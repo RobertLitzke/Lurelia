@@ -1,0 +1,25 @@
+{
+  "name": "mound_grounds",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "The mound grounds: short grass kept down by deer on the great bird mound and the low half rings east of it, a few old oaks.",
+  "priority": 10,
+  "rules": {"region": "mounds"},
+  "surface": "meadow_grass",
+  "subsurface": "silt",
+  "map_color": [196, 200, 140],
+  "plants": [
+    {"plant": "live_oak", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 50}}},
+    {"plant": "spanish_moss", "density": 0.6, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "deer", "count": 5},
+    {"creature": "sandhill_crane", "count": 3},
+    {"creature": "great_horned_owl", "count": 1},
+    {"creature": "coyote", "count": 2}
+  ],
+  "collectibles": [
+    {"item": "arrowhead", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}},
+    {"item": "pottery_shard", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}
+  ]
+}

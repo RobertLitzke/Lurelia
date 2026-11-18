@@ -1,0 +1,53 @@
+{
+  "name": "badger",
+  "version": 2,
+  "introduced_by": "base",
+  "notes": "Badger: a low, wide grey digger with a white head striped black through the eyes, nosing along hedge and wood edge at dusk and bolting for cover.",
+  "voxel": 0.035,
+  "half_w": 0.2,
+  "height": 0.38,
+  "colors": {"coat": [128, 124, 118], "white": [240, 236, 228], "dark": [36, 28, 24], "belly": [84, 80, 76]},
+  "behaviour": {
+    "movement": "skulk",
+    "sleeps_on_side": true,
+    "walk_speed": 0.9,
+    "flee_speed": 4.5,
+    "wary": 10,
+    "flightiness": 0.7,
+    "flees_from": ["player"],
+    "spawn_chance": 0.4,
+    "active": "nocturnal",
+    "off_hours": 0.05
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 6, 17], "radius": [5.2, 4.0, 7.8], "mat": "coat"},
+    {"op": "recolour_below", "y": 4, "from": "coat", "to": "belly"},
+    {"op": "ellipsoid", "centre": [16, 6.5, 9], "radius": [3.6, 3.2, 4.4], "mat": "white", "part": "head"},
+    {"op": "box", "from": [14, 5, 3], "to": [18, 8, 6], "mat": "white", "part": "head"},
+    {"op": "box", "from": [15, 6, 2], "to": [17, 8, 4], "mat": "dark", "part": "head"},
+    {"op": "recolour", "at": [12, 5, 3], "until": [14, 10, 12], "from": "white", "to": "dark"},
+    {"op": "recolour", "at": [18, 5, 3], "until": [20, 10, 12], "from": "white", "to": "dark"},
+    {"op": "box", "from": [12, 8, 11], "to": [14, 10, 12], "mat": "dark", "part": "ear_l"},
+    {"op": "box", "from": [18, 8, 11], "to": [20, 10, 12], "mat": "dark", "part": "ear_r"},
+    {"op": "box", "from": [12, 0, 11], "to": [14, 3, 14], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [18, 0, 11], "to": [20, 3, 14], "mat": "dark", "part": "leg_fr"},
+    {"op": "box", "from": [12, 0, 20], "to": [14, 3, 23], "mat": "dark", "part": "leg_hl"},
+    {"op": "box", "from": [18, 0, 20], "to": [20, 3, 23], "mat": "dark", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [16, 6, 25.5], "radius": [2.0, 2.0, 2.6], "mat": "white", "part": "tail"}
+  ],
+  "vary": {"size": 0.08, "shade": 0.06},
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "head", "role": "head", "parent": "body", "joint": [16, 6, 12]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [13, 8, 11.5], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [19, 8, 11.5], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [13, 3, 12.5], "side": "l", "pair": 0},
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [19, 3, 12.5], "side": "r", "pair": 0},
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [13, 3, 21.5], "side": "l", "pair": 1},
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [19, 3, 21.5], "side": "r", "pair": 1},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 6, 23.5]}
+    ]
+  }
+}

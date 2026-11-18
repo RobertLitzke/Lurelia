@@ -1,0 +1,17 @@
+{
+  "name": "field_wall",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A length of dry-stone field wall with gaps.",
+  "size": [36, 5, 3],
+  "anchor": [18, 0, 1],
+  "level": false,
+  "decays": false,
+  "tags": ["settler"],
+  "slots": {"wall": "mossy_stone"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [36, 4, 3], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [10, 2, 0], "to": [14, 4, 3], "mat": "air"},
+    {"op": "box", "from": [25, 3, 0], "to": [29, 4, 3], "mat": "air"}
+  ]
+}

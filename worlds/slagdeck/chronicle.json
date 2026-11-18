@@ -1,0 +1,374 @@
+{
+  "places": {
+    "deck": [
+      192.0,
+      192.0
+    ]
+  },
+  "events": [
+    {
+      "year": -4000,
+      "event": "landmass",
+      "cause": "A granite shelf off a cold coast, which is why the works was put here and not somewhere easier to reach.",
+      "centre": "deck",
+      "radius": 168,
+      "roughness": 0.22,
+      "hills": 5,
+      "ridges": 0,
+      "shelf": 5,
+      "edge_fall": 70
+    },
+    {
+      "year": -90,
+      "event": "place",
+      "cause": "The smelter deck: the works' one building, raised on a plinth so the tapping floor could be worked from under it.",
+      "structure": "slagdeck_arena",
+      "at": "deck",
+      "bearing": 0,
+      "poi": "the smelter deck"
+    },
+    {
+      "year": -2,
+      "event": "area",
+      "cause": "The hands called the tapping floor the pit, and nobody has called it anything else since.",
+      "name": "the pit",
+      "kind": "floor",
+      "at": [
+        192,
+        194
+      ],
+      "radius": 13
+    },
+    {
+      "year": -2,
+      "event": "area",
+      "cause": "The west shop, where the moulds were cast.",
+      "name": "west shop",
+      "kind": "shop",
+      "at": [
+        168,
+        180
+      ],
+      "radius": 15
+    },
+    {
+      "year": -2,
+      "event": "area",
+      "cause": "The east shop, where the scrap came in.",
+      "name": "east shop",
+      "kind": "shop",
+      "at": [
+        216,
+        206
+      ],
+      "radius": 15
+    },
+    {
+      "year": -2,
+      "event": "area",
+      "cause": "The gantry over the north walk, where the crane driver sat.",
+      "name": "the gantry",
+      "kind": "gantry",
+      "at": [
+        191,
+        169
+      ],
+      "radius": 9
+    },
+    {
+      "year": -1,
+      "event": "lamp",
+      "cause": "The works lighting, still on, which is the other thing nobody here can explain.",
+      "at": "deck",
+      "points": [
+        [
+          -34.0,
+          -30.0,
+          8.6
+        ],
+        [
+          -34.0,
+          30.0,
+          8.6
+        ],
+        [
+          -18.0,
+          -30.0,
+          8.6
+        ],
+        [
+          -18.0,
+          30.0,
+          8.6
+        ],
+        [
+          0.0,
+          -30.0,
+          8.6
+        ],
+        [
+          0.0,
+          30.0,
+          8.6
+        ],
+        [
+          18.0,
+          -30.0,
+          8.6
+        ],
+        [
+          18.0,
+          30.0,
+          8.6
+        ],
+        [
+          34.0,
+          -30.0,
+          8.6
+        ],
+        [
+          34.0,
+          30.0,
+          8.6
+        ]
+      ],
+      "reach": 13.0,
+      "strength": 0.95,
+      "colour": [
+        255,
+        234,
+        196
+      ]
+    },
+    {
+      "year": -1,
+      "event": "lamp",
+      "cause": "The works lighting, still on, which is the other thing nobody here can explain.",
+      "at": "deck",
+      "points": [
+        [
+          -39.0,
+          -20.0,
+          12.1
+        ],
+        [
+          -39.0,
+          -8.0,
+          12.1
+        ],
+        [
+          -39.0,
+          4.0,
+          12.1
+        ],
+        [
+          39.0,
+          -6.0,
+          12.1
+        ],
+        [
+          39.0,
+          6.0,
+          12.1
+        ],
+        [
+          39.0,
+          18.0,
+          12.1
+        ]
+      ],
+      "reach": 14.0,
+      "strength": 0.8,
+      "colour": [
+        255,
+        234,
+        196
+      ]
+    },
+    {
+      "year": -1,
+      "event": "lamp",
+      "cause": "The works lighting, still on, which is the other thing nobody here can explain.",
+      "at": "deck",
+      "points": [
+        [
+          -39.0,
+          -20.0,
+          7.2
+        ],
+        [
+          -21.0,
+          -20.0,
+          7.2
+        ],
+        [
+          -39.0,
+          -10.0,
+          7.2
+        ],
+        [
+          -21.0,
+          -10.0,
+          7.2
+        ],
+        [
+          -39.0,
+          0.0,
+          7.2
+        ],
+        [
+          -21.0,
+          0.0,
+          7.2
+        ],
+        [
+          22.0,
+          -6.0,
+          7.2
+        ],
+        [
+          39.0,
+          -6.0,
+          7.2
+        ],
+        [
+          22.0,
+          6.0,
+          7.2
+        ],
+        [
+          39.0,
+          6.0,
+          7.2
+        ],
+        [
+          22.0,
+          18.0,
+          7.2
+        ],
+        [
+          39.0,
+          18.0,
+          7.2
+        ]
+      ],
+      "reach": 14.0,
+      "strength": 1.15,
+      "colour": [
+        255,
+        234,
+        196
+      ]
+    },
+    {
+      "year": -1,
+      "event": "lamp",
+      "cause": "The works lighting, still on, which is the other thing nobody here can explain.",
+      "at": "deck",
+      "points": [
+        [
+          -11.0,
+          -3.0,
+          9.1
+        ],
+        [
+          11.0,
+          -3.0,
+          9.1
+        ],
+        [
+          -11.0,
+          7.0,
+          9.1
+        ],
+        [
+          11.0,
+          7.0,
+          9.1
+        ]
+      ],
+      "reach": 16.0,
+      "strength": 1.05,
+      "colour": [
+        255,
+        234,
+        196
+      ]
+    },
+    {
+      "year": -1,
+      "event": "lamp",
+      "cause": "The works lighting, still on, which is the other thing nobody here can explain.",
+      "at": "deck",
+      "points": [
+        [
+          -13.0,
+          -18.0,
+          14.1
+        ],
+        [
+          -13.0,
+          -6.0,
+          14.1
+        ],
+        [
+          -13.0,
+          6.0,
+          14.1
+        ],
+        [
+          -13.0,
+          18.0,
+          14.1
+        ],
+        [
+          0.0,
+          -18.0,
+          14.1
+        ],
+        [
+          0.0,
+          -6.0,
+          14.1
+        ],
+        [
+          0.0,
+          6.0,
+          14.1
+        ],
+        [
+          0.0,
+          18.0,
+          14.1
+        ],
+        [
+          13.0,
+          -18.0,
+          14.1
+        ],
+        [
+          13.0,
+          -6.0,
+          14.1
+        ],
+        [
+          13.0,
+          6.0,
+          14.1
+        ],
+        [
+          13.0,
+          18.0,
+          14.1
+        ]
+      ],
+      "reach": 24.0,
+      "strength": 0.85,
+      "colour": [
+        255,
+        234,
+        196
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "petrified_wood",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Wood turned to stone: red, amber and grey bands.",
+  "id": 141,
+  "smooth": false,
+  "texture": {
+    "pattern": "rings",
+    "base": [150, 96, 80],
+    "alt": [196, 160, 120],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [160, 106, 90], "alt": [200, 166, 128]}
+  },
+  "top": {
+    "pattern": "rings",
+    "base": [170, 110, 90],
+    "alt": [210, 176, 140],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [176, 120, 100], "alt": [214, 182, 148]}
+  }
+}

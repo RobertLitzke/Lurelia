@@ -1,0 +1,15 @@
+{
+  "name": "black_sand",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 19,
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [52, 50, 52],
+    "scale": 6,
+    "contrast": 1.0,
+    "alt": [96, 92, 90],
+    "calm": {"base": [74, 70, 72], "alt": [92, 88, 88]}
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "pale_grass",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 25,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [124, 130, 122],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [176, 170, 186],
+    "calm": {"base": [134, 140, 132], "alt": [148, 140, 160]}
+  },
+  "top": {
+    "pattern": "blotch",
+    "base": [138, 146, 136],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [158, 148, 168],
+    "calm": {"base": [146, 154, 144], "alt": [162, 152, 174]}
+  }
+}

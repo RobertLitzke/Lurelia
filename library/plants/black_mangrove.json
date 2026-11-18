@@ -1,0 +1,15 @@
+{
+  "name": "black_mangrove",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Black mangrove: a bushy tree on the mud banks just above the tide.",
+  "form": "broad",
+  "height": [3, 5],
+  "trunk_radius": [0.15, 0.22],
+  "crown_radius": [1.8, 2.6],
+  "bark": "mangrove_bark",
+  "leaf": "mangrove_leaves",
+  "max_slope": 0.8,
+  "standing_water": [-0.8, 0.5],
+  "affords": ["cover"]
+}

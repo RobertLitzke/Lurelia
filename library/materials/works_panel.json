@@ -1,0 +1,8 @@
+{
+  "name": "works_panel",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "Painted sheet on the arena's walls: one flat grey, no pattern at all, so corners and openings stay sharp.",
+  "smooth": false,
+  "texture": {"pattern": "flat", "base": [76, 80, 82], "scale": 1, "contrast": 1.0, "calm": {"base": [88, 92, 94]}}
+}

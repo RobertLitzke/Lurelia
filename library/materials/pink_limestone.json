@@ -1,0 +1,16 @@
+{
+  "name": "pink_limestone",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Soft pink and white limestone the hoodoos are cut from.",
+  "id": 107,
+  "smooth": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [214, 150, 128],
+    "alt": [236, 196, 176],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [220, 160, 138], "alt": [236, 200, 180]}
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "feather_tussock",
+  "version": 2,
+  "introduced_by": "windbarrow",
+  "notes": "herb: A big feathergrass tussock standing out of the sward, its awns silver-gold and bent downwind; drawn as sprites, so you walk through it. v2: three muted coats in drifts about 35 m across.",
+  "form": "herb",
+  "height": [1.3, 2.1],
+  "crown_radius": [0.5, 0.9],
+  "bark": "sawgrass_blades",
+  "leaf": "sawgrass_blades",
+  "morphs": [
+    {"name": "tawny", "weight": 5, "notes": "The common tussock, dry gold-green.", "colors": {"leaf": [136, 130, 74]}},
+    {
+      "name": "silver",
+      "weight": 3,
+      "notes": "Paler drifts where the awns catch the light.",
+      "colors": {"leaf": [148, 148, 112]}
+    },
+    {"name": "sage", "weight": 2, "notes": "Greener stands in the damp hollows.", "colors": {"leaf": [114, 130, 84]}}
+  ],
+  "morph_blob_m": 35,
+  "max_slope": 0.9
+}

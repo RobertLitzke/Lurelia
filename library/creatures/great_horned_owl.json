@@ -1,0 +1,27 @@
+{
+  "name": "great_horned_owl",
+  "version": 2,
+  "introduced_by": "hemlow",
+  "notes": "Great horned owl: big, mottled grey-brown with a pale throat, quartering slowly over old forest at dusk. Rare: seen now and then, never for long.",
+  "colors": {
+    "body": [110, 90, 70],
+    "head": [96, 78, 60],
+    "beak": [36, 28, 24],
+    "wing": [88, 72, 56],
+    "tail": [88, 72, 56],
+    "legs": [210, 180, 140]
+  },
+  "behaviour": {
+    "movement": "circle",
+    "fly_height": 8,
+    "walk_speed": 2.5,
+    "flee_speed": 6.0,
+    "wary": 14.0,
+    "flightiness": 0.5,
+    "spawn_chance": 0.08,
+    "active": "nocturnal",
+    "off_hours": 0.05
+  },
+  "like": "starling",
+  "scale": 2.3
+}

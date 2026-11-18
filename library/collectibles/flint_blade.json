@@ -1,0 +1,13 @@
+{
+  "name": "flint_blade",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A long blade struck from a flint core, blue-black with a white heel: on the working floors and all along the trails.",
+  "display": "flint blade",
+  "voxel": 0.02,
+  "colors": {"flint": [58, 60, 66], "cortex": [196, 190, 176]},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 2, 16], "radius": [2.4, 1.6, 9], "mat": "flint"},
+    {"op": "ellipsoid", "centre": [16, 2, 24], "radius": [2.6, 1.6, 2.4], "mat": "cortex"}
+  ]
+}

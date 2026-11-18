@@ -1,0 +1,16 @@
+{
+  "name": "trim_white",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "White painted trim boards.",
+  "id": 168,
+  "smooth": false,
+  "texture": {
+    "pattern": "flat",
+    "base": [226, 222, 212],
+    "alt": [210, 206, 196],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [228, 224, 214], "alt": [214, 210, 200]}
+  }
+}

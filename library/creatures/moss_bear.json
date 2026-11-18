@@ -1,0 +1,19 @@
+{
+  "name": "moss_bear",
+  "version": 1,
+  "introduced_by": "faerie",
+  "notes": "The faerie wood's bear: larger and slower than a black bear, its coat gone green-brown under a mantle of moss, with pale mushrooms on its back that glow at dusk. It barely minds people.",
+  "colors": {"bear": [110, 100, 66], "moss": [74, 116, 50], "cap": [190, 240, 170, 1.4]},
+  "behaviour": {"walk_speed": 0.7, "wary": 5, "spawn_chance": 0.0015},
+  "like": "bear",
+  "scale": 1.15,
+  "extra_ops": [
+    {"op": "ellipsoid", "centre": [16.5, 15.5, 14], "radius": [4.2, 1.6, 7.5], "mat": "moss"},
+    {"op": "ellipsoid", "centre": [16.5, 16.5, 12], "radius": [3.2, 1.2, 3.0], "mat": "moss"},
+    {"op": "box", "from": [15, 17, 10], "to": [16, 19, 11], "mat": "cap"},
+    {"op": "box", "from": [18, 17, 14], "to": [19, 18, 15], "mat": "cap"},
+    {"op": "box", "from": [14, 16, 18], "to": [15, 18, 19], "mat": "cap"},
+    {"op": "set", "at": [17, 17, 20], "mat": "cap"}
+  ],
+  "vary": {"shade": 0.06, "hue": 0.03}
+}

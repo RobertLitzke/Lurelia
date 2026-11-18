@@ -1,0 +1,15 @@
+{
+  "name": "live_oak_leaves",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Live oak leaves: small, leathery and dark olive, evergreen.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [58, 78, 44],
+    "alt": [72, 90, 52],
+    "scale": 9,
+    "contrast": 0.9,
+    "calm": {"base": [56, 76, 42], "alt": [70, 88, 50]}
+  }
+}

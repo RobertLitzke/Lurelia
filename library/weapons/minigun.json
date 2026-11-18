@@ -1,0 +1,43 @@
+{
+  "name": "minigun",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "Six barrels on a gearbox: it takes half a second to come up to speed, then holds a wall of bullets on a target. Weak per round and it wanders, so it is a weapon for holding a corridor, not for duels across the hall. Belt-fed from the drum, so it never reloads: the spin-up is the wait it has instead.",
+  "display": "MINIGUN",
+  "slot": 7,
+  "ammo_max": 400,
+  "ammo_start": 220,
+  "fire": {
+    "kind": "hitscan",
+    "rpm": 1100,
+    "damage": 3.85,
+    "spread_deg": 1.3,
+    "range": 200.0,
+    "falloff": 0.6,
+    "spin_up": 0.45,
+    "kick": 0.1,
+    "tracer": [1.0, 0.86, 0.5],
+    "tracer_s": 0.05
+  },
+  "alt": {
+    "kind": "hitscan",
+    "rpm": 1800,
+    "damage": 2.75,
+    "spread_deg": 2.9,
+    "range": 160.0,
+    "falloff": 0.5,
+    "spin_up": 0.7,
+    "kick": 0.16,
+    "tracer": [1.0, 0.8, 0.42],
+    "tracer_s": 0.05
+  },
+  "view": "minigun",
+  "grip": [
+    [0.05, 0.42, 0.62, 0.16],
+    [0.0, 0.38, 0.08, 0.24],
+    [0.6, 0.3, 0.26, 0.34],
+    [0.66, 0.02, 0.12, 0.3],
+    [0.8, 0.14, 0.18, 0.22]
+  ],
+  "tint": [0.42, 0.44, 0.46]
+}

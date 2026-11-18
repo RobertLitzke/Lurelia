@@ -1,0 +1,15 @@
+{
+  "name": "forest_floor",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 49,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [88, 110, 50],
+    "scale": 5,
+    "contrast": 1.0,
+    "alt": [104, 84, 52],
+    "calm": {"base": [92, 104, 58], "alt": [104, 96, 62]}
+  }
+}

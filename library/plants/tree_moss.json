@@ -1,0 +1,16 @@
+{
+  "name": "tree_moss",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Moss up the shaded side of a trunk: patches of green felt on the north face. A crust plant; its biome density is the chance a tree carries it.",
+  "form": "crust",
+  "height": [0.4, 4.0],
+  "trunk_radius": [0.0, 0.0],
+  "crown_radius": [0.22, 0.4],
+  "bark": "tree_moss",
+  "leaf": "tree_moss",
+  "max_slope": 9,
+  "crust": "patch",
+  "hosts": ["tree"],
+  "shaded": true
+}

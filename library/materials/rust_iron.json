@@ -1,0 +1,15 @@
+{
+  "name": "rust_iron",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 37,
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [120, 66, 40],
+    "scale": 6,
+    "contrast": 1.0,
+    "alt": [80, 54, 42],
+    "calm": {"base": [150, 86, 56]}
+  }
+}

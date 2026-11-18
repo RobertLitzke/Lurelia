@@ -1,0 +1,16 @@
+{
+  "name": "black_sand_beach",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "priority": 6,
+  "rules": {"coast": [0, 10], "elev": [0, 3.5], "region": "west_coast"},
+  "surface": "black_sand",
+  "subsurface": "black_sand",
+  "rock": "basalt",
+  "map_color": [60, 60, 64],
+  "plants": [],
+  "features": [{"structure": "basalt_columns", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [{"creature": "gull", "count": 4}, {"creature": "harbor_seal", "count": 3}, {"creature": "cormorant", "count": 2}],
+  "collectibles": [{"item": "seashell", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}],
+  "mist": 0.55
+}

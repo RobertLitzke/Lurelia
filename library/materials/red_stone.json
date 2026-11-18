@@ -1,0 +1,16 @@
+{
+  "name": "red_stone",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Laid red sandstone blocks: Bitterwater chapel, Harlow's stone buildings, the granaries.",
+  "id": 132,
+  "smooth": false,
+  "texture": {
+    "pattern": "coursed",
+    "base": [172, 98, 68],
+    "alt": [194, 122, 86],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [180, 108, 78], "alt": [198, 130, 94]}
+  }
+}

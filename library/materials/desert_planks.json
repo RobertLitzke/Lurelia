@@ -1,0 +1,16 @@
+{
+  "name": "desert_planks",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Boards dried silver-grey and brown by a century of desert sun.",
+  "id": 142,
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [126, 112, 96],
+    "alt": [98, 86, 74],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [134, 120, 104], "alt": [108, 96, 84]}
+  }
+}

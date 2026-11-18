@@ -1,0 +1,15 @@
+{
+  "name": "cane_soil",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Dark worked soil between the cane rows.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [92, 76, 58],
+    "alt": [104, 88, 66],
+    "scale": 4,
+    "contrast": 0.5,
+    "calm": {"base": [94, 78, 60], "alt": [106, 90, 68]}
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "kaldvik_shore",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "A fjord's narrow shore: dark shingle under a rind of snow, kelp wrack and ice at the tideline.",
+  "priority": 5,
+  "rules": {"elev": [0, 3], "coast": [0, 7]},
+  "surface": "shingle_dark",
+  "subsurface": "gravel",
+  "map_color": [70, 72, 78],
+  "plants": [],
+  "features": [{"structure": "basalt_boulder", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "harbor_seal", "count": 3},
+    {"creature": "eider", "count": 4},
+    {"creature": "arctic_fox", "count": 2},
+    {"creature": "raven", "count": 2}
+  ],
+  "collectibles": []
+}

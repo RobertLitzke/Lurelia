@@ -1,0 +1,16 @@
+{
+  "name": "brick_brown",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Dark brown face brick.",
+  "id": 165,
+  "smooth": false,
+  "texture": {
+    "pattern": "coursed",
+    "base": [104, 74, 60],
+    "alt": [88, 62, 50],
+    "scale": 8,
+    "contrast": 1.0,
+    "calm": {"base": [116, 84, 68], "alt": [100, 72, 58]}
+  }
+}

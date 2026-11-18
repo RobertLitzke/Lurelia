@@ -1,0 +1,33 @@
+{
+  "name": "false_front",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A Harlow main-street building: plank walls, a tin gable roof hidden behind a tall square false front, a boardwalk and porch roof.",
+  "size": [24, 29, 45],
+  "anchor": [12, 0, 0],
+  "foundation": 4,
+  "tags": ["harlow", "house"],
+  "slots": {
+    "wall": "desert_planks",
+    "trim": "timber_frame",
+    "roof": "corrugated_tin",
+    "floor": "desert_planks",
+    "glass": "window_glass"
+  },
+  "ops": [
+    {"op": "box", "from": [0, 0, 8], "to": [24, 1, 44], "mat": "floor", "part": "floor"},
+    {"op": "walls", "from": [0, 1, 8], "to": [24, 16, 44], "mat": "wall", "thick": 1, "part": "timber"},
+    {"op": "gable", "from": [0, 16, 8], "to": [24, 16, 44], "axis": "z", "mat": "roof", "rise": 1, "part": "roof"},
+    {"op": "box", "from": [0, 16, 8], "to": [24, 28, 9], "mat": "wall", "part": "timber"},
+    {"op": "box", "from": [0, 27, 7], "to": [24, 28, 9], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [10, 1, 8], "to": [14, 10, 9], "mat": "air"},
+    {"op": "box", "from": [2, 5, 8], "to": [9, 12, 9], "mat": "glass", "part": "glass"},
+    {"op": "box", "from": [15, 5, 8], "to": [22, 12, 9], "mat": "glass", "part": "glass"},
+    {"op": "box", "from": [3, 18, 8], "to": [21, 25, 9], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [0, 0, 0], "to": [24, 1, 8], "mat": "floor", "part": "floor"},
+    {"op": "box", "from": [0, 1, 0], "to": [1, 13, 1], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [23, 1, 0], "to": [24, 13, 1], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [11, 1, 0], "to": [12, 13, 1], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [0, 13, 0], "to": [24, 14, 8], "mat": "roof", "part": "roof"}
+  ]
+}

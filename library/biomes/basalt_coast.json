@@ -1,0 +1,34 @@
+{
+  "name": "basalt_coast",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "priority": 5,
+  "rules": {"coast": [0, 45], "region": "west_coast"},
+  "surface": "shore_grass",
+  "subsurface": "black_sand",
+  "rock": "basalt",
+  "map_color": [120, 130, 90],
+  "plants": [
+    {"plant": "hanging_vine", "density": 0.08, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "heather", "density": 0.03, "placement": {"verb": "clustered", "params": {"size": 20}}},
+    {"plant": "umbrella_pine", "density": 0.002, "placement": {"verb": "lone", "params": {"spacing": 25}}}
+  ],
+  "features": [
+    {
+      "structure": "basalt_columns",
+      "density": 0.0012,
+      "placement": {"verb": "gradient", "params": {"min": 0.3, "max": 1.2}, "field": "slope"}
+    }
+  ],
+  "creatures": [
+    {"creature": "gull", "count": 3},
+    {"creature": "rabbit", "count": 3},
+    {"creature": "eagle", "count": 1},
+    {"creature": "harbor_seal", "count": 3},
+    {"creature": "sea_lion", "count": 3},
+    {"creature": "puffin", "count": 8},
+    {"creature": "cormorant", "count": 3},
+    {"creature": "bumblebee", "count": 3}
+  ],
+  "mist": 0.85
+}

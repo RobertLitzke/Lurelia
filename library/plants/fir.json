@@ -1,0 +1,13 @@
+{
+  "name": "fir",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Tall, narrow, dark: the high slopes.",
+  "form": "columnar",
+  "height": [12, 17],
+  "trunk_radius": [0.25, 0.35],
+  "crown_radius": [2.0, 2.8],
+  "bark": "bark",
+  "leaf": "dark_needles",
+  "max_slope": 0.75
+}

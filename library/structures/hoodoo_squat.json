@@ -1,0 +1,24 @@
+{
+  "name": "hoodoo_squat",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A hoodoo: a pinnacle of soft banded tuff left standing under a harder capstone as the slope around it washed away.",
+  "size": [28, 50, 28],
+  "anchor": [14, 0, 14],
+  "foundation": 4,
+  "level": false,
+  "decays": false,
+  "tags": ["natural", "landmark", "hoodoo"],
+  "slots": {"rust": "hoodoo_rust", "pale": "hoodoo_pale"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [14.0, 0, 14.0], "radius": [13.5, 5.76, 12.6], "mat": "rust"},
+    {"op": "ellipsoid", "centre": [14.5589, 6.8984, 13.4972], "radius": [8.57351, 9.65776, 7.78166], "mat": "rust"},
+    {"op": "cylinder", "base": [14.0, 6.8984, 14.0], "radius": 8.31631, "height": 1, "mat": "pale"},
+    {"op": "ellipsoid", "centre": [13.3133, 17.7808, 14.5533], "radius": [7.08519, 9.44069, 7.34148], "mat": "rust"},
+    {"op": "cylinder", "base": [14.0, 17.7808, 14.0], "radius": 6.87263, "height": 1, "mat": "pale"},
+    {"op": "ellipsoid", "centre": [13.2231, 29.2586, 13.6413], "radius": [6.73788, 10.4045, 5.97433], "mat": "rust"},
+    {"op": "ellipsoid", "centre": [14.5222, 41.0518, 14.3916], "radius": [3.70512, 10.2677, 4.02869], "mat": "rust"},
+    {"op": "cylinder", "base": [14.0, 36, 14.0], "radius": 3.6, "height": 6, "mat": "rust"},
+    {"op": "ellipsoid", "centre": [14.0, 43, 14.0], "radius": [7.21207, 3.5, 6.99562], "mat": "pale"}
+  ]
+}

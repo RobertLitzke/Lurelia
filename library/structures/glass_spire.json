@@ -1,0 +1,32 @@
+{
+  "name": "glass_spire",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A needle of skyglass some 50 m tall at the heart of the strewn field, ringed by smaller shards. It flashes in the sun from across the island.",
+  "size": [48, 155, 48],
+  "anchor": [24, 0, 24],
+  "foundation": 6,
+  "level": false,
+  "decays": false,
+  "tags": ["anomaly", "landmark"],
+  "slots": {"glass": "skyglass"},
+  "ops": [
+    {"op": "cylinder", "base": [24.2901, 0.0, 24.3542], "radius": 7.0, "height": 20.229, "mat": "glass"},
+    {"op": "cylinder", "base": [24.5068, 19.229, 23.4348], "radius": 5.92877, "height": 21.399, "mat": "glass"},
+    {"op": "cylinder", "base": [24.1788, 39.628, 24.4811], "radius": 5.09596, "height": 23.4336, "mat": "glass"},
+    {"op": "cylinder", "base": [23.6959, 62.0616, 24.0525], "radius": 4.43936, "height": 18.6907, "mat": "glass"},
+    {"op": "cylinder", "base": [23.6601, 79.7523, 23.7354], "radius": 3.55239, "height": 14.1311, "mat": "glass"},
+    {"op": "cylinder", "base": [23.5915, 92.8834, 24.3566], "radius": 2.49422, "height": 21.6573, "mat": "glass"},
+    {"op": "cylinder", "base": [23.552, 113.541, 23.4021], "radius": 1.82483, "height": 20.1745, "mat": "glass"},
+    {"op": "cylinder", "base": [23.6586, 132.715, 24.5789], "radius": 0.789131, "height": 16.0946, "mat": "glass"},
+    {"op": "cylinder", "base": [41.5124, 0, 21.7743], "radius": 1.64707, "height": 19.5566, "mat": "glass"},
+    {"op": "cylinder", "base": [39.1511, 0, 32.695], "radius": 1.82877, "height": 25.3313, "mat": "glass"},
+    {"op": "cylinder", "base": [23.2791, 0, 35.6668], "radius": 1.43343, "height": 9.31912, "mat": "glass"},
+    {"op": "cylinder", "base": [21.0663, 0, 33.1263], "radius": 1.36163, "height": 18.0622, "mat": "glass"},
+    {"op": "cylinder", "base": [11.951, 0, 33.1035], "radius": 1.40548, "height": 12.1992, "mat": "glass"},
+    {"op": "cylinder", "base": [12.5708, 0, 17.1462], "radius": 1.37895, "height": 15.6244, "mat": "glass"},
+    {"op": "cylinder", "base": [20.2885, 0, 15.2409], "radius": 2.17012, "height": 6.45731, "mat": "glass"},
+    {"op": "cylinder", "base": [29.2925, 0, 8.26215], "radius": 1.02168, "height": 21.7548, "mat": "glass"},
+    {"op": "cylinder", "base": [34.1155, 0, 14.0247], "radius": 1.01089, "height": 6.93454, "mat": "glass"}
+  ]
+}

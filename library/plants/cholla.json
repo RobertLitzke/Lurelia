@@ -1,0 +1,17 @@
+{
+  "name": "cholla",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "branching: Cholla: a small shrubby cactus of short jointed arms, pale with dense spines that glow against the light.",
+  "form": "branching",
+  "height": [1.3, 2.3],
+  "trunk_radius": [0.13, 0.16],
+  "crown_radius": [0.35, 0.5],
+  "bark": "cholla",
+  "leaf": "cholla",
+  "spread": 0.5,
+  "dome": 0,
+  "limb": 1.0,
+  "max_slope": 0.9,
+  "affords": ["nectar", "nest"]
+}

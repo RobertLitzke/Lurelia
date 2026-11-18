@@ -1,0 +1,15 @@
+{
+  "name": "river_cobbles",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 28,
+  "smooth": true,
+  "texture": {
+    "pattern": "cracks",
+    "base": [118, 112, 104],
+    "scale": 6,
+    "contrast": 1.0,
+    "alt": [84, 80, 76],
+    "calm": {"base": [150, 140, 128], "alt": [128, 120, 110]}
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "salt_bed",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The bed of Saltmere: grey salt mud under a metre or two of still, milky water.",
+  "priority": 4,
+  "rules": {"underwater": true},
+  "surface": "salt_mud",
+  "subsurface": "salt_mud",
+  "rock": "chalk_grey",
+  "fringe": 0,
+  "map_color": [150, 160, 158],
+  "plants": [],
+  "creatures": []
+}

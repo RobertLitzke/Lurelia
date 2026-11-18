@@ -1,0 +1,16 @@
+{
+  "name": "jungle_floor",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Dark jungle floor: leaf litter, roots and moss under the banyans.",
+  "id": 251,
+  "smooth": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [78, 84, 50],
+    "alt": [96, 104, 58],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [84, 90, 56], "alt": [100, 108, 62]}
+  }
+}

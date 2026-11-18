@@ -1,0 +1,16 @@
+{
+  "name": "flowering_cherry",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Ornamental cherry in a planting strip: low, wide, pink.",
+  "form": "broad",
+  "height": [5, 7],
+  "trunk_radius": [0.16, 0.22],
+  "crown_radius": [2.4, 3.2],
+  "bark": "bark",
+  "leaf": "blossom_leaves",
+  "leaf_alt": ["leaves", 0.2],
+  "squash": 0.7,
+  "max_slope": 0.7,
+  "affords": ["nectar"]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "log_moss",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Moss over the top of an old fallen log: green blotches over grey wood.",
+  "id": 192,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [82, 104, 52],
+    "alt": [112, 106, 92],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [94, 118, 60], "alt": [138, 128, 112]}
+  }
+}

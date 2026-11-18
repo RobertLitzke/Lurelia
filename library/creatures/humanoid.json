@@ -1,0 +1,125 @@
+{
+  "name": "humanoid",
+  "version": 1,
+  "introduced_by": "shooter",
+  "notes": "The root of everything that stands on two legs and carries something in its hands. It is form, not finish: plain plates in neutral greys, named by what they are for (body, limb, dark, face, foot), so a child that gives nothing but five colours and a few extra ops is a different person. Shaped like a jointed print-in-place figurine: limbs two voxels across and held clear of the trunk, a dark joint between every pair of segments, a narrow waist and a box for a head, because a fighter is read at twenty metres by its gaps and a solid barrel of limbs reads as nothing. Eighteen bones, three to a limb, because this rig is driven by a player's movement rather than by an activity table and has to look right strafing, jumping, landing and dying as well as walking. Nothing lists it in a biome, so it only ever appears where code asks for it by name (the shooter's bots, the EDIT page).",
+  "voxel": 0.0547,
+  "half_w": 0.3,
+  "height": 1.75,
+  "colors": {
+    "body": [150, 154, 160],
+    "limb": [126, 130, 138],
+    "dark": [62, 66, 74],
+    "face": [172, 176, 182],
+    "foot": [44, 46, 52]
+  },
+  "behaviour": {
+    "movement": "skulk",
+    "walk_speed": 1.4,
+    "flee_speed": 6.0,
+    "wary": 16,
+    "flightiness": 0.4,
+    "spawn_chance": 0.0,
+    "swims": true,
+    "active": "diurnal"
+  },
+  "ops": [
+    {"op": "box", "from": [13, 15, 14], "to": [19, 17, 18], "mat": "body"},
+    {"op": "box", "from": [14, 17, 14], "to": [18, 18, 18], "mat": "dark", "part": "spine"},
+    {"op": "box", "from": [14, 18, 14], "to": [18, 20, 18], "mat": "body", "part": "spine"},
+    {"op": "box", "from": [13, 20, 14], "to": [19, 26, 18], "mat": "body", "part": "chest"},
+    {"op": "box", "from": [15, 26, 15], "to": [17, 27, 17], "mat": "dark", "part": "neck"},
+    {"op": "box", "from": [14, 28, 14], "to": [18, 32, 18], "mat": "face", "part": "head"},
+    {"op": "box", "from": [14, 27, 14], "to": [18, 28, 17], "mat": "dark", "part": "jaw"},
+    {"op": "box", "from": [12, 24, 15], "to": [13, 26, 17], "mat": "dark", "part": "arm_l"},
+    {"op": "box", "from": [10, 20, 15], "to": [12, 26, 17], "mat": "limb", "part": "arm_l"},
+    {"op": "box", "from": [10, 19, 15], "to": [12, 20, 17], "mat": "dark", "part": "fore_l"},
+    {"op": "box", "from": [10, 14, 15], "to": [12, 19, 17], "mat": "limb", "part": "fore_l"},
+    {"op": "box", "from": [10, 11, 15], "to": [12, 14, 17], "mat": "dark", "part": "hand_l"},
+    {"op": "box", "from": [19, 24, 15], "to": [20, 26, 17], "mat": "dark", "part": "arm_r"},
+    {"op": "box", "from": [20, 20, 15], "to": [22, 26, 17], "mat": "limb", "part": "arm_r"},
+    {"op": "box", "from": [20, 19, 15], "to": [22, 20, 17], "mat": "dark", "part": "fore_r"},
+    {"op": "box", "from": [20, 14, 15], "to": [22, 19, 17], "mat": "limb", "part": "fore_r"},
+    {"op": "box", "from": [20, 11, 15], "to": [22, 14, 17], "mat": "dark", "part": "hand_r"},
+    {"op": "box", "from": [13, 9, 14], "to": [15, 15, 17], "mat": "limb", "part": "thigh_l"},
+    {"op": "box", "from": [13, 8, 15], "to": [15, 9, 17], "mat": "dark", "part": "shin_l"},
+    {"op": "box", "from": [13, 2, 14], "to": [15, 8, 17], "mat": "limb", "part": "shin_l"},
+    {"op": "box", "from": [13, 0, 12], "to": [15, 2, 17], "mat": "foot", "part": "foot_l"},
+    {"op": "box", "from": [17, 9, 14], "to": [19, 15, 17], "mat": "limb", "part": "thigh_r"},
+    {"op": "box", "from": [17, 8, 15], "to": [19, 9, 17], "mat": "dark", "part": "shin_r"},
+    {"op": "box", "from": [17, 2, 14], "to": [19, 8, 17], "mat": "limb", "part": "shin_r"},
+    {"op": "box", "from": [17, 0, 12], "to": [19, 2, 17], "mat": "foot", "part": "foot_r"}
+  ],
+  "ages": {"bones": "none"},
+  "rig": {
+    "plan": "biped",
+    "bones": [
+      {"name": "pelvis", "role": "root", "joint": [16, 16, 16]},
+      {"name": "spine", "role": "spine", "parent": "pelvis", "joint": [16, 17.5, 16], "overlap": 1},
+      {"name": "chest", "role": "spine", "parent": "spine", "joint": [16, 20.5, 16], "overlap": 1},
+      {"name": "neck", "role": "neck", "parent": "chest", "joint": [16, 26.5, 16], "overlap": 1},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16, 27.5, 16], "overlap": 1},
+      {"name": "jaw", "role": "jaw", "parent": "head", "joint": [16, 27.8, 15.5]},
+      {"name": "arm_l", "role": "arm", "parent": "chest", "joint": [11, 25, 16], "side": "l", "overlap": 1},
+      {"name": "fore_l", "role": "arm", "parent": "arm_l", "joint": [11, 19.5, 16], "side": "l", "overlap": 1},
+      {"name": "hand_l", "role": "arm", "parent": "fore_l", "joint": [11, 14, 16], "side": "l", "overlap": 1},
+      {"name": "arm_r", "role": "arm", "parent": "chest", "joint": [21, 25, 16], "side": "r", "overlap": 1},
+      {"name": "fore_r", "role": "arm", "parent": "arm_r", "joint": [21, 19.5, 16], "side": "r", "overlap": 1},
+      {"name": "hand_r", "role": "arm", "parent": "fore_r", "joint": [21, 14, 16], "side": "r", "overlap": 1},
+      {
+        "name": "thigh_l",
+        "role": "leg",
+        "parent": "pelvis",
+        "joint": [14, 15.5, 16],
+        "side": "l",
+        "pair": 0,
+        "overlap": 1
+      },
+      {
+        "name": "shin_l",
+        "role": "leg",
+        "parent": "thigh_l",
+        "joint": [14, 8.5, 16],
+        "side": "l",
+        "pair": 0,
+        "overlap": 1
+      },
+      {
+        "name": "foot_l",
+        "role": "leg",
+        "parent": "shin_l",
+        "joint": [14, 1.5, 16],
+        "side": "l",
+        "pair": 0,
+        "overlap": 1
+      },
+      {
+        "name": "thigh_r",
+        "role": "leg",
+        "parent": "pelvis",
+        "joint": [18, 15.5, 16],
+        "side": "r",
+        "pair": 0,
+        "overlap": 1
+      },
+      {
+        "name": "shin_r",
+        "role": "leg",
+        "parent": "thigh_r",
+        "joint": [18, 8.5, 16],
+        "side": "r",
+        "pair": 0,
+        "overlap": 1
+      },
+      {
+        "name": "foot_r",
+        "role": "leg",
+        "parent": "shin_r",
+        "joint": [18, 1.5, 16],
+        "side": "r",
+        "pair": 0,
+        "overlap": 1
+      }
+    ]
+  }
+}

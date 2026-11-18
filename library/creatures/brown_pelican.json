@@ -1,0 +1,9 @@
+{
+  "name": "brown_pelican",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "circle: Brown pelican: big and grey-brown, flying low over the bay and the sound and floating on it.",
+  "colors": {"white": [210, 196, 160], "beak": [196, 160, 96], "dark": [36, 28, 24], "grey": [112, 104, 96]},
+  "like": "gull",
+  "scale": 2.2
+}

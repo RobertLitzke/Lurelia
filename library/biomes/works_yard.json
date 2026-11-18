@@ -1,0 +1,15 @@
+{
+  "name": "works_yard",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "The gravel apron round the arena deck: ash, clinker and nothing growing. Nothing to look at, which is the point; everything worth seeing is inside.",
+  "priority": 12,
+  "rules": {"elev": [-2, 200]},
+  "surface": "ballast",
+  "subsurface": "asphalt",
+  "fringe": 0,
+  "map_color": [122, 120, 116],
+  "plants": [],
+  "creatures": [{"creature": "squirrel", "count": 4}],
+  "collectibles": []
+}

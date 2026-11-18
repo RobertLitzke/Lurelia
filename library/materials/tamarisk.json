@@ -1,0 +1,16 @@
+{
+  "name": "tamarisk",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Feathery grey-green tamarisk with pink flower plumes.",
+  "id": 129,
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [108, 120, 92],
+    "alt": [176, 126, 136],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [118, 128, 100], "alt": [184, 138, 146]}
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "brain_coral",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Brain coral: an olive dome scored with meandering grooves.",
+  "form": "coral_mound",
+  "height": [0.9, 1.6],
+  "trunk_radius": [0.1, 0.1],
+  "crown_radius": [0.8, 1.4],
+  "bark": "coral_brain",
+  "leaf": "coral_brain",
+  "max_slope": 1.4,
+  "water_depth": [0.6, 22]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "skep_bench",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Three straw bee skeps on a plank bench under a little lean-to roof. Front local -Z.",
+  "size": [28, 15, 8],
+  "anchor": [14, 0, 4],
+  "level": false,
+  "decays": false,
+  "tags": ["hemlow", "prop"],
+  "slots": {"plank": "weathered_planks", "roof": "thatch", "skep": "thatch"},
+  "ops": [
+    {"op": "box", "from": [0, 3, 1], "to": [28, 4, 7], "mat": "plank", "part": "timber"},
+    {"op": "box", "from": [1, 0, 2], "to": [3, 3, 6], "mat": "plank", "part": "timber"},
+    {"op": "box", "from": [25, 0, 2], "to": [27, 3, 6], "mat": "plank", "part": "timber"},
+    {"op": "box", "from": [0, 4, 7], "to": [28, 14, 8], "mat": "plank", "part": "timber"},
+    {"op": "box", "from": [0, 14, 0], "to": [28, 15, 8], "mat": "roof", "part": "roof"},
+    {"op": "ellipsoid", "centre": [5, 4, 4], "radius": [3.2, 5.5, 3.0], "mat": "skep", "part": "roof"},
+    {"op": "box", "from": [5, 4, 1], "to": [6, 5, 2], "mat": "air"},
+    {"op": "ellipsoid", "centre": [14, 4, 4], "radius": [3.2, 5.5, 3.0], "mat": "skep", "part": "roof"},
+    {"op": "box", "from": [14, 4, 1], "to": [15, 5, 2], "mat": "air"},
+    {"op": "ellipsoid", "centre": [23, 4, 4], "radius": [3.2, 5.5, 3.0], "mat": "skep", "part": "roof"},
+    {"op": "box", "from": [23, 4, 1], "to": [24, 5, 2], "mat": "air"}
+  ]
+}

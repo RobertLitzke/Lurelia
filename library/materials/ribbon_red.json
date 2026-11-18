@@ -1,0 +1,15 @@
+{
+  "name": "ribbon_red",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Red ribbon wound round a straw goat.",
+  "smooth": false,
+  "texture": {
+    "pattern": "flat",
+    "base": [196, 30, 36],
+    "alt": [176, 24, 30],
+    "scale": 4,
+    "contrast": 0.3,
+    "calm": {"base": [204, 38, 44], "alt": [184, 32, 38]}
+  }
+}

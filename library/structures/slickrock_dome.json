@@ -1,0 +1,16 @@
+{
+  "name": "slickrock_dome",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A low rounded dome of bare sandstone rising out of the sand.",
+  "size": [40, 14, 36],
+  "anchor": [20, 0, 18],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"rock": "navajo_sandstone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [20, 0, 18], "radius": [19, 12, 17], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [26, 2, 14], "radius": [10, 10, 10], "mat": "rock"}
+  ]
+}

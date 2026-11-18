@@ -1,0 +1,63 @@
+{
+  "name": "scrap_gun",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "A hopper of scrap fired as a cone of nine shards. They are bodies, not rays: you can watch them go, they ricochet once off anything they clip, and they are gone less than a second out, which is what makes the gun murderous inside ten metres and useless past thirty. The right button lobs the shell whole: it bounces once, bursts, and the burst throws the hopper's own scrap out of it -- ten of the same shards, going nowhere in particular and gone in less than a second, so what the shot leaves behind it is the cone it would have fired, pointing every way at once.",
+  "display": "SCRAP GUN",
+  "slot": 8,
+  "ammo_max": 100,
+  "ammo_start": 44,
+  "mag": 10,
+  "reload_s": 1.7,
+  "fire": {
+    "kind": "shell",
+    "rpm": 105.0,
+    "damage": 16.0,
+    "pellets": 9,
+    "spread_deg": 4.83,
+    "range": 45.0,
+    "falloff": 0.22,
+    "speed": 62.0,
+    "gravity": 5.0,
+    "bounces": 1,
+    "self_hit": 0.5,
+    "fuse_s": 0.85,
+    "kick": 0.85,
+    "tracer": [1.0, 0.72, 0.42],
+    "tracer_s": 0.07,
+    "look": "shard"
+  },
+  "alt": {
+    "kind": "shell",
+    "rpm": 121.0,
+    "damage": 22.0,
+    "speed": 26.0,
+    "gravity": 11.0,
+    "bounces": 1,
+    "fuse_s": 3.0,
+    "kick": 0.6,
+    "splash": {"damage": 38.0, "radius": 3.0, "push": 8.0, "self_damage": 0.4, "self_push": 1.0},
+    "cluster": {
+      "count": 10,
+      "damage": 14.0,
+      "speed": 30.0,
+      "gravity": 5.0,
+      "cone_deg": 85.0,
+      "bounces": 0,
+      "fuse_s": 0.7,
+      "look": "shard"
+    },
+    "tracer": [1.0, 0.72, 0.42],
+    "tracer_s": 0.08,
+    "look": "grenade"
+  },
+  "view": "scrap",
+  "grip": [
+    [0.06, 0.44, 0.44, 0.22],
+    [0.0, 0.4, 0.08, 0.3],
+    [0.46, 0.52, 0.26, 0.26],
+    [0.48, 0.26, 0.32, 0.28],
+    [0.62, 0.0, 0.14, 0.28]
+  ],
+  "tint": [0.46, 0.4, 0.34]
+}

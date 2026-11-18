@@ -1,0 +1,15 @@
+{
+  "name": "thatch",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 33,
+  "smooth": false,
+  "texture": {
+    "pattern": "thatch",
+    "base": [168, 140, 86],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [128, 102, 60],
+    "calm": {"base": [196, 160, 98], "alt": [176, 140, 84]}
+  }
+}

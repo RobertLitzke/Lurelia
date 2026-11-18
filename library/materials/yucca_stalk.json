@@ -1,0 +1,16 @@
+{
+  "name": "yucca_stalk",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Marker voxel at the heart of a flowering yucca; the spike of creamy bells is a sprite (layer yucca_stalk).",
+  "id": 144,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [96, 104, 64],
+    "alt": [190, 186, 160],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [104, 112, 70], "alt": [196, 192, 166]}
+  }
+}

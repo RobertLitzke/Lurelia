@@ -1,0 +1,65 @@
+{
+  "name": "karst_pinnacle",
+  "version": 2,
+  "introduced_by": "jadewater",
+  "notes": "The tops and faces of the towers and the Old Wall: thin turf, wind-twisted pines, vine curtains over every lip, banyans out of the cliffs.",
+  "priority": 7,
+  "rules": {"elev": [20, 200]},
+  "surface": "tower_grass",
+  "subsurface": "karst_soil",
+  "map_color": [168, 176, 180],
+  "plants": [
+    {
+      "plant": "karst_pine",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.3, "max": 0.55}}
+    },
+    {
+      "plant": "banyan",
+      "density": 0.003,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.35, "max": 0.6}}
+    },
+    {
+      "plant": "oak",
+      "density": 0.008,
+      "placement": {"verb": "clustered", "params": {"size": 24, "min": 0.4, "max": 0.6}}
+    },
+    {"plant": "hazel", "density": 0.008, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "small_fig",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.3, "max": 0.55}}
+    },
+    {
+      "plant": "fern",
+      "density": 0.03,
+      "placement": {"verb": "clustered", "params": {"size": 12, "min": 0.3, "max": 0.5}}
+    },
+    {
+      "plant": "cliff_banyan",
+      "density": 0.008,
+      "placement": {"verb": "gradient", "params": {"min": 0.9, "max": 4.0}, "field": "slope"}
+    },
+    {"plant": "karst_vine", "density": 0.65, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "wisteria", "density": 0.12, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "flowering_cherry",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.4, "max": 0.6}}
+    },
+    {"plant": "rock_moss", "density": 0.08}
+  ],
+  "features": [
+    {"structure": "tower_shrine", "density": 0.0002, "placement": {"verb": "lone", "params": {"spacing": 60}}},
+    {"structure": "pavilion", "density": 0.00015, "placement": {"verb": "lone", "params": {"spacing": 90}}},
+    {"structure": "stone_stupa", "density": 0.0002, "placement": {"verb": "lone", "params": {"spacing": 70}}}
+  ],
+  "creatures": [
+    {"creature": "serow", "count": 10},
+    {"creature": "eagle", "count": 1},
+    {"creature": "kite_ray", "count": 15},
+    {"creature": "starling", "count": 50},
+    {"creature": "glossy_starling", "count": 40},
+    {"creature": "langur", "count": 4}
+  ]
+}

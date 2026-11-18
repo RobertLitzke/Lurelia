@@ -1,0 +1,40 @@
+{
+  "name": "dragonfly",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "dart: Blue darner: a long blue dragonfly that holds still over the water and darts from spot to spot along the river and the shore. The base of every dragonfly; drawn a little larger than life.",
+  "voxel": 0.0035,
+  "half_w": 0.03,
+  "height": 0.03,
+  "colors": {
+    "body": [60, 110, 190],
+    "thorax": [80, 140, 70],
+    "eye": [40, 70, 130],
+    "wing": [220, 226, 232],
+    "dark": [36, 28, 24]
+  },
+  "behaviour": {
+    "movement": "dart",
+    "walk_speed": 2.5,
+    "flee_speed": 7,
+    "wary": 2.5,
+    "flightiness": 0.8,
+    "group": {"size": [1, 3], "spacing": 2, "range": 6}
+  },
+  "ops": [
+    {"op": "box", "from": [15, 10, 14], "to": [17, 12, 31], "mat": "body"},
+    {"op": "box", "from": [14, 9, 9], "to": [18, 13, 14], "mat": "thorax"},
+    {"op": "box", "from": [14, 9, 6], "to": [18, 13, 9], "mat": "eye"},
+    {"op": "box", "from": [2, 13, 10], "to": [14, 14, 12], "mat": "wing"},
+    {"op": "box", "from": [18, 13, 10], "to": [30, 14, 12], "mat": "wing"},
+    {"op": "box", "from": [3, 13, 13], "to": [14, 14, 15], "mat": "wing"},
+    {"op": "box", "from": [18, 13, 13], "to": [29, 14, 15], "mat": "wing"},
+    {
+      "op": "repeat",
+      "count": 5,
+      "step": [0, 0, 3],
+      "ops": [{"op": "recolour", "at": [14, 9, 16], "until": [18, 13, 17], "from": "body", "to": "dark"}]
+    }
+  ],
+  "vary": {"size": 0.1}
+}

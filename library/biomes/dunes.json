@@ -1,0 +1,22 @@
+{
+  "name": "dunes",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "priority": 4,
+  "rules": {"coast": [0, 40], "elev": [0, 9]},
+  "surface": "shore_grass",
+  "subsurface": "sand",
+  "map_color": [190, 186, 120],
+  "plants": [
+    {"plant": "umbrella_pine", "density": 0.003, "placement": {"verb": "clustered", "params": {"size": 40}}},
+    {"plant": "heather", "density": 0.02, "placement": {"verb": "clustered", "params": {"size": 15}}},
+    {
+      "plant": "beach_pea",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.5, "max": 0.65}}
+    }
+  ],
+  "features": [],
+  "creatures": [{"creature": "rabbit", "count": 6}, {"creature": "gull", "count": 2}, {"creature": "bumblebee", "count": 3}],
+  "collectibles": [{"item": "seashell", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}]
+}

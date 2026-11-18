@@ -1,0 +1,16 @@
+{
+  "name": "banyan_bark",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Smooth grey banyan bark, fluted where the aerial roots have fused into the trunk.",
+  "id": 237,
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [128, 122, 110],
+    "alt": [104, 100, 92],
+    "scale": 6,
+    "contrast": 0.8,
+    "calm": {"base": [140, 134, 122], "alt": [118, 114, 104]}
+  }
+}

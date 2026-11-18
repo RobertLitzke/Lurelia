@@ -1,0 +1,27 @@
+{
+  "name": "sea_eagle",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "A white-tailed sea eagle: broad brown wings like a barn door, a pale head and the white wedge of tail, quartering the fjord for fish.",
+  "half_w": 0.45,
+  "height": 0.55,
+  "colors": {
+    "body": [96, 76, 56],
+    "head": [200, 188, 160],
+    "beak": [236, 196, 60],
+    "wing": [78, 62, 46],
+    "tail": [238, 236, 228],
+    "legs": [236, 196, 60]
+  },
+  "behaviour": {
+    "movement": "soar",
+    "walk_speed": 10,
+    "flee_speed": 13,
+    "wary": 22,
+    "flightiness": 0.4,
+    "fly_height": 45,
+    "group": null
+  },
+  "like": "starling",
+  "scale": 4.2
+}

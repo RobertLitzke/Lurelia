@@ -1,0 +1,19 @@
+{
+  "name": "brick_wall_ruin",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "The last wall of a brick building, standing alone with an arched doorway through it and buttresses at the ends; faces local -Z.",
+  "size": [36, 18, 6],
+  "anchor": [18, 0, 3],
+  "foundation": 4,
+  "level": true,
+  "tags": ["levee"],
+  "slots": {"wall": "brick_brown"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [36, 18, 2], "mat": "wall", "part": "wall"},
+    {"op": "box", "from": [13, 0, 0], "to": [23, 10, 2], "mat": "air", "part": "wall"},
+    {"op": "ellipsoid", "centre": [18, 10, 1], "radius": [5, 3.5, 2], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [0, 0, 2], "to": [3, 8, 6], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [33, 0, 2], "to": [36, 8, 6], "mat": "wall", "part": "stone"}
+  ]
+}

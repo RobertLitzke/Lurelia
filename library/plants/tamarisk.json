@@ -1,0 +1,15 @@
+{
+  "name": "tamarisk",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Tamarisk thickets on the lake shore and the lower river, pink in flower.",
+  "form": "broad",
+  "height": [2.5, 4.5],
+  "trunk_radius": [0.1, 0.18],
+  "crown_radius": [1.4, 2.1],
+  "bark": "juniper_bark",
+  "leaf": "tamarisk",
+  "squash": 0.85,
+  "max_slope": 0.7,
+  "autumn": "leaves_autumn"
+}

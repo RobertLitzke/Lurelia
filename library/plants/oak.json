@@ -1,0 +1,14 @@
+{
+  "name": "oak",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Broad canopy hardwood of the lowland woods.",
+  "form": "broad",
+  "height": [9, 13],
+  "trunk_radius": [0.28, 0.4],
+  "buttress": 0.3,
+  "crown_radius": [2.4, 3.3],
+  "bark": "bark",
+  "leaf": "leaves",
+  "autumn": "leaves_autumn"
+}

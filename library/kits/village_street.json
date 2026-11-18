@@ -1,0 +1,13 @@
+{
+  "name": "village_street",
+  "version": 1,
+  "introduced_by": "routing engine",
+  "notes": "A village street: 5 m of dirt with a stone kerb and a flagged footway each side. Buildings stand back from the footway, not the carriageway.",
+  "ground": "grade",
+  "width": 5.0,
+  "mat": "packed_dirt",
+  "shoulder": "road_gravel",
+  "margin": 4.0,
+  "walk": {"width": 1.5, "gap": 0.5, "mat": "moss_flagstone", "kerb": "fieldstone", "side": "both"},
+  "tags": ["road"]
+}

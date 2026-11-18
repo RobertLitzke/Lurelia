@@ -1,0 +1,19 @@
+{
+  "name": "arch_ribbon",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A long, thin ribbon of an arch, 35 m across with a span barely 2.5 m thick: the next one to fall. Long axis local X.",
+  "size": [140, 50, 16],
+  "anchor": [70, 0, 8],
+  "foundation": 8,
+  "level": false,
+  "decays": false,
+  "tags": ["natural", "arch"],
+  "slots": {"rock": "navajo_sandstone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [70.0, 19.32, 8.0], "radius": [70.0, 26.68, 6.0], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [16.8, 9.2, 8.0], "radius": [19.6, 14.72, 9.0], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [123.2, 8.28, 8.0], "radius": [18.2, 12.88, 8.0], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [70.0, 0, 8.0], "radius": [56, 36, 12], "mat": "air"}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "rabbitbrush",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Marker voxel at the foot of a rabbitbrush bush; the stems and flowers are sprites (layer rabbitbrush).",
+  "id": 126,
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [138, 140, 92],
+    "alt": [206, 180, 64],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [146, 148, 100], "alt": [210, 186, 76]}
+  }
+}

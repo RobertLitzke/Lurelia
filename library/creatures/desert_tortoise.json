@@ -1,0 +1,30 @@
+{
+  "name": "desert_tortoise",
+  "version": 2,
+  "introduced_by": "redrock",
+  "notes": "Desert tortoise: smaller and sandier, with a high domed shell; spends the heat of the day in a burrow and the morning cropping desert plants.",
+  "colors": {"shell": [150, 120, 80], "scute": [104, 80, 52], "rim": [128, 96, 60], "skin": [168, 140, 104]},
+  "behaviour": {"active": "crepuscular", "off_hours": 0.25},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 5.5, 16], "radius": [6.2, 5.8, 8], "mat": "shell"},
+    {"op": "recolour_below", "y": 3, "from": "shell", "to": "belly"},
+    {"op": "ellipsoid", "centre": [16, 3, 16], "radius": [6.6, 1.2, 8.4], "mat": "rim"},
+    {"op": "recolour", "at": [15, 6, 11], "until": [17, 12, 13], "from": "shell", "to": "scute"},
+    {"op": "recolour", "at": [15, 6, 15], "until": [17, 12, 17], "from": "shell", "to": "scute"},
+    {"op": "recolour", "at": [15, 6, 19], "until": [17, 12, 21], "from": "shell", "to": "scute"},
+    {"op": "recolour", "at": [12, 6, 13], "until": [14, 12, 15], "from": "shell", "to": "scute"},
+    {"op": "recolour", "at": [18, 6, 13], "until": [20, 12, 15], "from": "shell", "to": "scute"},
+    {"op": "recolour", "at": [12, 6, 17], "until": [14, 12, 19], "from": "shell", "to": "scute"},
+    {"op": "recolour", "at": [18, 6, 17], "until": [20, 12, 19], "from": "shell", "to": "scute"},
+    {"op": "box", "from": [14, 2, 4], "to": [18, 6, 8], "mat": "skin", "part": "head"},
+    {"op": "set", "at": [14, 5, 5], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [17, 5, 5], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [8, 0, 9], "to": [11, 4, 12], "mat": "skin", "part": "leg_fl"},
+    {"op": "box", "from": [21, 0, 9], "to": [24, 4, 12], "mat": "skin", "part": "leg_fr"},
+    {"op": "box", "from": [8, 0, 20], "to": [11, 4, 23], "mat": "skin", "part": "leg_hl"},
+    {"op": "box", "from": [21, 0, 20], "to": [24, 4, 23], "mat": "skin", "part": "leg_hr"},
+    {"op": "box", "from": [15, 2, 24], "to": [17, 4, 26], "mat": "skin", "part": "tail"}
+  ],
+  "like": "tortoise",
+  "scale": 0.75
+}

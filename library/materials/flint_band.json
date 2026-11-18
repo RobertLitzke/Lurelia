@@ -1,0 +1,15 @@
+{
+  "name": "flint_band",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A band of flint nodules in the chalk: hard blue-black lumps in a level line along every face that reaches it.",
+  "smooth": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [62, 64, 72],
+    "alt": [46, 48, 54],
+    "scale": 4,
+    "contrast": 0.9,
+    "calm": {"base": [68, 70, 78], "alt": [50, 52, 58]}
+  }
+}

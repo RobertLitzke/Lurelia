@@ -1,0 +1,12 @@
+{
+  "name": "cliff_banyan",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "branching: A banyan that started in a crack in a cliff: smaller, grown out of the rock face on steep ground.",
+  "height": [8, 12],
+  "trunk_radius": [0.4, 0.55],
+  "buttress": 0.5,
+  "crown_radius": [2.6, 3.4],
+  "max_slope": 9,
+  "like": "banyan"
+}

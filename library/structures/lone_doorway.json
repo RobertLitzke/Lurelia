@@ -1,0 +1,19 @@
+{
+  "name": "lone_doorway",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A stone doorway standing on its own with nothing behind it. The sill is worn hollow, as if people walked through it for years.",
+  "size": [12, 16, 4],
+  "anchor": [6, 0, 2],
+  "foundation": 3,
+  "decays": false,
+  "tags": ["anomaly"],
+  "slots": {"stone": "fieldstone", "sill": "slate"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [3, 13, 4], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [9, 0, 0], "to": [12, 13, 4], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [0, 13, 0], "to": [12, 16, 4], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [3, 0, 0], "to": [9, 1, 4], "mat": "sill", "part": "stone"},
+    {"op": "box", "from": [4, 0, 1], "to": [8, 1, 3], "mat": "air"}
+  ]
+}

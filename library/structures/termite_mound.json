@@ -1,0 +1,23 @@
+{
+  "name": "termite_mound",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "A termite mound: a hard clay cone chest to head high with a chimney or two off the crown, standing in the grass. Scatter on dry ground; it levels nothing.",
+  "size": [17, 18, 17],
+  "anchor": [8, 0, 8],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"clay": "packed_dirt"},
+  "ops": [
+    {"op": "cylinder", "base": [8, 0, 8], "radius": 7.5, "height": 2, "mat": "clay", "part": "wall"},
+    {"op": "cylinder", "base": [8, 2, 8], "radius": 6.5, "height": 2, "mat": "clay", "part": "wall"},
+    {"op": "cylinder", "base": [8, 4, 8], "radius": 5.5, "height": 2, "mat": "clay", "part": "wall"},
+    {"op": "cylinder", "base": [8, 6, 8], "radius": 4.5, "height": 2, "mat": "clay", "part": "wall"},
+    {"op": "cylinder", "base": [8, 8, 8], "radius": 3.5, "height": 2, "mat": "clay", "part": "wall"},
+    {"op": "cylinder", "base": [8, 10, 8], "radius": 2.5, "height": 2, "mat": "clay", "part": "wall"},
+    {"op": "cylinder", "base": [8, 12, 8], "radius": 1.8, "height": 2, "mat": "clay", "part": "wall"},
+    {"op": "box", "from": [8, 13, 7], "to": [9, 17, 8], "mat": "clay", "part": "wall"},
+    {"op": "box", "from": [6, 12, 9], "to": [7, 15, 10], "mat": "clay", "part": "wall"}
+  ]
+}

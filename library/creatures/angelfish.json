@@ -1,0 +1,10 @@
+{
+  "name": "angelfish",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Queen angelfish: blue and gold, larger than the butterflyfish, hanging by its patch of reef and turning to look at a diver.",
+  "colors": {"body": [56, 116, 196], "band": [240, 200, 44], "fin": [240, 200, 44]},
+  "behaviour": {"walk_speed": 0.45, "group": {"size": [1, 2], "spacing": 0.8, "range": 3}, "above_bed": [0.6, 2.2]},
+  "like": "butterflyfish",
+  "scale": 1.5
+}

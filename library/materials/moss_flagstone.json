@@ -1,0 +1,17 @@
+{
+  "name": "moss_flagstone",
+  "version": 1,
+  "introduced_by": "faerie",
+  "notes": "Flagstones gone green at the edges.",
+  "id": 184,
+  "smooth": true,
+  "crisp": true,
+  "texture": {
+    "pattern": "coursed",
+    "base": [146, 152, 134],
+    "alt": [110, 136, 90],
+    "scale": 1,
+    "contrast": 1.0,
+    "calm": {"base": [156, 162, 144], "alt": [120, 146, 98]}
+  }
+}

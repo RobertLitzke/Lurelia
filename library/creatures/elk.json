@@ -1,0 +1,25 @@
+{
+  "name": "elk",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Elk: bigger and greyer than the red deer, with a dark mane and a wide rack. Herds of three to seven on high ground.",
+  "colors": {"coat": [140, 118, 96], "belly": [210, 196, 176], "mane": [150, 98, 60]},
+  "behaviour": {
+    "walk_speed": 1.2,
+    "flee_speed": 7.0,
+    "wary": 14,
+    "flightiness": 1.1,
+    "group": {"size": [3, 7], "spacing": 3.2, "range": 18, "alignment": 1.0, "cohesion": 1.0}
+  },
+  "like": "deer",
+  "scale": 1.3,
+  "extra_ops": [
+    {"op": "box", "from": [15, 16, 8], "to": [18, 23, 11], "mat": "mane", "part": "neck"},
+    {"op": "set", "at": [14, 31, 7], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [18, 31, 7], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [15, 30, 7], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [17, 30, 7], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [13, 29, 7], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [19, 29, 7], "mat": "antler", "part": "head"}
+  ]
+}

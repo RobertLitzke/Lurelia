@@ -1,0 +1,14 @@
+{
+  "name": "settler_coin",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A brass coin with a hole in the middle; it glints in the grass.",
+  "display": "settler’s coin",
+  "voxel": 0.027,
+  "spin": false,
+  "colors": {"brass": [200, 160, 70, 0.5], "dark": [36, 28, 24]},
+  "ops": [
+    {"op": "cylinder", "base": [16, 0, 16], "radius": 6, "height": 2, "mat": "brass"},
+    {"op": "set", "at": [16, 2, 16], "mat": "dark"}
+  ]
+}

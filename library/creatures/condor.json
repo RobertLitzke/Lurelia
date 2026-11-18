@@ -1,0 +1,25 @@
+{
+  "name": "condor",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "soar: California condor: black, with a bare pink-grey head and white bands under the wings, 3 m across. Soars for hours on the cliff updrafts, alone or in pairs, and hardly beats its wings.",
+  "half_w": 0.55,
+  "height": 0.7,
+  "colors": {
+    "body": [24, 24, 30],
+    "head": [196, 128, 108],
+    "beak": [214, 196, 160],
+    "wing": [24, 24, 30],
+    "tail": [24, 24, 30],
+    "legs": [140, 118, 96],
+    "white": [240, 236, 228]
+  },
+  "behaviour": {"walk_speed": 10, "flee_speed": 13, "wary": 24, "flightiness": 0.3, "fly_height": 60, "wingbeat": 1.2},
+  "like": "eagle",
+  "scale": 1.45,
+  "extra_ops": [
+    {"op": "box", "from": [11, 8, 15], "to": [15, 9, 17], "mat": "white", "part": "wing_l"},
+    {"op": "box", "from": [18, 8, 15], "to": [22, 9, 17], "mat": "white", "part": "wing_r"},
+    {"op": "box", "from": [15, 10, 11], "to": [18, 11, 13], "mat": "body", "part": "head"}
+  ]
+}

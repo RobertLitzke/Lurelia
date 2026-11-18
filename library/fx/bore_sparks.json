@@ -1,0 +1,19 @@
+{
+  "name": "bore_sparks",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "Sparks out of the bore, in the colour of the round.",
+  "shape": "streak",
+  "count": [3, 6],
+  "speed": [3.0, 7.0],
+  "cone_deg": 20,
+  "life": [0.08, 0.18],
+  "size": [0.01, 0.006],
+  "gravity": 4.0,
+  "drag": 1.0,
+  "color": [255, 190, 110],
+  "material": false,
+  "alpha": 1.0,
+  "glow": 3.0,
+  "near_fade": 0.4
+}

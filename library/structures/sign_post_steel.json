@@ -1,0 +1,14 @@
+{
+  "name": "sign_post_steel",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "A galvanised pole for a street blade or a road sign, 2.9 m to the top. The blade is drawn as plates (world/places.rs), not voxels.",
+  "size": [2, 12, 2],
+  "anchor": [0, 0, 0],
+  "foundation": 4,
+  "level": false,
+  "decays": false,
+  "tags": ["sign", "street"],
+  "slots": {"pole": "bridge_steel"},
+  "ops": [{"op": "box", "from": [0, 0, 0], "to": [1, 12, 1], "mat": "pole", "part": "metal"}]
+}

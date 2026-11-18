@@ -1,0 +1,20 @@
+{
+  "name": "snowflake",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "A snowflake near the camera: a soft white speck falling about a metre a second, swinging as it comes down and carried by the wind.",
+  "shape": "puff",
+  "count": [1, 1],
+  "speed": [0.0, 0.2],
+  "cone_deg": 180,
+  "life": [7.0, 10.0],
+  "size": [0.05, 0.05],
+  "size_jitter": 0.4,
+  "gravity": 1.1,
+  "drag": 1.1,
+  "wind": 1.0,
+  "flutter": 0.35,
+  "color": [250, 252, 255],
+  "alpha": 0.95,
+  "near_fade": 0.35
+}

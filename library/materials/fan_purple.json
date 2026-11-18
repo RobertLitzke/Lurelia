@@ -1,0 +1,15 @@
+{
+  "name": "fan_purple",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Sea fans: purple lattices standing across the swell.",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [160, 76, 152],
+    "alt": [138, 62, 132],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [166, 82, 158], "alt": [144, 68, 138]}
+  }
+}

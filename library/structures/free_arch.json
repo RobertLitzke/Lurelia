@@ -1,0 +1,22 @@
+{
+  "name": "free_arch",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A free-standing sandstone arch on open slickrock, 20 m across and 20 m high, thick in the legs and thin at the top.",
+  "size": [80, 80, 24],
+  "anchor": [40, 0, 12],
+  "foundation": 8,
+  "level": false,
+  "decays": false,
+  "tags": ["natural", "arch", "landmark"],
+  "slots": {"rock": "navajo_sandstone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [40, 26, 12], "radius": [35, 46, 8], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [43, 22, 12], "radius": [22, 37, 12], "mat": "air"},
+    {"op": "ellipsoid", "centre": [10, 8, 12], "radius": [12, 16, 10], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [72, 6, 12], "radius": [8, 12, 9], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [16, 30, 12], "radius": [7, 14, 8], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [52, 64, 12], "radius": [10, 7, 7], "mat": "rock"},
+    {"op": "box", "from": [30, 0, 0], "to": [56, 2, 24], "mat": "air"}
+  ]
+}

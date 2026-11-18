@@ -1,0 +1,16 @@
+{
+  "name": "elder_flower",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Elder blossom: flat cream corymbs that lie on the crown's green.",
+  "id": 72,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [230, 224, 190],
+    "alt": [198, 196, 152],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [232, 226, 194], "alt": [204, 202, 160]}
+  }
+}

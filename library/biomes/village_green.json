@@ -1,0 +1,35 @@
+{
+  "name": "village_green",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Old fields and yards around a settlement, gone to meadow.",
+  "priority": 9,
+  "rules": {"region": "village"},
+  "surface": "meadow_grass",
+  "subsurface": "silt",
+  "fringe": 0,
+  "map_color": [150, 180, 90],
+  "plants": [
+    {"plant": "oak", "density": 0.0005, "placement": {"verb": "lone", "params": {"spacing": 30}}},
+    {"plant": "hazel", "density": 0.002, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "great_oak", "density": 0.0008, "placement": {"verb": "lone", "params": {"spacing": 30}}},
+    {"plant": "hawthorn", "density": 0.003, "placement": {"verb": "lone", "params": {"spacing": 16.0}}}
+  ],
+  "features": [{"structure": "field_wall", "density": 0.0009, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "rabbit", "count": 3},
+    {"creature": "crow", "count": 2},
+    {"creature": "starling", "count": 40},
+    {"creature": "sparrow", "count": 6},
+    {"creature": "horse", "count": 3},
+    {"creature": "tortoise", "count": 2},
+    {"creature": "cow", "count": 3},
+    {"creature": "sheep", "count": 5},
+    {"creature": "squirrel", "count": 3},
+    {"creature": "bat", "count": 3}
+  ],
+  "collectibles": [
+    {"item": "pottery_shard", "density": 0.005, "placement": {"verb": "scatter", "params": {}}},
+    {"item": "settler_coin", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}}
+  ]
+}

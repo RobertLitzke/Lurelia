@@ -1,0 +1,18 @@
+{
+  "name": "timber_sign",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A sawn board on two posts at the edge of a settlement: a place name, a mill, a landing. Dark letters burnt into weathered oak.",
+  "post": "sign_posts_timber",
+  "board": [2.4, 0.8],
+  "centre_m": 1.55,
+  "offset_m": 0.02,
+  "thickness": 0.08,
+  "face": [134, 104, 68],
+  "edge": [76, 56, 34],
+  "ink": [40, 28, 16],
+  "cap_m": 0.17,
+  "border_m": 0.0,
+  "letters": "caps",
+  "two_sided": true
+}

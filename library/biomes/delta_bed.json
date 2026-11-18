@@ -1,0 +1,20 @@
+{
+  "name": "delta_bed",
+  "version": 3,
+  "introduced_by": "lowmouth",
+  "notes": "The sound round the delta and the floor of every open water: soft grey mud under a metre or so of brown water, with rafts of lily pads drifting on the quieter reaches.",
+  "priority": 0,
+  "rules": {"underwater": true},
+  "surface": "delta_mud",
+  "subsurface": "silt",
+  "map_color": [86, 120, 132],
+  "creatures": [
+    {"creature": "brown_pelican", "count": 8},
+    {"creature": "gull", "count": 10},
+    {"creature": "cormorant", "count": 4},
+    {"creature": "herring", "count": 30},
+    {"creature": "sea_turtle", "count": 4},
+    {"creature": "stingray", "count": 1},
+    {"creature": "barracuda", "count": 1}
+  ]
+}

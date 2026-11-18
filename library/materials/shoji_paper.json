@@ -1,0 +1,16 @@
+{
+  "name": "shoji_paper",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Paper screens on a fine wooden lattice, yellowed.",
+  "id": 247,
+  "smooth": false,
+  "texture": {
+    "pattern": "coursed",
+    "base": [226, 216, 192],
+    "alt": [196, 184, 160],
+    "scale": 8,
+    "contrast": 0.5,
+    "calm": {"base": [226, 218, 196], "alt": [204, 194, 172]}
+  }
+}

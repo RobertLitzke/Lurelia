@@ -1,0 +1,10 @@
+{
+  "name": "arctic_fox",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "An arctic fox in its winter coat, white to the tail tip, trotting the shore for whatever the tide and the ravens leave.",
+  "colors": {"fox": [238, 238, 234], "white": [250, 250, 248], "dark": [44, 40, 38]},
+  "morphs": [],
+  "like": "fox",
+  "scale": 0.85
+}

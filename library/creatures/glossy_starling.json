@@ -1,0 +1,18 @@
+{
+  "name": "glossy_starling",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "flock: Glossy starling: a starling in metallic blue-green with a bright orange belly, in quick flocks round the towers and over the beaches.",
+  "colors": {
+    "body": [34, 96, 150],
+    "head": [28, 70, 140],
+    "beak": [24, 24, 30],
+    "wing": [26, 126, 140],
+    "tail": [30, 64, 120],
+    "legs": [40, 32, 28],
+    "belly": [226, 120, 40]
+  },
+  "behaviour": {"group": {"size": [6, 60], "spacing": 1.4, "range": 8, "separation": 1.0, "alignment": 1.4, "cohesion": 1.0}},
+  "like": "starling",
+  "extra_ops": [{"op": "recolour_below", "y": 8, "from": "body", "to": "belly"}]
+}

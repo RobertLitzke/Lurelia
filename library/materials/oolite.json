@@ -1,0 +1,16 @@
+{
+  "name": "oolite",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Honey-coloured oolitic limestone in thick beds: the face of Hemlow Edge and the bones of the upland.",
+  "id": 60,
+  "smooth": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [176, 150, 104],
+    "alt": [196, 170, 120],
+    "scale": 2,
+    "contrast": 0.6,
+    "calm": {"base": [184, 160, 116], "alt": [200, 176, 128]}
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "steading",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The ground of a Windbarrow village: yards trodden to bare chalk between the round houses, barley plots behind hurdles, hearths, racks and pens, cattle and sheep standing about.",
+  "priority": 22,
+  "rules": {"region": "steading"},
+  "surface": "downland_grass",
+  "subsurface": "chalk_white",
+  "rock": null,
+  "fringe": 0,
+  "map_color": [172, 146, 110],
+  "plants": [
+    {
+      "plant": "feather_tussock",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 8, "min": 0.0, "max": 0.6}}
+    },
+    {"plant": "hawthorn", "density": 0.0008, "placement": {"verb": "lone", "params": {"spacing": 22}}}
+  ],
+  "creatures": [
+    {"creature": "cow", "count": 6},
+    {"creature": "steppe_sheep", "count": 10},
+    {"creature": "przewalski_horse", "count": 2},
+    {"creature": "goose", "count": 6},
+    {"creature": "rabbit", "count": 2},
+    {"creature": "sparrow", "count": 12},
+    {"creature": "starling", "count": 16},
+    {"creature": "crow", "count": 4},
+    {"creature": "bee", "count": 6}
+  ],
+  "collectibles": [
+    {"item": "pottery_shard", "density": 0.002, "placement": {"verb": "scatter", "params": {}}},
+    {"item": "flint_blade", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}},
+    {"item": "antler_pick", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}
+  ]
+}

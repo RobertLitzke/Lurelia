@@ -1,0 +1,15 @@
+{
+  "name": "staghorn_violet",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "A violet staghorn, the same build in a cooler colour.",
+  "form": "coral_branch",
+  "height": [1.0, 1.8],
+  "trunk_radius": [0.12, 0.13],
+  "crown_radius": [1.2, 2.0],
+  "bark": "coral_violet",
+  "leaf": "coral_tip",
+  "max_slope": 1.4,
+  "water_depth": [1.5, 20],
+  "stems": [4, 6]
+}

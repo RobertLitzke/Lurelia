@@ -1,0 +1,20 @@
+{
+  "name": "lamp_post",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "A street lantern on a black iron post, lit from dusk.",
+  "size": [5, 18, 5],
+  "anchor": [2, 0, 2],
+  "foundation": 1,
+  "level": false,
+  "decays": false,
+  "tags": ["kaldvik"],
+  "ops": [
+    {"op": "box", "from": [2, 0, 2], "to": [3, 12, 3], "mat": "roof_tar", "part": "metal"},
+    {"op": "box", "from": [1, 0, 1], "to": [4, 1, 4], "mat": "roof_tar", "part": "metal"},
+    {"op": "box", "from": [1, 11, 1], "to": [4, 12, 4], "mat": "roof_tar", "part": "metal"},
+    {"op": "box", "from": [1, 12, 1], "to": [4, 15, 4], "mat": "lantern_glass", "part": "glass"},
+    {"op": "box", "from": [0, 15, 0], "to": [5, 16, 5], "mat": "roof_tar", "part": "metal"},
+    {"op": "box", "from": [2, 16, 2], "to": [3, 17, 3], "mat": "roof_tar", "part": "metal"}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "blue_hole",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "The bottom of a blue hole: sand in the dark.",
+  "priority": 21,
+  "rules": {"underwater": true, "region": "blue_hole"},
+  "surface": "sand",
+  "subsurface": "reef_lime",
+  "rock": "reef_lime",
+  "fringe": 0,
+  "map_color": [20, 40, 120],
+  "creatures": [{"creature": "grouper", "count": 4}, {"creature": "moon_jelly", "count": 14}]
+}

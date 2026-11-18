@@ -1,0 +1,16 @@
+{
+  "name": "great_window",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A large arch: carves a 20 m window through whatever rock it is placed in (a sandstone fin). Its long axis is local X; place it on a fin's centre line.",
+  "size": [100, 120, 72],
+  "anchor": [50, 0, 36],
+  "level": false,
+  "decays": false,
+  "tags": ["natural", "arch", "landmark"],
+  "slots": {},
+  "ops": [
+    {"op": "ellipsoid", "centre": [50, 52, 36], "radius": [40, 48, 44], "mat": "carve"},
+    {"op": "ellipsoid", "centre": [30, 40, 36], "radius": [20, 30, 44], "mat": "carve"}
+  ]
+}

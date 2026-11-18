@@ -1,0 +1,15 @@
+{
+  "name": "cane_char",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "A burned cane field: black stubble and grey ash in rows.",
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [54, 50, 46],
+    "alt": [86, 80, 72],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [60, 56, 52], "alt": [90, 84, 76]}
+  }
+}

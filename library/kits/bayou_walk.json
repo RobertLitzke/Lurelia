@@ -1,0 +1,15 @@
+{
+  "name": "bayou_walk",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Lowmouth's boardwalk: a 1.5 m plank deck 1.75 m over the water on cypress posts every 2.5 m, a rail on the left. The same walk the stilt_walkway structure drew in 8 m pieces, now following any line.",
+  "ground": "deck",
+  "width": 1.5,
+  "mat": "weathered_planks",
+  "lift": 1.75,
+  "deck": {"thick": 0.25, "mat": "weathered_planks", "under": "timber_frame"},
+  "rails": [{"side": "left", "out": 0.0, "from": 0.75, "to": 1.0, "thick": 0.25, "mat": "timber_frame"}],
+  "posts": [{"side": "left", "out": 0.0, "every": 2.5, "size": [0.25, 1.0, 0.25], "mat": "timber_frame"}],
+  "piers": {"every": 2.5, "radius": 0.3, "mat": "timber_frame", "min_drop": 0.4},
+  "tags": ["walkway", "lowmouth"]
+}

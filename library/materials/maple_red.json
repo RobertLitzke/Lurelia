@@ -1,0 +1,16 @@
+{
+  "name": "maple_red",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 51,
+  "smooth": false,
+  "foliage": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [170, 50, 30],
+    "alt": [210, 96, 40],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [176, 64, 38], "alt": [204, 104, 52]}
+  }
+}

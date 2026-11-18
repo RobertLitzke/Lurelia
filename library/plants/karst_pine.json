@@ -1,0 +1,12 @@
+{
+  "name": "karst_pine",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "umbrella: The small wind-twisted pine of the tower tops: flat-crowned, 3-6 m.",
+  "height": [3, 6],
+  "trunk_radius": [0.14, 0.22],
+  "crown_radius": [1.6, 2.6],
+  "squash": 0.45,
+  "max_slope": 2.0,
+  "like": "umbrella_pine"
+}

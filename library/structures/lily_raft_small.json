@@ -1,0 +1,23 @@
+{
+  "name": "lily_raft_small",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Three giant lily pads and a flower on a cenote's surface. Base sea.",
+  "size": [36, 8, 36],
+  "anchor": [18, 0, 18],
+  "foundation": 0,
+  "level": false,
+  "decays": false,
+  "base": "sea",
+  "tags": ["cenote"],
+  "ops": [
+    {"op": "cylinder", "base": [10, 4, 10], "radius": 8, "height": 1, "mat": "lily_pad"},
+    {"op": "box", "from": [10, 4, 10], "to": [19, 5, 11], "mat": "air"},
+    {"op": "cylinder", "base": [25, 4, 13], "radius": 6, "height": 1, "mat": "lily_pad"},
+    {"op": "box", "from": [25, 4, 13], "to": [32, 5, 14], "mat": "air"},
+    {"op": "cylinder", "base": [14, 4, 26], "radius": 7, "height": 1, "mat": "lily_pad"},
+    {"op": "box", "from": [14, 4, 26], "to": [22, 5, 27], "mat": "air"},
+    {"op": "ellipsoid", "centre": [8, 5.5, 12], "radius": [1.2, 1.0, 1.2], "mat": "lily_flower"},
+    {"op": "ellipsoid", "centre": [12, 5.5, 28], "radius": [1.2, 1.0, 1.2], "mat": "lily_flower"}
+  ]
+}

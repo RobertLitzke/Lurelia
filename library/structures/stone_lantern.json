@@ -1,0 +1,22 @@
+{
+  "name": "stone_lantern",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "A granite toro lantern, 2 m tall; the film has grown inside its fire box and it still glows. Feature.",
+  "size": [6, 9, 6],
+  "anchor": [3, 0, 3],
+  "foundation": 1,
+  "level": false,
+  "decays": false,
+  "tags": ["order"],
+  "ops": [
+    {"op": "box", "from": [1, 0, 1], "to": [5, 1, 5], "mat": "temple_stone", "part": "stone"},
+    {"op": "box", "from": [2, 1, 2], "to": [4, 4, 4], "mat": "temple_stone", "part": "stone"},
+    {"op": "box", "from": [1, 4, 1], "to": [5, 5, 5], "mat": "temple_stone", "part": "stone"},
+    {"op": "box", "from": [1, 5, 1], "to": [5, 7, 5], "mat": "temple_stone", "part": "stone"},
+    {"op": "box", "from": [2, 5, 1], "to": [4, 7, 5], "mat": "lantern_film"},
+    {"op": "box", "from": [1, 5, 2], "to": [5, 7, 4], "mat": "lantern_film"},
+    {"op": "box", "from": [0, 7, 0], "to": [6, 8, 6], "mat": "temple_stone", "part": "stone"},
+    {"op": "box", "from": [2, 8, 2], "to": [4, 9, 4], "mat": "temple_stone", "part": "stone"}
+  ]
+}

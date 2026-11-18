@@ -1,0 +1,16 @@
+{
+  "name": "barley_grass",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A small walled barley plot: thin ranks of pale ears over worked chalk soil.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [142, 132, 94],
+    "alt": [156, 146, 106],
+    "scale": 5,
+    "contrast": 0.5,
+    "calm": {"base": [162, 152, 114], "alt": [174, 164, 126]}
+  },
+  "grass": {"sparse": 0.5, "dense": 0.95, "short": 2.6}
+}

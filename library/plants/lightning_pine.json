@@ -1,0 +1,13 @@
+{
+  "name": "lightning_pine",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A pine killed by lightning and burnt black, still standing among the living ones. About one pine in fifty.",
+  "form": "snag",
+  "bark": "charcoal",
+  "leaf": null,
+  "leaf_alt": null,
+  "like": "pine",
+  "rarity": 0.02,
+  "lean": 0.12
+}

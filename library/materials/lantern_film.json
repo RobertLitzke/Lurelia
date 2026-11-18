@@ -1,0 +1,19 @@
+{
+  "name": "lantern_film",
+  "version": 2,
+  "introduced_by": "jadewater",
+  "notes": "The living film on cave ceilings and cenote overhangs: damp karst rock pricked with points of cold blue light, threads of it hanging down. v2: was bright cyan all over; now plain damp rock whose points of light the shader adds (glow_specks).",
+  "id": 240,
+  "smooth": false,
+  "glow": 1.6,
+  "texture": {
+    "pattern": "noise",
+    "base": [112, 122, 128],
+    "alt": [98, 108, 116],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [116, 126, 132], "alt": [102, 112, 120]}
+  },
+  "glow_specks": true,
+  "facet": true
+}

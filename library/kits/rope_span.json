@@ -1,0 +1,16 @@
+{
+  "name": "rope_span",
+  "version": 1,
+  "introduced_by": "routing engine",
+  "notes": "A lacquered rope bridge between two rims: a 2 m plank deck sagging 1.2 m at mid-span, rope handlines and a post each side every 4 m. Replaces the rope_bridge_NN structures, which were the same bridge cut to eight fixed lengths.",
+  "ground": "deck",
+  "width": 2.0,
+  "mat": "temple_wood",
+  "lift": 0.0,
+  "sag": 1.2,
+  "max_span": 90.0,
+  "deck": {"thick": 0.25, "mat": "temple_wood"},
+  "rails": [{"side": "both", "out": 0.0, "from": 0.9, "to": 1.15, "thick": 0.25, "mat": "coral_lacquer"}],
+  "posts": [{"side": "both", "out": 0.0, "every": 4.0, "size": [0.25, 1.15, 0.25], "mat": "coral_lacquer"}],
+  "tags": ["bridge", "rope"]
+}

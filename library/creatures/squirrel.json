@@ -1,0 +1,50 @@
+{
+  "name": "squirrel",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Grey squirrel: bounds over the ground between trees with its tail plumed up behind it, and flicks away round a trunk when you come.",
+  "voxel": 0.022,
+  "half_w": 0.09,
+  "height": 0.32,
+  "colors": {"coat": [150, 150, 146], "belly": [240, 236, 228], "dark": [36, 28, 24]},
+  "behaviour": {
+    "movement": "hop",
+    "walk_speed": 1.4,
+    "flee_speed": 6.0,
+    "wary": 7,
+    "flightiness": 1.5,
+    "flees_from": ["player", "fox", "cougar"]
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 7.5, 16.5], "radius": [3.0, 3.4, 5.2], "mat": "coat"},
+    {"op": "recolour_below", "y": 5, "from": "coat", "to": "belly"},
+    {"op": "ellipsoid", "centre": [16, 10, 10.5], "radius": [2.6, 2.4, 2.8], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [15, 8, 7], "to": [17, 10, 9], "mat": "coat", "part": "head"},
+    {"op": "set", "at": [16, 9, 6], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [14, 10, 8], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [17, 10, 8], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [13, 12, 10], "to": [14, 14, 11], "mat": "coat", "part": "ear_l"},
+    {"op": "box", "from": [18, 12, 10], "to": [19, 14, 11], "mat": "coat", "part": "ear_r"},
+    {"op": "box", "from": [14, 0, 12], "to": [15, 4, 14], "mat": "coat", "part": "leg_fl"},
+    {"op": "box", "from": [17, 0, 12], "to": [18, 4, 14], "mat": "coat", "part": "leg_fr"},
+    {"op": "box", "from": [13, 0, 18], "to": [15, 4, 21], "mat": "coat", "part": "leg_hl"},
+    {"op": "box", "from": [17, 0, 18], "to": [19, 4, 21], "mat": "coat", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [16, 11, 22.5], "radius": [1.8, 3.4, 2.6], "mat": "coat", "part": "tail"},
+    {"op": "ellipsoid", "centre": [16, 15.5, 21], "radius": [1.8, 3.6, 2.4], "mat": "coat", "part": "tail"}
+  ],
+  "vary": {"size": 0.1, "shade": 0.08, "hue": 0.04},
+  "rig": {
+    "plan": "hopper",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "head", "role": "head", "parent": "body", "joint": [16, 9, 13]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [13.5, 12, 10.5], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [18.5, 12, 10.5], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14.5, 4, 13], "side": "l", "pair": 0},
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [17.5, 4, 13], "side": "r", "pair": 0},
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14, 4, 19.5], "side": "l", "pair": 1},
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [18, 4, 19.5], "side": "r", "pair": 1},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 9, 20.5]}
+    ]
+  }
+}

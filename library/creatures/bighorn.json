@@ -1,0 +1,97 @@
+{
+  "name": "bighorn",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Desert bighorn sheep: stocky, grey-brown with a white rump and curled horns; lives on the cliffs and ledges.",
+  "voxel": 0.06,
+  "half_w": 0.3,
+  "height": 1.15,
+  "colors": {
+    "rabbit": [140, 118, 96],
+    "rabbit_light": [210, 196, 176],
+    "white": [240, 236, 228],
+    "antler": [214, 196, 160],
+    "dark": [36, 28, 24]
+  },
+  "behaviour": {
+    "movement": "graze",
+    "walk_speed": 0.9,
+    "flee_speed": 5.5,
+    "wary": 18,
+    "flightiness": 1.1,
+    "juvenile_flightiness": 0.8,
+    "flees_from": ["player"],
+    "group": {"size": [2, 6], "spacing": 2.2, "range": 12, "alignment": 0.8, "cohesion": 1.2}
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 14, 17], "radius": [4.6, 4.4, 7.5], "mat": "rabbit"},
+    {"op": "recolour_below", "y": 11, "from": "rabbit", "to": "rabbit_light"},
+    {"op": "box", "from": [13, 2, 11], "to": [16, 12, 14], "mat": "rabbit", "part": "leg_fl"},
+    {"op": "box", "from": [13, 0, 11], "to": [16, 2, 14], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [13, 2, 21], "to": [16, 12, 24], "mat": "rabbit", "part": "leg_hl"},
+    {"op": "box", "from": [13, 0, 21], "to": [16, 2, 24], "mat": "dark", "part": "leg_hl"},
+    {"op": "box", "from": [17, 2, 11], "to": [20, 12, 14], "mat": "rabbit", "part": "leg_fr"},
+    {"op": "box", "from": [17, 0, 11], "to": [20, 2, 14], "mat": "dark", "part": "leg_fr"},
+    {"op": "box", "from": [17, 2, 21], "to": [20, 12, 24], "mat": "rabbit", "part": "leg_hr"},
+    {"op": "box", "from": [17, 0, 21], "to": [20, 2, 24], "mat": "dark", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [16, 14, 24.3], "radius": [3.4, 3.6, 1.6], "mat": "white"},
+    {"op": "box", "from": [14, 15, 7], "to": [18, 21, 11], "mat": "rabbit", "part": "neck"},
+    {"op": "box", "from": [14, 19, 3], "to": [18, 24, 8], "mat": "rabbit", "part": "head"},
+    {"op": "box", "from": [14, 19, 2], "to": [18, 21, 3], "mat": "rabbit_light", "part": "head"},
+    {"op": "set", "at": [14, 22, 4], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [17, 22, 4], "mat": "dark", "part": "head"},
+    {"op": "disc", "centre": [12.5, 22, 7], "radius": 3.3, "thick": 1.5, "axis": "x", "mat": "antler", "part": "head"},
+    {"op": "disc", "centre": [12.5, 22, 7], "radius": 1.5, "thick": 1.5, "axis": "x", "mat": "air", "part": "head"},
+    {"op": "disc", "centre": [19.5, 22, 7], "radius": 3.3, "thick": 1.5, "axis": "x", "mat": "antler", "part": "head"},
+    {"op": "disc", "centre": [19.5, 22, 7], "radius": 1.5, "thick": 1.5, "axis": "x", "mat": "air", "part": "head"},
+    {"op": "box", "from": [13, 23, 7], "to": [19, 25, 9], "mat": "antler", "part": "head"}
+  ],
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16, 16, 10]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16, 20, 8]},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14.5, 12, 12.5], "side": "l", "pair": 0},
+      {
+        "name": "leg_fl_low",
+        "role": "leg",
+        "parent": "leg_fl",
+        "joint": [14.5, 6, 12.5],
+        "claims": [[[13, 0, 11], [16, 6, 14]]],
+        "side": "l",
+        "pair": 0
+      },
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [18.5, 12, 12.5], "side": "r", "pair": 0},
+      {
+        "name": "leg_fr_low",
+        "role": "leg",
+        "parent": "leg_fr",
+        "joint": [18.5, 6, 12.5],
+        "claims": [[[17, 0, 11], [20, 6, 14]]],
+        "side": "r",
+        "pair": 0
+      },
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14.5, 12, 22.5], "side": "l", "pair": 1},
+      {
+        "name": "leg_hl_low",
+        "role": "leg",
+        "parent": "leg_hl",
+        "joint": [14.5, 6, 22.5],
+        "claims": [[[13, 0, 21], [16, 6, 24]]],
+        "side": "l",
+        "pair": 1
+      },
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [18.5, 12, 22.5], "side": "r", "pair": 1},
+      {
+        "name": "leg_hr_low",
+        "role": "leg",
+        "parent": "leg_hr",
+        "joint": [18.5, 6, 22.5],
+        "claims": [[[17, 0, 21], [20, 6, 24]]],
+        "side": "r",
+        "pair": 1
+      }
+    ]
+  }
+}

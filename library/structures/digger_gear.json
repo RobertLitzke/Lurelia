@@ -1,0 +1,20 @@
+{
+  "name": "digger_gear",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Flint diggers' gear left at a pit edge: a hide spread on the chalk, a heap of knapped flakes, an antler pick leaning on a stake and another lying. Faces local -Z.",
+  "size": [20, 12, 20],
+  "anchor": [10, 0, 10],
+  "foundation": 0,
+  "level": false,
+  "tags": ["windbarrow"],
+  "slots": {"hide": "canvas", "chips": "flint", "timber": "oak_post", "bone": "old_bone"},
+  "ops": [
+    {"op": "box", "from": [2, 0, 4], "to": [10, 1, 10], "mat": "hide", "part": "cloth"},
+    {"op": "ellipsoid", "centre": [15, 1, 6], "radius": [3.2, 1.6, 3.2], "mat": "chips", "part": "floor"},
+    {"op": "box", "from": [12, 0, 12], "to": [13, 9, 13], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [11, 8, 11], "to": [15, 10, 15], "mat": "bone", "part": "timber"},
+    {"op": "box", "from": [4, 0, 12], "to": [10, 1, 15], "mat": "bone", "part": "floor"},
+    {"op": "box", "from": [5, 1, 13], "to": [6, 4, 14], "mat": "bone", "part": "timber"}
+  ]
+}

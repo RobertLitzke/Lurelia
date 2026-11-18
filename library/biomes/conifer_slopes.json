@@ -1,0 +1,56 @@
+{
+  "name": "conifer_slopes",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "priority": 3,
+  "rules": {"elev": [30, 64]},
+  "surface": "forest_floor",
+  "subsurface": "dirt",
+  "map_color": [46, 90, 64],
+  "plants": [
+    {"plant": "pine", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "fir", "density": 0.012, "placement": {"verb": "clustered", "params": {"size": 40}}},
+    {"plant": "snag", "density": 0.0015, "placement": {"verb": "lone", "params": {"spacing": 20}}},
+    {"plant": "giant_fir", "density": 0.0012, "placement": {"verb": "lone", "params": {"spacing": 30}}},
+    {"plant": "fern", "density": 0.02, "placement": {"verb": "clustered", "params": {"size": 16}}},
+    {
+      "plant": "huckleberry",
+      "density": 0.03,
+      "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.42, "max": 0.6}}
+    },
+    {
+      "plant": "sapling_fir",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.4, "max": 0.6}}
+    },
+    {"plant": "broken_snag", "density": 0.0025, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "stump", "density": 0.0025, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "shelf_fungus", "density": 0.12},
+    {"plant": "tree_moss", "density": 0.5},
+    {"plant": "rock_moss", "density": 0.08}
+  ],
+  "features": [
+    {"structure": "boulder", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "rock_outcrop", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "fallen_trunk", "density": 0.0018, "placement": {"verb": "scatter", "params": {"seat": 0.4}}},
+    {"structure": "mossy_log", "density": 0.0006, "placement": {"verb": "scatter", "params": {"seat": 0.4}}}
+  ],
+  "creatures": [
+    {"creature": "bear", "count": 1},
+    {"creature": "deer", "count": 3},
+    {"creature": "marmot", "count": 2},
+    {"creature": "eagle", "count": 1},
+    {"creature": "elk", "count": 3},
+    {"creature": "northern_flicker", "count": 1},
+    {"creature": "pileated_woodpecker", "count": 1},
+    {"creature": "great_horned_owl", "count": 1},
+    {"creature": "cougar", "count": 1},
+    {"creature": "douglas_squirrel", "count": 4},
+    {"creature": "wolf", "count": 2}
+  ],
+  "collectibles": [
+    {"item": "pine_cone", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},
+    {"item": "mushroom", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "mist": 0.25
+}

@@ -1,0 +1,17 @@
+{
+  "name": "window_tall",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A tall, narrow slot of a window through a fin, leaning a little: about 7 m wide and 15 m high.",
+  "size": [56, 96, 56],
+  "anchor": [28, 0, 28],
+  "level": false,
+  "decays": false,
+  "tags": ["natural", "arch"],
+  "slots": {},
+  "ops": [
+    {"op": "ellipsoid", "centre": [26, 4, 28], "radius": [14, 56, 40], "mat": "carve"},
+    {"op": "ellipsoid", "centre": [31, 30, 28], "radius": [10, 30, 32], "mat": "carve"},
+    {"op": "ellipsoid", "centre": [22, 14, 28], "radius": [9, 18, 30], "mat": "carve"}
+  ]
+}

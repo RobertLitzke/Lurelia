@@ -1,0 +1,16 @@
+{
+  "name": "slickrock",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Bare rounded sandstone underfoot, blotched with lichen and varnish.",
+  "id": 109,
+  "smooth": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [206, 140, 100],
+    "alt": [184, 118, 86],
+    "scale": 2,
+    "contrast": 1.0,
+    "calm": {"base": [212, 150, 110], "alt": [196, 132, 96]}
+  }
+}

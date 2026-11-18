@@ -1,0 +1,16 @@
+{
+  "name": "cotswold_stone",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Coursed honey limestone walling, dressed at the corners: every building in Hemlow.",
+  "id": 62,
+  "smooth": false,
+  "texture": {
+    "pattern": "coursed",
+    "base": [186, 156, 106],
+    "alt": [204, 176, 124],
+    "scale": 5,
+    "contrast": 0.8,
+    "calm": {"base": [196, 168, 118], "alt": [210, 184, 134]}
+  }
+}

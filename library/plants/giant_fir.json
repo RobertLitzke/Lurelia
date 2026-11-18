@@ -1,0 +1,13 @@
+{
+  "name": "giant_fir",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "An old fir well above the canopy; a landmark on the slopes. Old and wind-beaten: its whorls no longer sit level.",
+  "height": [22, 28],
+  "trunk_radius": [0.55, 0.75],
+  "buttress": 0.6,
+  "crown_radius": [3.0, 3.8],
+  "max_slope": 0.6,
+  "like": "fir",
+  "sweep": "ragged"
+}

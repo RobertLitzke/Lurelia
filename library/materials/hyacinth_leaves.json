@@ -1,0 +1,15 @@
+{
+  "name": "hyacinth_leaves",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Water hyacinth: glossy round leaves on swollen floating stalks, a mat over the water.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [68, 118, 58],
+    "alt": [86, 136, 66],
+    "scale": 8,
+    "contrast": 0.9,
+    "calm": {"base": [70, 120, 60], "alt": [88, 136, 68]}
+  }
+}

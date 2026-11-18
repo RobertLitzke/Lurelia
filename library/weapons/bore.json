@@ -1,0 +1,37 @@
+{
+  "name": "bore",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "A rock drill with the feed taken off it, so the whole of what it does goes down the bore. It does not fire rounds: hold the left button and it puts out a turning rope of cutting light that takes a ball out of whatever it is held on, over and over, until the hole is through and the hole is a sightline. The right button runs the drill backwards: it throws what the left button cut out of the walls back out of the gun as half-metre blocks of the map's own rock, lobbed across the room, and where one lands it stays. Wall up a doorway, build a step to a ledge, or drop one on somebody's head, which is the only one of the three that does not leave a block behind. It is the only weapon in the arena that changes the arena, and the reason nobody holds a corner for long.",
+  "display": "BORE",
+  "slot": 4,
+  "ammo_max": 80,
+  "ammo_start": 34,
+  "fire": {
+    "kind": "beam",
+    "rpm": 190.0,
+    "damage": 78.0,
+    "range": 60.0,
+    "falloff": 0.7,
+    "bore_r": 0.55,
+    "twist": 3.0,
+    "kick": 0.0,
+    "tracer": [1.0, 0.72, 0.34],
+    "tracer_s": 0.04
+  },
+  "alt": {
+    "kind": "shell",
+    "rpm": 75.0,
+    "damage": 45.0,
+    "speed": 85.0,
+    "gravity": 9.0,
+    "spoil_r": 0.5,
+    "per_shot": 2,
+    "kick": 0.7,
+    "tracer": [1.0, 0.6, 0.26],
+    "tracer_s": 0.05,
+    "look": "block"
+  },
+  "view": "bore",
+  "tint": [0.5, 0.42, 0.34]
+}

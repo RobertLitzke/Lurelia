@@ -1,0 +1,20 @@
+{
+  "name": "cotswold_wall",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A 10 m length of honey dry-stone field wall with a coping of stones on edge and a field gate in it. Long axis local X.",
+  "size": [40, 5, 3],
+  "anchor": [20, 0, 1],
+  "level": false,
+  "decays": false,
+  "tags": ["hemlow"],
+  "slots": {"wall": "cotswold_stone", "gate": "weathered_planks"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [40, 4, 3], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [0, 4, 1], "to": [40, 5, 2], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [17, 0, 0], "to": [22, 5, 3], "mat": "air"},
+    {"op": "box", "from": [17, 0, 1], "to": [18, 5, 2], "mat": "gate", "part": "timber"},
+    {"op": "box", "from": [18, 2, 1], "to": [22, 3, 2], "mat": "gate", "part": "timber"},
+    {"op": "box", "from": [18, 4, 1], "to": [22, 5, 2], "mat": "gate", "part": "timber"}
+  ]
+}

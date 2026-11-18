@@ -1,0 +1,54 @@
+{
+  "name": "starling",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Starlings: big flocks that wheel over open ground, settle in a meadow or a tree, and burst up together when you come near. Also the body every perching bird in the library starts from (crow, eagle, sparrow are `like` it).",
+  "voxel": 0.021,
+  "half_w": 0.12,
+  "height": 0.15,
+  "colors": {
+    "body": [24, 24, 30],
+    "head": [24, 24, 30],
+    "beak": [36, 28, 24],
+    "wing": [24, 24, 30],
+    "tail": [24, 24, 30],
+    "legs": [36, 28, 24]
+  },
+  "behaviour": {
+    "movement": "flock",
+    "walk_speed": 9,
+    "flee_speed": 14,
+    "wary": 16,
+    "flightiness": 1.6,
+    "fly_height": 9,
+    "group": {"size": [6, 140], "spacing": 1.6, "range": 9, "separation": 1.0, "alignment": 1.4, "cohesion": 1.0}
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 8, 16], "radius": [2.2, 2.2, 5], "mat": "body"},
+    {"op": "ellipsoid", "centre": [16, 9.5, 10.5], "radius": [1.8, 1.8, 2], "mat": "head", "part": "head"},
+    {"op": "box", "from": [15, 9, 7], "to": [17, 10, 9], "mat": "beak", "part": "head"},
+    {"op": "box", "from": [2, 9, 13], "to": [8, 10, 16], "mat": "wing", "part": "wing_l_tip"},
+    {"op": "box", "from": [8, 9, 13], "to": [11, 10, 16], "mat": "wing", "part": "wing_l"},
+    {"op": "box", "from": [11, 9, 12], "to": [15, 10, 17], "mat": "wing", "part": "wing_l"},
+    {"op": "box", "from": [18, 9, 12], "to": [22, 10, 17], "mat": "wing", "part": "wing_r"},
+    {"op": "box", "from": [22, 9, 13], "to": [25, 10, 16], "mat": "wing", "part": "wing_r"},
+    {"op": "box", "from": [25, 9, 13], "to": [31, 10, 16], "mat": "wing", "part": "wing_r_tip"},
+    {"op": "box", "from": [15, 8, 20], "to": [18, 9, 25], "mat": "tail", "part": "tail"},
+    {"op": "box", "from": [15, 4, 16], "to": [16, 6, 17], "mat": "legs", "part": "leg_l"},
+    {"op": "box", "from": [17, 4, 16], "to": [18, 6, 17], "mat": "legs", "part": "leg_r"}
+  ],
+  "rig": {
+    "plan": "bird",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "head", "role": "head", "parent": "body", "joint": [16, 9, 12.5]},
+      {"name": "wing_l", "role": "wing", "parent": "body", "joint": [15, 9.5, 14.5], "side": "l"},
+      {"name": "wing_l_tip", "role": "wing", "parent": "wing_l", "joint": [8, 9.5, 14.5], "side": "l"},
+      {"name": "wing_r", "role": "wing", "parent": "body", "joint": [18, 9.5, 14.5], "side": "r"},
+      {"name": "wing_r_tip", "role": "wing", "parent": "wing_r", "joint": [25, 9.5, 14.5], "side": "r"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 8.5, 20]},
+      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [15.5, 6, 16.5], "side": "l", "pair": 0},
+      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [17.5, 6, 16.5], "side": "r", "pair": 0}
+    ]
+  }
+}

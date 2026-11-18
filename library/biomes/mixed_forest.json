@@ -1,0 +1,95 @@
+{
+  "name": "mixed_forest",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "priority": 1,
+  "rules": {},
+  "surface": "forest_floor",
+  "subsurface": "dirt",
+  "map_color": [70, 120, 60],
+  "plants": [
+    {"plant": "hanging_vine", "density": 0.12, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "oak",
+      "density": 0.024,
+      "placement": {"verb": "clustered", "params": {"size": 50, "min": 0.35, "max": 0.55}}
+    },
+    {"plant": "birch", "density": 0.007, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "hazel", "density": 0.01, "placement": {"verb": "clustered", "params": {"size": 18}}},
+    {"plant": "pine", "density": 0.004, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "great_oak", "density": 0.0012, "placement": {"verb": "lone", "params": {"spacing": 35}}},
+    {
+      "plant": "maple",
+      "density": 0.003,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.5, "max": 0.65}}
+    },
+    {
+      "plant": "fern",
+      "density": 0.04,
+      "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.4, "max": 0.6}}
+    },
+    {
+      "plant": "redwood",
+      "density": 0.0012,
+      "placement": {"verb": "clustered", "params": {"size": 60, "min": 0.55, "max": 0.7}}
+    },
+    {
+      "plant": "young_redwood",
+      "density": 0.0018,
+      "placement": {"verb": "clustered", "params": {"size": 60, "min": 0.55, "max": 0.7}}
+    },
+    {
+      "plant": "huckleberry",
+      "density": 0.035,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.4, "max": 0.6}}
+    },
+    {
+      "plant": "thimbleberry",
+      "density": 0.025,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.5, "max": 0.65}}
+    },
+    {
+      "plant": "sapling_maple",
+      "density": 0.008,
+      "placement": {"verb": "clustered", "params": {"size": 22, "min": 0.45, "max": 0.62}}
+    },
+    {"plant": "sapling_fir", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "snag", "density": 0.0015, "placement": {"verb": "lone", "params": {"spacing": 18}}},
+    {"plant": "broken_snag", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "stump", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "hawthorn", "density": 0.003, "placement": {"verb": "edge", "params": {"width": 18.0, "inner": 0.03}}},
+    {"plant": "shelf_fungus", "density": 0.14},
+    {"plant": "tree_moss", "density": 0.45}
+  ],
+  "features": [
+    {"structure": "fallen_log", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "boulder", "density": 0.0003, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "rock_outcrop", "density": 0.00012, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "fallen_trunk", "density": 0.002, "placement": {"verb": "scatter", "params": {"seat": 0.4}}},
+    {"structure": "mossy_log", "density": 0.0012, "placement": {"verb": "scatter", "params": {"seat": 0.4}}}
+  ],
+  "creatures": [
+    {"creature": "bear", "count": 1},
+    {"creature": "deer", "count": 5},
+    {"creature": "fox", "count": 2},
+    {"creature": "sparrow", "count": 4},
+    {"creature": "boar", "count": 3},
+    {"creature": "woodpecker", "count": 2},
+    {"creature": "pileated_woodpecker", "count": 1},
+    {"creature": "great_horned_owl", "count": 1},
+    {"creature": "cougar", "count": 1},
+    {"creature": "badger", "count": 1},
+    {"creature": "squirrel", "count": 4},
+    {"creature": "toad", "count": 3},
+    {"creature": "bat", "count": 4},
+    {"creature": "wolf", "count": 1},
+    {"creature": "garter_snake", "count": 3}
+  ],
+  "collectibles": [
+    {
+      "item": "mushroom",
+      "density": 0.0015,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.45, "max": 0.6}}
+    }
+  ]
+}

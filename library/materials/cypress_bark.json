@@ -1,0 +1,15 @@
+{
+  "name": "cypress_bark",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Bald cypress bark: fibrous, peeling in long grey-brown strips with red-brown beneath.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [118, 100, 84],
+    "alt": [92, 76, 64],
+    "scale": 5,
+    "contrast": 0.7,
+    "calm": {"base": [122, 104, 88], "alt": [98, 82, 70]}
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "cottonwood",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Cottonwood: big spreading trees along the river where there is water.",
+  "form": "branching",
+  "height": [13, 19],
+  "trunk_radius": [0.45, 0.65],
+  "buttress": 0.45,
+  "crown_radius": [4.0, 5.5],
+  "bark": "cottonwood_bark",
+  "leaf": "cottonwood_leaves",
+  "curve": "sweep",
+  "canopy": "cloud",
+  "leader": 0.85,
+  "fill": 0.8,
+  "limb": 0.75,
+  "max_slope": 0.5,
+  "autumn": "leaves_autumn"
+}

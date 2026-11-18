@@ -1,0 +1,18 @@
+{
+  "name": "mushroom",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Fly agaric, in the woods.",
+  "display": "mushroom",
+  "voxel": 0.03,
+  "colors": {"cream": [236, 222, 196], "cap_red": [190, 50, 40], "white": [240, 236, 228]},
+  "ops": [
+    {"op": "cylinder", "base": [16, 0, 16], "radius": 2.5, "height": 9, "mat": "cream"},
+    {"op": "ellipsoid", "centre": [16, 11, 16], "radius": [8, 4.5, 8], "mat": "cap_red"},
+    {"op": "set", "at": [13, 14, 15], "mat": "white"},
+    {"op": "set", "at": [18, 14, 14], "mat": "white"},
+    {"op": "set", "at": [16, 14, 18], "mat": "white"},
+    {"op": "set", "at": [14, 14, 19], "mat": "white"},
+    {"op": "set", "at": [19, 14, 17], "mat": "white"}
+  ]
+}

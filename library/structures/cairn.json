@@ -1,0 +1,18 @@
+{
+  "name": "cairn",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Stacked stones marking a path or a summit.",
+  "size": [8, 10, 8],
+  "anchor": [4, 0, 4],
+  "level": false,
+  "decays": false,
+  "tags": ["marker"],
+  "slots": {"stone": "fieldstone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [4, 1.5, 4], "radius": [3.5, 2, 3.5], "mat": "stone"},
+    {"op": "ellipsoid", "centre": [4, 4, 4], "radius": [2.6, 1.8, 2.6], "mat": "stone"},
+    {"op": "ellipsoid", "centre": [4, 6.5, 4], "radius": [1.8, 1.5, 1.8], "mat": "stone"},
+    {"op": "ellipsoid", "centre": [4, 8.5, 4], "radius": [1, 1, 1], "mat": "stone"}
+  ]
+}

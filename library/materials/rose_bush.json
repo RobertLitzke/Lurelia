@@ -1,0 +1,16 @@
+{
+  "name": "rose_bush",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Cottage-garden and dog roses: green leaves thick with pink blooms.",
+  "id": 73,
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [70, 108, 50],
+    "alt": [222, 128, 150],
+    "scale": 8,
+    "contrast": 1.0,
+    "calm": {"base": [76, 112, 54], "alt": [220, 136, 156]}
+  }
+}

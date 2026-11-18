@@ -1,0 +1,22 @@
+{
+  "name": "water_tank",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A riveted water tank on four legs.",
+  "size": [16, 26, 16],
+  "anchor": [8, 0, 8],
+  "tags": ["station", "harlow"],
+  "slots": {"leg": "desert_planks", "tank": "corrugated_tin"},
+  "ops": [
+    {"op": "box", "from": [2, 0, 2], "to": [4, 14, 4], "mat": "leg", "part": "timber"},
+    {"op": "box", "from": [12, 0, 2], "to": [14, 14, 4], "mat": "leg", "part": "timber"},
+    {"op": "box", "from": [2, 0, 12], "to": [4, 14, 14], "mat": "leg", "part": "timber"},
+    {"op": "box", "from": [12, 0, 12], "to": [14, 14, 14], "mat": "leg", "part": "timber"},
+    {"op": "box", "from": [2, 6, 2], "to": [14, 7, 4], "mat": "leg", "part": "timber"},
+    {"op": "box", "from": [2, 6, 12], "to": [14, 7, 14], "mat": "leg", "part": "timber"},
+    {"op": "box", "from": [1, 14, 1], "to": [15, 15, 15], "mat": "leg", "part": "floor"},
+    {"op": "cylinder", "base": [8, 15, 8], "radius": 6.5, "height": 9, "mat": "tank", "part": "metal"},
+    {"op": "cylinder", "base": [8, 24, 8], "radius": 4, "height": 1, "mat": "tank", "part": "metal"},
+    {"op": "cylinder", "base": [8, 25, 8], "radius": 1.5, "height": 1, "mat": "tank", "part": "metal"}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "feathergrass",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Feathergrass: the steppe's cover, a tall bunchgrass with a silver-gold summer awn, tawny over bare chalk between the tussocks.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [126, 116, 86],
+    "alt": [114, 104, 78],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [150, 138, 108], "alt": [138, 126, 98]}
+  },
+  "top": {
+    "pattern": "noise",
+    "base": [140, 128, 96],
+    "alt": [128, 118, 88],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [164, 150, 118], "alt": [152, 140, 110]}
+  },
+  "grass": {"sparse": 0.12, "dense": 0.9, "short": 3.2}
+}

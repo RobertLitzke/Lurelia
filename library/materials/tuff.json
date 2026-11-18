@@ -1,0 +1,15 @@
+{
+  "name": "tuff",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 18,
+  "smooth": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [176, 156, 124],
+    "scale": 3,
+    "contrast": 1.0,
+    "alt": [204, 186, 150],
+    "calm": {"base": [206, 176, 134], "alt": [218, 190, 148]}
+  }
+}

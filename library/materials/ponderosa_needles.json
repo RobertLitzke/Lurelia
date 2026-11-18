@@ -1,0 +1,16 @@
+{
+  "name": "ponderosa_needles",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Long ponderosa needles, yellow-green.",
+  "id": 121,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [62, 96, 46],
+    "alt": [84, 116, 58],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [74, 108, 56], "alt": [92, 124, 64]}
+  }
+}

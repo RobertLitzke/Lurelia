@@ -1,0 +1,37 @@
+{
+  "name": "canyon_floor",
+  "version": 2,
+  "introduced_by": "redrock",
+  "notes": "The Sorrel's floodplain on the canyon floor: cottonwood and willow, tamarisk lower down.",
+  "priority": 7,
+  "rules": {"river": [0, 14], "elev": [0, 70]},
+  "surface": "wash_sand",
+  "subsurface": "wash_sand",
+  "map_color": [120, 150, 80],
+  "plants": [
+    {"plant": "hanging_vine", "density": 0.06, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "cottonwood", "density": 0.008, "placement": {"verb": "riparian", "params": {"width": 8}}},
+    {"plant": "tamarisk", "density": 0.01, "placement": {"verb": "riparian", "params": {"width": 5}}},
+    {"plant": "rabbitbrush", "density": 0.01, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "rock_lichen", "density": 0.06}
+  ],
+  "creatures": [
+    {"creature": "heron", "count": 1},
+    {"creature": "mule_deer", "count": 2},
+    {"creature": "sandhill_crane", "count": 2},
+    {"creature": "meadowhawk", "count": 4},
+    {"creature": "dragonfly", "count": 2},
+    {"creature": "bee", "count": 3},
+    {"creature": "mallard", "count": 3},
+    {"creature": "trout", "count": 2},
+    {"creature": "desert_toad", "count": 3},
+    {"creature": "otter", "count": 1},
+    {"creature": "canyon_bat", "count": 5},
+    {"creature": "rattlesnake", "count": 2}
+  ],
+  "collectibles": [
+    {"item": "arrowhead", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}},
+    {"item": "pottery_shard", "density": 0.00015, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "mist": 0.25
+}

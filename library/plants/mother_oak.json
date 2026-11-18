@@ -1,0 +1,21 @@
+{
+  "name": "mother_oak",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "branching: The great oak below Durn: a vast domed crown on a short, hugely buttressed black trunk, wider than it is tall and old enough that the village has always called it that. One tree only, in its own region.",
+  "form": "branching",
+  "height": [26, 30],
+  "trunk_radius": [1.0, 1.2],
+  "buttress": 0.9,
+  "crown_radius": [9.0, 11.0],
+  "bark": "live_oak_bark",
+  "leaf": "leaves",
+  "curve": "arch",
+  "canopy": "cloud",
+  "leader": 0.05,
+  "fill": 0.85,
+  "spread": 1.0,
+  "dome": 0.4,
+  "max_slope": 0.7,
+  "autumn": "leaves_autumn"
+}

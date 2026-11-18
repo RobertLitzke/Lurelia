@@ -1,0 +1,15 @@
+{
+  "name": "barrel_sponge",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "A barrel sponge: one squat orange barrel, older than anything round it.",
+  "form": "sponge",
+  "height": [0.8, 1.5],
+  "trunk_radius": [0.35, 0.5],
+  "crown_radius": [0.4, 0.6],
+  "bark": "sponge_orange",
+  "leaf": "sponge_orange",
+  "max_slope": 1.4,
+  "water_depth": [6, 35],
+  "stems": [1, 1]
+}

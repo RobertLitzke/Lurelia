@@ -1,0 +1,23 @@
+{
+  "name": "fae_badger",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "The faerie wood's badger: bigger and bolder, its grey gone moss-green, the stripes on its head glowing pale at dusk, with toadstools riding on its back.",
+  "colors": {
+    "coat": [96, 110, 78],
+    "belly": [70, 80, 58],
+    "white": [206, 240, 196, 1.3],
+    "dark": [36, 28, 24],
+    "cap": [190, 240, 170, 1.4]
+  },
+  "behaviour": {"walk_speed": 0.7, "wary": 5, "spawn_chance": 0.25},
+  "like": "badger",
+  "scale": 1.15,
+  "extra_ops": [
+    {"op": "ellipsoid", "centre": [16, 9.5, 17], "radius": [4.0, 1.4, 6.0], "mat": "coat"},
+    {"op": "box", "from": [14, 10, 13], "to": [15, 12, 14], "mat": "cap"},
+    {"op": "box", "from": [18, 10, 17], "to": [19, 11, 18], "mat": "cap"},
+    {"op": "set", "at": [16, 10, 21], "mat": "cap"}
+  ],
+  "vary": {"shade": 0.06, "hue": 0.04}
+}

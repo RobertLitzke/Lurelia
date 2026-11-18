@@ -1,0 +1,31 @@
+{
+  "name": "ghost_forest",
+  "version": 2,
+  "introduced_by": "lowmouth",
+  "notes": "The ghost forest on the bay's north shore: grey dead cypress standing in the water where the salt came in, cormorants and anhingas on every snag, lily pads between the dead trunks.",
+  "priority": 11,
+  "rules": {"region": "ghost", "amphibious": true},
+  "surface": "delta_mud",
+  "subsurface": "peat",
+  "map_color": [150, 150, 140],
+  "plants": [
+    {
+      "plant": "cypress_snag",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.25, "max": 0.6}}
+    },
+    {
+      "plant": "cattail",
+      "density": 0.7,
+      "placement": {"verb": "clustered", "params": {"size": 22, "min": 0.66, "max": 0.675}}
+    }
+  ],
+  "creatures": [
+    {"creature": "anhinga", "count": 6},
+    {"creature": "cormorant", "count": 6},
+    {"creature": "heron", "count": 2},
+    {"creature": "crow", "count": 4},
+    {"creature": "alligator", "count": 2}
+  ],
+  "mist": 0.35
+}

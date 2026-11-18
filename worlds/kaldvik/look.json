@@ -1,0 +1,52 @@
+{
+  "notes": "Winter fjord: white ground, dark water, blue air. The far walls go blue-grey within a few hundred metres so the fjord reads as wall behind wall, and the low sun is a pale rose, not gold.",
+  "ramp": [
+    {
+      "at": 0.0,
+      "color": [
+        0.8,
+        0.84,
+        0.92
+      ]
+    },
+    {
+      "at": 0.3,
+      "color": [
+        0.62,
+        0.71,
+        0.86
+      ]
+    },
+    {
+      "at": 0.65,
+      "color": [
+        0.46,
+        0.57,
+        0.8
+      ]
+    },
+    {
+      "at": 1.0,
+      "color": [
+        0.36,
+        0.46,
+        0.72
+      ]
+    }
+  ],
+  "knobs": {
+    "ramp_reach": 520.0,
+    "ramp_value": 0.35,
+    "haze_density": 1.5,
+    "haze_height": 90.0,
+    "sky_ramp": 0.55,
+    "sky_reach": 0.45,
+    "shade_ramp": 0.7,
+    "sun_side": 0.15,
+    "sun_glow": 0.6,
+    "saturation": 0.92,
+    "contrast": 0.32,
+    "exposure": 0.98,
+    "time_tint": 0.6
+  }
+}

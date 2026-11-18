@@ -1,0 +1,51 @@
+{
+  "name": "skipjack",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "A bright plastic thing among nine iron ones, and the only weapon in the arena anybody laughs at before it kills them. Razor discs off a drum, flat and level, ricocheting four times and keeping most of its speed through each, so it is for shooting round a corner at somebody who thinks a corner is cover -- aim at the wall beside them and the disc does the rest. The right button lobs the drum itself, which arcs, bursts where it lands and throws ten little discs out of the burst -- they bounce, they scatter, and for the next two seconds the floor of that room is not somewhere anybody wants to be standing. It is called the skipjack for what the discs do off a wall, and nobody now remembers what it was for before somebody put blades in it.",
+  "display": "SKIPJACK",
+  "slot": 6,
+  "ammo_max": 100,
+  "ammo_start": 40,
+  "fire": {
+    "kind": "shell",
+    "rpm": 182.0,
+    "damage": 42.0,
+    "speed": 74.0,
+    "bounces": 4,
+    "bounce_keep": 0.72,
+    "self_hit": 0.5,
+    "kick": 0.3,
+    "tracer": [0.84, 0.9, 0.96],
+    "tracer_s": 0.06,
+    "look": "disc"
+  },
+  "alt": {
+    "kind": "shell",
+    "rpm": 72.0,
+    "damage": 16.0,
+    "speed": 30.0,
+    "gravity": 13.0,
+    "bounces": 0,
+    "fuse_s": 3.0,
+    "per_shot": 2,
+    "kick": 0.6,
+    "splash": {"damage": 18.0, "radius": 1.8, "push": 4.0, "self_damage": 0.3, "self_push": 1.0},
+    "cluster": {
+      "count": 10,
+      "damage": 11.0,
+      "speed": 13.0,
+      "gravity": 9.0,
+      "cone_deg": 80.0,
+      "bounces": 3,
+      "fuse_s": 2.0,
+      "splash": {"damage": 15.0, "radius": 1.5, "push": 3.0, "self_damage": 0.3, "self_push": 1.0},
+      "look": "disc"
+    },
+    "tracer": [0.9, 0.86, 0.8],
+    "tracer_s": 0.07,
+    "look": "grenade"
+  },
+  "view": "skipjack",
+  "tint": [0.78, 0.42, 0.18]
+}

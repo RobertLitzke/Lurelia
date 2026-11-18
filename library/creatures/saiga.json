@@ -1,0 +1,22 @@
+{
+  "name": "saiga",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "graze: Saiga: a pale sandy steppe antelope with a swollen down-turned nose and short ridged amber horns. Small groups out on the open grass; the quickest thing here to run.",
+  "colors": {"pronghorn": [206, 192, 158], "white": [240, 236, 228], "dark": [36, 28, 24], "black": [202, 172, 104]},
+  "behaviour": {
+    "movement": "graze",
+    "walk_speed": 1.04,
+    "flee_speed": 9.6,
+    "wary": 28,
+    "flees_from": ["player", "wolf", "sabretooth"],
+    "group": {"size": [3, 9], "spacing": 2.8, "range": 20, "alignment": 1.0, "cohesion": 1.1}
+  },
+  "like": "pronghorn",
+  "scale": 0.9,
+  "extra_ops": [
+    {"op": "ellipsoid", "centre": [16.5, 22.5, 2.5], "radius": [2.4, 2.6, 2.2], "mat": "pronghorn", "part": "head"},
+    {"op": "box", "from": [15, 20, 1], "to": [18, 21, 3], "mat": "dark", "part": "head"}
+  ],
+  "vary": {"size": 0.08, "shade": 0.08, "hue": 0.03}
+}

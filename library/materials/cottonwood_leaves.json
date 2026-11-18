@@ -1,0 +1,16 @@
+{
+  "name": "cottonwood_leaves",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Bright cottonwood leaves along the river.",
+  "id": 127,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [88, 122, 54],
+    "alt": [106, 136, 62],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [94, 124, 58], "alt": [110, 136, 64]}
+  }
+}

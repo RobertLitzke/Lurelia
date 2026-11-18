@@ -1,0 +1,9 @@
+{
+  "name": "karst_vine",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "vine: The long vine curtains of the karst: strands 5-16 m down every tower lip and ledge.",
+  "height": [5, 16],
+  "crown_radius": [2.0, 5.0],
+  "like": "hanging_vine"
+}

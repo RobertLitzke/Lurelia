@@ -1,0 +1,12 @@
+{
+  "name": "sand_lane",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "A village lane on a sand island: 2.4 m trodden down to the dark dirt under the sand, with the sand drifting back at its edges.",
+  "ground": "grade",
+  "width": 2.4,
+  "mat": "path_dirt",
+  "shoulder": "shore_sand",
+  "margin": 1.5,
+  "tags": ["path"]
+}

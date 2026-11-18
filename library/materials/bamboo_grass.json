@@ -1,0 +1,16 @@
+{
+  "name": "bamboo_grass",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "The bamboo forest's floor: long green grass between the culms, greener and wetter than the litter it grew through.",
+  "smooth": true,
+  "tint": "meadow",
+  "texture": {
+    "pattern": "noise",
+    "base": [86, 120, 54],
+    "alt": [100, 130, 62],
+    "scale": 5,
+    "contrast": 0.8,
+    "calm": {"base": [90, 122, 58], "alt": [104, 132, 66]}
+  }
+}

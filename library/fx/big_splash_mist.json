@@ -1,0 +1,18 @@
+{
+  "name": "big_splash_mist",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "The white mass of a whale's splash, rolling up and drifting off.",
+  "shape": "puff",
+  "count": [14, 20],
+  "speed": [1.5, 4.5],
+  "cone_deg": 55,
+  "life": [0.9, 1.8],
+  "size": [0.5, 2.0],
+  "size_jitter": 0.3,
+  "gravity": 1.5,
+  "drag": 1.6,
+  "wind": 0.5,
+  "color": [240, 244, 246],
+  "alpha": 0.5
+}

@@ -1,0 +1,17 @@
+{
+  "name": "lily_flower",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Pale pink-white lily petals that glow a little at the base.",
+  "id": 243,
+  "smooth": false,
+  "glow": 0.25,
+  "texture": {
+    "pattern": "blotch",
+    "base": [236, 206, 214],
+    "alt": [250, 236, 236],
+    "scale": 6,
+    "contrast": 0.8,
+    "calm": {"base": [236, 210, 216], "alt": [248, 234, 234]}
+  }
+}

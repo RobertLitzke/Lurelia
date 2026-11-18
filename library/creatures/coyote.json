@@ -1,0 +1,91 @@
+{
+  "name": "coyote",
+  "version": 2,
+  "introduced_by": "redrock",
+  "notes": "Coyote: grey-tan, bushy tail with a dark tip; hunts jackrabbits and lizards, keeps its distance.",
+  "voxel": 0.055,
+  "half_w": 0.2,
+  "height": 0.85,
+  "colors": {"coyote": [168, 140, 104], "rabbit_light": [210, 196, 176], "dark": [36, 28, 24]},
+  "behaviour": {
+    "movement": "skulk",
+    "sleeps_on_side": true,
+    "walk_speed": 1.5,
+    "flee_speed": 7,
+    "wary": 14,
+    "flightiness": 0.8,
+    "juvenile_flightiness": 0.75,
+    "flees_from": ["player"],
+    "hunts": ["rabbit", "lizard"],
+    "active": "crepuscular",
+    "off_hours": 0.2
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 10, 15], "radius": [3.2, 3.4, 7], "mat": "coyote"},
+    {"op": "recolour_below", "y": 8, "from": "coyote", "to": "rabbit_light"},
+    {"op": "box", "from": [14, 0, 10], "to": [15, 8, 11], "mat": "coyote", "part": "leg_fl"},
+    {"op": "box", "from": [17, 0, 10], "to": [18, 8, 11], "mat": "coyote", "part": "leg_fr"},
+    {"op": "box", "from": [14, 0, 19], "to": [15, 8, 20], "mat": "coyote", "part": "leg_hl"},
+    {"op": "box", "from": [17, 0, 19], "to": [18, 8, 20], "mat": "coyote", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [16, 13.5, 7], "radius": [3, 2.6, 3], "mat": "coyote", "part": "head"},
+    {"op": "box", "from": [15, 11, 2], "to": [18, 14, 5], "mat": "coyote", "part": "head"},
+    {"op": "box", "from": [15, 11, 2], "to": [18, 12, 5], "mat": "rabbit_light", "part": "head"},
+    {"op": "set", "at": [16, 13, 1], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [14, 14, 5], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [18, 14, 5], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [13, 15, 7], "to": [15, 19, 8], "mat": "coyote", "part": "ear_l"},
+    {"op": "box", "from": [17, 15, 7], "to": [19, 19, 8], "mat": "coyote", "part": "ear_r"},
+    {"op": "ellipsoid", "centre": [16, 9, 25.5], "radius": [2.4, 2.4, 4.5], "mat": "coyote", "part": "tail"},
+    {"op": "ellipsoid", "centre": [16, 8, 29.5], "radius": [1.7, 1.7, 1.8], "mat": "dark", "part": "tail"}
+  ],
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "head", "role": "head", "parent": "body", "joint": [16, 12, 9.5]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [14, 15, 7.5], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [18, 15, 7.5], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14.5, 8, 10.5], "side": "l", "pair": 0},
+      {
+        "name": "leg_fl_low",
+        "role": "leg",
+        "parent": "leg_fl",
+        "joint": [14.5, 4, 10.5],
+        "claims": [[[14, 0, 10], [15, 4, 11]]],
+        "side": "l",
+        "pair": 0
+      },
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [17.5, 8, 10.5], "side": "r", "pair": 0},
+      {
+        "name": "leg_fr_low",
+        "role": "leg",
+        "parent": "leg_fr",
+        "joint": [17.5, 4, 10.5],
+        "claims": [[[17, 0, 10], [18, 4, 11]]],
+        "side": "r",
+        "pair": 0
+      },
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14.5, 8, 19.5], "side": "l", "pair": 1},
+      {
+        "name": "leg_hl_low",
+        "role": "leg",
+        "parent": "leg_hl",
+        "joint": [14.5, 4, 19.5],
+        "claims": [[[14, 0, 19], [15, 4, 20]]],
+        "side": "l",
+        "pair": 1
+      },
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [17.5, 8, 19.5], "side": "r", "pair": 1},
+      {
+        "name": "leg_hr_low",
+        "role": "leg",
+        "parent": "leg_hr",
+        "joint": [17.5, 4, 19.5],
+        "claims": [[[17, 0, 19], [18, 4, 20]]],
+        "side": "r",
+        "pair": 1
+      },
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 10, 21.5]}
+    ]
+  }
+}

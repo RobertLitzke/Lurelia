@@ -1,0 +1,42 @@
+{
+  "name": "bamboo_forest",
+  "version": 2,
+  "introduced_by": "jadewater",
+  "notes": "Wetter ground east of the Old Wall: giant bamboo in dense patches over long green grass, among small broadleaf trees and ferns, misty.",
+  "priority": 4,
+  "rules": {"moist": [0.62, 1.0], "elev": [2.5, 20]},
+  "surface": "bamboo_grass",
+  "subsurface": "dirt",
+  "map_color": [150, 168, 70],
+  "plants": [
+    {
+      "plant": "giant_bamboo",
+      "density": 0.03,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.3, "max": 0.55}}
+    },
+    {
+      "plant": "golden_bamboo",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.4, "max": 0.6}}
+    },
+    {"plant": "alder", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "oak", "density": 0.002, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "hazel", "density": 0.008, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "fern",
+      "density": 0.09,
+      "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.25, "max": 0.5}}
+    },
+    {"plant": "tree_moss", "density": 0.3}
+  ],
+  "creatures": [
+    {"creature": "panda", "count": 8},
+    {"creature": "deer", "count": 4},
+    {"creature": "sparrow", "count": 8},
+    {"creature": "tiger", "count": 1},
+    {"creature": "langur", "count": 5},
+    {"creature": "fruit_bat", "count": 4},
+    {"creature": "green_tree_snake", "count": 3}
+  ],
+  "mist": 0.5
+}

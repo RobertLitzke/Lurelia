@@ -1,0 +1,15 @@
+{
+  "name": "chalk_grey",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A greyer, harder bed of the chalk low in the stack, stained along its joints.",
+  "smooth": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [152, 150, 144],
+    "alt": [168, 166, 158],
+    "scale": 3,
+    "contrast": 0.5,
+    "calm": {"base": [156, 154, 148], "alt": [170, 168, 160]}
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "ship_hull",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "A wooden ship's hull, black with tar and greenheart sheathing, rimed white where the spray froze on it.",
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [34, 34, 38],
+    "alt": [48, 50, 56],
+    "scale": 5,
+    "contrast": 0.6,
+    "calm": {"base": [42, 42, 46], "alt": [56, 58, 64]}
+  }
+}

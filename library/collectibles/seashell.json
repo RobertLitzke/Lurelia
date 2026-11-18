@@ -1,0 +1,15 @@
+{
+  "name": "seashell",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Washed up on the beaches.",
+  "display": "seashell",
+  "voxel": 0.027,
+  "colors": {"cream": [236, 222, 196], "pink": [220, 150, 150]},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 2, 16], "radius": [7, 2.5, 8], "mat": "cream"},
+    {"op": "ellipsoid", "centre": [12, 3.5, 14], "radius": [1, 0.8, 4], "mat": "pink"},
+    {"op": "ellipsoid", "centre": [16, 3.5, 12], "radius": [1, 0.8, 4], "mat": "pink"},
+    {"op": "ellipsoid", "centre": [20, 3.5, 14], "radius": [1, 0.8, 4], "mat": "pink"}
+  ]
+}

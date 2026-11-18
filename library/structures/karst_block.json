@@ -1,0 +1,17 @@
+{
+  "name": "karst_block",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "A big fallen block of limestone, 3-4 m across, with a smaller one beside it. Slot stone: the tower's rock.",
+  "size": [34, 20, 31],
+  "anchor": [17, 0, 15],
+  "foundation": 0,
+  "level": false,
+  "decays": false,
+  "tags": ["karst", "rubble"],
+  "slots": {"stone": "karst_limestone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [15.3, 8.5, 15.3], "radius": [11.9, 10.2, 11.0], "mat": "stone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [25.5, 5.1, 6.8], "radius": [5.1, 5.1, 5.1], "mat": "stone", "part": "stone"}
+  ]
+}

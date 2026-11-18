@@ -1,0 +1,44 @@
+{
+  "name": "tepe_ground",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The hilltop round the Tepe: turf grazed and trodden down to the chalk, thyme and thistles at the wall's foot, and the pillars standing in it. The bare rubble is the enclosure's own floor, inside the bench wall.",
+  "priority": 18,
+  "rules": {"region": "tepe"},
+  "surface": "downland_grass",
+  "subsurface": "chalk_white",
+  "rock": null,
+  "fringe": 0,
+  "map_color": [200, 196, 150],
+  "plants": [
+    {
+      "plant": "heather",
+      "density": 0.03,
+      "placement": {"verb": "clustered", "params": {"size": 9, "min": 0.2, "max": 1.0}}
+    },
+    {
+      "plant": "feather_tussock",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 11, "min": 0.35, "max": 1.0}}
+    },
+    {
+      "plant": "sagebrush",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 12, "min": 0.3, "max": 1.0}}
+    },
+    {"plant": "hawthorn", "density": 0.0006, "placement": {"verb": "lone", "params": {"spacing": 26}}},
+    {"plant": "rock_lichen", "density": 0.3, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [{"structure": "boulder", "density": 0.0004}, {"structure": "flat_rock", "density": 0.0005}],
+  "creatures": [
+    {"creature": "eagle", "count": 2},
+    {"creature": "crow", "count": 4},
+    {"creature": "starling", "count": 10},
+    {"creature": "sparrow", "count": 6},
+    {"creature": "lizard", "count": 4}
+  ],
+  "collectibles": [
+    {"item": "flint_blade", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}},
+    {"item": "pottery_shard", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}
+  ]
+}

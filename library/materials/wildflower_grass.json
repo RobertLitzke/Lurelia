@@ -1,0 +1,17 @@
+{
+  "name": "wildflower_grass",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Hay-meadow turf thick with flowers: buttercup, scabious, knapweed, ox-eye daisy, poppies (sprites as on prairie grass).",
+  "id": 64,
+  "smooth": true,
+  "tint": "meadow",
+  "texture": {
+    "pattern": "noise",
+    "base": [96, 132, 58],
+    "alt": [112, 146, 64],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [100, 134, 60], "alt": [114, 146, 66]}
+  }
+}

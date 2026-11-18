@@ -1,0 +1,16 @@
+{
+  "name": "window_glass",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Dark window glass (glints in the sun).",
+  "id": 136,
+  "smooth": false,
+  "texture": {
+    "pattern": "glass",
+    "base": [40, 52, 60],
+    "alt": [70, 86, 96],
+    "scale": 2,
+    "contrast": 1.0,
+    "calm": {"base": [52, 64, 72], "alt": [80, 96, 106]}
+  }
+}

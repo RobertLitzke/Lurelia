@@ -1,0 +1,16 @@
+{
+  "name": "siding_sage",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Sage-green painted lap siding.",
+  "id": 160,
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [132, 146, 118],
+    "alt": [118, 130, 104],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [142, 156, 126], "alt": [128, 140, 114]}
+  }
+}

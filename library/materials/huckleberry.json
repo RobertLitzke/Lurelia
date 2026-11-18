@@ -1,0 +1,16 @@
+{
+  "name": "huckleberry",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Marker voxel at the foot of a huckleberry bush; the stems and leaves are sprites (layer huckleberry).",
+  "id": 190,
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [52, 82, 40],
+    "alt": [40, 34, 60],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [64, 96, 48], "alt": [52, 44, 70]}
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "name": "deer",
+  "version": 3,
+  "introduced_by": "base",
+  "notes": "Red deer. Usually in small family groups that graze together and bolt together.",
+  "voxel": 0.0625,
+  "half_w": 0.28,
+  "height": 1.4,
+  "colors": {
+    "coat": [150, 98, 60],
+    "belly": [210, 180, 140],
+    "dark": [36, 28, 24],
+    "white": [240, 236, 228],
+    "antler": [214, 196, 160]
+  },
+  "behaviour": {
+    "movement": "graze",
+    "walk_speed": 1.3,
+    "flee_speed": 7.5,
+    "wary": 10,
+    "flightiness": 1.2,
+    "juvenile_flightiness": 0.55,
+    "flees_from": ["player"],
+    "group": {"size": [1, 4], "spacing": 2.5, "range": 14, "alignment": 1.0, "cohesion": 1.0},
+    "swims": true,
+    "active": "crepuscular",
+    "off_hours": 0.25
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 15, 17], "radius": [4.2, 4.0, 8.5], "mat": "coat"},
+    {"op": "recolour_below", "y": 13, "from": "coat", "to": "belly"},
+    {"op": "box", "from": [13, 2, 11], "to": [15, 13, 13], "mat": "coat", "part": "leg_fl"},
+    {"op": "box", "from": [13, 0, 11], "to": [15, 2, 13], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [18, 2, 11], "to": [20, 13, 13], "mat": "coat", "part": "leg_fr"},
+    {"op": "box", "from": [18, 0, 11], "to": [20, 2, 13], "mat": "dark", "part": "leg_fr"},
+    {"op": "box", "from": [13, 2, 22], "to": [15, 13, 24], "mat": "coat", "part": "leg_hl"},
+    {"op": "box", "from": [13, 0, 22], "to": [15, 2, 24], "mat": "dark", "part": "leg_hl"},
+    {"op": "box", "from": [18, 2, 22], "to": [20, 13, 24], "mat": "coat", "part": "leg_hr"},
+    {"op": "box", "from": [18, 0, 22], "to": [20, 2, 24], "mat": "dark", "part": "leg_hr"},
+    {"op": "box", "from": [15, 16, 8], "to": [18, 23, 11], "mat": "coat", "part": "neck"},
+    {"op": "box", "from": [14, 21, 3], "to": [19, 26, 9], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [15, 21, 2], "to": [18, 24, 3], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [14, 24, 5], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [18, 24, 5], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [12, 25, 7], "to": [14, 27, 8], "mat": "coat", "part": "ear_l"},
+    {"op": "box", "from": [19, 25, 7], "to": [21, 27, 8], "mat": "coat", "part": "ear_r"},
+    {"op": "box", "from": [15, 26, 6], "to": [16, 30, 7], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [14, 29, 6], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [13, 30, 6], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [15, 28, 5], "mat": "antler", "part": "head"},
+    {"op": "box", "from": [17, 26, 6], "to": [18, 30, 7], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [18, 29, 6], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [19, 30, 6], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [17, 28, 5], "mat": "antler", "part": "head"},
+    {"op": "box", "from": [15, 15, 25], "to": [18, 18, 27], "mat": "white", "part": "tail"}
+  ],
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16.5, 17, 10.5]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16.5, 22.5, 8.5]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [14, 25.5, 7.5], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [19, 25.5, 7.5], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14, 13, 12], "side": "l", "pair": 0},
+      {
+        "name": "leg_fl_low",
+        "role": "leg",
+        "parent": "leg_fl",
+        "joint": [14, 7, 12],
+        "claims": [[[13, 0, 11], [15, 7, 13]]],
+        "side": "l",
+        "pair": 0
+      },
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [19, 13, 12], "side": "r", "pair": 0},
+      {
+        "name": "leg_fr_low",
+        "role": "leg",
+        "parent": "leg_fr",
+        "joint": [19, 7, 12],
+        "claims": [[[18, 0, 11], [20, 7, 13]]],
+        "side": "r",
+        "pair": 0
+      },
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14, 13, 23], "side": "l", "pair": 1},
+      {
+        "name": "leg_hl_low",
+        "role": "leg",
+        "parent": "leg_hl",
+        "joint": [14, 7, 23],
+        "claims": [[[13, 0, 22], [15, 7, 24]]],
+        "side": "l",
+        "pair": 1
+      },
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [19, 13, 23], "side": "r", "pair": 1},
+      {
+        "name": "leg_hr_low",
+        "role": "leg",
+        "parent": "leg_hr",
+        "joint": [19, 7, 23],
+        "claims": [[[18, 0, 22], [20, 7, 24]]],
+        "side": "r",
+        "pair": 1
+      },
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 17.5, 25]}
+    ]
+  }
+}

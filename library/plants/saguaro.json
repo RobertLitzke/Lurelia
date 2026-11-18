@@ -1,0 +1,12 @@
+{
+  "name": "saguaro",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "cactus: Saguaro: a ribbed green column with a rounded top; old ones carry up to five arms that leave the trunk level and turn up.",
+  "form": "cactus",
+  "height": [4.0, 12.0],
+  "trunk_radius": [0.4, 0.5],
+  "crown_radius": [1.0, 1.0],
+  "bark": "saguaro",
+  "max_slope": 0.8
+}

@@ -1,0 +1,26 @@
+{
+  "name": "swan",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Trumpeter swan: big and white with a black bill, alone or in pairs on quiet water, and slow to leave it.",
+  "colors": {
+    "body": [240, 236, 228],
+    "head": [240, 236, 228],
+    "neck": [240, 236, 228],
+    "beak": [36, 28, 24],
+    "wing": [240, 236, 228],
+    "tail": [240, 236, 228],
+    "legs": [36, 28, 24],
+    "white": [240, 236, 228]
+  },
+  "behaviour": {
+    "wary": 20,
+    "flightiness": 0.8,
+    "wingbeat": 1.9,
+    "spawn_chance": 0.3,
+    "group": {"size": [1, 2], "spacing": 2.0, "range": 8, "separation": 1.0, "alignment": 1.0, "cohesion": 1.0}
+  },
+  "like": "goose",
+  "scale": 1.45,
+  "extra_ops": [{"op": "box", "from": [15, 15, 9], "to": [17, 17, 11], "mat": "neck", "part": "head"}]
+}

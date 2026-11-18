@@ -1,0 +1,29 @@
+{
+  "name": "packhorse_bridge",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A medieval packhorse bridge: three low arches, a narrow cobbled deck humped over the middle, low parapets. 16 m along local X; base rim hangs it from the banks, so place it at the river's middle with local X across the stream.",
+  "size": [64, 24, 12],
+  "anchor": [32, 20, 6],
+  "level": false,
+  "decays": false,
+  "base": "rim",
+  "tags": ["hemlow", "bridge"],
+  "slots": {"wall": "cotswold_stone", "deck": "fae_cobbles"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 1], "to": [64, 20, 11], "mat": "wall", "part": "stone"},
+    {"op": "ellipsoid", "centre": [14, 0, 6], "radius": [7.5, 14, 8], "mat": "air"},
+    {"op": "ellipsoid", "centre": [32, 0, 6], "radius": [7.5, 14, 8], "mat": "air"},
+    {"op": "ellipsoid", "centre": [50, 0, 6], "radius": [7.5, 14, 8], "mat": "air"},
+    {"op": "box", "from": [0, 19, 2], "to": [64, 20, 10], "mat": "deck", "part": "floor"},
+    {"op": "box", "from": [0, 20, 1], "to": [64, 23, 2], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [0, 20, 10], "to": [64, 23, 11], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [16, 20, 2], "to": [48, 21, 10], "mat": "deck", "part": "floor"},
+    {"op": "box", "from": [16, 23, 1], "to": [48, 24, 2], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [16, 23, 10], "to": [48, 24, 11], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [21, 0, 0], "to": [25, 12, 1], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [39, 0, 0], "to": [43, 12, 1], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [21, 0, 11], "to": [25, 12, 12], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [39, 0, 11], "to": [43, 12, 12], "mat": "wall", "part": "stone"}
+  ]
+}

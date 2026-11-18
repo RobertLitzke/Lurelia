@@ -1,0 +1,16 @@
+{
+  "name": "splash",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "Droplets thrown up where a body broke the water.",
+  "shape": "streak",
+  "count": [18, 28],
+  "speed": [2.0, 4.5],
+  "cone_deg": 38,
+  "life": [0.5, 0.9],
+  "size": [0.012, 0.008],
+  "gravity": 9.8,
+  "drag": 0.3,
+  "color": [225, 235, 240],
+  "alpha": 0.85
+}

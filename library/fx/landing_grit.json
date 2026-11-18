@@ -1,0 +1,17 @@
+{
+  "name": "landing_grit",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "Grit thrown up out of the ground by a hard landing.",
+  "shape": "chip",
+  "count": [6, 10],
+  "speed": [1.4, 3.0],
+  "cone_deg": 55,
+  "life": [0.6, 1.1],
+  "size": [0.018, 0.018],
+  "size_jitter": 0.4,
+  "gravity": 9.8,
+  "drag": 0.6,
+  "settle": true,
+  "material": true
+}

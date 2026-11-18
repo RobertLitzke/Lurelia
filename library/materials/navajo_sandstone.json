@@ -1,0 +1,16 @@
+{
+  "name": "navajo_sandstone",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Salmon cross-bedded dune sandstone: fins, arches, slickrock.",
+  "id": 103,
+  "smooth": true,
+  "texture": {
+    "pattern": "ripples",
+    "base": [210, 140, 100],
+    "alt": [224, 168, 126],
+    "scale": 3,
+    "contrast": 0.8,
+    "calm": {"base": [218, 152, 112], "alt": [228, 174, 134]}
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "lophelia",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Lophelia: white cold-water coral in bushy thickets on the deep fjord walls, red fans and cod among it.",
+  "form": "coral_branch",
+  "height": [0.9, 1.6],
+  "trunk_radius": [0.11, 0.13],
+  "crown_radius": [1.0, 1.8],
+  "bark": "coral_white",
+  "leaf": "coral_white",
+  "max_slope": 3.0,
+  "water_depth": [8, 60],
+  "stems": [5, 8]
+}

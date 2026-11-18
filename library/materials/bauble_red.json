@@ -1,0 +1,17 @@
+{
+  "name": "bauble_red",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Red glass baubles and the lights in them.",
+  "smooth": false,
+  "glow": 1.6,
+  "texture": {
+    "pattern": "flat",
+    "base": [220, 40, 40],
+    "alt": [240, 70, 60],
+    "scale": 4,
+    "contrast": 0.2,
+    "calm": {"base": [228, 48, 48], "alt": [248, 78, 68]}
+  },
+  "night_glow": true
+}

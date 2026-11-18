@@ -1,0 +1,8 @@
+{
+  "name": "alligator",
+  "version": 2,
+  "introduced_by": "lowmouth",
+  "notes": "American alligator: broad-snouted and near black, the fresh-water crocodilian of the swamp and the sawgrass. Basking on the banks, and awash among the cypress knees.",
+  "colors": {"hide": [52, 56, 44], "belly": [196, 188, 156], "ridge": [36, 40, 32], "eye": [36, 28, 24]},
+  "like": "crocodile"
+}

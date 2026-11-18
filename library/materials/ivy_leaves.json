@@ -1,0 +1,16 @@
+{
+  "name": "ivy_leaves",
+  "version": 1,
+  "introduced_by": "faerie",
+  "notes": "Ivy climbing the walls: glossy dark green.",
+  "id": 182,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [46, 88, 40],
+    "alt": [62, 108, 50],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [56, 100, 48], "alt": [72, 120, 58]}
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "windbreak",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The flint diggers' windbreak: 12 m of hazel hurdling on oak stakes with a hide lean-to behind it. The screen faces the wind on local -Z; the shelter is behind it.",
+  "size": [48, 12, 16],
+  "anchor": [24, 0, 3],
+  "foundation": 3,
+  "level": false,
+  "tags": ["windbarrow"],
+  "slots": {"timber": "oak_post", "hurdle": "stick_wood", "hide": "canvas"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 2], "to": [48, 9, 4], "mat": "hurdle", "part": "frame"},
+    {"op": "box", "from": [0, 0, 1], "to": [2, 11, 5], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [11, 0, 1], "to": [13, 11, 5], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [23, 0, 1], "to": [25, 11, 5], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [35, 0, 1], "to": [37, 11, 5], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [46, 0, 1], "to": [48, 11, 5], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [12, 0, 12], "to": [14, 9, 14], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [34, 0, 12], "to": [36, 9, 14], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [12, 8, 4], "to": [36, 9, 14], "mat": "hide", "part": "cloth"},
+    {"op": "box", "from": [12, 9, 3], "to": [36, 10, 6], "mat": "hide", "part": "cloth"}
+  ]
+}

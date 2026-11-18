@@ -1,0 +1,15 @@
+{
+  "name": "staghorn_coral",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Staghorn: limbs forking up and out from one foot, ochre with pale blunt tips; in thickets on the fore reef.",
+  "form": "coral_branch",
+  "height": [1.2, 2.0],
+  "trunk_radius": [0.12, 0.14],
+  "crown_radius": [1.4, 2.2],
+  "bark": "coral_ochre",
+  "leaf": "coral_tip",
+  "max_slope": 1.4,
+  "water_depth": [0.8, 18],
+  "stems": [4, 7]
+}

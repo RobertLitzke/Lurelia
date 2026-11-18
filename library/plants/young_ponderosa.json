@@ -1,0 +1,16 @@
+{
+  "name": "young_ponderosa",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Ponderosa pine under about eighty years, still cone-shaped, crown starting a third of the way up.",
+  "form": "conifer",
+  "height": [7, 12],
+  "trunk_radius": [0.2, 0.3],
+  "crown_radius": [1.8, 2.5],
+  "bark": "ponderosa_bark",
+  "leaf": "ponderosa_needles",
+  "max_slope": 0.8,
+  "crown_base": 0.3,
+  "sweep": "up",
+  "taper": 0.9
+}

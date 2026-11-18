@@ -1,0 +1,16 @@
+{
+  "name": "giant_culm",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Giant bamboo: thick green-gold culms banded at the nodes.",
+  "id": 235,
+  "smooth": false,
+  "texture": {
+    "pattern": "strata",
+    "base": [116, 136, 62],
+    "alt": [150, 150, 70],
+    "scale": 2,
+    "contrast": 1.0,
+    "calm": {"base": [118, 136, 64], "alt": [146, 146, 72]}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "beach_pea_leaves",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Beach pea: low trailing green leaves with magenta-purple pea flowers.",
+  "id": 212,
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [84, 118, 62],
+    "alt": [150, 76, 146],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [92, 122, 68], "alt": [150, 92, 150]}
+  }
+}

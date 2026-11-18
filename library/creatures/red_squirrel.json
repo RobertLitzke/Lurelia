@@ -1,0 +1,14 @@
+{
+  "name": "red_squirrel",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Red squirrel: smaller than the grey, rust-red with a cream front and tufted ears, keeping to the conifers and the old hedgerow trees.",
+  "colors": {"coat": [186, 98, 44], "belly": [240, 236, 228], "dark": [36, 28, 24]},
+  "behaviour": {"wary": 8},
+  "like": "squirrel",
+  "scale": 0.9,
+  "extra_ops": [
+    {"op": "box", "from": [13, 14, 10], "to": [14, 16, 11], "mat": "coat", "part": "ear_l"},
+    {"op": "box", "from": [18, 14, 10], "to": [19, 16, 11], "mat": "coat", "part": "ear_r"}
+  ]
+}

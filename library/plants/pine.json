@@ -1,0 +1,15 @@
+{
+  "name": "pine",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Upland conifer. Branches thrown up at the ends, and a less regular cone than a fir.",
+  "form": "conifer",
+  "height": [8, 13],
+  "trunk_radius": [0.22, 0.32],
+  "crown_radius": [1.8, 2.6],
+  "bark": "bark",
+  "leaf": "pine",
+  "max_slope": 0.7,
+  "sweep": "up",
+  "taper": 0.85
+}

@@ -1,0 +1,22 @@
+{
+  "name": "reef_groove",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "The sand channels between the spurs: white sand rippled by the surge, a brain coral here and there.",
+  "priority": 20,
+  "rules": {"underwater": true, "region": "reef_groove"},
+  "surface": "sand",
+  "subsurface": "reef_lime",
+  "rock": "reef_lime",
+  "fringe": 0,
+  "map_color": [230, 220, 190],
+  "plants": [
+    {"plant": "brain_coral", "density": 0.006, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "finger_coral", "density": 0.005, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "garden_eel", "count": 84},
+    {"creature": "stingray", "count": 4},
+    {"creature": "reef_chromis", "count": 70}
+  ]
+}

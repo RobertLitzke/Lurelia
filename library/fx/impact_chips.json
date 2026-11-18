@@ -1,0 +1,17 @@
+{
+  "name": "impact_chips",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "Chips off the wall a round hit, in the wall's own colour.",
+  "shape": "chip",
+  "count": [5, 9],
+  "speed": [1.5, 4.0],
+  "cone_deg": 55,
+  "life": [0.6, 1.2],
+  "size": [0.025, 0.025],
+  "size_jitter": 0.45,
+  "gravity": 9.8,
+  "drag": 0.4,
+  "settle": true,
+  "material": true
+}

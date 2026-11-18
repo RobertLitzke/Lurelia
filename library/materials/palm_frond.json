@@ -1,0 +1,15 @@
+{
+  "name": "palm_frond",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Palmetto and cabbage palm fronds: stiff fans of grey-green blades.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [96, 124, 66],
+    "alt": [114, 138, 74],
+    "scale": 7,
+    "contrast": 0.8,
+    "calm": {"base": [98, 124, 68], "alt": [114, 138, 76]}
+  }
+}

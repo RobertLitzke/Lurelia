@@ -1,0 +1,12 @@
+{
+  "name": "pale_hare",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A hare bleached like the trees in the bloom. It does not run from people.",
+  "half_w": 0.13,
+  "height": 0.4,
+  "colors": {"rabbit": [214, 206, 226], "rabbit_light": [240, 236, 228]},
+  "behaviour": {"walk_speed": 0.8, "flee_speed": 4.0, "wary": 3, "flightiness": 1.6, "flees_from": ["fox"]},
+  "like": "rabbit",
+  "scale": 1.14286
+}

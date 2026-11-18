@@ -1,0 +1,33 @@
+{
+  "name": "flood_meadow",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "The flooded grass: short green sward on sand a hand or two under the water for two months of the year, standing in water you can see your feet through. The lechwe herds and everything that follows them.",
+  "priority": 11,
+  "rules": {"elev": [-1.2, 1.9], "slope": [0, 0.35], "amphibious": true},
+  "surface": "marsh_grass",
+  "subsurface": "shore_sand",
+  "map_color": [122, 154, 96],
+  "plants": [
+    {"plant": "sawgrass", "density": 0.05, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "cattail", "density": 0.03, "placement": {"verb": "riparian", "params": {"width": 24}}},
+    {"plant": "reedmace", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "cabbage_palm",
+      "density": 0.0012,
+      "placement": {"verb": "clustered", "params": {"size": 26, "min": 0.0, "max": 0.006}}
+    }
+  ],
+  "creatures": [
+    {"creature": "lechwe", "count": 30},
+    {"creature": "elephant", "count": 6},
+    {"creature": "water_buffalo", "count": 12},
+    {"creature": "hippo", "count": 6},
+    {"creature": "crocodile", "count": 3},
+    {"creature": "great_egret", "count": 8},
+    {"creature": "heron", "count": 5},
+    {"creature": "bee_eater", "count": 24},
+    {"creature": "dragonfly", "count": 14}
+  ],
+  "collectibles": [{"item": "seashell", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}]
+}

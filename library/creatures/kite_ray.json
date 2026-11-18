@@ -1,0 +1,10 @@
+{
+  "name": "kite_ray",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "undulate: Kite ray: a jade-backed ray the size of a door, spotted with cyan light, that flies. Rises from the cenotes and rides the updrafts round the towers.",
+  "colors": {"back": [64, 118, 108], "belly": [214, 226, 216], "glow": [90, 230, 230, 1.6]},
+  "behaviour": {"fly_height": 14, "walk_speed": 2.4, "flee_speed": 4.0},
+  "like": "sky_ray",
+  "scale": 1.5
+}

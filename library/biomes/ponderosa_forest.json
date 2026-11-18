@@ -1,0 +1,60 @@
+{
+  "name": "ponderosa_forest",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "The plateau: open park-like ponderosa pine forest on needle duff, gambel oak beneath, aspen in the damp hollows.",
+  "priority": 4,
+  "rules": {"elev": [78, 200]},
+  "surface": "pine_duff",
+  "subsurface": "dirt",
+  "map_color": [70, 104, 60],
+  "plants": [
+    {
+      "plant": "ponderosa",
+      "density": 0.0055,
+      "placement": {"verb": "clustered", "params": {"size": 60, "min": 0.25, "max": 0.55}}
+    },
+    {
+      "plant": "young_ponderosa",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.4, "max": 0.65}}
+    },
+    {
+      "plant": "gambel_oak",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 26, "min": 0.5, "max": 0.68}}
+    },
+    {
+      "plant": "aspen",
+      "density": 0.02,
+      "placement": {"verb": "gradient", "params": {"min": 0.55, "max": 0.7}, "field": "moist"}
+    },
+    {"plant": "gambel_oak", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "thimbleberry",
+      "density": 0.01,
+      "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.5, "max": 0.66}}
+    },
+    {"plant": "snag", "density": 0.0008, "placement": {"verb": "lone", "params": {"spacing": 30}}},
+    {"plant": "broken_snag", "density": 0.0015, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "stump", "density": 0.0015, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "shelf_fungus", "density": 0.08}
+  ],
+  "features": [
+    {"structure": "fallen_log", "density": 0.0003, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "boulder", "density": 0.00015, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "fallen_trunk", "density": 0.0012, "placement": {"verb": "scatter", "params": {"seat": 0.4}}}
+  ],
+  "creatures": [
+    {"creature": "bear", "count": 1},
+    {"creature": "deer", "count": 6},
+    {"creature": "crow", "count": 2},
+    {"creature": "acorn_woodpecker", "count": 3},
+    {"creature": "northern_flicker", "count": 1},
+    {"creature": "great_horned_owl", "count": 1},
+    {"creature": "cougar", "count": 1},
+    {"creature": "douglas_squirrel", "count": 3},
+    {"creature": "gopher_snake", "count": 2}
+  ],
+  "collectibles": [{"item": "pine_cone", "density": 0.001, "placement": {"verb": "scatter", "params": {}}}]
+}

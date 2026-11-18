@@ -1,0 +1,16 @@
+{
+  "name": "candle_flame",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Candle flames and lamp wicks: a small warm light.",
+  "smooth": false,
+  "glow": 1.4,
+  "texture": {
+    "pattern": "flat",
+    "base": [255, 204, 120],
+    "alt": [255, 230, 170],
+    "scale": 4,
+    "contrast": 0.3,
+    "calm": {"base": [255, 204, 120], "alt": [255, 230, 170]}
+  }
+}

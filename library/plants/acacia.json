@@ -1,0 +1,15 @@
+{
+  "name": "acacia",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Thorn acacia: a flat-topped umbrella of fine grey-green leaf on a short trunk, the crown wider than the tree is tall.",
+  "form": "umbrella",
+  "height": [5, 8.5],
+  "trunk_radius": [0.22, 0.38],
+  "crown_radius": [2.6, 3.8],
+  "bark": "pale_bark",
+  "leaf": "acacia_leaf",
+  "squash": 0.5,
+  "max_slope": 0.7,
+  "affords": ["perch", "nest", "browse"]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "moon_jelly",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Moon jellyfish: a pale lilac bell the size of a plate with four rings in it, drifting, beating slowly upward and sinking between.",
+  "voxel": 0.02,
+  "half_w": 0.16,
+  "height": 0.36,
+  "colors": {"bell": [222, 206, 236], "ring": [240, 182, 214], "tentacle": [236, 228, 242]},
+  "behaviour": {
+    "movement": "school",
+    "habit": "pulse",
+    "walk_speed": 0.1,
+    "flee_speed": 0.1,
+    "wary": 0,
+    "flightiness": 0.0,
+    "leap": 0,
+    "depth": [1.5, 10],
+    "shallows": 2.5,
+    "group": {"size": [3, 8], "spacing": 2.0, "range": 4},
+    "active": "any"
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16.5, 15, 16.5], "radius": [8, 4, 8], "mat": "bell"},
+    {"op": "recolour", "at": [12, 16, 12], "until": [21, 19, 21], "from": "bell", "to": "ring"},
+    {"op": "recolour", "at": [14, 16, 14], "until": [19, 19, 19], "from": "ring", "to": "bell"},
+    {"op": "box", "from": [16, 2, 16], "to": [17, 12, 17], "mat": "tentacle"},
+    {"op": "box", "from": [11, 5, 16], "to": [12, 12, 17], "mat": "tentacle"},
+    {"op": "box", "from": [21, 5, 16], "to": [22, 12, 17], "mat": "tentacle"},
+    {"op": "box", "from": [16, 6, 11], "to": [17, 12, 12], "mat": "tentacle"},
+    {"op": "box", "from": [16, 6, 21], "to": [17, 12, 22], "mat": "tentacle"}
+  ]
+}

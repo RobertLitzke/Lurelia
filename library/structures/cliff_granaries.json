@@ -1,0 +1,24 @@
+{
+  "name": "cliff_granaries",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Stone granaries of the canyon people in an alcove in a canyon wall: carves the alcove about 11 m up and 9-12 m back from the point, lays its floor flat, builds three small sealed rooms, and heaps a talus ramp below. Place on the canyon floor at the wall's foot, facing out (local -Z).",
+  "size": [64, 76, 60],
+  "anchor": [32, 0, 0],
+  "level": false,
+  "decays": false,
+  "tags": ["ruin", "landmark"],
+  "slots": {"rock": "chinle_mudstone", "talus": "red_sand", "wall": "red_stone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [22, 0, 40], "radius": [13, 43, 40], "mat": "talus"},
+    {"op": "ellipsoid", "centre": [32, 56, 42], "radius": [27, 13, 17], "mat": "carve"},
+    {"op": "box", "from": [8, 40, 30], "to": [56, 44, 54], "mat": "rock"},
+    {"op": "walls", "from": [12, 44, 40], "to": [22, 52, 50], "mat": "wall", "thick": 1, "part": "stone"},
+    {"op": "box", "from": [15, 44, 40], "to": [18, 47, 41], "mat": "air"},
+    {"op": "walls", "from": [26, 44, 41], "to": [36, 54, 51], "mat": "wall", "thick": 1, "part": "stone"},
+    {"op": "box", "from": [29, 46, 41], "to": [32, 49, 42], "mat": "air"},
+    {"op": "walls", "from": [40, 44, 40], "to": [50, 51, 49], "mat": "wall", "thick": 1, "part": "stone"},
+    {"op": "box", "from": [12, 52, 40], "to": [22, 53, 50], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [40, 51, 40], "to": [50, 52, 49], "mat": "wall", "part": "stone"}
+  ]
+}

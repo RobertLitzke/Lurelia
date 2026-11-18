@@ -1,0 +1,1601 @@
+{
+ "places": {
+  "knap": [
+   470,
+   460
+  ],
+  "church": [
+   455,
+   455
+  ],
+  "green": [
+   492,
+   470
+  ],
+  "hob": [
+   470,
+   210
+  ],
+  "lip": [
+   788,
+   536
+  ],
+  "pool": [
+   791,
+   538
+  ],
+  "mere": [
+   200,
+   470
+  ],
+  "lane_top": [
+   500,
+   488
+  ],
+  "lane_bend": [
+   512,
+   540
+  ],
+  "ford": [
+   526,
+   588
+  ]
+ },
+ "events": [
+  {
+   "year": -150000000,
+   "event": "landmass",
+   "cause": "the oolite laid down as lime sand in a warm shallow sea, lifted into a low upland",
+   "centre": [
+    470,
+    512
+   ],
+   "radius": 560,
+   "roughness": 0.35,
+   "hills": 9,
+   "ridges": 2,
+   "shelf": 6
+  },
+  {
+   "year": -20000000,
+   "event": "escarpment",
+   "cause": "the oolite tilted and broken off in the east: Hemlow Edge",
+   "from": [
+    830,
+    -60
+   ],
+   "to": [
+    770,
+    1090
+   ],
+   "height": 26,
+   "width": 8,
+   "reach": 2000
+  },
+  {
+   "year": -100000,
+   "event": "vale",
+   "cause": "a combe cut back into the Edge by a spring",
+   "path": [
+    [
+     700,
+     215
+    ],
+    [
+     745,
+     232
+    ],
+    [
+     800,
+     238
+    ],
+    [
+     845,
+     242
+    ]
+   ],
+   "width": 8,
+   "depth": 5,
+   "side": 22,
+   "fall": 5,
+   "meander": 6
+  },
+  {
+   "year": -100000,
+   "event": "vale",
+   "cause": "a short combe in the Edge south of the Spout",
+   "path": [
+    [
+     742,
+     690
+    ],
+    [
+     790,
+     700
+    ]
+   ],
+   "width": 8,
+   "depth": 5,
+   "side": 22,
+   "fall": 5,
+   "meander": 6
+  },
+  {
+   "year": -100000,
+   "event": "vale",
+   "cause": "a dry combe in the far south of the Edge",
+   "path": [
+    [
+     745,
+     880
+    ],
+    [
+     770,
+     872
+    ],
+    [
+     800,
+     880
+    ]
+   ],
+   "width": 8,
+   "depth": 5,
+   "side": 22,
+   "fall": 5,
+   "meander": 6
+  },
+  {
+   "year": -90000,
+   "event": "erode_rims",
+   "cause": "frost and rain rounding the lip of the Edge",
+   "depth": 3,
+   "reach": 10,
+   "gullies": 0.5
+  },
+  {
+   "year": -12000,
+   "event": "deposit",
+   "cause": "the knoll of harder stone the Hem bends round: Hemlow Knap",
+   "at": [
+    490,
+    460
+   ],
+   "radius": 185,
+   "thickness": 12,
+   "mat": "stone_light",
+   "shape": "dome"
+  },
+  {
+   "year": -12000,
+   "event": "vale",
+   "cause": "the Hem's valley, worn down across the upland",
+   "path": [
+    [
+     270,
+     490
+    ],
+    [
+     340,
+     530
+    ],
+    [
+     420,
+     575
+    ],
+    [
+     500,
+     600
+    ],
+    [
+     585,
+     585
+    ],
+    [
+     660,
+     560
+    ],
+    [
+     730,
+     548
+    ]
+   ],
+   "width": 26,
+   "depth": 4,
+   "depth_end": 3,
+   "side": 45,
+   "meander": 8
+  },
+  {
+   "year": -12000,
+   "event": "lake",
+   "cause": "springs filling a hollow at the west end of the upland: Hemmere",
+   "name": "hemmere",
+   "at": [
+    200,
+    470
+   ],
+   "radius": 70,
+   "depth": 1.6,
+   "bed": "peat",
+   "ragged": 0.4,
+   "stretch": 1.5,
+   "bearing": 100,
+   "bank": "river_mud"
+  },
+  {
+   "year": -11800,
+   "event": "lake",
+   "cause": "a peat pool in the Wisp Moss",
+   "name": "moss_pool_1",
+   "at": [
+    108,
+    402
+   ],
+   "radius": 11,
+   "depth": 0.9,
+   "bed": "peat",
+   "bank": "river_mud",
+   "ragged": 0.45
+  },
+  {
+   "year": -11800,
+   "event": "lake",
+   "cause": "a peat pool in the Wisp Moss",
+   "name": "moss_pool_2",
+   "at": [
+    128,
+    566
+   ],
+   "radius": 13,
+   "depth": 0.9,
+   "bed": "peat",
+   "bank": "river_mud",
+   "ragged": 0.45
+  },
+  {
+   "year": -11800,
+   "event": "lake",
+   "cause": "a peat pool in the Wisp Moss",
+   "name": "moss_pool_3",
+   "at": [
+    262,
+    398
+   ],
+   "radius": 8,
+   "depth": 0.9,
+   "bed": "peat",
+   "bank": "river_mud",
+   "ragged": 0.45
+  },
+  {
+   "year": -11800,
+   "event": "lake",
+   "cause": "a peat pool in the Wisp Moss",
+   "name": "moss_pool_4",
+   "at": [
+    286,
+    566
+   ],
+   "radius": 9,
+   "depth": 0.9,
+   "bed": "peat",
+   "bank": "river_mud",
+   "ragged": 0.45
+  },
+  {
+   "year": -11800,
+   "event": "lake",
+   "cause": "a peat pool in the Wisp Moss",
+   "name": "moss_pool_5",
+   "at": [
+    86,
+    486
+   ],
+   "radius": 8,
+   "depth": 0.9,
+   "bed": "peat",
+   "bank": "river_mud",
+   "ragged": 0.45
+  },
+  {
+   "year": -11800,
+   "event": "lake",
+   "cause": "a peat pool in the Wisp Moss",
+   "name": "moss_pool_6",
+   "at": [
+    300,
+    430
+   ],
+   "radius": 7,
+   "depth": 0.9,
+   "bed": "peat",
+   "bank": "river_mud",
+   "ragged": 0.45
+  },
+  {
+   "year": -11800,
+   "event": "lake",
+   "cause": "a peat pool in the Wisp Moss",
+   "name": "moss_pool_7",
+   "at": [
+    160,
+    600
+   ],
+   "radius": 8,
+   "depth": 0.9,
+   "bed": "peat",
+   "bank": "river_mud",
+   "ragged": 0.45
+  },
+  {
+   "year": -11700,
+   "event": "deposit",
+   "cause": "a reedy islet of peat in Hemmere",
+   "at": [
+    178,
+    452
+   ],
+   "radius": 16,
+   "thickness": 2.6,
+   "mat": "peat",
+   "shape": "dome"
+  },
+  {
+   "year": -11700,
+   "event": "deposit",
+   "cause": "a second, smaller islet where a willow took root",
+   "at": [
+    232,
+    494
+   ],
+   "radius": 11,
+   "thickness": 2.2,
+   "mat": "peat",
+   "shape": "dome"
+  },
+  {
+   "year": -11500,
+   "event": "lake",
+   "cause": "the plunge pool the Hem has drilled at the foot of the Edge",
+   "name": "spout_pool",
+   "at": "pool",
+   "radius": 9,
+   "depth": 2.2,
+   "bed": "river_gravel",
+   "ragged": 0.15,
+   "steep": true
+  },
+  {
+   "year": -11000,
+   "event": "passage",
+   "cause": "Lantern Hole: a cave dissolved back into the Edge behind the fall, roofed with glow-worms",
+   "path": [
+    [
+     797,
+     537
+    ],
+    [
+     785,
+     537
+    ],
+    [
+     776,
+     541
+    ],
+    [
+     760,
+     527
+    ],
+    [
+     742,
+     512
+    ],
+    [
+     728,
+     494
+    ],
+    [
+     716,
+     470
+    ]
+   ],
+   "height": 6.2,
+   "radius": 2.6,
+   "lining": "glowworm_ceiling",
+   "shafts": 1,
+   "wander": 3,
+   "poi": "Lantern Hole",
+   "wall": "cave_rock"
+  },
+  {
+   "year": -11000,
+   "event": "passage",
+   "cause": "the glow-worm chamber, where the cave widens under the wood",
+   "path": [
+    [
+     748,
+     516
+    ],
+    [
+     738,
+     508
+    ]
+   ],
+   "height": 7.0,
+   "radius": 4.2,
+   "lining": "glowworm_ceiling",
+   "wall": "cave_rock"
+  },
+  {
+   "year": -11000,
+   "event": "passage",
+   "cause": "a side passage of Lantern Hole running south under the combe",
+   "path": [
+    [
+     760,
+     527
+    ],
+    [
+     750,
+     546
+    ],
+    [
+     738,
+     564
+    ],
+    [
+     729,
+     584
+    ]
+   ],
+   "height": 6.0,
+   "radius": 2.1,
+   "lining": "glowworm_ceiling",
+   "wall": "cave_rock",
+   "wander": 3
+  },
+  {
+   "year": -11000,
+   "event": "passage",
+   "cause": "the south chamber at the end of the side passage",
+   "path": [
+    [
+     731,
+     586
+    ],
+    [
+     723,
+     594
+    ]
+   ],
+   "height": 6.2,
+   "radius": 3.4,
+   "lining": "glowworm_ceiling",
+   "wall": "cave_rock"
+  },
+  {
+   "year": -11000,
+   "event": "passage",
+   "cause": "the north branch, climbing toward the Hob Stones, where the glow-worms are thickest",
+   "path": [
+    [
+     728,
+     494
+    ],
+    [
+     737,
+     476
+    ],
+    [
+     747,
+     455
+    ],
+    [
+     745,
+     436
+    ]
+   ],
+   "height": 6.4,
+   "radius": 2.3,
+   "lining": "glowworm_ceiling",
+   "wall": "cave_rock",
+   "wander": 3
+  },
+  {
+   "year": -11000,
+   "event": "passage",
+   "cause": "the north chamber, the Lantern Room",
+   "path": [
+    [
+     746,
+     438
+    ],
+    [
+     742,
+     426
+    ]
+   ],
+   "height": 6.8,
+   "radius": 4.0,
+   "lining": "glowworm_ceiling",
+   "wall": "cave_rock",
+   "poi": "the Lantern Room"
+  },
+  {
+   "year": -11000,
+   "event": "river",
+   "cause": "the Hem, from Hemmere across the upland, over the Edge and down the vale",
+   "name": "hem",
+   "path": [
+    [
+     268,
+     488
+    ],
+    [
+     340,
+     530
+    ],
+    [
+     420,
+     575
+    ],
+    [
+     500,
+     600
+    ],
+    [
+     585,
+     585
+    ],
+    [
+     660,
+     560
+    ],
+    [
+     740,
+     548
+    ],
+    [
+     800,
+     545
+    ],
+    [
+     880,
+     540
+    ],
+    [
+     990,
+     530
+    ]
+   ],
+   "width": 8,
+   "depth": 3.2,
+   "bed": "river_gravel",
+   "meander": 10,
+   "bank": "river_mud"
+  },
+  {
+   "year": -9000,
+   "event": "place",
+   "cause": "lime laid down drip by drip from the roof: stalactites and stalagmites",
+   "structure": "cave_formations",
+   "at": [
+    776,
+    540
+   ],
+   "bearing": 20,
+   "height": 3.6
+  },
+  {
+   "year": -9000,
+   "event": "place",
+   "cause": "lime laid down drip by drip from the roof: stalactites and stalagmites",
+   "structure": "cave_formations_tall",
+   "at": [
+    743,
+    511
+   ],
+   "bearing": 70,
+   "height": 2.8
+  },
+  {
+   "year": -9000,
+   "event": "place",
+   "cause": "lime laid down drip by drip from the roof: stalactites and stalagmites",
+   "structure": "cave_formations_tall",
+   "at": [
+    726,
+    591
+   ],
+   "bearing": 140,
+   "height": 2.9
+  },
+  {
+   "year": -9000,
+   "event": "place",
+   "cause": "lime laid down drip by drip from the roof: stalactites and stalagmites",
+   "structure": "cave_formations_tall",
+   "at": [
+    744,
+    431
+   ],
+   "bearing": 200,
+   "height": 2.9
+  },
+  {
+   "year": -9000,
+   "event": "place",
+   "cause": "lime laid down drip by drip from the roof: stalactites and stalagmites",
+   "structure": "cave_formations",
+   "at": [
+    740,
+    467
+   ],
+   "bearing": 300,
+   "height": 4.0
+  },
+  {
+   "year": -9000,
+   "event": "moisture",
+   "cause": "springs coming up through the peat round Hemmere",
+   "at": "mere",
+   "radius": 170,
+   "amount": 0.45
+  },
+  {
+   "year": -9000,
+   "event": "region",
+   "cause": "the Wisp Moss: wet ground round the mere",
+   "name": "moss",
+   "at": [
+    205,
+    478
+   ],
+   "radius": 150
+  },
+  {
+   "year": -9000,
+   "event": "region",
+   "cause": "the spray round Lantern Spout",
+   "name": "spout",
+   "at": [
+    794,
+    538
+   ],
+   "radius": 30
+  },
+  {
+   "year": -4000,
+   "event": "bloom",
+   "cause": "whatever lives at the Hob Stones; it fades with distance from them",
+   "at": "hob",
+   "radius": 110,
+   "strength": 1.0
+  },
+  {
+   "year": -4000,
+   "event": "region",
+   "cause": "the clearing where no tree grows round the Hob Stones",
+   "name": "hob",
+   "at": "hob",
+   "radius": 38
+  },
+  {
+   "year": -4000,
+   "event": "place",
+   "cause": "the Hob Stones, raised by people nobody remembers",
+   "structure": "hob_stones",
+   "at": "hob",
+   "bearing": 0,
+   "poi": "the Hob Stones"
+  },
+  {
+   "year": -900,
+   "event": "region",
+   "cause": "the meadows cleared for sheep on the Knap",
+   "name": "meadow",
+   "at": [
+    470,
+    480
+   ],
+   "radius": 200
+  },
+  {
+   "year": -900,
+   "event": "region",
+   "cause": "the meadows cleared down the valley to the east",
+   "name": "meadow",
+   "at": [
+    630,
+    560
+   ],
+   "radius": 115
+  },
+  {
+   "year": -900,
+   "event": "region",
+   "cause": "the meadows cleared up the valley to the west",
+   "name": "meadow",
+   "at": [
+    340,
+    535
+   ],
+   "radius": 105
+  },
+  {
+   "year": -800,
+   "event": "place",
+   "cause": "the mill on the Hem at the foot of the Knap, older than the church",
+   "structure": "mill",
+   "at": [
+    478,
+    588
+   ],
+   "face": [
+    480,
+    605
+   ],
+   "slots": {
+    "wall": "cotswold_stone",
+    "roof": "stone_tiles",
+    "timber": "timber_frame",
+    "floor": "moss_flagstone"
+   },
+   "poi": "Hemlow mill"
+  },
+  {
+   "year": -650,
+   "event": "place",
+   "cause": "the wool church rebuilt on the top of the Knap when the fleeces sold to Flanders",
+   "structure": "wool_church",
+   "at": "church",
+   "bearing": 180,
+   "poi": "Hemlow church"
+  },
+  {
+   "year": -620,
+   "event": "region",
+   "cause": "the village on the top of the Knap",
+   "name": "hemlow",
+   "at": [
+    492,
+    490
+   ],
+   "radius": 85
+  },
+  {
+   "year": -620,
+   "event": "place",
+   "cause": "the abbey's tithe barn on the east side of the green",
+   "structure": "tithe_barn",
+   "at": [
+    536,
+    486
+   ],
+   "face": "green"
+  },
+  {
+   "year": -600,
+   "event": "place",
+   "cause": "the market cross on the green",
+   "structure": "market_cross",
+   "at": "green",
+   "bearing": 0,
+   "poi": "Hemlow green"
+  },
+  {
+   "year": -590,
+   "event": "place",
+   "cause": "the Hob and Lantern, the inn on the north side of the green",
+   "structure": "village_inn",
+   "at": [
+    506,
+    446
+   ],
+   "face": "green",
+   "poi": "the Hob and Lantern"
+  },
+  {
+   "year": -580,
+   "event": "place",
+   "cause": "a row of three weavers' cottages north-west of the green",
+   "structure": "cotswold_row",
+   "at": [
+    475,
+    444
+   ],
+   "face": "green"
+  },
+  {
+   "year": -560,
+   "event": "place",
+   "cause": "the reeve's house on the south-west of the green",
+   "structure": "cotswold_house",
+   "at": [
+    468,
+    494
+   ],
+   "face": "green"
+  },
+  {
+   "year": -540,
+   "event": "place",
+   "cause": "a cottage on the east of the green, by the barn",
+   "structure": "cotswold_cottage",
+   "at": [
+    518,
+    470
+   ],
+   "face": [
+    492,
+    470
+   ]
+  },
+  {
+   "year": -530,
+   "event": "place",
+   "cause": "the dovecote behind the church",
+   "structure": "dovecote",
+   "at": [
+    432,
+    486
+   ],
+   "face": [
+    455,
+    470
+   ]
+  },
+  {
+   "year": -520,
+   "event": "place",
+   "cause": "a thatched cottage at the top of the lane",
+   "structure": "cotswold_thatch",
+   "at": [
+    488,
+    510
+   ],
+   "face": "green"
+  },
+  {
+   "year": -500,
+   "event": "place",
+   "cause": "a cottage on the east side of the lane",
+   "structure": "cotswold_cottage",
+   "at": [
+    525,
+    522
+   ],
+   "face": [
+    512,
+    522
+   ]
+  },
+  {
+   "year": -480,
+   "event": "place",
+   "cause": "a thatched cottage on the west side of the lane",
+   "structure": "cotswold_thatch",
+   "at": [
+    497,
+    545
+   ],
+   "face": [
+    512,
+    545
+   ]
+  },
+  {
+   "year": -460,
+   "event": "place",
+   "cause": "a house at the foot of the lane above the river",
+   "structure": "cotswold_house",
+   "at": [
+    530,
+    555
+   ],
+   "face": [
+    515,
+    555
+   ]
+  },
+  {
+   "year": -450,
+   "event": "path",
+   "cause": "the green, worn into the turf",
+   "from": [
+    470,
+    470
+   ],
+   "to": [
+    515,
+    470
+   ],
+   "width": 3,
+   "mat": "fae_cobbles"
+  },
+  {
+   "year": -450,
+   "event": "path",
+   "cause": "the lane from the green down to the ford",
+   "from": "green",
+   "to": "lane_bend",
+   "width": 2.5,
+   "mat": "fae_cobbles"
+  },
+  {
+   "year": -450,
+   "event": "path",
+   "cause": "the lane from the green down to the ford",
+   "from": "lane_bend",
+   "to": "ford",
+   "width": 2.5,
+   "mat": "fae_cobbles"
+  },
+  {
+   "year": -450,
+   "event": "path",
+   "cause": "the church path",
+   "from": [
+    470,
+    470
+   ],
+   "to": [
+    458,
+    468
+   ],
+   "width": 2,
+   "mat": "fae_cobbles"
+  },
+  {
+   "year": -440,
+   "event": "path",
+   "cause": "the mill track",
+   "from": [
+    500,
+    530
+   ],
+   "to": [
+    482,
+    578
+   ],
+   "width": 2,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -450,
+   "event": "place",
+   "cause": "the packhorse bridge where the old road went south over the Hem",
+   "structure": "packhorse_bridge",
+   "at": [
+    526,
+    598
+   ],
+   "bearing": 90,
+   "poi": "the packhorse bridge"
+  },
+  {
+   "year": -300,
+   "event": "path",
+   "cause": "a track the village keeps from the fields to the edge of the Hollins and no further",
+   "from": [
+    470,
+    400
+   ],
+   "to": [
+    470,
+    300
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -200,
+   "event": "place",
+   "cause": "the woodcutter's hut, the one house the village lets stand in the Hollins",
+   "structure": "woodcutter_hut",
+   "at": [
+    300,
+    322
+   ],
+   "face": [
+    350,
+    370
+   ],
+   "poi": "the woodcutter's hut"
+  },
+  {
+   "year": -200,
+   "event": "place",
+   "cause": "the woodcutter's cordwood",
+   "structure": "log_pile",
+   "at": [
+    318,
+    302
+   ],
+   "bearing": 40
+  },
+  {
+   "year": -200,
+   "event": "place",
+   "cause": "the woodcutter's chopping block",
+   "structure": "chopping_block",
+   "at": [
+    318,
+    336
+   ],
+   "bearing": 0
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "the wise woman's cottage near the Hob Stones",
+   "structure": "cotswold_thatch",
+   "at": [
+    640,
+    330
+   ],
+   "face": [
+    600,
+    345
+   ],
+   "poi": "the wise woman's cottage",
+   "slots": {
+    "door": "door_green"
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "her bee skeps",
+   "structure": "skep_bench",
+   "at": [
+    654,
+    348
+   ],
+   "face": [
+    640,
+    360
+   ]
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "her herb beds",
+   "structure": "herb_beds",
+   "at": [
+    624,
+    350
+   ],
+   "bearing": 10
+  },
+  {
+   "year": -150,
+   "event": "place",
+   "cause": "a charcoal burner's clamp, still smouldering",
+   "structure": "charcoal_clamp",
+   "at": [
+    360,
+    718
+   ],
+   "bearing": 300,
+   "poi": "the charcoal burners"
+  },
+  {
+   "year": -150,
+   "event": "place",
+   "cause": "wood stacked for the next burn",
+   "structure": "log_pile",
+   "at": [
+    380,
+    704
+   ],
+   "bearing": 120
+  },
+  {
+   "year": -150,
+   "event": "place",
+   "cause": "the burners' block",
+   "structure": "chopping_block",
+   "at": [
+    344,
+    702
+   ],
+   "bearing": 0
+  },
+  {
+   "year": -160,
+   "event": "place",
+   "cause": "a cottage abandoned when its people went into the Hollins and did not come back",
+   "structure": "cotswold_cottage",
+   "at": [
+    662,
+    742
+   ],
+   "face": [
+    650,
+    700
+   ],
+   "age": 160,
+   "poi": "the empty cottage"
+  },
+  {
+   "year": -160,
+   "event": "place",
+   "cause": "its well",
+   "structure": "well",
+   "at": [
+    648,
+    756
+   ],
+   "bearing": 0,
+   "age": 160,
+   "slots": {
+    "wall": "cotswold_stone",
+    "roof": "stone_tiles"
+   }
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    392,
+    402
+   ],
+   "to": [
+    356,
+    372
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    356,
+    372
+   ],
+   "to": [
+    338,
+    352
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    338,
+    352
+   ],
+   "to": [
+    314,
+    330
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    562,
+    362
+   ],
+   "to": [
+    596,
+    352
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    596,
+    352
+   ],
+   "to": [
+    612,
+    338
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    612,
+    338
+   ],
+   "to": [
+    630,
+    336
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    490,
+    228
+   ],
+   "to": [
+    530,
+    252
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    530,
+    252
+   ],
+   "to": [
+    575,
+    300
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    575,
+    300
+   ],
+   "to": [
+    618,
+    322
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    378,
+    622
+   ],
+   "to": [
+    366,
+    652
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    366,
+    652
+   ],
+   "to": [
+    372,
+    684
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    372,
+    684
+   ],
+   "to": [
+    360,
+    712
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    640,
+    662
+   ],
+   "to": [
+    652,
+    692
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    652,
+    692
+   ],
+   "to": [
+    650,
+    718
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "a trail worn through the Hollins",
+   "from": [
+    650,
+    718
+   ],
+   "to": [
+    660,
+    734
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "the track on to the Hob Stones",
+   "from": [
+    470,
+    300
+   ],
+   "to": [
+    466,
+    272
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "the track on to the Hob Stones",
+   "from": [
+    466,
+    272
+   ],
+   "to": [
+    470,
+    246
+   ],
+   "width": 1.5,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "the path along the river to the head of the Spout",
+   "from": [
+    690,
+    538
+   ],
+   "to": [
+    730,
+    530
+   ],
+   "width": 1.8,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "the path along the river to the head of the Spout",
+   "from": [
+    730,
+    530
+   ],
+   "to": [
+    760,
+    532
+   ],
+   "width": 1.8,
+   "mat": "path_dirt"
+  },
+  {
+   "year": -150,
+   "event": "path",
+   "cause": "the path along the river to the head of the Spout",
+   "from": [
+    760,
+    532
+   ],
+   "to": [
+    780,
+    536
+   ],
+   "width": 1.8,
+   "mat": "path_dirt"
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the village on the knoll, named for the low hill above the Hem",
+   "name": "Hemlow",
+   "kind": "village",
+   "at": "knap",
+   "radius": 120
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the small green the market cross stands on",
+   "name": "The Green",
+   "kind": "green",
+   "at": "green",
+   "radius": 40
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the knoll of harder stone the river bends round",
+   "name": "Hemlow Knap",
+   "kind": "hill",
+   "at": "knap",
+   "radius": 190
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the shallow lake the Hem rises in",
+   "name": "Hemmere",
+   "kind": "mere",
+   "at": "mere",
+   "radius": 150
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the wet peat round the mere, and the lights over it",
+   "name": "The Wisp Moss",
+   "kind": "bog",
+   "at": [
+    255,
+    500
+   ],
+   "radius": 110
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the ring in its clearing in the north wood",
+   "name": "The Hob Stones",
+   "kind": "stone ring",
+   "at": "hob",
+   "radius": 70
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "where the Hem goes over the Edge in one drop",
+   "name": "Lantern Spout",
+   "kind": "waterfall",
+   "at": "lip",
+   "radius": 70
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the long limestone scarp the upland ends in",
+   "name": "Hemlow Edge",
+   "kind": "scarp",
+   "at": [
+    788,
+    560
+   ],
+   "radius": 150
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "where the old road crossed the Hem below the mill",
+   "name": "The Ford",
+   "kind": "ford",
+   "at": "ford",
+   "radius": 45
+  },
+  {
+   "year": -220,
+   "event": "sign",
+   "cause": "the parish set a stone where the lane leaves the green",
+   "at": [
+    498,
+    480
+   ],
+   "text": [
+    "HEMLOW"
+   ],
+   "style": "carved_stone",
+   "bearing": 180
+  },
+  {
+   "year": -180,
+   "event": "sign",
+   "cause": "the inn hung its name at the lane's turning",
+   "at": [
+    508,
+    536
+   ],
+   "text": [
+    "THE HOB",
+    "AND LANTERN"
+   ],
+   "style": "painted_board",
+   "bearing": 290,
+   "age": 30
+  },
+  {
+   "year": -300,
+   "event": "sign",
+   "cause": "a bound stone of the abbey's land, cut when the barn was built",
+   "at": [
+    540,
+    600
+   ],
+   "text": [
+    "ABBEY",
+    "LAND"
+   ],
+   "style": "carved_stone",
+   "bearing": 20
+  },
+  {
+   "year": -120,
+   "event": "sign",
+   "cause": "the miller's board on the bridge",
+   "at": [
+    524,
+    584
+   ],
+   "text": [
+    "MILL"
+   ],
+   "style": "painted_board",
+   "bearing": 0,
+   "age": 40
+  },
+  {
+   "year": -60,
+   "event": "sign",
+   "cause": "a board at the head of the path down the Edge",
+   "at": [
+    778,
+    548
+   ],
+   "text": [
+    "LANTERN",
+    "SPOUT"
+   ],
+   "style": "painted_board",
+   "bearing": 250,
+   "age": 20
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "redwood_needles",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Redwood foliage: flat dark sprays.",
+  "id": 201,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [50, 76, 40],
+    "alt": [42, 64, 34],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [58, 84, 46], "alt": [50, 74, 40]}
+  }
+}

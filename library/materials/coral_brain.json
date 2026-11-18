@@ -1,0 +1,15 @@
+{
+  "name": "coral_brain",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Brain coral: olive-green with paler meandering grooves.",
+  "smooth": false,
+  "texture": {
+    "pattern": "ripples",
+    "base": [138, 146, 92],
+    "alt": [104, 114, 70],
+    "scale": 3,
+    "contrast": 1.2,
+    "calm": {"base": [144, 152, 98], "alt": [110, 120, 76]}
+  }
+}

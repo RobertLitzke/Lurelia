@@ -1,0 +1,19 @@
+{
+  "name": "bigleaf_maple",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "The Northwest's big maple: green, broad, mossy-limbed. Street and yard tree.",
+  "form": "branching",
+  "height": [11, 17],
+  "trunk_radius": [0.5, 0.7],
+  "buttress": 0.55,
+  "crown_radius": [3.5, 5.0],
+  "bark": "bark",
+  "leaf": "leaves",
+  "curve": "sweep",
+  "canopy": "lobes",
+  "leader": 0.5,
+  "fill": 0.6,
+  "max_slope": 0.6,
+  "autumn": "maple_red"
+}

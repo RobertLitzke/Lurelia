@@ -1,0 +1,17 @@
+{
+  "name": "beech_leaves",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Fresh bright-green beech leaves in flat sprays.",
+  "id": 71,
+  "smooth": false,
+  "tint": "leaves",
+  "texture": {
+    "pattern": "blotch",
+    "base": [92, 136, 52],
+    "alt": [110, 150, 60],
+    "scale": 7,
+    "contrast": 1.0,
+    "calm": {"base": [96, 136, 56], "alt": [112, 148, 62]}
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "splash_mist",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "A low burst of spray over a splash.",
+  "shape": "puff",
+  "count": [5, 8],
+  "speed": [0.8, 1.8],
+  "cone_deg": 70,
+  "life": [0.5, 0.9],
+  "size": [0.15, 0.55],
+  "gravity": 0.4,
+  "drag": 2.8,
+  "wind": 0.4,
+  "color": [235, 242, 245],
+  "alpha": 0.3,
+  "near_fade": 0.8
+}

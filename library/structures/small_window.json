@@ -1,0 +1,13 @@
+{
+  "name": "small_window",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A small arch or window: carves a 9 m hole through the rock of a fin. Long axis local X.",
+  "size": [48, 64, 48],
+  "anchor": [24, 0, 24],
+  "level": false,
+  "decays": false,
+  "tags": ["natural", "arch"],
+  "slots": {},
+  "ops": [{"op": "ellipsoid", "centre": [24, 30, 24], "radius": [18, 26, 30], "mat": "carve"}]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "trout",
+  "version": 2,
+  "introduced_by": "redrock",
+  "notes": "Rainbow trout stocked in the Redrock reservoir: olive back, pale sides, in loose groups of three to six, and quicker to jump than herring.",
+  "colors": {"herring": [110, 100, 66], "silver": [210, 180, 140], "fin": [110, 100, 66]},
+  "morphs": [
+    {"name": "rainbow", "weight": 28, "notes": "The rainbow trout."},
+    {
+      "name": "golden",
+      "weight": 1,
+      "shades": 2,
+      "notes": "The golden morph, bright as a coin in clear water: the one fish you can pick out from the bank. One trout in about thirty.",
+      "colors": {"herring": [[206, 160, 48], [222, 176, 58]], "silver": [[238, 208, 114], [248, 220, 126]]}
+    }
+  ],
+  "behaviour": {"walk_speed": 1.0, "flee_speed": 4.0, "leap": 1.2, "group": {"size": [3, 6], "spacing": 1.0, "range": 5}},
+  "like": "herring",
+  "scale": 1.5
+}

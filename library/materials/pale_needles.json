@@ -1,0 +1,15 @@
+{
+  "name": "pale_needles",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 39,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [92, 118, 112],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [132, 114, 156],
+    "calm": {"base": [104, 126, 120], "alt": [136, 120, 164]}
+  }
+}

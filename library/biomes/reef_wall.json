@@ -1,0 +1,32 @@
+{
+  "name": "reef_wall",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "The drop-off: a near-sheer wall of reef limestone falling into the blue, fans and sponges standing out from it, plate coral shelving its face.",
+  "priority": 20,
+  "rules": {"underwater": true, "region": "reef_wall"},
+  "surface": "reef_lime",
+  "subsurface": "reef_lime",
+  "rock": "reef_lime",
+  "fringe": 0,
+  "map_color": [120, 90, 140],
+  "plants": [
+    {"plant": "sea_fan", "density": 0.04, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "sea_fan_red", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "tube_sponge", "density": 0.025, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "barrel_sponge", "density": 0.012, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "plate_coral", "density": 0.015, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "wall_plate_coral", "density": 0.55, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "anthias", "count": 140},
+    {"creature": "reef_shark", "count": 3},
+    {"creature": "barracuda", "count": 7},
+    {"creature": "jack", "count": 35},
+    {"creature": "sardine", "count": 140},
+    {"creature": "manta_ray", "count": 4},
+    {"creature": "moon_jelly", "count": 21},
+    {"creature": "whale_shark", "count": 1},
+    {"creature": "reef_manta", "count": 4}
+  ]
+}

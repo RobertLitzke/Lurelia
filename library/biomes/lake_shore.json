@@ -1,0 +1,26 @@
+{
+  "name": "lake_shore",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "The ground the falling lake left: cracked mud and sand, tamarisk taking hold.",
+  "priority": 7,
+  "rules": {"coast": [0, 16], "elev": [0, 5]},
+  "surface": "lake_mud",
+  "subsurface": "shore_sand",
+  "map_color": [176, 168, 146],
+  "plants": [
+    {
+      "plant": "tamarisk",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.45, "max": 0.6}}
+    }
+  ],
+  "creatures": [
+    {"creature": "heron", "count": 1},
+    {"creature": "goose", "count": 6},
+    {"creature": "mallard", "count": 4},
+    {"creature": "meadowhawk", "count": 3},
+    {"creature": "frog", "count": 5}
+  ],
+  "mist": 0.55
+}

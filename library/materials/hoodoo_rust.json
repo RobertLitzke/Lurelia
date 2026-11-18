@@ -1,0 +1,16 @@
+{
+  "name": "hoodoo_rust",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 53,
+  "smooth": false,
+  "texture": {
+    "pattern": "strata",
+    "base": [196, 112, 72],
+    "scale": 3,
+    "contrast": 1.0,
+    "alt": [214, 136, 92],
+    "calm": {"base": [214, 120, 76], "alt": [226, 146, 98]}
+  },
+  "round": true
+}

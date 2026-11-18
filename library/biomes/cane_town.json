@@ -1,0 +1,19 @@
+{
+  "name": "cane_town",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Mire, the cane town: mown yards between the cottages, a few live oaks hung with moss, dirt lanes.",
+  "priority": 9,
+  "rules": {"region": "mire"},
+  "surface": "meadow_grass",
+  "subsurface": "silt",
+  "fringe": 0,
+  "map_color": [200, 180, 140],
+  "plants": [
+    {"plant": "live_oak", "density": 0.0008, "placement": {"verb": "lone", "params": {"spacing": 30}}},
+    {"plant": "spanish_moss", "density": 0.8, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "cabbage_palm", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [{"creature": "crow", "count": 4}, {"creature": "starling", "count": 20}],
+  "collectibles": [{"item": "settler_coin", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}]
+}

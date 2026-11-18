@@ -1,0 +1,17 @@
+{
+  "name": "redwood",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "conifer: Coast redwood: the tallest trees in the library, a fluted red trunk bare for half its height and a narrow dark crown. Groves in the wet lowland valleys. The foliage hangs; the crown is a narrow spire for its height.",
+  "form": "conifer",
+  "height": [34, 46],
+  "trunk_radius": [0.9, 1.25],
+  "buttress": 0.9,
+  "crown_radius": [3.6, 4.6],
+  "bark": "redwood_bark",
+  "leaf": "redwood_needles",
+  "max_slope": 0.55,
+  "crown_base": 0.48,
+  "sweep": "droop",
+  "taper": 1.15
+}

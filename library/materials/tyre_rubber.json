@@ -1,0 +1,16 @@
+{
+  "name": "tyre_rubber",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Old tyres, the course markers.",
+  "id": 139,
+  "smooth": false,
+  "texture": {
+    "pattern": "rings",
+    "base": [34, 34, 36],
+    "alt": [52, 52, 54],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [44, 44, 46], "alt": [58, 58, 60]}
+  }
+}

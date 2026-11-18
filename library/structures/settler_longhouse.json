@@ -1,0 +1,26 @@
+{
+  "name": "settler_longhouse",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Long stone house with a slate roof and two doors: a family house and its byre.",
+  "size": [40, 25, 24],
+  "anchor": [20, 0, 0],
+  "foundation": 6,
+  "tags": ["settler", "house"],
+  "slots": {"wall": "fieldstone", "floor": "weathered_planks", "timber": "timber_frame", "roof": "slate"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [40, 1, 24], "mat": "floor", "part": "floor"},
+    {"op": "walls", "from": [0, 1, 0], "to": [40, 10, 24], "mat": "wall", "thick": 2, "part": "wall"},
+    {"op": "box", "from": [8, 1, 0], "to": [12, 8, 2], "mat": "air"},
+    {"op": "box", "from": [27, 1, 0], "to": [32, 9, 2], "mat": "air"},
+    {"op": "box", "from": [16, 5, 0], "to": [19, 8, 2], "mat": "air"},
+    {"op": "box", "from": [3, 5, 0], "to": [5, 8, 2], "mat": "air"},
+    {"op": "box", "from": [35, 5, 0], "to": [37, 8, 2], "mat": "air"},
+    {"op": "box", "from": [0, 5, 10], "to": [2, 8, 14], "mat": "air"},
+    {"op": "box", "from": [0, 10, 0], "to": [40, 11, 24], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [2, 10, 2], "to": [38, 11, 22], "mat": "air"},
+    {"op": "box", "from": [20, 1, 2], "to": [21, 10, 22], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [20, 1, 10], "to": [21, 8, 14], "mat": "air"},
+    {"op": "gable", "from": [0, 11, 0], "to": [40, 11, 24], "axis": "x", "mat": "roof", "rise": 1, "part": "roof"}
+  ]
+}

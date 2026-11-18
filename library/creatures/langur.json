@@ -1,0 +1,16 @@
+{
+  "name": "langur",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Langur: pale silver-grey with a black face and hands, and a tail longer than it is, carried in a high loop.",
+  "colors": {"coat": [182, 178, 166], "belly": [222, 218, 206], "face": [36, 28, 24], "dark": [36, 28, 24]},
+  "behaviour": {"wary": 12, "walk_speed": 1.3},
+  "like": "monkey",
+  "scale": 1.0,
+  "extra_ops": [
+    {"op": "ellipsoid", "centre": [16, 15, 25], "radius": [1.1, 1.1, 3.4], "mat": "coat", "part": "tail"},
+    {"op": "ellipsoid", "centre": [16, 17, 29], "radius": [1.1, 3.2, 1.2], "mat": "coat", "part": "tail"},
+    {"op": "box", "from": [13, 0, 11], "to": [15, 3, 13], "mat": "face", "part": "leg_fl"},
+    {"op": "box", "from": [17, 0, 11], "to": [19, 3, 13], "mat": "face", "part": "leg_fr"}
+  ]
+}

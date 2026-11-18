@@ -1,0 +1,15 @@
+{
+  "name": "ash",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 20,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [178, 176, 170],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [206, 204, 198],
+    "calm": {"base": [204, 198, 188]}
+  }
+}

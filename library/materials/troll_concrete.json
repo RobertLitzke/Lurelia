@@ -1,0 +1,16 @@
+{
+  "name": "troll_concrete",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Rough grey ferro-concrete, the troll's skin.",
+  "id": 170,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [108, 106, 102],
+    "alt": [86, 86, 84],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [122, 120, 116], "alt": [100, 100, 98]}
+  }
+}

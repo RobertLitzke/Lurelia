@@ -1,0 +1,36 @@
+/target
+/saves
+/shots
+/photos
+/screenshots
+# Review pages from --catalog (GUIDE.md "The catalogue").
+/catalog/
+__pycache__/
+
+# Worktrees and other working state the editor keeps beside the project.
+/.claude/worktrees/
+
+# Design notes and working history, kept locally.
+/notes/
+
+# Tools that read other people's data, and what they produce
+# (third_party/README.md).
+/third_party/
+# Arena map scripts; they finish through the git-ignored importer above.
+/tools/arena/
+/library/structures/ut99_*.json
+
+# Worlds and tools kept out of the published game (local/README.md): the city
+# worlds built from map data, their importer, the original noise island.
+/local/
+
+# Screenshots and previews are throwaway; the sprite art is content.
+*.png
+*.jpg
+!docs/*.png
+!library/sprites/*.png
+!worlds/*/pictures/*.png
+!library/logo/*.png
+!library/fonts/*.png
+# Build reports the arena tool writes beside its worlds.
+/worlds/*/report.txt

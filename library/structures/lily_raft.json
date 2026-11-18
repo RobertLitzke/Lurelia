@@ -1,0 +1,33 @@
+{
+  "name": "lily_raft",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "A raft of giant water lilies on the surface of a cenote: seven pads 3.5-5.5 m across with pale flowers, close enough to step between. Base sea; the pads float at sea level.",
+  "size": [60, 8, 60],
+  "anchor": [30, 0, 30],
+  "foundation": 0,
+  "level": false,
+  "decays": false,
+  "base": "sea",
+  "tags": ["cenote"],
+  "ops": [
+    {"op": "cylinder", "base": [14, 4, 14], "radius": 9, "height": 1, "mat": "lily_pad"},
+    {"op": "box", "from": [14, 4, 14], "to": [24, 5, 15], "mat": "air"},
+    {"op": "cylinder", "base": [31, 4, 11], "radius": 7, "height": 1, "mat": "lily_pad"},
+    {"op": "box", "from": [31, 4, 11], "to": [39, 5, 12], "mat": "air"},
+    {"op": "cylinder", "base": [44, 4, 20], "radius": 10, "height": 1, "mat": "lily_pad"},
+    {"op": "box", "from": [44, 4, 20], "to": [55, 5, 21], "mat": "air"},
+    {"op": "cylinder", "base": [22, 4, 32], "radius": 11, "height": 1, "mat": "lily_pad"},
+    {"op": "box", "from": [22, 4, 32], "to": [34, 5, 33], "mat": "air"},
+    {"op": "cylinder", "base": [42, 4, 41], "radius": 8, "height": 1, "mat": "lily_pad"},
+    {"op": "box", "from": [42, 4, 41], "to": [51, 5, 42], "mat": "air"},
+    {"op": "cylinder", "base": [12, 4, 46], "radius": 7, "height": 1, "mat": "lily_pad"},
+    {"op": "box", "from": [12, 4, 46], "to": [20, 5, 47], "mat": "air"},
+    {"op": "cylinder", "base": [30, 4, 51], "radius": 9, "height": 1, "mat": "lily_pad"},
+    {"op": "box", "from": [30, 4, 51], "to": [40, 5, 52], "mat": "air"},
+    {"op": "ellipsoid", "centre": [11, 5.5, 17], "radius": [1.2, 1.0, 1.2], "mat": "lily_flower"},
+    {"op": "ellipsoid", "centre": [41, 5.5, 23], "radius": [1.2, 1.0, 1.2], "mat": "lily_flower"},
+    {"op": "ellipsoid", "centre": [40, 5.5, 43], "radius": [1.2, 1.0, 1.2], "mat": "lily_flower"},
+    {"op": "ellipsoid", "centre": [27, 5.5, 54], "radius": [1.2, 1.0, 1.2], "mat": "lily_flower"}
+  ]
+}

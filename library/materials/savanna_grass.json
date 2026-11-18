@@ -1,0 +1,24 @@
+{
+  "name": "savanna_grass",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Savanna grass: tall tussock grass gone gold in the dry, standing over pale sand that shows through between the tufts.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [150, 132, 84],
+    "alt": [138, 120, 76],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [170, 150, 102], "alt": [158, 138, 94]}
+  },
+  "top": {
+    "pattern": "noise",
+    "base": [162, 142, 92],
+    "alt": [150, 132, 84],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [182, 160, 110], "alt": [170, 150, 102]}
+  },
+  "grass": {"sparse": 0.14, "dense": 0.9, "short": 3.4}
+}

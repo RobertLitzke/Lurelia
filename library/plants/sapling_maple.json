@@ -1,0 +1,14 @@
+{
+  "name": "sapling_maple",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A young broadleaf, head high to twice that, waiting in the shade for a gap in the canopy.",
+  "form": "birch",
+  "height": [2.4, 4.2],
+  "trunk_radius": [0.05, 0.08],
+  "crown_radius": [0.6, 0.95],
+  "bark": "bark",
+  "leaf": "leaves",
+  "max_slope": 0.8,
+  "autumn": "leaves_autumn"
+}

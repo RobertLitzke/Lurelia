@@ -1,0 +1,15 @@
+{
+  "name": "oyster_shell",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Old oyster shell, grey-white and broken: the chenier's beaches and the shell road.",
+  "smooth": true,
+  "texture": {
+    "pattern": "gravel",
+    "base": [196, 190, 178],
+    "alt": [158, 152, 142],
+    "scale": 7,
+    "contrast": 0.8,
+    "calm": {"base": [192, 186, 174], "alt": [164, 158, 148]}
+  }
+}

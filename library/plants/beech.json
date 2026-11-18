@@ -1,0 +1,20 @@
+{
+  "name": "beech",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A tall beech of the Hollins and the Edge hangers: smooth grey trunk, a high dome of fresh green.",
+  "form": "branching",
+  "height": [17, 24],
+  "trunk_radius": [0.6, 0.85],
+  "buttress": 0.45,
+  "crown_radius": [5.0, 6.5],
+  "bark": "beech_bark",
+  "leaf": "beech_leaves",
+  "curve": "sweep",
+  "canopy": "vase",
+  "leader": 0.55,
+  "fill": 0.7,
+  "spread": 1.0,
+  "max_slope": 1.2,
+  "autumn": "leaves_autumn"
+}

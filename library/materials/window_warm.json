@@ -1,0 +1,17 @@
+{
+  "name": "window_warm",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "A window with a lamp behind it: dark glass by day, warm amber from dusk.",
+  "smooth": false,
+  "glow": 1.2,
+  "texture": {
+    "pattern": "glass",
+    "base": [238, 176, 92],
+    "alt": [252, 206, 128],
+    "scale": 4,
+    "contrast": 0.6,
+    "calm": {"base": [246, 184, 100], "alt": [255, 214, 136]}
+  },
+  "night_glow": true
+}

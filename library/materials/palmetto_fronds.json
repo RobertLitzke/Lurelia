@@ -1,0 +1,15 @@
+{
+  "name": "palmetto_fronds",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Saw palmetto fans: stiff grey-green blades (drawn as sprites).",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [96, 124, 66],
+    "alt": [114, 138, 74],
+    "scale": 7,
+    "contrast": 0.8,
+    "calm": {"base": [96, 124, 66], "alt": [114, 138, 74]}
+  }
+}

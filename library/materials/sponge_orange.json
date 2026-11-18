@@ -1,0 +1,15 @@
+{
+  "name": "sponge_orange",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Barrel sponge: burnt orange, pocked.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [222, 122, 54],
+    "alt": [196, 100, 42],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [228, 128, 60], "alt": [202, 106, 48]}
+  }
+}

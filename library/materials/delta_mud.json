@@ -1,0 +1,15 @@
+{
+  "name": "delta_mud",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Soft grey-brown delta mud: the bed of the open water and the mudflats, smooth and wet.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [104, 96, 78],
+    "alt": [114, 106, 86],
+    "scale": 3,
+    "contrast": 0.35,
+    "calm": {"base": [108, 100, 82], "alt": [116, 108, 88]}
+  }
+}

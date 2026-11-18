@@ -1,0 +1,40 @@
+{
+  "name": "sidearm",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "The gun you are left with: a stubby bullpup with its magazine along the top, accurate enough to be worth aiming and light enough that you go looking for something else. It rewards a head shot by half again. The right button fires short bursts of three at the full cyclic rate with a beat between them, tight enough to land all three on a man at middle range and quick enough to matter up close.",
+  "display": "SIDEARM",
+  "slot": 2,
+  "ammo_max": 180,
+  "ammo_start": 180,
+  "mag": 60,
+  "reload_s": 1.45,
+  "fire": {
+    "kind": "hitscan",
+    "rpm": 330.0,
+    "damage": 13.5,
+    "spread_deg": 0.55,
+    "range": 200.0,
+    "falloff": 0.72,
+    "head_mult": 1.5,
+    "kick": 0.34,
+    "tracer": [1.0, 0.93, 0.68],
+    "tracer_s": 0.04
+  },
+  "alt": {
+    "kind": "hitscan",
+    "rpm": 900.0,
+    "burst": 3,
+    "burst_gap_s": 0.28,
+    "damage": 12.0,
+    "spread_deg": 1.1,
+    "range": 170.0,
+    "falloff": 0.62,
+    "head_mult": 1.5,
+    "kick": 0.3,
+    "tracer": [1.0, 0.9, 0.62],
+    "tracer_s": 0.04
+  },
+  "view": "sidearm",
+  "tint": [0.38, 0.4, 0.43]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "fireweed",
+  "version": 2,
+  "introduced_by": "glassfall",
+  "notes": "First colour back after a burn: clumps of magenta spikes drawn as sprites.",
+  "form": "herb",
+  "height": [1.0, 1.6],
+  "crown_radius": [0.5, 0.8],
+  "bark": "dead_wood",
+  "leaf": "fireweed",
+  "affords": ["nectar"]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "meadow_grass",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 44,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [86, 122, 56],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [102, 134, 62],
+    "calm": {"base": [100, 126, 62], "alt": [112, 134, 66]}
+  }
+}

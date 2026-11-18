@@ -1,0 +1,16 @@
+{
+  "name": "acacia_leaf",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Acacia leaf: fine grey-green pinnate leaf, thin enough to see sky through, massed into a flat top.",
+  "smooth": false,
+  "foliage": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [116, 130, 98],
+    "alt": [100, 114, 86],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [126, 140, 108], "alt": [110, 124, 96]}
+  }
+}

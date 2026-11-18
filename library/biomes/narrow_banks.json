@@ -1,0 +1,50 @@
+{
+  "name": "narrow_banks",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The green line of the Narrow: willow and alder leaning downwind, reedmace in the slack water, long meadow grass, and everything in the country coming down to drink.",
+  "priority": 14,
+  "rules": {"river": [0, 26]},
+  "surface": "meadow_grass",
+  "subsurface": "dirt",
+  "rock": null,
+  "map_color": [96, 150, 76],
+  "plants": [
+    {"plant": "willow", "density": 0.012, "placement": {"verb": "riparian", "params": {"width": 16}}},
+    {"plant": "alder", "density": 0.01, "placement": {"verb": "riparian", "params": {"width": 20}}},
+    {"plant": "birch", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 24}}},
+    {"plant": "reedmace", "density": 0.05, "placement": {"verb": "riparian", "params": {"width": 7}}},
+    {
+      "plant": "feather_tussock",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.2, "max": 1.0}}
+    },
+    {"plant": "tree_moss", "density": 0.2, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [{"structure": "mossy_log", "density": 0.0004}],
+  "creatures": [
+    {"creature": "przewalski_horse", "count": 2},
+    {"creature": "mammoth", "count": 2},
+    {"creature": "deer", "count": 5},
+    {"creature": "boar", "count": 3},
+    {"creature": "otter", "count": 2},
+    {"creature": "heron", "count": 3},
+    {"creature": "goose", "count": 8},
+    {"creature": "mallard", "count": 8},
+    {"creature": "swan", "count": 2},
+    {"creature": "kingfisher", "count": 2},
+    {"creature": "dragonfly", "count": 10},
+    {"creature": "meadowhawk", "count": 6},
+    {"creature": "frog", "count": 6},
+    {"creature": "steppe_wolf", "count": 2},
+    {"creature": "corpse_candle", "count": 2},
+    {"creature": "starling", "count": 14},
+    {"creature": "sparrow", "count": 12},
+    {"creature": "bumblebee", "count": 5},
+    {"creature": "bat", "count": 6}
+  ],
+  "collectibles": [
+    {"item": "flint_blade", "density": 0.0003, "placement": {"verb": "scatter", "params": {}}},
+    {"item": "pottery_shard", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}
+  ]
+}

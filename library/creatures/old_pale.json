@@ -1,0 +1,10 @@
+{
+  "name": "old_pale",
+  "version": 2,
+  "introduced_by": "lowmouth",
+  "notes": "Old Pale: a white alligator half as long again as any other, seen now and then in the swamp and never twice in the same place.",
+  "colors": {"hide": [226, 222, 206], "belly": [240, 236, 226], "ridge": [204, 198, 182], "eye": [190, 60, 50, 0.4]},
+  "like": "alligator",
+  "rarity": 0.03,
+  "scale": 1.6
+}

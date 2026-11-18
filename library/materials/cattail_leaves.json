@@ -1,0 +1,15 @@
+{
+  "name": "cattail_leaves",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Cattail leaves: tall dark green straps standing out of the shallows (drawn as sprites).",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [70, 104, 50],
+    "alt": [86, 116, 58],
+    "scale": 7,
+    "contrast": 0.6,
+    "calm": {"base": [70, 104, 50], "alt": [86, 116, 58]}
+  }
+}

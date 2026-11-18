@@ -1,0 +1,15 @@
+{
+  "name": "sinter_stain",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Sinter stained by the mats of algae and bacteria in the run-off: rust orange shading to olive where the water cools.",
+  "smooth": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [176, 104, 52],
+    "alt": [118, 116, 62],
+    "scale": 5,
+    "contrast": 0.8,
+    "calm": {"base": [184, 116, 64], "alt": [128, 124, 72]}
+  }
+}

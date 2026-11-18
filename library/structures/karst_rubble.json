@@ -1,0 +1,18 @@
+{
+  "name": "karst_rubble",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "A few blocks of limestone fallen from a tower, half sunk in the sand. Slot stone: the tower's rock.",
+  "size": [31, 14, 27],
+  "anchor": [15, 0, 13],
+  "foundation": 0,
+  "level": false,
+  "decays": false,
+  "tags": ["karst", "rubble"],
+  "slots": {"stone": "karst_limestone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [10.2, 5.1, 10.2], "radius": [7.6, 6.0, 6.8], "mat": "stone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [20.4, 3.4, 15.3], "radius": [5.1, 4.2, 5.1], "mat": "stone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [6.8, 2.5, 20.4], "radius": [4.2, 3.4, 3.4], "mat": "stone", "part": "stone"}
+  ]
+}

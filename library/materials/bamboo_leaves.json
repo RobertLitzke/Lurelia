@@ -1,0 +1,16 @@
+{
+  "name": "bamboo_leaves",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Narrow yellow-green bamboo leaves in feathery sprays.",
+  "id": 236,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [88, 124, 52],
+    "alt": [112, 142, 60],
+    "scale": 9,
+    "contrast": 1.0,
+    "calm": {"base": [92, 124, 56], "alt": [110, 138, 62]}
+  }
+}

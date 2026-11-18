@@ -1,0 +1,31 @@
+{
+  "name": "high_meadow",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Grass parks on the plateau where the soil stays wet in spring: gold grass, aspen and young pines at the edges.",
+  "priority": 5,
+  "rules": {"elev": [78, 200], "moist": [0.66, 1]},
+  "surface": "prairie_grass",
+  "subsurface": "dirt",
+  "map_color": [196, 172, 96],
+  "plants": [
+    {"plant": "aspen", "density": 0.03, "placement": {"verb": "edge", "params": {"width": 18, "inner": 0.0}}},
+    {
+      "plant": "young_ponderosa",
+      "density": 0.012,
+      "placement": {"verb": "edge", "params": {"width": 26, "inner": 0.01}}
+    },
+    {"plant": "ponderosa", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 60}}}
+  ],
+  "creatures": [
+    {"creature": "deer", "count": 6},
+    {"creature": "pronghorn", "count": 4},
+    {"creature": "elk", "count": 3},
+    {"creature": "horse", "count": 5},
+    {"creature": "sandhill_crane", "count": 3},
+    {"creature": "northern_flicker", "count": 1},
+    {"creature": "bison", "count": 5},
+    {"creature": "sheep", "count": 6},
+    {"creature": "wolf", "count": 1}
+  ]
+}

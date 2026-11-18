@@ -1,0 +1,13 @@
+{
+  "name": "broken_snag",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "The lower trunk of a dead tree snapped off two to four metres up, bark still on, leaning a little.",
+  "form": "snag",
+  "height": [2.0, 4.0],
+  "trunk_radius": [0.22, 0.36],
+  "crown_radius": [0.6, 1.0],
+  "bark": "bark",
+  "max_slope": 1.0,
+  "lean": 0.15
+}

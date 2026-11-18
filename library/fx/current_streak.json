@@ -1,0 +1,18 @@
+{
+  "name": "current_streak",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Specks of drift carried fast along a current under the sea: thin pale streaks that give the stream away.",
+  "shape": "streak",
+  "count": [1, 2],
+  "speed": [3.0, 5.0],
+  "cone_deg": 6,
+  "life": [1.2, 2.0],
+  "size": [0.012, 0.006],
+  "gravity": 0.0,
+  "drag": 0.0,
+  "wind": 0.0,
+  "color": [210, 236, 240],
+  "alpha": 0.45,
+  "near_fade": 0.3
+}

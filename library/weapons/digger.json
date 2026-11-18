@@ -1,0 +1,35 @@
+{
+  "name": "digger",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "A skeleton-frame caulk gun off a shelf in the works, with the cartridge swapped for something that goes off and a spade welded under the nozzle. No bore, no rounds, nothing to run out of: you squeeze the handle and about three metres in front of you ceases to be a problem. Because it takes none of its own blast you can put the nozzle against the floor and ride the shove onto the gantry, which is the only way up there that costs you no health. The spade bites whatever the nozzle is against while the handle is squeezed, at the rate a shovel works out in the world, so a body down a borer hole can cut its own way out rather than be killed in it. The right button is a shorter, weaker squeeze that throws whoever it catches much further: a shove for getting somebody off a ledge rather than for killing them.",
+  "display": "DIGGER",
+  "slot": 1,
+  "ammo_max": 0,
+  "ammo_start": 0,
+  "fire": {
+    "kind": "hitscan",
+    "rpm": 84.0,
+    "damage": 14.0,
+    "range": 3.4,
+    "falloff": 1.0,
+    "kick": 1.1,
+    "splash": {"damage": 64.0, "radius": 2.1, "push": 12.0, "self_damage": 0.0, "self_push": 1.0},
+    "tracer": [1.0, 0.82, 0.55],
+    "tracer_s": 0.05
+  },
+  "alt": {
+    "kind": "hitscan",
+    "rpm": 96.0,
+    "damage": 8.0,
+    "range": 2.4,
+    "falloff": 1.0,
+    "kick": 0.6,
+    "splash": {"damage": 26.0, "radius": 2.8, "push": 21.0, "self_damage": 0.0, "self_push": 1.0},
+    "tracer": [1.0, 0.9, 0.7],
+    "tracer_s": 0.05
+  },
+  "dig": {"radius": 0.45, "rpm": 430.0, "range": 3.0},
+  "view": "digger",
+  "tint": [0.62, 0.6, 0.58]
+}

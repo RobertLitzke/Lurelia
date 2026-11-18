@@ -1,0 +1,22 @@
+{
+  "name": "cave_mouth",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A cave mouth in a chalk slope: carves an opening 4 m wide and 3 m high 16 m straight back into the hill, with fallen chalk blocks round the threshold. Place at the foot of a slope facing out (local -Z), on the line of a `passage` so the two meet.",
+  "size": [24, 16, 64],
+  "anchor": [12, 0, 2],
+  "foundation": 2,
+  "level": false,
+  "decays": false,
+  "tags": ["windbarrow", "cave"],
+  "slots": {"floor": "chalk_rubble", "stone": "chalk_white"},
+  "ops": [
+    {"op": "box", "from": [4, 1, 6], "to": [20, 13, 64], "mat": "carve"},
+    {"op": "box", "from": [6, 1, 6], "to": [18, 14, 64], "mat": "carve"},
+    {"op": "box", "from": [4, 0, 6], "to": [20, 1, 64], "mat": "floor", "part": "floor"},
+    {"op": "box", "from": [2, 0, 0], "to": [22, 1, 10], "mat": "floor", "part": "floor"},
+    {"op": "ellipsoid", "centre": [4, 1, 7], "radius": [3, 2, 3], "mat": "stone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [21, 1, 9], "radius": [2.4, 2, 2.4], "mat": "stone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [10, 0, 2], "radius": [3.4, 1.6, 2.6], "mat": "stone", "part": "stone"}
+  ]
+}

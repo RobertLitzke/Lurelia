@@ -1,0 +1,15 @@
+{
+  "name": "sawgrass_blades",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Sawgrass: tough tawny-green blades with toothed edges, in tussocks out of the water.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [132, 132, 76],
+    "alt": [150, 140, 86],
+    "scale": 7,
+    "contrast": 0.7,
+    "calm": {"base": [128, 132, 74], "alt": [146, 140, 84]}
+  }
+}

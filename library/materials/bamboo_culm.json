@@ -1,0 +1,17 @@
+{
+  "name": "bamboo_culm",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Golden bamboo culms with green nodes. Passable: you push between the stalks.",
+  "id": 234,
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [172, 150, 72],
+    "alt": [134, 136, 62],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [170, 150, 78], "alt": [138, 138, 66]}
+  }
+}

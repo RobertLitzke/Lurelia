@@ -1,0 +1,16 @@
+{
+  "name": "rock_moss",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Moss on stone: dark damp green in blotches with the grey stone showing between them.",
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [112, 110, 104],
+    "alt": [70, 102, 50],
+    "scale": 8,
+    "contrast": 1.0,
+    "calm": {"base": [122, 120, 114], "alt": [80, 112, 58]}
+  }
+}

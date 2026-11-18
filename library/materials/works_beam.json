@@ -1,0 +1,8 @@
+{
+  "name": "works_beam",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "Charcoal structural steel: columns, trusses, the lips of the catwalks.",
+  "smooth": false,
+  "texture": {"pattern": "flat", "base": [72, 76, 78], "scale": 1, "contrast": 1.0, "calm": {"base": [84, 88, 90]}}
+}

@@ -1,0 +1,26 @@
+{
+  "name": "tawny_owl",
+  "version": 2,
+  "introduced_by": "hemlow",
+  "notes": "Tawny owl: a round, rusty-brown wood owl with dark eyes, floating low between the trunks of the Hollins at dusk.",
+  "colors": {
+    "body": [150, 98, 60],
+    "head": [150, 98, 60],
+    "beak": [210, 180, 140],
+    "wing": [128, 96, 60],
+    "tail": [128, 96, 60],
+    "legs": [210, 180, 140]
+  },
+  "behaviour": {
+    "movement": "circle",
+    "fly_height": 5,
+    "walk_speed": 2.2,
+    "flee_speed": 5.5,
+    "wary": 9.0,
+    "flightiness": 0.6,
+    "active": "nocturnal",
+    "off_hours": 0.06
+  },
+  "like": "starling",
+  "scale": 1.7
+}

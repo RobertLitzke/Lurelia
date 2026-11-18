@@ -1,0 +1,15 @@
+{
+  "name": "golden_bamboo",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "bamboo: Golden bamboo of the gorges: dense clumps of thin culms 6-11 m tall that you push through (the culms are passable).",
+  "form": "bamboo",
+  "height": [6, 11],
+  "trunk_radius": [0.17, 0.19],
+  "crown_radius": [1.6, 2.6],
+  "bark": "bamboo_culm",
+  "leaf": "bamboo_leaves",
+  "max_slope": 1.0,
+  "stems": [10, 18],
+  "crown_base": 0.55
+}

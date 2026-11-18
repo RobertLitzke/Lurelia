@@ -1,0 +1,16 @@
+{
+  "name": "temple_wood",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Dark cedar of the temple's posts and beams, gone grey at the edges.",
+  "id": 245,
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [96, 70, 52],
+    "alt": [80, 58, 44],
+    "scale": 6,
+    "contrast": 0.8,
+    "calm": {"base": [104, 78, 60], "alt": [90, 68, 52]}
+  }
+}

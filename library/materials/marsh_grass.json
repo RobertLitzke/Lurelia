@@ -1,0 +1,16 @@
+{
+  "name": "marsh_grass",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Coarse tawny-green marsh grass on the levee toes, the chenier and the hammock edges (grass sprites grow on it).",
+  "smooth": true,
+  "tint": "meadow",
+  "texture": {
+    "pattern": "noise",
+    "base": [116, 126, 66],
+    "alt": [132, 134, 74],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [112, 128, 64], "alt": [128, 134, 72]}
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "skystone_mother",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "The main mass of the thing that fell, buried deep at the far end of the strewn field.",
+  "display": "the mother stone",
+  "voxel": 0.0833333,
+  "colors": {"glassblack": [30, 24, 44], "wing": [170, 120, 255, 1.8]},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 10, 16], "radius": [13, 10, 12], "mat": "glassblack"},
+    {"op": "ellipsoid", "centre": [20, 15, 13], "radius": [6, 5, 6], "mat": "glassblack"},
+    {"op": "ellipsoid", "centre": [16, 19, 16], "radius": [1.2, 1.2, 1.2], "mat": "wing"},
+    {"op": "ellipsoid", "centre": [8, 12, 20], "radius": [1.2, 1.2, 1.2], "mat": "wing"},
+    {"op": "ellipsoid", "centre": [24, 11, 12], "radius": [1.2, 1.2, 1.2], "mat": "wing"},
+    {"op": "ellipsoid", "centre": [14, 15, 26], "radius": [1.2, 1.2, 1.2], "mat": "wing"},
+    {"op": "ellipsoid", "centre": [20, 16, 8], "radius": [1.2, 1.2, 1.2], "mat": "wing"},
+    {"op": "ellipsoid", "centre": [10, 7, 9], "radius": [1.2, 1.2, 1.2], "mat": "wing"}
+  ]
+}

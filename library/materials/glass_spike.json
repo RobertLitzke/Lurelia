@@ -1,0 +1,15 @@
+{
+  "name": "glass_spike",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 48,
+  "smooth": false,
+  "texture": {
+    "pattern": "glass",
+    "base": [120, 96, 170],
+    "scale": 2,
+    "contrast": 1.0,
+    "alt": [236, 226, 255],
+    "calm": {"base": [140, 116, 190], "alt": [230, 220, 250]}
+  }
+}

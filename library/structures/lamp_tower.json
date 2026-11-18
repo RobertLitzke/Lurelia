@@ -1,0 +1,26 @@
+{
+  "name": "lamp_tower",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "The Lamp: a round stone tower on the highest kopje, built to carry a light, twelve metres of it still standing with the lantern floor gone and six window slots round the head. Its door faces the way you climb; the tower looks over the pans.",
+  "size": [29, 40, 29],
+  "anchor": [14, 0, 14],
+  "foundation": 10,
+  "level": true,
+  "decays": true,
+  "tags": ["ruin", "tower"],
+  "slots": {"stone": "fieldstone", "sill": "carved_limestone"},
+  "ops": [
+    {"op": "cylinder", "base": [14, 0, 14], "radius": 13, "height": 40, "mat": "stone", "part": "stone"},
+    {"op": "cylinder", "base": [14, 1, 14], "radius": 9, "height": 40, "mat": "air"},
+    {"op": "box", "from": [11, 1, 0], "to": [17, 12, 14], "mat": "air"},
+    {"op": "cylinder", "base": [14, 34, 14], "radius": 13, "height": 2, "mat": "sill", "part": "stone"},
+    {"op": "cylinder", "base": [14, 34, 14], "radius": 10, "height": 2, "mat": "air"},
+    {"op": "box", "from": [23, 20, 13], "to": [26, 25, 16], "mat": "air"},
+    {"op": "box", "from": [18, 20, 22], "to": [21, 25, 25], "mat": "air"},
+    {"op": "box", "from": [8, 20, 22], "to": [11, 25, 25], "mat": "air"},
+    {"op": "box", "from": [3, 20, 13], "to": [6, 25, 16], "mat": "air"},
+    {"op": "box", "from": [8, 20, 4], "to": [11, 25, 7], "mat": "air"},
+    {"op": "box", "from": [18, 20, 4], "to": [21, 25, 7], "mat": "air"}
+  ]
+}

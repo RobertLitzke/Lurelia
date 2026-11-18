@@ -1,0 +1,15 @@
+{
+  "name": "cypress_needles",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Bald cypress foliage: soft feathery sprays of needles, a light olive green.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [92, 114, 58],
+    "alt": [108, 128, 66],
+    "scale": 8,
+    "contrast": 0.9,
+    "calm": {"base": [90, 112, 56], "alt": [106, 126, 64]}
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "banyan",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "branching: Banyan: a huge spreading fig on a buttressed, fluted grey trunk; grows out of cliffs as cliff_banyan.",
+  "form": "branching",
+  "height": [15, 21],
+  "trunk_radius": [0.75, 1.0],
+  "buttress": 0.8,
+  "crown_radius": [3.6, 4.8],
+  "bark": "banyan_bark",
+  "leaf": "banyan_leaves",
+  "curve": "arch",
+  "canopy": "cloud",
+  "leader": 0.2,
+  "fill": 0.85,
+  "spread": 1.0,
+  "limb": 0.5,
+  "max_slope": 1.0
+}

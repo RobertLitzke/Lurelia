@@ -1,0 +1,16 @@
+{
+  "name": "lawn_grass",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Mown city lawn and verge grass.",
+  "id": 152,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [96, 128, 58],
+    "alt": [84, 116, 52],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [100, 132, 60], "alt": [90, 122, 56]}
+  }
+}

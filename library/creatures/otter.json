@@ -1,0 +1,55 @@
+{
+  "name": "otter",
+  "version": 2,
+  "introduced_by": "base",
+  "notes": "River otter: a long low swimmer with a thick tapering tail, up on the bank to eat and back in the water as soon as it sees you.",
+  "voxel": 0.032,
+  "half_w": 0.14,
+  "height": 0.34,
+  "colors": {"coat": [96, 72, 52], "belly": [168, 140, 104], "muzzle": [210, 196, 176], "dark": [36, 28, 24]},
+  "behaviour": {
+    "movement": "wade",
+    "walk_speed": 1.1,
+    "flee_speed": 5.0,
+    "wary": 12,
+    "flightiness": 1.0,
+    "flees_from": ["player"],
+    "swims": true,
+    "active": "crepuscular",
+    "off_hours": 0.3
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 5.5, 15], "radius": [3.2, 3.2, 7.6], "mat": "coat"},
+    {"op": "recolour_below", "y": 4, "from": "coat", "to": "belly"},
+    {"op": "box", "from": [14, 5, 6], "to": [18, 8, 9], "mat": "coat", "part": "neck"},
+    {"op": "ellipsoid", "centre": [16, 7, 5.5], "radius": [2.8, 2.4, 3.0], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [15, 5, 1], "to": [18, 7, 4], "mat": "muzzle", "part": "head"},
+    {"op": "set", "at": [16, 6, 1], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [14, 8, 3], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [18, 8, 3], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [13, 8, 6], "to": [14, 9, 7], "mat": "coat", "part": "ear_l"},
+    {"op": "box", "from": [18, 8, 6], "to": [19, 9, 7], "mat": "coat", "part": "ear_r"},
+    {"op": "box", "from": [13, 0, 9], "to": [15, 3, 12], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [17, 0, 9], "to": [19, 3, 12], "mat": "dark", "part": "leg_fr"},
+    {"op": "box", "from": [13, 0, 18], "to": [15, 3, 21], "mat": "dark", "part": "leg_hl"},
+    {"op": "box", "from": [17, 0, 18], "to": [19, 3, 21], "mat": "dark", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [16, 4.5, 24], "radius": [2.2, 2.0, 5.0], "mat": "coat", "part": "tail"},
+    {"op": "ellipsoid", "centre": [16, 4, 29], "radius": [1.2, 1.2, 1.6], "mat": "coat", "part": "tail"}
+  ],
+  "vary": {"size": 0.1, "shade": 0.08},
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16, 6, 8.5]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16, 6.5, 6.5]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [13.5, 8, 6.5], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [18.5, 8, 6.5], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14, 3, 10.5], "side": "l", "pair": 0},
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [18, 3, 10.5], "side": "r", "pair": 0},
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14, 3, 19.5], "side": "l", "pair": 1},
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [18, 3, 19.5], "side": "r", "pair": 1},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 5, 20.5]}
+    ]
+  }
+}

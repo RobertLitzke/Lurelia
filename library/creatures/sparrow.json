@@ -1,0 +1,32 @@
+{
+  "name": "sparrow",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A small brown sparrow that sits on top of shrubs and small trees, flits from one to the next in short bounding hops, drops to the ground to peck, and bursts away when you come close. Groups of two to six.",
+  "colors": {
+    "body": [140, 118, 96],
+    "head": [150, 98, 60],
+    "beak": [36, 28, 24],
+    "wing": [128, 96, 60],
+    "tail": [128, 96, 60],
+    "legs": [210, 180, 140],
+    "breast": [210, 196, 176],
+    "head_cap": [128, 96, 60]
+  },
+  "behaviour": {
+    "movement": "flit",
+    "walk_speed": 5,
+    "flee_speed": 9,
+    "wary": 6,
+    "flightiness": 1.7,
+    "fly_height": 0,
+    "flight": "bound",
+    "group": {"size": [2, 6], "spacing": 1.0, "range": 8, "alignment": 1.0, "cohesion": 1.0}
+  },
+  "like": "starling",
+  "scale": 0.85,
+  "extra_ops": [
+    {"op": "ellipsoid", "centre": [16, 7, 13.5], "radius": [1.9, 1.5, 3], "mat": "breast"},
+    {"op": "box", "from": [15, 10, 9], "to": [17, 11, 12], "mat": "head_cap", "part": "head"}
+  ]
+}

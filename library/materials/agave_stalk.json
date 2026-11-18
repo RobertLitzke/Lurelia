@@ -1,0 +1,16 @@
+{
+  "name": "agave_stalk",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Marker voxel at the heart of a flowering agave; the stalk and its yellow flower clusters are sprites (layers agave_stalk, agave_stalk_dry).",
+  "id": 143,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [92, 100, 60],
+    "alt": [120, 112, 56],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [100, 108, 66], "alt": [126, 118, 62]}
+  }
+}

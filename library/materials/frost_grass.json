@@ -1,0 +1,17 @@
+{
+  "name": "frost_grass",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The grass of a frost hollow: every blade rimed white and glittering, whatever the hour and whatever the season.",
+  "smooth": true,
+  "glints": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [196, 202, 202],
+    "alt": [176, 184, 186],
+    "scale": 6,
+    "contrast": 0.5,
+    "calm": {"base": [206, 212, 212], "alt": [186, 194, 196]}
+  },
+  "grass": {"sparse": 0.08, "dense": 0.5, "short": 1.6}
+}

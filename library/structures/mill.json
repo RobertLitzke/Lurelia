@@ -1,0 +1,28 @@
+{
+  "name": "mill",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Stone mill with an undershot wheel on its +X side; wants a site beside flowing water.",
+  "size": [38, 28, 26],
+  "anchor": [12, 0, 0],
+  "foundation": 8,
+  "tags": ["settler", "mill"],
+  "slots": {"wall": "fieldstone", "floor": "weathered_planks", "timber": "timber_frame", "roof": "slate", "iron": "rust_iron"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [24, 1, 26], "mat": "floor", "part": "floor"},
+    {"op": "walls", "from": [0, 1, 0], "to": [24, 13, 26], "mat": "wall", "thick": 2, "part": "wall"},
+    {"op": "box", "from": [10, 1, 0], "to": [14, 9, 2], "mat": "air"},
+    {"op": "box", "from": [4, 6, 0], "to": [7, 9, 2], "mat": "air"},
+    {"op": "box", "from": [22, 7, 9], "to": [24, 10, 12], "mat": "air"},
+    {"op": "box", "from": [0, 13, 0], "to": [24, 14, 26], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [2, 13, 2], "to": [22, 14, 24], "mat": "air"},
+    {"op": "gable", "from": [0, 14, 0], "to": [24, 14, 26], "axis": "x", "mat": "roof", "rise": 1, "part": "roof"},
+    {"op": "log", "base": [24, 9, 13], "radius": 1.0, "length": 9, "axis": "x", "mat": "iron", "part": "metal"},
+    {"op": "disc", "centre": [31, 9, 13], "radius": 8.5, "thick": 2, "axis": "x", "mat": "timber", "part": "timber"},
+    {"op": "disc", "centre": [31, 9, 13], "radius": 6.5, "thick": 2, "axis": "x", "mat": "air"},
+    {"op": "box", "from": [30, 1, 12], "to": [32, 18, 14], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [30, 8, 5], "to": [32, 10, 22], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [25, 0, 2], "to": [37, 1, 4], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [25, 0, 22], "to": [37, 1, 24], "mat": "wall", "part": "stone"}
+  ]
+}

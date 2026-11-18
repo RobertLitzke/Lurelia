@@ -1,0 +1,10 @@
+{
+  "name": "fae_toad",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "The faerie wood's toad: moss-backed and slow, with pale spots that glow at dusk. It sits where it sits and lets you look at it.",
+  "colors": {"coat": [84, 112, 66], "belly": [180, 200, 150], "mark": [200, 240, 180, 1.4]},
+  "behaviour": {"walk_speed": 0.3, "wary": 2},
+  "like": "toad",
+  "scale": 1.3
+}

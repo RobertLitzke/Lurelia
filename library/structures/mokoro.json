@@ -1,0 +1,20 @@
+{
+  "name": "mokoro",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "A mokoro: a dugout canoe six metres long, drawn up on the sand with its pole laid along the thwart. Place in twos and threes at a landing, bow to the water.",
+  "size": [8, 5, 29],
+  "anchor": [3, 0, 14],
+  "level": false,
+  "decays": true,
+  "tags": ["boat"],
+  "slots": {"wood": "dead_wood", "pole": "oak_post"},
+  "ops": [
+    {"op": "log", "base": [3, 1, 2], "radius": 2.6, "length": 24, "axis": "z", "mat": "wood", "part": "timber"},
+    {"op": "log", "base": [3, 3, 3], "radius": 1.9, "length": 22, "axis": "z", "mat": "air"},
+    {"op": "box", "from": [1, 0, 1], "to": [6, 2, 4], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [1, 0, 24], "to": [6, 2, 27], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [0, 1, 12], "to": [7, 2, 14], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [5, 2, 6], "to": [6, 3, 22], "mat": "pole", "part": "timber"}
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "sky_ray",
+  "version": 1,
+  "introduced_by": "faerie",
+  "notes": "undulate: A ray that swims through the air of the faerie wood, a metre and a half across, violet-backed with glowing spots, circling slowly a few metres up on rippling wings.",
+  "colors": {"back": [72, 70, 120], "belly": [210, 196, 220], "glow": [170, 120, 255, 1.8]},
+  "behaviour": {
+    "movement": "undulate",
+    "walk_speed": 2.0,
+    "flee_speed": 3.0,
+    "wary": 0,
+    "fly_height": 4,
+    "leap": 0,
+    "spawn_chance": 1,
+    "group": null,
+    "flight": "flap",
+    "wingbeat": 0.45
+  },
+  "like": "manta_ray",
+  "scale": 0.34,
+  "extra_ops": [
+    {"op": "set", "at": [9, 5, 14], "mat": "glow", "part": "wing_l"},
+    {"op": "set", "at": [6, 5, 17], "mat": "glow", "part": "wing_l_mid"},
+    {"op": "set", "at": [10, 5, 19], "mat": "glow", "part": "wing_l"},
+    {"op": "set", "at": [22, 5, 14], "mat": "glow", "part": "wing_r"},
+    {"op": "set", "at": [25, 5, 17], "mat": "glow", "part": "wing_r_mid"},
+    {"op": "set", "at": [21, 5, 19], "mat": "glow", "part": "wing_r"},
+    {"op": "set", "at": [16, 5, 28], "mat": "glow", "part": "tail"}
+  ]
+}

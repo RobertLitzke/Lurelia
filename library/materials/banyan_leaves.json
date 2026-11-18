@@ -1,0 +1,17 @@
+{
+  "name": "banyan_leaves",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Banyan foliage: thick, glossy, dark green.",
+  "id": 238,
+  "smooth": false,
+  "tint": "leaves",
+  "texture": {
+    "pattern": "blotch",
+    "base": [56, 92, 46],
+    "alt": [72, 110, 54],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [66, 102, 52], "alt": [80, 116, 60]}
+  }
+}

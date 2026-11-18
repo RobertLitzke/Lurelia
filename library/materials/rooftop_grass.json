@@ -1,0 +1,16 @@
+{
+  "name": "rooftop_grass",
+  "version": 1,
+  "introduced_by": "faerie",
+  "notes": "A roof gone to meadow.",
+  "id": 185,
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [92, 128, 58],
+    "alt": [80, 116, 52],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [98, 134, 62], "alt": [86, 122, 56]}
+  }
+}

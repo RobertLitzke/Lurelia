@@ -1,0 +1,20 @@
+{
+  "name": "drying_rack",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Three hides stretched to dry on an oak frame 7 m long, in the yards of Durn. Long axis local X, hides facing local -Z.",
+  "size": [28, 18, 6],
+  "anchor": [14, 0, 3],
+  "foundation": 3,
+  "level": false,
+  "tags": ["windbarrow"],
+  "slots": {"timber": "oak_post", "hide": "canvas"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 2], "to": [2, 16, 4], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [26, 0, 2], "to": [28, 16, 4], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [0, 15, 2], "to": [28, 17, 4], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [3, 4, 2], "to": [11, 15, 3], "mat": "hide", "part": "cloth"},
+    {"op": "box", "from": [13, 6, 2], "to": [19, 15, 3], "mat": "hide", "part": "cloth"},
+    {"op": "box", "from": [21, 3, 2], "to": [26, 15, 3], "mat": "hide", "part": "cloth"}
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "cattle_track",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "A track worn to the dirt by people and cattle, 2.5 m across with sand drifting at its edges: the between-places line in a delta where everything else is water.",
+  "ground": "grade",
+  "width": 2.5,
+  "mat": "path_dirt",
+  "shoulder": "shore_sand",
+  "margin": 2.5,
+  "tags": ["path"]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "wash_sand",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Pale tan sand and pebbles in a dry wash or canyon floor.",
+  "id": 110,
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [212, 182, 142],
+    "alt": [178, 150, 116],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [216, 188, 148], "alt": [190, 162, 126]}
+  }
+}

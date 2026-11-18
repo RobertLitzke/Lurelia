@@ -1,0 +1,15 @@
+{
+  "name": "bell_charm",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "A little bronze bell on a red cord, left at the temple by the Order's visitors.",
+  "display": "bell charm",
+  "voxel": 0.0125,
+  "spin": false,
+  "colors": {"bronze": [120, 150, 110, 0.4], "cord": [200, 92, 72]},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 10, 16], "radius": [7, 8, 7], "mat": "bronze"},
+    {"op": "box", "from": [9, 2, 9], "to": [23, 4, 23], "mat": "bronze"},
+    {"op": "box", "from": [15, 18, 15], "to": [17, 30, 17], "mat": "cord"}
+  ]
+}

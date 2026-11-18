@@ -1,0 +1,2222 @@
+{
+ "places": {
+  "centre": [
+   768,
+   740
+  ],
+  "cone": [
+   1080,
+   190
+  ],
+  "station": [
+   640,
+   556
+  ],
+  "harlow": [
+   440,
+   1284
+  ],
+  "harlow_mesa": [
+   430,
+   1160
+  ],
+  "bitterwater": [
+   800,
+   1390
+  ],
+  "gathering": [
+   420,
+   840
+  ],
+  "fins": [
+   1035,
+   655
+  ]
+ },
+ "events": [
+  {
+   "year": -10000000,
+   "event": "landmass",
+   "cause": "the flat-lying sediments, lifted and worn into a high desert; the reservoir now surrounds it",
+   "centre": "centre",
+   "radius": 900,
+   "roughness": 0.8,
+   "hills": 7,
+   "ridges": 3
+  },
+  {
+   "year": -6500000,
+   "event": "dip",
+   "cause": "the west of the country, tipped down toward the old river by a slow monocline: the bands of the Red and White Cliffs run down at a slant toward the amphitheatre",
+   "at": [
+    300,
+    400
+   ],
+   "radius": 560,
+   "bearing": 245,
+   "grade": 0.04,
+   "warp": 6
+  },
+  {
+   "year": -6500000,
+   "event": "dip",
+   "cause": "the east, bowed up over the fin country the other way, so the beds climb eastward through the side canyons",
+   "at": [
+    1180,
+    380
+   ],
+   "radius": 520,
+   "bearing": 70,
+   "grade": 0.035,
+   "warp": 5
+  },
+  {
+   "year": -6000000,
+   "event": "escarpment",
+   "cause": "the lowest step: the desert bench stands above the old river flats in the south",
+   "from": [
+    1700,
+    1330
+   ],
+   "to": [
+    -160,
+    1320
+   ],
+   "height": 32,
+   "width": 14,
+   "reach": 2000
+  },
+  {
+   "year": -5000000,
+   "event": "escarpment",
+   "cause": "the Red Cliffs, the dark red wall that crosses the whole country",
+   "from": [
+    1700,
+    505
+   ],
+   "to": [
+    -160,
+    490
+   ],
+   "height": 36,
+   "width": 10,
+   "reach": 2000
+  },
+  {
+   "year": -4000000,
+   "event": "escarpment",
+   "cause": "the White Cliffs below the plateau forest",
+   "from": [
+    1700,
+    300
+   ],
+   "to": [
+    -160,
+    285
+   ],
+   "height": 20,
+   "width": 9,
+   "reach": 2000
+  },
+  {
+   "year": -3000000,
+   "event": "reef",
+   "cause": "the Comb, a fold in the south-east where the beds bend up and the eroded edge stands as a tilted ridge",
+   "from": [
+    1000,
+    1060
+   ],
+   "to": [
+    1235,
+    1150
+   ],
+   "height": 34,
+   "width": 58,
+   "crest": 0.55,
+   "scarp": 9,
+   "cracks": 3,
+   "crack_width": 4.5,
+   "floor": "wash_sand",
+   "poi": "the Comb"
+  },
+  {
+   "year": -3000000,
+   "event": "reef",
+   "cause": "a smaller fold west of the Gathering, its beds tilted up into a low ridge",
+   "from": [
+    140,
+    690
+   ],
+   "to": [
+    335,
+    805
+   ],
+   "height": 22,
+   "width": 44,
+   "crest": 0.55,
+   "scarp": 7,
+   "cracks": 2,
+   "crack_width": 4,
+   "floor": "wash_sand",
+   "poi": "the Little Reef"
+  },
+  {
+   "year": -900000,
+   "event": "canyon",
+   "cause": "the Sorrel River cutting south from the plateau springs to the big river",
+   "path": [
+    [
+     900,
+     110
+    ],
+    [
+     880,
+     250
+    ],
+    [
+     868,
+     420
+    ],
+    [
+     882,
+     540
+    ],
+    [
+     860,
+     700
+    ],
+    [
+     900,
+     900
+    ],
+    [
+     872,
+     1100
+    ],
+    [
+     920,
+     1300
+    ],
+    [
+     950,
+     1500
+    ]
+   ],
+   "width": 18,
+   "depth": 34,
+   "depth_end": 22,
+   "wall": 0.6,
+   "bench": 8,
+   "meander": 10,
+   "floor": "wash_sand",
+   "poi": "head of Sorrel Canyon",
+   "irregular": 1.0
+  },
+  {
+   "year": -899000,
+   "event": "river",
+   "cause": "the Sorrel itself, a small river on the canyon floor",
+   "name": "sorrel",
+   "path": [
+    [
+     900,
+     120
+    ],
+    [
+     880,
+     250
+    ],
+    [
+     868,
+     420
+    ],
+    [
+     882,
+     540
+    ],
+    [
+     860,
+     700
+    ],
+    [
+     900,
+     900
+    ],
+    [
+     872,
+     1100
+    ],
+    [
+     920,
+     1300
+    ],
+    [
+     950,
+     1500
+    ]
+   ],
+   "width": 5,
+   "depth": 1.2,
+   "bed": "river_cobbles",
+   "water": "river_water",
+   "meander": 10
+  },
+  {
+   "year": -880000,
+   "event": "canyon",
+   "cause": "the frost amphitheatre cut back into the White Cliffs, where the hoodoos stand",
+   "path": [
+    [
+     420,
+     230
+    ],
+    [
+     425,
+     300
+    ],
+    [
+     430,
+     360
+    ]
+   ],
+   "width": 70,
+   "depth": 14,
+   "depth_end": 4,
+   "wall": 1.2,
+   "bench": 6,
+   "meander": 6,
+   "poi": "the amphitheatre",
+   "irregular": 1.0
+  },
+  {
+   "year": -700000,
+   "event": "canyon",
+   "cause": "a side canyon cut back into the Red Cliffs",
+   "path": [
+    [
+     150,
+     430
+    ],
+    [
+     158,
+     472.0
+    ],
+    [
+     154,
+     503
+    ]
+   ],
+   "width": 10,
+   "depth": 8,
+   "depth_end": 1,
+   "wall": 0.5,
+   "bench": 8,
+   "meander": 5,
+   "irregular": 1.0
+  },
+  {
+   "year": -700000,
+   "event": "canyon",
+   "cause": "a side canyon cut back into the Red Cliffs",
+   "path": [
+    [
+     330,
+     405
+    ],
+    [
+     338,
+     462.0
+    ],
+    [
+     334,
+     503
+    ]
+   ],
+   "width": 10,
+   "depth": 8,
+   "depth_end": 1,
+   "wall": 0.5,
+   "bench": 8,
+   "meander": 5,
+   "irregular": 1.0
+  },
+  {
+   "year": -700000,
+   "event": "canyon",
+   "cause": "a side canyon cut back into the Red Cliffs",
+   "path": [
+    [
+     520,
+     440
+    ],
+    [
+     528,
+     476.0
+    ],
+    [
+     524,
+     503
+    ]
+   ],
+   "width": 10,
+   "depth": 8,
+   "depth_end": 1,
+   "wall": 0.5,
+   "bench": 8,
+   "meander": 5,
+   "irregular": 1.0
+  },
+  {
+   "year": -700000,
+   "event": "canyon",
+   "cause": "a side canyon cut back into the Red Cliffs",
+   "path": [
+    [
+     745,
+     420
+    ],
+    [
+     753,
+     468.0
+    ],
+    [
+     749,
+     503
+    ]
+   ],
+   "width": 10,
+   "depth": 8,
+   "depth_end": 1,
+   "wall": 0.5,
+   "bench": 8,
+   "meander": 5,
+   "irregular": 1.0
+  },
+  {
+   "year": -700000,
+   "event": "canyon",
+   "cause": "a side canyon cut back into the Red Cliffs",
+   "path": [
+    [
+     1010,
+     410
+    ],
+    [
+     1018,
+     464.0
+    ],
+    [
+     1014,
+     503
+    ]
+   ],
+   "width": 10,
+   "depth": 8,
+   "depth_end": 1,
+   "wall": 0.5,
+   "bench": 8,
+   "meander": 5,
+   "irregular": 1.0
+  },
+  {
+   "year": -700000,
+   "event": "canyon",
+   "cause": "a side canyon cut back into the Red Cliffs",
+   "path": [
+    [
+     1240,
+     435
+    ],
+    [
+     1248,
+     474.0
+    ],
+    [
+     1244,
+     503
+    ]
+   ],
+   "width": 10,
+   "depth": 8,
+   "depth_end": 1,
+   "wall": 0.5,
+   "bench": 8,
+   "meander": 5,
+   "irregular": 1.0
+  },
+  {
+   "year": -700000,
+   "event": "canyon",
+   "cause": "a side canyon cut back into the Red Cliffs",
+   "path": [
+    [
+     1400,
+     420
+    ],
+    [
+     1408,
+     468.0
+    ],
+    [
+     1404,
+     503
+    ]
+   ],
+   "width": 10,
+   "depth": 8,
+   "depth_end": 1,
+   "wall": 0.5,
+   "bench": 8,
+   "meander": 5,
+   "irregular": 1.0
+  },
+  {
+   "year": -700000,
+   "event": "canyon",
+   "cause": "a side canyon cut back into the White Cliffs",
+   "path": [
+    [
+     250,
+     215
+    ],
+    [
+     244,
+     255
+    ],
+    [
+     250,
+     298
+    ]
+   ],
+   "width": 9,
+   "depth": 6,
+   "depth_end": 1,
+   "wall": 0.5,
+   "bench": 6,
+   "meander": 4,
+   "irregular": 1.0
+  },
+  {
+   "year": -700000,
+   "event": "canyon",
+   "cause": "a side canyon cut back into the White Cliffs",
+   "path": [
+    [
+     610,
+     205
+    ],
+    [
+     604,
+     255
+    ],
+    [
+     610,
+     298
+    ]
+   ],
+   "width": 9,
+   "depth": 6,
+   "depth_end": 1,
+   "wall": 0.5,
+   "bench": 6,
+   "meander": 4,
+   "irregular": 1.0
+  },
+  {
+   "year": -700000,
+   "event": "canyon",
+   "cause": "a side canyon cut back into the White Cliffs",
+   "path": [
+    [
+     1230,
+     225
+    ],
+    [
+     1224,
+     255
+    ],
+    [
+     1230,
+     298
+    ]
+   ],
+   "width": 9,
+   "depth": 6,
+   "depth_end": 1,
+   "wall": 0.5,
+   "bench": 6,
+   "meander": 4,
+   "irregular": 1.0
+  },
+  {
+   "year": -600000,
+   "event": "mesa",
+   "cause": "Harlow Mesa, a long remnant of the Red Cliffs in the south-west",
+   "at": "harlow_mesa",
+   "radius": 56,
+   "height": 32,
+   "stretch": [
+    90,
+    2.2
+   ],
+   "warp": 0.25,
+   "tiers": 3,
+   "dip": [
+    205,
+    0.06
+   ],
+   "poi": "Harlow Mesa"
+  },
+  {
+   "year": -600000,
+   "event": "mesa",
+   "cause": "Sentinel Butte, east of the canyon",
+   "at": [
+    1060,
+    930
+   ],
+   "radius": 42,
+   "height": 38,
+   "warp": 0.2,
+   "tiers": 2,
+   "dip": [
+    125,
+    0.08
+   ],
+   "poi": "Sentinel Butte"
+  },
+  {
+   "year": -600000,
+   "event": "mesa",
+   "cause": "a smaller butte west of the canyon",
+   "at": [
+    560,
+    1000
+   ],
+   "radius": 30,
+   "height": 30,
+   "warp": 0.3,
+   "tiers": 2,
+   "dip": [
+    300,
+    0.07
+   ]
+  },
+  {
+   "year": -500000,
+   "event": "mesa",
+   "cause": "the Totem, a spire left where a butte wore away",
+   "at": [
+    1190,
+    760
+   ],
+   "radius": 6,
+   "height": 40,
+   "warp": 0.12,
+   "talus": 0.2,
+   "skirt": 14,
+   "poi": "the Totem"
+  },
+  {
+   "year": -500000,
+   "event": "mesa",
+   "cause": "the Totem's smaller twin",
+   "at": [
+    1222,
+    790
+   ],
+   "radius": 4.5,
+   "height": 28,
+   "warp": 0.12,
+   "talus": 0.2,
+   "skirt": 10
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a fin of pale sandstone, one of a row east of the canyon",
+   "at": [
+    975,
+    640
+   ],
+   "radius": 3.4,
+   "height": 24,
+   "stretch": [
+    0,
+    8
+   ],
+   "warp": 0.2,
+   "talus": 0.12,
+   "skirt": 5,
+   "dip": [
+    90,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a fin of pale sandstone, one of a row east of the canyon",
+   "at": [
+    996,
+    655
+   ],
+   "radius": 3.8,
+   "height": 28,
+   "stretch": [
+    0,
+    9
+   ],
+   "warp": 0.2,
+   "talus": 0.12,
+   "skirt": 5,
+   "dip": [
+    90,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a fin of pale sandstone, one of a row east of the canyon",
+   "at": [
+    1020,
+    660
+   ],
+   "radius": 4.6,
+   "height": 34,
+   "stretch": [
+    0,
+    9
+   ],
+   "warp": 0.2,
+   "talus": 0.12,
+   "skirt": 5,
+   "dip": [
+    90,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a fin of pale sandstone, one of a row east of the canyon",
+   "at": [
+    1043,
+    648
+   ],
+   "radius": 3.6,
+   "height": 30,
+   "stretch": [
+    0,
+    8
+   ],
+   "warp": 0.2,
+   "talus": 0.12,
+   "skirt": 5,
+   "dip": [
+    90,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a fin of pale sandstone, one of a row east of the canyon",
+   "at": [
+    1064,
+    664
+   ],
+   "radius": 3.4,
+   "height": 26,
+   "stretch": [
+    0,
+    7
+   ],
+   "warp": 0.2,
+   "talus": 0.12,
+   "skirt": 5,
+   "dip": [
+    90,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a fin of pale sandstone, one of a row east of the canyon",
+   "at": [
+    1085,
+    670
+   ],
+   "radius": 4.0,
+   "height": 28,
+   "stretch": [
+    0,
+    7
+   ],
+   "warp": 0.2,
+   "talus": 0.12,
+   "skirt": 5,
+   "dip": [
+    90,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a fin of pale sandstone, one of a row east of the canyon",
+   "at": [
+    1106,
+    655
+   ],
+   "radius": 3.2,
+   "height": 22,
+   "stretch": [
+    0,
+    6
+   ],
+   "warp": 0.2,
+   "talus": 0.12,
+   "skirt": 5,
+   "dip": [
+    90,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a low bench of bare slickrock",
+   "at": [
+    1150,
+    640
+   ],
+   "radius": 30,
+   "height": 3,
+   "warp": 0.35,
+   "talus": 0.7,
+   "skirt": 10,
+   "cap": "slickrock"
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a sandstone fin standing out of the slickrock, the joints either side of it worn away",
+   "at": [
+    1150,
+    640
+   ],
+   "radius": 4.2,
+   "height": 20,
+   "stretch": [
+    95,
+    4.6
+   ],
+   "warp": 0.22,
+   "talus": 0.22,
+   "skirt": 7,
+   "dip": [
+    165,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a sandstone fin standing out of the slickrock, the joints either side of it worn away",
+   "at": [
+    1212,
+    702
+   ],
+   "radius": 3.8,
+   "height": 18,
+   "stretch": [
+    8,
+    4.0
+   ],
+   "warp": 0.22,
+   "talus": 0.22,
+   "skirt": 7,
+   "dip": [
+    78,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a sandstone fin standing out of the slickrock, the joints either side of it worn away",
+   "at": [
+    1262,
+    612
+   ],
+   "radius": 3.5,
+   "height": 22,
+   "stretch": [
+    84,
+    3.6
+   ],
+   "warp": 0.22,
+   "talus": 0.22,
+   "skirt": 7,
+   "dip": [
+    154,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a sandstone fin standing out of the slickrock, the joints either side of it worn away",
+   "at": [
+    1100,
+    762
+   ],
+   "radius": 4.5,
+   "height": 20,
+   "stretch": [
+    176,
+    4.4
+   ],
+   "warp": 0.22,
+   "talus": 0.22,
+   "skirt": 7,
+   "dip": [
+    246,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a sandstone fin standing out of the slickrock, the joints either side of it worn away",
+   "at": [
+    1178,
+    822
+   ],
+   "radius": 3.6,
+   "height": 24,
+   "stretch": [
+    4,
+    3.8
+   ],
+   "warp": 0.22,
+   "talus": 0.22,
+   "skirt": 7,
+   "dip": [
+    74,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a sandstone fin standing out of the slickrock, the joints either side of it worn away",
+   "at": [
+    1008,
+    792
+   ],
+   "radius": 4.0,
+   "height": 17,
+   "stretch": [
+    172,
+    4.0
+   ],
+   "warp": 0.22,
+   "talus": 0.22,
+   "skirt": 7,
+   "dip": [
+    242,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a sandstone fin standing out of the slickrock, the joints either side of it worn away",
+   "at": [
+    1292,
+    762
+   ],
+   "radius": 3.4,
+   "height": 16,
+   "stretch": [
+    96,
+    3.4
+   ],
+   "warp": 0.22,
+   "talus": 0.22,
+   "skirt": 7,
+   "dip": [
+    166,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a sandstone fin standing out of the slickrock, the joints either side of it worn away",
+   "at": [
+    958,
+    722
+   ],
+   "radius": 3.6,
+   "height": 19,
+   "stretch": [
+    2,
+    4.2
+   ],
+   "warp": 0.22,
+   "talus": 0.22,
+   "skirt": 7,
+   "dip": [
+    72,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a sandstone fin standing out of the slickrock, the joints either side of it worn away",
+   "at": [
+    690,
+    880
+   ],
+   "radius": 3.8,
+   "height": 16,
+   "stretch": [
+    92,
+    3.6
+   ],
+   "warp": 0.22,
+   "talus": 0.22,
+   "skirt": 7,
+   "dip": [
+    162,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a sandstone fin standing out of the slickrock, the joints either side of it worn away",
+   "at": [
+    360,
+    640
+   ],
+   "radius": 3.4,
+   "height": 15,
+   "stretch": [
+    3,
+    3.4
+   ],
+   "warp": 0.22,
+   "talus": 0.22,
+   "skirt": 7,
+   "dip": [
+    73,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a sandstone fin standing out of the slickrock, the joints either side of it worn away",
+   "at": [
+    760,
+    1150
+   ],
+   "radius": 4.0,
+   "height": 18,
+   "stretch": [
+    176,
+    3.8
+   ],
+   "warp": 0.22,
+   "talus": 0.22,
+   "skirt": 7,
+   "dip": [
+    246,
+    0.05
+   ]
+  },
+  {
+   "year": -400000,
+   "event": "mesa",
+   "cause": "a sandstone fin standing out of the slickrock, the joints either side of it worn away",
+   "at": [
+    1290,
+    900
+   ],
+   "radius": 3.6,
+   "height": 17,
+   "stretch": [
+    88,
+    3.8
+   ],
+   "warp": 0.22,
+   "talus": 0.22,
+   "skirt": 7,
+   "dip": [
+    158,
+    0.05
+   ]
+  },
+  {
+   "year": -300000,
+   "event": "erode_rims",
+   "cause": "frost and flash floods rounding off the lip of every cliff and cutting notches back into the tops along the joints",
+   "depth": 3.5,
+   "reach": 12,
+   "gullies": 0.5,
+   "min_drop": 5,
+   "joints": 1.0
+  },
+  {
+   "year": -300000,
+   "event": "deposit",
+   "cause": "a mound of banded clay in the badlands",
+   "at": [
+    430,
+    1388
+   ],
+   "radius": 12,
+   "thickness": 4,
+   "mat": "chinle_mudstone"
+  },
+  {
+   "year": -300000,
+   "event": "deposit",
+   "cause": "a mound of banded clay in the badlands",
+   "at": [
+    462,
+    1372
+   ],
+   "radius": 15,
+   "thickness": 6,
+   "mat": "chinle_mudstone"
+  },
+  {
+   "year": -300000,
+   "event": "deposit",
+   "cause": "a mound of banded clay in the badlands",
+   "at": [
+    500,
+    1392
+   ],
+   "radius": 18,
+   "thickness": 4,
+   "mat": "chinle_mudstone"
+  },
+  {
+   "year": -300000,
+   "event": "deposit",
+   "cause": "a mound of banded clay in the badlands",
+   "at": [
+    404,
+    1366
+   ],
+   "radius": 12,
+   "thickness": 6,
+   "mat": "chinle_mudstone"
+  },
+  {
+   "year": -300000,
+   "event": "deposit",
+   "cause": "a mound of banded clay in the badlands",
+   "at": [
+    530,
+    1378
+   ],
+   "radius": 15,
+   "thickness": 4,
+   "mat": "chinle_mudstone"
+  },
+  {
+   "year": -300000,
+   "event": "deposit",
+   "cause": "a mound of banded clay in the badlands",
+   "at": [
+    470,
+    1405
+   ],
+   "radius": 18,
+   "thickness": 6,
+   "mat": "chinle_mudstone"
+  },
+  {
+   "year": -300000,
+   "event": "region",
+   "cause": "the banded clay badlands on the low flats",
+   "name": "painted",
+   "at": [
+    465,
+    1388
+   ],
+   "radius": 62
+  },
+  {
+   "year": -50000,
+   "event": "spires",
+   "cause": "frost and rain cutting the soft pink rock under the White Cliffs into hoodoos",
+   "structures": [
+    "hoodoo",
+    "hoodoo_squat",
+    "hoodoo_tall",
+    "hoodoo_squat"
+   ],
+   "at": [
+    428,
+    335
+   ],
+   "radius": 55,
+   "count": 28,
+   "spacing": 8,
+   "poi": "the hoodoos"
+  },
+  {
+   "year": -50000,
+   "event": "place",
+   "cause": "one of the eleven hoodoos standing in a ring on the open desert, far from any cliff",
+   "structure": "hoodoo",
+   "at": [
+    443.9,
+    847.4
+   ],
+   "bearing": 0,
+   "poi": "the Gathering"
+  },
+  {
+   "year": -50000,
+   "event": "place",
+   "cause": "one of the eleven hoodoos standing in a ring on the open desert, far from any cliff",
+   "structure": "hoodoo_squat",
+   "at": [
+    434.2,
+    856.8
+   ],
+   "bearing": 97
+  },
+  {
+   "year": -50000,
+   "event": "place",
+   "cause": "one of the eleven hoodoos standing in a ring on the open desert, far from any cliff",
+   "structure": "hoodoo_squat",
+   "at": [
+    422.8,
+    861.8
+   ],
+   "bearing": 194
+  },
+  {
+   "year": -50000,
+   "event": "place",
+   "cause": "one of the eleven hoodoos standing in a ring on the open desert, far from any cliff",
+   "structure": "hoodoo_squat",
+   "at": [
+    409.3,
+    862.6
+   ],
+   "bearing": 291
+  },
+  {
+   "year": -50000,
+   "event": "place",
+   "cause": "one of the eleven hoodoos standing in a ring on the open desert, far from any cliff",
+   "structure": "hoodoo",
+   "at": [
+    401.3,
+    851.6
+   ],
+   "bearing": 28
+  },
+  {
+   "year": -50000,
+   "event": "place",
+   "cause": "one of the eleven hoodoos standing in a ring on the open desert, far from any cliff",
+   "structure": "hoodoo_squat",
+   "at": [
+    398.0,
+    839.7
+   ],
+   "bearing": 125
+  },
+  {
+   "year": -50000,
+   "event": "place",
+   "cause": "one of the eleven hoodoos standing in a ring on the open desert, far from any cliff",
+   "structure": "hoodoo_squat",
+   "at": [
+    399.2,
+    826.2
+   ],
+   "bearing": 222
+  },
+  {
+   "year": -50000,
+   "event": "place",
+   "cause": "one of the eleven hoodoos standing in a ring on the open desert, far from any cliff",
+   "structure": "hoodoo_squat",
+   "at": [
+    411.1,
+    819.9
+   ],
+   "bearing": 319
+  },
+  {
+   "year": -50000,
+   "event": "place",
+   "cause": "one of the eleven hoodoos standing in a ring on the open desert, far from any cliff",
+   "structure": "hoodoo",
+   "at": [
+    423.4,
+    818.3
+   ],
+   "bearing": 56
+  },
+  {
+   "year": -50000,
+   "event": "place",
+   "cause": "one of the eleven hoodoos standing in a ring on the open desert, far from any cliff",
+   "structure": "hoodoo_squat",
+   "at": [
+    436.6,
+    821.3
+   ],
+   "bearing": 153
+  },
+  {
+   "year": -50000,
+   "event": "place",
+   "cause": "one of the eleven hoodoos standing in a ring on the open desert, far from any cliff",
+   "structure": "hoodoo_squat",
+   "at": [
+    441.2,
+    834.1
+   ],
+   "bearing": 250
+  },
+  {
+   "year": -20000,
+   "event": "place",
+   "cause": "a great window worn through the tallest fin",
+   "structure": "great_window",
+   "at": [
+    1020,
+    652
+   ],
+   "bearing": 90,
+   "poi": "the Great Window"
+  },
+  {
+   "year": -20000,
+   "event": "place",
+   "cause": "a smaller window in the last fin",
+   "structure": "small_window",
+   "at": [
+    1078,
+    672
+   ],
+   "bearing": 90
+  },
+  {
+   "year": -20000,
+   "event": "place",
+   "cause": "an opening worn through the fin, frost wedging grains loose until the light came through",
+   "structure": "window_lone",
+   "at": [
+    1150,
+    640
+   ],
+   "bearing": 185,
+   "poi": "the Lone Arch"
+  },
+  {
+   "year": -20000,
+   "event": "place",
+   "cause": "an opening worn through the fin, frost wedging grains loose until the light came through",
+   "structure": "window_span",
+   "at": [
+    1212,
+    702
+   ],
+   "bearing": 98
+  },
+  {
+   "year": -20000,
+   "event": "place",
+   "cause": "an opening worn through the fin, frost wedging grains loose until the light came through",
+   "structure": "window_tall",
+   "at": [
+    1262,
+    612
+   ],
+   "bearing": 174,
+   "poi": "Needle Window"
+  },
+  {
+   "year": -20000,
+   "event": "place",
+   "cause": "an opening worn through the fin, frost wedging grains loose until the light came through",
+   "structure": "window_twin",
+   "at": [
+    1100,
+    762
+   ],
+   "bearing": 266,
+   "poi": "the Spectacles"
+  },
+  {
+   "year": -20000,
+   "event": "place",
+   "cause": "an opening worn through the fin, frost wedging grains loose until the light came through",
+   "structure": "window_high",
+   "at": [
+    1178,
+    822
+   ],
+   "bearing": 94
+  },
+  {
+   "year": -20000,
+   "event": "place",
+   "cause": "an opening worn through the fin, frost wedging grains loose until the light came through",
+   "structure": "window_span",
+   "at": [
+    1008,
+    792
+   ],
+   "bearing": 262
+  },
+  {
+   "year": -20000,
+   "event": "place",
+   "cause": "an opening worn through the fin, frost wedging grains loose until the light came through",
+   "structure": "window_tall",
+   "at": [
+    1292,
+    762
+   ],
+   "bearing": 186
+  },
+  {
+   "year": -20000,
+   "event": "place",
+   "cause": "an opening worn through the fin, frost wedging grains loose until the light came through",
+   "structure": "window_high",
+   "at": [
+    958,
+    722
+   ],
+   "bearing": 92
+  },
+  {
+   "year": -20000,
+   "event": "place",
+   "cause": "an opening worn through the fin, frost wedging grains loose until the light came through",
+   "structure": "window_span",
+   "at": [
+    690,
+    880
+   ],
+   "bearing": 182
+  },
+  {
+   "year": -20000,
+   "event": "place",
+   "cause": "an opening worn through the fin, frost wedging grains loose until the light came through",
+   "structure": "window_tall",
+   "at": [
+    360,
+    640
+   ],
+   "bearing": 93
+  },
+  {
+   "year": -20000,
+   "event": "place",
+   "cause": "an opening worn through the fin, frost wedging grains loose until the light came through",
+   "structure": "window_high",
+   "at": [
+    760,
+    1150
+   ],
+   "bearing": 266
+  },
+  {
+   "year": -20000,
+   "event": "place",
+   "cause": "an opening worn through the fin, frost wedging grains loose until the light came through",
+   "structure": "window_twin",
+   "at": [
+    1290,
+    900
+   ],
+   "bearing": 178
+  },
+  {
+   "year": -20000,
+   "event": "region",
+   "cause": "arch country: the bench round the fins, where the sandstone weathers into arches, windows and potholes",
+   "name": "arches",
+   "at": [
+    1120,
+    680
+   ],
+   "radius": 210
+  },
+  {
+   "year": -8000,
+   "event": "dunes",
+   "cause": "sand blown off the old lake beaches and heaped into dunes in the south-west",
+   "at": [
+    230,
+    1000
+   ],
+   "radius": 130,
+   "spacing": 46,
+   "height": 9,
+   "wind_bearing": 60,
+   "mat": "coral_sand",
+   "name": "dunes",
+   "poi": "the Coral Dunes"
+  },
+  {
+   "year": -5000,
+   "event": "moisture",
+   "cause": "a spring-wet park on the plateau where the pines give way to grass",
+   "at": [
+    520,
+    120
+   ],
+   "radius": 60,
+   "amount": 0.5
+  },
+  {
+   "year": -5000,
+   "event": "moisture",
+   "cause": "a spring-wet park on the plateau where the pines give way to grass",
+   "at": [
+    760,
+    220
+   ],
+   "radius": 50,
+   "amount": 0.5
+  },
+  {
+   "year": -5000,
+   "event": "moisture",
+   "cause": "a spring-wet park on the plateau where the pines give way to grass",
+   "at": [
+    330,
+    230
+   ],
+   "radius": 45,
+   "amount": 0.5
+  },
+  {
+   "year": -5000,
+   "event": "moisture",
+   "cause": "a spring-wet park on the plateau where the pines give way to grass",
+   "at": [
+    980,
+    80
+   ],
+   "radius": 40,
+   "amount": 0.5
+  },
+  {
+   "year": -940,
+   "event": "volcano",
+   "cause": "the cinder cone that opened on the plateau nine hundred years ago",
+   "at": "cone",
+   "radius": 110,
+   "height": 26,
+   "crater_radius": 14,
+   "crater_depth": 6,
+   "flows": 2
+  },
+  {
+   "year": -939,
+   "event": "region",
+   "cause": "the cinders the cone threw out",
+   "name": "cinder",
+   "at": "cone",
+   "radius": 150
+  },
+  {
+   "year": -938,
+   "event": "lava_tube",
+   "cause": "lava that crusted over on the cone's west flank and drained, leaving the ice cave",
+   "path": [
+    [
+     990,
+     150
+    ],
+    [
+     962,
+     205
+    ],
+    [
+     985,
+     262
+    ]
+   ],
+   "radius": 2.6,
+   "depth": 5,
+   "skylights": 2
+  },
+  {
+   "year": -800,
+   "event": "place",
+   "cause": "the canyon people's granaries in an alcove high in the west wall",
+   "structure": "cliff_granaries",
+   "at": [
+    875,
+    790
+   ],
+   "bearing": 90,
+   "poi": "the granaries"
+  },
+  {
+   "year": -146,
+   "event": "place",
+   "cause": "Bitterwater's stone chapel, now standing in the shallows",
+   "structure": "chapel",
+   "at": "bitterwater",
+   "bearing": 200,
+   "age": 63,
+   "slots": {
+    "wall": "red_stone",
+    "floor": "red_stone",
+    "roof": "corrugated_tin"
+   },
+   "poi": "Bitterwater chapel"
+  },
+  {
+   "year": -146,
+   "event": "place",
+   "cause": "a Bitterwater farmhouse",
+   "structure": "settler_house",
+   "at": [
+    770,
+    1398
+   ],
+   "bearing": 180,
+   "age": 63,
+   "slots": {
+    "wall": "red_stone",
+    "roof": "corrugated_tin"
+   }
+  },
+  {
+   "year": -146,
+   "event": "place",
+   "cause": "a Bitterwater farmhouse",
+   "structure": "settler_house",
+   "at": [
+    828,
+    1404
+   ],
+   "bearing": 170,
+   "age": 63,
+   "slots": {
+    "wall": "red_stone",
+    "roof": "corrugated_tin"
+   }
+  },
+  {
+   "year": -144,
+   "event": "place",
+   "cause": "the stamp mill on the slope below the mesa",
+   "structure": "stamp_mill",
+   "at": [
+    515,
+    1240
+   ],
+   "bearing": 180,
+   "poi": "Harlow stamp mill"
+  },
+  {
+   "year": -144,
+   "event": "deposit",
+   "cause": "the mill's tailings, spread in a fan below it",
+   "at": [
+    532,
+    1278
+   ],
+   "radius": 22,
+   "thickness": 1.6,
+   "mat": "tailings"
+  },
+  {
+   "year": -144,
+   "event": "place",
+   "cause": "the hoisting works over Harlow's main shaft",
+   "structure": "headframe",
+   "at": [
+    380,
+    1246
+   ],
+   "bearing": 180,
+   "poi": "Harlow headframe"
+  },
+  {
+   "year": -144,
+   "event": "place",
+   "cause": "the haulage adit into the mesa",
+   "structure": "mine_portal",
+   "at": [
+    330,
+    1232
+   ],
+   "bearing": 180,
+   "poi": "the Harlow adit"
+  },
+  {
+   "year": -144,
+   "event": "place",
+   "cause": "Harlow's cemetery on the rise east of town",
+   "structure": "cemetery",
+   "at": [
+    570,
+    1300
+   ],
+   "bearing": 270,
+   "poi": "Harlow cemetery"
+  },
+  {
+   "year": -144,
+   "event": "settlement",
+   "cause": "the silver camp at the foot of Harlow Mesa, 1882",
+   "name": "harlow",
+   "at": "harlow",
+   "radius": 50,
+   "houses": 11,
+   "buildings": [
+    "false_front",
+    "miner_shack",
+    "false_front_wide",
+    "miner_shack",
+    "stone_office",
+    "miner_shack",
+    "false_front"
+   ],
+   "extras": [
+    {
+     "structure": "water_tank",
+     "near": "edge"
+    }
+   ],
+   "path": "path_dirt"
+  },
+  {
+   "year": -133,
+   "event": "abandon",
+   "cause": "silver collapsed in 1893 and the town emptied in a year",
+   "settlement": "harlow"
+  },
+  {
+   "year": -98,
+   "event": "canyon",
+   "cause": "the side wash at the east end that the road takes down to the ferry",
+   "path": [
+    [
+     1380,
+     555
+    ],
+    [
+     1450,
+     562
+    ],
+    [
+     1530,
+     590
+    ]
+   ],
+   "width": 18,
+   "depth": 1,
+   "depth_end": 34,
+   "wall": 1.6,
+   "bench": 4,
+   "meander": 3,
+   "floor": "wash_sand",
+   "irregular": 1.0
+  },
+  {
+   "year": -97,
+   "event": "road",
+   "cause": "the highway along the foot of the Red Cliffs, finished in 1930 (the bridge went in first)",
+   "path": [
+    [
+     22,
+     578
+    ],
+    [
+     100,
+     560
+    ],
+    [
+     300,
+     547
+    ],
+    [
+     600,
+     545
+    ],
+    [
+     882,
+     540
+    ],
+    [
+     1150,
+     548
+    ],
+    [
+     1380,
+     555
+    ],
+    [
+     1455,
+     563
+    ],
+    [
+     1515,
+     586
+    ]
+   ],
+   "width": 8,
+   "mat": "asphalt",
+   "shoulder": "road_gravel",
+   "smooth": 40
+  },
+  {
+   "year": -97,
+   "event": "place",
+   "cause": "the steel arch bridge over Sorrel Canyon, 1929",
+   "structure": "arch_bridge",
+   "at": [
+    880,
+    540
+   ],
+   "bearing": 0,
+   "poi": "Sorrel Canyon bridge"
+  },
+  {
+   "year": -96,
+   "event": "sign",
+   "cause": "the state put up boards at the foot of the grade",
+   "at": [
+    884,
+    534
+   ],
+   "text": [
+    "BITTERWATER",
+    "9"
+   ],
+   "style": "highway_board",
+   "bearing": 90
+  },
+  {
+   "year": -96,
+   "event": "sign",
+   "cause": "and another for the traffic coming the other way",
+   "at": [
+    310,
+    537
+   ],
+   "text": [
+    "HARLOW",
+    "LAKE CORWIN"
+   ],
+   "style": "highway_board",
+   "bearing": 270
+  },
+  {
+   "year": -90,
+   "event": "sign",
+   "cause": "a stone cut for the chapel the lake covered and uncovered",
+   "at": [
+    806,
+    1384
+   ],
+   "text": [
+    "BITTER",
+    "WATER",
+    "1931"
+   ],
+   "style": "carved_stone",
+   "bearing": 200
+  },
+  {
+   "year": -74,
+   "event": "place",
+   "cause": "the uranium men's steel headframe over an old shaft, 1952",
+   "structure": "steel_headframe",
+   "at": [
+    296,
+    1262
+   ],
+   "bearing": 180,
+   "age": 62
+  },
+  {
+   "year": -74,
+   "event": "place",
+   "cause": "an ore cart left on its side",
+   "structure": "ore_cart",
+   "at": [
+    348,
+    1252
+   ],
+   "bearing": 30,
+   "age": 62
+  },
+  {
+   "year": -72,
+   "event": "place",
+   "cause": "Pruitt's filling station, 1954",
+   "structure": "filling_station",
+   "at": "station",
+   "bearing": 0,
+   "age": 2,
+   "poi": "Pruitt's filling station"
+  },
+  {
+   "year": -72,
+   "event": "place",
+   "cause": "the station's sign",
+   "structure": "station_sign",
+   "at": [
+    612,
+    553
+   ],
+   "bearing": 0,
+   "age": 2
+  },
+  {
+   "year": -72,
+   "event": "place",
+   "cause": "the station's water tank",
+   "structure": "water_tank",
+   "at": [
+    672,
+    582
+   ],
+   "bearing": 0,
+   "age": 2
+  },
+  {
+   "year": -70,
+   "event": "sign",
+   "cause": "the Pruitts lettered their board the year the store opened",
+   "at": [
+    612,
+    553
+   ],
+   "text": [
+    "PRUITT'S"
+   ],
+   "style": "station_board",
+   "bearing": 0
+  },
+  {
+   "year": -63,
+   "event": "place",
+   "cause": "the ferry landing at the east end of the highway",
+   "structure": "ferry_landing",
+   "at": [
+    1478,
+    578
+   ],
+   "bearing": 110,
+   "age": 4,
+   "poi": "the ferry landing"
+  },
+  {
+   "year": -44,
+   "event": "canyon",
+   "cause": "the 1983 flash flood that cut the west wash back 200 m in a night and took the highway's last stretch to the lake with it",
+   "path": [
+    [
+     222,
+     549
+    ],
+    [
+     150,
+     556
+    ],
+    [
+     90,
+     562
+    ],
+    [
+     20,
+     580
+    ]
+   ],
+   "width": 18,
+   "depth": 11,
+   "depth_end": 34,
+   "wall": 0.9,
+   "bench": 5,
+   "meander": 4,
+   "floor": "wash_sand",
+   "poi": "the washout",
+   "irregular": 1.0
+  },
+  {
+   "year": -43,
+   "event": "place",
+   "cause": "the barrier the highway department put up where the road now ends in air",
+   "structure": "road_barrier",
+   "at": [
+    236,
+    548
+   ],
+   "bearing": 270,
+   "age": 42,
+   "poi": "the end of the road"
+  },
+  {
+   "year": -43,
+   "event": "sign",
+   "cause": "the barricade the county set on the lip of the new canyon",
+   "at": [
+    243,
+    553
+   ],
+   "text": [
+    "ROAD",
+    "CLOSED"
+   ],
+   "style": "painted_board",
+   "bearing": 90,
+   "age": 12
+  },
+  {
+   "year": -34,
+   "event": "track",
+   "cause": "the Pruitts' son bulldozed a dirt bike course behind the station, 1992",
+   "path": [
+    [
+     560,
+     615
+    ],
+    [
+     640,
+     610
+    ],
+    [
+     700,
+     613
+    ],
+    [
+     732,
+     628
+    ],
+    [
+     736,
+     655
+    ],
+    [
+     712,
+     668
+    ],
+    [
+     650,
+     664
+    ],
+    [
+     612,
+     668
+    ],
+    [
+     592,
+     690
+    ],
+    [
+     560,
+     698
+    ],
+    [
+     534,
+     680
+    ],
+    [
+     532,
+     644
+    ]
+   ],
+   "width": 6,
+   "mat": "packed_dirt",
+   "poi": "Pruitt's bike course"
+  },
+  {
+   "year": -34,
+   "event": "place",
+   "cause": "the course's start gate",
+   "structure": "start_gate",
+   "at": [
+    600,
+    606
+   ],
+   "bearing": 0,
+   "age": 6
+  },
+  {
+   "year": -34,
+   "event": "place",
+   "cause": "tyres stacked on the outside of a turn",
+   "structure": "tyre_stack",
+   "at": [
+    742,
+    640
+   ],
+   "bearing": 0,
+   "age": 6
+  },
+  {
+   "year": -34,
+   "event": "place",
+   "cause": "tyres stacked on the outside of a turn",
+   "structure": "tyre_stack",
+   "at": [
+    720,
+    676
+   ],
+   "bearing": 0,
+   "age": 6
+  },
+  {
+   "year": -34,
+   "event": "place",
+   "cause": "tyres stacked on the outside of a turn",
+   "structure": "tyre_stack",
+   "at": [
+    528,
+    690
+   ],
+   "bearing": 0,
+   "age": 6
+  },
+  {
+   "year": -34,
+   "event": "place",
+   "cause": "tyres stacked on the outside of a turn",
+   "structure": "tyre_stack",
+   "at": [
+    524,
+    636
+   ],
+   "bearing": 0,
+   "age": 6
+  },
+  {
+   "year": -34,
+   "event": "place",
+   "cause": "tyres stacked on the outside of a turn",
+   "structure": "tyre_stack",
+   "at": [
+    600,
+    682
+   ],
+   "bearing": 0,
+   "age": 6
+  },
+  {
+   "year": -28,
+   "event": "fire",
+   "cause": "the 1998 fire that burned a long strip of plateau forest west of the cone",
+   "at": [
+    640,
+    170
+   ],
+   "radius": 110,
+   "wind_bearing": 255,
+   "stretch": 0.7,
+   "char": "charcoal"
+  },
+  {
+   "year": -4,
+   "event": "sign",
+   "cause": "the notice the ferryman left when the ramp no longer reached the water",
+   "at": [
+    1470,
+    582
+   ],
+   "text": [
+    "FERRY",
+    "NO SERVICE"
+   ],
+   "style": "painted_board",
+   "bearing": 110,
+   "age": 4
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the town that stood on the bench until the lake took its water",
+   "name": "Harlow",
+   "kind": "town",
+   "at": "harlow",
+   "radius": 150
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the mesa the town was named for",
+   "name": "Harlow Mesa",
+   "kind": "mesa",
+   "at": "harlow_mesa",
+   "radius": 130
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the families who were paid and moved out when the dam closed",
+   "name": "Bitterwater",
+   "kind": "drowned town",
+   "at": "bitterwater",
+   "radius": 130
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the family who ran the pumps on the highway",
+   "name": "Pruitt's Station",
+   "kind": "filling station",
+   "at": "station",
+   "radius": 90
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the name the sheepmen gave the ground under the west reef",
+   "name": "The Gathering",
+   "kind": "rock",
+   "at": "gathering",
+   "radius": 170
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the thin walls of pale rock the joints left standing",
+   "name": "The Fins",
+   "kind": "rock",
+   "at": "fins",
+   "radius": 190
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the last vent on the plateau, long cold",
+   "name": "Cinder Cone",
+   "kind": "volcano",
+   "at": "cone",
+   "radius": 140
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "siding_teal",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Deep teal painted lap siding.",
+  "id": 164,
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [64, 112, 112],
+    "alt": [54, 98, 98],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [74, 124, 122], "alt": [64, 110, 108]}
+  }
+}

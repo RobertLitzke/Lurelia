@@ -1,0 +1,31 @@
+{
+  "name": "glow_cenote",
+  "version": 2,
+  "introduced_by": "jadewater",
+  "notes": "The rims and walls of the flooded sinkholes: moss lit by the film beneath, vine curtains, banyans on the walls, kite rays rising.",
+  "priority": 11,
+  "rules": {"region": "cenotes"},
+  "surface": "lumen_moss",
+  "subsurface": "dirt",
+  "rock": "karst_streaked",
+  "map_color": [80, 210, 210],
+  "plants": [
+    {"plant": "karst_vine", "density": 0.95, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "fern", "density": 0.08, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "cliff_banyan",
+      "density": 0.006,
+      "placement": {"verb": "gradient", "params": {"min": 1.0, "max": 4.0}, "field": "slope"}
+    },
+    {"plant": "golden_bamboo", "density": 0.004, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "kite_ray", "count": 12},
+    {"creature": "dragonfly", "count": 8},
+    {"creature": "lantern_moth", "count": 10},
+    {"creature": "crystal_bat", "count": 5},
+    {"creature": "anaconda", "count": 1}
+  ],
+  "mist": 0.15,
+  "water": {"shallow": [46, 150, 104], "deep": [10, 52, 40]}
+}

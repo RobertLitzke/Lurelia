@@ -1,0 +1,25 @@
+{
+  "name": "brick_quarters",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "The sugar house's quarters: a roofless row of three brick rooms, a door and a window each on local -Z, a chimney stack between each pair. Give it an age.",
+  "size": [64, 24, 20],
+  "anchor": [32, 0, 10],
+  "foundation": 4,
+  "level": true,
+  "tags": ["levee"],
+  "slots": {"wall": "brick_brown"},
+  "ops": [
+    {"op": "walls", "from": [0, 0, 0], "to": [64, 12, 20], "mat": "wall", "thick": 2, "part": "wall"},
+    {"op": "box", "from": [20, 0, 2], "to": [22, 12, 18], "mat": "wall", "part": "wall"},
+    {"op": "box", "from": [19, 0, 14], "to": [23, 22, 20], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [42, 0, 2], "to": [44, 12, 18], "mat": "wall", "part": "wall"},
+    {"op": "box", "from": [41, 0, 14], "to": [45, 22, 20], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [7, 0, 0], "to": [11, 9, 2], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [14, 4, 0], "to": [17, 8, 2], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [29, 0, 0], "to": [33, 9, 2], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [36, 4, 0], "to": [39, 8, 2], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [51, 0, 0], "to": [55, 9, 2], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [58, 4, 0], "to": [61, 8, 2], "mat": "air", "part": "wall"}
+  ]
+}

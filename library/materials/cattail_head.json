@@ -1,0 +1,15 @@
+{
+  "name": "cattail_head",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "A cattail's stem and brown velvet head (drawn as a stalk sprite).",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [92, 60, 36],
+    "alt": [110, 74, 46],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [92, 60, 36], "alt": [110, 74, 46]}
+  }
+}

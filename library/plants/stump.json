@@ -1,0 +1,12 @@
+{
+  "name": "stump",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A knee-high stump where a tree snapped off long ago, grey bark still on.",
+  "form": "snag",
+  "height": [0.5, 1.0],
+  "trunk_radius": [0.25, 0.4],
+  "crown_radius": [0.0, 0.0],
+  "bark": "cottonwood_bark",
+  "max_slope": 1.0
+}

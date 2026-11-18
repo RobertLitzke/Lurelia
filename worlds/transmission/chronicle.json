@@ -1,0 +1,362 @@
+{
+  "places": {},
+  "events": [
+    {
+      "year": -100,
+      "event": "heightmap",
+      "file": "ground.bin",
+      "cause": "A level plain at 22 m: the ground the map is sunk into, so nothing but the arena shapes the world."
+    },
+    {
+      "year": -20,
+      "event": "place",
+      "cause": "tools/arena/transmission.py, rasterised brush by brush into quarter-metre voxels.",
+      "structure": "arena_transmission",
+      "at": [
+        128.0,
+        128.0
+      ],
+      "bearing": 0,
+      "poi": "transmission"
+    },
+    {
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
+      "at": [
+        128.0,
+        128.0
+      ],
+      "points": [
+        [
+          -20.45,
+          -16.4,
+          -13.75
+        ],
+        [
+          -20.35,
+          -8.2,
+          -13.75
+        ],
+        [
+          -20.25,
+          0.0,
+          -13.75
+        ],
+        [
+          -20.15,
+          8.2,
+          -13.75
+        ],
+        [
+          -20.05,
+          16.4,
+          -13.75
+        ],
+        [
+          -17.0,
+          -20.45,
+          -13.75
+        ],
+        [
+          -10.0,
+          -20.35,
+          -13.75
+        ],
+        [
+          -3.0,
+          -20.25,
+          -13.75
+        ],
+        [
+          4.0,
+          -20.15,
+          -13.75
+        ],
+        [
+          11.0,
+          -20.05,
+          -13.75
+        ],
+        [
+          -12.5,
+          2.75,
+          -13.75
+        ],
+        [
+          -4.25,
+          14.0,
+          -13.75
+        ],
+        [
+          -16.88,
+          19.56,
+          -13.75
+        ],
+        [
+          -9.62,
+          19.69,
+          -13.75
+        ],
+        [
+          -2.38,
+          19.81,
+          -13.75
+        ],
+        [
+          4.88,
+          19.94,
+          -13.75
+        ],
+        [
+          11.0,
+          -4.25,
+          -13.75
+        ],
+        [
+          14.06,
+          -16.0,
+          -13.75
+        ],
+        [
+          14.19,
+          -9.0,
+          -13.75
+        ],
+        [
+          14.31,
+          -2.0,
+          -13.75
+        ],
+        [
+          14.44,
+          5.0,
+          -13.75
+        ],
+        [
+          -14.5,
+          -0.5,
+          -9.75
+        ],
+        [
+          14.0,
+          -0.5,
+          -9.75
+        ],
+        [
+          20.08,
+          -8.5,
+          -9.75
+        ],
+        [
+          20.25,
+          -0.5,
+          -9.75
+        ],
+        [
+          20.42,
+          7.5,
+          -9.75
+        ],
+        [
+          -0.5,
+          -14.5,
+          -5.75
+        ],
+        [
+          -0.5,
+          14.0,
+          -5.75
+        ],
+        [
+          6.25,
+          -20.38,
+          -5.75
+        ],
+        [
+          15.75,
+          -20.12,
+          -5.75
+        ],
+        [
+          5.0,
+          19.75,
+          -5.75
+        ]
+      ],
+      "reach": 9.0,
+      "strength": 0.5,
+      "colour": [
+        238,
+        247,
+        255
+      ]
+    },
+    {
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
+      "at": [
+        128.0,
+        128.0
+      ],
+      "points": [
+        [
+          -5.5,
+          -5.5,
+          -5.25
+        ],
+        [
+          4.5,
+          -5.5,
+          -5.25
+        ],
+        [
+          -5.5,
+          4.5,
+          -5.25
+        ],
+        [
+          4.5,
+          4.5,
+          -5.25
+        ],
+        [
+          15.5,
+          15.5,
+          -6.25
+        ]
+      ],
+      "reach": 16.0,
+      "strength": 0.75,
+      "colour": [
+        238,
+        247,
+        255
+      ]
+    },
+    {
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
+      "at": [
+        128.0,
+        128.0
+      ],
+      "points": [
+        [
+          -17.25,
+          -12.5,
+          -11.25
+        ],
+        [
+          20.25,
+          -17.5,
+          -7.25
+        ]
+      ],
+      "reach": 8.0,
+      "strength": 0.5,
+      "colour": [
+        238,
+        247,
+        255
+      ]
+    },
+    {
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
+      "at": [
+        128.0,
+        128.0
+      ],
+      "points": [
+        [
+          -12.5,
+          12.5,
+          -10.25
+        ]
+      ],
+      "reach": 10.0,
+      "strength": 0.5,
+      "colour": [
+        238,
+        247,
+        255
+      ]
+    },
+    {
+      "year": -2,
+      "event": "area",
+      "cause": "What the people who fought here called it: the turbine hall.",
+      "name": "the turbine hall",
+      "kind": "floor",
+      "at": [
+        127.5,
+        127.5
+      ],
+      "radius": 7
+    },
+    {
+      "year": -2,
+      "event": "area",
+      "cause": "What the people who fought here called it: the crossing.",
+      "name": "the crossing",
+      "kind": "bridge",
+      "at": [
+        127.5,
+        127.5
+      ],
+      "radius": 2
+    },
+    {
+      "year": -2,
+      "event": "area",
+      "cause": "What the people who fought here called it: the intake.",
+      "name": "the intake",
+      "kind": "room",
+      "at": [
+        143.5,
+        143.5
+      ],
+      "radius": 6
+    },
+    {
+      "year": -2,
+      "event": "area",
+      "cause": "What the people who fought here called it: the cold store.",
+      "name": "the cold store",
+      "kind": "room",
+      "at": [
+        115.5,
+        140.5
+      ],
+      "radius": 4
+    },
+    {
+      "year": -2,
+      "event": "area",
+      "cause": "What the people who fought here called it: the spine.",
+      "name": "the spine",
+      "kind": "passage",
+      "at": [
+        107.8,
+        127.5
+      ],
+      "radius": 3
+    },
+    {
+      "year": -2,
+      "event": "area",
+      "cause": "What the people who fought here called it: the north run.",
+      "name": "the north run",
+      "kind": "passage",
+      "at": [
+        123.5,
+        107.8
+      ],
+      "radius": 3
+    }
+  ]
+}

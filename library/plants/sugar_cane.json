@@ -1,0 +1,14 @@
+{
+  "name": "sugar_cane",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Sugar cane: dense clumps of straight jointed stalks taller than a man, ribbon leaves arching over; drawn as sprites.",
+  "form": "herb",
+  "height": [2.8, 3.8],
+  "crown_radius": [0.4, 0.6],
+  "bark": "dead_wood",
+  "leaf": "cane_leaves",
+  "max_slope": 0.4,
+  "standing_water": [-5, -0.1],
+  "affords": ["cover"]
+}

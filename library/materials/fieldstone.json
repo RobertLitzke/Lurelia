@@ -1,0 +1,15 @@
+{
+  "name": "fieldstone",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 31,
+  "smooth": false,
+  "texture": {
+    "pattern": "coursed",
+    "base": [138, 132, 122],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [168, 160, 146],
+    "calm": {"base": [178, 164, 144], "alt": [192, 178, 156]}
+  }
+}

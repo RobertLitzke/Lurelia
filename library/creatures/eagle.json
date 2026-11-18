@@ -1,0 +1,28 @@
+{
+  "name": "eagle",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A lone eagle circling high over the slopes and the coast. Never lands where you can see it.",
+  "half_w": 0.4,
+  "height": 0.5,
+  "colors": {
+    "body": [36, 28, 24],
+    "head": [240, 236, 228],
+    "beak": [240, 190, 40],
+    "wing": [150, 98, 60],
+    "tail": [150, 98, 60],
+    "legs": [240, 190, 40]
+  },
+  "behaviour": {
+    "movement": "soar",
+    "walk_speed": 11,
+    "flee_speed": 14,
+    "wary": 20,
+    "flightiness": 0.4,
+    "juvenile_flightiness": 0.8,
+    "fly_height": 38,
+    "group": null
+  },
+  "like": "starling",
+  "scale": 3.57143
+}

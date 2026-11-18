@@ -1,0 +1,16 @@
+{
+  "name": "bottle_blue",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Cobalt-blue bottle glass hung on the bottle trees, faintly lit from inside.",
+  "smooth": false,
+  "glow": 1.0,
+  "texture": {
+    "pattern": "glass",
+    "base": [44, 84, 168],
+    "alt": [86, 132, 220],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [44, 84, 168], "alt": [86, 132, 220]}
+  }
+}

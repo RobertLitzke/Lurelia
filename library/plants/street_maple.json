@@ -1,0 +1,19 @@
+{
+  "name": "street_maple",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "A planted street maple: smaller and tidier than the bigleaf, a few leaves turning.",
+  "form": "branching",
+  "height": [7, 10],
+  "trunk_radius": [0.2, 0.28],
+  "crown_radius": [2.4, 3.4],
+  "bark": "bark",
+  "leaf": "leaves",
+  "leaf_alt": ["maple_red", 0.12],
+  "curve": "straight",
+  "canopy": "lobes",
+  "leader": 0.6,
+  "fill": 0.45,
+  "max_slope": 0.7,
+  "autumn": "maple_red"
+}

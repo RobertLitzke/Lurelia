@@ -1,0 +1,16 @@
+{
+  "name": "silver_deadwood",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Dead cypress and cedar weathered silver-grey, split along the grain: the ghost forest's snags, the bottle trees, the figure's cane. Drawn as thin stems (bevelled, not rounded), so slim branches stay joined.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [134, 130, 122],
+    "alt": [100, 96, 90],
+    "scale": 4,
+    "contrast": 0.9,
+    "calm": {"base": [164, 156, 144], "alt": [142, 134, 124]}
+  },
+  "tube": true
+}

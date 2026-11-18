@@ -1,0 +1,15 @@
+{
+  "name": "sail_frozen",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Canvas furled on the yards and frozen stiff, grey-white and crusted.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [214, 216, 214],
+    "alt": [190, 194, 194],
+    "scale": 5,
+    "contrast": 0.6,
+    "calm": {"base": [222, 224, 222], "alt": [198, 202, 202]}
+  }
+}

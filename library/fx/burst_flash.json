@@ -1,0 +1,18 @@
+{
+  "name": "burst_flash",
+  "version": 1,
+  "introduced_by": "rocket_blast",
+  "notes": "The white-hot heart of a burst, there for a tenth of a second and swelling as it goes.",
+  "shape": "puff",
+  "count": [3, 4],
+  "speed": [0.0, 0.8],
+  "cone_deg": 180,
+  "life": [0.09, 0.15],
+  "size": [0.5, 2.0],
+  "size_jitter": 0.2,
+  "drag": 4.0,
+  "color": [255, 244, 214],
+  "alpha": 0.95,
+  "glow": 4.0,
+  "near_fade": 1.0
+}

@@ -1,0 +1,13 @@
+{
+  "name": "huckleberry",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "herb: Red huckleberry, a loose knee-to-waist-high bush of arching stems and small oval leaves on the forest floor, drawn as sprites (layer huckleberry); you can walk through it.",
+  "form": "herb",
+  "height": [0.7, 1.2],
+  "trunk_radius": [0.0, 0.0],
+  "crown_radius": [0.6, 0.9],
+  "bark": "dead_wood",
+  "leaf": "huckleberry",
+  "max_slope": 1.0
+}

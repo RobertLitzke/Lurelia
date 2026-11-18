@@ -1,0 +1,15 @@
+{
+  "name": "terracotta",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Unglazed red earthenware: storage jars, a little paler where the sea has worn them.",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [176, 96, 64],
+    "alt": [156, 82, 54],
+    "scale": 5,
+    "contrast": 0.7,
+    "calm": {"base": [182, 102, 70], "alt": [162, 88, 60]}
+  }
+}

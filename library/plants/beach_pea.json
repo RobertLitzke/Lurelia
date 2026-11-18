@@ -1,0 +1,15 @@
+{
+  "name": "beach_pea",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "shrub: Beach pea: a low mat of trailing leaves and purple pea flowers on the sand above the tide line.",
+  "form": "shrub",
+  "height": [0.25, 0.45],
+  "trunk_radius": [0.04, 0.05],
+  "crown_radius": [0.4, 0.7],
+  "bark": "beach_pea_leaves",
+  "leaf": "beach_pea_leaves",
+  "squash": 0.45,
+  "max_slope": 0.9,
+  "affords": ["nectar"]
+}

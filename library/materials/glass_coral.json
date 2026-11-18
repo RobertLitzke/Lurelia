@@ -1,0 +1,16 @@
+{
+  "name": "glass_coral",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Glassfall's strange coral near the strewn field: clear pale cyan, faintly lit from inside, as if grown from the glass the sky threw down.",
+  "smooth": false,
+  "glow": 0.3,
+  "texture": {
+    "pattern": "glass",
+    "base": [168, 226, 232],
+    "alt": [140, 206, 216],
+    "scale": 4,
+    "contrast": 0.9,
+    "calm": {"base": [174, 232, 238], "alt": [146, 212, 222]}
+  }
+}

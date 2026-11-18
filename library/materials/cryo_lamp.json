@@ -1,0 +1,9 @@
+{
+  "name": "cryo_lamp",
+  "version": 1,
+  "introduced_by": "icezeto",
+  "notes": "A cold strip light in a frozen base: blue-white, the only warm-looking thing about it is that it works.",
+  "smooth": false,
+  "glow": 1.35,
+  "texture": {"pattern": "flat", "base": [196, 226, 255], "scale": 1, "contrast": 1.0, "calm": {"base": [206, 232, 255]}}
+}

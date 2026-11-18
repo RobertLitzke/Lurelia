@@ -1,0 +1,18 @@
+{
+  "name": "iron_plate",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "A small rusted plate bolted to a post: a parish number, a gauge, a company's name on a works gate.",
+  "post": "sign_post_single",
+  "board": [0.8, 0.5],
+  "centre_m": 1.5,
+  "offset_m": 0.02,
+  "thickness": 0.04,
+  "face": [122, 86, 60],
+  "edge": [74, 50, 34],
+  "ink": [232, 224, 206],
+  "cap_m": 0.1,
+  "border_m": 0.03,
+  "letters": "caps",
+  "two_sided": false
+}

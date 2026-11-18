@@ -1,0 +1,19 @@
+{
+  "name": "jack",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Jacks: blue-silver fish in a fast school sweeping along the reef edge and round the bait balls.",
+  "colors": {"herring": [70, 110, 150], "silver": [150, 158, 168], "fin": [70, 110, 150]},
+  "behaviour": {
+    "habit": "patrol",
+    "walk_speed": 1.6,
+    "flee_speed": 4.5,
+    "leap": 0,
+    "depth": [3, 12],
+    "shallows": 3,
+    "group": {"size": [6, 12], "spacing": 0.8, "range": 4, "cohesion": 1.3},
+    "hunts": ["sardine", "reef_chromis", "anthias"]
+  },
+  "like": "herring",
+  "scale": 2.0
+}

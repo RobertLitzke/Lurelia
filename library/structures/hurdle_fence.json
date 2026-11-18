@@ -1,0 +1,20 @@
+{
+  "name": "hurdle_fence",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A 10 m run of woven hazel hurdling between oak stakes: the plot and yard fences of Windbarrow. Long axis local X.",
+  "size": [40, 7, 4],
+  "anchor": [20, 0, 2],
+  "foundation": 3,
+  "level": false,
+  "tags": ["windbarrow"],
+  "slots": {"wall": "daub", "roof": "thatch", "timber": "oak_post", "floor": "packed_dirt", "hurdle": "stick_wood"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 1], "to": [40, 5, 3], "mat": "hurdle", "part": "frame"},
+    {"op": "box", "from": [0, 0, 0], "to": [2, 7, 4], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [9, 0, 0], "to": [11, 7, 4], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [19, 0, 0], "to": [21, 7, 4], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [29, 0, 0], "to": [31, 7, 4], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [38, 0, 0], "to": [40, 7, 4], "mat": "timber", "part": "timber"}
+  ]
+}

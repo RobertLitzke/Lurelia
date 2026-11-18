@@ -1,0 +1,33 @@
+{
+  "name": "puffin",
+  "version": 2,
+  "introduced_by": "glassfall",
+  "notes": "circle: Tufted puffin: black with a white face, a big orange-red beak and orange feet. Circles low off the basalt cliffs where it nests and rafts on the sea.",
+  "colors": {
+    "body": [24, 24, 30],
+    "head": [24, 24, 30],
+    "beak": [230, 96, 40],
+    "wing": [24, 24, 30],
+    "tail": [24, 24, 30],
+    "legs": [230, 120, 50],
+    "white": [240, 236, 228]
+  },
+  "behaviour": {
+    "movement": "circle",
+    "walk_speed": 9,
+    "flee_speed": 12,
+    "wary": 10,
+    "flightiness": 0.8,
+    "fly_height": 7,
+    "floats": true,
+    "flight": "flap",
+    "group": null,
+    "dive_depth": 7
+  },
+  "like": "starling",
+  "scale": 1.4,
+  "extra_ops": [
+    {"op": "recolour", "at": [13, 9, 8], "until": [20, 11, 11], "from": "head", "to": "white"},
+    {"op": "box", "from": [15, 8, 7], "to": [17, 10, 9], "mat": "beak", "part": "head"}
+  ]
+}

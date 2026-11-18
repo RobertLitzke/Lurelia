@@ -1,0 +1,15 @@
+{
+  "name": "oak_post",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Split oak, adze-dressed and weathered silver: the house posts, the barrow posts and the granary legs.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [138, 122, 98],
+    "alt": [118, 104, 84],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [144, 128, 106], "alt": [122, 108, 90]}
+  }
+}

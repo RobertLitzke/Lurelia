@@ -1,0 +1,15 @@
+{
+  "name": "pine_cone",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Under the conifers.",
+  "display": "pine cone",
+  "voxel": 0.03,
+  "colors": {"coat": [150, 98, 60], "dark": [36, 28, 24]},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 7, 16], "radius": [4, 7, 4], "mat": "coat"},
+    {"op": "ellipsoid", "centre": [16, 4, 16], "radius": [4.6, 0.8, 4.6], "mat": "dark"},
+    {"op": "ellipsoid", "centre": [16, 7, 16], "radius": [4.6, 0.8, 4.6], "mat": "dark"},
+    {"op": "ellipsoid", "centre": [16, 10, 16], "radius": [4.6, 0.8, 4.6], "mat": "dark"}
+  ]
+}

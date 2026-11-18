@@ -1,0 +1,15 @@
+{
+  "name": "sapling_pine",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Young pine coming back after fire. Bushy and upswept, like the pines it will grow into.",
+  "form": "sapling",
+  "height": [2, 4],
+  "trunk_radius": [0.08, 0.12],
+  "crown_radius": [0.8, 1.2],
+  "bark": "bark",
+  "leaf": "pine",
+  "sweep": "up",
+  "taper": 0.85,
+  "whorls": [4, 6]
+}

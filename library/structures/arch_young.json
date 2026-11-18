@@ -1,0 +1,21 @@
+{
+  "name": "arch_young",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A young arch: a fin with a deep alcove eaten into its side and a hole just broken through at the back. Long axis local X.",
+  "size": [64, 64, 20],
+  "anchor": [32, 0, 10],
+  "foundation": 8,
+  "level": false,
+  "decays": false,
+  "tags": ["natural", "arch"],
+  "slots": {"rock": "wingate_sandstone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [32.0, 25.2, 10.0], "radius": [32.0, 34.8, 8.0], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [7.68, 12.0, 10.0], "radius": [8.96, 19.2, 11.0], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [56.32, 10.8, 10.0], "radius": [8.32, 16.8, 10.0], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [26.0, 0, 10.0], "radius": [16, 22, 16], "mat": "air"},
+    {"op": "ellipsoid", "centre": [38.0, 30, 10.0], "radius": [4, 4, 16], "mat": "air"},
+    {"op": "ellipsoid", "centre": [30, 14, 2], "radius": [18, 22, 12], "mat": "air"}
+  ]
+}

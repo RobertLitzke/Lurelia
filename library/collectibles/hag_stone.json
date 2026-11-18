@@ -1,0 +1,13 @@
+{
+  "name": "hag_stone",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A pebble with a hole worn right through it. The village says if you look through one you see the Hollins as they really are.",
+  "display": "hag stone",
+  "voxel": 0.022,
+  "colors": {"pebble": [168, 160, 146], "dark": [36, 28, 24]},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 5, 16], "radius": [9, 5, 8], "mat": "pebble"},
+    {"op": "cylinder", "base": [16, 0, 16], "radius": 2.6, "height": 11, "mat": "dark"}
+  ]
+}

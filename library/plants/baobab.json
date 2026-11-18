@@ -1,0 +1,22 @@
+{
+  "name": "baobab",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Baobab: a grey barrel of a trunk, three to five metres through, under a sparse crown of thick limbs held up like roots. Bare for much of the year; the crown is open enough to see sky through.",
+  "form": "branching",
+  "height": [13, 19],
+  "trunk_radius": [1.7, 2.5],
+  "buttress": 1.0,
+  "crown_radius": [3.6, 5.0],
+  "bark": "baobab_bark",
+  "leaf": "live_oak_leaves",
+  "curve": "straight",
+  "canopy": "tufts",
+  "leader": 0.1,
+  "fill": 0.15,
+  "spread": 0.9,
+  "dome": 0.15,
+  "limb": 0.55,
+  "max_slope": 0.5,
+  "affords": ["perch", "nest"]
+}

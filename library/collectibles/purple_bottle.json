@@ -1,0 +1,15 @@
+{
+  "name": "purple_bottle",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "An old clear bottle turned violet by a century of desert sun, around Harlow.",
+  "display": "purple bottle",
+  "voxel": 0.018,
+  "colors": {"purple_glass": [150, 112, 176, 0.3]},
+  "ops": [
+    {"op": "cylinder", "base": [16, 0, 16], "radius": 4, "height": 13, "mat": "purple_glass"},
+    {"op": "cylinder", "base": [16, 13, 16], "radius": 2.6, "height": 2, "mat": "purple_glass"},
+    {"op": "cylinder", "base": [16, 15, 16], "radius": 1.6, "height": 6, "mat": "purple_glass"},
+    {"op": "cylinder", "base": [16, 20, 16], "radius": 2.1, "height": 1, "mat": "purple_glass"}
+  ]
+}

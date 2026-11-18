@@ -1,0 +1,19 @@
+{
+  "name": "backwater_flats",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "The delta's quiet water: eelgrass over silt in the sheltered reaches behind the islands, brown and barely moving, with rafts of lily pads on the surface and hyacinth where it is stillest. The fresh-water twin of eelgrass_flats, which is the salt meadow of a lagoon.",
+  "priority": 3,
+  "rules": {"underwater": true, "elev": [-2.4, -0.25], "coast": [-220, -2]},
+  "surface": "eelgrass",
+  "subsurface": "silt",
+  "map_color": [84, 124, 104],
+  "plants": [{"plant": "water_lily", "density": 0.16, "placement": {"verb": "scatter", "params": {}}}],
+  "features": [{"structure": "hyacinth_raft", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "channel_catfish", "count": 14},
+    {"creature": "alligator_gar", "count": 6},
+    {"creature": "water_snake", "count": 3},
+    {"creature": "otter", "count": 3}
+  ]
+}

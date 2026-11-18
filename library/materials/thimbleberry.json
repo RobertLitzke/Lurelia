@@ -1,0 +1,16 @@
+{
+  "name": "thimbleberry",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Marker voxel at the foot of a thimbleberry bush; the stems and big leaves are sprites (layer thimbleberry).",
+  "id": 191,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [64, 100, 40],
+    "alt": [50, 84, 34],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [76, 112, 48], "alt": [62, 96, 40]}
+  }
+}

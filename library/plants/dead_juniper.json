@@ -1,0 +1,13 @@
+{
+  "name": "dead_juniper",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A silvered dead juniper, twisted, still standing.",
+  "form": "snag",
+  "height": [2, 4],
+  "trunk_radius": [0.18, 0.3],
+  "crown_radius": [1.0, 1.6],
+  "bark": "juniper_bark",
+  "max_slope": 1.3,
+  "lean": 0.35
+}

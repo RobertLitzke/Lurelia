@@ -1,0 +1,16 @@
+{
+  "name": "basalt_boulder",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "A boulder of black basalt the ice dropped where it melted, an erratic, rimed on its windward side.",
+  "size": [16, 12, 16],
+  "anchor": [8, 0, 8],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"rock": "basalt"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [8, 5, 8], "radius": [7, 5.5, 6], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [10, 7, 6], "radius": [4, 3, 4], "mat": "rock"}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "steppe_sheep",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The sheep of the villages, kept in one big flock apiece rather than in knots of a few: twelve to thirty-six together, so a flock is a sight when you come on it and the downs are empty between.",
+  "colors": {
+    "rabbit": [240, 236, 228],
+    "rabbit_light": [240, 236, 228],
+    "white": [240, 236, 228],
+    "fleece": [238, 232, 220],
+    "face": [60, 56, 54],
+    "dark": [36, 28, 24],
+    "antler": [214, 196, 160]
+  },
+  "behaviour": {
+    "movement": "graze",
+    "walk_speed": 0.7,
+    "flee_speed": 4.5,
+    "wary": 9,
+    "group": {"size": [12, 36], "spacing": 1.8, "range": 26, "alignment": 1.0, "cohesion": 1.6}
+  },
+  "like": "sheep",
+  "scale": 1.0
+}

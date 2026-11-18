@@ -1,0 +1,15 @@
+{
+  "name": "dead_wood",
+  "version": 2,
+  "introduced_by": "glassfall",
+  "id": 43,
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [128, 122, 112],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [96, 90, 84],
+    "calm": {"base": [160, 150, 136], "alt": [140, 130, 118]}
+  }
+}

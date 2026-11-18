@@ -1,0 +1,16 @@
+{
+  "name": "tailings",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Pale yellow crushed rock from the stamp mill.",
+  "id": 118,
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [212, 194, 136],
+    "alt": [184, 164, 112],
+    "scale": 7,
+    "contrast": 1.0,
+    "calm": {"base": [214, 198, 144], "alt": [190, 172, 122]}
+  }
+}

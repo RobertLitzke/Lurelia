@@ -1,0 +1,57 @@
+{
+  "name": "cemetery",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Harlow's cemetery on the hill: a picket fence, wooden crosses and two stones.",
+  "size": [36, 8, 28],
+  "anchor": [18, 0, 14],
+  "tags": ["harlow"],
+  "slots": {"timber": "desert_planks", "stone": "red_stone", "dirt": "red_sand"},
+  "ops": [
+    {
+      "op": "repeat",
+      "count": 18,
+      "step": [2, 0, 0],
+      "ops": [
+        {"op": "box", "from": [0, 0, 0], "to": [1, 4, 1], "mat": "timber", "part": "timber"},
+        {"op": "box", "from": [0, 0, 27], "to": [1, 4, 28], "mat": "timber", "part": "timber"}
+      ]
+    },
+    {
+      "op": "repeat",
+      "count": 14,
+      "step": [0, 0, 2],
+      "ops": [
+        {"op": "box", "from": [0, 0, 0], "to": [1, 4, 1], "mat": "timber", "part": "timber"},
+        {"op": "box", "from": [35, 0, 0], "to": [36, 4, 1], "mat": "timber", "part": "timber"}
+      ]
+    },
+    {"op": "box", "from": [0, 3, 0], "to": [36, 4, 1], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [0, 3, 27], "to": [36, 4, 28], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [0, 3, 0], "to": [1, 4, 28], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [35, 3, 0], "to": [36, 4, 28], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [16, 0, 0], "to": [20, 4, 1], "mat": "air"},
+    {
+      "op": "repeat",
+      "count": 4,
+      "step": [7, 0, 0],
+      "ops": [
+        {"op": "box", "from": [5, 0, 8], "to": [6, 6, 9], "mat": "timber", "part": "timber"},
+        {"op": "box", "from": [4, 4, 8], "to": [7, 5, 9], "mat": "timber", "part": "timber"},
+        {"op": "box", "from": [4, 0, 9], "to": [7, 1, 13], "mat": "dirt"}
+      ]
+    },
+    {
+      "op": "repeat",
+      "count": 3,
+      "step": [8, 0, 0],
+      "ops": [
+        {"op": "box", "from": [8, 0, 18], "to": [9, 6, 19], "mat": "timber", "part": "timber"},
+        {"op": "box", "from": [7, 4, 18], "to": [10, 5, 19], "mat": "timber", "part": "timber"},
+        {"op": "box", "from": [7, 0, 19], "to": [10, 1, 23], "mat": "dirt"}
+      ]
+    },
+    {"op": "box", "from": [30, 0, 18], "to": [33, 5, 19], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [30, 0, 8], "to": [33, 4, 9], "mat": "stone", "part": "stone"}
+  ]
+}

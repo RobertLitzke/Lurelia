@@ -1,0 +1,15 @@
+{
+  "name": "chalk_white",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "White chalk: soft, thickly bedded limestone, the bones of the whole country. Shows on every scarp and hoof-cut.",
+  "smooth": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [196, 192, 182],
+    "alt": [210, 206, 196],
+    "scale": 2,
+    "contrast": 0.45,
+    "calm": {"base": [198, 194, 184], "alt": [210, 208, 198]}
+  }
+}

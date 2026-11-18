@@ -1,0 +1,17 @@
+{
+  "name": "slag_pool",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "The pit at the middle of the deck: slag still hot enough to light the walls above it, and hot enough to kill anything that wades in. Twelve damage a second, so crossing a corner of it costs a little and standing in it is about eight seconds of life.",
+  "smooth": false,
+  "glow": 2.2,
+  "texture": {
+    "pattern": "blotch",
+    "base": [126, 34, 12],
+    "alt": [78, 20, 8],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [136, 42, 16], "alt": [86, 26, 10]}
+  },
+  "hurt": 12.0
+}

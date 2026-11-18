@@ -1,0 +1,16 @@
+{
+  "name": "river_water",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 27,
+  "smooth": true,
+  "water": true,
+  "texture": {
+    "pattern": "ripples",
+    "base": [52, 104, 116],
+    "scale": 3,
+    "contrast": 0.8,
+    "alt": [80, 140, 150],
+    "calm": {"base": [70, 130, 140], "alt": [96, 156, 164]}
+  }
+}

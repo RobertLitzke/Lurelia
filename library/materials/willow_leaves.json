@@ -1,0 +1,15 @@
+{
+  "name": "willow_leaves",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 41,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [110, 140, 60],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [150, 170, 80],
+    "calm": {"base": [134, 160, 72], "alt": [156, 176, 86]}
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "warthog",
+  "version": 2,
+  "introduced_by": "thornpan",
+  "notes": "Warthog: grey, bristled and comic, head down in the grass with its tail straight up when it trots off. Everywhere in the country and the first thing most people see.",
+  "colors": {
+    "coat": [110, 100, 92],
+    "belly": [128, 118, 108],
+    "mane": [52, 44, 38],
+    "tusk": [240, 236, 228],
+    "dark": [36, 28, 24]
+  },
+  "behaviour": {
+    "walk_speed": 1.1,
+    "flee_speed": 8.0,
+    "wary": 14,
+    "flightiness": 1.5,
+    "group": {"size": [2, 6], "spacing": 1.8, "range": 12, "alignment": 1.0, "cohesion": 1.1},
+    "active": "diurnal"
+  },
+  "like": "boar",
+  "scale": 1.05
+}

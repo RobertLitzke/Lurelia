@@ -1,0 +1,19 @@
+{
+  "name": "market_cross",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "The market cross on Hemlow green: three worn steps, a tall shaft and a weathered cross head.",
+  "size": [16, 28, 16],
+  "anchor": [8, 0, 8],
+  "foundation": 4,
+  "tags": ["hemlow"],
+  "slots": {"wall": "lichen_rock"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [16, 2, 16], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [2, 2, 2], "to": [14, 4, 14], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [4, 4, 4], "to": [12, 6, 12], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [7, 6, 7], "to": [9, 26, 9], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [4, 21, 7], "to": [12, 23, 9], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [7, 26, 7], "to": [9, 28, 9], "mat": "wall", "part": "stone"}
+  ]
+}

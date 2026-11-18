@@ -1,0 +1,31 @@
+{
+  "name": "patch_reef",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "A patch reef standing up out of the lagoon sand to a metre or two of the surface: a knot of staghorn, tables and brain coral.",
+  "priority": 21,
+  "rules": {"underwater": true, "region": "patch_reef"},
+  "surface": "reef_lime",
+  "subsurface": "reef_lime",
+  "rock": "reef_lime",
+  "fringe": 0,
+  "map_color": [200, 150, 160],
+  "plants": [
+    {
+      "plant": "staghorn_coral",
+      "density": 0.08,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.3, "max": 0.6}}
+    },
+    {"plant": "table_coral_teal", "density": 0.03, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "brain_coral", "density": 0.04, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "finger_coral", "density": 0.04, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "plate_coral", "density": 0.02, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "reef_chromis", "count": 140},
+    {"creature": "butterflyfish", "count": 10},
+    {"creature": "angelfish", "count": 4},
+    {"creature": "parrotfish", "count": 7},
+    {"creature": "reef_manta", "count": 2}
+  ]
+}

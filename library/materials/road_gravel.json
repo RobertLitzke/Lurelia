@@ -1,0 +1,16 @@
+{
+  "name": "road_gravel",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Road shoulder gravel.",
+  "id": 116,
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [156, 136, 116],
+    "alt": [120, 104, 90],
+    "scale": 8,
+    "contrast": 1.0,
+    "calm": {"base": [166, 146, 124], "alt": [132, 116, 100]}
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "cave_bear",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "graze: Cave bear: half again the bulk of a black bear, dark brown with a high shoulder hump and a pale muzzle, denning in the chalk caves and out at the mouths at dawn and dusk.",
+  "colors": {"bear": [86, 64, 44], "muzzle": [196, 170, 132], "dark": [36, 28, 24]},
+  "behaviour": {
+    "movement": "graze",
+    "walk_speed": 0.8,
+    "flee_speed": 7.0,
+    "wary": 15,
+    "flees_from": ["player"],
+    "spawn_chance": 0.3,
+    "swims": true
+  },
+  "like": "bear",
+  "scale": 1.8,
+  "extra_ops": [
+    {"op": "ellipsoid", "centre": [16.5, 14.5, 13.5], "radius": [4.8, 3.2, 4.0], "mat": "bear"},
+    {"op": "box", "from": [13, 0, 9], "to": [16, 2, 14], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [17, 0, 9], "to": [20, 2, 14], "mat": "dark", "part": "leg_fr"}
+  ],
+  "vary": {"size": 0.1, "shade": 0.1, "hue": 0.04}
+}

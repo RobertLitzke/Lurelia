@@ -1,0 +1,16 @@
+{
+  "name": "glassbloom",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Marker voxel at the foot of a glassbloom; the blades are sprites (layer glassbloom).",
+  "id": 56,
+  "smooth": false,
+  "texture": {
+    "pattern": "glass",
+    "base": [120, 96, 170],
+    "alt": [236, 226, 255],
+    "scale": 2,
+    "contrast": 1.0,
+    "calm": {"base": [140, 116, 190], "alt": [230, 220, 250]}
+  }
+}

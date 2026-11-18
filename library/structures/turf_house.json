@@ -1,0 +1,61 @@
+{
+  "name": "turf_house",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "An Icelandic turf farmhouse: long sod walls and a grass roof, two white timber gables on the front, one with the door.",
+  "size": [46, 27, 28],
+  "anchor": [23, 0, 14],
+  "foundation": 6,
+  "level": true,
+  "tags": ["kaldvik", "house"],
+  "ops": [
+    {"op": "walls", "from": [1, 0, 1], "to": [45, 10, 27], "mat": "turf_wall", "thick": 3, "part": "wall"},
+    {
+      "op": "gable",
+      "from": [0, 10, 0],
+      "to": [46, 10, 28],
+      "axis": "x",
+      "mat": "turf_roof",
+      "rise": 1,
+      "part": "roof"
+    },
+    {"op": "gable", "from": [1, 10, 1], "to": [2, 10, 27], "axis": "x", "mat": "turf_wall", "rise": 1, "part": "wall"},
+    {
+      "op": "gable",
+      "from": [44, 10, 1],
+      "to": [45, 10, 27],
+      "axis": "x",
+      "mat": "turf_wall",
+      "rise": 1,
+      "part": "wall"
+    },
+    {"op": "box", "from": [8, 0, 0], "to": [20, 14, 4], "mat": "white_siding", "part": "wall"},
+    {"op": "gable", "from": [7, 14, 0], "to": [21, 14, 4], "axis": "z", "mat": "roof_tar", "rise": 1, "part": "roof"},
+    {
+      "op": "gable",
+      "from": [8, 14, 0],
+      "to": [20, 14, 1],
+      "axis": "z",
+      "mat": "white_siding",
+      "rise": 1,
+      "part": "wall"
+    },
+    {"op": "box", "from": [12, 15, 0], "to": [16, 18, 1], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [10, 4, 0], "to": [13, 8, 1], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [26, 0, 0], "to": [38, 14, 4], "mat": "white_siding", "part": "wall"},
+    {"op": "gable", "from": [25, 14, 0], "to": [39, 14, 4], "axis": "z", "mat": "roof_tar", "rise": 1, "part": "roof"},
+    {
+      "op": "gable",
+      "from": [26, 14, 0],
+      "to": [38, 14, 1],
+      "axis": "z",
+      "mat": "white_siding",
+      "rise": 1,
+      "part": "wall"
+    },
+    {"op": "box", "from": [30, 15, 0], "to": [34, 18, 1], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [28, 4, 0], "to": [31, 8, 1], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [12, 0, 0], "to": [16, 9, 1], "mat": "door_red", "part": "timber"},
+    {"op": "box", "from": [32, 9, 12], "to": [35, 26, 15], "mat": "fieldstone", "part": "stone"}
+  ]
+}

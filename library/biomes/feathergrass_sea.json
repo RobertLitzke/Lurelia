@@ -1,0 +1,59 @@
+{
+  "name": "feathergrass_sea",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The open steppe: waist-high feathergrass gone gold over chalk, big tussocks standing out of it, a hawthorn or a juniper every few hundred metres. The default of Windbarrow.",
+  "priority": 1,
+  "rules": {},
+  "surface": "feathergrass",
+  "subsurface": "chalk_white",
+  "rock": null,
+  "map_color": [196, 176, 104],
+  "plants": [
+    {
+      "plant": "feather_tussock",
+      "density": 0.022,
+      "placement": {"verb": "clustered", "params": {"size": 26, "min": 0.3, "max": 1.0}}
+    },
+    {"plant": "hawthorn", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 40}}},
+    {"plant": "juniper", "density": 0.0005, "placement": {"verb": "lone", "params": {"spacing": 34}}},
+    {
+      "plant": "birch",
+      "density": 0.0005,
+      "placement": {"verb": "clustered", "params": {"size": 15, "min": 0.56, "max": 1.0}}
+    },
+    {
+      "plant": "alder",
+      "density": 0.0003,
+      "placement": {"verb": "clustered", "params": {"size": 13, "min": 0.62, "max": 1.0}}
+    },
+    {
+      "plant": "sagebrush",
+      "density": 0.007,
+      "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.0, "max": 0.8}}
+    },
+    {
+      "plant": "heather",
+      "density": 0.003,
+      "placement": {"verb": "clustered", "params": {"size": 12, "min": 0.2, "max": 1.0}}
+    }
+  ],
+  "features": [{"structure": "boulder", "density": 8e-05}, {"structure": "flat_rock", "density": 0.00012}],
+  "creatures": [
+    {"creature": "przewalski_horse", "count": 4},
+    {"creature": "saiga", "count": 5},
+    {"creature": "mammoth", "count": 4},
+    {"creature": "steppe_wolf", "count": 4},
+    {"creature": "eagle", "count": 2},
+    {"creature": "sabretooth", "count": 1},
+    {"creature": "wind_skate", "count": 5},
+    {"creature": "marmot", "count": 7},
+    {"creature": "rabbit", "count": 3},
+    {"creature": "starling", "count": 20},
+    {"creature": "sparrow", "count": 4},
+    {"creature": "lizard", "count": 4},
+    {"creature": "bee", "count": 4},
+    {"creature": "crow", "count": 3}
+  ],
+  "collectibles": [{"item": "flint_blade", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}]
+}

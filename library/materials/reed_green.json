@@ -1,0 +1,16 @@
+{
+  "name": "reed_green",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Long grey-green leaves and stems of reedmace.",
+  "id": 74,
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [96, 124, 64],
+    "alt": [112, 140, 74],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [100, 126, 68], "alt": [114, 140, 76]}
+  }
+}

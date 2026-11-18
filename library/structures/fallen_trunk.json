@@ -1,0 +1,18 @@
+{
+  "name": "fallen_trunk",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A middling tree blown down: a 7 m trunk with its small root plate and two snapped limbs lying beside it.",
+  "size": [32, 8, 14],
+  "anchor": [16, 0, 7],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"wood": "dead_wood", "bark": "cottonwood_bark"},
+  "ops": [
+    {"op": "log", "base": [3, 2.8, 7], "radius": 1.6, "length": 28, "axis": "x", "mat": "bark"},
+    {"op": "disc", "centre": [2, 3, 7], "radius": 3.2, "thick": 2, "axis": "x", "mat": "wood"},
+    {"op": "log", "base": [14, 1.8, 8], "radius": 0.7, "length": 5, "axis": "z", "mat": "wood"},
+    {"op": "log", "base": [23, 1.8, 1], "radius": 0.7, "length": 5, "axis": "z", "mat": "wood"}
+  ]
+}

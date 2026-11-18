@@ -1,0 +1,16 @@
+{
+  "name": "siding_cream",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Cream painted lap siding.",
+  "id": 162,
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [210, 196, 160],
+    "alt": [192, 178, 144],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [214, 200, 166], "alt": [196, 184, 150]}
+  }
+}

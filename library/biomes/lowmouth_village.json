@@ -1,0 +1,28 @@
+{
+  "name": "lowmouth_village",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Lowmouth, the stilt village on the old channel: houses and camps on posts, boardwalks and footbridges over the water, boats tied under them.",
+  "priority": 12,
+  "rules": {"region": "lowmouth", "amphibious": true},
+  "surface": "swamp_muck",
+  "subsurface": "silt",
+  "fringe": 0,
+  "map_color": [190, 150, 110],
+  "plants": [
+    {"plant": "bald_cypress", "density": 0.002, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "spanish_moss", "density": 0.6, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "cattail",
+      "density": 0.7,
+      "placement": {"verb": "clustered", "params": {"size": 22, "min": 0.7, "max": 0.715}}
+    }
+  ],
+  "creatures": [
+    {"creature": "mallard", "count": 8},
+    {"creature": "great_egret", "count": 2},
+    {"creature": "crow", "count": 4},
+    {"creature": "channel_catfish", "count": 6}
+  ],
+  "collectibles": [{"item": "settler_coin", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}]
+}

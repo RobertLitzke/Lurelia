@@ -1,0 +1,21 @@
+{
+  "name": "sky_manta",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "undulate: One skate in twenty grown to three metres across, riding well above the rest where they skim the awns. A rare morph of wind_skate, so it stands in for one of them and is never spawned on its own.",
+  "colors": {"back": [146, 134, 98], "belly": [218, 210, 186], "glow": [198, 184, 124]},
+  "behaviour": {
+    "movement": "undulate",
+    "walk_speed": 3.0,
+    "flee_speed": 5.0,
+    "wary": 0,
+    "fly_height": 7.5,
+    "flight": "flap",
+    "wingbeat": 0.32,
+    "group": null
+  },
+  "like": "wind_skate",
+  "rarity": 0.05,
+  "scale": 2.4,
+  "vary": {"size": 0.08, "shade": 0.08, "hue": 0.02}
+}

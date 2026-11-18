@@ -1,0 +1,16 @@
+{
+  "name": "water_lily",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Water lily: the marker a lily plant grows from, drawn only as pads lying flat on the water over it (floating). Its colour is the pads' green.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [70, 110, 54],
+    "alt": [86, 126, 64],
+    "scale": 5,
+    "contrast": 0.8,
+    "calm": {"base": [74, 112, 58], "alt": [90, 128, 68]}
+  },
+  "floating": true
+}

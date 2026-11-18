@@ -1,0 +1,29 @@
+{
+  "name": "stock_pen",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A Windbarrow stock pen: a ring of woven hazel hurdles 13 m across on oak stakes, its gate on local -Z.",
+  "size": [58, 9, 58],
+  "anchor": [29, 0, 29],
+  "foundation": 3,
+  "tags": ["windbarrow"],
+  "slots": {"wall": "daub", "roof": "thatch", "timber": "oak_post", "floor": "packed_dirt", "hurdle": "stick_wood"},
+  "ops": [
+    {"op": "cylinder", "base": [29, 0, 29], "radius": 27, "height": 5, "mat": "hurdle", "part": "frame"},
+    {"op": "cylinder", "base": [29, 0, 29], "radius": 25, "height": 5, "mat": "air"},
+    {"op": "box", "from": [24, 0, 1], "to": [34, 5, 5], "mat": "air"},
+    {"op": "box", "from": [24, 0, 2], "to": [25, 7, 4], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [33, 0, 2], "to": [34, 7, 4], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [24, 2, 2], "to": [34, 3, 3], "mat": "hurdle", "part": "frame"},
+    {"op": "cylinder", "base": [54.5, 0, 34.2], "radius": 1.1, "height": 7, "mat": "timber", "part": "timber"},
+    {"op": "cylinder", "base": [46.6, 0, 48.2], "radius": 1.1, "height": 7, "mat": "timber", "part": "timber"},
+    {"op": "cylinder", "base": [32.0, 0, 54.8], "radius": 1.1, "height": 7, "mat": "timber", "part": "timber"},
+    {"op": "cylinder", "base": [16.2, 0, 51.6], "radius": 1.1, "height": 7, "mat": "timber", "part": "timber"},
+    {"op": "cylinder", "base": [5.3, 0, 39.8], "radius": 1.1, "height": 7, "mat": "timber", "part": "timber"},
+    {"op": "cylinder", "base": [3.5, 0, 23.8], "radius": 1.1, "height": 7, "mat": "timber", "part": "timber"},
+    {"op": "cylinder", "base": [11.4, 0, 9.8], "radius": 1.1, "height": 7, "mat": "timber", "part": "timber"},
+    {"op": "cylinder", "base": [26.0, 0, 3.2], "radius": 1.1, "height": 7, "mat": "timber", "part": "timber"},
+    {"op": "cylinder", "base": [41.8, 0, 6.4], "radius": 1.1, "height": 7, "mat": "timber", "part": "timber"},
+    {"op": "cylinder", "base": [52.7, 0, 18.2], "radius": 1.1, "height": 7, "mat": "timber", "part": "timber"}
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "name": "reef_crest",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "The crest, where the swell breaks: elkhorn thickets leaning into it.",
+  "priority": 20,
+  "rules": {"underwater": true, "region": "reef_crest"},
+  "surface": "reef_lime",
+  "subsurface": "reef_lime",
+  "rock": "reef_lime",
+  "fringe": 0,
+  "map_color": [200, 180, 120],
+  "plants": [
+    {
+      "plant": "elkhorn_coral",
+      "density": 0.09,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.25, "max": 0.55}}
+    },
+    {"plant": "brain_coral", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "finger_coral", "density": 0.03, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "yellow_tang", "count": 28},
+    {"creature": "parrotfish", "count": 7},
+    {"creature": "butterflyfish", "count": 7},
+    {"creature": "reef_manta", "count": 1}
+  ]
+}

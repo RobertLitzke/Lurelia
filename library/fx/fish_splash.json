@@ -1,0 +1,17 @@
+{
+  "name": "fish_splash",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "A fish leaping out or dropping back in: a few droplets.",
+  "shape": "streak",
+  "count": [6, 9],
+  "speed": [1.2, 2.4],
+  "cone_deg": 35,
+  "life": [0.35, 0.7],
+  "size": [0.012, 0.008],
+  "gravity": 9.8,
+  "drag": 0.4,
+  "color": [225, 235, 240],
+  "alpha": 0.85,
+  "near_fade": 0.6
+}

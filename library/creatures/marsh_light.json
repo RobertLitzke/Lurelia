@@ -1,0 +1,22 @@
+{
+  "name": "marsh_light",
+  "version": 2,
+  "introduced_by": "hemlow",
+  "notes": "A will-o'-the-wisp of the Wisp Moss: a pale blue-white ball of light the size of a fist with a fainter halo, drifting low over the bog pools and slowly pulsing. Nobody knows what it is.",
+  "voxel": 0.03,
+  "half_w": 0.1,
+  "height": 0.1,
+  "colors": {"wisp": [220, 236, 255, 3.0], "halo": [150, 190, 255, 1.4]},
+  "behaviour": {
+    "movement": "flutter",
+    "fly_height": 1.1,
+    "blink": 0.12,
+    "flightiness": 0.35,
+    "active": "nocturnal",
+    "off_hours": 0.0
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 16, 16], "radius": [3.4, 3.4, 3.4], "mat": "halo"},
+    {"op": "ellipsoid", "centre": [16, 16, 16], "radius": [2.2, 2.2, 2.2], "mat": "wisp"}
+  ]
+}

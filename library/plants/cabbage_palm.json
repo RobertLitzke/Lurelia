@@ -1,0 +1,14 @@
+{
+  "name": "cabbage_palm",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Cabbage palm: a ringed grey trunk with a round head of stiff fan fronds (sprite fans round the head).",
+  "form": "umbrella",
+  "height": [7, 11],
+  "trunk_radius": [0.18, 0.24],
+  "crown_radius": [1.4, 1.9],
+  "bark": "palm_trunk",
+  "leaf": "palm_frond",
+  "squash": 0.5,
+  "max_slope": 0.6
+}

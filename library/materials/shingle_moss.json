@@ -1,0 +1,16 @@
+{
+  "name": "shingle_moss",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Old shingles going green with moss in a wet climate.",
+  "id": 158,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [76, 84, 66],
+    "alt": [92, 108, 64],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [86, 96, 74], "alt": [104, 120, 72]}
+  }
+}

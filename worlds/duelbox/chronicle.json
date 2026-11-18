@@ -1,0 +1,76 @@
+{
+  "places": {
+    "box": [
+      128.0,
+      128.0
+    ]
+  },
+  "events": [
+    {
+      "year": -4000,
+      "event": "landmass",
+      "cause": "A flat granite shelf. Nothing about the land matters here; it is a table for the room to stand on.",
+      "centre": "box",
+      "radius": 112,
+      "roughness": 0.0,
+      "hills": 0,
+      "ridges": 0,
+      "shelf": 4,
+      "edge_fall": 50
+    },
+    {
+      "year": -1,
+      "event": "place",
+      "cause": "The room itself.",
+      "structure": "duelbox",
+      "at": "box",
+      "bearing": 0,
+      "poi": "the box"
+    },
+    {
+      "year": -1,
+      "event": "lamp",
+      "cause": "Six strip lights, because a room nobody can see across measures nothing.",
+      "at": "box",
+      "points": [
+        [
+          -17.0,
+          -7.0,
+          16.6
+        ],
+        [
+          -17.0,
+          7.0,
+          16.6
+        ],
+        [
+          0.0,
+          -7.0,
+          16.6
+        ],
+        [
+          0.0,
+          7.0,
+          16.6
+        ],
+        [
+          17.0,
+          -7.0,
+          16.6
+        ],
+        [
+          17.0,
+          7.0,
+          16.6
+        ]
+      ],
+      "reach": 20.0,
+      "strength": 1.6,
+      "colour": [
+        255,
+        240,
+        214
+      ]
+    }
+  ]
+}

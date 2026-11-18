@@ -1,0 +1,14 @@
+{
+  "name": "cattail",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Cattails: tall strap leaves in clumps in the shallows, most with a stem carrying a brown velvet head; drawn as sprites, so a kayak slides through them.",
+  "form": "herb",
+  "height": [1.6, 2.2],
+  "crown_radius": [0.4, 0.6],
+  "bark": "dead_wood",
+  "leaf": "cattail_leaves",
+  "max_slope": 0.6,
+  "standing_water": [-0.4, 0.9],
+  "stalk": ["cattail_head", 0.65]
+}

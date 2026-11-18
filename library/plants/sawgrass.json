@@ -1,0 +1,13 @@
+{
+  "name": "sawgrass",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Sawgrass: low tussocks of toothed tawny blades out of the shallow water, drawn as sprites (a kayak slides through them).",
+  "form": "herb",
+  "height": [0.8, 1.1],
+  "crown_radius": [0.6, 0.9],
+  "bark": "dead_wood",
+  "leaf": "sawgrass_blades",
+  "max_slope": 0.6,
+  "standing_water": [-0.5, 0.8]
+}

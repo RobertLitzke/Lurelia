@@ -1,0 +1,26 @@
+{
+  "name": "coral_dunes",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A field of wind-blown coral-pink sand in the south-west: bare crests and slip faces, a few tough plants in the troughs, more toward the edges where the sand thins over the desert.",
+  "priority": 3,
+  "rules": {"region": "dunes"},
+  "surface": "coral_sand",
+  "subsurface": "coral_sand",
+  "map_color": [222, 160, 128],
+  "plants": [
+    {"plant": "sagebrush", "density": 0.004, "placement": {"verb": "edge", "params": {"width": 30, "inner": 0.15}}},
+    {"plant": "rabbitbrush", "density": 0.003, "placement": {"verb": "edge", "params": {"width": 24, "inner": 0.15}}},
+    {"plant": "yucca", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "juniper", "density": 0.0004, "placement": {"verb": "edge", "params": {"width": 20, "inner": 0.15}}},
+    {"plant": "dead_juniper", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "lizard", "count": 6},
+    {"creature": "jackrabbit", "count": 2},
+    {"creature": "coyote", "count": 1},
+    {"creature": "eagle", "count": 1},
+    {"creature": "canyon_bat", "count": 3}
+  ],
+  "collectibles": [{"item": "arrowhead", "density": 2e-05, "placement": {"verb": "scatter", "params": {}}}]
+}

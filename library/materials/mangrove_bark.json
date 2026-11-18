@@ -1,0 +1,15 @@
+{
+  "name": "mangrove_bark",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Mangrove bark: smooth grey-brown prop roots and stems, mud-stained near the water.",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [104, 94, 80],
+    "alt": [84, 76, 64],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [108, 98, 84], "alt": [88, 80, 68]}
+  }
+}

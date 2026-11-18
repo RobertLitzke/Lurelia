@@ -1,0 +1,15 @@
+{
+  "name": "barnacle_crust",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Barnacle crust: a metre-thick band of cemented shell plates on every rock face at thirty-four metres, the old lake's waterline. Grey-white, pitted, and wrong in a country with no sea.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [192, 188, 176],
+    "alt": [166, 160, 148],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [196, 192, 182], "alt": [172, 166, 154]}
+  }
+}

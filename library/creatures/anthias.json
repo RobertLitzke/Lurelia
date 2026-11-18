@@ -1,0 +1,18 @@
+{
+  "name": "anthias",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Anthias: little orange-pink fish in a cloud over the coral, the colour of the reef at the wall's edge.",
+  "colors": {"herring": [232, 120, 52], "silver": [232, 128, 150], "fin": [232, 120, 52]},
+  "behaviour": {
+    "habit": "cloud",
+    "walk_speed": 0.6,
+    "flee_speed": 2.5,
+    "leap": 0,
+    "above_bed": [0.4, 2.0],
+    "shallows": 0.6,
+    "group": {"size": [14, 28], "spacing": 0.18, "range": 1.2, "separation": 1.0, "alignment": 0.8, "cohesion": 1.4}
+  },
+  "like": "herring",
+  "scale": 0.33
+}

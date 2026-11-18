@@ -1,0 +1,44 @@
+{
+  "name": "sheep",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Sheep: the bighorn with its horns taken off and a fleece grown over it, white with a dark face and legs, out on the pasture in flocks.",
+  "colors": {
+    "rabbit": [240, 236, 228],
+    "rabbit_light": [240, 236, 228],
+    "white": [240, 236, 228],
+    "fleece": [238, 232, 220],
+    "face": [60, 56, 54],
+    "dark": [36, 28, 24],
+    "antler": [214, 196, 160]
+  },
+  "behaviour": {
+    "movement": "graze",
+    "walk_speed": 0.7,
+    "flee_speed": 4.5,
+    "wary": 9,
+    "flightiness": 0.3,
+    "group": {"size": [3, 9], "spacing": 2.0, "range": 16, "alignment": 1.0, "cohesion": 1.4}
+  },
+  "like": "bighorn",
+  "scale": 0.8,
+  "extra_ops": [
+    {"op": "disc", "centre": [12.5, 22, 7], "radius": 3.6, "thick": 2.0, "axis": "x", "mat": "air", "part": "head"},
+    {"op": "disc", "centre": [19.5, 22, 7], "radius": 3.6, "thick": 2.0, "axis": "x", "mat": "air", "part": "head"},
+    {"op": "box", "from": [13, 24, 6], "to": [19, 26, 10], "mat": "air", "part": "head"},
+    {"op": "box", "from": [13, 23, 8], "to": [19, 24, 10], "mat": "air", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 15, 17], "radius": [5.0, 4.8, 7.6], "mat": "fleece"},
+    {"op": "box", "from": [14, 16, 8], "to": [18, 21, 12], "mat": "fleece", "part": "neck"},
+    {"op": "box", "from": [14, 19, 3], "to": [18, 24, 8], "mat": "face", "part": "head"},
+    {"op": "box", "from": [14, 22, 7], "to": [18, 25, 9], "mat": "fleece", "part": "head"},
+    {"op": "set", "at": [14, 22, 4], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [17, 22, 4], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [12, 21, 7], "to": [14, 22, 9], "mat": "face", "part": "head"},
+    {"op": "box", "from": [18, 21, 7], "to": [20, 22, 9], "mat": "face", "part": "head"},
+    {"op": "box", "from": [13, 2, 11], "to": [16, 9, 14], "mat": "face", "part": "leg_fl"},
+    {"op": "box", "from": [17, 2, 11], "to": [20, 9, 14], "mat": "face", "part": "leg_fr"},
+    {"op": "box", "from": [13, 2, 21], "to": [16, 9, 24], "mat": "face", "part": "leg_hl"},
+    {"op": "box", "from": [17, 2, 21], "to": [20, 9, 24], "mat": "face", "part": "leg_hr"}
+  ],
+  "vary": {"size": 0.08, "shade": 0.04}
+}

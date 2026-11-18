@@ -1,0 +1,15 @@
+{
+  "name": "giant_bamboo",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "bamboo: Giant bamboo: clumps of thick green-gold culms 14-22 m tall, nodding at the tips, leaves on the upper half. Solid.",
+  "form": "bamboo",
+  "height": [14, 22],
+  "trunk_radius": [0.18, 0.24],
+  "crown_radius": [1.8, 3.2],
+  "bark": "giant_culm",
+  "leaf": "bamboo_leaves",
+  "max_slope": 0.8,
+  "stems": [7, 13],
+  "crown_base": 0.5
+}

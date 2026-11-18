@@ -1,0 +1,22 @@
+{
+  "name": "bald_cypress",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Bald cypress: a tall flat-crowned tree standing in the black water on a great flared, buttressed foot.",
+  "form": "branching",
+  "height": [14, 22],
+  "trunk_radius": [0.45, 0.7],
+  "buttress": 0.9,
+  "crown_radius": [3.5, 5.0],
+  "bark": "cypress_bark",
+  "leaf": "cypress_needles",
+  "curve": "straight",
+  "canopy": "layers",
+  "leader": 0.9,
+  "fill": 0.3,
+  "spread": 0.35,
+  "max_slope": 0.8,
+  "standing_water": [-1.5, 1.6],
+  "affords": ["perch", "nest"],
+  "autumn": "leaves_autumn"
+}

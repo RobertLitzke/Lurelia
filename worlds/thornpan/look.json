@@ -1,0 +1,49 @@
+{
+  "notes": "Glare off white sand and salt. Bleached near, silver-blue far, the sky's own light in everything, and a reach to match a country you can see clear across.",
+  "ramp": [
+    {
+      "at": 0.0,
+      "color": [
+        1.0,
+        0.95,
+        0.78
+      ]
+    },
+    {
+      "at": 0.45,
+      "color": [
+        1.0,
+        0.88,
+        0.72
+      ]
+    },
+    {
+      "at": 1.0,
+      "color": [
+        0.72,
+        0.84,
+        1.0
+      ]
+    }
+  ],
+  "knobs": {
+    "ramp_reach": 1000.0,
+    "ramp_curve": 0.6,
+    "ramp_value": 0.9,
+    "haze_density": 1.35,
+    "haze_height": 260.0,
+    "sun_glow": 0.6,
+    "exposure": 1.04,
+    "saturation": 0.97
+  },
+  "ambient": [
+    0.46,
+    0.96,
+    1.06
+  ],
+  "sun_tint": [
+    1.12,
+    0.98,
+    0.78
+  ]
+}

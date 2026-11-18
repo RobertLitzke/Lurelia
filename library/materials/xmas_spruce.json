@@ -1,0 +1,15 @@
+{
+  "name": "xmas_spruce",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "The market spruce's boughs, dense and dark.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [34, 64, 44],
+    "alt": [24, 50, 34],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [42, 72, 52], "alt": [32, 58, 42]}
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "name": "ochre_house",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "A small ochre house with a turf roof. Door on local -Z.",
+  "size": [32, 33, 26],
+  "anchor": [16, 0, 13],
+  "foundation": 6,
+  "level": true,
+  "tags": ["kaldvik", "house"],
+  "ops": [
+    {"op": "box", "from": [1, 0, 1], "to": [31, 1, 25], "mat": "weathered_planks", "part": "floor"},
+    {"op": "walls", "from": [1, 1, 1], "to": [31, 15, 25], "mat": "ochre_board", "thick": 1, "part": "wall"},
+    {
+      "op": "gable",
+      "from": [0, 15, 0],
+      "to": [32, 15, 26],
+      "axis": "x",
+      "mat": "turf_roof",
+      "rise": 1,
+      "part": "roof"
+    },
+    {
+      "op": "gable",
+      "from": [1, 15, 1],
+      "to": [2, 15, 25],
+      "axis": "x",
+      "mat": "ochre_board",
+      "rise": 1,
+      "part": "wall"
+    },
+    {
+      "op": "gable",
+      "from": [30, 15, 1],
+      "to": [31, 15, 25],
+      "axis": "x",
+      "mat": "ochre_board",
+      "rise": 1,
+      "part": "wall"
+    },
+    {"op": "box", "from": [1, 1, 1], "to": [2, 15, 2], "mat": "trim_white", "part": "timber"},
+    {"op": "box", "from": [30, 1, 1], "to": [31, 15, 2], "mat": "trim_white", "part": "timber"},
+    {"op": "box", "from": [1, 1, 24], "to": [2, 15, 25], "mat": "trim_white", "part": "timber"},
+    {"op": "box", "from": [30, 1, 24], "to": [31, 15, 25], "mat": "trim_white", "part": "timber"},
+    {"op": "box", "from": [14, 1, 1], "to": [18, 10, 2], "mat": "door_red", "part": "timber"},
+    {"op": "box", "from": [13, 10, 1], "to": [19, 11, 2], "mat": "trim_white", "part": "timber"},
+    {"op": "box", "from": [5, 4, 1], "to": [9, 8, 2], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [4, 3, 1], "to": [10, 4, 2], "mat": "trim_white", "part": "timber"},
+    {"op": "box", "from": [5, 4, 24], "to": [9, 8, 25], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [4, 3, 24], "to": [10, 4, 25], "mat": "trim_white", "part": "timber"},
+    {"op": "box", "from": [23, 4, 1], "to": [27, 8, 2], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [22, 3, 1], "to": [28, 4, 2], "mat": "trim_white", "part": "timber"},
+    {"op": "box", "from": [23, 4, 24], "to": [27, 8, 25], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [22, 3, 24], "to": [28, 4, 25], "mat": "trim_white", "part": "timber"},
+    {"op": "box", "from": [1, 17, 12], "to": [2, 21, 15], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [30, 17, 12], "to": [31, 21, 15], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [7, 11, 12], "to": [10, 32, 15], "mat": "fieldstone", "part": "stone"}
+  ]
+}

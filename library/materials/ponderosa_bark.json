@@ -1,0 +1,24 @@
+{
+  "name": "ponderosa_bark",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Ponderosa bark: orange plates with dark seams.",
+  "id": 120,
+  "smooth": false,
+  "texture": {
+    "pattern": "cracks",
+    "base": [168, 96, 56],
+    "alt": [92, 56, 40],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [174, 106, 66], "alt": [110, 70, 52]}
+  },
+  "top": {
+    "pattern": "rings",
+    "base": [176, 140, 100],
+    "alt": [130, 96, 66],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [184, 150, 110], "alt": [140, 106, 76]}
+  }
+}

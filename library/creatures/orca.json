@@ -1,0 +1,20 @@
+{
+  "name": "orca",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Orcas: a family of four or five following the herring into the fjord in winter, black and white, the bull's fin a head taller than the rest. They breach less than the humpbacks and travel faster.",
+  "colors": {"whale": [18, 18, 22], "whale_belly": [236, 236, 236], "white": [240, 240, 240], "dark": [18, 18, 22]},
+  "morphs": [],
+  "behaviour": {
+    "movement": "breach",
+    "walk_speed": 3.2,
+    "flee_speed": 5.5,
+    "wary": 0,
+    "flightiness": 0.0,
+    "leap": 0.15,
+    "spawn_chance": 0.0012,
+    "active": "any"
+  },
+  "like": "humpback",
+  "scale": 0.6
+}

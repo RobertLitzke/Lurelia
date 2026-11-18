@@ -1,0 +1,17 @@
+{
+  "name": "coolant_pool",
+  "version": 1,
+  "introduced_by": "icezeto",
+  "notes": "A sump of reactor coolant left to pool where the slag was: cyan, faintly lit from inside and cold enough to kill. Twelve damage a second, the same as the slag it stands in for.",
+  "smooth": true,
+  "glow": 0.7,
+  "texture": {
+    "pattern": "noise",
+    "base": [60, 170, 196],
+    "alt": [80, 190, 214],
+    "scale": 6,
+    "contrast": 0.35,
+    "calm": {"base": [70, 178, 202], "alt": [90, 196, 218]}
+  },
+  "hurt": 12.0
+}

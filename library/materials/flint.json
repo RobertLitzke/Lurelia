@@ -1,0 +1,15 @@
+{
+  "name": "flint",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Knapped flint: the working floors and the spoil, glassy blue-grey under a chalk-white cortex.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [58, 60, 66],
+    "alt": [176, 172, 160],
+    "scale": 7,
+    "contrast": 1.0,
+    "calm": {"base": [64, 66, 72], "alt": [178, 174, 164]}
+  }
+}

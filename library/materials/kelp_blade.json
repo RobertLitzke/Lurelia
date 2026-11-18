@@ -1,0 +1,16 @@
+{
+  "name": "kelp_blade",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Giant kelp blades: translucent golden brown.",
+  "id": 206,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [128, 108, 42],
+    "alt": [100, 86, 34],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [134, 116, 52], "alt": [108, 94, 42]}
+  }
+}

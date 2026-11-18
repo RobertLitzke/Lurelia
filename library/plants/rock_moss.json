@@ -1,0 +1,16 @@
+{
+  "name": "rock_moss",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Moss on the shaded faces of rock: patches down a bank or a crag that never gets the midday sun. A crust plant; its density is the chance per 4 m cell of steep ground.",
+  "form": "crust",
+  "height": [0.0, 0.0],
+  "trunk_radius": [0.0, 0.0],
+  "crown_radius": [0.25, 0.5],
+  "bark": "rock_moss",
+  "leaf": "rock_moss",
+  "max_slope": 9,
+  "crust": "patch",
+  "hosts": ["rock"],
+  "shaded": true
+}

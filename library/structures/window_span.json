@@ -1,0 +1,18 @@
+{
+  "name": "window_span",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A wide, low opening carved through a sandstone fin (placed on a `mesa` fin, bearing across it): about 17 m wide and 9 m high, the lintel thinner at one end where a second hollow ate up into it.",
+  "size": [96, 72, 56],
+  "anchor": [48, 0, 28],
+  "level": false,
+  "decays": false,
+  "tags": ["natural", "arch"],
+  "slots": {},
+  "ops": [
+    {"op": "ellipsoid", "centre": [46, 2, 28], "radius": [34, 34, 40], "mat": "carve"},
+    {"op": "ellipsoid", "centre": [34, 14, 28], "radius": [20, 30, 34], "mat": "carve"},
+    {"op": "ellipsoid", "centre": [62, 8, 28], "radius": [18, 26, 30], "mat": "carve"},
+    {"op": "ellipsoid", "centre": [52, 36, 28], "radius": [9, 6, 22], "mat": "carve"}
+  ]
+}

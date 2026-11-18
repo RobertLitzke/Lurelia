@@ -1,0 +1,73 @@
+{
+  "name": "lowmouth",
+  "size_m": 1384,
+  "height_m": 48,
+  "sea_level_m": 18,
+  "underwater": {"visibility": 4, "light": 0.35},
+  "seed": 1927,
+  "sun": {"latitude": 34},
+  "seeds": 1,
+  "rock": [
+    [
+      "silt",
+      1.0
+    ]
+  ],
+  "spawn": [
+    724,
+    296
+  ],
+  "spawn_bearing": 110,
+  "seasons": ["spring", "summer", "autumn"],
+  "start_season": "summer",
+  "weather": {
+    "sun": 0.9,
+    "heat": 1.0,
+    "clouds": 0.8,
+    "rain": 0.9,
+    "fog": 0.6
+  },
+  "start_weather": "sun",
+  "default_biome": "bottomland",
+  "seabed_biome": "delta_bed",
+  "biomes": [
+    "delta_bed",
+    "backwater_flats",
+    "bottomland",
+    "levee",
+    "cane_field",
+    "burned_cane",
+    "cypress_swamp",
+    "ghost_forest",
+    "drowned_parish",
+    "lowmouth_village",
+    "sawgrass",
+    "hammock",
+    "mangrove_keys",
+    "chenier",
+    "gulf_beach",
+    "mudflat",
+    "wisp_moss",
+    "cane_town",
+    "mound_grounds"
+  ],
+  "water": {
+    "shallow": [
+      88,
+      86,
+      56
+    ],
+    "deep": [
+      32,
+      36,
+      24
+    ],
+    "still": true
+  },
+  "start_hour": 16.5,
+  "noise_at": [
+    152,
+    0
+  ],
+  "moss": 0.6
+}

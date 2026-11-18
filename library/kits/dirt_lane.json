@@ -1,0 +1,12 @@
+{
+  "name": "dirt_lane",
+  "version": 1,
+  "introduced_by": "routing engine",
+  "notes": "A farm lane: 3.5 m of packed dirt graded into the land, grass verges either side. The everyday line between fields, cottages and a village street.",
+  "ground": "grade",
+  "width": 3.5,
+  "mat": "packed_dirt",
+  "shoulder": "path_dirt",
+  "margin": 3.0,
+  "tags": ["road"]
+}

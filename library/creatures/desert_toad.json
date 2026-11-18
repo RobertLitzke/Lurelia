@@ -1,0 +1,10 @@
+{
+  "name": "desert_toad",
+  "version": 2,
+  "introduced_by": "base",
+  "notes": "Desert toad: sand-coloured under dark blotches, out at the canyon pools and the wet sand after rain.",
+  "colors": {"coat": [178, 150, 108], "belly": [226, 214, 186], "mark": [110, 88, 60]},
+  "behaviour": {"walk_speed": 0.4, "wary": 4, "spawn_chance": 0.5, "active": "nocturnal", "off_hours": 0.1},
+  "like": "toad",
+  "scale": 1.1
+}

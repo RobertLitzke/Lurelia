@@ -1,0 +1,16 @@
+{
+  "name": "coral_lacquer",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Coral-red lacquer on the Order's bridges and gates; it has not faded.",
+  "id": 244,
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [206, 84, 62],
+    "alt": [190, 72, 54],
+    "scale": 8,
+    "contrast": 0.5,
+    "calm": {"base": [200, 92, 72], "alt": [188, 82, 64]}
+  }
+}

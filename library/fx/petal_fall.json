@@ -1,0 +1,19 @@
+{
+  "name": "petal_fall",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "A petal off a tree in blossom: smaller and slower than a leaf.",
+  "shape": "leaf",
+  "count": [1, 1],
+  "speed": [0.0, 0.2],
+  "cone_deg": 60,
+  "life": [8.0, 12.0],
+  "size": [0.045, 0.045],
+  "size_jitter": 0.25,
+  "gravity": 0.7,
+  "drag": 2.6,
+  "wind": 0.8,
+  "settle": true,
+  "flutter": 0.4,
+  "material": true
+}

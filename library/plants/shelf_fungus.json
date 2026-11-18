@@ -1,0 +1,15 @@
+{
+  "name": "shelf_fungus",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Bracket fungus on old trunks: half-shelves standing out from the bark in twos and threes. A crust plant, so its biome density is the chance a tree carries a colony, and `height` the band of trunk it keeps to.",
+  "form": "crust",
+  "height": [0.8, 4.5],
+  "trunk_radius": [0.0, 0.0],
+  "crown_radius": [0.25, 0.42],
+  "bark": "shelf_fungus",
+  "leaf": "shelf_fungus",
+  "max_slope": 9,
+  "crust": "bracket",
+  "hosts": ["tree"]
+}

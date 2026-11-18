@@ -1,0 +1,16 @@
+{
+  "name": "wingate_sandstone",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Dark red-orange sandstone that breaks in sheer walls (the Red Cliffs).",
+  "id": 101,
+  "smooth": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [164, 78, 48],
+    "alt": [182, 94, 58],
+    "scale": 2,
+    "contrast": 0.7,
+    "calm": {"base": [178, 92, 60], "alt": [190, 106, 70]}
+  }
+}

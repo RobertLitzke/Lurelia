@@ -1,0 +1,15 @@
+{
+  "name": "coral_rose",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Rose-pink coral, boulder and wall colonies.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [214, 114, 126],
+    "alt": [190, 94, 110],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [220, 120, 132], "alt": [196, 100, 116]}
+  }
+}

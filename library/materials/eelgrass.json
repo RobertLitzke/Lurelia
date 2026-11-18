@@ -1,0 +1,16 @@
+{
+  "name": "eelgrass",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Drowned meadow: fine dark-green grass on a soft bed, growing under the water as land grass grows over it. Its sprites are not hidden at the waterline (underwater).",
+  "smooth": true,
+  "texture": {
+    "pattern": "grain",
+    "base": [52, 92, 64],
+    "alt": [64, 104, 70],
+    "scale": 7,
+    "contrast": 0.7,
+    "calm": {"base": [56, 94, 66], "alt": [68, 106, 72]}
+  },
+  "underwater": true
+}

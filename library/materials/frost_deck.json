@@ -1,0 +1,16 @@
+{
+  "name": "frost_deck",
+  "version": 1,
+  "introduced_by": "icezeto",
+  "notes": "Floor plate under a skin of frost: grey steel courses gone pale, with the boot-worn lines a little darker.",
+  "smooth": false,
+  "crisp": true,
+  "texture": {
+    "pattern": "coursed",
+    "base": [100, 110, 120],
+    "alt": [88, 98, 110],
+    "scale": 1,
+    "contrast": 1.0,
+    "calm": {"base": [108, 118, 128], "alt": [96, 106, 118]}
+  }
+}

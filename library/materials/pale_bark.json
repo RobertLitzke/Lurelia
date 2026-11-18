@@ -1,0 +1,15 @@
+{
+  "name": "pale_bark",
+  "version": 2,
+  "introduced_by": "glassfall",
+  "id": 38,
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [196, 190, 204],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [160, 150, 176],
+    "calm": {"base": [186, 178, 196], "alt": [166, 156, 180]}
+  }
+}

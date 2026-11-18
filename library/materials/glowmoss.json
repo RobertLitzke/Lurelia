@@ -1,0 +1,15 @@
+{
+  "name": "glowmoss",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 26,
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [52, 150, 132],
+    "scale": 6,
+    "contrast": 1.0,
+    "alt": [150, 240, 210],
+    "calm": {"base": [74, 170, 150], "alt": [140, 230, 200]}
+  }
+}

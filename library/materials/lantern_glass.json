@@ -1,0 +1,17 @@
+{
+  "name": "lantern_glass",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "A street lantern's glass, lit from dusk.",
+  "smooth": false,
+  "glow": 2.2,
+  "texture": {
+    "pattern": "glass",
+    "base": [246, 212, 150],
+    "alt": [255, 228, 176],
+    "scale": 4,
+    "contrast": 0.4,
+    "calm": {"base": [254, 220, 158], "alt": [255, 236, 184]}
+  },
+  "night_glow": true
+}

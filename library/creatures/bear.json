@@ -1,0 +1,96 @@
+{
+  "name": "bear",
+  "version": 3,
+  "introduced_by": "glassfall",
+  "notes": "Black bear: a heavy, slow forager with a tan muzzle, alone and fairly rare. It moves off from people rather than toward them.",
+  "voxel": 0.06,
+  "half_w": 0.34,
+  "height": 1.0,
+  "colors": {"bear": [36, 28, 24], "muzzle": [210, 180, 140], "dark": [36, 28, 24]},
+  "behaviour": {
+    "movement": "graze",
+    "sleeps_on_side": true,
+    "walk_speed": 0.9,
+    "flee_speed": 6.0,
+    "wary": 14,
+    "flightiness": 0.3,
+    "juvenile_flightiness": 0.5,
+    "flees_from": ["player"],
+    "spawn_chance": 0.001,
+    "swims": true,
+    "active": "crepuscular",
+    "off_hours": 0.3
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16.5, 11, 16], "radius": [5, 5, 8.5], "mat": "bear"},
+    {"op": "ellipsoid", "centre": [16.5, 13.5, 12], "radius": [4.2, 3.4, 3.6], "mat": "bear"},
+    {"op": "ellipsoid", "centre": [16.5, 12, 21], "radius": [4.6, 4.6, 4.2], "mat": "bear"},
+    {"op": "box", "from": [13, 2, 10], "to": [16, 10, 13], "mat": "bear", "part": "leg_fl"},
+    {"op": "box", "from": [13, 0, 9], "to": [16, 2, 13], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [17, 2, 10], "to": [20, 10, 13], "mat": "bear", "part": "leg_fr"},
+    {"op": "box", "from": [17, 0, 9], "to": [20, 2, 13], "mat": "dark", "part": "leg_fr"},
+    {"op": "box", "from": [13, 2, 19], "to": [16, 10, 22], "mat": "bear", "part": "leg_hl"},
+    {"op": "box", "from": [13, 0, 18], "to": [16, 2, 22], "mat": "dark", "part": "leg_hl"},
+    {"op": "box", "from": [17, 2, 19], "to": [20, 10, 22], "mat": "bear", "part": "leg_hr"},
+    {"op": "box", "from": [17, 0, 18], "to": [20, 2, 22], "mat": "dark", "part": "leg_hr"},
+    {"op": "box", "from": [14, 10, 6], "to": [19, 15, 10], "mat": "bear", "part": "neck"},
+    {"op": "ellipsoid", "centre": [16.5, 13, 5], "radius": [3, 2.8, 2.8], "mat": "bear", "part": "head"},
+    {"op": "box", "from": [15, 10, 1], "to": [18, 13, 4], "mat": "muzzle", "part": "head"},
+    {"op": "box", "from": [15, 12, 0], "to": [18, 13, 1], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [13, 15, 5], "to": [15, 17, 6], "mat": "bear", "part": "ear_l"},
+    {"op": "box", "from": [18, 15, 5], "to": [20, 17, 6], "mat": "bear", "part": "ear_r"},
+    {"op": "box", "from": [16, 13, 24], "to": [17, 15, 26], "mat": "bear", "part": "tail"}
+  ],
+  "vary": {"size": 0.1, "shade": 0.1, "hue": 0.06},
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16.5, 12.5, 9]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16.5, 12.5, 6.5]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [14, 15, 5.5], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [19, 15, 5.5], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14.5, 10, 11.5], "side": "l", "pair": 0},
+      {
+        "name": "leg_fl_low",
+        "role": "leg",
+        "parent": "leg_fl",
+        "joint": [14.5, 5, 11.5],
+        "claims": [[[13, 0, 9], [16, 5, 13]]],
+        "side": "l",
+        "pair": 0
+      },
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [18.5, 10, 11.5], "side": "r", "pair": 0},
+      {
+        "name": "leg_fr_low",
+        "role": "leg",
+        "parent": "leg_fr",
+        "joint": [18.5, 5, 11.5],
+        "claims": [[[17, 0, 9], [20, 5, 13]]],
+        "side": "r",
+        "pair": 0
+      },
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14.5, 10, 20.5], "side": "l", "pair": 1},
+      {
+        "name": "leg_hl_low",
+        "role": "leg",
+        "parent": "leg_hl",
+        "joint": [14.5, 5, 20.5],
+        "claims": [[[13, 0, 18], [16, 5, 22]]],
+        "side": "l",
+        "pair": 1
+      },
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [18.5, 10, 20.5], "side": "r", "pair": 1},
+      {
+        "name": "leg_hr_low",
+        "role": "leg",
+        "parent": "leg_hr",
+        "joint": [18.5, 5, 20.5],
+        "claims": [[[17, 0, 18], [20, 5, 22]]],
+        "side": "r",
+        "pair": 1
+      },
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 14, 24]}
+    ]
+  }
+}

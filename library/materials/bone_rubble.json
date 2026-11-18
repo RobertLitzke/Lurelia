@@ -1,0 +1,15 @@
+{
+  "name": "bone_rubble",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The ground of the Bone Downs: chalk rubble with splinters and knuckles of old ivory broken through it.",
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [176, 164, 136],
+    "alt": [228, 220, 194],
+    "scale": 8,
+    "contrast": 1.1,
+    "calm": {"base": [180, 168, 142], "alt": [230, 222, 198]}
+  }
+}

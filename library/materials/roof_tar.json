@@ -1,0 +1,16 @@
+{
+  "name": "roof_tar",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Flat tar-and-gravel roofing.",
+  "id": 155,
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [92, 90, 88],
+    "alt": [112, 110, 106],
+    "scale": 8,
+    "contrast": 1.0,
+    "calm": {"base": [104, 102, 100], "alt": [122, 120, 116]}
+  }
+}

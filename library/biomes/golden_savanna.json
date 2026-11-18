@@ -1,0 +1,41 @@
+{
+  "name": "golden_savanna",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Open savanna: gold tussock grass on rolling sand, flat-topped acacias in loose stands, baobabs standing alone a hundred metres apart, and termite mounds. The country between the water and the pans.",
+  "priority": 6,
+  "rules": {"elev": [2.0, 60], "slope": [0, 0.5]},
+  "surface": "savanna_grass",
+  "subsurface": "packed_dirt",
+  "map_color": [172, 150, 96],
+  "plants": [
+    {
+      "plant": "acacia",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.0, "max": 0.012}}
+    },
+    {"plant": "baobab", "density": 0.00022, "placement": {"verb": "lone", "params": {"spacing": 70}}},
+    {
+      "plant": "mopane",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.0, "max": 0.05}}
+    },
+    {"plant": "rabbitbrush", "density": 0.03, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [
+    {"structure": "termite_mound", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 40}}},
+    {"structure": "granite_stack", "density": 6e-05, "placement": {"verb": "lone", "params": {"spacing": 90}}}
+  ],
+  "creatures": [
+    {"creature": "zebra", "count": 14},
+    {"creature": "wildebeest", "count": 30},
+    {"creature": "giraffe", "count": 5},
+    {"creature": "warthog", "count": 10},
+    {"creature": "vulture", "count": 4},
+    {"creature": "glossy_starling", "count": 12},
+    {"creature": "jackrabbit", "count": 6},
+    {"creature": "lizard", "count": 8},
+    {"creature": "bee", "count": 10}
+  ],
+  "collectibles": [{"item": "ivory_shard", "density": 8e-05, "placement": {"verb": "scatter", "params": {}}}]
+}

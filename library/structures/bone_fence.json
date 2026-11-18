@@ -1,0 +1,246 @@
+{
+  "name": "bone_fence",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A 10 m run of stock fence built of mammoth ribs set upright in the chalk with a rail lashed along them, for ground where no hazel grows. Long axis local X.",
+  "size": [40, 14, 5],
+  "anchor": [19, 0, 2],
+  "foundation": 4,
+  "level": false,
+  "tags": ["windbarrow"],
+  "slots": {"bone": "old_bone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [1.0, 1.0, 2.0], "radius": [1.0, 1.0, 1.0], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [0.8, 2.1, 2.0], "radius": [0.95, 1.0, 0.95], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [0.6, 3.2, 2.0], "radius": [0.9, 1.0, 0.9], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [0.4, 4.3, 2.0], "radius": [0.85, 1.0, 0.85], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [0.2, 5.4, 2.0], "radius": [0.8, 1.0, 0.8], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [0.0, 6.5, 2.0], "radius": [0.75, 1.0, 0.75], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [-0.2, 7.6, 2.0], "radius": [0.7, 1.0, 0.7], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [4.0, 1.0, 2.0], "radius": [1.0, 1.0, 1.0], "mat": "bone", "part": "frame"},
+    {
+      "op": "ellipsoid",
+      "centre": [4.2, 2.1, 2.0],
+      "radius": [0.957143, 1.0, 0.957143],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [4.3, 3.2, 2.0],
+      "radius": [0.914286, 1.0, 0.914286],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [4.5, 4.3, 2.0],
+      "radius": [0.871429, 1.0, 0.871429],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [4.7, 5.4, 2.0],
+      "radius": [0.828571, 1.0, 0.828571],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [4.9, 6.5, 2.0],
+      "radius": [0.785714, 1.0, 0.785714],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [5.0, 7.6, 2.0],
+      "radius": [0.742857, 1.0, 0.742857],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {"op": "ellipsoid", "centre": [5.2, 8.7, 2.0], "radius": [0.7, 1.0, 0.7], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [8.0, 1.0, 2.0], "radius": [1.0, 1.0, 1.0], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [7.8, 2.1, 2.0], "radius": [0.9625, 1.0, 0.9625], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [7.7, 3.2, 2.0], "radius": [0.925, 1.0, 0.925], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [7.5, 4.3, 2.0], "radius": [0.8875, 1.0, 0.8875], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [7.4, 5.4, 2.0], "radius": [0.85, 1.0, 0.85], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [7.2, 6.5, 2.0], "radius": [0.8125, 1.0, 0.8125], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [7.1, 7.6, 2.0], "radius": [0.775, 1.0, 0.775], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [7.0, 8.7, 2.0], "radius": [0.7375, 1.0, 0.7375], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [6.8, 9.8, 2.0], "radius": [0.7, 1.0, 0.7], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [11.0, 1.0, 2.0], "radius": [1.0, 1.0, 1.0], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [11.2, 2.1, 2.0], "radius": [0.95, 1.0, 0.95], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [11.4, 3.2, 2.0], "radius": [0.9, 1.0, 0.9], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [11.6, 4.3, 2.0], "radius": [0.85, 1.0, 0.85], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [11.8, 5.4, 2.0], "radius": [0.8, 1.0, 0.8], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [12.0, 6.5, 2.0], "radius": [0.75, 1.0, 0.75], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [12.2, 7.6, 2.0], "radius": [0.7, 1.0, 0.7], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [15.0, 1.0, 2.0], "radius": [1.0, 1.0, 1.0], "mat": "bone", "part": "frame"},
+    {
+      "op": "ellipsoid",
+      "centre": [14.8, 2.1, 2.0],
+      "radius": [0.957143, 1.0, 0.957143],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [14.7, 3.2, 2.0],
+      "radius": [0.914286, 1.0, 0.914286],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [14.5, 4.3, 2.0],
+      "radius": [0.871429, 1.0, 0.871429],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [14.3, 5.4, 2.0],
+      "radius": [0.828571, 1.0, 0.828571],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [14.1, 6.5, 2.0],
+      "radius": [0.785714, 1.0, 0.785714],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [14.0, 7.6, 2.0],
+      "radius": [0.742857, 1.0, 0.742857],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {"op": "ellipsoid", "centre": [13.8, 8.7, 2.0], "radius": [0.7, 1.0, 0.7], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [18.0, 1.0, 2.0], "radius": [1.0, 1.0, 1.0], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [18.1, 2.1, 2.0], "radius": [0.9625, 1.0, 0.9625], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [18.3, 3.2, 2.0], "radius": [0.925, 1.0, 0.925], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [18.4, 4.3, 2.0], "radius": [0.8875, 1.0, 0.8875], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [18.6, 5.4, 2.0], "radius": [0.85, 1.0, 0.85], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [18.8, 6.5, 2.0], "radius": [0.8125, 1.0, 0.8125], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [18.9, 7.6, 2.0], "radius": [0.775, 1.0, 0.775], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [19.1, 8.7, 2.0], "radius": [0.7375, 1.0, 0.7375], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [19.2, 9.8, 2.0], "radius": [0.7, 1.0, 0.7], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [22.0, 1.0, 2.0], "radius": [1.0, 1.0, 1.0], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [21.8, 2.1, 2.0], "radius": [0.95, 1.0, 0.95], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [21.6, 3.2, 2.0], "radius": [0.9, 1.0, 0.9], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [21.4, 4.3, 2.0], "radius": [0.85, 1.0, 0.85], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [21.2, 5.4, 2.0], "radius": [0.8, 1.0, 0.8], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [21.0, 6.5, 2.0], "radius": [0.75, 1.0, 0.75], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [20.8, 7.6, 2.0], "radius": [0.7, 1.0, 0.7], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [25.0, 1.0, 2.0], "radius": [1.0, 1.0, 1.0], "mat": "bone", "part": "frame"},
+    {
+      "op": "ellipsoid",
+      "centre": [25.2, 2.1, 2.0],
+      "radius": [0.957143, 1.0, 0.957143],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [25.3, 3.2, 2.0],
+      "radius": [0.914286, 1.0, 0.914286],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [25.5, 4.3, 2.0],
+      "radius": [0.871429, 1.0, 0.871429],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [25.7, 5.4, 2.0],
+      "radius": [0.828571, 1.0, 0.828571],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [25.9, 6.5, 2.0],
+      "radius": [0.785714, 1.0, 0.785714],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [26.0, 7.6, 2.0],
+      "radius": [0.742857, 1.0, 0.742857],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {"op": "ellipsoid", "centre": [26.2, 8.7, 2.0], "radius": [0.7, 1.0, 0.7], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [29.0, 1.0, 2.0], "radius": [1.0, 1.0, 1.0], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [28.9, 2.1, 2.0], "radius": [0.9625, 1.0, 0.9625], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [28.7, 3.2, 2.0], "radius": [0.925, 1.0, 0.925], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [28.6, 4.3, 2.0], "radius": [0.8875, 1.0, 0.8875], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [28.4, 5.4, 2.0], "radius": [0.85, 1.0, 0.85], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [28.2, 6.5, 2.0], "radius": [0.8125, 1.0, 0.8125], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [28.1, 7.6, 2.0], "radius": [0.775, 1.0, 0.775], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [27.9, 8.7, 2.0], "radius": [0.7375, 1.0, 0.7375], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [27.8, 9.8, 2.0], "radius": [0.7, 1.0, 0.7], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [32.0, 1.0, 2.0], "radius": [1.0, 1.0, 1.0], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [32.2, 2.1, 2.0], "radius": [0.95, 1.0, 0.95], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [32.4, 3.2, 2.0], "radius": [0.9, 1.0, 0.9], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [32.6, 4.3, 2.0], "radius": [0.85, 1.0, 0.85], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [32.8, 5.4, 2.0], "radius": [0.8, 1.0, 0.8], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [33.0, 6.5, 2.0], "radius": [0.75, 1.0, 0.75], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [33.2, 7.6, 2.0], "radius": [0.7, 1.0, 0.7], "mat": "bone", "part": "frame"},
+    {"op": "ellipsoid", "centre": [36.0, 1.0, 2.0], "radius": [1.0, 1.0, 1.0], "mat": "bone", "part": "frame"},
+    {
+      "op": "ellipsoid",
+      "centre": [35.8, 2.1, 2.0],
+      "radius": [0.957143, 1.0, 0.957143],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [35.7, 3.2, 2.0],
+      "radius": [0.914286, 1.0, 0.914286],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [35.5, 4.3, 2.0],
+      "radius": [0.871429, 1.0, 0.871429],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [35.3, 5.4, 2.0],
+      "radius": [0.828571, 1.0, 0.828571],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [35.1, 6.5, 2.0],
+      "radius": [0.785714, 1.0, 0.785714],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [35.0, 7.6, 2.0],
+      "radius": [0.742857, 1.0, 0.742857],
+      "mat": "bone",
+      "part": "frame"
+    },
+    {"op": "ellipsoid", "centre": [34.8, 8.7, 2.0], "radius": [0.7, 1.0, 0.7], "mat": "bone", "part": "frame"},
+    {"op": "box", "from": [0, 4, 1], "to": [38, 5, 3], "mat": "bone", "part": "frame"}
+  ]
+}

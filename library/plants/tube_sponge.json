@@ -1,0 +1,15 @@
+{
+  "name": "tube_sponge",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Tube sponges: fat purple tubes standing in a cluster.",
+  "form": "sponge",
+  "height": [0.5, 1.2],
+  "trunk_radius": [0.14, 0.2],
+  "crown_radius": [0.3, 0.6],
+  "bark": "sponge_purple",
+  "leaf": "sponge_purple",
+  "max_slope": 1.4,
+  "water_depth": [3, 30],
+  "stems": [2, 6]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "street_blade",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "A green enamelled street blade on a galvanised pole, white letters inside a white keyline: the way a city says where you are.",
+  "post": "sign_post_steel",
+  "board": [1.9, 0.26],
+  "centre_m": 2.65,
+  "offset_m": 0.02,
+  "thickness": 0.03,
+  "face": [30, 74, 52],
+  "edge": [236, 236, 230],
+  "ink": [240, 240, 234],
+  "cap_m": 0.125,
+  "border_m": 0.022,
+  "letters": "caps",
+  "two_sided": true
+}

@@ -1,0 +1,28 @@
+{
+  "name": "gallery_forest",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Gallery forest: closed high forest along the shaded bank of the upper river, figs rooted into the scarp, vines, ferns, and no view out of it at all.",
+  "priority": 18,
+  "rules": {"region": "green_bank", "river": [0, 70], "elev": [0.5, 40]},
+  "surface": "jungle_floor",
+  "subsurface": "dirt",
+  "map_color": [56, 92, 54],
+  "plants": [
+    {"plant": "banyan", "density": 0.012, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "small_fig", "density": 0.01, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "fern", "density": 0.14, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "hanging_vine", "density": 0.3, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "shelf_fungus", "density": 0.25, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "tree_moss", "density": 0.3, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "macaque", "count": 10},
+    {"creature": "fruit_bat", "count": 12},
+    {"creature": "pileated_woodpecker", "count": 4},
+    {"creature": "kingfisher", "count": 4},
+    {"creature": "bee_eater", "count": 8},
+    {"creature": "frog", "count": 10},
+    {"creature": "firefly", "count": 30}
+  ]
+}

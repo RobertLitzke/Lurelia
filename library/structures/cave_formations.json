@@ -1,0 +1,21 @@
+{
+  "name": "cave_formations",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A few stalactites, stalagmites and one column for a cave passage about 5 m high: place with `height` at the passage floor (sea + passage height - radius); the stalactites start above the ceiling and hang down.",
+  "size": [24, 55, 24],
+  "anchor": [12, 12, 12],
+  "level": false,
+  "decays": false,
+  "tags": ["hemlow", "cave"],
+  "slots": {"flow": "flowstone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [13, 45, 11], "radius": [2.8, 21.4, 2.7], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [20, 45, 18], "radius": [2.8, 24.2, 3.0], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [7, 45, 15], "radius": [2.7, 23.8, 2.6], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [14, 45, 20], "radius": [3.0, 22.2, 2.7], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [18, 6, 20], "radius": [2.2, 15.2, 2.0], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [13, 6, 14], "radius": [2.3, 12.4, 2.7], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [6, 6, 17], "radius": [2.3, 12.0, 2.1], "mat": "flow", "part": "stone"}
+  ]
+}

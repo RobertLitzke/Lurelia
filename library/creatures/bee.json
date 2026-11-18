@@ -1,0 +1,29 @@
+{
+  "name": "bee",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "buzz: Honeybee: goes from flower to flower (plants that afford nectar), hovering at each, in small numbers wherever there is bloom. The base of every bee. Drawn about twice life size so it shows.",
+  "voxel": 0.0011,
+  "half_w": 0.01,
+  "height": 0.02,
+  "colors": {"bee": [214, 160, 50], "fuzz": [150, 112, 74], "dark": [36, 28, 24], "wing": [220, 226, 232]},
+  "behaviour": {
+    "movement": "buzz",
+    "walk_speed": 1.6,
+    "flee_speed": 3.0,
+    "wary": 1.2,
+    "flightiness": 0.6,
+    "group": {"size": [2, 5], "spacing": 1, "range": 4}
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 10, 19], "radius": [4, 4, 6], "mat": "bee"},
+    {"op": "ellipsoid", "centre": [16, 10, 12], "radius": [3.5, 3.5, 3.5], "mat": "fuzz"},
+    {"op": "ellipsoid", "centre": [16, 10, 7], "radius": [2.5, 2.5, 2.2], "mat": "dark"},
+    {"op": "box", "from": [9, 14, 10], "to": [15, 15, 17], "mat": "wing"},
+    {"op": "box", "from": [17, 14, 10], "to": [23, 15, 17], "mat": "wing"},
+    {"op": "recolour", "at": [10, 4, 16], "until": [23, 17, 18], "from": "bee", "to": "dark"},
+    {"op": "recolour", "at": [10, 4, 20], "until": [23, 17, 22], "from": "bee", "to": "dark"},
+    {"op": "recolour", "at": [10, 4, 24], "until": [23, 17, 26], "from": "bee", "to": "dark"}
+  ],
+  "vary": {"size": 0.08}
+}

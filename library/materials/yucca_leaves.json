@@ -1,0 +1,16 @@
+{
+  "name": "yucca_leaves",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Stiff yucca blades.",
+  "id": 130,
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [112, 132, 82],
+    "alt": [140, 150, 98],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [120, 138, 90], "alt": [146, 156, 106]}
+  }
+}

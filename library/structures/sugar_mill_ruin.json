@@ -1,0 +1,23 @@
+{
+  "name": "sugar_mill_ruin",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "The old sugar house: roofless brick walls 4.5 m high with an arched cart door (local -Z), a tall square brick chimney at the back corner and the rusted sugar kettles still inside. Give it an age.",
+  "size": [50, 66, 72],
+  "anchor": [24, 0, 36],
+  "foundation": 6,
+  "level": true,
+  "tags": ["levee"],
+  "slots": {"wall": "brick_brown", "iron": "rust_iron"},
+  "ops": [
+    {"op": "walls", "from": [0, 0, 0], "to": [48, 18, 72], "mat": "wall", "thick": 2, "part": "wall"},
+    {"op": "box", "from": [18, 0, 0], "to": [30, 14, 2], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [0, 6, 20], "to": [2, 13, 26], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [46, 6, 40], "to": [48, 13, 46], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [36, 0, 58], "to": [48, 64, 70], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [39, 2, 61], "to": [45, 64, 67], "mat": "air", "part": "stone"},
+    {"op": "box", "from": [35, 62, 57], "to": [49, 64, 71], "mat": "wall", "part": "stone"},
+    {"op": "cylinder", "base": [12, 0, 30], "radius": 5, "height": 5, "mat": "iron", "part": "metal"},
+    {"op": "cylinder", "base": [26, 0, 30], "radius": 5, "height": 5, "mat": "iron", "part": "metal"}
+  ]
+}

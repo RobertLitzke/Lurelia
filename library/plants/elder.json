@@ -1,0 +1,22 @@
+{
+  "name": "elder",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Elder in hedges and at the wood's edge: several arching stems from one root, flat tiers of leaves, and cream corymbs lying on top at midsummer.",
+  "form": "branching",
+  "height": [3.5, 5.5],
+  "trunk_radius": [0.1, 0.14],
+  "crown_radius": [1.8, 2.6],
+  "bark": "bark",
+  "leaf": "leaves",
+  "squash": 0.7,
+  "curve": "arch",
+  "canopy": "layers",
+  "leader": 0.0,
+  "max_slope": 0.9,
+  "affords": ["nectar"],
+  "stems": [3, 5],
+  "flower": "elder_flower",
+  "flower_seasons": ["spring", "summer"],
+  "autumn": "leaves_autumn"
+}

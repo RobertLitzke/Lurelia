@@ -1,0 +1,37 @@
+{
+  "name": "cow",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Dairy cow: the bison's frame with the hump shaved off and a straight back, brown over white, standing about the pasture in twos and threes. Pays people no mind.",
+  "colors": {
+    "coat": [240, 236, 228],
+    "wool": [240, 236, 228],
+    "patch": [110, 82, 56],
+    "horn": [214, 196, 160],
+    "dark": [36, 28, 24]
+  },
+  "behaviour": {
+    "walk_speed": 0.6,
+    "flee_speed": 4.0,
+    "wary": 5,
+    "flightiness": 0.15,
+    "group": {"size": [2, 5], "spacing": 3.2, "range": 20, "alignment": 0.7, "cohesion": 1.0}
+  },
+  "like": "bison",
+  "scale": 0.567,
+  "extra_ops": [
+    {"op": "box", "from": [9, 19, 5], "to": [23, 26, 17], "mat": "air"},
+    {"op": "ellipsoid", "centre": [16, 15, 13], "radius": [4.4, 4.2, 4.4], "mat": "coat"},
+    {"op": "box", "from": [13, 12, 5], "to": [19, 17, 10], "mat": "coat", "part": "neck"},
+    {"op": "ellipsoid", "centre": [16, 13, 5], "radius": [3.2, 3.2, 3.2], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [14, 10, 1], "to": [18, 13, 4], "mat": "patch", "part": "head"},
+    {"op": "set", "at": [13, 14, 3], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [18, 14, 3], "mat": "dark", "part": "head"},
+    {"op": "recolour", "at": [10, 13, 14], "until": [23, 20, 19], "from": "coat", "to": "patch"},
+    {"op": "recolour", "at": [10, 15, 21], "until": [23, 20, 25], "from": "coat", "to": "patch"},
+    {"op": "recolour", "at": [10, 8, 10], "until": [23, 12, 14], "from": "coat", "to": "patch"},
+    {"op": "box", "from": [12, 15, 4], "to": [13, 16, 5], "mat": "horn", "part": "head"},
+    {"op": "box", "from": [19, 15, 4], "to": [20, 16, 5], "mat": "horn", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 11, 21], "radius": [2.2, 1.6, 2.2], "mat": "patch"}
+  ]
+}

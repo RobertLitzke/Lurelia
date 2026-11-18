@@ -1,0 +1,25 @@
+{
+  "name": "downland_grass",
+  "version": 2,
+  "introduced_by": "windbarrow",
+  "notes": "Short chalk turf: close-cropped grass gone khaki with thyme and small flowers in it, the chalk showing through on the crowns. v2: drifts between cool khaki and dry gold across the down, declared rather than taking the shared meadow ramp.",
+  "smooth": true,
+  "drift": {"calm": [[138, 142, 112], [166, 152, 110]], "classic": [[116, 122, 96], [142, 128, 92]]},
+  "texture": {
+    "pattern": "noise",
+    "base": [112, 114, 88],
+    "alt": [122, 124, 96],
+    "scale": 7,
+    "contrast": 0.6,
+    "calm": {"base": [132, 134, 106], "alt": [142, 144, 114]}
+  },
+  "top": {
+    "pattern": "noise",
+    "base": [124, 126, 98],
+    "alt": [134, 136, 106],
+    "scale": 7,
+    "contrast": 0.6,
+    "calm": {"base": [146, 148, 116], "alt": [156, 158, 124]}
+  },
+  "grass": {"sparse": 0.1, "dense": 0.8, "short": 3.0}
+}

@@ -1,0 +1,18 @@
+{
+  "name": "impact_dust",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "A puff of the wall's dust where a round hit.",
+  "shape": "puff",
+  "count": [3, 5],
+  "speed": [0.4, 1.2],
+  "cone_deg": 45,
+  "life": [0.5, 1.0],
+  "size": [0.06, 0.4],
+  "gravity": -0.1,
+  "drag": 3.0,
+  "wind": 0.5,
+  "color": [205, 195, 180],
+  "material": true,
+  "alpha": 0.4
+}

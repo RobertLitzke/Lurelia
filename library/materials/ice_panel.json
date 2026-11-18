@@ -1,0 +1,16 @@
+{
+  "name": "ice_panel",
+  "version": 1,
+  "introduced_by": "icezeto",
+  "notes": "Wall panelling in a frozen base: off-white composite in metre courses, a little blue in the joints, rime in the seams. The bright surface that makes the place read as built rather than dug.",
+  "smooth": false,
+  "crisp": true,
+  "texture": {
+    "pattern": "coursed",
+    "base": [132, 142, 152],
+    "alt": [116, 126, 138],
+    "scale": 1,
+    "contrast": 1.0,
+    "calm": {"base": [140, 150, 160], "alt": [124, 134, 146]}
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "name": "kaldvik",
+  "size_m": 1024,
+  "height_m": 224,
+  "sea_level_m": 24,
+  "underwater": {
+    "visibility": 12,
+    "light": 0.14
+  },
+  "seed": 1207,
+  "seeds": 2,
+  "rock": [
+    [
+      "basalt",
+      0.7
+    ],
+    [
+      "stone_dark",
+      0.3
+    ]
+  ],
+  "strata": [
+    [
+      "basalt",
+      0
+    ],
+    [
+      "stone",
+      52
+    ],
+    [
+      "basalt",
+      54
+    ],
+    [
+      "stone_dark",
+      88
+    ],
+    [
+      "basalt",
+      91
+    ],
+    [
+      "stone",
+      120
+    ],
+    [
+      "basalt",
+      122.5
+    ],
+    [
+      "stone_dark",
+      150
+    ],
+    [
+      "basalt",
+      152
+    ],
+    [
+      "stone",
+      178
+    ],
+    [
+      "basalt",
+      180
+    ]
+  ],
+  "strata_swell": 3,
+  "spawn": [
+    868,
+    474
+  ],
+  "spawn_bearing": 90,
+  "seasons": [
+    "winter"
+  ],
+  "weather": {
+    "sun": 1.0,
+    "clouds": 1.1,
+    "snow": 1.0,
+    "fog": 0.4
+  },
+  "start_weather": "sun",
+  "start_hour": 13.5,
+  "sun": {
+    "latitude": 64,
+    "lift_deg": 20,
+    "shadow_soft": 1.6,
+    "cold": 0.75
+  },
+  "aurora": 1.0,
+  "moss": 0.3,
+  "weathering": 0.6,
+  "default_biome": "kaldvik_spruce",
+  "seabed_biome": "kaldvik_fjord",
+  "biomes": [
+    "kaldvik_spruce",
+    "kaldvik_fell",
+    "kaldvik_shore",
+    "cold_coral",
+    "kaldvik_green",
+    "kaldvik_fjord"
+  ],
+  "water": {
+    "shallow": [
+      64,
+      100,
+      110
+    ],
+    "deep": [
+      22,
+      46,
+      60
+    ]
+  },
+  "snow_cover": 0.85,
+  "diamond_dust": 1.0,
+  "glide": {
+    "thermals": 0.2,
+    "ridge_from": 185,
+    "ridge_speed": 9
+  }
+}

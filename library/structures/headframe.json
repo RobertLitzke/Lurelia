@@ -1,0 +1,50 @@
+{
+  "name": "headframe",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "The timber headframe over Harlow's main shaft: four posts braced together, a sheave wheel at the top, back legs to the hoist house. Over an open shaft 2 m square and 23 m deep, cribbed with timber, with a timber collar round its mouth.",
+  "size": [24, 164, 40],
+  "anchor": [12, 96, 6],
+  "foundation": 6,
+  "tags": ["harlow", "industry", "landmark"],
+  "slots": {"timber": "timber_frame", "iron": "rust_iron"},
+  "ops": [
+    {"op": "box", "from": [3, 96, 3], "to": [21, 97, 21], "mat": "timber", "part": "floor"},
+    {"op": "box", "from": [4, 97, 4], "to": [6, 156, 6], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [18, 97, 4], "to": [20, 156, 6], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [4, 97, 18], "to": [6, 156, 20], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [18, 97, 18], "to": [20, 156, 20], "mat": "timber", "part": "timber"},
+    {
+      "op": "repeat",
+      "count": 5,
+      "step": [0, 12, 0],
+      "ops": [
+        {"op": "box", "from": [4, 106, 4], "to": [20, 107, 6], "mat": "timber", "part": "timber"},
+        {"op": "box", "from": [4, 106, 18], "to": [20, 107, 20], "mat": "timber", "part": "timber"},
+        {"op": "box", "from": [4, 106, 4], "to": [6, 107, 20], "mat": "timber", "part": "timber"},
+        {"op": "box", "from": [18, 106, 4], "to": [20, 107, 20], "mat": "timber", "part": "timber"}
+      ]
+    },
+    {"op": "box", "from": [3, 156, 3], "to": [21, 158, 21], "mat": "timber", "part": "timber"},
+    {"op": "disc", "centre": [12, 159, 12], "radius": 5.5, "thick": 1.5, "axis": "x", "mat": "iron", "part": "metal"},
+    {"op": "disc", "centre": [12, 159, 12], "radius": 3.5, "thick": 1.5, "axis": "x", "mat": "air"},
+    {
+      "op": "repeat",
+      "count": 28,
+      "step": [0, -2, 1],
+      "ops": [
+        {"op": "box", "from": [8, 154, 20], "to": [10, 156, 21], "mat": "timber", "part": "timber"},
+        {"op": "box", "from": [14, 154, 20], "to": [16, 156, 21], "mat": "timber", "part": "timber"}
+      ]
+    },
+    {"op": "box", "from": [7, 0, 7], "to": [17, 96, 17], "mat": "timber", "part": "timber"},
+    {
+      "op": "repeat",
+      "count": 12,
+      "step": [0, 8, 0],
+      "ops": [{"op": "box", "from": [6, 2, 6], "to": [18, 4, 18], "mat": "timber", "part": "timber"}]
+    },
+    {"op": "box", "from": [6, 96, 6], "to": [18, 98, 18], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [8, 4, 8], "to": [16, 99, 16], "mat": "carve"}
+  ]
+}

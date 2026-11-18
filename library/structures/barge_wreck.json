@@ -1,0 +1,20 @@
+{
+  "name": "barge_wreck",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "A rusted cane barge sunk on the river bank, broken across the middle, its little deckhouse still at the stern (local +Z). Base sea.",
+  "size": [20, 17, 72],
+  "anchor": [10, 0, 36],
+  "foundation": 0,
+  "level": false,
+  "base": "sea",
+  "tags": ["river"],
+  "slots": {"hull": "rust_iron", "cabin": "siding_rust"},
+  "ops": [
+    {"op": "walls", "from": [0, 0, 0], "to": [20, 9, 72], "mat": "hull", "thick": 1, "part": "metal"},
+    {"op": "box", "from": [1, 0, 1], "to": [19, 2, 71], "mat": "hull", "part": "metal"},
+    {"op": "box", "from": [0, 4, 30], "to": [20, 9, 40], "mat": "air", "part": "metal"},
+    {"op": "box", "from": [2, 9, 60], "to": [18, 16, 70], "mat": "cabin", "part": "wall"},
+    {"op": "box", "from": [1, 16, 59], "to": [19, 17, 71], "mat": "hull", "part": "roof"}
+  ]
+}

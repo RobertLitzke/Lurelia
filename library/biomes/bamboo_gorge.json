@@ -1,0 +1,29 @@
+{
+  "name": "bamboo_gorge",
+  "version": 2,
+  "introduced_by": "jadewater",
+  "notes": "The narrow misty gorges of the Old Wall: golden bamboo you push through, a few giant clumps, ferns, pandas.",
+  "priority": 9,
+  "rules": {"region": "gorges", "elev": [-1, 16]},
+  "surface": "bamboo_litter",
+  "subsurface": "dirt",
+  "map_color": [196, 176, 80],
+  "plants": [
+    {
+      "plant": "golden_bamboo",
+      "density": 0.07,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.25, "max": 0.5}}
+    },
+    {"plant": "giant_bamboo", "density": 0.006, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "fern", "density": 0.08, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "karst_vine", "density": 0.7, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "cliff_banyan",
+      "density": 0.002,
+      "placement": {"verb": "gradient", "params": {"min": 1.2, "max": 4.0}, "field": "slope"}
+    },
+    {"plant": "rock_moss", "density": 0.1}
+  ],
+  "creatures": [{"creature": "panda", "count": 6}, {"creature": "kite_ray", "count": 6}, {"creature": "dragonfly", "count": 6}],
+  "mist": 0.4
+}

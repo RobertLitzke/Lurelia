@@ -1,0 +1,18 @@
+{
+  "name": "painted_badlands",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Banded purple and grey clay hills with petrified logs weathering out; almost nothing grows.",
+  "priority": 7,
+  "rules": {"region": "painted"},
+  "surface": "chinle_mudstone",
+  "subsurface": "chinle_mudstone",
+  "map_color": [168, 136, 156],
+  "plants": [
+    {"plant": "rabbitbrush", "density": 0.001, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "rock_lichen", "density": 0.08}
+  ],
+  "features": [{"structure": "petrified_log", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [{"creature": "lizard", "count": 4}],
+  "collectibles": [{"item": "petrified_wood", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}]
+}

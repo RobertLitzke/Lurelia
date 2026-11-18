@@ -1,0 +1,16 @@
+{
+  "name": "deck_ramp",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "The same plate as deck_floor but smoothed, so a stepped ramp or a stair is drawn as one slope. Use it on anything that climbs.",
+  "smooth": true,
+  "crisp": true,
+  "texture": {
+    "pattern": "coursed",
+    "base": [88, 90, 91],
+    "alt": [76, 78, 80],
+    "scale": 1,
+    "contrast": 1.0,
+    "calm": {"base": [98, 100, 101], "alt": [86, 88, 90]}
+  }
+}

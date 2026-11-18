@@ -1,0 +1,21 @@
+{
+  "name": "ruined_tower",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A round stone watchtower, 21 m, hollow, its crown broken away on one side. Who built it is not in any record. Seen from the coast and the summit.",
+  "size": [28, 90, 28],
+  "anchor": [14, 0, 14],
+  "foundation": 3,
+  "tags": ["ruin", "landmark"],
+  "slots": {"wall": "fieldstone", "base": "mossy_stone"},
+  "ops": [
+    {"op": "cylinder", "base": [14.0, 0, 14.0], "radius": 10, "height": 84, "mat": "wall"},
+    {"op": "cylinder", "base": [14.0, 1, 14.0], "radius": 7.5, "height": 90, "mat": "air"},
+    {"op": "box", "from": [12, 0, 2], "to": [16, 10, 8], "mat": "air"},
+    {"op": "box", "from": [22, 24, 13], "to": [25, 29, 16], "mat": "air"},
+    {"op": "box", "from": [8, 44, 20], "to": [11, 49, 23], "mat": "air"},
+    {"op": "box", "from": [8, 64, 5], "to": [11, 69, 8], "mat": "air"},
+    {"op": "ellipsoid", "centre": [21.0, 88, 17.0], "radius": [11, 16, 9], "mat": "air"},
+    {"op": "cylinder", "base": [14.0, 0, 14.0], "radius": 10.5, "height": 3, "mat": "base"}
+  ]
+}

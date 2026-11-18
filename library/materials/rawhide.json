@@ -1,0 +1,15 @@
+{
+  "name": "rawhide",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Hides scraped, smoked brown and lashed over a frame: the cover of the bone house and the windbreak.",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [122, 88, 58],
+    "alt": [104, 74, 48],
+    "scale": 5,
+    "contrast": 0.7,
+    "calm": {"base": [128, 94, 64], "alt": [110, 80, 54]}
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "levee",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "The levee and the high ground along the Marrow: mown grass, a few great live oaks, cottonwoods and willows down the bank.",
+  "priority": 7,
+  "rules": {"region": "levee"},
+  "surface": "meadow_grass",
+  "subsurface": "silt",
+  "map_color": [140, 176, 96],
+  "plants": [
+    {"plant": "live_oak", "density": 0.0003, "placement": {"verb": "lone", "params": {"spacing": 60}}},
+    {"plant": "cottonwood", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 18}}},
+    {"plant": "willow", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 10}}},
+    {"plant": "spanish_moss", "density": 0.9, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "deer", "count": 3},
+    {"creature": "coyote", "count": 2},
+    {"creature": "crow", "count": 6},
+    {"creature": "starling", "count": 30},
+    {"creature": "sandhill_crane", "count": 3},
+    {"creature": "great_horned_owl", "count": 1}
+  ]
+}

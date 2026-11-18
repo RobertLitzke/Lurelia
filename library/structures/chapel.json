@@ -1,0 +1,23 @@
+{
+  "name": "chapel",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Small steep-roofed chapel with a bell-cote over the door.",
+  "size": [20, 37, 28],
+  "anchor": [10, 0, 0],
+  "foundation": 6,
+  "tags": ["settler", "chapel"],
+  "slots": {"wall": "fieldstone", "floor": "slate", "timber": "timber_frame", "roof": "slate"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [20, 1, 28], "mat": "floor", "part": "floor"},
+    {"op": "walls", "from": [0, 1, 0], "to": [20, 14, 28], "mat": "wall", "thick": 2, "part": "wall"},
+    {"op": "box", "from": [8, 1, 0], "to": [12, 11, 2], "mat": "air"},
+    {"op": "box", "from": [0, 6, 8], "to": [2, 12, 10], "mat": "air"},
+    {"op": "box", "from": [0, 6, 18], "to": [2, 12, 20], "mat": "air"},
+    {"op": "box", "from": [18, 6, 8], "to": [20, 12, 10], "mat": "air"},
+    {"op": "box", "from": [18, 6, 18], "to": [20, 12, 20], "mat": "air"},
+    {"op": "gable", "from": [0, 14, 0], "to": [20, 14, 28], "axis": "z", "mat": "roof", "rise": 2, "part": "roof"},
+    {"op": "box", "from": [8, 14, 0], "to": [12, 22, 2], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [9, 17, 0], "to": [11, 21, 2], "mat": "air"}
+  ]
+}

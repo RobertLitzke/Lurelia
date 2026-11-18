@@ -1,0 +1,63 @@
+{
+  "name": "cypress_swamp",
+  "version": 2,
+  "introduced_by": "lowmouth",
+  "notes": "The back swamp: bald cypress and tupelo standing in black tea-coloured water, knees round their feet, moss in long beards, hyacinth on the still water, lily pads on the open water between the trunks.",
+  "priority": 10,
+  "rules": {"region": "swamp", "amphibious": true},
+  "surface": "swamp_muck",
+  "subsurface": "peat",
+  "map_color": [70, 110, 80],
+  "plants": [
+    {
+      "plant": "bald_cypress",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.3, "max": 0.6}}
+    },
+    {"plant": "water_tupelo", "density": 0.004, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "cypress_snag", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "spanish_moss", "density": 0.85, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "cattail",
+      "density": 0.7,
+      "placement": {"verb": "clustered", "params": {"size": 22, "min": 0.64, "max": 0.655}}
+    },
+    {"plant": "fern", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "saw_palmetto", "density": 0.008, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "shelf_fungus", "density": 0.12}
+  ],
+  "features": [
+    {"structure": "cypress_knees", "density": 0.0025, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "hyacinth_raft", "density": 0.0003, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "mossy_log", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "structure": "lily_pads",
+      "density": 0.0012,
+      "placement": {"verb": "clustered", "params": {"size": 60, "min": 0.5, "max": 0.75}}
+    },
+    {
+      "structure": "lily_pads_flowering",
+      "density": 0.0008,
+      "placement": {"verb": "clustered", "params": {"size": 60, "min": 0.55, "max": 0.8}}
+    }
+  ],
+  "creatures": [
+    {"creature": "heron", "count": 3},
+    {"creature": "great_egret", "count": 4},
+    {"creature": "anhinga", "count": 4},
+    {"creature": "kingfisher", "count": 3},
+    {"creature": "mallard", "count": 10},
+    {"creature": "pileated_woodpecker", "count": 2},
+    {"creature": "barn_owl", "count": 1},
+    {"creature": "firefly", "count": 70},
+    {"creature": "dragonfly", "count": 12},
+    {"creature": "alligator", "count": 13},
+    {"creature": "nutria", "count": 4},
+    {"creature": "channel_catfish", "count": 10},
+    {"creature": "bullfrog", "count": 6},
+    {"creature": "otter", "count": 1},
+    {"creature": "water_snake", "count": 3}
+  ],
+  "water": {"shallow": [92, 84, 52], "deep": [34, 32, 22]},
+  "mist": 0.15
+}

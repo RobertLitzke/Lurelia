@@ -1,0 +1,31 @@
+{
+  "name": "mine_portal",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "The timbered mouth of a Harlow adit, rails running out of it: carves a tunnel 15 m straight back into the hill. Place at the foot of a slope or cliff, facing out.",
+  "size": [24, 22, 76],
+  "anchor": [12, 0, 4],
+  "foundation": 2,
+  "level": false,
+  "tags": ["harlow", "industry"],
+  "slots": {"timber": "timber_frame", "iron": "rust_iron", "floor": "wash_sand"},
+  "ops": [
+    {"op": "box", "from": [6, 1, 6], "to": [18, 17, 76], "mat": "carve"},
+    {"op": "box", "from": [6, 0, 6], "to": [18, 1, 76], "mat": "floor", "part": "floor"},
+    {"op": "box", "from": [2, 0, 0], "to": [22, 1, 16], "mat": "floor", "part": "floor"},
+    {"op": "box", "from": [4, 1, 6], "to": [6, 18, 8], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [18, 1, 6], "to": [20, 18, 8], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [3, 18, 5], "to": [21, 20, 9], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [4, 1, 10], "to": [6, 18, 12], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [18, 1, 10], "to": [20, 18, 12], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [3, 18, 9], "to": [21, 20, 13], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [9, 1, 0], "to": [10, 2, 16], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [14, 1, 0], "to": [15, 2, 16], "mat": "iron", "part": "metal"},
+    {
+      "op": "repeat",
+      "count": 8,
+      "step": [0, 0, 2],
+      "ops": [{"op": "box", "from": [8, 1, 0], "to": [16, 1, 1], "mat": "timber", "part": "timber"}]
+    }
+  ]
+}

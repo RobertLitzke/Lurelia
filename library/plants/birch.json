@@ -1,0 +1,13 @@
+{
+  "name": "birch",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Light-loving, quick to colonise.",
+  "form": "birch",
+  "height": [8, 11],
+  "trunk_radius": [0.14, 0.2],
+  "crown_radius": [1.4, 1.8],
+  "bark": "birch_bark",
+  "leaf": "birch_leaves",
+  "autumn": "leaves_autumn"
+}

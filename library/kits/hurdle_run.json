@@ -1,0 +1,11 @@
+{
+  "name": "hurdle_run",
+  "version": 1,
+  "introduced_by": "routing engine",
+  "notes": "Woven hazel hurdling between oak stakes, 1.25 m high, stakes every 2.5 m: the plot and yard fences of a downland village, now following any line. The hurdle_fence structure is the same thing cut to a 10 m run on a quarter turn.",
+  "ground": "follow",
+  "width": 0.0,
+  "rails": [{"side": "centre", "out": 0.0, "from": 0.0, "to": 1.25, "thick": 0.5, "mat": "stick_wood"}],
+  "posts": [{"side": "centre", "out": 0.0, "every": 2.5, "size": [0.5, 1.75, 0.75], "mat": "oak_post"}],
+  "tags": ["fence"]
+}

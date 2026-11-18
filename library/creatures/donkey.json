@@ -1,0 +1,38 @@
+{
+  "name": "donkey",
+  "version": 2,
+  "introduced_by": "redrock",
+  "notes": "Feral burro: the miners' donkeys, turned loose when Harlow emptied. Grey-brown with a pale muzzle and belly, long ears and a dark cross on the shoulders. Small herds round the old town; curious, slow to run.",
+  "colors": {"coat": [140, 118, 96], "belly": [210, 196, 176], "mane": [74, 58, 40], "muzzle": [210, 196, 176]},
+  "behaviour": {"walk_speed": 0.9, "flee_speed": 6.0, "wary": 8, "flightiness": 0.2},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 16, 17], "radius": [3.6, 3.8, 8.2], "mat": "coat"},
+    {"op": "recolour_below", "y": 13, "from": "coat", "to": "belly"},
+    {"op": "ellipsoid", "centre": [16, 18.5, 9.5], "radius": [2.8, 3.6, 3.1], "mat": "coat", "part": "neck"},
+    {"op": "ellipsoid", "centre": [16, 21.5, 7.2], "radius": [2.3, 2.8, 2.3], "mat": "coat", "part": "neck"},
+    {"op": "box", "from": [14, 20, 5], "to": [18, 25, 8], "mat": "coat", "part": "neck"},
+    {"op": "box", "from": [14, 22, 0], "to": [18, 26, 5], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [15, 22, 0], "to": [17, 24, 1], "mat": "muzzle", "part": "head"},
+    {"op": "set", "at": [14, 25, 3], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [17, 25, 3], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [14, 26, 4], "to": [15, 31, 5], "mat": "coat", "part": "ear_l"},
+    {"op": "box", "from": [17, 26, 4], "to": [18, 31, 5], "mat": "coat", "part": "ear_r"},
+    {"op": "box", "from": [15, 21, 8], "to": [17, 23, 11], "mat": "mane", "part": "neck"},
+    {"op": "box", "from": [15, 24, 5], "to": [17, 26, 8], "mat": "mane", "part": "neck"},
+    {"op": "box", "from": [15, 13, 25], "to": [17, 18, 27], "mat": "mane", "part": "tail"},
+    {"op": "box", "from": [13, 2, 11], "to": [15, 13, 13], "mat": "coat", "part": "leg_fl"},
+    {"op": "box", "from": [13, 0, 11], "to": [15, 2, 13], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [17, 2, 11], "to": [19, 13, 13], "mat": "coat", "part": "leg_fr"},
+    {"op": "box", "from": [17, 0, 11], "to": [19, 2, 13], "mat": "dark", "part": "leg_fr"},
+    {"op": "box", "from": [13, 2, 22], "to": [15, 13, 24], "mat": "coat", "part": "leg_hl"},
+    {"op": "box", "from": [13, 0, 22], "to": [15, 2, 24], "mat": "dark", "part": "leg_hl"},
+    {"op": "box", "from": [17, 2, 22], "to": [19, 13, 24], "mat": "coat", "part": "leg_hr"},
+    {"op": "box", "from": [17, 0, 22], "to": [19, 2, 24], "mat": "dark", "part": "leg_hr"}
+  ],
+  "like": "horse",
+  "scale": 0.72,
+  "extra_ops": [
+    {"op": "recolour", "at": [12, 17, 12], "until": [21, 21, 14], "from": "coat", "to": "mane"},
+    {"op": "recolour", "at": [15, 18, 8], "until": [17, 21, 24], "from": "coat", "to": "mane"}
+  ]
+}

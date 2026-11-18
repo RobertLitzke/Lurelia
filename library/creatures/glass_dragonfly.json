@@ -1,0 +1,9 @@
+{
+  "name": "glass_dragonfly",
+  "version": 1,
+  "introduced_by": "faerie",
+  "notes": "A dragonfly of the faerie wood with a glowing violet body and wings like thin glass.",
+  "colors": {"body": [170, 120, 255, 1.8], "thorax": [170, 120, 255, 1.8], "wing": [210, 220, 255]},
+  "like": "dragonfly",
+  "scale": 1.2
+}

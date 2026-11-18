@@ -1,0 +1,25 @@
+{
+  "name": "bee_eater",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Carmine bee-eater: carmine body, blue-green head and a long tail, hunting insects out over the water all morning. Nests in holes in a cut bank, in colonies of hundreds, and follows any grass fire for what it drives up.",
+  "colors": {
+    "body": [196, 62, 72],
+    "head": [64, 150, 160],
+    "wing": [176, 56, 66],
+    "tail": [150, 48, 58],
+    "breast": [206, 86, 86],
+    "head_cap": [72, 164, 172],
+    "beak": [36, 28, 24]
+  },
+  "behaviour": {
+    "movement": "flock",
+    "walk_speed": 7.0,
+    "flee_speed": 13.0,
+    "wary": 10,
+    "flightiness": 1.4,
+    "group": {"size": [14, 40], "spacing": 1.4, "range": 12, "separation": 1.0, "alignment": 0.9, "cohesion": 1.0}
+  },
+  "like": "sparrow",
+  "scale": 1.1
+}

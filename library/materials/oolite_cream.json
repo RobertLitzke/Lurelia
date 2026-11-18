@@ -1,0 +1,16 @@
+{
+  "name": "oolite_cream",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A paler, creamier bed of the oolite that makes a level band along the Edge.",
+  "id": 61,
+  "smooth": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [206, 192, 156],
+    "alt": [220, 206, 170],
+    "scale": 3,
+    "contrast": 0.5,
+    "calm": {"base": [210, 196, 162], "alt": [222, 210, 176]}
+  }
+}

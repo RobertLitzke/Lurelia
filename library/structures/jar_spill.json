@@ -1,0 +1,164 @@
+{
+  "name": "jar_spill",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Trade jars spilled down the sand from a wreck's hold: celadon and plain red earthenware, some standing, most rolled on their sides, crusted over. Twelve metres across. `base: bed`.",
+  "size": [48, 8, 48],
+  "anchor": [24, 0, 24],
+  "level": false,
+  "decays": true,
+  "base": "bed",
+  "tags": ["wreck", "underwater"],
+  "ops": [
+    {"op": "ellipsoid", "centre": [27.1, 1.5, 5.4], "radius": [1.8, 1.8, 3.0], "mat": "terracotta", "part": "stone"},
+    {
+      "op": "ellipsoid",
+      "centre": [10.5, 2.5, 10.2],
+      "radius": [1.8, 3.0, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {"op": "box", "from": [9, 5, 9], "to": [11, 6, 11], "mat": "celadon_glaze", "part": "stone"},
+    {
+      "op": "ellipsoid",
+      "centre": [6.2, 2.5, 37.9],
+      "radius": [1.8, 3.0, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {"op": "box", "from": [5, 5, 36], "to": [7, 6, 38], "mat": "celadon_glaze", "part": "stone"},
+    {
+      "op": "ellipsoid",
+      "centre": [19.4, 1.5, 23.5],
+      "radius": [1.8, 1.8, 3.0],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [16.9, 2.5, 23.1],
+      "radius": [1.8, 3.0, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {"op": "box", "from": [15, 5, 22], "to": [17, 6, 24], "mat": "celadon_glaze", "part": "stone"},
+    {
+      "op": "ellipsoid",
+      "centre": [26.7, 1.5, 13.7],
+      "radius": [1.8, 1.8, 3.0],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [31.0, 1.5, 7.0],
+      "radius": [3.0, 1.8, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [41.1, 1.5, 11.8],
+      "radius": [3.0, 1.8, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [43.7, 1.5, 11.3],
+      "radius": [1.8, 1.8, 3.0],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {"op": "ellipsoid", "centre": [34.7, 2.5, 42.7], "radius": [1.8, 3.0, 1.8], "mat": "terracotta", "part": "stone"},
+    {"op": "box", "from": [33, 5, 41], "to": [35, 6, 43], "mat": "terracotta", "part": "stone"},
+    {
+      "op": "ellipsoid",
+      "centre": [12.3, 2.5, 34.3],
+      "radius": [1.8, 3.0, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {"op": "box", "from": [11, 5, 33], "to": [13, 6, 35], "mat": "celadon_glaze", "part": "stone"},
+    {
+      "op": "ellipsoid",
+      "centre": [27.8, 2.5, 16.5],
+      "radius": [1.8, 3.0, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {"op": "box", "from": [26, 5, 15], "to": [28, 6, 17], "mat": "celadon_glaze", "part": "stone"},
+    {"op": "ellipsoid", "centre": [21.3, 1.5, 25.5], "radius": [1.8, 1.8, 3.0], "mat": "terracotta", "part": "stone"},
+    {"op": "ellipsoid", "centre": [32.1, 2.5, 13.9], "radius": [1.8, 3.0, 1.8], "mat": "terracotta", "part": "stone"},
+    {"op": "box", "from": [31, 5, 12], "to": [33, 6, 14], "mat": "terracotta", "part": "stone"},
+    {"op": "ellipsoid", "centre": [25.0, 1.5, 19.0], "radius": [3.0, 1.8, 1.8], "mat": "terracotta", "part": "stone"},
+    {
+      "op": "ellipsoid",
+      "centre": [39.0, 2.5, 17.2],
+      "radius": [1.8, 3.0, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {"op": "box", "from": [37, 5, 16], "to": [39, 6, 18], "mat": "celadon_glaze", "part": "stone"},
+    {
+      "op": "ellipsoid",
+      "centre": [34.6, 1.5, 7.0],
+      "radius": [3.0, 1.8, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {"op": "ellipsoid", "centre": [39.0, 1.5, 31.6], "radius": [1.8, 1.8, 3.0], "mat": "terracotta", "part": "stone"},
+    {
+      "op": "ellipsoid",
+      "centre": [16.0, 1.5, 8.2],
+      "radius": [3.0, 1.8, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [12.5, 2.5, 20.9],
+      "radius": [1.8, 3.0, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {"op": "box", "from": [11, 5, 19], "to": [13, 6, 21], "mat": "celadon_glaze", "part": "stone"},
+    {
+      "op": "ellipsoid",
+      "centre": [5.1, 2.5, 10.6],
+      "radius": [1.8, 3.0, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {"op": "box", "from": [4, 5, 9], "to": [6, 6, 11], "mat": "celadon_glaze", "part": "stone"},
+    {
+      "op": "ellipsoid",
+      "centre": [21.2, 1.5, 33.1],
+      "radius": [3.0, 1.8, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [34.5, 1.5, 9.4],
+      "radius": [3.0, 1.8, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [16.2, 1.5, 36.4],
+      "radius": [3.0, 1.8, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    },
+    {"op": "ellipsoid", "centre": [11.8, 1.5, 35.5], "radius": [3.0, 1.8, 1.8], "mat": "terracotta", "part": "stone"},
+    {
+      "op": "ellipsoid",
+      "centre": [41.7, 1.5, 39.5],
+      "radius": [3.0, 1.8, 1.8],
+      "mat": "celadon_glaze",
+      "part": "stone"
+    }
+  ]
+}

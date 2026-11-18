@@ -1,0 +1,15 @@
+{
+  "name": "mossy_stone",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 32,
+  "smooth": false,
+  "texture": {
+    "pattern": "coursed",
+    "base": [104, 116, 86],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [132, 138, 108],
+    "calm": {"base": [128, 140, 100], "alt": [146, 154, 116]}
+  }
+}

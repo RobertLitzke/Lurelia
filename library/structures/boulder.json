@@ -1,0 +1,16 @@
+{
+  "name": "boulder",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A rounded boulder, lichened.",
+  "size": [16, 12, 16],
+  "anchor": [8, 0, 8],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"rock": "lichen_rock"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [8, 5, 8], "radius": [7, 5.5, 6], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [10, 7, 6], "radius": [4, 3, 4], "mat": "rock"}
+  ]
+}

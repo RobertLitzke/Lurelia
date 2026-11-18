@@ -1,0 +1,16 @@
+{
+  "name": "agave",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "canes: Agave: a rosette of thick blue-grey spine-tipped leaves splayed from the ground.",
+  "form": "canes",
+  "height": [0.6, 1.1],
+  "trunk_radius": [0.13, 0.13],
+  "crown_radius": [0.2, 0.3],
+  "bark": "agave",
+  "leaf": "agave",
+  "spread": 1.0,
+  "max_slope": 1.2,
+  "stems": [14, 22],
+  "stalk": ["agave_stalk", 0.18]
+}

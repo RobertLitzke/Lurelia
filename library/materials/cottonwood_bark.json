@@ -1,0 +1,24 @@
+{
+  "name": "cottonwood_bark",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Grey, deeply furrowed cottonwood bark.",
+  "id": 128,
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [136, 130, 118],
+    "alt": [104, 98, 90],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [146, 140, 128], "alt": [116, 110, 102]}
+  },
+  "top": {
+    "pattern": "rings",
+    "base": [160, 146, 120],
+    "alt": [126, 114, 96],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [168, 154, 128], "alt": [136, 124, 106]}
+  }
+}

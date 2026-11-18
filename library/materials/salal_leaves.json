@@ -1,0 +1,16 @@
+{
+  "name": "salal_leaves",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Salal: thick, glossy, dark evergreen leaves of the Northwest understorey.",
+  "id": 174,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [54, 84, 46],
+    "alt": [70, 104, 56],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [64, 98, 52], "alt": [82, 118, 62]}
+  }
+}

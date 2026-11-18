@@ -1,0 +1,15 @@
+{
+  "name": "street_oak",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "A red oak planted along a street: tall, round, dark green.",
+  "form": "broad",
+  "height": [10, 14],
+  "trunk_radius": [0.3, 0.42],
+  "buttress": 0.25,
+  "crown_radius": [3.2, 4.4],
+  "bark": "bark",
+  "leaf": "leaves",
+  "max_slope": 0.7,
+  "autumn": "leaves_autumn"
+}

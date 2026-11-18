@@ -1,0 +1,50 @@
+{
+  "name": "thornpan",
+  "size_m": 1536,
+  "height_m": 96,
+  "sea_level_m": 20,
+  "underwater": {"visibility": 5, "light": 0.3},
+  "seed": 1964,
+  "sun": {"latitude": 30},
+  "seeds": 1,
+  "rock": [
+    ["granite", 1.0]
+  ],
+  "strata": [
+    ["granite", 0],
+    ["barnacle_crust", 45.4],
+    ["granite", 46.6]
+  ],
+  "spawn": [866, 540],
+  "spawn_bearing": 232,
+  "seasons": ["summer", "winter"],
+  "start_season": "summer",
+  "weather": {
+    "sun": 1.6,
+    "heat": 1.3,
+    "clouds": 0.3,
+    "rain": 0.1,
+    "fog": 0.15
+  },
+  "start_weather": "sun",
+  "default_biome": "golden_savanna",
+  "seabed_biome": "delta_shallows",
+  "start_hour": 17.2,
+  "snow_line_m": 1000,
+  "weathering": 0.6,
+  "moss": 0.1,
+  "water": {
+    "shallow": [150, 178, 168],
+    "deep": [46, 92, 96]
+  },
+  "modes": ["walk", "glide", "climb", "rope", "kayak", "screenshot", "camera"],
+  "biomes": [
+    "golden_savanna",
+    "flood_meadow",
+    "palm_island",
+    "kopje_rock",
+    "gallery_forest",
+    "pan_floor",
+    "delta_shallows"
+  ]
+}

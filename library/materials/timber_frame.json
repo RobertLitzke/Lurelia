@@ -1,0 +1,15 @@
+{
+  "name": "timber_frame",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 35,
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [78, 56, 40],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [98, 72, 50],
+    "calm": {"base": [104, 74, 52], "alt": [116, 84, 58]}
+  }
+}

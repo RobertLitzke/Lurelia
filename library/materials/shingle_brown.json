@@ -1,0 +1,16 @@
+{
+  "name": "shingle_brown",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Brown cedar-look shingles.",
+  "id": 157,
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [98, 76, 60],
+    "alt": [82, 62, 50],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [112, 88, 70], "alt": [96, 74, 60]}
+  }
+}

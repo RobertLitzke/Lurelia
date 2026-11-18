@@ -1,0 +1,16 @@
+{
+  "name": "reedmace_head",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "The velvet brown seed heads of reedmace.",
+  "id": 75,
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [92, 60, 38],
+    "alt": [110, 74, 46],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [96, 64, 42], "alt": [112, 76, 50]}
+  }
+}

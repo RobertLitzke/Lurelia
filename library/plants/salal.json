@@ -1,0 +1,14 @@
+{
+  "name": "salal",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Salal: a knee-high evergreen shrub under trees and along yards and strips.",
+  "form": "shrub",
+  "height": [0.6, 1.2],
+  "trunk_radius": [0.04, 0.06],
+  "crown_radius": [0.6, 1.0],
+  "bark": "dead_wood",
+  "leaf": "salal_leaves",
+  "squash": 0.7,
+  "max_slope": 1.0
+}

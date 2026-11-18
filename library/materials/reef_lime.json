@@ -1,0 +1,15 @@
+{
+  "name": "reef_lime",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Pale reef limestone: the dead coral a reef stands on, cream and grey, pocked.",
+  "smooth": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [184, 176, 156],
+    "alt": [154, 146, 128],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [190, 182, 162], "alt": [160, 152, 134]}
+  }
+}

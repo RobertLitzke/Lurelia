@@ -1,0 +1,14 @@
+{
+  "name": "sea_fan",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "A sea fan: a purple lattice spread flat across the swell; the fans on one reef all face the same way.",
+  "form": "sea_fan",
+  "height": [1.6, 2.6],
+  "trunk_radius": [0.06, 0.08],
+  "crown_radius": [1.0, 1.5],
+  "bark": "fan_purple",
+  "leaf": "fan_purple",
+  "max_slope": 3.0,
+  "water_depth": [3, 30]
+}

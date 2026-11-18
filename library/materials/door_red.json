@@ -1,0 +1,16 @@
+{
+  "name": "door_red",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "A front door painted deep red.",
+  "id": 176,
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [128, 40, 36],
+    "alt": [116, 36, 32],
+    "scale": 1,
+    "contrast": 0.4,
+    "calm": {"base": [140, 52, 48], "alt": [128, 48, 44]}
+  }
+}

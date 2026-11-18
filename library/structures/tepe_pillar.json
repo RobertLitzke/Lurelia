@@ -1,0 +1,19 @@
+{
+  "name": "tepe_pillar",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A single carved T-pillar of the Tepe's cream limestone, standing where it was left: 4 m tall, its broad faces along local X, ochre in the grooves.",
+  "size": [20, 21, 20],
+  "anchor": [10, 0, 10],
+  "foundation": 6,
+  "level": false,
+  "decays": false,
+  "tags": ["windbarrow", "temple"],
+  "slots": {"pillar": "carved_limestone", "paint": "ochre"},
+  "ops": [
+    {"op": "box", "from": [4, 0, 7], "to": [16, 15, 13], "mat": "pillar", "part": "stone"},
+    {"op": "box", "from": [2, 15, 6], "to": [18, 19, 14], "mat": "pillar", "part": "stone"},
+    {"op": "box", "from": [5, 6, 7], "to": [7, 11, 8], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [11, 2, 7], "to": [15, 3, 8], "mat": "paint", "part": "stone"}
+  ]
+}

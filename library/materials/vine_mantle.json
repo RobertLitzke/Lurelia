@@ -1,0 +1,18 @@
+{
+  "name": "vine_mantle",
+  "version": 2,
+  "introduced_by": "jadewater",
+  "notes": "A tower wrapped in vines and moss so thickly no rock shows: solid, so it can be climbed. v2: faceted with the rock.",
+  "id": 229,
+  "smooth": false,
+  "tint": "leaves",
+  "texture": {
+    "pattern": "blotch",
+    "base": [60, 104, 48],
+    "alt": [84, 130, 60],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [66, 108, 52], "alt": [88, 132, 64]}
+  },
+  "facet": true
+}

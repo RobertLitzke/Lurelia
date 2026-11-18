@@ -1,0 +1,51 @@
+{
+  "name": "bat",
+  "version": 2,
+  "introduced_by": "base",
+  "notes": "A small brown bat: flickers about in tight circles over clearings and water at dusk, never in a straight line for long.",
+  "voxel": 0.013,
+  "half_w": 0.06,
+  "height": 0.1,
+  "colors": {"body": [84, 62, 46], "membrane": [60, 48, 44], "ear": [60, 48, 44], "dark": [36, 28, 24]},
+  "behaviour": {
+    "movement": "flutter",
+    "walk_speed": 3.5,
+    "flee_speed": 7.0,
+    "wary": 7,
+    "flightiness": 1.2,
+    "fly_height": 5.0,
+    "flight": "flap",
+    "wingbeat": 8.0,
+    "active": "nocturnal",
+    "off_hours": 0.02
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 8, 17], "radius": [1.8, 2.0, 3.4], "mat": "body"},
+    {"op": "ellipsoid", "centre": [16, 9, 13], "radius": [1.6, 1.6, 2.0], "mat": "body", "part": "head"},
+    {"op": "set", "at": [16, 8, 11], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [13, 10, 13], "to": [14, 14, 14], "mat": "ear", "part": "head"},
+    {"op": "box", "from": [18, 10, 13], "to": [19, 14, 14], "mat": "ear", "part": "head"},
+    {"op": "box", "from": [8, 8, 13], "to": [15, 9, 20], "mat": "membrane", "part": "wing_l"},
+    {"op": "box", "from": [2, 8, 14], "to": [8, 9, 19], "mat": "membrane", "part": "wing_l_tip"},
+    {"op": "box", "from": [17, 8, 13], "to": [24, 9, 20], "mat": "membrane", "part": "wing_r"},
+    {"op": "box", "from": [24, 8, 14], "to": [30, 9, 19], "mat": "membrane", "part": "wing_r_tip"},
+    {"op": "box", "from": [15, 7, 20], "to": [18, 8, 23], "mat": "membrane", "part": "tail"},
+    {"op": "box", "from": [15, 5, 18], "to": [16, 7, 19], "mat": "dark", "part": "leg_l"},
+    {"op": "box", "from": [17, 5, 18], "to": [18, 7, 19], "mat": "dark", "part": "leg_r"}
+  ],
+  "vary": {"size": 0.12, "shade": 0.1},
+  "rig": {
+    "plan": "bird",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "head", "role": "head", "parent": "body", "joint": [16, 8.5, 14.5]},
+      {"name": "wing_l", "role": "wing", "parent": "body", "joint": [15, 8.5, 16.5], "side": "l"},
+      {"name": "wing_l_tip", "role": "wing", "parent": "wing_l", "joint": [8, 8.5, 16.5], "side": "l"},
+      {"name": "wing_r", "role": "wing", "parent": "body", "joint": [17, 8.5, 16.5], "side": "r"},
+      {"name": "wing_r_tip", "role": "wing", "parent": "wing_r", "joint": [24, 8.5, 16.5], "side": "r"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 7.5, 20]},
+      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [15.5, 7, 18.5], "side": "l", "pair": 0},
+      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [17.5, 7, 18.5], "side": "r", "pair": 0}
+    ]
+  }
+}

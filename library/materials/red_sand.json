@@ -1,0 +1,16 @@
+{
+  "name": "red_sand",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Desert floor sand, rust red.",
+  "id": 108,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [190, 112, 74],
+    "alt": [176, 100, 66],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [198, 124, 86], "alt": [188, 114, 78]}
+  }
+}

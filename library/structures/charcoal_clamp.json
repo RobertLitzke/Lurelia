@@ -1,0 +1,29 @@
+{
+  "name": "charcoal_clamp",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A charcoal burner's clamp: a low earth-covered mound with a glowing vent on top, and beside it the burner's round hut of poles.",
+  "size": [40, 18, 28],
+  "anchor": [20, 0, 14],
+  "level": false,
+  "decays": false,
+  "tags": ["hemlow", "prop"],
+  "slots": {"earth": "packed_dirt", "char": "charcoal", "ember": "lamplit_glass", "pole": "dead_wood"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [14, 0, 14], "radius": [12, 8, 12], "mat": "earth", "part": "stone"},
+    {"op": "cylinder", "base": [14, 6, 14], "radius": 1.2, "height": 3, "mat": "char", "part": "stone"},
+    {"op": "cylinder", "base": [14, 8, 14], "radius": 0.6, "height": 1, "mat": "ember", "part": "stone"},
+    {"op": "cylinder", "base": [34, 0, 8], "radius": 3.6, "height": 12, "mat": "pole", "part": "timber"},
+    {"op": "cylinder", "base": [34, 0, 8], "radius": 2.6, "height": 11, "mat": "air"},
+    {"op": "box", "from": [33, 0, 4], "to": [36, 7, 6], "mat": "air"},
+    {"op": "box", "from": [37, 10, 8], "to": [38, 17, 9], "mat": "pole", "part": "timber"},
+    {"op": "box", "from": [36, 10, 10], "to": [37, 16, 11], "mat": "pole", "part": "timber"},
+    {"op": "box", "from": [35, 10, 11], "to": [36, 15, 12], "mat": "pole", "part": "timber"},
+    {"op": "box", "from": [32, 10, 11], "to": [33, 17, 12], "mat": "pole", "part": "timber"},
+    {"op": "box", "from": [31, 10, 9], "to": [32, 16, 10], "mat": "pole", "part": "timber"},
+    {"op": "box", "from": [31, 10, 7], "to": [32, 15, 8], "mat": "pole", "part": "timber"},
+    {"op": "box", "from": [32, 10, 5], "to": [33, 17, 6], "mat": "pole", "part": "timber"},
+    {"op": "box", "from": [35, 10, 5], "to": [36, 16, 6], "mat": "pole", "part": "timber"},
+    {"op": "box", "from": [36, 10, 6], "to": [37, 15, 7], "mat": "pole", "part": "timber"}
+  ]
+}

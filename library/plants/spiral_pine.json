@@ -1,0 +1,12 @@
+{
+  "name": "spiral_pine",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Grows in a slow helix and comes out pale where the strangeness is strong. Nobody knows why.",
+  "form": "spiral",
+  "height": [9, 14],
+  "trunk_radius": [0.2, 0.3],
+  "crown_radius": [2.2, 3.0],
+  "bark": "pale_bark",
+  "leaf": "pale_needles"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "lake_mud",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Grey-tan mud the falling lake left, cracked into plates.",
+  "id": 114,
+  "smooth": true,
+  "texture": {
+    "pattern": "cracks",
+    "base": [160, 150, 128],
+    "alt": [118, 108, 92],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [168, 158, 136], "alt": [134, 124, 106]}
+  }
+}

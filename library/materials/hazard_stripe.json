@@ -1,0 +1,15 @@
+{
+  "name": "hazard_stripe",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "Yellow and black warning paint along the edge of every drop.",
+  "smooth": false,
+  "texture": {
+    "pattern": "columns",
+    "base": [168, 142, 44],
+    "alt": [40, 38, 36],
+    "scale": 8,
+    "contrast": 1.0,
+    "calm": {"base": [178, 152, 54], "alt": [48, 46, 44]}
+  }
+}

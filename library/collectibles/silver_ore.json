@@ -1,0 +1,20 @@
+{
+  "name": "silver_ore",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A lump of galena-bearing ore that fell off a Harlow ore cart.",
+  "display": "silver ore",
+  "voxel": 0.02,
+  "colors": {"ore": [118, 116, 124], "galena": [196, 196, 206, 0.45], "terracotta": [184, 96, 60]},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 5, 16], "radius": [7, 5, 6], "mat": "ore"},
+    {"op": "ellipsoid", "centre": [12, 6, 13], "radius": [3, 3, 3], "mat": "ore"},
+    {"op": "ellipsoid", "centre": [19, 4, 19], "radius": [4, 3.5, 3.5], "mat": "terracotta"},
+    {"op": "set", "at": [13, 9, 14], "mat": "galena"},
+    {"op": "set", "at": [17, 9, 15], "mat": "galena"},
+    {"op": "set", "at": [20, 7, 13], "mat": "galena"},
+    {"op": "set", "at": [15, 8, 19], "mat": "galena"},
+    {"op": "set", "at": [11, 7, 17], "mat": "galena"},
+    {"op": "set", "at": [18, 10, 17], "mat": "galena"}
+  ]
+}

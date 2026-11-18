@@ -1,0 +1,16 @@
+{
+  "name": "sage",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Silver-green sagebrush.",
+  "id": 125,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [138, 146, 118],
+    "alt": [116, 126, 100],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [146, 154, 126], "alt": [126, 136, 110]}
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "glassbloom",
+  "version": 2,
+  "introduced_by": "glassfall",
+  "notes": "A shrub whose leaves are hard and glassy: a fan of faceted violet blades, drawn as sprites. Found only near skystone.",
+  "form": "herb",
+  "height": [0.8, 1.4],
+  "crown_radius": [0.6, 1.0],
+  "bark": "pale_bark",
+  "leaf": "glassbloom",
+  "affords": ["nectar"]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "pavement",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Concrete sidewalk slabs.",
+  "id": 150,
+  "smooth": true,
+  "crisp": true,
+  "texture": {
+    "pattern": "coursed",
+    "base": [168, 166, 160],
+    "alt": [150, 148, 142],
+    "scale": 1,
+    "contrast": 1.0,
+    "calm": {"base": [176, 174, 168], "alt": [160, 158, 152]}
+  }
+}

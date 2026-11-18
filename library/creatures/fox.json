@@ -1,0 +1,102 @@
+{
+  "name": "fox",
+  "version": 3,
+  "introduced_by": "base",
+  "notes": "Red fox; hunts rabbits.",
+  "voxel": 0.05,
+  "half_w": 0.18,
+  "height": 0.75,
+  "colors": {"fox": [214, 104, 34], "white": [240, 236, 228], "dark": [36, 28, 24]},
+  "morphs": [
+    {"name": "red", "weight": 19, "notes": "The red fox."},
+    {
+      "name": "silver",
+      "weight": 1,
+      "notes": "The dark morph: black with the white tail tip left. About one fox in twenty.",
+      "colors": {"fox": [36, 28, 24], "white": [240, 236, 228]}
+    }
+  ],
+  "behaviour": {
+    "movement": "skulk",
+    "sleeps_on_side": true,
+    "walk_speed": 1.6,
+    "flee_speed": 6.5,
+    "wary": 7,
+    "flightiness": 0.9,
+    "juvenile_flightiness": 0.7,
+    "flees_from": ["player"],
+    "hunts": ["rabbit", "pale_hare"],
+    "active": "crepuscular",
+    "off_hours": 0.25
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 10, 15], "radius": [3.2, 3.4, 7], "mat": "fox"},
+    {"op": "recolour_below", "y": 8, "from": "fox", "to": "white"},
+    {"op": "box", "from": [14, 0, 10], "to": [15, 8, 11], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [17, 0, 10], "to": [18, 8, 11], "mat": "dark", "part": "leg_fr"},
+    {"op": "box", "from": [14, 0, 19], "to": [15, 8, 20], "mat": "dark", "part": "leg_hl"},
+    {"op": "box", "from": [17, 0, 19], "to": [18, 8, 20], "mat": "dark", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [16, 13.5, 7], "radius": [3, 2.6, 3], "mat": "fox", "part": "head"},
+    {"op": "box", "from": [15, 11, 2], "to": [18, 14, 5], "mat": "fox", "part": "head"},
+    {"op": "box", "from": [15, 11, 2], "to": [18, 12, 5], "mat": "white", "part": "head"},
+    {"op": "set", "at": [16, 13, 1], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [14, 14, 5], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [18, 14, 5], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [13, 15, 7], "to": [15, 19, 8], "mat": "fox", "part": "ear_l"},
+    {"op": "box", "from": [17, 15, 7], "to": [19, 19, 8], "mat": "fox", "part": "ear_r"},
+    {"op": "set", "at": [13, 18, 7], "mat": "dark", "part": "ear_l"},
+    {"op": "set", "at": [18, 18, 7], "mat": "dark", "part": "ear_r"},
+    {"op": "ellipsoid", "centre": [16, 10, 25.5], "radius": [2.2, 2.2, 4.5], "mat": "fox", "part": "tail"},
+    {"op": "ellipsoid", "centre": [16, 10, 29.5], "radius": [1.6, 1.6, 1.8], "mat": "white", "part": "tail"}
+  ],
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "head", "role": "head", "parent": "body", "joint": [16, 12, 9.5]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [14, 15, 7.5], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [18, 15, 7.5], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14.5, 8, 10.5], "side": "l", "pair": 0},
+      {
+        "name": "leg_fl_low",
+        "role": "leg",
+        "parent": "leg_fl",
+        "joint": [14.5, 4, 10.5],
+        "claims": [[[14, 0, 10], [15, 4, 11]]],
+        "side": "l",
+        "pair": 0
+      },
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [17.5, 8, 10.5], "side": "r", "pair": 0},
+      {
+        "name": "leg_fr_low",
+        "role": "leg",
+        "parent": "leg_fr",
+        "joint": [17.5, 4, 10.5],
+        "claims": [[[17, 0, 10], [18, 4, 11]]],
+        "side": "r",
+        "pair": 0
+      },
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14.5, 8, 19.5], "side": "l", "pair": 1},
+      {
+        "name": "leg_hl_low",
+        "role": "leg",
+        "parent": "leg_hl",
+        "joint": [14.5, 4, 19.5],
+        "claims": [[[14, 0, 19], [15, 4, 20]]],
+        "side": "l",
+        "pair": 1
+      },
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [17.5, 8, 19.5], "side": "r", "pair": 1},
+      {
+        "name": "leg_hr_low",
+        "role": "leg",
+        "parent": "leg_hr",
+        "joint": [17.5, 4, 19.5],
+        "claims": [[[17, 0, 19], [18, 4, 20]]],
+        "side": "r",
+        "pair": 1
+      },
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 10, 21.5]}
+    ]
+  }
+}

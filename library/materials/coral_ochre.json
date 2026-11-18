@@ -1,0 +1,15 @@
+{
+  "name": "coral_ochre",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Living staghorn and elkhorn: warm ochre-tan, the tissue over a white skeleton.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [184, 138, 96],
+    "alt": [160, 116, 80],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [190, 144, 102], "alt": [166, 122, 86]}
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "ponderosa",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Mature ponderosa pine: a tall orange trunk bare for most of its height and a rounded open crown.",
+  "form": "broad",
+  "height": [17, 25],
+  "trunk_radius": [0.4, 0.6],
+  "buttress": 0.35,
+  "crown_radius": [3.0, 4.0],
+  "bark": "ponderosa_bark",
+  "leaf": "ponderosa_needles",
+  "squash": 0.8,
+  "max_slope": 0.8
+}

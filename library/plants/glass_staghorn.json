@@ -1,0 +1,15 @@
+{
+  "name": "glass_staghorn",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Glassfall's strange staghorn: clear cyan glass branches, faintly lit, nearest the strewn field.",
+  "form": "coral_branch",
+  "height": [1.2, 2.1],
+  "trunk_radius": [0.12, 0.14],
+  "crown_radius": [1.4, 2.2],
+  "bark": "glass_coral",
+  "leaf": "glass_coral_violet",
+  "max_slope": 1.4,
+  "water_depth": [0.8, 22],
+  "stems": [4, 7]
+}

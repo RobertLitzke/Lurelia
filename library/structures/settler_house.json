@@ -1,0 +1,29 @@
+{
+  "name": "settler_house",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "One-room fieldstone cottage, thatched, door on the front (local -Z).",
+  "size": [24, 27, 28],
+  "anchor": [12, 0, 0],
+  "foundation": 6,
+  "tags": ["settler", "house"],
+  "slots": {"wall": "fieldstone", "floor": "weathered_planks", "timber": "timber_frame", "roof": "thatch"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [24, 1, 28], "mat": "floor", "part": "floor"},
+    {"op": "walls", "from": [0, 1, 0], "to": [24, 11, 28], "mat": "wall", "thick": 2, "part": "wall"},
+    {"op": "box", "from": [10, 1, 0], "to": [14, 9, 2], "mat": "air"},
+    {"op": "box", "from": [4, 5, 0], "to": [7, 8, 2], "mat": "air"},
+    {"op": "box", "from": [17, 5, 0], "to": [20, 8, 2], "mat": "air"},
+    {"op": "box", "from": [0, 5, 11], "to": [2, 8, 15], "mat": "air"},
+    {"op": "box", "from": [22, 5, 13], "to": [24, 8, 17], "mat": "air"},
+    {"op": "box", "from": [9, 9, 0], "to": [15, 10, 2], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [0, 1, 0], "to": [2, 11, 2], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [22, 1, 0], "to": [24, 11, 2], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [0, 1, 26], "to": [2, 11, 28], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [22, 1, 26], "to": [24, 11, 28], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [0, 11, 0], "to": [24, 12, 28], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [2, 11, 2], "to": [22, 12, 26], "mat": "air"},
+    {"op": "gable", "from": [0, 12, 0], "to": [24, 12, 28], "axis": "x", "mat": "roof", "rise": 1, "part": "roof"},
+    {"op": "box", "from": [18, 10, 20], "to": [21, 25, 23], "mat": "wall", "part": "stone"}
+  ]
+}

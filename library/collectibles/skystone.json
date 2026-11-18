@@ -1,0 +1,17 @@
+{
+  "name": "skystone",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A buried fragment from the strewn field: black glass with violet glints, faintly warm.",
+  "display": "skystone",
+  "voxel": 0.043,
+  "colors": {"glassblack": [30, 24, 44], "wing": [170, 120, 255, 1.8]},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 6, 16], "radius": [7, 6, 6], "mat": "glassblack"},
+    {"op": "set", "at": [16, 12, 16], "mat": "wing"},
+    {"op": "set", "at": [12, 8, 18], "mat": "wing"},
+    {"op": "set", "at": [20, 7, 13], "mat": "wing"},
+    {"op": "set", "at": [15, 9, 21], "mat": "wing"},
+    {"op": "set", "at": [18, 10, 11], "mat": "wing"}
+  ]
+}

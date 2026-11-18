@@ -1,0 +1,16 @@
+{
+  "name": "juniper",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Utah juniper: a short leaning trunk that splits low into twisted limbs, each ending in a flat clump of scale leaves; often one limb is dead. Grows out of cracks in bare rock.",
+  "form": "gnarled",
+  "height": [2.8, 5.0],
+  "trunk_radius": [0.18, 0.3],
+  "crown_radius": [0.9, 1.4],
+  "bark": "juniper_bark",
+  "leaf": "juniper_foliage",
+  "squash": 0.6,
+  "spread": 0.6,
+  "max_slope": 1.3,
+  "lean": 0.35
+}

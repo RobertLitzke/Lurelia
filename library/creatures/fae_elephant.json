@@ -1,0 +1,23 @@
+{
+  "name": "fae_elephant",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "The faerie wood's elephant: no taller than a pony, pale lilac and mossed along its back, its small tusks glowing at dusk. It lets children walk up to it.",
+  "colors": {
+    "coat": [196, 180, 212],
+    "hide": [170, 152, 190],
+    "tusk": [214, 200, 255, 1.4],
+    "nail": [150, 140, 160],
+    "dark": [36, 28, 24],
+    "moss": [92, 130, 70]
+  },
+  "behaviour": {"walk_speed": 0.6, "wary": 4, "spawn_chance": 0.2, "group": {"size": [1, 3], "spacing": 3.0, "range": 16}},
+  "like": "elephant",
+  "scale": 0.45,
+  "extra_ops": [
+    {"op": "ellipsoid", "centre": [16, 20.5, 16], "radius": [4.4, 1.6, 7.0], "mat": "moss"},
+    {"op": "set", "at": [14, 22, 13], "mat": "moss"},
+    {"op": "set", "at": [18, 22, 18], "mat": "moss"}
+  ],
+  "vary": {"shade": 0.05, "hue": 0.04}
+}

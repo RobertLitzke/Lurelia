@@ -1,0 +1,58 @@
+{
+  "name": "humpback",
+  "version": 3,
+  "introduced_by": "glassfall",
+  "notes": "Humpback whale, about 10 m long: black above with long white flippers. Alone offshore in deep water and rare: it dives for half a minute, lies at the surface spouting, and now and then breaches.",
+  "voxel": 0.34,
+  "half_w": 1.6,
+  "height": 3.0,
+  "colors": {"whale": [40, 44, 52], "whale_belly": [150, 158, 168], "white": [240, 236, 228], "dark": [36, 28, 24]},
+  "morphs": [
+    {"name": "grey", "weight": 39, "notes": "The humpback as it is."},
+    {
+      "name": "white",
+      "weight": 1,
+      "notes": "The pale morph sailors tell of: white all over. About one humpback in forty.",
+      "colors": {"whale": [226, 228, 226], "whale_belly": [240, 238, 232], "white": [250, 248, 244]}
+    }
+  ],
+  "behaviour": {
+    "movement": "breach",
+    "walk_speed": 2.0,
+    "flee_speed": 4.0,
+    "wary": 0,
+    "flightiness": 0.0,
+    "leap": 0.3,
+    "spawn_chance": 0.0008,
+    "active": "any"
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 6, 13], "radius": [4.6, 4.2, 10.5], "mat": "whale"},
+    {"op": "ellipsoid", "centre": [16, 7.5, 5], "radius": [3.6, 2.6, 3.5], "mat": "whale"},
+    {"op": "recolour_below", "y": 4, "from": "whale", "to": "whale_belly"},
+    {"op": "box", "from": [15, 10, 19], "to": [17, 11, 21], "mat": "whale"},
+    {"op": "set", "at": [12, 6, 8], "mat": "dark"},
+    {"op": "set", "at": [19, 6, 8], "mat": "dark"},
+    {"op": "box", "from": [4, 4, 9], "to": [12, 5, 12], "mat": "white", "part": "fin_l"},
+    {"op": "box", "from": [2, 4, 10], "to": [4, 5, 12], "mat": "white", "part": "fin_l"},
+    {"op": "box", "from": [20, 4, 9], "to": [28, 5, 12], "mat": "white", "part": "fin_r"},
+    {"op": "box", "from": [28, 4, 10], "to": [30, 5, 12], "mat": "white", "part": "fin_r"},
+    {"op": "ellipsoid", "centre": [16, 6.5, 25], "radius": [2.2, 2.4, 3.5], "mat": "whale", "part": "tail"},
+    {"op": "box", "from": [10, 6, 29], "to": [22, 7, 31], "mat": "whale", "part": "tail"},
+    {"op": "box", "from": [12, 6, 28], "to": [20, 7, 29], "mat": "whale", "part": "tail"},
+    {"op": "box", "from": [8, 6, 30], "to": [10, 7, 32], "mat": "whale", "part": "tail"},
+    {"op": "box", "from": [22, 6, 30], "to": [24, 7, 32], "mat": "whale", "part": "tail"},
+    {"op": "set", "at": [15, 6, 31], "mat": "air", "part": "tail"},
+    {"op": "set", "at": [16, 6, 31], "mat": "air", "part": "tail"}
+  ],
+  "vary": {"size": 0.08, "shade": 0.04},
+  "rig": {
+    "plan": "cetacean",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 6.5, 22.5]},
+      {"name": "fin_l", "role": "arm", "parent": "body", "joint": [11.5, 4.5, 10.5], "side": "l"},
+      {"name": "fin_r", "role": "arm", "parent": "body", "joint": [20.5, 4.5, 10.5], "side": "r"}
+    ]
+  }
+}

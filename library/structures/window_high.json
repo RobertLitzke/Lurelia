@@ -1,0 +1,18 @@
+{
+  "name": "window_high",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A small window high in a fin over an overhanging alcove at its foot: the start of an arch.",
+  "size": [72, 72, 56],
+  "anchor": [36, 0, 28],
+  "level": false,
+  "decays": false,
+  "tags": ["natural", "arch"],
+  "slots": {},
+  "ops": [
+    {"op": "ellipsoid", "centre": [38, 44, 28], "radius": [14, 15, 40], "mat": "carve"},
+    {"op": "ellipsoid", "centre": [33, 49, 28], "radius": [9, 10, 34], "mat": "carve"},
+    {"op": "ellipsoid", "centre": [36, 0, 14], "radius": [26, 22, 18], "mat": "carve"},
+    {"op": "ellipsoid", "centre": [28, 6, 10], "radius": [16, 16, 14], "mat": "carve"}
+  ]
+}

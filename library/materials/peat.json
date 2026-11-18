@@ -1,0 +1,16 @@
+{
+  "name": "peat",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Black-brown peat under the mere and the bog pools.",
+  "id": 66,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [52, 40, 30],
+    "alt": [66, 52, 38],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [58, 46, 34], "alt": [70, 56, 42]}
+  }
+}

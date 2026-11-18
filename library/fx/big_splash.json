@@ -1,0 +1,16 @@
+{
+  "name": "big_splash",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "A whale breaching or falling back: water thrown metres up.",
+  "shape": "streak",
+  "count": [40, 60],
+  "speed": [3.0, 8.0],
+  "cone_deg": 35,
+  "life": [0.7, 1.4],
+  "size": [0.03, 0.02],
+  "gravity": 9.8,
+  "drag": 0.4,
+  "color": [225, 235, 240],
+  "alpha": 0.85
+}

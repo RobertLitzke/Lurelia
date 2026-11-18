@@ -1,0 +1,18 @@
+{
+  "name": "kelp_perch",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Kelp perch: small bronze fish in clouds round the kelp stipes, slipping in among them when startled.",
+  "colors": {"herring": [150, 118, 64], "silver": [206, 184, 132], "fin": [150, 118, 64]},
+  "behaviour": {
+    "habit": "cloud",
+    "walk_speed": 0.6,
+    "flee_speed": 2.5,
+    "leap": 0,
+    "above_bed": [1.0, 4.5],
+    "shallows": 2.5,
+    "group": {"size": [10, 20], "spacing": 0.3, "range": 1.6, "cohesion": 1.3}
+  },
+  "like": "herring",
+  "scale": 0.7
+}

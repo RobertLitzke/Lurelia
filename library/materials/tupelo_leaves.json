@@ -1,0 +1,15 @@
+{
+  "name": "tupelo_leaves",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Water tupelo leaves: broad, a dull mid green.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [74, 100, 52],
+    "alt": [88, 112, 60],
+    "scale": 8,
+    "contrast": 0.9,
+    "calm": {"base": [72, 98, 50], "alt": [86, 110, 58]}
+  }
+}

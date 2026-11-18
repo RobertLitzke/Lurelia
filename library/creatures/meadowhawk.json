@@ -1,0 +1,9 @@
+{
+  "name": "meadowhawk",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Red meadowhawk: a smaller dragonfly, bright red, perching low over the canyon's backwaters and the lake shore.",
+  "colors": {"body": [200, 50, 40], "thorax": [150, 70, 50], "eye": [150, 60, 50]},
+  "like": "dragonfly",
+  "scale": 0.75
+}

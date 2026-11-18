@@ -1,0 +1,16 @@
+{
+  "name": "coral_sand",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Pale coral-pink wind-blown sand of the dune field: finer and pinker than the red desert sand.",
+  "id": 146,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [214, 136, 108],
+    "alt": [202, 126, 100],
+    "scale": 5,
+    "contrast": 0.8,
+    "calm": {"base": [222, 146, 116], "alt": [210, 136, 108]}
+  }
+}

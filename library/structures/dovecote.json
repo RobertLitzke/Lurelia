@@ -1,0 +1,30 @@
+{
+  "name": "dovecote",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A round stone dovecote with a conical stone-slate roof and a little timber lantern on top where the doves go in and out. Door on local -Z.",
+  "size": [24, 45, 24],
+  "anchor": [12, 0, 12],
+  "foundation": 6,
+  "tags": ["hemlow"],
+  "slots": {"wall": "cotswold_stone", "roof": "stone_tiles", "timber": "weathered_planks", "door": "door_wood"},
+  "ops": [
+    {"op": "cylinder", "base": [12, 0, 12], "radius": 10, "height": 24, "mat": "wall", "part": "wall"},
+    {"op": "cylinder", "base": [12, 1, 12], "radius": 8, "height": 23, "mat": "air"},
+    {"op": "box", "from": [10, 1, 1], "to": [14, 9, 4], "mat": "air"},
+    {"op": "box", "from": [10, 1, 2], "to": [14, 9, 3], "mat": "door", "part": "timber"},
+    {"op": "cylinder", "base": [12, 12, 12], "radius": 10.5, "height": 1, "mat": "wall", "part": "stone"},
+    {"op": "cylinder", "base": [12, 24, 12], "radius": 11, "height": 2, "mat": "roof", "part": "roof"},
+    {"op": "cylinder", "base": [12, 26, 12], "radius": 9.5, "height": 2, "mat": "roof", "part": "roof"},
+    {"op": "cylinder", "base": [12, 28, 12], "radius": 8, "height": 2, "mat": "roof", "part": "roof"},
+    {"op": "cylinder", "base": [12, 30, 12], "radius": 6.5, "height": 2, "mat": "roof", "part": "roof"},
+    {"op": "cylinder", "base": [12, 32, 12], "radius": 5, "height": 2, "mat": "roof", "part": "roof"},
+    {"op": "cylinder", "base": [12, 34, 12], "radius": 3.5, "height": 2, "mat": "roof", "part": "roof"},
+    {"op": "cylinder", "base": [12, 36, 12], "radius": 2, "height": 2, "mat": "roof", "part": "roof"},
+    {"op": "box", "from": [10, 38, 10], "to": [14, 42, 14], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [11, 39, 10], "to": [13, 41, 14], "mat": "air"},
+    {"op": "box", "from": [10, 39, 11], "to": [14, 41, 13], "mat": "air"},
+    {"op": "box", "from": [9, 42, 9], "to": [15, 43, 15], "mat": "roof", "part": "roof"},
+    {"op": "box", "from": [11, 43, 11], "to": [13, 44, 13], "mat": "roof", "part": "roof"}
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "log_pile",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A woodcutter's stack of cordwood between posts, 6 m long. Long axis local X.",
+  "size": [24, 10, 20],
+  "anchor": [12, 0, 10],
+  "level": false,
+  "decays": false,
+  "tags": ["hemlow", "prop"],
+  "slots": {"log": "bark", "post": "weathered_planks"},
+  "ops": [
+    {"op": "log", "base": [1, 1.6, 3.2], "radius": 1.5, "length": 22, "axis": "x", "mat": "log", "part": "timber"},
+    {"op": "log", "base": [1, 1.6, 6.3], "radius": 1.5, "length": 22, "axis": "x", "mat": "log", "part": "timber"},
+    {"op": "log", "base": [1, 1.6, 9.4], "radius": 1.5, "length": 22, "axis": "x", "mat": "log", "part": "timber"},
+    {"op": "log", "base": [1, 1.6, 12.5], "radius": 1.5, "length": 22, "axis": "x", "mat": "log", "part": "timber"},
+    {"op": "log", "base": [1, 1.6, 15.6], "radius": 1.5, "length": 22, "axis": "x", "mat": "log", "part": "timber"},
+    {"op": "log", "base": [1, 4.6, 4.7], "radius": 1.5, "length": 22, "axis": "x", "mat": "log", "part": "timber"},
+    {"op": "log", "base": [1, 4.6, 7.8], "radius": 1.5, "length": 22, "axis": "x", "mat": "log", "part": "timber"},
+    {"op": "log", "base": [1, 4.6, 10.9], "radius": 1.5, "length": 22, "axis": "x", "mat": "log", "part": "timber"},
+    {"op": "log", "base": [1, 4.6, 14.0], "radius": 1.5, "length": 22, "axis": "x", "mat": "log", "part": "timber"},
+    {"op": "log", "base": [1, 7.6, 6.2], "radius": 1.5, "length": 22, "axis": "x", "mat": "log", "part": "timber"},
+    {"op": "log", "base": [1, 7.6, 9.3], "radius": 1.5, "length": 22, "axis": "x", "mat": "log", "part": "timber"},
+    {"op": "log", "base": [1, 7.6, 12.4], "radius": 1.5, "length": 22, "axis": "x", "mat": "log", "part": "timber"},
+    {"op": "box", "from": [0, 0, 1], "to": [1, 10, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [23, 0, 1], "to": [24, 10, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [0, 0, 18], "to": [1, 10, 19], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [23, 0, 18], "to": [24, 10, 19], "mat": "post", "part": "timber"}
+  ]
+}

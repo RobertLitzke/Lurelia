@@ -1,0 +1,17 @@
+{
+  "name": "fae_mire",
+  "version": 1,
+  "introduced_by": "local",
+  "notes": "The pit in an overgrown arena: still water gone luminous and sour, bright enough to light the walls above it and poisonous enough to kill anything that wades in. Close to the moss in colour and all but flat, so that what marks it out from the grass at the edge is the light coming off it rather than a pattern. Twelve damage a second, the same as the slag it stands in for, so a hazard the map was built around is still a hazard after the greening.",
+  "smooth": false,
+  "glow": 0.7,
+  "texture": {
+    "pattern": "noise",
+    "base": [62, 100, 50],
+    "alt": [78, 114, 56],
+    "scale": 6,
+    "contrast": 0.35,
+    "calm": {"base": [68, 106, 56], "alt": [84, 120, 62]}
+  },
+  "hurt": 12.0
+}

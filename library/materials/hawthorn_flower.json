@@ -1,0 +1,15 @@
+{
+  "name": "hawthorn_flower",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Hawthorn blossom: dense white heads with a pink flush, lying over the crown in May.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [242, 238, 232],
+    "alt": [228, 206, 208],
+    "scale": 7,
+    "contrast": 0.6,
+    "calm": {"base": [244, 240, 234], "alt": [232, 212, 214]}
+  }
+}

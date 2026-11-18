@@ -1,0 +1,18 @@
+{
+  "name": "lake_bed",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Mud under the reservoir.",
+  "priority": 1,
+  "rules": {"underwater": true},
+  "surface": "lake_mud",
+  "subsurface": "lake_mud",
+  "map_color": [70, 110, 120],
+  "creatures": [
+    {"creature": "trout", "count": 10},
+    {"creature": "goose", "count": 6},
+    {"creature": "mallard", "count": 5},
+    {"creature": "swan", "count": 1}
+  ],
+  "mist": 0.6
+}

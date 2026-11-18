@@ -1,0 +1,16 @@
+{
+  "name": "scree",
+  "version": 2,
+  "introduced_by": "glassfall",
+  "notes": "Gravel in the classic style (large, low-contrast stones); saturated keeps cracks, darker and at 70% contrast.",
+  "id": 45,
+  "smooth": true,
+  "texture": {
+    "pattern": "gravel",
+    "base": [112, 106, 104],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [76, 72, 74],
+    "calm": {"pattern": "cracks", "base": [102, 96, 94], "alt": [90, 85, 84], "contrast": 0.7, "scale": 7}
+  }
+}

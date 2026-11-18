@@ -1,0 +1,17 @@
+{
+  "name": "sign_pole_tall",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Two steel legs holding a big board over a highway shoulder. They run up behind the board to just under its top, the way a real gantry sign is built, so no gap shows under it. The board is drawn as plates (world/places.rs), not voxels.",
+  "size": [14, 25, 2],
+  "anchor": [7, 0, 0],
+  "foundation": 6,
+  "level": false,
+  "decays": false,
+  "tags": ["sign", "highway"],
+  "slots": {"pole": "bridge_steel"},
+  "ops": [
+    {"op": "box", "from": [2, 0, 0], "to": [3, 24, 1], "mat": "pole", "part": "metal"},
+    {"op": "box", "from": [11, 0, 0], "to": [12, 24, 1], "mat": "pole", "part": "metal"}
+  ]
+}

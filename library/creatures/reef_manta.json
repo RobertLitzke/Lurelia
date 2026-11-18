@@ -1,0 +1,16 @@
+{
+  "name": "reef_manta",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "The manta at home on the reef: gliding along the wall and over the fore reef in ones and threes, coming to the cleaning stations on the spurs. Common here where the open-sea manta is rare, and as unafraid.",
+  "behaviour": {
+    "spawn_chance": 0.7,
+    "habit": "cruise",
+    "depth": [2.0, 9.0],
+    "shallows": 4,
+    "walk_speed": 1.0,
+    "group": {"size": [1, 3], "spacing": 6, "range": 14}
+  },
+  "like": "manta_ray",
+  "scale": 0.85
+}

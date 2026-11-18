@@ -1,0 +1,16 @@
+{
+  "name": "mossy_log",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "An old log, long down and sinking into the duff, moss along its top.",
+  "size": [36, 7, 9],
+  "anchor": [18, 0, 4],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"wood": "dead_wood", "moss": "log_moss"},
+  "ops": [
+    {"op": "log", "base": [1, 3.0, 4.5], "radius": 2.2, "length": 34, "axis": "x", "mat": "wood"},
+    {"op": "recolour", "at": [0, 3, 0], "until": [36, 7, 9], "from": "wood", "to": "moss"}
+  ]
+}

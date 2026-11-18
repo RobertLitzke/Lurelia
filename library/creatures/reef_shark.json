@@ -1,0 +1,44 @@
+{
+  "name": "reef_shark",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Grey reef shark: about 1.6 m, grey above and white below, cruising the wall and the pass in long slow passes. It minds nobody.",
+  "voxel": 0.05,
+  "half_w": 0.18,
+  "height": 0.4,
+  "colors": {"shark": [112, 120, 126], "belly": [236, 236, 230], "dark": [36, 28, 24]},
+  "behaviour": {
+    "movement": "school",
+    "habit": "patrol",
+    "walk_speed": 1.0,
+    "flee_speed": 2.0,
+    "wary": 0,
+    "flightiness": 0.0,
+    "leap": 0,
+    "depth": [3, 18],
+    "shallows": 3,
+    "spawn_chance": 0.3,
+    "group": {"size": [1, 2], "spacing": 4, "range": 10},
+    "active": "any",
+    "hunts": ["sardine", "jack", "parrotfish", "yellow_tang"]
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16.5, 6, 15], "radius": [2.8, 3.0, 11], "mat": "shark"},
+    {"op": "ellipsoid", "centre": [16.5, 5.5, 5], "radius": [2.0, 2.0, 3.2], "mat": "shark"},
+    {"op": "recolour_below", "y": 5, "from": "shark", "to": "belly"},
+    {"op": "box", "from": [16, 8, 11], "to": [17, 12, 14], "mat": "shark"},
+    {"op": "box", "from": [16, 8, 14], "to": [17, 10, 16], "mat": "shark"},
+    {"op": "box", "from": [10, 4, 10], "to": [13, 5, 14], "mat": "shark"},
+    {"op": "box", "from": [20, 4, 10], "to": [23, 5, 14], "mat": "shark"},
+    {"op": "set", "at": [14, 7, 4], "mat": "dark"},
+    {"op": "set", "at": [19, 7, 4], "mat": "dark"},
+    {"op": "ellipsoid", "centre": [16.5, 6, 26], "radius": [1.1, 1.4, 2.8], "mat": "shark", "part": "tail"},
+    {"op": "box", "from": [16, 7, 27], "to": [17, 13, 31], "mat": "shark", "part": "tail"},
+    {"op": "box", "from": [16, 1, 27], "to": [17, 5, 30], "mat": "shark", "part": "tail"},
+    {"op": "recolour", "at": [16, 11, 29], "until": [17, 13, 31], "from": "shark", "to": "dark"}
+  ],
+  "rig": {
+    "plan": "fish",
+    "bones": [{"name": "body", "role": "root"}, {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 6, 23]}]
+  }
+}

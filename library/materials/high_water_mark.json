@@ -1,0 +1,16 @@
+{
+  "name": "high_water_mark",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A level pale band on every cliff at one height: the unexplained high-water mark.",
+  "id": 105,
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [214, 206, 186],
+    "alt": [196, 186, 166],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [216, 208, 190], "alt": [200, 190, 172]}
+  }
+}

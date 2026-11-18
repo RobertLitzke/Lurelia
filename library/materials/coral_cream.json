@@ -1,0 +1,15 @@
+{
+  "name": "coral_cream",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Table coral: cream with a faint green cast.",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [226, 208, 172],
+    "alt": [204, 188, 152],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [232, 214, 178], "alt": [210, 194, 158]}
+  }
+}

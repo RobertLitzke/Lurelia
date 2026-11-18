@@ -1,0 +1,53 @@
+{
+  "name": "marmot",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Lives in the scree: a long, heavy-bodied ground squirrel, grizzled brown with a pale muzzle and a bushy tail. Sits up on a boulder to whistle.",
+  "voxel": 0.03125,
+  "half_w": 0.16,
+  "height": 0.3,
+  "colors": {"marmot": [128, 96, 60], "belly": [210, 180, 140], "dark": [36, 28, 24]},
+  "behaviour": {
+    "movement": "graze",
+    "walk_speed": 0.7,
+    "flee_speed": 4.5,
+    "wary": 9,
+    "flightiness": 1.4,
+    "flees_from": ["player", "fox"]
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 5.5, 16.5], "radius": [4.6, 3.8, 7.6], "mat": "marmot"},
+    {"op": "ellipsoid", "centre": [16, 6, 13], "radius": [4.4, 3.8, 4], "mat": "marmot"},
+    {"op": "recolour_below", "y": 3, "from": "marmot", "to": "belly"},
+    {"op": "ellipsoid", "centre": [16, 6.5, 7.5], "radius": [3.0, 2.4, 2.8], "mat": "marmot", "part": "head"},
+    {"op": "box", "from": [15, 5, 4], "to": [17, 7, 5], "mat": "belly", "part": "head"},
+    {"op": "set", "at": [15, 6, 4], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [16, 6, 4], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [14, 8, 6], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [18, 8, 6], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [13, 8, 8], "to": [14, 10, 9], "mat": "marmot", "part": "head"},
+    {"op": "box", "from": [18, 8, 8], "to": [19, 10, 9], "mat": "marmot", "part": "head"},
+    {"op": "box", "from": [12, 0, 10], "to": [14, 3, 12], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [18, 0, 10], "to": [20, 3, 12], "mat": "dark", "part": "leg_fr"},
+    {"op": "box", "from": [12, 0, 20], "to": [14, 3, 22], "mat": "marmot", "part": "leg_hl"},
+    {"op": "box", "from": [18, 0, 20], "to": [20, 3, 22], "mat": "marmot", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [16, 5, 26], "radius": [1.8, 1.8, 3], "mat": "marmot", "part": "tail"},
+    {"op": "box", "from": [15, 4, 28], "to": [17, 6, 30], "mat": "dark", "part": "tail"}
+  ],
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "head", "role": "head", "parent": "body", "joint": [16, 6, 10]},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [13, 3, 11], "side": "l", "pair": 0},
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [19, 3, 11], "side": "r", "pair": 0},
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [13, 3, 21], "side": "l", "pair": 1},
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [19, 3, 21], "side": "r", "pair": 1},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 5, 23.5]}
+    ],
+    "activities": {
+      "stand": {"time": [2, 6], "next": {"walk": 3, "graze": 4, "look": 2, "sit": 2, "lie": 0.3}},
+      "sit": {"time": [4, 15], "next": {"stand": 1, "look": 0.5}}
+    }
+  }
+}

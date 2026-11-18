@@ -1,0 +1,48 @@
+{
+  "name": "lizard",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Side-blotched lizard: suns on warm rock and darts off when you come close.",
+  "voxel": 0.014,
+  "half_w": 0.08,
+  "height": 0.06,
+  "colors": {"rabbit": [140, 118, 96], "dark": [36, 28, 24], "rabbit_light": [210, 196, 176]},
+  "behaviour": {
+    "movement": "skulk",
+    "walk_speed": 0.5,
+    "flee_speed": 4,
+    "wary": 3.5,
+    "flightiness": 1.7,
+    "flees_from": ["player", "coyote"]
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 2.5, 15], "radius": [2.6, 1.6, 6], "mat": "rabbit"},
+    {"op": "ellipsoid", "centre": [16, 3, 7.5], "radius": [2, 1.5, 2.6], "mat": "rabbit", "part": "head"},
+    {"op": "box", "from": [15, 1, 20], "to": [17, 3, 25], "mat": "rabbit", "part": "tail"},
+    {"op": "box", "from": [15, 1, 25], "to": [17, 2, 31], "mat": "rabbit", "part": "tail_tip"},
+    {"op": "box", "from": [12, 0, 10], "to": [14, 2, 12], "mat": "rabbit", "part": "leg_fl"},
+    {"op": "box", "from": [18, 0, 10], "to": [20, 2, 12], "mat": "rabbit", "part": "leg_fr"},
+    {"op": "box", "from": [12, 0, 18], "to": [14, 2, 20], "mat": "rabbit", "part": "leg_hl"},
+    {"op": "box", "from": [18, 0, 18], "to": [20, 2, 20], "mat": "rabbit", "part": "leg_hr"},
+    {"op": "recolour_below", "y": 2, "from": "rabbit", "to": "rabbit_light"},
+    {"op": "set", "at": [14, 3, 12], "mat": "dark"},
+    {"op": "set", "at": [18, 3, 14], "mat": "dark"},
+    {"op": "set", "at": [15, 4, 17], "mat": "dark"},
+    {"op": "set", "at": [17, 3, 10], "mat": "dark"},
+    {"op": "set", "at": [15, 4, 6], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [17, 4, 6], "mat": "dark", "part": "head"}
+  ],
+  "rig": {
+    "plan": "sprawler",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "head", "role": "head", "parent": "body", "joint": [16, 3, 10]},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 2, 20]},
+      {"name": "tail_tip", "role": "tail", "parent": "tail", "joint": [16, 1.5, 25]},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14, 1, 11], "side": "l", "pair": 0},
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [18, 1, 11], "side": "r", "pair": 0},
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14, 1, 19], "side": "l", "pair": 1},
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [18, 1, 19], "side": "r", "pair": 1}
+    ]
+  }
+}

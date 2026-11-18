@@ -1,0 +1,25 @@
+{
+  "name": "wildebeest",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Blue wildebeest: slate grey, high in the shoulder and low in the head, with a black mane and beard and horns that hook out and up. Grazes the dry grass in long strung-out herds.",
+  "colors": {"coat": [96, 94, 98], "wool": [78, 76, 82], "horn": [150, 142, 128], "dark": [36, 28, 24]},
+  "behaviour": {
+    "walk_speed": 1.0,
+    "flee_speed": 11.0,
+    "wary": 24,
+    "flightiness": 1.1,
+    "group": {"size": [10, 30], "spacing": 3.0, "range": 55, "alignment": 1.4, "cohesion": 1.6}
+  },
+  "like": "bison",
+  "scale": 0.8,
+  "extra_ops": [
+    {"op": "box", "from": [10, 14, 3], "to": [22, 18, 7], "mat": "air", "part": "head"},
+    {"op": "box", "from": [11, 14, 4], "to": [14, 15, 6], "mat": "horn", "part": "head"},
+    {"op": "box", "from": [18, 14, 4], "to": [21, 15, 6], "mat": "horn", "part": "head"},
+    {"op": "box", "from": [11, 15, 4], "to": [12, 17, 6], "mat": "horn", "part": "head"},
+    {"op": "box", "from": [20, 15, 4], "to": [21, 17, 6], "mat": "horn", "part": "head"},
+    {"op": "box", "from": [15, 7, 3], "to": [17, 10, 6], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [15, 16, 6], "to": [17, 18, 11], "mat": "dark", "part": "neck"}
+  ]
+}

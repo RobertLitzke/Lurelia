@@ -1,0 +1,16 @@
+{
+  "name": "cinder_field",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Black cinders around the young cone; a few pines and nothing else.",
+  "priority": 7,
+  "rules": {"region": "cinder"},
+  "surface": "cinders",
+  "subsurface": "cinders",
+  "map_color": [60, 50, 52],
+  "plants": [
+    {"plant": "ponderosa", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 40}}},
+    {"plant": "young_ponderosa", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [{"structure": "basalt_columns", "density": 5e-05, "placement": {"verb": "scatter", "params": {}}}]
+}

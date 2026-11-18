@@ -1,0 +1,16 @@
+{
+  "name": "young_ice",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "New ice a few nights old: thin, dark and glassy, the water showing grey through it.",
+  "smooth": true,
+  "glints": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [96, 110, 122],
+    "alt": [80, 94, 108],
+    "scale": 8,
+    "contrast": 0.4,
+    "calm": {"base": [104, 118, 130], "alt": [90, 104, 118]}
+  }
+}

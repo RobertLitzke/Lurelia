@@ -1,0 +1,17 @@
+{
+  "name": "moss_grass",
+  "version": 2,
+  "introduced_by": "faerie",
+  "notes": "Deep, soft moss-and-grass ground of the enchanted city. v2: grows its own tufts rather than taking the shared default, thick and half again as tall, since it is the floor of a wood growing indoors and short lawn read as mown.",
+  "id": 181,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [76, 120, 52],
+    "alt": [66, 108, 46],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [84, 128, 56], "alt": [74, 116, 50]}
+  },
+  "grass": {"sparse": 0.14, "dense": 0.92, "short": 1.6}
+}

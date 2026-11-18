@@ -1,0 +1,16 @@
+{
+  "name": "bottle_violet",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Violet bottle glass on the bottle trees.",
+  "smooth": false,
+  "glow": 0.9,
+  "texture": {
+    "pattern": "glass",
+    "base": [104, 62, 152],
+    "alt": [146, 104, 196],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [104, 62, 152], "alt": [146, 104, 196]}
+  }
+}

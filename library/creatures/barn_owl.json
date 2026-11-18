@@ -1,0 +1,26 @@
+{
+  "name": "barn_owl",
+  "version": 2,
+  "introduced_by": "hemlow",
+  "notes": "Barn owl: pale gold and white, quartering low over the meadows at dusk on soft slow wingbeats.",
+  "colors": {
+    "body": [240, 236, 228],
+    "head": [240, 236, 228],
+    "beak": [210, 180, 140],
+    "wing": [214, 176, 112],
+    "tail": [214, 176, 112],
+    "legs": [210, 180, 140]
+  },
+  "behaviour": {
+    "movement": "circle",
+    "fly_height": 4,
+    "walk_speed": 2.5,
+    "flee_speed": 6.0,
+    "wary": 10.0,
+    "flightiness": 0.6,
+    "active": "nocturnal",
+    "off_hours": 0.04
+  },
+  "like": "starling",
+  "scale": 2.3
+}

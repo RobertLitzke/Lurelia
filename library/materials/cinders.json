@@ -1,0 +1,16 @@
+{
+  "name": "cinders",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Black and oxblood volcanic cinders around the cone.",
+  "id": 112,
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [46, 38, 38],
+    "alt": [92, 42, 32],
+    "scale": 7,
+    "contrast": 1.0,
+    "calm": {"base": [62, 52, 52], "alt": [104, 56, 44]}
+  }
+}

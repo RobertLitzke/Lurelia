@@ -1,0 +1,29 @@
+{
+  "name": "surveyor_camp",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A canvas tent, a cold fire ring, a crate, and a levelled instrument on a tripod, aimed at open sea.",
+  "size": [24, 12, 24],
+  "anchor": [12, 0, 12],
+  "foundation": 2,
+  "tags": ["anomaly", "surveyor"],
+  "slots": {
+    "cloth": "canvas",
+    "timber": "timber_frame",
+    "iron": "rust_iron",
+    "stone": "fieldstone",
+    "crate": "weathered_planks",
+    "char": "charcoal"
+  },
+  "ops": [
+    {"op": "gable", "from": [2, 0, 4], "to": [14, 0, 16], "axis": "z", "mat": "cloth", "rise": 1, "part": "cloth"},
+    {"op": "box", "from": [5, 0, 4], "to": [11, 4, 5], "mat": "air"},
+    {"op": "box", "from": [18, 0, 18], "to": [19, 6, 19], "mat": "timber", "part": "frame"},
+    {"op": "box", "from": [21, 0, 18], "to": [22, 6, 19], "mat": "timber", "part": "frame"},
+    {"op": "box", "from": [19, 0, 21], "to": [20, 6, 22], "mat": "timber", "part": "frame"},
+    {"op": "box", "from": [19, 6, 18], "to": [21, 7, 22], "mat": "iron", "part": "metal"},
+    {"op": "cylinder", "base": [18, 0, 8], "radius": 2.6, "height": 1, "mat": "stone", "part": "stone"},
+    {"op": "cylinder", "base": [18, 0, 8], "radius": 1.6, "height": 1, "mat": "char"},
+    {"op": "box", "from": [4, 0, 18], "to": [8, 3, 21], "mat": "crate", "part": "timber"}
+  ]
+}

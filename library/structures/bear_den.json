@@ -1,0 +1,27 @@
+{
+  "name": "bear_den",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A cave bear's bed: a trodden floor of chalk rubble and bone 5 m across with long bones and a skull lying in it. Place inside a cave chamber with `height` at the chamber floor; level false, so it beds into the rubble.",
+  "size": [32, 6, 32],
+  "anchor": [16, 0, 16],
+  "foundation": 3,
+  "level": false,
+  "decays": false,
+  "tags": ["windbarrow", "cave"],
+  "slots": {"floor": "bone_floor", "bone": "old_bone", "stone": "chalk_grey"},
+  "ops": [
+    {"op": "cylinder", "base": [16, 0, 16], "radius": 11, "height": 1, "mat": "floor", "part": "floor"},
+    {"op": "box", "from": [13, 1, 14], "to": [18, 2, 15], "mat": "bone", "part": "floor"},
+    {"op": "box", "from": [11, 1, 22], "to": [12, 2, 28], "mat": "bone", "part": "floor"},
+    {"op": "box", "from": [22, 1, 18], "to": [23, 2, 23], "mat": "bone", "part": "floor"},
+    {"op": "box", "from": [16, 1, 11], "to": [21, 2, 12], "mat": "bone", "part": "floor"},
+    {"op": "box", "from": [13, 1, 11], "to": [18, 2, 12], "mat": "bone", "part": "floor"},
+    {"op": "box", "from": [9, 1, 13], "to": [16, 2, 14], "mat": "bone", "part": "floor"},
+    {"op": "box", "from": [17, 1, 17], "to": [23, 2, 18], "mat": "bone", "part": "floor"},
+    {"op": "box", "from": [20, 1, 10], "to": [21, 2, 15], "mat": "bone", "part": "floor"},
+    {"op": "box", "from": [11, 1, 23], "to": [14, 2, 24], "mat": "bone", "part": "floor"},
+    {"op": "ellipsoid", "centre": [16, 1, 6], "radius": [5, 3, 3], "mat": "bone", "part": "floor"},
+    {"op": "ellipsoid", "centre": [8, 1, 26], "radius": [3, 2, 2.4], "mat": "stone", "part": "stone"}
+  ]
+}

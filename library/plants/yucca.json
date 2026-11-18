@@ -1,0 +1,16 @@
+{
+  "name": "yucca",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Narrowleaf yucca: a stiff clump of blades on sandy slopes.",
+  "form": "shrub",
+  "height": [0.5, 0.9],
+  "trunk_radius": [0.04, 0.06],
+  "crown_radius": [0.3, 0.45],
+  "bark": "yucca_leaves",
+  "leaf": "yucca_leaves",
+  "squash": 1.2,
+  "max_slope": 1.1,
+  "affords": ["nectar"],
+  "stalk": ["yucca_stalk", 0.4]
+}

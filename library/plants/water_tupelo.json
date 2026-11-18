@@ -1,0 +1,16 @@
+{
+  "name": "water_tupelo",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Water tupelo: a swollen-footed swamp tree with a narrow crown of light green, among the cypress.",
+  "form": "broad",
+  "height": [10, 15],
+  "trunk_radius": [0.3, 0.45],
+  "buttress": 0.6,
+  "crown_radius": [2.4, 3.4],
+  "bark": "mangrove_bark",
+  "leaf": "tupelo_leaves",
+  "max_slope": 0.8,
+  "standing_water": [-1.0, 1.3],
+  "autumn": "maple_red"
+}

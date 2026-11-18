@@ -1,0 +1,16 @@
+{
+  "name": "canopy_walk",
+  "version": 1,
+  "introduced_by": "routing engine",
+  "notes": "A rope walkway through the crowns: a 1.5 m plank deck held at the height the ribbon names, netting to shoulder height, sagging 0.8 m between supports.",
+  "ground": "deck",
+  "width": 1.5,
+  "mat": "weathered_planks",
+  "lift": 0.0,
+  "sag": 0.8,
+  "max_span": 60.0,
+  "deck": {"thick": 0.25, "mat": "weathered_planks"},
+  "rails": [{"side": "both", "out": 0.0, "from": 0.25, "to": 1.2, "thick": 0.25, "mat": "canvas"}],
+  "posts": [{"side": "both", "out": 0.0, "every": 5.0, "size": [0.25, 1.4, 0.25], "mat": "timber_frame"}],
+  "tags": ["walkway", "rope"]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "cane_leaves",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Sugar cane: tall jointed stalks and long ribbon leaves, fresh green.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [112, 148, 72],
+    "alt": [134, 158, 86],
+    "scale": 7,
+    "contrast": 0.7,
+    "calm": {"base": [110, 144, 70], "alt": [130, 154, 84]}
+  }
+}

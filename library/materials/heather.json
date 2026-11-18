@@ -1,0 +1,15 @@
+{
+  "name": "heather",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 42,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [90, 58, 96],
+    "scale": 6,
+    "contrast": 1.0,
+    "alt": [70, 92, 58],
+    "calm": {"base": [112, 80, 116], "alt": [96, 110, 74]}
+  }
+}

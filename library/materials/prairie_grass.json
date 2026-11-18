@@ -1,0 +1,23 @@
+{
+  "name": "prairie_grass",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 24,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [120, 102, 56],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [100, 84, 44],
+    "calm": {"base": [150, 128, 78], "alt": [140, 118, 72]}
+  },
+  "top": {
+    "pattern": "noise",
+    "base": [168, 144, 84],
+    "scale": 5,
+    "contrast": 1.0,
+    "alt": [146, 124, 64],
+    "calm": {"base": [178, 152, 94], "alt": [164, 138, 84]}
+  }
+}

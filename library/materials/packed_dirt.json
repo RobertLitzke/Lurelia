@@ -1,0 +1,16 @@
+{
+  "name": "packed_dirt",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Bulldozed and ridden-in dirt of the bike course.",
+  "id": 117,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [176, 150, 120],
+    "alt": [154, 128, 100],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [188, 162, 130], "alt": [166, 140, 112]}
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "cottage_rose",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Roses in the cottage gardens and wild dog rose in the hedges: a pink-flowered shrub.",
+  "form": "shrub",
+  "height": [1.2, 2.0],
+  "crown_radius": [0.8, 1.3],
+  "bark": "bark",
+  "leaf": "rose_bush",
+  "affords": ["nectar"]
+}

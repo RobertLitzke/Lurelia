@@ -1,0 +1,16 @@
+{
+  "name": "fireweed",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Marker voxel at the foot of a fireweed clump; the stems and flowers are sprites (layer fireweed).",
+  "id": 55,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [52, 74, 34],
+    "alt": [92, 40, 44],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [62, 84, 40], "alt": [100, 52, 52]}
+  }
+}

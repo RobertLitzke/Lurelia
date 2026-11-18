@@ -1,0 +1,38 @@
+{
+  "name": "butterflyfish",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Butterflyfish: a yellow disc of a fish about 20 cm long with a dark band through the eye, in ones and twos picking over the coral. The base of the deep-bodied reef fish.",
+  "voxel": 0.008,
+  "half_w": 0.02,
+  "height": 0.14,
+  "colors": {"body": [240, 200, 44], "band": [36, 28, 24], "fin": [240, 200, 44], "dark": [36, 28, 24]},
+  "behaviour": {
+    "movement": "school",
+    "habit": "hover",
+    "walk_speed": 0.5,
+    "flee_speed": 2.5,
+    "wary": 4,
+    "flightiness": 0.8,
+    "flees_from": ["player"],
+    "above_bed": [0.5, 2.0],
+    "shallows": 0.8,
+    "leap": 0,
+    "group": {"size": [1, 2], "spacing": 0.5, "range": 3},
+    "active": "diurnal"
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16.5, 9, 14], "radius": [1.6, 7, 8], "mat": "body"},
+    {"op": "recolour", "at": [14, 3, 9], "until": [19, 16, 11], "from": "body", "to": "band"},
+    {"op": "box", "from": [16, 15, 10], "to": [17, 17, 19], "mat": "fin"},
+    {"op": "box", "from": [16, 1, 12], "to": [17, 3, 18], "mat": "fin"},
+    {"op": "set", "at": [15, 11, 8], "mat": "dark"},
+    {"op": "set", "at": [17, 11, 8], "mat": "dark"},
+    {"op": "ellipsoid", "centre": [16.5, 9, 22], "radius": [0.8, 2.5, 1.8], "mat": "body", "part": "tail"},
+    {"op": "box", "from": [16, 5, 23], "to": [17, 13, 26], "mat": "fin", "part": "tail"}
+  ],
+  "rig": {
+    "plan": "fish",
+    "bones": [{"name": "body", "role": "root"}, {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 9, 21]}]
+  }
+}

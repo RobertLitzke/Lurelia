@@ -1,0 +1,15 @@
+{
+  "name": "baobab_bark",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Baobab bark: smooth, thick and pewter grey with a pink cast, pleated in soft vertical folds on a trunk far too wide for its height.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [146, 138, 128],
+    "alt": [132, 124, 116],
+    "scale": 7,
+    "contrast": 0.5,
+    "calm": {"base": [156, 148, 138], "alt": [142, 134, 126]}
+  }
+}

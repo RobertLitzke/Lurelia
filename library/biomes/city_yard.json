@@ -1,0 +1,33 @@
+{
+  "name": "city_yard",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Yards, verges and the green between houses: the default of a city world.",
+  "priority": 1,
+  "rules": {},
+  "surface": "lawn_grass",
+  "subsurface": "dirt",
+  "fringe": 0,
+  "map_color": [130, 160, 100],
+  "plants": [
+    {
+      "plant": "bigleaf_maple",
+      "density": 0.0035,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.2, "max": 1.0}}
+    },
+    {"plant": "fir", "density": 0.0012, "placement": {"verb": "lone", "params": {"spacing": 14}}},
+    {"plant": "birch", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "hazel", "density": 0.004, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "salal",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 12, "min": 0.0, "max": 1.0}}
+    },
+    {
+      "plant": "fern",
+      "density": 0.008,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.0, "max": 1.0}}
+    }
+  ],
+  "creatures": [{"creature": "crow", "count": 4}]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "fore_reef",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "The fore reef: spurs of coral running down to the drop-off, the richest water on the reef: staghorn thickets, tables, plates, brain and boulder coral, sponges and fans.",
+  "priority": 20,
+  "rules": {"underwater": true, "region": "fore_reef"},
+  "surface": "reef_lime",
+  "subsurface": "reef_lime",
+  "rock": "reef_lime",
+  "fringe": 0,
+  "map_color": [210, 140, 150],
+  "plants": [
+    {
+      "plant": "staghorn_coral",
+      "density": 0.07,
+      "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.3, "max": 0.5}}
+    },
+    {
+      "plant": "staghorn_violet",
+      "density": 0.03,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.35, "max": 0.55}}
+    },
+    {"plant": "table_coral", "density": 0.018, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "table_coral_teal", "density": 0.012, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "plate_coral", "density": 0.025, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "brain_coral", "density": 0.03, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "boulder_coral", "density": 0.008, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "finger_coral", "density": 0.03, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "tube_sponge", "density": 0.012, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "sea_fan", "density": 0.01, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "reef_chromis", "count": 210},
+    {"creature": "anthias", "count": 140},
+    {"creature": "yellow_tang", "count": 35},
+    {"creature": "butterflyfish", "count": 14},
+    {"creature": "angelfish", "count": 7},
+    {"creature": "parrotfish", "count": 10},
+    {"creature": "grouper", "count": 4},
+    {"creature": "sea_turtle", "count": 4},
+    {"creature": "reef_manta", "count": 3}
+  ]
+}

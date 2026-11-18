@@ -1,0 +1,18 @@
+{
+  "name": "window_lone",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "The Lone Arch's opening: a broad span about 20 m wide and 14 m high through a fin on the slickrock bench, the lintel thin and uneven.",
+  "size": [112, 96, 64],
+  "anchor": [56, 0, 32],
+  "level": false,
+  "decays": false,
+  "tags": ["natural", "arch"],
+  "slots": {},
+  "ops": [
+    {"op": "ellipsoid", "centre": [56, 0, 32], "radius": [40, 56, 46], "mat": "carve"},
+    {"op": "ellipsoid", "centre": [44, 20, 32], "radius": [24, 40, 40], "mat": "carve"},
+    {"op": "ellipsoid", "centre": [70, 14, 32], "radius": [20, 36, 36], "mat": "carve"},
+    {"op": "ellipsoid", "centre": [60, 58, 32], "radius": [12, 6, 26], "mat": "carve"}
+  ]
+}

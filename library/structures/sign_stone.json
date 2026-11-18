@@ -1,0 +1,17 @@
+{
+  "name": "sign_stone",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A waist-high stone marker with one dressed face: a milestone, a parish bound, a name stone at a lane end. The lettering is drawn as plates (world/places.rs) on the dressed face, which looks along local -Z.",
+  "size": [4, 5, 3],
+  "anchor": [1, 0, 0],
+  "foundation": 4,
+  "level": false,
+  "decays": false,
+  "tags": ["sign"],
+  "slots": {"stone": "cotswold_stone"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [3, 4, 2], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [0, 4, 0], "to": [3, 5, 1], "mat": "stone", "part": "stone"}
+  ]
+}

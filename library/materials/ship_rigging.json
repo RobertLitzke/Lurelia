@@ -1,0 +1,15 @@
+{
+  "name": "ship_rigging",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Tarred spars and standing rigging, furred with hoar frost.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [52, 46, 40],
+    "alt": [70, 64, 56],
+    "scale": 5,
+    "contrast": 0.5,
+    "calm": {"base": [60, 54, 48], "alt": [78, 72, 64]}
+  }
+}

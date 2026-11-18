@@ -1,0 +1,11 @@
+{
+  "name": "snag",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Standing dead tree, often fire-killed.",
+  "form": "snag",
+  "height": [5, 10],
+  "trunk_radius": [0.2, 0.32],
+  "crown_radius": [1.0, 2.0],
+  "bark": "dead_wood"
+}

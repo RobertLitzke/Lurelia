@@ -1,0 +1,21 @@
+{
+  "name": "offering_post",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "An oak post 4 m tall at a parting of the trails, a horse skull set on its top facing local -Z and strips of hide and ochred cloth tied below it.",
+  "size": [16, 20, 16],
+  "anchor": [8, 0, 8],
+  "foundation": 6,
+  "level": false,
+  "tags": ["windbarrow"],
+  "slots": {"stone": "chalk_block", "timber": "oak_post", "bone": "old_bone", "hide": "canvas", "paint": "ochre"},
+  "ops": [
+    {"op": "cylinder", "base": [8, 0, 8], "radius": 3.4, "height": 2, "mat": "stone", "part": "stone"},
+    {"op": "cylinder", "base": [8, 1, 8], "radius": 1.4, "height": 14, "mat": "timber", "part": "timber"},
+    {"op": "ellipsoid", "centre": [8, 16, 8], "radius": [2.2, 2.2, 3.6], "mat": "bone", "part": "stone"},
+    {"op": "box", "from": [7, 14, 3], "to": [9, 17, 6], "mat": "bone", "part": "stone"},
+    {"op": "box", "from": [6, 9, 8], "to": [7, 13, 9], "mat": "hide", "part": "cloth"},
+    {"op": "box", "from": [9, 8, 7], "to": [10, 12, 8], "mat": "hide", "part": "cloth"},
+    {"op": "box", "from": [8, 10, 10], "to": [9, 13, 11], "mat": "paint", "part": "cloth"}
+  ]
+}

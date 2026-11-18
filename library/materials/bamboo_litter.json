@@ -1,0 +1,16 @@
+{
+  "name": "bamboo_litter",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Pale gold drift of fallen bamboo leaves on the forest floor.",
+  "id": 249,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [122, 112, 70],
+    "alt": [104, 98, 62],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [124, 114, 74], "alt": [108, 102, 66]}
+  }
+}

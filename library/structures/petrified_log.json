@@ -1,0 +1,19 @@
+{
+  "name": "petrified_log",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A petrified log lying on the clay, broken into rounds where it weathered out.",
+  "size": [44, 8, 10],
+  "anchor": [22, 0, 5],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"wood": "petrified_wood"},
+  "ops": [
+    {"op": "log", "base": [0, 3, 5], "radius": 2.6, "length": 12, "axis": "x", "mat": "wood"},
+    {"op": "log", "base": [13, 3, 5], "radius": 2.5, "length": 10, "axis": "x", "mat": "wood"},
+    {"op": "log", "base": [24, 3, 5], "radius": 2.3, "length": 9, "axis": "x", "mat": "wood"},
+    {"op": "log", "base": [35, 3, 5], "radius": 2.0, "length": 7, "axis": "x", "mat": "wood"},
+    {"op": "ellipsoid", "centre": [4, 2, 5], "radius": [3, 3, 4], "mat": "wood"}
+  ]
+}

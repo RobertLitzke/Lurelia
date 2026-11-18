@@ -1,0 +1,24 @@
+{
+  "name": "city_wood",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Wooded slopes and green belts: fir and maple over ferns.",
+  "priority": 9,
+  "rules": {"region": "city_wood"},
+  "surface": "forest_floor",
+  "subsurface": "dirt",
+  "fringe": 0,
+  "map_color": [60, 110, 70],
+  "plants": [
+    {"plant": "fir", "density": 0.012, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "bigleaf_maple", "density": 0.006, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "fern", "density": 0.05, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "salal", "density": 0.03, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "shelf_fungus", "density": 0.1}
+  ],
+  "creatures": [
+    {"creature": "pileated_woodpecker", "count": 1},
+    {"creature": "woodpecker", "count": 1},
+    {"creature": "squirrel", "count": 4}
+  ]
+}

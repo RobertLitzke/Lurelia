@@ -1,0 +1,16 @@
+{
+  "name": "kelp_stipe",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Giant kelp stipe: olive-brown, rope-like.",
+  "id": 205,
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [96, 84, 38],
+    "alt": [74, 64, 30],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [104, 92, 46], "alt": [84, 74, 38]}
+  }
+}

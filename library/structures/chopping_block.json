@@ -1,0 +1,20 @@
+{
+  "name": "chopping_block",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A chopping block with an axe left in it and split logs round it.",
+  "size": [12, 10, 12],
+  "anchor": [6, 0, 6],
+  "level": false,
+  "decays": false,
+  "tags": ["hemlow", "prop"],
+  "slots": {"log": "bark", "blade": "rust_iron", "handle": "weathered_planks"},
+  "ops": [
+    {"op": "cylinder", "base": [6, 0, 6], "radius": 2.6, "height": 3, "mat": "log", "part": "timber"},
+    {"op": "box", "from": [5, 3, 6], "to": [6, 4, 7], "mat": "blade", "part": "metal"},
+    {"op": "box", "from": [5, 4, 6], "to": [6, 9, 7], "mat": "handle", "part": "timber"},
+    {"op": "log", "base": [9, 0.8, 1], "radius": 0.9, "length": 4, "axis": "z", "mat": "log", "part": "timber"},
+    {"op": "log", "base": [1, 0.8, 9], "radius": 0.9, "length": 4, "axis": "x", "mat": "log", "part": "timber"},
+    {"op": "log", "base": [2, 0.8, 2], "radius": 0.8, "length": 3, "axis": "x", "mat": "log", "part": "timber"}
+  ]
+}

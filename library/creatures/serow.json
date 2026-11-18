@@ -1,0 +1,9 @@
+{
+  "name": "serow",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "graze: Serow: a small dark goat-antelope of the tower ledges and the top of the Old Wall, with a pale throat.",
+  "colors": {"rabbit": [70, 64, 58], "rabbit_light": [150, 140, 126]},
+  "like": "bighorn",
+  "scale": 0.85
+}

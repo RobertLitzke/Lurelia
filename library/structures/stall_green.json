@@ -1,0 +1,41 @@
+{
+  "name": "stall_green",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "A Christmas-market stall: a counter under a striped canvas roof hung with a string of lights, goods on the counter. Counter on local -Z.",
+  "size": [16, 19, 14],
+  "anchor": [7, 0, 6],
+  "foundation": 2,
+  "level": true,
+  "tags": ["kaldvik", "market"],
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [14, 1, 12], "mat": "weathered_planks", "part": "floor"},
+    {"op": "box", "from": [0, 1, 0], "to": [14, 5, 2], "mat": "weathered_planks", "part": "timber"},
+    {"op": "box", "from": [0, 5, 0], "to": [14, 6, 3], "mat": "trim_white", "part": "timber"},
+    {"op": "box", "from": [0, 1, 0], "to": [1, 11, 1], "mat": "weathered_planks", "part": "timber"},
+    {"op": "box", "from": [13, 1, 0], "to": [14, 11, 1], "mat": "weathered_planks", "part": "timber"},
+    {"op": "box", "from": [0, 1, 11], "to": [1, 11, 12], "mat": "weathered_planks", "part": "timber"},
+    {"op": "box", "from": [13, 1, 11], "to": [14, 11, 12], "mat": "weathered_planks", "part": "timber"},
+    {"op": "box", "from": [0, 1, 11], "to": [14, 10, 12], "mat": "weathered_planks", "part": "wall"},
+    {
+      "op": "gable",
+      "from": [-1, 11, -1],
+      "to": [15, 11, 13],
+      "axis": "x",
+      "mat": "stall_green",
+      "rise": 1,
+      "part": "cloth"
+    },
+    {"op": "box", "from": [0, 10, -1], "to": [1, 11, 0], "mat": "fairy_light", "part": "metal"},
+    {"op": "box", "from": [2, 10, -1], "to": [3, 11, 0], "mat": "fairy_light", "part": "metal"},
+    {"op": "box", "from": [4, 10, -1], "to": [5, 11, 0], "mat": "fairy_light", "part": "metal"},
+    {"op": "box", "from": [6, 10, -1], "to": [7, 11, 0], "mat": "fairy_light", "part": "metal"},
+    {"op": "box", "from": [8, 10, -1], "to": [9, 11, 0], "mat": "fairy_light", "part": "metal"},
+    {"op": "box", "from": [10, 10, -1], "to": [11, 11, 0], "mat": "fairy_light", "part": "metal"},
+    {"op": "box", "from": [12, 10, -1], "to": [13, 11, 0], "mat": "fairy_light", "part": "metal"},
+    {"op": "box", "from": [1, 6, 0], "to": [3, 7, 2], "mat": "stall_red", "part": "cloth"},
+    {"op": "box", "from": [4, 6, 0], "to": [6, 8, 2], "mat": "ochre_board", "part": "cloth"},
+    {"op": "box", "from": [7, 6, 0], "to": [9, 7, 2], "mat": "trim_white", "part": "cloth"},
+    {"op": "box", "from": [10, 6, 0], "to": [12, 8, 2], "mat": "stockfish", "part": "cloth"}
+  ]
+}

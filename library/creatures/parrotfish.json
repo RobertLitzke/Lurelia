@@ -1,0 +1,18 @@
+{
+  "name": "parrotfish",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Parrotfish: half a metre long, teal and pink, crunching coral with its beak; the white sand of the reef is what it leaves.",
+  "colors": {"herring": [60, 160, 160], "silver": [232, 128, 150], "fin": [240, 200, 44]},
+  "behaviour": {
+    "habit": "hover",
+    "walk_speed": 0.7,
+    "flee_speed": 3.0,
+    "leap": 0,
+    "above_bed": [0.3, 1.5],
+    "shallows": 0.8,
+    "group": {"size": [1, 3], "spacing": 1.0, "range": 4}
+  },
+  "like": "herring",
+  "scale": 1.9
+}

@@ -1,0 +1,16 @@
+{
+  "name": "corrugated_tin",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Galvanised corrugated iron, streaked with rust.",
+  "id": 131,
+  "smooth": false,
+  "texture": {
+    "pattern": "columns",
+    "base": [150, 152, 150],
+    "alt": [128, 104, 88],
+    "scale": 8,
+    "contrast": 1.0,
+    "calm": {"base": [160, 162, 160], "alt": [140, 118, 100]}
+  }
+}

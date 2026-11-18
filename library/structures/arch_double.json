@@ -1,0 +1,21 @@
+{
+  "name": "arch_double",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A fin pierced twice, two openings side by side with a pillar between and a small window above it. Long axis local X.",
+  "size": [120, 68, 26],
+  "anchor": [60, 0, 13],
+  "foundation": 8,
+  "level": false,
+  "decays": false,
+  "tags": ["natural", "arch"],
+  "slots": {"rock": "wingate_sandstone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [60.0, 26.88, 13.0], "radius": [60.0, 37.12, 11.0], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [14.4, 12.8, 13.0], "radius": [16.8, 20.48, 14.0], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [105.6, 11.52, 13.0], "radius": [15.6, 17.92, 13.0], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [33.0, 0, 13.0], "radius": [20, 38, 22], "mat": "air"},
+    {"op": "ellipsoid", "centre": [87.0, 0, 13.0], "radius": [20, 34, 22], "mat": "air"},
+    {"op": "ellipsoid", "centre": [60.0, 50, 13.0], "radius": [5, 5, 22], "mat": "air"}
+  ]
+}

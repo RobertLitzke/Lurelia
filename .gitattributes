@@ -1,0 +1,5 @@
+# Text files are stored with LF line endings whatever the editor wrote.
+* text=auto eol=lf
+*.png binary
+*.bin binary
+*.npy binary

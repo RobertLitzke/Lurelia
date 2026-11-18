@@ -1,0 +1,16 @@
+{
+  "name": "sea_ice",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Old sea ice: white-grey, wind-polished in places, faintly blue where it is clear.",
+  "smooth": true,
+  "glints": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [200, 210, 218],
+    "alt": [170, 186, 198],
+    "scale": 7,
+    "contrast": 0.5,
+    "calm": {"base": [208, 216, 224], "alt": [182, 196, 208]}
+  }
+}

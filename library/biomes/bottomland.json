@@ -1,0 +1,60 @@
+{
+  "name": "bottomland",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "The delta's ordinary ground: low wet woods of tupelo and oak along the old levees, palmettos under them, moss hanging everywhere.",
+  "priority": 4,
+  "rules": {"elev": [-0.5, 20]},
+  "surface": "marsh_grass",
+  "subsurface": "silt",
+  "map_color": [104, 140, 80],
+  "plants": [
+    {"plant": "live_oak", "density": 0.0006, "placement": {"verb": "lone", "params": {"spacing": 34}}},
+    {
+      "plant": "water_tupelo",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 60, "min": 0.45, "max": 0.7}}
+    },
+    {
+      "plant": "bald_cypress",
+      "density": 0.002,
+      "placement": {"verb": "clustered", "params": {"size": 70, "min": 0.55, "max": 0.8}}
+    },
+    {"plant": "willow", "density": 0.002, "placement": {"verb": "riparian", "params": {"width": 16}}},
+    {
+      "plant": "cabbage_palm",
+      "density": 0.0015,
+      "placement": {"verb": "clustered", "params": {"size": 50, "min": 0.5, "max": 0.75}}
+    },
+    {
+      "plant": "saw_palmetto",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.45, "max": 0.7}}
+    },
+    {"plant": "spanish_moss", "density": 0.6, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "cattail",
+      "density": 0.7,
+      "placement": {"verb": "clustered", "params": {"size": 22, "min": 0.7, "max": 0.715}}
+    },
+    {"plant": "shelf_fungus", "density": 0.16},
+    {"plant": "tree_moss", "density": 0.4}
+  ],
+  "creatures": [
+    {"creature": "deer", "count": 6},
+    {"creature": "boar", "count": 4},
+    {"creature": "coyote", "count": 2},
+    {"creature": "bear", "count": 1},
+    {"creature": "crow", "count": 6},
+    {"creature": "great_horned_owl", "count": 1},
+    {"creature": "pileated_woodpecker", "count": 2},
+    {"creature": "firefly", "count": 50},
+    {"creature": "dragonfly", "count": 8},
+    {"creature": "nutria", "count": 4},
+    {"creature": "squirrel", "count": 3},
+    {"creature": "bullfrog", "count": 4},
+    {"creature": "toad", "count": 3},
+    {"creature": "bat", "count": 4}
+  ],
+  "collectibles": [{"item": "pottery_shard", "density": 6e-05, "placement": {"verb": "scatter", "params": {}}}]
+}

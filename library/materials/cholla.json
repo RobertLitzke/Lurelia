@@ -1,0 +1,16 @@
+{
+  "name": "cholla",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Cholla: a pale straw glow of dense spines over green joints.",
+  "id": 210,
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [190, 182, 118],
+    "alt": [130, 140, 86],
+    "scale": 8,
+    "contrast": 1.0,
+    "calm": {"base": [192, 184, 128], "alt": [140, 148, 96]}
+  }
+}

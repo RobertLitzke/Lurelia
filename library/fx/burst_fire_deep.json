@@ -1,0 +1,19 @@
+{
+  "name": "burst_fire_deep",
+  "version": 1,
+  "introduced_by": "rocket_blast",
+  "notes": "The fireball's red edge, which outlasts the orange and goes up with the smoke.",
+  "shape": "puff",
+  "count": [8, 11],
+  "speed": [2.5, 7.0],
+  "cone_deg": 180,
+  "life": [0.4, 0.75],
+  "size": [0.4, 1.35],
+  "size_jitter": 0.35,
+  "gravity": -2.6,
+  "drag": 5.0,
+  "color": [232, 58, 30],
+  "alpha": 0.75,
+  "glow": 1.8,
+  "near_fade": 1.0
+}

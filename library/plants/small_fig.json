@@ -1,0 +1,13 @@
+{
+  "name": "small_fig",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "broad: A small fig tree, 3-5 m, that grows anywhere it gets a root in: tower tops, ledges, the backs of beaches.",
+  "height": [3, 5.5],
+  "trunk_radius": [0.14, 0.22],
+  "crown_radius": [1.2, 2.0],
+  "bark": "banyan_bark",
+  "leaf": "banyan_leaves",
+  "max_slope": 2.0,
+  "like": "oak"
+}

@@ -1,0 +1,96 @@
+{
+  "name": "bison",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Bison: a humped, shaggy-shouldered bull half again as tall as a person and heavy through the barrel, head carried low, grazing the open grass in small bands. It gives way slowly and not far.",
+  "voxel": 0.117,
+  "half_w": 0.63,
+  "height": 2.6,
+  "colors": {"coat": [84, 62, 46], "wool": [110, 82, 56], "horn": [214, 196, 160], "dark": [36, 28, 24]},
+  "behaviour": {
+    "movement": "graze",
+    "walk_speed": 0.8,
+    "flee_speed": 7.0,
+    "wary": 16,
+    "flightiness": 0.3,
+    "juvenile_flightiness": 0.7,
+    "flees_from": ["player"],
+    "group": {"size": [3, 9], "spacing": 3.0, "range": 18, "alignment": 0.9, "cohesion": 1.2}
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 15, 18], "radius": [5.6, 5.0, 6.8], "mat": "coat"},
+    {"op": "ellipsoid", "centre": [16, 16.5, 11.5], "radius": [5.4, 5.6, 4.6], "mat": "wool"},
+    {"op": "ellipsoid", "centre": [16, 14.5, 22], "radius": [4.8, 4.4, 4.2], "mat": "coat"},
+    {"op": "box", "from": [12, 2, 9], "to": [15, 13, 12], "mat": "coat", "part": "leg_fl"},
+    {"op": "box", "from": [12, 0, 9], "to": [15, 2, 12], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [17, 2, 9], "to": [20, 13, 12], "mat": "coat", "part": "leg_fr"},
+    {"op": "box", "from": [17, 0, 9], "to": [20, 2, 12], "mat": "dark", "part": "leg_fr"},
+    {"op": "box", "from": [12, 2, 20], "to": [15, 13, 23], "mat": "coat", "part": "leg_hl"},
+    {"op": "box", "from": [12, 0, 20], "to": [15, 2, 23], "mat": "dark", "part": "leg_hl"},
+    {"op": "box", "from": [17, 2, 20], "to": [20, 13, 23], "mat": "coat", "part": "leg_hr"},
+    {"op": "box", "from": [17, 0, 20], "to": [20, 2, 23], "mat": "dark", "part": "leg_hr"},
+    {"op": "box", "from": [13, 11, 5], "to": [19, 17, 10], "mat": "wool", "part": "neck"},
+    {"op": "ellipsoid", "centre": [16, 13, 5], "radius": [3.4, 3.4, 3.4], "mat": "wool", "part": "head"},
+    {"op": "box", "from": [14, 10, 1], "to": [18, 13, 4], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [14, 10, 1], "to": [18, 11, 3], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [14, 8, 3], "to": [18, 11, 6], "mat": "wool", "part": "head"},
+    {"op": "set", "at": [13, 14, 3], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [18, 14, 3], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [11, 15, 4], "to": [13, 16, 6], "mat": "horn", "part": "head"},
+    {"op": "box", "from": [19, 15, 4], "to": [21, 16, 6], "mat": "horn", "part": "head"},
+    {"op": "set", "at": [11, 16, 4], "mat": "horn", "part": "head"},
+    {"op": "set", "at": [20, 16, 4], "mat": "horn", "part": "head"},
+    {"op": "box", "from": [15, 13, 25], "to": [17, 17, 26], "mat": "coat", "part": "tail"},
+    {"op": "box", "from": [15, 11, 25], "to": [17, 13, 27], "mat": "dark", "part": "tail"}
+  ],
+  "vary": {"size": 0.1, "shade": 0.08, "hue": 0.03},
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16, 14, 9]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16, 13, 6.5]},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [13.5, 13, 10.5], "side": "l", "pair": 0},
+      {
+        "name": "leg_fl_low",
+        "role": "leg",
+        "parent": "leg_fl",
+        "joint": [13.5, 6, 10.5],
+        "claims": [[[12, 0, 9], [15, 6, 12]]],
+        "side": "l",
+        "pair": 0
+      },
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [13.5, 13, 21.5], "side": "l", "pair": 1},
+      {
+        "name": "leg_hl_low",
+        "role": "leg",
+        "parent": "leg_hl",
+        "joint": [13.5, 6, 21.5],
+        "claims": [[[12, 0, 20], [15, 6, 23]]],
+        "side": "l",
+        "pair": 1
+      },
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [18.5, 13, 10.5], "side": "r", "pair": 0},
+      {
+        "name": "leg_fr_low",
+        "role": "leg",
+        "parent": "leg_fr",
+        "joint": [18.5, 6, 10.5],
+        "claims": [[[17, 0, 9], [20, 6, 12]]],
+        "side": "r",
+        "pair": 0
+      },
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [18.5, 13, 21.5], "side": "r", "pair": 1},
+      {
+        "name": "leg_hr_low",
+        "role": "leg",
+        "parent": "leg_hr",
+        "joint": [18.5, 6, 21.5],
+        "claims": [[[17, 0, 20], [20, 6, 23]]],
+        "side": "r",
+        "pair": 1
+      },
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 16, 24.5]}
+    ]
+  }
+}

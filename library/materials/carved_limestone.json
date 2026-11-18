@@ -1,0 +1,15 @@
+{
+  "name": "carved_limestone",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The Tepe's pillars: a hard cream limestone from somewhere else, worked smooth and carved in low relief.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [180, 176, 164],
+    "alt": [164, 160, 148],
+    "scale": 6,
+    "contrast": 0.5,
+    "calm": {"base": [192, 188, 176], "alt": [176, 172, 160]}
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "name": "hollins",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "The Hollins: old oak and beech wood with hazel and fern beneath, turning strange near the Hob Stones (gold maples, cherry trees, blossom vines, pale birch, glassbloom). The default of Hemlow.",
+  "priority": 1,
+  "rules": {},
+  "surface": "moss_grass",
+  "subsurface": "dirt",
+  "map_color": [62, 120, 64],
+  "plants": [
+    {
+      "plant": "beech",
+      "density": 0.0045,
+      "placement": {"verb": "clustered", "params": {"size": 45, "min": 0.3, "max": 1.0}}
+    },
+    {"plant": "great_oak", "density": 0.0011, "placement": {"verb": "lone", "params": {"spacing": 22}}},
+    {
+      "plant": "oak",
+      "density": 0.0025,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.25, "max": 1.0}}
+    },
+    {
+      "plant": "hazel",
+      "density": 0.01,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.2, "max": 1.0}}
+    },
+    {
+      "plant": "gold_maple",
+      "density": 0.004,
+      "placement": {"verb": "gradient", "params": {"min": 0.12, "max": 1.0}, "field": "strange"}
+    },
+    {
+      "plant": "flowering_cherry",
+      "density": 0.002,
+      "placement": {"verb": "gradient", "params": {"min": 0.3, "max": 1.0}, "field": "strange"}
+    },
+    {
+      "plant": "pale_birch",
+      "density": 0.003,
+      "placement": {"verb": "gradient", "params": {"min": 0.45, "max": 1.0}, "field": "strange"}
+    },
+    {
+      "plant": "blossom_vine",
+      "density": 0.25,
+      "placement": {"verb": "gradient", "params": {"min": 0.08, "max": 1.0}, "field": "strange"}
+    },
+    {"plant": "hanging_vine", "density": 0.08, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "fern",
+      "density": 0.14,
+      "placement": {"verb": "clustered", "params": {"size": 12, "min": 0.0, "max": 1.0}}
+    },
+    {
+      "plant": "giant_fir",
+      "density": 0.003,
+      "placement": {"verb": "gradient", "params": {"min": 0.25, "max": 1.0}, "field": "strange"}
+    },
+    {"plant": "bigleaf_maple", "density": 0.0015, "placement": {"verb": "lone", "params": {"spacing": 24}}},
+    {"plant": "elder", "density": 0.0015, "placement": {"verb": "edge", "params": {"width": 14, "inner": 0.002}}},
+    {
+      "plant": "glassbloom",
+      "density": 0.02,
+      "placement": {"verb": "gradient", "params": {"min": 0.55, "max": 1.0}, "field": "strange"}
+    },
+    {"plant": "hawthorn", "density": 0.004, "placement": {"verb": "scatter"}},
+    {"plant": "shelf_fungus", "density": 0.18},
+    {"plant": "tree_moss", "density": 0.55}
+  ],
+  "features": [
+    {"structure": "mossy_log", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "fallen_trunk", "density": 0.00015, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "deer", "count": 8},
+    {"creature": "mossback_deer", "count": 7},
+    {"creature": "fae_horse", "count": 3},
+    {"creature": "moss_bear", "count": 1},
+    {"creature": "moss_tortoise", "count": 3},
+    {"creature": "boar", "count": 4},
+    {"creature": "fox", "count": 3},
+    {"creature": "sky_ray", "count": 7},
+    {"creature": "lantern_moth", "count": 50},
+    {"creature": "firefly", "count": 90},
+    {"creature": "dusk_wren", "count": 14},
+    {"creature": "woodpecker", "count": 2},
+    {"creature": "glow_bee", "count": 8},
+    {"creature": "tawny_owl", "count": 2},
+    {"creature": "great_horned_owl", "count": 1},
+    {"creature": "badger", "count": 1},
+    {"creature": "fae_badger", "count": 1},
+    {"creature": "red_squirrel", "count": 4},
+    {"creature": "toad", "count": 3},
+    {"creature": "fae_toad", "count": 2},
+    {"creature": "bat", "count": 4}
+  ],
+  "collectibles": [{"item": "mushroom", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}]
+}

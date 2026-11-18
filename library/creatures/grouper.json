@@ -1,0 +1,21 @@
+{
+  "name": "grouper",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Grouper: a heavy brown fish nearly a metre long that hangs by a coral head or in a cave mouth and watches you.",
+  "colors": {"herring": [116, 88, 60], "silver": [204, 184, 144], "fin": [116, 88, 60]},
+  "behaviour": {
+    "habit": "hover",
+    "walk_speed": 0.4,
+    "flee_speed": 2.0,
+    "wary": 3,
+    "flightiness": 0.5,
+    "leap": 0,
+    "above_bed": [0.4, 1.4],
+    "shallows": 1.0,
+    "group": {"size": [1, 1]},
+    "hunts": ["reef_chromis", "anthias", "kelp_perch"]
+  },
+  "like": "herring",
+  "scale": 3.2
+}

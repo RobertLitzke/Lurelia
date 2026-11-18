@@ -1,0 +1,1293 @@
+{
+ "places": {
+  "centre": [
+   880,
+   560
+  ],
+  "source": [
+   1500,
+   90
+  ],
+  "gate": [
+   1240,
+   330
+  ],
+  "narrows": [
+   980,
+   580
+  ],
+  "narrows_rim": [
+   1012,
+   520
+  ],
+  "spread": [
+   520,
+   900
+  ],
+  "head": [
+   880,
+   700
+  ],
+  "breach": [
+   760,
+   790
+  ],
+  "sedge": [
+   560,
+   860
+  ],
+  "longwater": [
+   1140,
+   450
+  ],
+  "camp": [
+   612,
+   986
+  ],
+  "pans": [
+   250,
+   1200
+  ],
+  "tomb": [
+   470,
+   1210
+  ],
+  "lamp_kopje": [
+   900,
+   1120
+  ],
+  "bee_bend": [
+   1014,
+   558
+  ]
+ },
+ "events": [
+  {
+   "year": -40000000,
+   "event": "landmass",
+   "cause": "granite basement under its own sand, rolling sandveld standing above the flood in the north and east and letting down into it in the south-west",
+   "centre": "centre",
+   "radius": 1480,
+   "roughness": 0.5,
+   "hills": 44,
+   "ridges": 12,
+   "shelf": 2,
+   "edge_fall": 150
+  },
+  {
+   "year": -2000000,
+   "event": "escarpment",
+   "cause": "the north-west fault of the rift: the block beyond it stood up and the river took the trough",
+   "from": [
+    1330,
+    230
+   ],
+   "to": [
+    930,
+    660
+   ],
+   "height": 13,
+   "width": 14,
+   "reach": 300
+  },
+  {
+   "year": -2000000,
+   "event": "escarpment",
+   "cause": "the south-east fault, facing the first across the trough",
+   "from": [
+    1010,
+    760
+   ],
+   "to": [
+    1420,
+    320
+   ],
+   "height": 11,
+   "width": 13,
+   "reach": 300
+  },
+  {
+   "year": -1800000,
+   "event": "deposit",
+   "cause": "a granite dome standing out of its own sand, weathering off in curved shells: one of the Stacks",
+   "at": [
+    900,
+    1120
+   ],
+   "radius": 50,
+   "thickness": 26,
+   "mat": "granite",
+   "shape": "dome"
+  },
+  {
+   "year": -1800000,
+   "event": "deposit",
+   "cause": "a granite dome standing out of its own sand, weathering off in curved shells: one of the Stacks",
+   "at": [
+    1180,
+    880
+   ],
+   "radius": 42,
+   "thickness": 18,
+   "mat": "granite",
+   "shape": "dome"
+  },
+  {
+   "year": -1800000,
+   "event": "deposit",
+   "cause": "a granite dome standing out of its own sand, weathering off in curved shells: one of the Stacks",
+   "at": [
+    1340,
+    640
+   ],
+   "radius": 38,
+   "thickness": 15,
+   "mat": "granite",
+   "shape": "dome"
+  },
+  {
+   "year": -1800000,
+   "event": "deposit",
+   "cause": "a granite dome standing out of its own sand, weathering off in curved shells: one of the Stacks",
+   "at": [
+    1120,
+    1360
+   ],
+   "radius": 40,
+   "thickness": 16,
+   "mat": "granite",
+   "shape": "dome"
+  },
+  {
+   "year": -1800000,
+   "event": "deposit",
+   "cause": "a granite dome standing out of its own sand, weathering off in curved shells: one of the Stacks",
+   "at": [
+    1060,
+    300
+   ],
+   "radius": 36,
+   "thickness": 13,
+   "mat": "granite",
+   "shape": "dome"
+  },
+  {
+   "year": -1800000,
+   "event": "deposit",
+   "cause": "a granite dome standing out of its own sand, weathering off in curved shells: one of the Stacks",
+   "at": [
+    1420,
+    1100
+   ],
+   "radius": 44,
+   "thickness": 20,
+   "mat": "granite",
+   "shape": "dome"
+  },
+  {
+   "year": -1800000,
+   "event": "deposit",
+   "cause": "a granite dome standing out of its own sand, weathering off in curved shells: one of the Stacks",
+   "at": [
+    700,
+    480
+   ],
+   "radius": 34,
+   "thickness": 12,
+   "mat": "granite",
+   "shape": "dome"
+  },
+  {
+   "year": -1790000,
+   "event": "region",
+   "cause": "the bare rock of the Stacks",
+   "name": "stacks",
+   "at": [
+    900,
+    1120
+   ],
+   "radius": 40
+  },
+  {
+   "year": -1790000,
+   "event": "region",
+   "cause": "the bare rock of the Stacks",
+   "name": "stacks",
+   "at": [
+    1180,
+    880
+   ],
+   "radius": 32
+  },
+  {
+   "year": -1790000,
+   "event": "region",
+   "cause": "the bare rock of the Stacks",
+   "name": "stacks",
+   "at": [
+    1340,
+    640
+   ],
+   "radius": 28
+  },
+  {
+   "year": -1790000,
+   "event": "region",
+   "cause": "the bare rock of the Stacks",
+   "name": "stacks",
+   "at": [
+    1120,
+    1360
+   ],
+   "radius": 30
+  },
+  {
+   "year": -1790000,
+   "event": "region",
+   "cause": "the bare rock of the Stacks",
+   "name": "stacks",
+   "at": [
+    1060,
+    300
+   ],
+   "radius": 26
+  },
+  {
+   "year": -1790000,
+   "event": "region",
+   "cause": "the bare rock of the Stacks",
+   "name": "stacks",
+   "at": [
+    1420,
+    1100
+   ],
+   "radius": 34
+  },
+  {
+   "year": -1790000,
+   "event": "region",
+   "cause": "the bare rock of the Stacks",
+   "name": "stacks",
+   "at": [
+    700,
+    480
+   ],
+   "radius": 24
+  },
+  {
+   "year": -1600000,
+   "event": "erode_rims",
+   "cause": "a hundred thousand dry seasons rounding the top of every rock face in the country",
+   "depth": 3,
+   "reach": 12,
+   "gullies": 0.45,
+   "min_drop": 4
+  },
+  {
+   "year": -60000,
+   "event": "vale",
+   "cause": "the trough floor worn into a soft valley, grassy to the water on the open bank",
+   "path": [
+    [
+     1500,
+     90
+    ],
+    [
+     1380,
+     240
+    ],
+    [
+     1240,
+     330
+    ],
+    [
+     1120,
+     430
+    ],
+    [
+     1020,
+     520
+    ],
+    [
+     980,
+     580
+    ],
+    [
+     880,
+     700
+    ]
+   ],
+   "width": 90,
+   "depth": 5,
+   "depth_end": 4,
+   "side": 70,
+   "meander": 7
+  },
+  {
+   "year": -14000,
+   "event": "subside",
+   "cause": "the lake that filled this basin to thirty-four metres gone, and the ground it stood on settling: the Spread, flat and a hand under the water for two months of the year",
+   "at": "spread",
+   "radius": 440,
+   "level": [
+    0.0,
+    0.5
+   ],
+   "grain": 80,
+   "edge": 80,
+   "ragged": 0.42,
+   "islands": 0.5,
+   "island_size": 34,
+   "island_rise": 1.3
+  },
+  {
+   "year": -13800,
+   "event": "subside",
+   "cause": "the deepest part of the old lake floor, swept bare and left dry: the White Pans",
+   "at": "pans",
+   "radius": 300,
+   "level": [
+    0.3,
+    1.0
+   ],
+   "grain": 60,
+   "edge": 60,
+   "ragged": 0.3,
+   "stretch": 1.4,
+   "bearing": 120
+  },
+  {
+   "year": -13700,
+   "event": "deposit",
+   "cause": "salt dried out of the last of the lake, plate on plate, until the pan floor stood clear of the water again",
+   "at": "pans",
+   "radius": 290,
+   "thickness": 1.6,
+   "mat": "shore_sand",
+   "shape": "dome",
+   "depth": 2
+  },
+  {
+   "year": -13600,
+   "event": "deposit",
+   "cause": "the island Sedge stands on: a sand knoll the fan built and kept",
+   "at": "sedge",
+   "radius": 78,
+   "thickness": 4.4,
+   "mat": "shore_sand",
+   "shape": "dome",
+   "depth": 4
+  },
+  {
+   "year": -13600,
+   "event": "deposit",
+   "cause": "the bank Barnacle Camp stands on",
+   "at": "camp",
+   "radius": 46,
+   "thickness": 4.0,
+   "mat": "shore_sand",
+   "shape": "dome",
+   "depth": 4
+  },
+  {
+   "year": -13600,
+   "event": "deposit",
+   "cause": "the rise the Tomb Tree stands on, off the east rim of the pans",
+   "at": "tomb",
+   "radius": 42,
+   "thickness": 3.6,
+   "mat": "shore_sand",
+   "shape": "dome",
+   "depth": 4
+  },
+  {
+   "year": -13000,
+   "event": "spires",
+   "cause": "boulders split off the dome and stacked where they fell",
+   "structures": [
+    "granite_stack"
+   ],
+   "at": [
+    900,
+    1120
+   ],
+   "radius": 54,
+   "count": 9,
+   "spacing": 18
+  },
+  {
+   "year": -13000,
+   "event": "spires",
+   "cause": "boulders split off the dome and stacked where they fell",
+   "structures": [
+    "granite_stack"
+   ],
+   "at": [
+    1180,
+    880
+   ],
+   "radius": 46,
+   "count": 6,
+   "spacing": 18
+  },
+  {
+   "year": -13000,
+   "event": "spires",
+   "cause": "boulders split off the dome and stacked where they fell",
+   "structures": [
+    "granite_stack"
+   ],
+   "at": [
+    1340,
+    640
+   ],
+   "radius": 42,
+   "count": 6,
+   "spacing": 18
+  },
+  {
+   "year": -13000,
+   "event": "spires",
+   "cause": "boulders split off the dome and stacked where they fell",
+   "structures": [
+    "granite_stack"
+   ],
+   "at": [
+    1120,
+    1360
+   ],
+   "radius": 44,
+   "count": 6,
+   "spacing": 18
+  },
+  {
+   "year": -13000,
+   "event": "spires",
+   "cause": "boulders split off the dome and stacked where they fell",
+   "structures": [
+    "granite_stack"
+   ],
+   "at": [
+    1060,
+    300
+   ],
+   "radius": 40,
+   "count": 6,
+   "spacing": 18
+  },
+  {
+   "year": -13000,
+   "event": "spires",
+   "cause": "boulders split off the dome and stacked where they fell",
+   "structures": [
+    "granite_stack"
+   ],
+   "at": [
+    1420,
+    1100
+   ],
+   "radius": 48,
+   "count": 6,
+   "spacing": 18
+  },
+  {
+   "year": -13000,
+   "event": "spires",
+   "cause": "boulders split off the dome and stacked where they fell",
+   "structures": [
+    "granite_stack"
+   ],
+   "at": [
+    700,
+    480
+   ],
+   "radius": 38,
+   "count": 6,
+   "spacing": 18
+  },
+  {
+   "year": -1200,
+   "event": "lake",
+   "cause": "a pool the hippo hold at the head of the fan, too deep to dry",
+   "name": "head_pool",
+   "at": [
+    800,
+    760
+   ],
+   "radius": 52,
+   "depth": 3.4,
+   "bed": "shore_sand",
+   "bank": "shore_sand",
+   "ragged": 0.35,
+   "stretch": 1.5,
+   "bearing": 70
+  },
+  {
+   "year": -1100,
+   "event": "lake",
+   "cause": "a second pool down the fan, kept open by the elephants crossing it",
+   "name": "low_pool",
+   "at": [
+    470,
+    1060
+   ],
+   "radius": 40,
+   "depth": 2.8,
+   "bed": "shore_sand",
+   "bank": "shore_sand",
+   "ragged": 0.4,
+   "stretch": 1.3,
+   "bearing": 130
+  },
+  {
+   "year": -900,
+   "event": "place",
+   "cause": "the Lamp: a tower built to carry a light, facing out over the deepest part of a lake that was already gone",
+   "structure": "lamp_tower",
+   "poi": "the Lamp",
+   "at": "lamp_kopje",
+   "bearing": 225,
+   "age": 900
+  },
+  {
+   "year": -300,
+   "event": "place",
+   "cause": "the Ringstone, built by people who were gone before the present ones came",
+   "structure": "ring_wall",
+   "poi": "the Ringstone",
+   "at": [
+    930,
+    1150
+   ],
+   "face": "lamp_kopje",
+   "age": 300
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "the Tomb Tree, east of the pans: two generations of one family, closed with a slab",
+   "structure": "baobab_tomb",
+   "poi": "the Tomb Tree",
+   "at": "tomb",
+   "bearing": 270,
+   "age": 180
+  },
+  {
+   "year": -120,
+   "event": "avulsion",
+   "cause": "the Thorn broke out at the head of the fan and took the west way: the old channel below dried to a grass lane in a season",
+   "river": "thorn",
+   "breach": "breach",
+   "old_bed": "shore_sand",
+   "silt": "shore_sand",
+   "silt_thick": 0.5,
+   "path": [
+    [
+     760,
+     790
+    ],
+    [
+     640,
+     830
+    ],
+    [
+     540,
+     890
+    ],
+    [
+     450,
+     950
+    ],
+    [
+     370,
+     1020
+    ]
+   ]
+  },
+  {
+   "year": -90,
+   "event": "region",
+   "cause": "the Spread: the fan of channels and sand islands the river ends in",
+   "name": "spread",
+   "at": "spread",
+   "radius": 470
+  },
+  {
+   "year": -90,
+   "event": "region",
+   "cause": "the White Pans, the old lake floor",
+   "name": "pans",
+   "at": "pans",
+   "radius": 310
+  },
+  {
+   "year": -90,
+   "event": "region",
+   "cause": "the Green Bank: closed forest on the shaded side of the upper river",
+   "name": "green_bank",
+   "at": [
+    1062,
+    286
+   ],
+   "radius": 250
+  },
+  {
+   "year": -60,
+   "event": "fire",
+   "cause": "a dry-season grass fire south of the Spread, run out by the afternoon wind; the bee-eaters followed it",
+   "at": [
+    760,
+    1060
+   ],
+   "radius": 180,
+   "wind_bearing": 120,
+   "stretch": 1.8,
+   "char": "charcoal"
+  },
+  {
+   "year": -30,
+   "event": "place",
+   "cause": "the Council Tree: the hollow baobab Sedge meets in",
+   "structure": "hollow_baobab",
+   "at": [
+    592,
+    884
+   ],
+   "face": "sedge"
+  },
+  {
+   "year": -30,
+   "event": "place",
+   "cause": "the Cistern Tree, on the rise above Longwater, kept full against the end of the dry",
+   "structure": "baobab_cistern",
+   "poi": "the Cistern Tree",
+   "at": [
+    1108,
+    492
+   ],
+   "face": "longwater"
+  },
+  {
+   "year": -22,
+   "event": "place",
+   "cause": "a sea-going hull on her beam ends on the salt, masts still up, in a country with no sea",
+   "structure": "careened_hull",
+   "at": [
+    300,
+    1230
+   ],
+   "bearing": 40,
+   "age": 400,
+   "poi": "the Careen"
+  },
+  {
+   "year": -22,
+   "event": "place",
+   "cause": "a hull broken in the reeds, barnacled to the rail; the fishing camp is built against it",
+   "structure": "wreck_ribs",
+   "at": [
+    648,
+    1004
+   ],
+   "bearing": 110,
+   "poi": "the Barnacle"
+  },
+  {
+   "year": -22,
+   "event": "place",
+   "cause": "a third hull on her side in the flood meadows, the cattle rub on her",
+   "structure": "wreck_ribs",
+   "at": [
+    700,
+    806
+   ],
+   "bearing": 20,
+   "poi": "the Ribs"
+  },
+  {
+   "year": -20,
+   "event": "place",
+   "cause": "fifteen metres of cut bank with a thousand nest holes in it: the carmine bee-eater colony",
+   "structure": "bee_bank",
+   "poi": "the bee-eater bank",
+   "at": "bee_bend",
+   "bearing": 270
+  },
+  {
+   "year": -20,
+   "event": "place",
+   "cause": "a mokoro drawn up at a landing",
+   "structure": "mokoro",
+   "at": [
+    566,
+    898
+   ],
+   "bearing": 200
+  },
+  {
+   "year": -20,
+   "event": "place",
+   "cause": "a mokoro drawn up at a landing",
+   "structure": "mokoro",
+   "at": [
+    574,
+    902
+   ],
+   "bearing": 210
+  },
+  {
+   "year": -20,
+   "event": "place",
+   "cause": "a mokoro drawn up at a landing",
+   "structure": "mokoro",
+   "at": [
+    582,
+    906
+   ],
+   "bearing": 220
+  },
+  {
+   "year": -20,
+   "event": "place",
+   "cause": "a mokoro drawn up at a landing",
+   "structure": "mokoro",
+   "at": [
+    1126,
+    478
+   ],
+   "bearing": 160
+  },
+  {
+   "year": -20,
+   "event": "place",
+   "cause": "a mokoro drawn up at a landing",
+   "structure": "mokoro",
+   "at": [
+    636,
+    996
+   ],
+   "bearing": 140
+  },
+  {
+   "year": -20,
+   "event": "place",
+   "cause": "the flood post at Sedge's landing, the years cut into it",
+   "structure": "flood_post",
+   "at": [
+    570,
+    892
+   ],
+   "bearing": 200
+  },
+  {
+   "year": -20,
+   "event": "place",
+   "cause": "the flood post at Longwater's landing",
+   "structure": "flood_post",
+   "at": [
+    1130,
+    470
+   ],
+   "bearing": 160
+  },
+  {
+   "year": -5,
+   "event": "place",
+   "cause": "the lake coming back: a hull standing in open water on the pan, seen only from a distance and only before sunset",
+   "structure": "careened_hull",
+   "at": [
+    196,
+    1150
+   ],
+   "bearing": 70,
+   "when": {
+    "far": 320,
+    "hours": [
+     16.4,
+     19.0
+    ]
+   },
+   "poi": "the lake coming back"
+  },
+  {
+   "year": -5,
+   "event": "place",
+   "cause": "another of them, further out on the salt",
+   "structure": "wreck_ribs",
+   "at": [
+    330,
+    1300
+   ],
+   "bearing": 150,
+   "when": {
+    "far": 280,
+    "hours": [
+     16.4,
+     19.0
+    ]
+   }
+  },
+  {
+   "year": -1,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "The Narrows",
+   "kind": "valley",
+   "at": [
+    1000,
+    600
+   ],
+   "radius": 200
+  },
+  {
+   "year": -1,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "The Green Bank",
+   "kind": "forest",
+   "at": [
+    1080,
+    300
+   ],
+   "radius": 210
+  },
+  {
+   "year": -1,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "The Dry Bank",
+   "kind": "grassland",
+   "at": [
+    1290,
+    560
+   ],
+   "radius": 240
+  },
+  {
+   "year": -1,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "The Spread",
+   "kind": "delta",
+   "at": [
+    520,
+    900
+   ],
+   "radius": 430
+  },
+  {
+   "year": -1,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "The White Pans",
+   "kind": "pan",
+   "at": [
+    250,
+    1200
+   ],
+   "radius": 300
+  },
+  {
+   "year": -1,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "Lamp Kopje",
+   "kind": "hill",
+   "at": [
+    900,
+    1120
+   ],
+   "radius": 90
+  },
+  {
+   "year": -1,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "Sedge",
+   "kind": "village",
+   "at": [
+    560,
+    860
+   ],
+   "radius": 80
+  },
+  {
+   "year": -1,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "Longwater",
+   "kind": "village",
+   "at": [
+    1140,
+    450
+   ],
+   "radius": 86
+  },
+  {
+   "year": -1,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "Barnacle Camp",
+   "kind": "camp",
+   "at": [
+    612,
+    986
+   ],
+   "radius": 46
+  },
+  {
+   "year": -1,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "The Stacks",
+   "kind": "hills",
+   "at": [
+    1250,
+    880
+   ],
+   "radius": 280
+  },
+  {
+   "year": -40,
+   "cause": "Sedge, strung along the spine of the biggest island in the Spread: one lane down the sand with the round houses either side of it, and short lanes off it to the water",
+   "event": "village",
+   "name": "sedge",
+   "at": [
+    548,
+    840
+   ],
+   "radius": 58,
+   "layout": "linear",
+   "bearing": 58,
+   "block": 20,
+   "spacing": 11,
+   "setback": 2.0,
+   "street": "sand_lane",
+   "lane": "footpath",
+   "houses": 9,
+   "buildings": [
+    "round_house",
+    "round_house_small",
+    "round_house",
+    "granary",
+    "round_house_small"
+   ],
+   "walk": "path_dirt",
+   "slots": {
+    "wall": "daub",
+    "roof": "thatch"
+   },
+   "extras": [
+    {
+     "structure": "drying_rack",
+     "count": 1,
+     "near": "edge"
+    }
+   ],
+   "plot": 3.5
+  },
+  {
+   "year": -40,
+   "cause": "Longwater, upstream on the open bank where the cattle are: lanes that grew rather than were laid, and the stock ground hurdled off above the village",
+   "event": "village",
+   "name": "longwater",
+   "at": "longwater",
+   "radius": 84,
+   "layout": "organic",
+   "bearing": 35,
+   "spacing": 17,
+   "setback": 3,
+   "street": "cattle_track",
+   "lane": "footpath",
+   "houses": 7,
+   "buildings": [
+    "round_house",
+    "round_house_small",
+    "granary",
+    "round_house",
+    "round_house_small"
+   ],
+   "walk": "path_dirt",
+   "slots": {
+    "wall": "daub",
+    "roof": "thatch"
+   },
+   "extras": [
+    {
+     "structure": "stock_pen",
+     "count": 2,
+     "near": "edge"
+    }
+   ],
+   "plot": 4.5
+  },
+  {
+   "year": -39,
+   "cause": "the hurdles round Longwater's stock ground, moved every few years and so never quite a circle",
+   "event": "ribbon",
+   "kit": "hurdle_run",
+   "closed": true,
+   "meander": 4,
+   "path": [
+    [
+     1196,
+     402
+    ],
+    [
+     1252,
+     420
+    ],
+    [
+     1268,
+     474
+    ],
+    [
+     1226,
+     512
+    ],
+    [
+     1176,
+     486
+    ],
+    [
+     1162,
+     436
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "Barnacle Camp, a fishing camp on a lower channel, built against the hull of the broken ship: one path along the bank with the sheds on it",
+   "event": "village",
+   "name": "camp",
+   "at": "camp",
+   "radius": 38,
+   "layout": "linear",
+   "bearing": 60,
+   "block": 16,
+   "spacing": 13,
+   "setback": 2.5,
+   "street": "footpath",
+   "houses": 3,
+   "buildings": [
+    "net_shed",
+    "round_house_small",
+    "net_shed"
+   ],
+   "walk": "path_dirt",
+   "slots": {
+    "wall": "daub",
+    "roof": "thatch"
+   },
+   "extras": [
+    {
+     "structure": "drying_rack",
+     "count": 2,
+     "near": "centre"
+    }
+   ],
+   "plot": 4.0
+  },
+  {
+   "year": -20,
+   "cause": "the bank trail: the cattle road down the dry side from Longwater to the Narrows, and the walk out to the bee-eater bank",
+   "event": "network",
+   "nodes": {
+    "lw": "longwater",
+    "cistern": [
+     1108,
+     492
+    ],
+    "rim": "narrows_rim",
+    "bees": "bee_bend"
+   },
+   "links": [
+    {
+     "from": "lw",
+     "to": "cistern",
+     "kit": "footpath"
+    },
+    {
+     "from": "cistern",
+     "to": "rim",
+     "kit": "cattle_track"
+    },
+    {
+     "from": "rim",
+     "to": "bees",
+     "kit": "footpath"
+    }
+   ],
+   "terms": {
+    "grade": 0.3,
+    "water": 14.0,
+    "wade": 0.6
+   }
+  },
+  {
+   "year": -20,
+   "cause": "Sedge's own paths: down to the landing where the mokoros are drawn up, and across to the Council Tree",
+   "event": "network",
+   "nodes": {
+    "village": "sedge",
+    "landing": [
+     568,
+     896
+    ],
+    "council": [
+     592,
+     884
+    ]
+   },
+   "links": [
+    {
+     "from": "village",
+     "to": "landing",
+     "kit": "footpath"
+    },
+    {
+     "from": "village",
+     "to": "council",
+     "kit": "footpath"
+    }
+   ],
+   "terms": {
+    "grade": 0.45,
+    "water": 14.0,
+    "wade": 0.6
+   }
+  },
+  {
+   "year": -20,
+   "cause": "the path from Barnacle Camp out along the reeds to the wreck it is built against",
+   "event": "route",
+   "from": "camp",
+   "to": [
+    644,
+    1002
+   ],
+   "kit": "footpath",
+   "terms": {
+    "grade": 0.45,
+    "water": 14.0,
+    "wade": 0.6
+   }
+  },
+  {
+   "year": -18,
+   "cause": "the salt road: the way across the dry pan from the Tomb Tree out to the Careen, walked only in the dry",
+   "event": "route",
+   "from": "tomb",
+   "to": [
+    304,
+    1234
+   ],
+   "kit": "cattle_track",
+   "terms": {
+    "grade": 0.2,
+    "water": 14.0,
+    "wade": 0.6
+   },
+   "poi": "the salt road"
+  },
+  {
+   "year": -3000,
+   "cause": "the Thorn, down the trough and out into the Spread, which is as far as any water in this country goes: the line it found down the low ground, through the gate and the narrows on its way",
+   "event": "watercourse",
+   "name": "thorn",
+   "from": "source",
+   "to": [
+    470,
+    1000
+   ],
+   "via": [
+    "gate",
+    [
+     1120,
+     430
+    ],
+    "narrows",
+    [
+     880,
+     700
+    ]
+   ],
+   "width": 26,
+   "depth": 3.2,
+   "bed": "shore_sand",
+   "bank": "shore_sand",
+   "meander": 16,
+   "floor": 2.4,
+   "terms": {
+    "step": 4,
+    "max_climb": 0.5
+   }
+  },
+  {
+   "year": -100,
+   "cause": "the Spread itself: the channels the Thorn breaks into below the head pool, each one finding its own way down the fan until the flood takes it",
+   "event": "watercourse",
+   "name": "spread_main",
+   "from": [
+    812,
+    752
+   ],
+   "to": [
+    545,
+    1300
+   ],
+   "width": 11,
+   "depth": 1.7,
+   "bed": "shore_sand",
+   "bank": "shore_sand",
+   "meander": 12,
+   "branches": [
+    {
+     "name": "spread_far",
+     "to": [
+      762,
+      1040
+     ],
+     "at": 0.05,
+     "width": 8,
+     "depth": 1.3
+    },
+    {
+     "name": "spread_east",
+     "to": [
+      650,
+      1230
+     ],
+     "at": 0.12,
+     "width": 8,
+     "depth": 1.3
+    },
+    {
+     "name": "spread_west",
+     "to": [
+      210,
+      950
+     ],
+     "at": 0.2,
+     "width": 9,
+     "depth": 1.4,
+     "meander": 13
+    },
+    {
+     "name": "spread_low",
+     "to": [
+      440,
+      1370
+     ],
+     "at": 0.45,
+     "width": 7,
+     "depth": 1.2
+    }
+   ],
+   "terms": {
+    "step": 4,
+    "max_climb": 0.45
+   }
+  }
+ ]
+}

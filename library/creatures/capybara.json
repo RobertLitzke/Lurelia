@@ -1,0 +1,63 @@
+{
+  "name": "capybara",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Capybara: the biggest rodent, a russet barrel with a blunt square head and no tail. Families graze the river banks and slip into the water rather than run far; very calm about people.",
+  "voxel": 0.042,
+  "half_w": 0.26,
+  "height": 0.6,
+  "colors": {
+    "coat": [150, 98, 60],
+    "belly": [128, 96, 60],
+    "mane": [128, 96, 60],
+    "nose": [36, 28, 24],
+    "tusk": [36, 28, 24],
+    "dark": [36, 28, 24]
+  },
+  "behaviour": {
+    "movement": "wade",
+    "walk_speed": 0.6,
+    "flee_speed": 4.0,
+    "wary": 5,
+    "flightiness": 0.9,
+    "juvenile_flightiness": 1.2,
+    "group": {"size": [2, 6], "spacing": 1.6, "range": 10, "alignment": 1.0, "cohesion": 1.2}
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 11, 17], "radius": [4.2, 4.4, 8.5], "mat": "coat"},
+    {"op": "ellipsoid", "centre": [16, 12, 12], "radius": [4.4, 5.0, 4.0], "mat": "coat"},
+    {"op": "recolour_below", "y": 8, "from": "coat", "to": "belly"},
+    {"op": "box", "from": [15, 15, 9], "to": [17, 17, 20], "mat": "mane"},
+    {"op": "box", "from": [13, 8, 6], "to": [19, 15, 10], "mat": "coat", "part": "neck"},
+    {"op": "ellipsoid", "centre": [16, 10, 5], "radius": [2.8, 3.0, 3.4], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [13, 7, 1], "to": [19, 12, 4], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [14, 9, 1], "to": [18, 11, 2], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [13, 12, 4], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [18, 12, 4], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [13, 13, 5], "to": [14, 14, 7], "mat": "coat", "part": "ear_l"},
+    {"op": "box", "from": [18, 13, 5], "to": [19, 14, 7], "mat": "coat", "part": "ear_r"},
+    {"op": "box", "from": [13, 2, 11], "to": [15, 8, 13], "mat": "coat", "part": "leg_fl"},
+    {"op": "box", "from": [13, 0, 11], "to": [15, 2, 13], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [17, 2, 11], "to": [19, 8, 13], "mat": "coat", "part": "leg_fr"},
+    {"op": "box", "from": [17, 0, 11], "to": [19, 2, 13], "mat": "dark", "part": "leg_fr"},
+    {"op": "box", "from": [13, 2, 21], "to": [15, 8, 23], "mat": "coat", "part": "leg_hl"},
+    {"op": "box", "from": [13, 0, 21], "to": [15, 2, 23], "mat": "dark", "part": "leg_hl"},
+    {"op": "box", "from": [17, 2, 21], "to": [19, 8, 23], "mat": "coat", "part": "leg_hr"},
+    {"op": "box", "from": [17, 0, 21], "to": [19, 2, 23], "mat": "dark", "part": "leg_hr"}
+  ],
+  "like": "boar",
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16, 11, 9.5]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16, 11, 7]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [13.5, 13, 6], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [18.5, 13, 6], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14, 8, 12], "side": "l", "pair": 0},
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [18, 8, 12], "side": "r", "pair": 0},
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14, 8, 22], "side": "l", "pair": 1},
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [18, 8, 22], "side": "r", "pair": 1}
+    ]
+  }
+}

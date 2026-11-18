@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catalogue</title>
+<style>
+:root {
+  --bg: #f4f2ee; --panel: #fff; --ink: #222; --dim: #6b675f; --line: #ddd8cf;
+  --accent: #2f6f8f; --good: #3d8b4f; --fix: #c08a1e; --bad: #b5463c; --chip: #ece8e0;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #17181a; --panel: #212326; --ink: #e6e3dd; --dim: #9a958c; --line: #34363a;
+    --accent: #6fb2d2; --good: #69b67b; --fix: #e0b24f; --bad: #e07a6f; --chip: #2d3034; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 system-ui, sans-serif; }
+header { position: sticky; top: 0; z-index: 5; background: var(--panel); border-bottom: 1px solid var(--line);
+  padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+header h1 { font-size: 16px; margin: 0; }
+header .tabs button, header .act { border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+  padding: 3px 9px; border-radius: 4px; cursor: pointer; font: inherit; }
+header .tabs button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+header input[type=search] { padding: 3px 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--ink); width: 160px; }
+header .count { color: var(--dim); }
+header .keys { color: var(--dim); font-size: 12px; width: 100%; }
+kbd { border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; font-size: 11px; background: var(--bg); }
+main { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; padding: 16px; max-width: 1700px; margin: 0 auto; }
+@media (max-width: 900px) { main { grid-template-columns: 1fr; } aside { display: none; } }
+aside { position: sticky; top: 90px; align-self: start; }
+.map { position: relative; width: 100%; aspect-ratio: 1; background: var(--panel); border: 1px solid var(--line); }
+.map img { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+.map .dot { position: absolute; width: 7px; height: 7px; margin: -3.5px; border-radius: 50%; background: #fff; border: 1px solid #000; opacity: .55; }
+.map .dot.cur { width: 14px; height: 14px; margin: -7px; background: #ff3b30; opacity: 1; border: 2px solid #fff; }
+aside p { color: var(--dim); font-size: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: 4px; padding: 10px 12px; margin-bottom: 14px; scroll-margin-top: 100px; }
+.card.cur { outline: 2px solid var(--accent); }
+.card.r-good { border-left-color: var(--good); } .card.r-fix { border-left-color: var(--fix); } .card.r-bad { border-left-color: var(--bad); }
+.card h2 { font-size: 16px; margin: 0 0 6px; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.card h2 .kind { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--dim); font-weight: 500; }
+.card h2 .file { font-size: 11px; color: var(--dim); font-weight: 400; font-family: ui-monospace, monospace; }
+.card h2 .newer { font-size: 11px; color: var(--fix); font-weight: 500; }
+.shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px; }
+.shots figure { margin: 0; }
+.shots img { width: 100%; display: block; border-radius: 3px; cursor: zoom-in; background: var(--chip); }
+.shots figcaption { color: var(--dim); font-size: 12px; }
+.notes { margin: 6px 0; }
+.note-warn { color: var(--bad); }
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: 1px 10px; font-size: 13px; margin: 6px 0; }
+.facts dt { color: var(--dim); } .facts dd { margin: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+.chip { background: var(--chip); border-radius: 10px; padding: 1px 8px; font-size: 12px; }
+.chip b { font-weight: 600; }
+.sw { display: inline-block; width: 11px; height: 11px; border-radius: 2px; vertical-align: -1px; margin-right: 3px; border: 1px solid rgba(0,0,0,.3); }
+details { font-size: 12px; } details pre { white-space: pre-wrap; max-height: 300px; overflow: auto; background: var(--bg); padding: 6px; }
+.fb { display: flex; gap: 6px; align-items: flex-start; margin-top: 8px; }
+.fb button { border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 4px; padding: 3px 9px; cursor: pointer; font: inherit; }
+.fb button.on.good { background: var(--good); color: #fff; } .fb button.on.fix { background: var(--fix); color: #111; } .fb button.on.bad { background: var(--bad); color: #fff; }
+.fb textarea { flex: 1; min-height: 32px; resize: vertical; font: inherit; padding: 4px 6px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--ink); }
+#lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.88); display: none; align-items: center; justify-content: center; z-index: 20; cursor: zoom-out; }
+#lightbox img { max-width: 96vw; max-height: 92vh; }
+#lightbox span { position: absolute; bottom: 12px; color: #ddd; }
+#toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 6px 12px; border-radius: 4px; display: none; z-index: 30; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">Catalogue</h1>
+  <div class="tabs" id="tabs"></div>
+  <input type="search" id="q" placeholder="filter by name ( / )">
+  <label><input type="checkbox" id="todo"> unrated only</label>
+  <span class="count" id="count"></span>
+  <button class="act" id="copy">Copy feedback</button>
+  <button class="act" id="save">Download .md</button>
+  <button class="act" id="clear">Clear</button>
+  <div class="keys"><kbd>j</kbd>/<kbd>k</kbd> next/previous · <kbd>1</kbd> good <kbd>2</kbd> needs work <kbd>3</kbd> bad <kbd>0</kbd> unrate · <kbd>n</kbd> or <kbd>Enter</kbd> write a note, <kbd>Esc</kbd> leave it · <kbd>v</kbd> view pictures large · <kbd>/</kbd> filter</div>
+</header>
+<main>
+  <section id="list"></section>
+  <aside>
+    <div class="map" id="map"><img src="map.png" alt="World map"></div>
+    <p id="mapnote">Red: the entry in focus. Grey: every other entry's spot.</p>
+  </aside>
+</main>
+<div id="lightbox"><img alt=""><span></span></div>
+<div id="toast"></div>
+<script src="catalog.js"></script>
+<script>
+const C = window.CATALOG || { world: '?', entries: [] };
+const KEY = 'catalog-feedback:' + C.world;
+const RATES = { good: 'good', fix: 'needs work', bad: 'bad' };
+const KINDS = ['all', 'biomes', 'plants', 'creatures', 'finds'];
+let fb = {};
+try { fb = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(fb)); } catch (e) {} };
+const id = e => e.kind + '/' + e.name;
+let kind = 'all', cur = 0, shown = [];
+try { kind = localStorage.getItem(KEY + ':tab') || 'all'; } catch (e) {}
+
+document.title = 'Catalogue: ' + C.world;
+document.getElementById('title').textContent = C.world + ' catalogue';
+const gen = new Date((C.generated || 0) * 1000);
+
+// Library settings as chips: scalars as key: value, true flags as the bare
+// key, ranges as a-b, lists of objects by their first name-like field.
+const SKIP = new Set(['name', 'version', 'introduced_by', 'notes', '_file', 'colors', 'map_color']);
+function fmt(v) {
+  if (Array.isArray(v)) {
+    if (v.every(x => typeof x === 'number')) return v.length === 2 ? v[0] + '–' + v[1] : v.join(', ');
+    if (v.every(x => typeof x !== 'object')) return v.join(', ');
+    return v.map(x => {
+      if (x && typeof x === 'object') {
+        const n = Object.values(x).find(y => typeof y === 'string');
+        const num = Object.entries(x).find(([k, y]) => typeof y === 'number');
+        return (n || '?') + (num ? ' ' + num[1] : '');
+      }
+      return String(x);
+    }).join(', ');
+  }
+  if (v && typeof v === 'object') return Object.entries(v).map(([k, y]) => k + ' ' + fmt(y)).join(', ');
+  return String(v);
+}
+function chips(obj, prefix, out) {
+  for (const [k, v] of Object.entries(obj || {})) {
+    if (!prefix && SKIP.has(k)) continue;
+    const key = prefix ? k : k;
+    if (v === true) out.push(`<span class="chip"><b>${esc(key)}</b></span>`);
+    else if (v === false || v === null) continue;
+    else if (v && typeof v === 'object' && !Array.isArray(v) && !prefix && Object.values(v).some(x => typeof x !== 'object' || Array.isArray(x))) chips(v, k, out);
+    else out.push(`<span class="chip">${esc(key)}: <b>${esc(fmt(v))}</b></span>`);
+  }
+  return out;
+}
+function swatches(entry) {
+  const c = entry && (entry.colors || (entry.map_color ? { map: entry.map_color } : null));
+  if (!c) return '';
+  return '<div class="chips">' + Object.entries(c).map(([k, v]) => Array.isArray(v) && v.length >= 3
+    ? `<span class="chip"><span class="sw" style="background:rgb(${v[0]},${v[1]},${v[2]})"></span>${esc(k)}</span>` : '').join('') + '</div>';
+}
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+function tabs() {
+  const el = document.getElementById('tabs');
+  el.innerHTML = KINDS.map(k => {
+    const n = k === 'all' ? C.entries.length : C.entries.filter(e => e.kind === k).length;
+    return n || k === 'all' ? `<button data-k="${k}" class="${k === kind ? 'on' : ''}">${k} ${n}</button>` : '';
+  }).join(' ');
+  el.querySelectorAll('button').forEach(b => b.onclick = () => { kind = b.dataset.k; try { localStorage.setItem(KEY + ':tab', kind); } catch (e) {} cur = 0; render(); });
+}
+
+function card(e, i) {
+  const f = fb[id(e)] || {};
+  const en = e.entry || {};
+  const newer = f.t && e.stamp && e.stamp * 1000 > f.t ? '<span class="newer">re-rendered since your note</span>' : '';
+  const shots = (e.shots || []).map((s, k) => `<figure><img loading="lazy" src="${esc(s.file)}?v=${e.stamp}" data-i="${i}" data-k="${k}" alt="${esc(e.name)}, ${esc(s.label)}"><figcaption>${esc(s.label)}</figcaption></figure>`).join('');
+  const facts = (e.facts || []).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
+  const ch = chips(en, '', []).join('');
+  return `<article class="card ${f.r ? 'r-' + f.r : ''} ${i === cur ? 'cur' : ''}" data-i="${i}">
+    <h2><span class="kind">${esc(e.kind)}</span>${esc(e.name)}${en._file ? `<span class="file">${esc(en._file)}</span>` : ''}${newer}</h2>
+    ${en.notes ? `<div class="notes">${esc(en.notes)}</div>` : ''}
+    ${e.note ? `<div class="notes note-warn">${esc(e.note)}</div>` : ''}
+    ${shots ? `<div class="shots">${shots}</div>` : ''}
+    ${facts ? `<dl class="facts">${facts}</dl>` : ''}
+    ${ch ? `<div class="chips">${ch}</div>` : ''}
+    ${swatches(en)}
+    ${e.entry ? `<details><summary>library entry</summary><pre>${esc(JSON.stringify(en, null, 1))}</pre></details>` : ''}
+    <div class="fb">
+      ${Object.entries(RATES).map(([r, l], k) => `<button class="${r} ${f.r === r ? 'on' : ''}" data-r="${r}" title="key ${k + 1}">${l}</button>`).join('')}
+      <textarea placeholder="note (n)" rows="1">${esc(f.note || '')}</textarea>
+    </div>
+  </article>`;
+}
+
+function render() {
+  tabs();
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const todo = document.getElementById('todo').checked;
+  shown = C.entries.filter(e => (kind === 'all' || e.kind === kind) && (!q || e.name.toLowerCase().includes(q)) && (!todo || !(fb[id(e)] || {}).r));
+  cur = Math.min(cur, Math.max(0, shown.length - 1));
+  const list = document.getElementById('list');
+  list.innerHTML = shown.map(card).join('') || '<p>Nothing to show.</p>';
+  list.querySelectorAll('.card').forEach(el => {
+    const i = +el.dataset.i, e = shown[i];
+    el.addEventListener('click', ev => { if (cur !== i) { cur = i; mark(false); } });
+    el.querySelectorAll('.fb button').forEach(b => b.onclick = () => rate(i, b.dataset.r));
+    const ta = el.querySelector('textarea');
+    ta.addEventListener('input', () => { const f = fb[id(e)] = fb[id(e)] || {}; f.note = ta.value; f.t = Date.now(); persist(); counts(); });
+    el.querySelectorAll('.shots img').forEach(img => img.onclick = () => lightbox(+img.dataset.i, +img.dataset.k));
+  });
+  counts();
+  dots();
+  mark(false);
+}
+
+function counts() {
+  const done = C.entries.filter(e => (fb[id(e)] || {}).r || (fb[id(e)] || {}).note).length;
+  document.getElementById('count').textContent = `${done}/${C.entries.length} reviewed · rendered ${gen.toLocaleString()} at ${(+C.hour).toFixed(1)} h`;
+}
+
+function dots() {
+  const map = document.getElementById('map');
+  map.querySelectorAll('.dot').forEach(d => d.remove());
+  shown.forEach((e, i) => {
+    if (!e.at) return;
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.dataset.i = i;
+    d.style.left = (100 * e.at[0] / C.size_m) + '%';
+    d.style.top = (100 * e.at[1] / C.size_m) + '%';
+    d.title = e.name;
+    d.onclick = () => { cur = i; mark(true); };
+    map.appendChild(d);
+  });
+}
+
+function mark(scroll) {
+  document.querySelectorAll('.card').forEach(el => el.classList.toggle('cur', +el.dataset.i === cur));
+  document.querySelectorAll('.map .dot').forEach(d => d.classList.toggle('cur', +d.dataset.i === cur));
+  const el = document.querySelector(`.card[data-i="${cur}"]`);
+  if (scroll && el) el.scrollIntoView({ block: 'start', behavior: 'instant' });
+}
+
+function rate(i, r) {
+  const e = shown[i];
+  const f = fb[id(e)] = fb[id(e)] || {};
+  f.r = f.r === r ? undefined : r;
+  f.t = Date.now();
+  persist();
+  const el = document.querySelector(`.card[data-i="${i}"]`);
+  el.classList.remove('r-good', 'r-fix', 'r-bad');
+  if (f.r) el.classList.add('r-' + f.r);
+  el.querySelectorAll('.fb button').forEach(b => b.classList.toggle('on', b.dataset.r === f.r));
+  counts();
+}
+
+let lb = null;
+function lightbox(i, k) {
+  const e = shown[i];
+  if (!e || !e.shots || !e.shots.length) return;
+  k = (k + e.shots.length) % e.shots.length;
+  lb = { i, k };
+  const box = document.getElementById('lightbox');
+  box.querySelector('img').src = e.shots[k].file + '?v=' + e.stamp;
+  box.querySelector('span').textContent = `${e.name}: ${e.shots[k].label} (v or arrows for the next, Esc to close)`;
+  box.style.display = 'flex';
+}
+function closeLb() { document.getElementById('lightbox').style.display = 'none'; lb = null; }
+document.getElementById('lightbox').onclick = closeLb;
+
+function markdown() {
+  const lines = [`# Catalogue feedback: ${C.world}`, '', `Rendered ${gen.toLocaleString()}.`];
+  for (const k of KINDS.slice(1)) {
+    const items = C.entries.filter(e => e.kind === k && fb[id(e)] && (fb[id(e)].r || (fb[id(e)].note || '').trim()));
+    if (!items.length) continue;
+    lines.push('', `## ${k}`, '');
+    for (const e of items) {
+      const f = fb[id(e)];
+      const file = e.entry && e.entry._file ? ` (${e.entry._file})` : '';
+      lines.push(`- **${e.name}**${file}: ${f.r ? RATES[f.r] : 'note'}${(f.note || '').trim() ? ' - ' + f.note.trim().replace(/\n+/g, ' / ') : ''}`);
+    }
+  }
+  return lines.join('\n') + '\n';
+}
+function toast(t) { const el = document.getElementById('toast'); el.textContent = t; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 1800); }
+document.getElementById('copy').onclick = () => {
+  const md = markdown();
+  navigator.clipboard.writeText(md).then(() => toast('Copied, paste it into the chat'), () => { prompt('Copy this:', md); });
+};
+document.getElementById('save').onclick = () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([markdown()], { type: 'text/markdown' }));
+  a.download = `catalogue-feedback-${C.world}.md`;
+  a.click();
+};
+document.getElementById('clear').onclick = () => { if (confirm('Clear every rating and note for ' + C.world + '?')) { fb = {}; persist(); render(); } };
+document.getElementById('q').oninput = () => { cur = 0; render(); };
+document.getElementById('todo').onchange = () => { cur = 0; render(); };
+
+document.addEventListener('keydown', ev => {
+  const t = ev.target;
+  if (lb) {
+    if (ev.key === 'Escape') closeLb();
+    else if (ev.key === 'v' || ev.key === 'ArrowRight') lightbox(lb.i, lb.k + 1);
+    else if (ev.key === 'ArrowLeft') lightbox(lb.i, lb.k - 1);
+    else if (ev.key === 'j' || ev.key === 'k') { closeLb(); } else return;
+    ev.preventDefault();
+    return;
+  }
+  if (t.tagName === 'TEXTAREA' || t.tagName === 'INPUT') {
+    if (ev.key === 'Escape') t.blur();
+    return;
+  }
+  if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
+  const go = d => { cur = Math.max(0, Math.min(shown.length - 1, cur + d)); mark(true); };
+  switch (ev.key) {
+    case 'j': case 'ArrowDown': go(1); break;
+    case 'k': case 'ArrowUp': go(-1); break;
+    case '1': rate(cur, 'good'); break;
+    case '2': rate(cur, 'fix'); break;
+    case '3': rate(cur, 'bad'); break;
+    case '0': { const e = shown[cur]; if (fb[id(e)]) { delete fb[id(e)].r; persist(); render(); } break; }
+    case 'n': case 'Enter': { const ta = document.querySelector(`.card[data-i="${cur}"] textarea`); if (ta) ta.focus(); break; }
+    case 'v': lightbox(cur, 0); break;
+    case '/': document.getElementById('q').focus(); break;
+    default: return;
+  }
+  ev.preventDefault();
+});
+render();
+</script>
+</body>
+</html>

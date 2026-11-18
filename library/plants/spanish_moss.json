@@ -1,0 +1,14 @@
+{
+  "name": "spanish_moss",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Spanish moss: grey beards hanging from the crowns of the live oaks and cypress.",
+  "form": "vine",
+  "height": [1.0, 2.8],
+  "trunk_radius": [0.0, 0.0],
+  "crown_radius": [1.0, 2.0],
+  "bark": "spanish_moss",
+  "leaf": "spanish_moss",
+  "max_slope": 9,
+  "hosts": ["tree"]
+}

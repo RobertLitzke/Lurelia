@@ -1,0 +1,17 @@
+{
+  "name": "fae_cobbles",
+  "version": 1,
+  "introduced_by": "faerie",
+  "notes": "Old cobbles with moss in every joint, where the asphalt was.",
+  "id": 183,
+  "smooth": true,
+  "crisp": true,
+  "texture": {
+    "pattern": "coursed",
+    "base": [106, 112, 100],
+    "alt": [86, 110, 70],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [118, 124, 112], "alt": [96, 122, 78]}
+  }
+}

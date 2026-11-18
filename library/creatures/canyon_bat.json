@@ -1,0 +1,10 @@
+{
+  "name": "canyon_bat",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Canyon bat: the smallest of them, pale sandy over a black face, out early in the evening along the rims and over the pools.",
+  "colors": {"body": [196, 170, 128], "membrane": [60, 48, 44], "ear": [36, 28, 24]},
+  "behaviour": {"walk_speed": 4.0, "wary": 6, "fly_height": 4.0, "wingbeat": 10.0},
+  "like": "bat",
+  "scale": 0.8
+}

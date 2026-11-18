@@ -1,0 +1,13 @@
+{
+  "name": "flat_rock",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A low slab of rock.",
+  "size": [22, 6, 16],
+  "anchor": [11, 0, 8],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"rock": "lichen_rock"},
+  "ops": [{"op": "ellipsoid", "centre": [11, 2.5, 8], "radius": [10, 3, 7], "mat": "rock"}]
+}

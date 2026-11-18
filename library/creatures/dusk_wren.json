@@ -1,0 +1,17 @@
+{
+  "name": "dusk_wren",
+  "version": 2,
+  "introduced_by": "faerie",
+  "notes": "A small jewel-coloured wren with a softly glowing crown. Flits between shrubs in small groups.",
+  "colors": {
+    "body": [58, 108, 120],
+    "head": [110, 82, 160],
+    "wing": [58, 108, 120],
+    "tail": [58, 108, 120],
+    "breast": [210, 196, 176],
+    "head_cap": [150, 230, 200, 1.2]
+  },
+  "behaviour": {"active": "crepuscular", "off_hours": 0.15},
+  "like": "sparrow",
+  "scale": 0.8
+}

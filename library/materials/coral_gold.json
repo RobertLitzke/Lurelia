@@ -1,0 +1,15 @@
+{
+  "name": "coral_gold",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Finger coral: mustard gold, bristling.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [216, 172, 62],
+    "alt": [192, 148, 50],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [222, 178, 68], "alt": [198, 154, 56]}
+  }
+}

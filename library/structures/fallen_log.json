@@ -1,0 +1,16 @@
+{
+  "name": "fallen_log",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A fallen trunk with its root plate.",
+  "size": [44, 10, 10],
+  "anchor": [22, 0, 5],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"wood": "dead_wood"},
+  "ops": [
+    {"op": "log", "base": [3, 3, 5], "radius": 2.4, "length": 40, "axis": "x", "mat": "wood"},
+    {"op": "disc", "centre": [2, 5, 5], "radius": 4.5, "thick": 2, "axis": "x", "mat": "wood"}
+  ]
+}

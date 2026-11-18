@@ -1,0 +1,15 @@
+{
+  "name": "turf_wall",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Turf walls: blocks of sod laid in herringbone courses on a stone footing.",
+  "smooth": false,
+  "texture": {
+    "pattern": "coursed",
+    "base": [98, 84, 62],
+    "alt": [80, 70, 52],
+    "scale": 5,
+    "contrast": 0.7,
+    "calm": {"base": [106, 92, 70], "alt": [88, 78, 60]}
+  }
+}

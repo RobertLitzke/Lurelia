@@ -1,0 +1,16 @@
+{
+  "name": "petrified_wood",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A chunk of log turned to stone, from the banded clay badlands.",
+  "display": "petrified wood",
+  "voxel": 0.022,
+  "colors": {"terracotta": [184, 96, 60], "cream": [236, 222, 196], "rabbit": [140, 118, 96]},
+  "ops": [
+    {"op": "log", "base": [7, 5, 16], "radius": 4.5, "length": 18, "axis": "x", "mat": "terracotta"},
+    {"op": "log", "base": [7, 5, 16], "radius": 2.6, "length": 18, "axis": "x", "mat": "cream"},
+    {"op": "log", "base": [7, 5, 16], "radius": 1.2, "length": 18, "axis": "x", "mat": "rabbit"},
+    {"op": "box", "from": [7, 0, 10], "to": [8, 10, 22], "mat": "rabbit"},
+    {"op": "box", "from": [24, 0, 10], "to": [25, 10, 22], "mat": "terracotta"}
+  ]
+}

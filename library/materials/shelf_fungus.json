@@ -1,0 +1,16 @@
+{
+  "name": "shelf_fungus",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Bracket fungus: plain cream, a shade darker here and there, on the shelves that stand out from old trunks.",
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "flat",
+    "base": [206, 186, 148],
+    "alt": [190, 168, 130],
+    "scale": 2,
+    "contrast": 0.3,
+    "calm": {"base": [212, 194, 160], "alt": [198, 178, 144]}
+  }
+}

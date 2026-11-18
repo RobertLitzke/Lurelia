@@ -1,0 +1,15 @@
+{
+  "name": "plate_coral",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Plate coral: violet plates overlapping in a whorl, like a head of lettuce.",
+  "form": "coral_plate",
+  "height": [0.8, 1.4],
+  "trunk_radius": [0.1, 0.1],
+  "crown_radius": [0.9, 1.5],
+  "bark": "coral_violet",
+  "leaf": "coral_violet",
+  "max_slope": 1.4,
+  "water_depth": [2, 25],
+  "stems": [4, 7]
+}

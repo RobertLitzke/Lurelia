@@ -1,0 +1,5563 @@
+{
+ "places": {
+  "centre": [
+   616,
+   760
+  ],
+  "headwater": [
+   858,
+   170
+  ],
+  "breach": [
+   753,
+   360
+  ],
+  "old_lobe": [
+   248,
+   1110
+  ],
+  "swamp": [
+   228,
+   560
+  ],
+  "swamp_west": [
+   118,
+   760
+  ],
+  "tremblante": [
+   678,
+   930
+  ],
+  "sawgrass": [
+   1058,
+   560
+  ],
+  "mouth": [
+   998,
+   1190
+  ],
+  "lowmouth": [
+   488,
+   700
+  ],
+  "parish": [
+   288,
+   1030
+  ],
+  "crossroads": [
+   448,
+   250
+  ],
+  "landing": [
+   732,
+   300
+  ],
+  "light": [
+   548,
+   1298
+  ]
+ },
+ "events": [
+  {
+   "year": -6000,
+   "event": "landmass",
+   "cause": "the delta plain the river built out into the Gulf, mud on mud",
+   "centre": "centre",
+   "radius": 960,
+   "roughness": 0.35,
+   "hills": 2.5,
+   "ridges": 0,
+   "shelf": 1.4,
+   "edge_fall": 60,
+   "seed": 1
+  },
+  {
+   "year": -4000,
+   "event": "lake",
+   "cause": "Sorrow Lake, the old oxbow the Marrow drains out of on its way to the sea",
+   "name": "sorrow",
+   "at": "headwater",
+   "radius": 70,
+   "depth": 2.4,
+   "bed": "river_mud",
+   "bank": "river_mud",
+   "ragged": 0.35,
+   "stretch": 1.6,
+   "bearing": 60,
+   "seed": 2
+  },
+  {
+   "year": -110,
+   "event": "avulsion",
+   "cause": "the flood of the old century: the Marrow broke its bank above the parish and took the short way south-east",
+   "river": "marrow",
+   "breach": "breach",
+   "path": [
+    [
+     753,
+     360
+    ],
+    [
+     848,
+     520
+    ],
+    [
+     938,
+     640
+    ],
+    [
+     948,
+     800
+    ],
+    [
+     1028,
+     960
+    ],
+    [
+     1058,
+     1150
+    ],
+    [
+     1108,
+     1330
+    ],
+    [
+     1120,
+     1382
+    ]
+   ],
+   "old_bed": "river_mud",
+   "silt": "silt",
+   "silt_thick": 0.8,
+   "seed": 21
+  },
+  {
+   "year": -90,
+   "event": "subside",
+   "cause": "the old lobe, starved of silt, settling into the sea: the parish drowned with it",
+   "at": "old_lobe",
+   "radius": 280,
+   "stretch": 1.35,
+   "bearing": 25,
+   "level": [
+    1.1,
+    2.0
+   ],
+   "islands": 0.05,
+   "island_size": 40,
+   "ragged": 0.35,
+   "seed": 25
+  },
+  {
+   "year": -85,
+   "event": "subside",
+   "cause": "the back swamp behind the old channel sinking into black water among the cypress",
+   "at": "swamp",
+   "radius": 230,
+   "stretch": 1.5,
+   "bearing": 110,
+   "level": [
+    0.5,
+    1.4
+   ],
+   "islands": 0.4,
+   "island_size": 34,
+   "ragged": 0.4,
+   "seed": 26
+  },
+  {
+   "year": -85,
+   "event": "subside",
+   "cause": "the west swamp, the same sinking reaching out toward the sound",
+   "at": "swamp_west",
+   "radius": 150,
+   "stretch": 1.3,
+   "bearing": 170,
+   "level": [
+    0.6,
+    1.4
+   ],
+   "islands": 0.38,
+   "island_size": 30,
+   "ragged": 0.4,
+   "seed": 27
+  },
+  {
+   "year": -75,
+   "event": "subside",
+   "cause": "the trembling prairie between the rivers, a floating marsh over water a hand deep",
+   "at": "tremblante",
+   "radius": 120,
+   "stretch": 1.4,
+   "bearing": 60,
+   "level": [
+    0.1,
+    0.45
+   ],
+   "islands": 0.3,
+   "island_size": 26,
+   "ragged": 0.45,
+   "seed": 29
+  },
+  {
+   "year": -70,
+   "event": "subside",
+   "cause": "the flats east of the new river letting down into a sheet of sawgrass and shallow water",
+   "at": "sawgrass",
+   "radius": 210,
+   "stretch": 1.5,
+   "bearing": 10,
+   "level": [
+    0.35,
+    0.7
+   ],
+   "islands": 0.36,
+   "island_size": 50,
+   "grain": 90,
+   "ragged": 0.4,
+   "seed": 30
+  },
+  {
+   "year": -40,
+   "event": "subside",
+   "cause": "the new mouth, where the river's silt meets the Gulf and the mangroves hold it",
+   "at": "mouth",
+   "radius": 250,
+   "stretch": 1.2,
+   "bearing": 150,
+   "level": [
+    0.4,
+    1.5
+   ],
+   "islands": 0.42,
+   "island_size": 30,
+   "ragged": 0.4,
+   "seed": 111
+  },
+  {
+   "year": -30,
+   "event": "subside",
+   "cause": "the Gulf eating at the south shore: the chenier's old point gone under, open water to the edge",
+   "at": [
+    608,
+    1412
+   ],
+   "radius": 82,
+   "stretch": 7,
+   "bearing": 90,
+   "level": [
+    1.4,
+    2.6
+   ],
+   "edge": 40,
+   "ragged": 0.2
+  },
+  {
+   "year": -60,
+   "event": "bayou",
+   "cause": "Bayou Lune, an old crevasse channel from the trembling prairie down to the bay",
+   "path": [
+    [
+     678,
+     930
+    ],
+    [
+     568,
+     960
+    ],
+    [
+     458,
+     1010
+    ],
+    [
+     368,
+     1040
+    ]
+   ],
+   "width": 9,
+   "depth": 1.6,
+   "bank": 6,
+   "meander": 10,
+   "seed": 75
+  },
+  {
+   "year": -60,
+   "event": "bayou",
+   "cause": "Bayou Grue, a slough draining the sawgrass south into the new mouth",
+   "path": [
+    [
+     1048,
+     760
+    ],
+    [
+     1088,
+     880
+    ],
+    [
+     1078,
+     1000
+    ]
+   ],
+   "width": 8,
+   "depth": 1.5,
+   "bank": 6,
+   "meander": 10,
+   "seed": 76
+  },
+  {
+   "year": -60,
+   "event": "bayou",
+   "cause": "Bayou Noir, the swamp's back door to the sound in the north-west",
+   "path": [
+    [
+     148,
+     470
+    ],
+    [
+     88,
+     400
+    ],
+    [
+     38,
+     330
+    ],
+    [
+     8,
+     300
+    ]
+   ],
+   "width": 8,
+   "depth": 1.6,
+   "bank": 6,
+   "meander": 12,
+   "seed": 77
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the natural levee along the Marrow and the old high ground of the north, where the road runs",
+   "name": "levee",
+   "at": [
+    948,
+    300
+   ],
+   "radius": 160
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the natural levee along the Marrow and the old high ground of the north, where the road runs",
+   "name": "levee",
+   "at": [
+    708,
+    290
+   ],
+   "radius": 150
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the natural levee along the Marrow and the old high ground of the north, where the road runs",
+   "name": "levee",
+   "at": [
+    498,
+    240
+   ],
+   "radius": 140
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the natural levee along the Marrow and the old high ground of the north, where the road runs",
+   "name": "levee",
+   "at": [
+    268,
+    230
+   ],
+   "radius": 140
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the natural levee along the Marrow and the old high ground of the north, where the road runs",
+   "name": "levee",
+   "at": [
+    98,
+    250
+   ],
+   "radius": 100
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "Mire's cane, planted on the high ground behind the levee",
+   "name": "cane",
+   "at": [
+    148,
+    165
+   ],
+   "radius": 135
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "Mire's cane, the east block",
+   "name": "cane",
+   "at": [
+    328,
+    140
+   ],
+   "radius": 85
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the cane field burned off this autumn, the stubble left black",
+   "name": "burnt",
+   "at": [
+    508,
+    140
+   ],
+   "radius": 75
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the back swamp",
+   "name": "swamp",
+   "at": [
+    228,
+    560
+   ],
+   "radius": 270
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the west swamp",
+   "name": "swamp",
+   "at": [
+    118,
+    760
+   ],
+   "radius": 170
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the swamp's edge along the old channel",
+   "name": "swamp",
+   "at": [
+    408,
+    600
+   ],
+   "radius": 110
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the bay over the drowned parish",
+   "name": "parish",
+   "at": [
+    268,
+    1090
+   ],
+   "radius": 270
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the ghost forest, where the bay's salt reached the swamp",
+   "name": "ghost",
+   "at": [
+    148,
+    880
+   ],
+   "radius": 95
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the ghost forest's east end",
+   "name": "ghost",
+   "at": [
+    298,
+    900
+   ],
+   "radius": 60
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "Lowmouth, the stilt village on the old channel",
+   "name": "lowmouth",
+   "at": [
+    462,
+    688
+   ],
+   "radius": 172
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the sawgrass flats",
+   "name": "sawgrass",
+   "at": [
+    1068,
+    560
+   ],
+   "radius": 260
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the trembling prairie, a floating marsh like the old country's mosses, with the marsh lights over it",
+   "name": "moss",
+   "at": [
+    678,
+    930
+   ],
+   "radius": 140
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the new mouth and its mangrove keys",
+   "name": "mouth",
+   "at": [
+    998,
+    1200
+   ],
+   "radius": 300
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the chenier, an old shell ridge on the south point",
+   "name": "chenier",
+   "at": [
+    568,
+    1290
+   ],
+   "radius": 240
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the chenier's point",
+   "name": "chenier",
+   "at": [
+    498,
+    1300
+   ],
+   "radius": 90
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the levee road, shell over mud, from the west fields to the landing",
+   "from": [
+    18,
+    236
+   ],
+   "to": [
+    208,
+    246
+   ],
+   "width": 4,
+   "mat": "oyster_shell"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the levee road, shell over mud, from the west fields to the landing",
+   "from": [
+    208,
+    246
+   ],
+   "to": [
+    448,
+    250
+   ],
+   "width": 4,
+   "mat": "oyster_shell"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the levee road, shell over mud, from the west fields to the landing",
+   "from": [
+    448,
+    250
+   ],
+   "to": [
+    608,
+    268
+   ],
+   "width": 4,
+   "mat": "oyster_shell"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the levee road, shell over mud, from the west fields to the landing",
+   "from": [
+    608,
+    268
+   ],
+   "to": [
+    718,
+    292
+   ],
+   "width": 4,
+   "mat": "oyster_shell"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the parish road, south from the cane to Lowmouth",
+   "from": [
+    448,
+    60
+   ],
+   "to": [
+    448,
+    250
+   ],
+   "width": 3,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the parish road, south from the cane to Lowmouth",
+   "from": [
+    448,
+    250
+   ],
+   "to": [
+    466,
+    420
+   ],
+   "width": 3,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the parish road, south from the cane to Lowmouth",
+   "from": [
+    466,
+    420
+   ],
+   "to": [
+    488,
+    560
+   ],
+   "width": 3,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the parish road, south from the cane to Lowmouth",
+   "from": [
+    488,
+    560
+   ],
+   "to": [
+    488,
+    640
+   ],
+   "width": 3,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -120,
+   "event": "place",
+   "cause": "the sugar house, run until the cane went to the big mill up the river",
+   "structure": "sugar_mill_ruin",
+   "at": [
+    638,
+    220
+   ],
+   "bearing": 180,
+   "age": 70,
+   "poi": "the old sugar house"
+  },
+  {
+   "year": -120,
+   "event": "place",
+   "cause": "the quarters behind the sugar house, roofless since the mill closed",
+   "structure": "brick_quarters",
+   "at": [
+    644,
+    262
+   ],
+   "bearing": 180,
+   "age": 70
+  },
+  {
+   "year": -120,
+   "event": "place",
+   "cause": "the sugar house's rain cistern",
+   "structure": "brick_cistern",
+   "at": [
+    608,
+    206
+   ],
+   "bearing": 0,
+   "age": 70
+  },
+  {
+   "year": -120,
+   "event": "place",
+   "cause": "the last wall of the boiling shed",
+   "structure": "brick_wall_ruin",
+   "at": [
+    670,
+    214
+   ],
+   "bearing": 270,
+   "age": 80
+  },
+  {
+   "year": -120,
+   "event": "place",
+   "cause": "the last wall of the cooper's shop",
+   "structure": "brick_wall_ruin",
+   "at": [
+    614,
+    244
+   ],
+   "bearing": 90,
+   "age": 80
+  },
+  {
+   "year": -50,
+   "event": "place",
+   "cause": "the pump house the parish built to drain the cane after the flood",
+   "structure": "pump_station",
+   "at": [
+    710,
+    352
+   ],
+   "bearing": 270,
+   "age": 20,
+   "poi": "the pump house"
+  },
+  {
+   "year": -40,
+   "event": "place",
+   "cause": "Theriot's bait shop at the landing, where everyone puts in",
+   "structure": "bait_shop",
+   "at": [
+    716,
+    284
+   ],
+   "face": [
+    754,
+    296
+   ],
+   "age": 4,
+   "poi": "Theriot's landing"
+  },
+  {
+   "year": -200,
+   "event": "place",
+   "cause": "the finger post where the levee road crosses the parish road",
+   "structure": "crossroads_post",
+   "at": "crossroads",
+   "bearing": 0,
+   "poi": "the crossroads"
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "what is left at the crossroads in the night",
+   "structure": "crossroads_offering",
+   "at": "crossroads",
+   "bearing": 0,
+   "when": {
+    "hours": [
+     21,
+     5
+    ]
+   }
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "the man at the crossroads, seen from the road after dark and never there when you arrive",
+   "structure": "crossroads_figure",
+   "at": [
+    436,
+    238
+   ],
+   "face": [
+    468,
+    266
+   ],
+   "when": {
+    "hours": [
+     19,
+     5.5
+    ],
+    "far": 70
+   }
+  },
+  {
+   "year": -60,
+   "event": "place",
+   "cause": "the juke joint that stands on the corner lot between midnight and three, and is an empty lot by day",
+   "structure": "juke_joint",
+   "at": [
+    482,
+    222
+   ],
+   "face": "crossroads",
+   "when": {
+    "hours": [
+     0,
+     3
+    ]
+   },
+   "poi": "the empty lot"
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "a woven stick lattice staked by the path through the burned cane",
+   "structure": "stick_lattice",
+   "at": [
+    440,
+    205
+   ],
+   "face": [
+    448,
+    205
+   ]
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "a woven stick lattice staked by the path through the burned cane",
+   "structure": "stick_lattice_tall",
+   "at": [
+    457,
+    178
+   ],
+   "face": [
+    448,
+    178
+   ]
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "a woven stick lattice staked by the path through the burned cane",
+   "structure": "stick_lattice",
+   "at": [
+    439,
+    150
+   ],
+   "face": [
+    448,
+    150
+   ]
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "a woven stick lattice staked by the path through the burned cane",
+   "structure": "stick_lattice",
+   "at": [
+    457,
+    122
+   ],
+   "face": [
+    448,
+    122
+   ]
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "a woven stick lattice staked by the path through the burned cane",
+   "structure": "stick_lattice_tall",
+   "at": [
+    440,
+    94
+   ],
+   "face": [
+    448,
+    94
+   ]
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "a woven stick lattice staked by the path through the burned cane",
+   "structure": "stick_lattice",
+   "at": [
+    456,
+    70
+   ],
+   "face": [
+    448,
+    70
+   ]
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "a woven stick lattice where a cane trail meets another",
+   "structure": "stick_lattice",
+   "at": [
+    436,
+    264
+   ],
+   "face": [
+    448,
+    250
+   ]
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "a woven stick lattice where a cane trail meets another",
+   "structure": "stick_lattice",
+   "at": [
+    462,
+    266
+   ],
+   "face": [
+    448,
+    250
+   ]
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "a woven stick lattice where a cane trail meets another",
+   "structure": "stick_lattice",
+   "at": [
+    300,
+    104
+   ],
+   "face": [
+    248,
+    170
+   ]
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "a woven stick lattice where a cane trail meets another",
+   "structure": "stick_lattice",
+   "at": [
+    98,
+    96
+   ],
+   "face": [
+    98,
+    140
+   ]
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "a woven stick lattice where a cane trail meets another",
+   "structure": "stick_lattice",
+   "at": [
+    178,
+    270
+   ],
+   "face": [
+    178,
+    240
+   ]
+  },
+  {
+   "year": -100,
+   "event": "settlement",
+   "cause": "Mire, the cane town that grew round old Mire's fields after the flood spared them",
+   "name": "mire",
+   "at": [
+    248,
+    170
+   ],
+   "radius": 95,
+   "houses": 24,
+   "buildings": [
+    "cane_store",
+    "cane_cottage",
+    "cane_cottage_b",
+    "cane_cottage",
+    "cane_cottage",
+    "cane_cottage_b",
+    "cane_cottage",
+    "cane_cottage_b",
+    "cane_cottage",
+    "cane_cottage_b",
+    "cane_cottage",
+    "cane_cottage",
+    "cane_cottage_b",
+    "cane_cottage",
+    "cane_cottage_b",
+    "cane_cottage",
+    "cane_cottage",
+    "cane_cottage_b",
+    "cane_cottage",
+    "cane_cottage_b",
+    "cane_cottage",
+    "cane_cottage",
+    "cane_cottage_b",
+    "cane_cottage"
+   ],
+   "path": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "place",
+   "cause": "the filling station where the town lane meets the levee road",
+   "structure": "filling_station",
+   "at": [
+    252,
+    254
+   ],
+   "face": [
+    252,
+    240
+   ],
+   "age": 6,
+   "poi": "Mire filling station"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the lane from Mire down to the levee road",
+   "from": [
+    248,
+    170
+   ],
+   "to": [
+    250,
+    215
+   ],
+   "width": 4,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the lane from Mire down to the levee road",
+   "from": [
+    250,
+    215
+   ],
+   "to": [
+    252,
+    246
+   ],
+   "width": 4,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the cane trails, out from Mire through the fields and round them",
+   "from": [
+    248,
+    170
+   ],
+   "to": [
+    178,
+    150
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the cane trails, out from Mire through the fields and round them",
+   "from": [
+    178,
+    150
+   ],
+   "to": [
+    108,
+    120
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the cane trails, out from Mire through the fields and round them",
+   "from": [
+    108,
+    120
+   ],
+   "to": [
+    48,
+    150
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the cane trails, out from Mire through the fields and round them",
+   "from": [
+    48,
+    150
+   ],
+   "to": [
+    38,
+    210
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the cane trails, out from Mire through the fields and round them",
+   "from": [
+    38,
+    210
+   ],
+   "to": [
+    98,
+    240
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the cane trails, out from Mire through the fields and round them",
+   "from": [
+    98,
+    240
+   ],
+   "to": [
+    178,
+    220
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the cane trails, out from Mire through the fields and round them",
+   "from": [
+    178,
+    220
+   ],
+   "to": [
+    248,
+    170
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the north trail into the cane",
+   "from": [
+    248,
+    170
+   ],
+   "to": [
+    268,
+    110
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the north trail into the cane",
+   "from": [
+    268,
+    110
+   ],
+   "to": [
+    318,
+    80
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the north trail into the cane",
+   "from": [
+    318,
+    80
+   ],
+   "to": [
+    388,
+    110
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the north trail into the cane",
+   "from": [
+    388,
+    110
+   ],
+   "to": [
+    408,
+    160
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the north trail into the cane",
+   "from": [
+    408,
+    160
+   ],
+   "to": [
+    368,
+    200
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the north trail into the cane",
+   "from": [
+    368,
+    200
+   ],
+   "to": [
+    308,
+    190
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the north trail into the cane",
+   "from": [
+    308,
+    190
+   ],
+   "to": [
+    248,
+    170
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the cross trail",
+   "from": [
+    108,
+    120
+   ],
+   "to": [
+    148,
+    70
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the cross trail",
+   "from": [
+    148,
+    70
+   ],
+   "to": [
+    228,
+    80
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the cross trail",
+   "from": [
+    228,
+    80
+   ],
+   "to": [
+    268,
+    110
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the cut through the cane to the crossroads",
+   "from": [
+    388,
+    110
+   ],
+   "to": [
+    448,
+    120
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the west loop through the cane",
+   "from": [
+    38,
+    210
+   ],
+   "to": [
+    16,
+    170
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the west loop through the cane",
+   "from": [
+    16,
+    170
+   ],
+   "to": [
+    38,
+    110
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the west loop through the cane",
+   "from": [
+    38,
+    110
+   ],
+   "to": [
+    108,
+    120
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the back trail along the north of the fields",
+   "from": [
+    38,
+    110
+   ],
+   "to": [
+    88,
+    60
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the back trail along the north of the fields",
+   "from": [
+    88,
+    60
+   ],
+   "to": [
+    178,
+    40
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the back trail along the north of the fields",
+   "from": [
+    178,
+    40
+   ],
+   "to": [
+    268,
+    50
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the back trail along the north of the fields",
+   "from": [
+    268,
+    50
+   ],
+   "to": [
+    318,
+    80
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the middle trail, Mire to the levee through the cane",
+   "from": [
+    178,
+    150
+   ],
+   "to": [
+    168,
+    200
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the middle trail, Mire to the levee through the cane",
+   "from": [
+    168,
+    200
+   ],
+   "to": [
+    148,
+    236
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the trail through the burned field to the sugar house",
+   "from": [
+    448,
+    120
+   ],
+   "to": [
+    488,
+    100
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the trail through the burned field to the sugar house",
+   "from": [
+    488,
+    100
+   ],
+   "to": [
+    548,
+    120
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the trail through the burned field to the sugar house",
+   "from": [
+    548,
+    120
+   ],
+   "to": [
+    568,
+    180
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the trail through the burned field to the sugar house",
+   "from": [
+    568,
+    180
+   ],
+   "to": [
+    608,
+    206
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the burned field's cross trail",
+   "from": [
+    468,
+    180
+   ],
+   "to": [
+    508,
+    150
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the burned field's cross trail",
+   "from": [
+    508,
+    150
+   ],
+   "to": [
+    538,
+    96
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "the Big Bridge over the old channel, high enough to paddle under",
+   "structure": "stilt_footbridge",
+   "at": [
+    476,
+    700
+   ],
+   "bearing": 270,
+   "poi": "the Big Bridge"
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "the little bridge on the back walk",
+   "structure": "stilt_footbridge",
+   "at": [
+    448,
+    744
+   ],
+   "bearing": 270
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "the north bridge, over the channel at the top of the village",
+   "structure": "stilt_footbridge",
+   "at": [
+    560,
+    616
+   ],
+   "bearing": 270,
+   "poi": "the north bridge"
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    436,
+    692
+   ],
+   "bearing": 180,
+   "slots": {
+    "wall": "siding_teal",
+    "door": "door_blue"
+   },
+   "age": 6
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    460,
+    692
+   ],
+   "bearing": 180,
+   "slots": {
+    "wall": "siding_cream",
+    "door": "door_green"
+   },
+   "age": 13
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    504,
+    693
+   ],
+   "bearing": 180,
+   "slots": {
+    "wall": "siding_sage",
+    "door": "door_blue"
+   },
+   "age": 20
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    536,
+    692
+   ],
+   "bearing": 180,
+   "slots": {
+    "wall": "siding_rust",
+    "door": "door_blue"
+   },
+   "age": 27
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    452,
+    712
+   ],
+   "bearing": 270,
+   "slots": {
+    "wall": "siding_slate",
+    "door": "door_green"
+   },
+   "age": 34
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    508,
+    709
+   ],
+   "bearing": 0,
+   "slots": {
+    "wall": "siding_grey",
+    "door": "door_blue"
+   },
+   "age": 11
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    538,
+    711
+   ],
+   "bearing": 90,
+   "slots": {
+    "wall": "siding_teal",
+    "door": "door_blue"
+   },
+   "age": 18
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    434,
+    730
+   ],
+   "bearing": 90,
+   "slots": {
+    "wall": "siding_cream",
+    "door": "door_green"
+   },
+   "age": 25
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    434,
+    752
+   ],
+   "bearing": 180,
+   "slots": {
+    "wall": "siding_sage",
+    "door": "door_blue"
+   },
+   "age": 32
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    516,
+    662
+   ],
+   "bearing": 90,
+   "slots": {
+    "wall": "siding_rust",
+    "door": "door_blue"
+   },
+   "age": 9
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    536,
+    664
+   ],
+   "bearing": 270,
+   "slots": {
+    "wall": "siding_slate",
+    "door": "door_green"
+   },
+   "age": 16
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    478,
+    754
+   ],
+   "bearing": 0,
+   "slots": {
+    "wall": "siding_grey",
+    "door": "door_blue"
+   },
+   "age": 23
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    371,
+    709
+   ],
+   "bearing": 0,
+   "slots": {
+    "wall": "siding_teal",
+    "door": "door_blue"
+   },
+   "age": 30
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    403,
+    709
+   ],
+   "bearing": 0,
+   "slots": {
+    "wall": "siding_cream",
+    "door": "door_green"
+   },
+   "age": 7
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    435,
+    709
+   ],
+   "bearing": 0,
+   "slots": {
+    "wall": "siding_sage",
+    "door": "door_blue"
+   },
+   "age": 14
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    467,
+    709
+   ],
+   "bearing": 0,
+   "slots": {
+    "wall": "siding_rust",
+    "door": "door_blue"
+   },
+   "age": 21
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    379,
+    635
+   ],
+   "bearing": 90,
+   "slots": {
+    "wall": "siding_slate",
+    "door": "door_green"
+   },
+   "age": 28
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    395,
+    653
+   ],
+   "bearing": 270,
+   "slots": {
+    "wall": "siding_grey",
+    "door": "door_blue"
+   },
+   "age": 35
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    411,
+    635
+   ],
+   "bearing": 90,
+   "slots": {
+    "wall": "siding_teal",
+    "door": "door_blue"
+   },
+   "age": 12
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    427,
+    653
+   ],
+   "bearing": 270,
+   "slots": {
+    "wall": "siding_cream",
+    "door": "door_green"
+   },
+   "age": 19
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    443,
+    635
+   ],
+   "bearing": 180,
+   "slots": {
+    "wall": "siding_sage",
+    "door": "door_blue"
+   },
+   "age": 26
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    459,
+    653
+   ],
+   "bearing": 0,
+   "slots": {
+    "wall": "siding_rust",
+    "door": "door_blue"
+   },
+   "age": 33
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    475,
+    635
+   ],
+   "bearing": 180,
+   "slots": {
+    "wall": "siding_slate",
+    "door": "door_green"
+   },
+   "age": 10
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    495,
+    607
+   ],
+   "bearing": 180,
+   "slots": {
+    "wall": "siding_grey",
+    "door": "door_blue"
+   },
+   "age": 17
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    511,
+    625
+   ],
+   "bearing": 0,
+   "slots": {
+    "wall": "siding_teal",
+    "door": "door_blue"
+   },
+   "age": 24
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    527,
+    607
+   ],
+   "bearing": 180,
+   "slots": {
+    "wall": "siding_cream",
+    "door": "door_green"
+   },
+   "age": 31
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    543,
+    625
+   ],
+   "bearing": 0,
+   "slots": {
+    "wall": "siding_sage",
+    "door": "door_blue"
+   },
+   "age": 8
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    497,
+    623
+   ],
+   "bearing": 0,
+   "slots": {
+    "wall": "siding_rust",
+    "door": "door_blue"
+   },
+   "age": 15
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    397,
+    627
+   ],
+   "bearing": 270,
+   "slots": {
+    "wall": "siding_slate",
+    "door": "door_green"
+   },
+   "age": 22
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    379,
+    675
+   ],
+   "bearing": 90,
+   "slots": {
+    "wall": "siding_grey",
+    "door": "door_blue"
+   },
+   "age": 29
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    397,
+    691
+   ],
+   "bearing": 270,
+   "slots": {
+    "wall": "siding_teal",
+    "door": "door_blue"
+   },
+   "age": 6
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    397,
+    723
+   ],
+   "bearing": 270,
+   "slots": {
+    "wall": "siding_cream",
+    "door": "door_green"
+   },
+   "age": 13
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    379,
+    739
+   ],
+   "bearing": 90,
+   "slots": {
+    "wall": "siding_sage",
+    "door": "door_blue"
+   },
+   "age": 20
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    411,
+    651
+   ],
+   "bearing": 0,
+   "slots": {
+    "wall": "siding_rust",
+    "door": "door_blue"
+   },
+   "age": 27
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    429,
+    667
+   ],
+   "bearing": 270,
+   "slots": {
+    "wall": "siding_slate",
+    "door": "door_green"
+   },
+   "age": 34
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    411,
+    683
+   ],
+   "bearing": 90,
+   "slots": {
+    "wall": "siding_grey",
+    "door": "door_blue"
+   },
+   "age": 11
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    395,
+    751
+   ],
+   "bearing": 270,
+   "slots": {
+    "wall": "siding_teal",
+    "door": "door_blue"
+   },
+   "age": 18
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    411,
+    769
+   ],
+   "bearing": 0,
+   "slots": {
+    "wall": "siding_cream",
+    "door": "door_green"
+   },
+   "age": 25
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    557,
+    711
+   ],
+   "bearing": 270,
+   "slots": {
+    "wall": "siding_sage",
+    "door": "door_blue"
+   },
+   "age": 32
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_house",
+   "at": [
+    539,
+    727
+   ],
+   "bearing": 270,
+   "slots": {
+    "wall": "siding_rust",
+    "door": "door_blue"
+   },
+   "age": 9
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "a house in Lowmouth, built on posts when the ground went under",
+   "structure": "stilt_camp",
+   "at": [
+    557,
+    743
+   ],
+   "bearing": 270,
+   "slots": {
+    "wall": "siding_slate",
+    "door": "door_green"
+   },
+   "age": 16
+  },
+  {
+   "year": -50,
+   "event": "place",
+   "cause": "the net shed at the channel's bend",
+   "structure": "net_shed",
+   "at": [
+    498,
+    676
+   ],
+   "bearing": 270,
+   "age": 12
+  },
+  {
+   "year": -50,
+   "event": "place",
+   "cause": "the net shed on West Walk",
+   "structure": "net_shed",
+   "at": [
+    378,
+    700
+   ],
+   "bearing": 180,
+   "age": 20
+  },
+  {
+   "year": -20,
+   "event": "place",
+   "cause": "the Guidrys' houseboat, tied up in the channel",
+   "structure": "houseboat",
+   "at": [
+    484,
+    724
+   ],
+   "bearing": 180,
+   "age": 5
+  },
+  {
+   "year": -20,
+   "event": "place",
+   "cause": "a houseboat at the top of the village",
+   "structure": "houseboat",
+   "at": [
+    498,
+    650
+   ],
+   "bearing": 0,
+   "age": 15
+  },
+  {
+   "year": -20,
+   "event": "place",
+   "cause": "a houseboat below the village",
+   "structure": "houseboat",
+   "at": [
+    438,
+    778
+   ],
+   "bearing": 200,
+   "age": 9
+  },
+  {
+   "year": -20,
+   "event": "place",
+   "cause": "a houseboat by the north bridge",
+   "structure": "houseboat",
+   "at": [
+    552,
+    630
+   ],
+   "bearing": 330,
+   "age": 22
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the path from Lowmouth's east bank up to the mound grounds",
+   "from": [
+    548,
+    700
+   ],
+   "to": [
+    608,
+    704
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the path from Lowmouth's east bank up to the mound grounds",
+   "from": [
+    608,
+    704
+   ],
+   "to": [
+    638,
+    760
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "St. Anne of the Marrow, the parish church, its floor now a metre under the bay",
+   "structure": "drowned_church",
+   "at": [
+    278,
+    1010
+   ],
+   "bearing": 0,
+   "age": 60,
+   "poi": "St. Anne's"
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    228,
+    980
+   ],
+   "bearing": 90,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    228,
+    980
+   ],
+   "bearing": 90,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    318,
+    975
+   ],
+   "bearing": 270,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    318,
+    975
+   ],
+   "bearing": 270,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    243,
+    1060
+   ],
+   "bearing": 0,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    243,
+    1060
+   ],
+   "bearing": 0,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    328,
+    1050
+   ],
+   "bearing": 180,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    328,
+    1050
+   ],
+   "bearing": 180,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    288,
+    1110
+   ],
+   "bearing": 0,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    288,
+    1110
+   ],
+   "bearing": 0,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    198,
+    1022
+   ],
+   "bearing": 90,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    198,
+    1022
+   ],
+   "bearing": 90,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    210,
+    1100
+   ],
+   "bearing": 0,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    210,
+    1100
+   ],
+   "bearing": 0,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    258,
+    948
+   ],
+   "bearing": 180,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    258,
+    948
+   ],
+   "bearing": 180,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    350,
+    1002
+   ],
+   "bearing": 270,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    350,
+    1002
+   ],
+   "bearing": 270,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    368,
+    1062
+   ],
+   "bearing": 270,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    368,
+    1062
+   ],
+   "bearing": 270,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    320,
+    1140
+   ],
+   "bearing": 0,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    320,
+    1140
+   ],
+   "bearing": 0,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    250,
+    1150
+   ],
+   "bearing": 0,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    250,
+    1150
+   ],
+   "bearing": 0,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    178,
+    962
+   ],
+   "bearing": 90,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    178,
+    962
+   ],
+   "bearing": 90,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    360,
+    950
+   ],
+   "bearing": 180,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    360,
+    950
+   ],
+   "bearing": 180,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -180,
+   "event": "place",
+   "cause": "a parish house that went down with the old lobe",
+   "structure": "sunken_house",
+   "at": [
+    268,
+    1190
+   ],
+   "bearing": 0,
+   "height": -2.5,
+   "age": 90
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "lamplight in the windows of a drowned house, after dark",
+   "structure": "drowned_lights",
+   "at": [
+    268,
+    1190
+   ],
+   "bearing": 0,
+   "height": -2.5,
+   "when": {
+    "hours": [
+     19.5,
+     5
+    ]
+   }
+  },
+  {
+   "year": -150,
+   "event": "place",
+   "cause": "the parish tombs, the bay over them now",
+   "structure": "sunken_tombs",
+   "at": [
+    303,
+    1015
+   ],
+   "bearing": 90,
+   "age": 90
+  },
+  {
+   "year": -110,
+   "event": "place",
+   "cause": "the Belle Marrow, the steamer lost in the flood of the old century, seen on the bay at night from far off",
+   "structure": "ghost_steamboat",
+   "at": [
+    148,
+    1180
+   ],
+   "bearing": 20,
+   "when": {
+    "hours": [
+     20,
+     5
+    ],
+    "far": 150
+   }
+  },
+  {
+   "year": -3400,
+   "event": "earthwork",
+   "cause": "the Bird Mound, heaped up basket by basket three thousand years ago by the people who lived on the old levee",
+   "parts": [
+    {
+     "from": [
+      634,
+      640
+     ],
+     "to": [
+      586,
+      640
+     ],
+     "width": 30,
+     "top": 12
+    },
+    {
+     "from": [
+      586,
+      640
+     ],
+     "to": [
+      564,
+      638
+     ],
+     "width": 14,
+     "top": 9.5
+    },
+    {
+     "from": [
+      610,
+      634
+     ],
+     "to": [
+      630,
+      570
+     ],
+     "width": 20,
+     "top": 8
+    },
+    {
+     "from": [
+      610,
+      646
+     ],
+     "to": [
+      630,
+      710
+     ],
+     "width": 20,
+     "top": 8
+    },
+    {
+     "from": [
+      630,
+      570
+     ],
+     "to": [
+      648,
+      556
+     ],
+     "width": 12,
+     "top": 6
+    },
+    {
+     "from": [
+      630,
+      710
+     ],
+     "to": [
+      648,
+      724
+     ],
+     "width": 12,
+     "top": 6
+    },
+    {
+     "from": [
+      634,
+      640
+     ],
+     "to": [
+      666,
+      626
+     ],
+     "width": 18,
+     "top": 6.5
+    },
+    {
+     "from": [
+      634,
+      640
+     ],
+     "to": [
+      666,
+      654
+     ],
+     "width": 18,
+     "top": 6.5
+    },
+    {
+     "from": [
+      634,
+      640
+     ],
+     "to": [
+      670,
+      640
+     ],
+     "width": 18,
+     "top": 7
+    }
+   ],
+   "poi": "the Bird Mound",
+   "seed": 3
+  },
+  {
+   "year": -3300,
+   "event": "earthwork",
+   "cause": "the half rings, low ridges the same people raised east of the mound, opening on a plaza toward it",
+   "arcs": [
+    {
+     "centre": [
+      758,
+      640
+     ],
+     "radius": 48,
+     "from": 15,
+     "to": 165,
+     "width": 9,
+     "top": 1.8
+    },
+    {
+     "centre": [
+      758,
+      640
+     ],
+     "radius": 66,
+     "from": 15,
+     "to": 165,
+     "width": 9,
+     "top": 1.8
+    },
+    {
+     "centre": [
+      758,
+      640
+     ],
+     "radius": 84,
+     "from": 15,
+     "to": 165,
+     "width": 9,
+     "top": 1.8
+    },
+    {
+     "centre": [
+      758,
+      640
+     ],
+     "radius": 102,
+     "from": 15,
+     "to": 165,
+     "width": 9,
+     "top": 1.8
+    }
+   ],
+   "relative": true,
+   "poi": "the half rings",
+   "seed": 4
+  },
+  {
+   "year": -30,
+   "event": "region",
+   "cause": "the mound grounds",
+   "name": "mounds",
+   "at": [
+    668,
+    640
+   ],
+   "radius": 180
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the path from the sugar house to the pump house",
+   "from": [
+    638,
+    240
+   ],
+   "to": [
+    668,
+    300
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the path from the sugar house to the pump house",
+   "from": [
+    668,
+    300
+   ],
+   "to": [
+    710,
+    340
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the levee path east of the landing",
+   "from": [
+    732,
+    300
+   ],
+   "to": [
+    808,
+    280
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the levee path east of the landing",
+   "from": [
+    808,
+    280
+   ],
+   "to": [
+    888,
+    300
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the levee path east of the landing",
+   "from": [
+    888,
+    300
+   ],
+   "to": [
+    968,
+    300
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the levee path east of the landing",
+   "from": [
+    968,
+    300
+   ],
+   "to": [
+    1048,
+    320
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the old trail south from the landing through the woods to the mound",
+   "from": [
+    732,
+    310
+   ],
+   "to": [
+    748,
+    400
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the old trail south from the landing through the woods to the mound",
+   "from": [
+    748,
+    400
+   ],
+   "to": [
+    728,
+    480
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the old trail south from the landing through the woods to the mound",
+   "from": [
+    728,
+    480
+   ],
+   "to": [
+    688,
+    560
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the old trail south from the landing through the woods to the mound",
+   "from": [
+    688,
+    560
+   ],
+   "to": [
+    718,
+    560
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the walk round the mound grounds",
+   "from": [
+    718,
+    560
+   ],
+   "to": [
+    758,
+    640
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the walk round the mound grounds",
+   "from": [
+    758,
+    640
+   ],
+   "to": [
+    718,
+    730
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the walk round the mound grounds",
+   "from": [
+    718,
+    730
+   ],
+   "to": [
+    638,
+    760
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the walk round the mound grounds",
+   "from": [
+    638,
+    760
+   ],
+   "to": [
+    538,
+    720
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the walk round the mound grounds",
+   "from": [
+    538,
+    720
+   ],
+   "to": [
+    528,
+    640
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the walk round the mound grounds",
+   "from": [
+    528,
+    640
+   ],
+   "to": [
+    548,
+    560
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the walk round the mound grounds",
+   "from": [
+    548,
+    560
+   ],
+   "to": [
+    638,
+    530
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the walk round the mound grounds",
+   "from": [
+    638,
+    530
+   ],
+   "to": [
+    718,
+    560
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the trail from the half rings to the plaza",
+   "from": [
+    758,
+    640
+   ],
+   "to": [
+    858,
+    640
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the long trail south from the mounds to the chenier",
+   "from": [
+    638,
+    760
+   ],
+   "to": [
+    648,
+    860
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the long trail south from the mounds to the chenier",
+   "from": [
+    648,
+    860
+   ],
+   "to": [
+    638,
+    960
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the long trail south from the mounds to the chenier",
+   "from": [
+    638,
+    960
+   ],
+   "to": [
+    608,
+    1060
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the long trail south from the mounds to the chenier",
+   "from": [
+    608,
+    1060
+   ],
+   "to": [
+    588,
+    1150
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the long trail south from the mounds to the chenier",
+   "from": [
+    588,
+    1150
+   ],
+   "to": [
+    568,
+    1230
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the long trail south from the mounds to the chenier",
+   "from": [
+    568,
+    1230
+   ],
+   "to": [
+    528,
+    1240
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the chenier path, from the tombs to the light",
+   "from": [
+    488,
+    1240
+   ],
+   "to": [
+    548,
+    1262
+   ],
+   "width": 2,
+   "mat": "oyster_shell"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the chenier path, from the tombs to the light",
+   "from": [
+    548,
+    1262
+   ],
+   "to": [
+    648,
+    1282
+   ],
+   "width": 2,
+   "mat": "oyster_shell"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the chenier path, from the tombs to the light",
+   "from": [
+    648,
+    1282
+   ],
+   "to": [
+    608,
+    1300
+   ],
+   "width": 2,
+   "mat": "oyster_shell"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the chenier path, from the tombs to the light",
+   "from": [
+    608,
+    1300
+   ],
+   "to": [
+    548,
+    1298
+   ],
+   "width": 2,
+   "mat": "oyster_shell"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "a hog trail through the bottomland east of the river",
+   "from": [
+    808,
+    450
+   ],
+   "to": [
+    848,
+    560
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "a hog trail through the bottomland east of the river",
+   "from": [
+    848,
+    560
+   ],
+   "to": [
+    888,
+    700
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "a hog trail through the bottomland east of the river",
+   "from": [
+    888,
+    700
+   ],
+   "to": [
+    848,
+    820
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "a hog trail through the bottomland east of the river",
+   "from": [
+    848,
+    820
+   ],
+   "to": [
+    788,
+    900
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the trail along the east hammocks",
+   "from": [
+    1248,
+    380
+   ],
+   "to": [
+    1268,
+    520
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the trail along the east hammocks",
+   "from": [
+    1268,
+    520
+   ],
+   "to": [
+    1258,
+    700
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the trail along the east hammocks",
+   "from": [
+    1258,
+    700
+   ],
+   "to": [
+    1248,
+    880
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "path",
+   "cause": "the trail along the east hammocks",
+   "from": [
+    1248,
+    880
+   ],
+   "to": [
+    1238,
+    1040
+   ],
+   "width": 2,
+   "mat": "packed_dirt"
+  },
+  {
+   "year": -60,
+   "event": "place",
+   "cause": "Mother Ruth's camp, deep in the swamp, where people bring what they can't take to the priest",
+   "structure": "stilt_camp",
+   "at": [
+    80,
+    640
+   ],
+   "bearing": 90,
+   "age": 20,
+   "slots": {
+    "wall": "siding_slate",
+    "door": "door_blue"
+   },
+   "poi": "Mother Ruth's camp"
+  },
+  {
+   "year": -40,
+   "event": "place",
+   "cause": "a bottle tree round Mother Ruth's camp",
+   "structure": "bottle_tree",
+   "at": [
+    66,
+    626
+   ],
+   "bearing": 86
+  },
+  {
+   "year": -40,
+   "event": "place",
+   "cause": "a bottle tree round Mother Ruth's camp",
+   "structure": "bottle_tree",
+   "at": [
+    94,
+    628
+   ],
+   "bearing": 282
+  },
+  {
+   "year": -40,
+   "event": "place",
+   "cause": "a bottle tree round Mother Ruth's camp",
+   "structure": "bottle_tree",
+   "at": [
+    70,
+    660
+   ],
+   "bearing": 114
+  },
+  {
+   "year": -40,
+   "event": "place",
+   "cause": "a bottle tree round Mother Ruth's camp",
+   "structure": "bottle_tree",
+   "at": [
+    98,
+    656
+   ],
+   "bearing": 310
+  },
+  {
+   "year": -5,
+   "event": "place",
+   "cause": "a lattice on the water path to Mother Ruth's",
+   "structure": "stick_lattice_tall",
+   "at": [
+    118,
+    640
+   ],
+   "face": [
+    148,
+    640
+   ]
+  },
+  {
+   "year": -25,
+   "event": "place",
+   "cause": "the Bon Temps well, a small platform out in the Gulf, pumping still",
+   "structure": "oil_platform",
+   "at": [
+    938,
+    1356
+   ],
+   "bearing": 0,
+   "age": 8,
+   "poi": "the Bon Temps well"
+  },
+  {
+   "year": -220,
+   "event": "place",
+   "cause": "Fort St. Jean, the brick fort that guarded the old pass to the parish",
+   "structure": "fort_ruin",
+   "at": [
+    48,
+    930
+   ],
+   "bearing": 90,
+   "age": 150,
+   "poi": "Fort St. Jean"
+  },
+  {
+   "year": -10,
+   "event": "place",
+   "cause": "a duck blind out in the sawgrass",
+   "structure": "duck_blind",
+   "at": [
+    998,
+    520
+   ],
+   "bearing": 0,
+   "age": 5
+  },
+  {
+   "year": -10,
+   "event": "place",
+   "cause": "a duck blind out in the sawgrass",
+   "structure": "duck_blind",
+   "at": [
+    1118,
+    640
+   ],
+   "bearing": 90,
+   "age": 5
+  },
+  {
+   "year": -10,
+   "event": "place",
+   "cause": "a duck blind out in the sawgrass",
+   "structure": "duck_blind",
+   "at": [
+    1148,
+    470
+   ],
+   "bearing": 180,
+   "age": 5
+  },
+  {
+   "year": -10,
+   "event": "place",
+   "cause": "a duck blind out in the sawgrass",
+   "structure": "duck_blind",
+   "at": [
+    1028,
+    720
+   ],
+   "bearing": 270,
+   "age": 5
+  },
+  {
+   "year": -40,
+   "event": "place",
+   "cause": "a cane barge sunk on the bank of the new river",
+   "structure": "barge_wreck",
+   "at": [
+    1020,
+    930
+   ],
+   "bearing": 10,
+   "age": 35,
+   "poi": "the sunk barge"
+  },
+  {
+   "year": -30,
+   "event": "place",
+   "cause": "a fishing camp on the mangrove keys",
+   "structure": "stilt_camp",
+   "at": [
+    908,
+    1120
+   ],
+   "bearing": 90,
+   "age": 10
+  },
+  {
+   "year": -30,
+   "event": "place",
+   "cause": "a fishing camp at the mouth",
+   "structure": "stilt_camp",
+   "at": [
+    1178,
+    1250
+   ],
+   "bearing": 270,
+   "age": 14,
+   "slots": {
+    "wall": "siding_teal",
+    "door": "door_yellow"
+   }
+  },
+  {
+   "year": -30,
+   "event": "place",
+   "cause": "the net shed at the mouth camp",
+   "structure": "net_shed",
+   "at": [
+    1162,
+    1272
+   ],
+   "bearing": 270,
+   "age": 14
+  },
+  {
+   "year": -70,
+   "event": "place",
+   "cause": "the Broussard place on the chenier, empty since the storm",
+   "structure": "cane_cottage_b",
+   "at": [
+    648,
+    1282
+   ],
+   "bearing": 180,
+   "age": 60,
+   "poi": "the Broussard place"
+  },
+  {
+   "year": -120,
+   "event": "place",
+   "cause": "the tombs on the chenier, where the parish buried its dead after the flood",
+   "structure": "raised_tombs",
+   "at": [
+    488,
+    1240
+   ],
+   "bearing": 90,
+   "age": 40,
+   "poi": "the chenier tombs"
+  },
+  {
+   "year": -100,
+   "event": "place",
+   "cause": "the light on the chenier's point",
+   "structure": "lighthouse",
+   "at": "light",
+   "bearing": 0,
+   "age": 10,
+   "poi": "the light"
+  },
+  {
+   "year": -15,
+   "event": "place",
+   "cause": "the Miss Odile, a shrimp boat that sank at her mooring in the mouth",
+   "structure": "shrimp_boat_wreck",
+   "at": [
+    1084,
+    1330
+   ],
+   "bearing": 200,
+   "age": 15,
+   "poi": "the wreck"
+  },
+  {
+   "year": -80,
+   "event": "place",
+   "cause": "the grandmother tree, the oldest bottle tree on the hammocks",
+   "structure": "bottle_tree",
+   "at": [
+    1108,
+    520
+   ],
+   "bearing": 0,
+   "poi": "the bottle tree"
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the stilt village the parish is named for",
+   "name": "Lowmouth",
+   "kind": "village",
+   "at": "lowmouth",
+   "radius": 190
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the church and houses the delta took back",
+   "name": "The Drowned Parish",
+   "kind": "ruin",
+   "at": "parish",
+   "radius": 140
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the trembling ground east of the village",
+   "name": "Tremblante",
+   "kind": "swamp",
+   "at": "tremblante",
+   "radius": 170
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the open sawgrass flats the east wind crosses",
+   "name": "The Sawgrass",
+   "kind": "marsh",
+   "at": "sawgrass",
+   "radius": 200
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "where the levee road meets the parish road",
+   "name": "The Crossroads",
+   "kind": "crossroads",
+   "at": "crossroads",
+   "radius": 60
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the boat landing at the head of the bayou",
+   "name": "The Landing",
+   "kind": "landing",
+   "at": "landing",
+   "radius": 70
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "where the river broke through to the sea",
+   "name": "The New Mouth",
+   "kind": "pass",
+   "at": "mouth",
+   "radius": 180
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the old cypress the loggers never reached",
+   "name": "Cypress Swamp",
+   "kind": "swamp",
+   "at": "swamp",
+   "radius": 200
+  },
+  {
+   "year": -60,
+   "event": "sign",
+   "cause": "the parish numbered its roads and lettered the posts",
+   "at": "crossroads",
+   "text": [
+    "PARISH",
+    "ROAD 4"
+   ],
+   "style": "iron_plate",
+   "bearing": 180,
+   "age": 25
+  },
+  {
+   "year": -80,
+   "event": "sign",
+   "cause": "the landing's board, painted over twice",
+   "at": "landing",
+   "text": [
+    "LANDING"
+   ],
+   "style": "painted_board",
+   "bearing": 270,
+   "age": 35
+  },
+  {
+   "year": -110,
+   "event": "sign",
+   "cause": "a stone cut for the church the water took",
+   "at": [
+    292,
+    1040
+   ],
+   "text": [
+    "ST ROCH",
+    "1884"
+   ],
+   "style": "carved_stone",
+   "bearing": 90
+  },
+  {
+   "year": -45,
+   "event": "sign",
+   "cause": "a gauge board the levee board bolted to a post",
+   "at": [
+    496,
+    712
+   ],
+   "text": [
+    "HIGH",
+    "WATER",
+    "1927"
+   ],
+   "style": "iron_plate",
+   "bearing": 90,
+   "age": 20
+  },
+  {
+   "year": -70,
+   "cause": "Front Street, the boardwalk along the channel's west bank, all the way across Lowmouth",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     362,
+     700
+    ],
+    [
+     404,
+     703
+    ],
+    [
+     448,
+     704
+    ],
+    [
+     492,
+     701
+    ],
+    [
+     528,
+     698
+    ],
+    [
+     558,
+     700
+    ]
+   ]
+  },
+  {
+   "year": -70,
+   "cause": "North Walk, along the top of the village",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     364,
+     646
+    ],
+    [
+     404,
+     643
+    ],
+    [
+     444,
+     645
+    ],
+    [
+     478,
+     646
+    ],
+    [
+     500,
+     644
+    ]
+   ]
+  },
+  {
+   "year": -70,
+   "cause": "Top Walk, out over the north bridge to the east bank",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     486,
+     616
+    ],
+    [
+     520,
+     614
+    ],
+    [
+     552,
+     617
+    ],
+    [
+     580,
+     615
+    ],
+    [
+     598,
+     616
+    ]
+   ]
+  },
+  {
+   "year": -70,
+   "cause": "the steps between North Walk and Top Walk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     488,
+     644
+    ],
+    [
+     487,
+     630
+    ],
+    [
+     488,
+     616
+    ]
+   ]
+  },
+  {
+   "year": -70,
+   "cause": "West Walk, down the swamp side of the village",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     388,
+     612
+    ],
+    [
+     386,
+     650
+    ],
+    [
+     389,
+     690
+    ],
+    [
+     387,
+     726
+    ],
+    [
+     389,
+     760
+    ]
+   ]
+  },
+  {
+   "year": -70,
+   "cause": "Mid Walk, between North Walk and Front Street",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     420,
+     644
+    ],
+    [
+     422,
+     672
+    ],
+    [
+     420,
+     700
+    ]
+   ]
+  },
+  {
+   "year": -70,
+   "cause": "the Church Walk, north from Front Street to the old landing",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     524,
+     700
+    ],
+    [
+     526,
+     676
+    ],
+    [
+     524,
+     648
+    ]
+   ]
+  },
+  {
+   "year": -70,
+   "cause": "Back Walk, down the west side to the camps",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     444,
+     700
+    ],
+    [
+     446,
+     728
+    ],
+    [
+     444,
+     758
+    ]
+   ]
+  },
+  {
+   "year": -70,
+   "cause": "South Walk, along the bottom of the village",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     386,
+     760
+    ],
+    [
+     412,
+     762
+    ],
+    [
+     442,
+     760
+    ]
+   ]
+  },
+  {
+   "year": -70,
+   "cause": "Back Walk, east of the little bridge",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     460,
+     744
+    ],
+    [
+     472,
+     745
+    ],
+    [
+     486,
+     744
+    ]
+   ]
+  },
+  {
+   "year": -70,
+   "cause": "Bank Walk, along the east bank",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     548,
+     702
+    ],
+    [
+     550,
+     728
+    ],
+    [
+     548,
+     756
+    ]
+   ]
+  },
+  {
+   "year": -70,
+   "cause": "the Mid Reach, from North Walk down to the Big Bridge",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     476,
+     646
+    ],
+    [
+     478,
+     672
+    ],
+    [
+     476,
+     700
+    ]
+   ]
+  },
+  {
+   "year": -40,
+   "cause": "the Bayou Walk, built out west into the swamp when the camps went up on it",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     388,
+     672
+    ],
+    [
+     358,
+     666
+    ],
+    [
+     330,
+     672
+    ],
+    [
+     304,
+     664
+    ]
+   ]
+  },
+  {
+   "year": -40,
+   "cause": "the North Reach, up to the cypress where the new houses are",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     420,
+     644
+    ],
+    [
+     414,
+     612
+    ],
+    [
+     419,
+     580
+    ],
+    [
+     411,
+     552
+    ]
+   ]
+  },
+  {
+   "year": -40,
+   "cause": "the South Quay, out below the village to the shrimp boats",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     441,
+     760
+    ],
+    [
+     454,
+     781
+    ],
+    [
+     437,
+     800
+    ],
+    [
+     412,
+     809
+    ]
+   ]
+  },
+  {
+   "year": -40,
+   "cause": "the Ferry Walk, off Bank Walk onto the parish road's own bank",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     548,
+     756
+    ],
+    [
+     567,
+     772
+    ],
+    [
+     586,
+     783
+    ]
+   ]
+  },
+  {
+   "year": -40,
+   "cause": "the fish quay, out into the channel off Front Street",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "path": [
+    [
+     512,
+     700
+    ],
+    [
+     524,
+     712
+    ],
+    [
+     533,
+     725
+    ]
+   ]
+  },
+  {
+   "year": -38,
+   "cause": "a house in Lowmouth, built on posts when the Bayou Walk went out",
+   "event": "place",
+   "structure": "stilt_house",
+   "at": [
+    372,
+    656
+   ],
+   "bearing": 0
+  },
+  {
+   "year": -38,
+   "cause": "a house in Lowmouth, built on posts when the Bayou Walk went out",
+   "event": "place",
+   "structure": "stilt_camp",
+   "at": [
+    356,
+    684
+   ],
+   "bearing": 180
+  },
+  {
+   "year": -38,
+   "cause": "a house in Lowmouth, built on posts when the Bayou Walk went out",
+   "event": "place",
+   "structure": "stilt_camp",
+   "at": [
+    338,
+    654
+   ],
+   "bearing": 180
+  },
+  {
+   "year": -38,
+   "cause": "a house in Lowmouth, built on posts when the Bayou Walk went out",
+   "event": "place",
+   "structure": "stilt_house",
+   "at": [
+    320,
+    686
+   ],
+   "bearing": 0
+  },
+  {
+   "year": -38,
+   "cause": "a house in Lowmouth, built on posts when the Bayou Walk went out",
+   "event": "place",
+   "structure": "stilt_camp",
+   "at": [
+    306,
+    650
+   ],
+   "bearing": 180
+  },
+  {
+   "year": -38,
+   "cause": "a house in Lowmouth, on the North Reach under the cypress",
+   "event": "place",
+   "structure": "stilt_house",
+   "at": [
+    402,
+    628
+   ],
+   "bearing": 90
+  },
+  {
+   "year": -38,
+   "cause": "a house in Lowmouth, on the North Reach under the cypress",
+   "event": "place",
+   "structure": "stilt_camp",
+   "at": [
+    432,
+    606
+   ],
+   "bearing": 270
+  },
+  {
+   "year": -38,
+   "cause": "a house in Lowmouth, on the North Reach under the cypress",
+   "event": "place",
+   "structure": "stilt_house",
+   "at": [
+    398,
+    592
+   ],
+   "bearing": 90
+  },
+  {
+   "year": -38,
+   "cause": "a house in Lowmouth, on the North Reach under the cypress",
+   "event": "place",
+   "structure": "stilt_house",
+   "at": [
+    434,
+    574
+   ],
+   "bearing": 270
+  },
+  {
+   "year": -38,
+   "cause": "a house in Lowmouth, on the North Reach under the cypress",
+   "event": "place",
+   "structure": "stilt_camp",
+   "at": [
+    400,
+    558
+   ],
+   "bearing": 90
+  },
+  {
+   "year": -38,
+   "cause": "a house in Lowmouth, down on the South Quay where the boats tie up",
+   "event": "place",
+   "structure": "stilt_house",
+   "at": [
+    468,
+    788
+   ],
+   "bearing": 270
+  },
+  {
+   "year": -38,
+   "cause": "a house in Lowmouth, down on the South Quay where the boats tie up",
+   "event": "place",
+   "structure": "stilt_camp",
+   "at": [
+    424,
+    818
+   ],
+   "bearing": 0
+  },
+  {
+   "year": -38,
+   "cause": "a house in Lowmouth, down on the South Quay where the boats tie up",
+   "event": "place",
+   "structure": "stilt_house",
+   "at": [
+    450,
+    814
+   ],
+   "bearing": 0
+  },
+  {
+   "year": -36,
+   "cause": "the net shed on the Ferry Walk, where the parish road meets the water",
+   "event": "place",
+   "structure": "net_shed",
+   "at": [
+    580,
+    776
+   ],
+   "bearing": 270
+  },
+  {
+   "year": -36,
+   "cause": "a houseboat tied at the fish quay",
+   "event": "place",
+   "structure": "houseboat",
+   "at": [
+    540,
+    733
+   ],
+   "bearing": 300
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     436.0,
+     697.0
+    ],
+    [
+     435.8,
+     703.7
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     460.0,
+     697.0
+    ],
+    [
+     460.4,
+     703.2
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     504.0,
+     698.0
+    ],
+    [
+     504.2,
+     700.0
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     536.0,
+     697.0
+    ],
+    [
+     535.9,
+     698.5
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     447.0,
+     712.0
+    ],
+    [
+     444.9,
+     712.2
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     508.0,
+     704.0
+    ],
+    [
+     507.6,
+     699.7
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     543.0,
+     711.0
+    ],
+    [
+     548.7,
+     710.6
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     439.0,
+     730.0
+    ],
+    [
+     445.8,
+     730.5
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     434.0,
+     757.0
+    ],
+    [
+     434.2,
+     760.5
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     521.0,
+     662.0
+    ],
+    [
+     525.0,
+     661.7
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     531.0,
+     664.0
+    ],
+    [
+     525.2,
+     664.4
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     478.0,
+     749.0
+    ],
+    [
+     477.7,
+     744.6
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     371.0,
+     704.0
+    ],
+    [
+     371.2,
+     700.7
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     467.0,
+     704.0
+    ],
+    [
+     466.9,
+     702.7
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     384.0,
+     635.0
+    ],
+    [
+     386.8,
+     635.1
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     390.0,
+     653.0
+    ],
+    [
+     386.2,
+     653.3
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     416.0,
+     635.0
+    ],
+    [
+     418.2,
+     634.6
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     422.0,
+     653.0
+    ],
+    [
+     420.6,
+     653.1
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     443.0,
+     640.0
+    ],
+    [
+     442.8,
+     644.9
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     459.0,
+     648.0
+    ],
+    [
+     459.1,
+     645.4
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     475.0,
+     640.0
+    ],
+    [
+     474.8,
+     645.9
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     495.0,
+     612.0
+    ],
+    [
+     495.2,
+     615.5
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     511.0,
+     620.0
+    ],
+    [
+     510.7,
+     614.5
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     527.0,
+     612.0
+    ],
+    [
+     526.8,
+     614.6
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     543.0,
+     620.0
+    ],
+    [
+     543.4,
+     616.2
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     497.0,
+     618.0
+    ],
+    [
+     496.8,
+     615.4
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     392.0,
+     627.0
+    ],
+    [
+     387.2,
+     626.7
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     384.0,
+     675.0
+    ],
+    [
+     384.7,
+     671.3
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     392.0,
+     691.0
+    ],
+    [
+     389.0,
+     690.8
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     392.0,
+     723.0
+    ],
+    [
+     387.2,
+     722.7
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     384.0,
+     739.0
+    ],
+    [
+     387.8,
+     738.8
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     411.0,
+     646.0
+    ],
+    [
+     411.1,
+     643.4
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     424.0,
+     667.0
+    ],
+    [
+     421.7,
+     667.2
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     416.0,
+     683.0
+    ],
+    [
+     421.2,
+     683.4
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     390.0,
+     751.0
+    ],
+    [
+     388.5,
+     751.1
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     411.0,
+     764.0
+    ],
+    [
+     411.2,
+     761.9
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     552.0,
+     711.0
+    ],
+    [
+     548.7,
+     711.3
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     534.0,
+     727.0
+    ],
+    [
+     533.0,
+     725.0
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     552.0,
+     743.0
+    ],
+    [
+     548.9,
+     742.8
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     493.0,
+     676.0
+    ],
+    [
+     477.8,
+     674.9
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     378.0,
+     705.0
+    ],
+    [
+     378.3,
+     701.2
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     372.0,
+     651.0
+    ],
+    [
+     371.6,
+     645.4
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     356.0,
+     689.0
+    ],
+    [
+     362.0,
+     700.0
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     338.0,
+     659.0
+    ],
+    [
+     340.3,
+     669.8
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     320.0,
+     681.0
+    ],
+    [
+     323.4,
+     670.0
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     306.0,
+     655.0
+    ],
+    [
+     304.0,
+     664.0
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     407.0,
+     628.0
+    ],
+    [
+     416.7,
+     626.2
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     427.0,
+     606.0
+    ],
+    [
+     415.2,
+     604.2
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     403.0,
+     592.0
+    ],
+    [
+     416.8,
+     594.2
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     429.0,
+     574.0
+    ],
+    [
+     418.2,
+     577.1
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     405.0,
+     558.0
+    ],
+    [
+     412.1,
+     556.0
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     463.0,
+     788.0
+    ],
+    [
+     454.0,
+     781.0
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     424.0,
+     813.0
+    ],
+    [
+     421.3,
+     805.6
+    ]
+   ]
+  },
+  {
+   "year": -35,
+   "cause": "the walk from the door to the boardwalk",
+   "event": "ribbon",
+   "kit": "bayou_walk",
+   "curve": false,
+   "path": [
+    [
+     450.0,
+     809.0
+    ],
+    [
+     438.3,
+     798.5
+    ]
+   ]
+  },
+  {
+   "year": -3000,
+   "cause": "the Marrow on its old course, south-west to the sea past the parish: the line it found down the levees and the back swamp between the places it has always come through",
+   "event": "watercourse",
+   "name": "marrow",
+   "from": "headwater",
+   "to": [
+    173,
+    1382
+   ],
+   "via": [
+    "breach",
+    [
+     608,
+     560
+    ],
+    [
+     488,
+     700
+    ],
+    [
+     368,
+     880
+    ],
+    [
+     278,
+     1060
+    ],
+    [
+     198,
+     1280
+    ]
+   ],
+   "width": 18,
+   "depth": 3.2,
+   "bed": "river_mud",
+   "bank": "river_mud",
+   "meander": 16,
+   "floor": 2.6,
+   "terms": {
+    "step": 4,
+    "max_climb": 0.45
+   }
+  },
+  {
+   "year": -55,
+   "cause": "the passes at the new mouth: below the sawgrass the river breaks into channels that each find their own way out into the bay",
+   "event": "watercourse",
+   "name": "mouth_main",
+   "from": [
+    1028,
+    960
+   ],
+   "to": [
+    1130,
+    1360
+   ],
+   "width": 13,
+   "depth": 2.2,
+   "bed": "river_mud",
+   "bank": "river_mud",
+   "meander": 12,
+   "floor": 2.6,
+   "branches": [
+    {
+     "name": "pass_west",
+     "to": [
+      868,
+      1330
+     ],
+     "at": 0.08,
+     "width": 9,
+     "depth": 1.6
+    },
+    {
+     "name": "pass_mid",
+     "to": [
+      978,
+      1382
+     ],
+     "at": 0.3,
+     "width": 9,
+     "depth": 1.6
+    },
+    {
+     "name": "pass_east",
+     "to": [
+      1270,
+      1250
+     ],
+     "at": 0.18,
+     "width": 8,
+     "depth": 1.5
+    }
+   ],
+   "terms": {
+    "step": 4,
+    "max_climb": 0.45
+   }
+  }
+ ]
+}

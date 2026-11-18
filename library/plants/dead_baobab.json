@@ -1,0 +1,12 @@
+{
+  "name": "dead_baobab",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "A baobab that died standing: the same grey barrel with its limbs bare and broken short. On the pan rim they stand in groups, holding nothing.",
+  "form": "snag",
+  "height": [6, 10],
+  "trunk_radius": [0.85, 1.35],
+  "crown_radius": [3.2, 4.6],
+  "bark": "baobab_bark",
+  "max_slope": 0.5
+}

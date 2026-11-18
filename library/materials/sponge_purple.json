@@ -1,0 +1,15 @@
+{
+  "name": "sponge_purple",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Tube sponges: deep purple, soft-looking.",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [128, 64, 148],
+    "alt": [106, 50, 126],
+    "scale": 5,
+    "contrast": 0.8,
+    "calm": {"base": [134, 70, 154], "alt": [112, 56, 132]}
+  }
+}

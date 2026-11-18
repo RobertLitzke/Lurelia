@@ -1,0 +1,17 @@
+{
+  "name": "lumen_moss",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Moss on the cenote rims, faintly lit by the film beneath it.",
+  "id": 241,
+  "smooth": true,
+  "glow": 0.35,
+  "texture": {
+    "pattern": "speckle",
+    "base": [62, 128, 96],
+    "alt": [96, 196, 176],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [70, 134, 102], "alt": [100, 190, 172]}
+  }
+}

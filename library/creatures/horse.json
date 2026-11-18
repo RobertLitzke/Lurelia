@@ -1,0 +1,97 @@
+{
+  "name": "horse",
+  "version": 3,
+  "introduced_by": "glassfall",
+  "notes": "graze: Feral horse: bay with a black mane, tail and legs. Small bands graze open grass, a stallion keeping watch, and wheel away at a gallop. The base of every horse.",
+  "voxel": 0.08,
+  "half_w": 0.35,
+  "height": 1.6,
+  "colors": {"coat": [150, 98, 60], "belly": [128, 96, 60], "mane": [36, 28, 24], "muzzle": [74, 58, 40], "dark": [36, 28, 24]},
+  "behaviour": {
+    "movement": "graze",
+    "walk_speed": 1.3,
+    "flee_speed": 9.0,
+    "wary": 16,
+    "flightiness": 0.9,
+    "juvenile_flightiness": 0.8,
+    "flees_from": ["player"],
+    "group": {"size": [2, 6], "spacing": 3.5, "range": 20, "alignment": 1.0, "cohesion": 1.0},
+    "swims": true
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 16, 17], "radius": [3.6, 3.8, 8.2], "mat": "coat"},
+    {"op": "recolour_below", "y": 13, "from": "coat", "to": "belly"},
+    {"op": "ellipsoid", "centre": [16, 18.5, 9.5], "radius": [2.8, 3.6, 3.1], "mat": "coat", "part": "neck"},
+    {"op": "ellipsoid", "centre": [16, 21.5, 7.2], "radius": [2.3, 2.8, 2.3], "mat": "coat", "part": "neck"},
+    {"op": "box", "from": [14, 20, 5], "to": [18, 25, 8], "mat": "coat", "part": "neck"},
+    {"op": "box", "from": [14, 22, 0], "to": [18, 26, 5], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [15, 22, 0], "to": [17, 24, 1], "mat": "muzzle", "part": "head"},
+    {"op": "set", "at": [14, 25, 3], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [17, 25, 3], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [14, 26, 4], "to": [15, 28, 5], "mat": "coat", "part": "ear_l"},
+    {"op": "box", "from": [17, 26, 4], "to": [18, 28, 5], "mat": "coat", "part": "ear_r"},
+    {"op": "box", "from": [15, 21, 8], "to": [17, 23, 11], "mat": "mane", "part": "neck"},
+    {"op": "box", "from": [15, 24, 5], "to": [17, 26, 8], "mat": "mane", "part": "neck"},
+    {"op": "box", "from": [15, 12, 25], "to": [17, 18, 27], "mat": "mane", "part": "tail"},
+    {"op": "box", "from": [13, 2, 11], "to": [15, 13, 13], "mat": "coat", "part": "leg_fl"},
+    {"op": "box", "from": [13, 0, 11], "to": [15, 2, 13], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [17, 2, 11], "to": [19, 13, 13], "mat": "coat", "part": "leg_fr"},
+    {"op": "box", "from": [17, 0, 11], "to": [19, 2, 13], "mat": "dark", "part": "leg_fr"},
+    {"op": "box", "from": [13, 2, 22], "to": [15, 13, 24], "mat": "coat", "part": "leg_hl"},
+    {"op": "box", "from": [13, 0, 22], "to": [15, 2, 24], "mat": "dark", "part": "leg_hl"},
+    {"op": "box", "from": [17, 2, 22], "to": [19, 13, 24], "mat": "coat", "part": "leg_hr"},
+    {"op": "box", "from": [17, 0, 22], "to": [19, 2, 24], "mat": "dark", "part": "leg_hr"}
+  ],
+  "vary": {"size": 0.06, "shade": 0.14, "hue": 0.05},
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16, 17.5, 10]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16, 24, 5.5]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [14.5, 26, 4.5], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [17.5, 26, 4.5], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14, 13, 12], "side": "l", "pair": 0},
+      {
+        "name": "leg_fl_low",
+        "role": "leg",
+        "parent": "leg_fl",
+        "joint": [14, 7, 12],
+        "claims": [[[13, 0, 11], [15, 7, 13]]],
+        "side": "l",
+        "pair": 0
+      },
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [18, 13, 12], "side": "r", "pair": 0},
+      {
+        "name": "leg_fr_low",
+        "role": "leg",
+        "parent": "leg_fr",
+        "joint": [18, 7, 12],
+        "claims": [[[17, 0, 11], [19, 7, 13]]],
+        "side": "r",
+        "pair": 0
+      },
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14, 13, 23], "side": "l", "pair": 1},
+      {
+        "name": "leg_hl_low",
+        "role": "leg",
+        "parent": "leg_hl",
+        "joint": [14, 7, 23],
+        "claims": [[[13, 0, 22], [15, 7, 24]]],
+        "side": "l",
+        "pair": 1
+      },
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [18, 13, 23], "side": "r", "pair": 1},
+      {
+        "name": "leg_hr_low",
+        "role": "leg",
+        "parent": "leg_hr",
+        "joint": [18, 7, 23],
+        "claims": [[[17, 0, 22], [19, 7, 24]]],
+        "side": "r",
+        "pair": 1
+      },
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 17, 25]}
+    ]
+  }
+}

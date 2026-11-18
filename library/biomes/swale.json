@@ -1,0 +1,48 @@
+{
+  "name": "swale",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The damp bottoms of the dry valleys, where the soil is deep: feathergrass shoulder-high and greener, big tussocks, a birch or a willow in the wettest heads.",
+  "priority": 8,
+  "rules": {"moist": [0.62, 1.0], "slope": [0, 0.2]},
+  "surface": "feathergrass",
+  "subsurface": "dirt",
+  "rock": null,
+  "map_color": [168, 170, 92],
+  "plants": [
+    {
+      "plant": "feather_tussock",
+      "density": 0.1,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.3, "max": 1.0}}
+    },
+    {
+      "plant": "birch",
+      "density": 0.0022,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.35, "max": 1.0}}
+    },
+    {
+      "plant": "alder",
+      "density": 0.0012,
+      "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.45, "max": 1.0}}
+    },
+    {"plant": "hawthorn", "density": 0.0012, "placement": {"verb": "lone", "params": {"spacing": 24}}},
+    {"plant": "sagebrush", "density": 0.002, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "broken_snag", "density": 0.0003, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "przewalski_horse", "count": 3},
+    {"creature": "saiga", "count": 3},
+    {"creature": "mammoth", "count": 3},
+    {"creature": "deer", "count": 5},
+    {"creature": "aurochs", "count": 14},
+    {"creature": "steppe_wolf", "count": 3},
+    {"creature": "wind_skate", "count": 6},
+    {"creature": "rabbit", "count": 3},
+    {"creature": "badger", "count": 2},
+    {"creature": "starling", "count": 20},
+    {"creature": "sparrow", "count": 12},
+    {"creature": "dragonfly", "count": 4},
+    {"creature": "bumblebee", "count": 4}
+  ],
+  "collectibles": [{"item": "flint_blade", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}]
+}

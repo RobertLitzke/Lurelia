@@ -1,0 +1,19 @@
+{
+  "name": "miner_shack",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A one-room miner's shack of planks with a tin roof and a stovepipe.",
+  "size": [16, 14, 20],
+  "anchor": [8, 0, 0],
+  "foundation": 4,
+  "tags": ["harlow", "house"],
+  "slots": {"wall": "desert_planks", "floor": "desert_planks", "roof": "corrugated_tin", "iron": "rust_iron"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [16, 1, 20], "mat": "floor", "part": "floor"},
+    {"op": "walls", "from": [0, 1, 0], "to": [16, 9, 20], "mat": "wall", "thick": 1, "part": "timber"},
+    {"op": "gable", "from": [0, 9, 0], "to": [16, 9, 20], "axis": "z", "mat": "roof", "rise": 1, "part": "roof"},
+    {"op": "box", "from": [6, 1, 0], "to": [10, 8, 1], "mat": "air"},
+    {"op": "box", "from": [1, 4, 8], "to": [1, 6, 12], "mat": "air"},
+    {"op": "cylinder", "base": [12, 9, 15], "radius": 0.8, "height": 5, "mat": "iron", "part": "metal"}
+  ]
+}

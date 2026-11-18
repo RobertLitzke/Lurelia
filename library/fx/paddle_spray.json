@@ -1,0 +1,17 @@
+{
+  "name": "paddle_spray",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "Water off the blade as it comes out of a stroke.",
+  "shape": "streak",
+  "count": [7, 11],
+  "speed": [1.2, 2.6],
+  "cone_deg": 28,
+  "life": [0.4, 0.7],
+  "size": [0.01, 0.007],
+  "gravity": 9.8,
+  "drag": 0.4,
+  "color": [225, 235, 240],
+  "alpha": 0.8,
+  "near_fade": 0.5
+}

@@ -1,0 +1,17 @@
+{
+  "name": "hedgehog",
+  "version": 2,
+  "introduced_by": "hemlow",
+  "notes": "Hedgehog: a small brown ball of spines that trundles along the hedge bottoms at dusk and curls up tight when you come close.",
+  "colors": {
+    "shell": [104, 84, 62],
+    "scute": [74, 58, 40],
+    "rim": [96, 74, 48],
+    "belly": [150, 98, 60],
+    "skin": [128, 96, 60],
+    "dark": [36, 28, 24]
+  },
+  "behaviour": {"walk_speed": 0.25, "flee_speed": 0.25, "wary": 4, "flightiness": 0.5, "active": "nocturnal", "off_hours": 0.05},
+  "like": "tortoise",
+  "scale": 0.6
+}

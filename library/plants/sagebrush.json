@@ -1,0 +1,14 @@
+{
+  "name": "sagebrush",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Big sagebrush, the grey-green cover of the open desert.",
+  "form": "shrub",
+  "height": [0.6, 1.2],
+  "trunk_radius": [0.05, 0.08],
+  "crown_radius": [0.45, 0.75],
+  "bark": "juniper_bark",
+  "leaf": "sage",
+  "squash": 0.8,
+  "max_slope": 0.9
+}

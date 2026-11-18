@@ -1,0 +1,22 @@
+{
+  "name": "duck_blind",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "A duck blind out in the flats: a plank box on four posts walled with bundled reeds, a slot to look out of on local -Z. Base sea.",
+  "size": [12, 12, 10],
+  "anchor": [6, 0, 5],
+  "foundation": 10,
+  "level": false,
+  "base": "sea",
+  "tags": ["sawgrass"],
+  "slots": {"post": "timber_frame", "deck": "weathered_planks", "reed": "thatch"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [1, 10, 1], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [11, 0, 0], "to": [12, 10, 1], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [0, 0, 9], "to": [1, 10, 10], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [11, 0, 9], "to": [12, 10, 10], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [0, 6, 0], "to": [12, 7, 10], "mat": "deck", "part": "floor"},
+    {"op": "walls", "from": [0, 7, 0], "to": [12, 11, 10], "mat": "reed", "thick": 1, "part": "roof"},
+    {"op": "box", "from": [3, 10, 0], "to": [9, 11, 1], "mat": "air", "part": "roof"}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "ballast",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Railway ballast: grey crushed rock.",
+  "id": 151,
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [110, 106, 100],
+    "alt": [140, 134, 126],
+    "scale": 10,
+    "contrast": 1.0,
+    "calm": {"base": [120, 116, 110], "alt": [146, 140, 132]}
+  }
+}

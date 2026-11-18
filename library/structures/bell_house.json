@@ -1,0 +1,23 @@
+{
+  "name": "bell_house",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "An open bell house: four posts, a small tiled roof, and a big green bronze bell hanging inside.",
+  "size": [24, 28, 24],
+  "anchor": [12, 0, 12],
+  "foundation": 4,
+  "decays": true,
+  "tags": ["order", "temple"],
+  "slots": {"base": "temple_stone", "post": "temple_wood", "roof": "temple_roof", "bell": "temple_roof"},
+  "ops": [
+    {"op": "box", "from": [3, 0, 3], "to": [21, 2, 21], "mat": "base", "part": "stone"},
+    {"op": "box", "from": [5, 2, 5], "to": [7, 18, 7], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [17, 2, 5], "to": [19, 18, 7], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [5, 2, 17], "to": [7, 18, 19], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [17, 2, 17], "to": [19, 18, 19], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [4, 17, 4], "to": [20, 18, 20], "mat": "post", "part": "timber"},
+    {"op": "gable", "from": [0, 18, 0], "to": [24, 18, 24], "axis": "x", "mat": "roof", "rise": 1, "part": "roof"},
+    {"op": "cylinder", "base": [12, 8, 12], "radius": 3, "height": 9, "mat": "bell", "part": "metal"},
+    {"op": "ellipsoid", "centre": [12, 17, 12], "radius": [3, 1.5, 3], "mat": "bell", "part": "metal"}
+  ]
+}

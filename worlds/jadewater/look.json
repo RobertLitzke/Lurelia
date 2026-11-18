@@ -1,0 +1,47 @@
+{
+  "notes": "Wet air in a green sea. Jade close to, milky aqua through the towers, the far ones nearly the colour of the sky; the haze kept low so each gorge stacks against the next.",
+  "ramp": [
+    {
+      "at": 0.0,
+      "color": [
+        0.55,
+        1.1,
+        0.8
+      ]
+    },
+    {
+      "at": 0.5,
+      "color": [
+        0.62,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "at": 1.0,
+      "color": [
+        0.78,
+        0.95,
+        1.05
+      ]
+    }
+  ],
+  "knobs": {
+    "ramp_reach": 520.0,
+    "haze_density": 2.1,
+    "haze_height": 70.0,
+    "sky_ramp": 0.6,
+    "contrast": 0.28,
+    "saturation": 1.05
+  },
+  "ambient": [
+    0.24,
+    1.05,
+    0.86
+  ],
+  "sun_tint": [
+    1.0,
+    0.99,
+    0.84
+  ]
+}

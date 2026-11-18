@@ -1,0 +1,9 @@
+{
+  "name": "works_lamp",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "A lamp strip under the galleries: the only thing still lit in the shops, and the only way to see in them.",
+  "smooth": false,
+  "glow": 1.35,
+  "texture": {"pattern": "flat", "base": [236, 228, 196], "scale": 1, "contrast": 1.0, "calm": {"base": [240, 234, 206]}}
+}

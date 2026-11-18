@@ -1,0 +1,16 @@
+{
+  "name": "highway_guard",
+  "version": 1,
+  "introduced_by": "routing engine",
+  "notes": "Two lanes and a shoulder, 9 m wide, with a steel guard rail on posts every 4 m down both edges. Where the land falls away it hands over to steel_span.",
+  "ground": "grade",
+  "width": 9.0,
+  "mat": "road_asphalt",
+  "shoulder": "road_gravel",
+  "margin": 7.0,
+  "max_span": 140.0,
+  "rails": [{"side": "both", "out": 0.4, "from": 0.5, "to": 0.8, "thick": 0.25, "mat": "bridge_steel"}],
+  "posts": [{"side": "both", "out": 0.4, "every": 4.0, "size": [0.25, 0.5, 0.25], "mat": "rust_iron"}],
+  "span": "steel_span",
+  "tags": ["road", "highway"]
+}

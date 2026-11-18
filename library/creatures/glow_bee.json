@@ -1,0 +1,10 @@
+{
+  "name": "glow_bee",
+  "version": 2,
+  "introduced_by": "faerie",
+  "notes": "A bee of the faerie wood: gold, softly glowing, drifting between blossoms at dusk.",
+  "colors": {"bee": [255, 214, 120, 1.6], "fuzz": [255, 214, 120, 1.6]},
+  "behaviour": {"active": "nocturnal", "off_hours": 0.05},
+  "like": "bee",
+  "scale": 1.3
+}

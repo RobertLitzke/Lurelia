@@ -1,0 +1,16 @@
+{
+  "name": "shore_sand",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Pale lake-shore sand above the waterline.",
+  "id": 119,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [214, 190, 152],
+    "alt": [198, 172, 136],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [218, 196, 160], "alt": [204, 180, 146]}
+  }
+}

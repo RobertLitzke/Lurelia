@@ -1,0 +1,14 @@
+{
+  "name": "hanging_vine",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A climbing vine that has reached the top and hangs back down: strands from the crowns of broadleaf trees, or a curtain over the lip of a cliff. `height` is the strand length, `crown_radius` the width of a cliff curtain.",
+  "form": "vine",
+  "height": [2.0, 5.5],
+  "trunk_radius": [0.0, 0.0],
+  "crown_radius": [1.5, 4.0],
+  "bark": "vine_leaves",
+  "leaf": "vine_leaves",
+  "max_slope": 9,
+  "autumn": "autumn_vine"
+}

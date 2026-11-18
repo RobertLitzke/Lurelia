@@ -1,0 +1,21 @@
+{
+  "name": "seabed",
+  "version": 2,
+  "introduced_by": "glassfall",
+  "notes": "Under the sea.",
+  "priority": 0,
+  "rules": {"underwater": true},
+  "surface": "sand",
+  "subsurface": "sand",
+  "map_color": [60, 110, 160],
+  "creatures": [
+    {"creature": "herring", "count": 30},
+    {"creature": "humpback", "count": 1},
+    {"creature": "manta_ray", "count": 1},
+    {"creature": "harbor_seal", "count": 1},
+    {"creature": "sea_turtle", "count": 1},
+    {"creature": "moon_jelly", "count": 6},
+    {"creature": "sardine", "count": 140},
+    {"creature": "jack", "count": 8}
+  ]
+}

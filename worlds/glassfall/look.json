@@ -1,0 +1,66 @@
+{
+  "notes": "Bright and cheerful: a strong blue sky, colour pushed up and the grade's moodiness taken out, a shallow vignette and almost no split tone. The air stays clear close to, so the heather, the grass and the black lava read as their own colour where you stand in them, and only takes the distance. FOG DISTANCE was 2600 m on a 1024 m island, which is further than you can ever see here: it left about 5% of air in front of the far shore, so the horizon read as a cut-out with the floodplain mist banked in front of it. 850 m is the longest sightline this island has. The two styles measure the same air differently (classic raises the distance to 1.6, the saturated path to 1.25 and then tints it by the ramp), so HAZE DENSITY, which only the saturated path reads, is set to match classic by eye at this vantage rather than by the formula.",
+  "zenith": [
+    0.16,
+    0.44,
+    1.1
+  ],
+  "horizon": [
+    0.6,
+    0.85,
+    1.15
+  ],
+  "ambient": [
+    0.38,
+    0.95,
+    1.2
+  ],
+  "sun_tint": [
+    1.02,
+    1.0,
+    0.94
+  ],
+  "sun_gain": 1.14,
+  "fog_distance": 850.0,
+  "ramp": [
+    {
+      "at": 0.0,
+      "color": [
+        0.9,
+        1.05,
+        0.95
+      ]
+    },
+    {
+      "at": 0.5,
+      "color": [
+        0.76,
+        0.94,
+        1.1
+      ]
+    },
+    {
+      "at": 1.0,
+      "color": [
+        0.62,
+        0.84,
+        1.15
+      ]
+    }
+  ],
+  "knobs": {
+    "ramp_reach": 600.0,
+    "ramp_curve": 0.8,
+    "ramp_value": 1.0,
+    "haze_ramp": 0.5,
+    "haze_density": 0.3,
+    "haze_height": 240.0,
+    "shade_ramp": 0.35,
+    "sun_side": 0.08,
+    "exposure": 1.06,
+    "tone": 0.35,
+    "saturation": 1.22,
+    "contrast": 0.16,
+    "vignette": 0.08
+  }
+}

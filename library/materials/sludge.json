@@ -1,0 +1,17 @@
+{
+  "name": "sludge",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "What the goo gun leaves behind: a wet olive mass that clings where it lands, slumps when nothing holds it up, and is about to go off. It gives off a little light of its own, which is how you spot a doorway somebody has mined. Named in Rust (combat::sludge), so it is in worldload::ENGINE_MATERIALS and every world reaches it.",
+  "smooth": false,
+  "glow": 0.35,
+  "texture": {
+    "pattern": "blotch",
+    "base": [74, 112, 34],
+    "alt": [118, 156, 44],
+    "scale": 3,
+    "contrast": 0.9,
+    "calm": {"base": [84, 116, 48], "alt": [120, 152, 60]}
+  },
+  "round": true
+}

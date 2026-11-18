@@ -1,0 +1,38 @@
+{
+  "name": "kaldvik_spruce",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Snow-bound spruce on the lower walls and the valley floors of a northern fjord: dense dark firs, a few bare birches, deep snow between.",
+  "priority": 3,
+  "rules": {"elev": [1, 100]},
+  "surface": "snow",
+  "subsurface": "snow",
+  "map_color": [40, 70, 62],
+  "plants": [
+    {"plant": "fir", "density": 0.03, "placement": {"verb": "clustered", "params": {"size": 34}}},
+    {"plant": "pine", "density": 0.006, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "sapling_fir",
+      "density": 0.014,
+      "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.4, "max": 0.6}}
+    },
+    {"plant": "birch", "density": 0.003, "placement": {"verb": "clustered", "params": {"size": 20}}},
+    {"plant": "juniper", "density": 0.006, "placement": {"verb": "clustered", "params": {"size": 12}}},
+    {"plant": "snag", "density": 0.001, "placement": {"verb": "lone", "params": {"spacing": 24}}},
+    {"plant": "rock_lichen", "density": 0.06}
+  ],
+  "features": [
+    {"structure": "basalt_boulder", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "fallen_trunk", "density": 0.0008, "placement": {"verb": "scatter", "params": {"seat": 0.4}}}
+  ],
+  "creatures": [
+    {"creature": "elk", "count": 3},
+    {"creature": "bear", "count": 1},
+    {"creature": "raven", "count": 3},
+    {"creature": "arctic_fox", "count": 3},
+    {"creature": "pale_hare", "count": 5},
+    {"creature": "sea_eagle", "count": 1}
+  ],
+  "collectibles": [{"item": "pine_cone", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}],
+  "mist": 0.2
+}

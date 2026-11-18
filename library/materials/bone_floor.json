@@ -1,0 +1,15 @@
+{
+  "name": "bone_floor",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The floor of a bear chamber: earth trodden black by generations of bears, with old bone broken through it.",
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [66, 56, 46],
+    "alt": [206, 198, 176],
+    "scale": 6,
+    "contrast": 0.9,
+    "calm": {"base": [70, 60, 50], "alt": [208, 200, 180]}
+  }
+}

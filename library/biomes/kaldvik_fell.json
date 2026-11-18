@@ -1,0 +1,30 @@
+{
+  "name": "kaldvik_fell",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "The high fell above the fjord walls: wind-packed snow over basalt, a few junipers hunched in the lee of boulders.",
+  "priority": 4,
+  "rules": {"elev": [95, 400]},
+  "surface": "snow",
+  "subsurface": "snow",
+  "rock": "basalt",
+  "map_color": [226, 232, 238],
+  "plants": [
+    {"plant": "juniper", "density": 0.0012, "placement": {"verb": "clustered", "params": {"size": 8}}},
+    {"plant": "heather", "density": 0.006, "placement": {"verb": "clustered", "params": {"size": 10}}},
+    {"plant": "rock_lichen", "density": 0.12}
+  ],
+  "features": [
+    {"structure": "basalt_boulder", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "basalt_columns", "density": 0.00012, "placement": {"verb": "lone", "params": {"spacing": 70}}},
+    {"structure": "cairn", "density": 0.0001, "placement": {"verb": "lone", "params": {"spacing": 120}}}
+  ],
+  "creatures": [
+    {"creature": "ptarmigan", "count": 3},
+    {"creature": "arctic_fox", "count": 3},
+    {"creature": "pale_hare", "count": 4},
+    {"creature": "raven", "count": 2},
+    {"creature": "elk", "count": 1}
+  ],
+  "collectibles": []
+}

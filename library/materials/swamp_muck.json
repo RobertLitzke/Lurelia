@@ -1,0 +1,15 @@
+{
+  "name": "swamp_muck",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Black-brown swamp mud under the cypress: wet, with a litter of rusty needles.",
+  "smooth": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [62, 54, 42],
+    "alt": [78, 66, 48],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [66, 58, 46], "alt": [80, 70, 52]}
+  }
+}

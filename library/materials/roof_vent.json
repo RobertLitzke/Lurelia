@@ -1,0 +1,16 @@
+{
+  "name": "roof_vent",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Galvanised rooftop vents and units.",
+  "id": 154,
+  "smooth": false,
+  "texture": {
+    "pattern": "flat",
+    "base": [150, 154, 156],
+    "alt": [130, 134, 136],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [160, 164, 166], "alt": [142, 146, 148]}
+  }
+}

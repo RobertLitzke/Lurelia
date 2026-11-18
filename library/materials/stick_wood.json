@@ -1,0 +1,15 @@
+{
+  "name": "stick_wood",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Peeled sticks lashed into lattices: grey, dry, a little twisted.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [96, 88, 76],
+    "alt": [72, 66, 58],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [96, 88, 76], "alt": [72, 66, 58]}
+  }
+}

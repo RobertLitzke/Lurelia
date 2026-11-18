@@ -1,0 +1,108 @@
+{
+  "name": "elephant",
+  "version": 2,
+  "introduced_by": "base",
+  "notes": "Elephant: three metres at the shoulder on four grey columns, with great ears, short tusks and a trunk that reaches the ground. Moves in small families and is in no hurry about anyone.",
+  "voxel": 0.12,
+  "half_w": 0.8,
+  "height": 3.0,
+  "colors": {
+    "coat": [128, 124, 120],
+    "hide": [104, 100, 96],
+    "tusk": [240, 236, 228],
+    "nail": [84, 80, 76],
+    "dark": [36, 28, 24]
+  },
+  "behaviour": {
+    "movement": "graze",
+    "walk_speed": 0.8,
+    "flee_speed": 5.0,
+    "wary": 16,
+    "flightiness": 0.12,
+    "juvenile_flightiness": 0.6,
+    "flees_from": ["player"],
+    "swims": true,
+    "group": {"size": [2, 5], "spacing": 4.0, "range": 20, "alignment": 0.8, "cohesion": 1.2},
+    "active": "crepuscular",
+    "off_hours": 0.4
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 16, 17], "radius": [5.4, 5.6, 8.0], "mat": "coat"},
+    {"op": "recolour_below", "y": 12, "from": "coat", "to": "hide"},
+    {"op": "box", "from": [11, 1, 8], "to": [15, 14, 12], "mat": "coat", "part": "leg_fl"},
+    {"op": "box", "from": [11, 0, 8], "to": [15, 1, 12], "mat": "nail", "part": "leg_fl"},
+    {"op": "box", "from": [17, 1, 8], "to": [21, 14, 12], "mat": "coat", "part": "leg_fr"},
+    {"op": "box", "from": [17, 0, 8], "to": [21, 1, 12], "mat": "nail", "part": "leg_fr"},
+    {"op": "box", "from": [11, 1, 19], "to": [15, 14, 23], "mat": "coat", "part": "leg_hl"},
+    {"op": "box", "from": [11, 0, 19], "to": [15, 1, 23], "mat": "nail", "part": "leg_hl"},
+    {"op": "box", "from": [17, 1, 19], "to": [21, 14, 23], "mat": "coat", "part": "leg_hr"},
+    {"op": "box", "from": [17, 0, 19], "to": [21, 1, 23], "mat": "nail", "part": "leg_hr"},
+    {"op": "box", "from": [13, 15, 6], "to": [20, 21, 11], "mat": "coat", "part": "neck"},
+    {"op": "ellipsoid", "centre": [16, 19, 7], "radius": [4.0, 4.2, 4.0], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [9, 14, 6], "to": [11, 23, 13], "mat": "hide", "part": "ear_l"},
+    {"op": "box", "from": [21, 14, 6], "to": [23, 23, 13], "mat": "hide", "part": "ear_r"},
+    {"op": "set", "at": [13, 20, 4], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [19, 20, 4], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 14, 4], "radius": [1.8, 4.0, 1.8], "mat": "coat", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 8, 3.5], "radius": [1.2, 3.4, 1.2], "mat": "coat", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 4, 4.5], "radius": [1.0, 1.6, 1.4], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [13, 13, 3], "to": [14, 15, 6], "mat": "tusk", "part": "head"},
+    {"op": "box", "from": [13, 11, 2], "to": [14, 13, 4], "mat": "tusk", "part": "head"},
+    {"op": "box", "from": [19, 13, 3], "to": [20, 15, 6], "mat": "tusk", "part": "head"},
+    {"op": "box", "from": [19, 11, 2], "to": [20, 13, 4], "mat": "tusk", "part": "head"},
+    {"op": "box", "from": [16, 14, 25], "to": [17, 20, 26], "mat": "hide", "part": "tail"},
+    {"op": "box", "from": [16, 12, 25], "to": [17, 14, 27], "mat": "dark", "part": "tail"}
+  ],
+  "vary": {"size": 0.1, "shade": 0.06},
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16, 18, 10]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16, 18, 8]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [11, 20, 9], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [21, 20, 9], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [13.0, 14, 10.0], "side": "l", "pair": 0},
+      {
+        "name": "leg_fl_low",
+        "role": "leg",
+        "parent": "leg_fl",
+        "joint": [13.0, 7, 10.0],
+        "claims": [[[11, 0, 8], [15, 7, 12]]],
+        "side": "l",
+        "pair": 0
+      },
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [13.0, 14, 21.0], "side": "l", "pair": 1},
+      {
+        "name": "leg_hl_low",
+        "role": "leg",
+        "parent": "leg_hl",
+        "joint": [13.0, 7, 21.0],
+        "claims": [[[11, 0, 19], [15, 7, 23]]],
+        "side": "l",
+        "pair": 1
+      },
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [19.0, 14, 10.0], "side": "r", "pair": 0},
+      {
+        "name": "leg_fr_low",
+        "role": "leg",
+        "parent": "leg_fr",
+        "joint": [19.0, 7, 10.0],
+        "claims": [[[17, 0, 8], [21, 7, 12]]],
+        "side": "r",
+        "pair": 0
+      },
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [19.0, 14, 21.0], "side": "r", "pair": 1},
+      {
+        "name": "leg_hr_low",
+        "role": "leg",
+        "parent": "leg_hr",
+        "joint": [19.0, 7, 21.0],
+        "claims": [[[17, 0, 19], [21, 7, 23]]],
+        "side": "r",
+        "pair": 1
+      },
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 19, 24.5]}
+    ]
+  }
+}

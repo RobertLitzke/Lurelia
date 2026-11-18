@@ -1,0 +1,12 @@
+{
+  "name": "young_redwood",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "conifer: A redwood of a century or so, already taller than the firs round it.",
+  "height": [18, 26],
+  "trunk_radius": [0.45, 0.6],
+  "buttress": 0.4,
+  "crown_radius": [2.6, 3.2],
+  "like": "redwood",
+  "crown_base": 0.3
+}

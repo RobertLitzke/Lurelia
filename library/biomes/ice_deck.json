@@ -1,0 +1,15 @@
+{
+  "name": "ice_deck",
+  "version": 1,
+  "introduced_by": "icezeto",
+  "notes": "The snowfield a frozen base is dug into: wind-packed snow and nothing else. It dresses the plain over a buried arena, not the arena itself; what is inside comes from the materials the ice style paints on the structure.",
+  "priority": 12,
+  "rules": {"elev": [-2, 200]},
+  "surface": "packed_snow",
+  "subsurface": "packed_snow",
+  "fringe": 0,
+  "map_color": [226, 232, 238],
+  "plants": [],
+  "creatures": [],
+  "collectibles": []
+}

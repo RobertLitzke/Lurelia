@@ -1,0 +1,36 @@
+{
+  "name": "houseboat",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "A houseboat moored in the channel: a flat hull awash, a board cabin with a flat tin roof, a lamp in the windows, a railed foredeck (local -Z). Base sea.",
+  "size": [16, 18, 36],
+  "anchor": [8, 0, 18],
+  "foundation": 0,
+  "level": false,
+  "base": "sea",
+  "tags": ["lowmouth"],
+  "slots": {
+    "hull": "weathered_planks",
+    "wall": "siding_sage",
+    "roof": "corrugated_tin",
+    "post": "timber_frame",
+    "door": "door_red",
+    "window": "window_glass",
+    "lamp": "lamplit_glass"
+  },
+  "ops": [
+    {"op": "box", "from": [0, 3, 0], "to": [16, 6, 36], "mat": "hull", "part": "timber"},
+    {"op": "walls", "from": [2, 6, 6], "to": [14, 16, 32], "mat": "wall", "thick": 1, "part": "wall"},
+    {"op": "box", "from": [1, 16, 4], "to": [15, 17, 34], "mat": "roof", "part": "roof"},
+    {"op": "box", "from": [6, 6, 6], "to": [10, 14, 7], "mat": "door", "part": "timber"},
+    {"op": "box", "from": [3, 10, 6], "to": [5, 13, 7], "mat": "lamp", "part": "glass"},
+    {"op": "box", "from": [11, 10, 6], "to": [13, 13, 7], "mat": "lamp", "part": "glass"},
+    {"op": "box", "from": [2, 10, 12], "to": [3, 13, 15], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [13, 10, 12], "to": [14, 13, 15], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [2, 10, 20], "to": [3, 13, 23], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [13, 10, 20], "to": [14, 13, 23], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [0, 6, 0], "to": [1, 9, 6], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [15, 6, 0], "to": [16, 9, 6], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [0, 8, 0], "to": [16, 9, 1], "mat": "post", "part": "timber"}
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "long_barrow_mouth",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The open east end of the Long Barrow: a kerbed forecourt with ochre on its floor, two uprights and a lintel at the mouth, the closing slab pushed aside and lying, and a chalk-lined passage carved 12 m back into the mound. Place at the mound's east end facing out (local -Z); it carves the passage into the earth behind it.",
+  "size": [32, 15, 56],
+  "anchor": [16, 0, 2],
+  "foundation": 4,
+  "level": false,
+  "decays": false,
+  "tags": ["windbarrow", "barrow"],
+  "slots": {"stone": "chalk_block", "floor": "chalk_rubble", "paint": "ochre"},
+  "ops": [
+    {"op": "box", "from": [11, 1, 8], "to": [21, 10, 56], "mat": "carve"},
+    {"op": "box", "from": [11, 0, 8], "to": [21, 1, 56], "mat": "floor", "part": "floor"},
+    {"op": "box", "from": [11, 1, 8], "to": [13, 9, 56], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [19, 1, 8], "to": [21, 9, 56], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [11, 9, 8], "to": [21, 10, 56], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [13, 1, 9], "to": [19, 9, 54], "mat": "air"},
+    {"op": "box", "from": [2, 0, 0], "to": [30, 1, 10], "mat": "floor", "part": "floor"},
+    {"op": "box", "from": [2, 0, 0], "to": [4, 3, 10], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [28, 0, 0], "to": [30, 3, 10], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [4, 0, 0], "to": [28, 2, 2], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [11, 0, 6], "to": [21, 2, 8], "mat": "air"},
+    {"op": "box", "from": [8, 0, 6], "to": [11, 13, 9], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [21, 0, 6], "to": [24, 13, 9], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [8, 10, 6], "to": [24, 13, 9], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [4, 0, 2], "to": [6, 11, 5], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [6, 0, 2], "to": [13, 2, 5], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [12, 1, 3], "to": [20, 2, 4], "mat": "paint", "part": "floor"}
+  ]
+}

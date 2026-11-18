@@ -1,0 +1,59 @@
+{
+  "name": "windbarrow",
+  "size_m": 1536,
+  "height_m": 128,
+  "sea_level_m": 20,
+  "underwater": {"visibility": 11, "light": 0.15},
+  "seed": 1883,
+  "sun": {"latitude": 50},
+  "seeds": 1,
+  "rock": [
+    ["chalk_white", 0.75],
+    ["chalk_grey", 0.25]
+  ],
+  "strata": [
+    ["chalk_grey", 0],
+    ["chalk_white", 24],
+    ["flint_band", 61],
+    ["chalk_white", 63.5],
+    ["flint_band", 70],
+    ["chalk_white", 72.5]
+  ],
+  "spawn": [500, 740],
+  "spawn_bearing": 38,
+  "seasons": ["spring", "summer", "autumn", "winter"],
+  "start_season": "summer",
+  "weather": {
+    "sun": 1.0,
+    "clouds": 1.3,
+    "rain": 0.7,
+    "fog": 0.3,
+    "snow": 0.2
+  },
+  "start_weather": "sun",
+  "default_biome": "feathergrass_sea",
+  "seabed_biome": "seabed",
+  "start_hour": 16.4,
+  "snow_line_m": 400,
+  "weathering": 0.8,
+  "moss": 0.4,
+  "biomes": [
+    "feathergrass_sea",
+    "chalk_down",
+    "scarp_face",
+    "flint_down",
+    "swale",
+    "narrow_banks",
+    "barrow_field",
+    "green_kurgan",
+    "tepe_ground",
+    "steading",
+    "frost_hollow",
+    "bone_down",
+    "oak_ground",
+    "barley_plot",
+    "salt_shore",
+    "salt_bed",
+    "seabed"
+  ]
+}

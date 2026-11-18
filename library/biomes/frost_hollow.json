@@ -1,0 +1,35 @@
+{
+  "name": "frost_hollow",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A hollow in the downs where the grass is rimed white and glittering at any hour of a high-summer afternoon. Nothing is wrong with it but that; the sheep will not go down into it.",
+  "priority": 17,
+  "rules": {"region": "frost"},
+  "surface": "frost_grass",
+  "subsurface": "chalk_white",
+  "rock": null,
+  "map_color": [216, 224, 224],
+  "plants": [
+    {
+      "plant": "feather_tussock",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 9, "min": 0.4, "max": 1.0}}
+    },
+    {
+      "plant": "sagebrush",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.4, "max": 1.0}}
+    },
+    {"plant": "hawthorn", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 30}}}
+  ],
+  "features": [{"structure": "boulder", "density": 0.0005}, {"structure": "flat_rock", "density": 0.0004}],
+  "creatures": [
+    {"creature": "corpse_candle", "count": 5},
+    {"creature": "crow", "count": 3},
+    {"creature": "wind_skate", "count": 2},
+    {"creature": "sparrow", "count": 3},
+    {"creature": "marmot", "count": 2}
+  ],
+  "collectibles": [{"item": "flint_blade", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}],
+  "mist": 0.22
+}

@@ -1,0 +1,16 @@
+{
+  "name": "shingle_dark",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Dark composition shingles.",
+  "id": 156,
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [64, 66, 72],
+    "alt": [52, 54, 60],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [78, 80, 88], "alt": [66, 68, 76]}
+  }
+}

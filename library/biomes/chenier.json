@@ -1,0 +1,33 @@
+{
+  "name": "chenier",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "The chenier: an old shell ridge on the south point, live oaks bent by the Gulf wind, palms, oyster shell underfoot, the tombs of the parish and the light at its tip.",
+  "priority": 9,
+  "rules": {"region": "chenier"},
+  "surface": "marsh_grass",
+  "subsurface": "oyster_shell",
+  "map_color": [140, 160, 110],
+  "plants": [
+    {
+      "plant": "live_oak",
+      "density": 0.003,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.4, "max": 0.7}}
+    },
+    {"plant": "cabbage_palm", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "saw_palmetto", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "spanish_moss", "density": 0.6, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "deer", "count": 3},
+    {"creature": "boar", "count": 2},
+    {"creature": "coyote", "count": 3},
+    {"creature": "bear", "count": 1},
+    {"creature": "crow", "count": 4},
+    {"creature": "brown_pelican", "count": 4}
+  ],
+  "collectibles": [
+    {"item": "arrowhead", "density": 0.0001, "placement": {"verb": "scatter", "params": {}}},
+    {"item": "seashell", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}
+  ]
+}

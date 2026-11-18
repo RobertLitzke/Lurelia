@@ -1,0 +1,14 @@
+{
+  "name": "water_lily",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Water lily: a root on the bed in still shallow water, drawn as a raft of pads lying flat on the surface with now and then a bloom. Sprites only, so a boat slides over it.",
+  "form": "herb",
+  "height": [0.2, 0.3],
+  "trunk_radius": [0.0, 0.0],
+  "crown_radius": [1.0, 1.8],
+  "bark": "water_lily",
+  "leaf": "water_lily",
+  "max_slope": 0.35,
+  "standing_water": [0.35, 3.0]
+}

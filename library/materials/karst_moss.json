@@ -1,0 +1,16 @@
+{
+  "name": "karst_moss",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Thick green moss streaking down the karst walls where water runs, and on the shady sides of ledges. Faceted with the rock.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [62, 100, 50],
+    "alt": [86, 122, 58],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [70, 106, 54], "alt": [92, 126, 62]}
+  },
+  "facet": true
+}

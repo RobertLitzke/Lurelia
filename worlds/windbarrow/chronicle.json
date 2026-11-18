@@ -1,0 +1,3787 @@
+{
+  "places": {
+    "durn": [
+      430,
+      790
+    ],
+    "durn_centre": [
+      430,
+      790
+    ],
+    "crest": [
+      832,
+      424
+    ],
+    "tepe": [
+      592,
+      622
+    ],
+    "barrow_north": [
+      782,
+      506
+    ],
+    "barrow_south": [
+      706,
+      786
+    ],
+    "long_barrow": [
+      742,
+      566
+    ],
+    "green_kurgan": [
+      778,
+      498
+    ],
+    "mares_barrow": [
+      736,
+      648
+    ],
+    "saltmere": [
+      320,
+      1230
+    ],
+    "gape": [
+      1146,
+      752
+    ],
+    "gape_south": [
+      1134,
+      918
+    ],
+    "swallow": [
+      1278,
+      702
+    ],
+    "flint_camp": [
+      1266,
+      700
+    ],
+    "spring": [
+      560,
+      200
+    ],
+    "ford": [
+      404,
+      712
+    ]
+  },
+  "events": [
+    {
+      "year": -90000000,
+      "event": "landmass",
+      "cause": "lime mud laid down in a warm sea and lifted without folding: chalk downland running past every horizon, so the world has no coast",
+      "centre": [
+        768,
+        768
+      ],
+      "radius": 2600,
+      "roughness": 0.5,
+      "hills": 45,
+      "ridges": 11,
+      "shelf": 14
+    },
+    {
+      "year": -80000000,
+      "event": "deposit",
+      "cause": "the whole chalk block standing high and dry, thickest in the middle of the country",
+      "at": [
+        768,
+        768
+      ],
+      "radius": 3400,
+      "thickness": 18,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2000000,
+      "event": "escarpment",
+      "cause": "the chalk snapped along a line and the eastern block stood up: the Barrow Edge",
+      "from": [
+        1070,
+        1500
+      ],
+      "to": [
+        1160,
+        60
+      ],
+      "height": 20,
+      "width": 15,
+      "reach": 2000
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        236,
+        352
+      ],
+      "radius": 150,
+      "thickness": 13,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        430,
+        236
+      ],
+      "radius": 120,
+      "thickness": 11,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        650,
+        320
+      ],
+      "radius": 96,
+      "thickness": 9,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        886,
+        232
+      ],
+      "radius": 134,
+      "thickness": 12,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        160,
+        690
+      ],
+      "radius": 118,
+      "thickness": 10,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        470,
+        470
+      ],
+      "radius": 104,
+      "thickness": 9,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        560,
+        880
+      ],
+      "radius": 142,
+      "thickness": 13,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        300,
+        980
+      ],
+      "radius": 110,
+      "thickness": 10,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        700,
+        1100
+      ],
+      "radius": 150,
+      "thickness": 14,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        900,
+        760
+      ],
+      "radius": 126,
+      "thickness": 11,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        920,
+        1060
+      ],
+      "radius": 108,
+      "thickness": 9,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        1010,
+        300
+      ],
+      "radius": 96,
+      "thickness": 8,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        170,
+        1360
+      ],
+      "radius": 132,
+      "thickness": 12,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        520,
+        1300
+      ],
+      "radius": 120,
+      "thickness": 11,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -1800000,
+      "event": "deposit",
+      "cause": "a harder core in the chalk that weathered slower than the rest",
+      "at": [
+        860,
+        1380
+      ],
+      "radius": 104,
+      "thickness": 9,
+      "shape": "dome",
+      "mat": "chalk_white"
+    },
+    {
+      "year": -200000,
+      "event": "vale",
+      "cause": "a dry combe worn back into the face of the Edge",
+      "path": [
+        [
+          1248,
+          268
+        ],
+        [
+          1196,
+          258
+        ],
+        [
+          1140,
+          254
+        ],
+        [
+          1086,
+          252
+        ]
+      ],
+      "width": 9,
+      "depth": 8,
+      "side": 30,
+      "fall": 5,
+      "meander": 6
+    },
+    {
+      "year": -200000,
+      "event": "vale",
+      "cause": "a dry combe worn back into the face of the Edge",
+      "path": [
+        [
+          1232,
+          362
+        ],
+        [
+          1186,
+          358
+        ],
+        [
+          1140,
+          356
+        ],
+        [
+          1096,
+          354
+        ]
+      ],
+      "width": 7,
+      "depth": 6,
+      "side": 30,
+      "fall": 5,
+      "meander": 6
+    },
+    {
+      "year": -200000,
+      "event": "vale",
+      "cause": "a dry combe worn back into the face of the Edge",
+      "path": [
+        [
+          1262,
+          452
+        ],
+        [
+          1210,
+          446
+        ],
+        [
+          1156,
+          442
+        ],
+        [
+          1104,
+          440
+        ]
+      ],
+      "width": 10,
+      "depth": 9,
+      "side": 30,
+      "fall": 5,
+      "meander": 6
+    },
+    {
+      "year": -200000,
+      "event": "vale",
+      "cause": "a dry combe worn back into the face of the Edge",
+      "path": [
+        [
+          1218,
+          604
+        ],
+        [
+          1172,
+          600
+        ],
+        [
+          1128,
+          598
+        ],
+        [
+          1090,
+          596
+        ]
+      ],
+      "width": 8,
+      "depth": 7,
+      "side": 30,
+      "fall": 5,
+      "meander": 6
+    },
+    {
+      "year": -200000,
+      "event": "vale",
+      "cause": "a dry combe worn back into the face of the Edge",
+      "path": [
+        [
+          1258,
+          866
+        ],
+        [
+          1204,
+          860
+        ],
+        [
+          1150,
+          856
+        ],
+        [
+          1098,
+          854
+        ]
+      ],
+      "width": 10,
+      "depth": 9,
+      "side": 30,
+      "fall": 5,
+      "meander": 6
+    },
+    {
+      "year": -200000,
+      "event": "vale",
+      "cause": "a dry combe worn back into the face of the Edge",
+      "path": [
+        [
+          1240,
+          1066
+        ],
+        [
+          1188,
+          1058
+        ],
+        [
+          1132,
+          1052
+        ],
+        [
+          1080,
+          1050
+        ]
+      ],
+      "width": 9,
+      "depth": 8,
+      "side": 30,
+      "fall": 5,
+      "meander": 6
+    },
+    {
+      "year": -200000,
+      "event": "vale",
+      "cause": "a dry combe worn back into the face of the Edge",
+      "path": [
+        [
+          1226,
+          1174
+        ],
+        [
+          1180,
+          1168
+        ],
+        [
+          1136,
+          1164
+        ],
+        [
+          1096,
+          1162
+        ]
+      ],
+      "width": 7,
+      "depth": 6,
+      "side": 30,
+      "fall": 5,
+      "meander": 6
+    },
+    {
+      "year": -200000,
+      "event": "vale",
+      "cause": "a dry combe worn back into the face of the Edge",
+      "path": [
+        [
+          1252,
+          1288
+        ],
+        [
+          1200,
+          1282
+        ],
+        [
+          1148,
+          1278
+        ],
+        [
+          1098,
+          1276
+        ]
+      ],
+      "width": 10,
+      "depth": 7,
+      "side": 30,
+      "fall": 5,
+      "meander": 6
+    },
+    {
+      "year": -200000,
+      "event": "vale",
+      "cause": "a dry combe worn back into the face of the Edge",
+      "path": [
+        [
+          1236,
+          150
+        ],
+        [
+          1188,
+          146
+        ],
+        [
+          1142,
+          144
+        ],
+        [
+          1100,
+          142
+        ]
+      ],
+      "width": 8,
+      "depth": 7,
+      "side": 30,
+      "fall": 5,
+      "meander": 6
+    },
+    {
+      "year": -200000,
+      "event": "canyon",
+      "cause": "the Gape: the deepest of the combes, cut down to the level the caves open at",
+      "path": [
+        [
+          1310,
+          772
+        ],
+        [
+          1246,
+          764
+        ],
+        [
+          1192,
+          758
+        ],
+        [
+          1142,
+          752
+        ]
+      ],
+      "width": 11,
+      "depth": 17,
+      "depth_end": 14,
+      "wall": 0.7,
+      "bench": 7,
+      "meander": 5,
+      "floor": "chalk_rubble",
+      "poi": "the Gape"
+    },
+    {
+      "year": -200000,
+      "event": "canyon",
+      "cause": "a second combe in the next bay south, with a lower cave mouth in its head",
+      "path": [
+        [
+          1282,
+          940
+        ],
+        [
+          1224,
+          932
+        ],
+        [
+          1174,
+          926
+        ],
+        [
+          1130,
+          920
+        ]
+      ],
+      "width": 10,
+      "depth": 22,
+      "depth_end": 17,
+      "wall": 0.7,
+      "bench": 7,
+      "meander": 5,
+      "floor": "chalk_rubble"
+    },
+    {
+      "year": -150000,
+      "event": "erode_rims",
+      "cause": "frost and rain rounding the lip of the Edge and gullying its tops",
+      "depth": 3,
+      "reach": 11,
+      "gullies": 0.5,
+      "min_drop": 4
+    },
+    {
+      "year": -60000,
+      "event": "subside",
+      "cause": "a shallow basin in the south-west chalk with no way out of it",
+      "at": "saltmere",
+      "radius": 260,
+      "drop": [
+        7,
+        11
+      ],
+      "grain": 80,
+      "edge": 70,
+      "ragged": 0.3,
+      "stretch": 1.3,
+      "bearing": 120
+    },
+    {
+      "year": -40000,
+      "event": "vale",
+      "cause": "the valley of the Narrow, worn across the whole country from the northern springs to the salt hollow",
+      "path": [
+        [
+          560,
+          200
+        ],
+        [
+          538,
+          268
+        ],
+        [
+          498,
+          326
+        ],
+        [
+          506,
+          398
+        ],
+        [
+          470,
+          452
+        ],
+        [
+          424,
+          496
+        ],
+        [
+          438,
+          566
+        ],
+        [
+          466,
+          624
+        ],
+        [
+          430,
+          678
+        ],
+        [
+          376,
+          712
+        ],
+        [
+          352,
+          772
+        ],
+        [
+          378,
+          830
+        ],
+        [
+          396,
+          892
+        ],
+        [
+          360,
+          944
+        ],
+        [
+          320,
+          992
+        ],
+        [
+          336,
+          1058
+        ],
+        [
+          350,
+          1120
+        ],
+        [
+          322,
+          1172
+        ],
+        [
+          318,
+          1206
+        ]
+      ],
+      "width": 34,
+      "depth": 7,
+      "depth_end": 5,
+      "side": 92,
+      "meander": 16
+    },
+    {
+      "year": -30000,
+      "event": "lake",
+      "cause": "Saltmere: the Narrow ends here and goes no further, so the water stands and turns salt",
+      "name": "saltmere",
+      "at": [
+        322,
+        1226
+      ],
+      "radius": 152,
+      "depth": 3.2,
+      "bed": "salt_mud",
+      "bank": "salt_crust",
+      "ragged": 0.35,
+      "stretch": 1.5,
+      "bearing": 115
+    },
+    {
+      "year": -28000,
+      "event": "river",
+      "cause": "the Narrow, rising in springs at the foot of the northern downs and running south-west into Saltmere",
+      "name": "narrow",
+      "path": [
+        [
+          560,
+          200
+        ],
+        [
+          538,
+          268
+        ],
+        [
+          498,
+          326
+        ],
+        [
+          506,
+          398
+        ],
+        [
+          470,
+          452
+        ],
+        [
+          424,
+          496
+        ],
+        [
+          438,
+          566
+        ],
+        [
+          466,
+          624
+        ],
+        [
+          430,
+          678
+        ],
+        [
+          376,
+          712
+        ],
+        [
+          352,
+          772
+        ],
+        [
+          378,
+          830
+        ],
+        [
+          396,
+          892
+        ],
+        [
+          360,
+          944
+        ],
+        [
+          320,
+          992
+        ],
+        [
+          336,
+          1058
+        ],
+        [
+          350,
+          1120
+        ],
+        [
+          322,
+          1172
+        ],
+        [
+          318,
+          1206
+        ]
+      ],
+      "width": 7,
+      "depth": 2.6,
+      "bed": "river_gravel",
+      "bank": "river_mud",
+      "meander": 22
+    },
+    {
+      "year": -20000,
+      "event": "moisture",
+      "cause": "springs and seepage all down the valley of the Narrow",
+      "at": [
+        430,
+        700
+      ],
+      "radius": 420,
+      "amount": 0.2
+    },
+    {
+      "year": -20000,
+      "event": "moisture",
+      "cause": "the dry high ground east of the Edge",
+      "at": [
+        1270,
+        760
+      ],
+      "radius": 340,
+      "amount": -0.3
+    },
+    {
+      "year": -19000,
+      "event": "region",
+      "cause": "the Flint Down: thin ground over rubble east of the Edge",
+      "name": "flint",
+      "at": [
+        1272,
+        700
+      ],
+      "radius": 330
+    },
+    {
+      "year": -19000,
+      "event": "region",
+      "cause": "the Flint Down, carried south along the top of the Edge",
+      "name": "flint",
+      "at": [
+        1210,
+        1000
+      ],
+      "radius": 230
+    },
+    {
+      "year": -19000,
+      "event": "region",
+      "cause": "Saltmere and its white shore",
+      "name": "saltmere",
+      "at": [
+        322,
+        1226
+      ],
+      "radius": 215
+    },
+    {
+      "year": -19000,
+      "event": "region",
+      "cause": "a hollow in the northern downs the cold sits in and does not leave, whatever the season",
+      "name": "frost",
+      "at": [
+        560,
+        190
+      ],
+      "radius": 36
+    },
+    {
+      "year": -19000,
+      "event": "region",
+      "cause": "the Bone Downs: the stretch of the Flint Down where it is mammoth bone that comes out of the chalk and not flint",
+      "name": "bone",
+      "at": [
+        1352,
+        940
+      ],
+      "radius": 95
+    },
+    {
+      "year": -18000,
+      "event": "passage",
+      "cause": "water running down the joints of the chalk hollowed out the Flint Down; the passages are dry now",
+      "path": [
+        [
+          1310,
+          769
+        ],
+        [
+          1346,
+          762
+        ],
+        [
+          1382,
+          752
+        ],
+        [
+          1414,
+          742
+        ]
+      ],
+      "height": 49.8,
+      "radius": 2.8,
+      "wall": "cave_chalk",
+      "wander": 3,
+      "shafts": 1,
+      "poi": "the Gape passage"
+    },
+    {
+      "year": -18000,
+      "event": "passage",
+      "cause": "water running down the joints of the chalk hollowed out the Flint Down; the passages are dry now",
+      "path": [
+        [
+          1418,
+          740
+        ],
+        [
+          1430,
+          732
+        ]
+      ],
+      "height": 51.2,
+      "radius": 4.2,
+      "wall": "cave_chalk",
+      "wander": 3,
+      "shafts": 1,
+      "poi": "the First Chamber"
+    },
+    {
+      "year": -18000,
+      "event": "passage",
+      "cause": "water running down the joints of the chalk hollowed out the Flint Down; the passages are dry now",
+      "path": [
+        [
+          1430,
+          732
+        ],
+        [
+          1452,
+          702
+        ],
+        [
+          1460,
+          668
+        ],
+        [
+          1452,
+          634
+        ]
+      ],
+      "height": 49.6,
+      "radius": 2.6,
+      "wall": "cave_chalk",
+      "wander": 3
+    },
+    {
+      "year": -18000,
+      "event": "passage",
+      "cause": "water running down the joints of the chalk hollowed out the Flint Down; the passages are dry now",
+      "path": [
+        [
+          1452,
+          634
+        ],
+        [
+          1420,
+          606
+        ],
+        [
+          1380,
+          580
+        ],
+        [
+          1340,
+          560
+        ]
+      ],
+      "height": 49.4,
+      "radius": 2.4,
+      "wall": "cave_chalk",
+      "wander": 3,
+      "shafts": 1
+    },
+    {
+      "year": -18000,
+      "event": "passage",
+      "cause": "water running down the joints of the chalk hollowed out the Flint Down; the passages are dry now",
+      "path": [
+        [
+          1336,
+          556
+        ],
+        [
+          1322,
+          548
+        ]
+      ],
+      "height": 51.4,
+      "radius": 4.4,
+      "wall": "cave_chalk",
+      "wander": 3,
+      "poi": "the Bone Chamber"
+    },
+    {
+      "year": -18000,
+      "event": "passage",
+      "cause": "water running down the joints of the chalk hollowed out the Flint Down; the passages are dry now",
+      "path": [
+        [
+          1414,
+          742
+        ],
+        [
+          1404,
+          780
+        ],
+        [
+          1388,
+          818
+        ],
+        [
+          1362,
+          852
+        ],
+        [
+          1330,
+          884
+        ]
+      ],
+      "height": 49.4,
+      "radius": 2.4,
+      "wall": "cave_chalk",
+      "wander": 3,
+      "shafts": 2
+    },
+    {
+      "year": -18000,
+      "event": "passage",
+      "cause": "water running down the joints of the chalk hollowed out the Flint Down; the passages are dry now",
+      "path": [
+        [
+          1330,
+          884
+        ],
+        [
+          1304,
+          906
+        ],
+        [
+          1286,
+          936
+        ]
+      ],
+      "height": 49.6,
+      "radius": 2.6,
+      "wall": "cave_chalk",
+      "wander": 3
+    },
+    {
+      "year": -18000,
+      "event": "passage",
+      "cause": "water running down the joints of the chalk hollowed out the Flint Down; the passages are dry now",
+      "path": [
+        [
+          1452,
+          702
+        ],
+        [
+          1476,
+          728
+        ],
+        [
+          1482,
+          756
+        ]
+      ],
+      "height": 49.0,
+      "radius": 2.0,
+      "wall": "cave_chalk",
+      "wander": 3,
+      "poi": "the Scratched Cat"
+    },
+    {
+      "year": -4200,
+      "event": "place",
+      "cause": "the Tepe: twelve carved pillars in a bench wall, raised by people the villages do not account for, and older than any of them",
+      "structure": "tepe_enclosure",
+      "at": "tepe",
+      "bearing": 160,
+      "poi": "the Tepe"
+    },
+    {
+      "year": -4200,
+      "event": "place",
+      "cause": "a thirteenth pillar, dressed and dragged part of the way up the hill, and left",
+      "structure": "tepe_pillar",
+      "at": [
+        640,
+        676
+      ],
+      "bearing": 70,
+      "poi": "the left pillar"
+    },
+    {
+      "year": -4190,
+      "event": "place",
+      "cause": "a pillar of the same stone standing alone in the empty north, a day from the Tepe and carved with a skate instead of a beast",
+      "structure": "skate_pillar",
+      "at": [
+        228,
+        112
+      ],
+      "bearing": 180,
+      "poi": "the Skate Pillar"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        746.0,
+        1096.0
+      ],
+      "to": [
+        746.4,
+        1098.0
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        746.4,
+        1098.0
+      ],
+      "to": [
+        745.8,
+        1100.2
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        745.8,
+        1100.2
+      ],
+      "to": [
+        744.0,
+        1102.2
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        744.0,
+        1102.2
+      ],
+      "to": [
+        741.2,
+        1103.3
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        741.2,
+        1103.3
+      ],
+      "to": [
+        737.8,
+        1103.1
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        737.8,
+        1103.1
+      ],
+      "to": [
+        734.6,
+        1101.3
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        734.6,
+        1101.3
+      ],
+      "to": [
+        732.3,
+        1098.0
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        732.3,
+        1098.0
+      ],
+      "to": [
+        731.5,
+        1093.7
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        731.5,
+        1093.7
+      ],
+      "to": [
+        732.7,
+        1089.1
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        732.7,
+        1089.1
+      ],
+      "to": [
+        735.9,
+        1085.1
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        735.9,
+        1085.1
+      ],
+      "to": [
+        740.8,
+        1082.7
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        740.8,
+        1082.7
+      ],
+      "to": [
+        746.6,
+        1082.6
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        746.6,
+        1082.6
+      ],
+      "to": [
+        752.2,
+        1085.0
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        752.2,
+        1085.0
+      ],
+      "to": [
+        756.6,
+        1089.8
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        756.6,
+        1089.8
+      ],
+      "to": [
+        758.7,
+        1096.3
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        758.7,
+        1096.3
+      ],
+      "to": [
+        757.9,
+        1103.4
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        757.9,
+        1103.4
+      ],
+      "to": [
+        754.0,
+        1109.9
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        754.0,
+        1109.9
+      ],
+      "to": [
+        747.6,
+        1114.4
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        747.6,
+        1114.4
+      ],
+      "to": [
+        739.5,
+        1115.9
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        739.5,
+        1115.9
+      ],
+      "to": [
+        731.1,
+        1113.9
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        731.1,
+        1113.9
+      ],
+      "to": [
+        724.1,
+        1108.4
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        724.1,
+        1108.4
+      ],
+      "to": [
+        719.8,
+        1100.2
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        719.8,
+        1100.2
+      ],
+      "to": [
+        719.2,
+        1090.5
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        719.2,
+        1090.5
+      ],
+      "to": [
+        722.7,
+        1081.2
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        722.7,
+        1081.2
+      ],
+      "to": [
+        730.0,
+        1073.9
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        730.0,
+        1073.9
+      ],
+      "to": [
+        740.0,
+        1070.1
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        740.0,
+        1070.1
+      ],
+      "to": [
+        751.1,
+        1070.7
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        751.1,
+        1070.7
+      ],
+      "to": [
+        761.2,
+        1076.0
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        761.2,
+        1076.0
+      ],
+      "to": [
+        768.4,
+        1085.2
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        768.4,
+        1085.2
+      ],
+      "to": [
+        771.4,
+        1097.0
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        771.4,
+        1097.0
+      ],
+      "to": [
+        769.2,
+        1109.3
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        769.2,
+        1109.3
+      ],
+      "to": [
+        762.0,
+        1119.8
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        762.0,
+        1119.8
+      ],
+      "to": [
+        750.7,
+        1126.7
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        750.7,
+        1126.7
+      ],
+      "to": [
+        737.3,
+        1128.5
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        737.3,
+        1128.5
+      ],
+      "to": [
+        724.1,
+        1124.4
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        724.1,
+        1124.4
+      ],
+      "to": [
+        713.3,
+        1115.1
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        713.3,
+        1115.1
+      ],
+      "to": [
+        707.2,
+        1101.9
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        707.2,
+        1101.9
+      ],
+      "to": [
+        707.0,
+        1087.0
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        707.0,
+        1087.0
+      ],
+      "to": [
+        713.0,
+        1073.0
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        713.0,
+        1073.0
+      ],
+      "to": [
+        724.6,
+        1062.4
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        724.6,
+        1062.4
+      ],
+      "to": [
+        739.7,
+        1057.4
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        739.7,
+        1057.4
+      ],
+      "to": [
+        756.0,
+        1059.0
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        756.0,
+        1059.0
+      ],
+      "to": [
+        770.5,
+        1067.3
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4180,
+      "event": "path",
+      "cause": "the turf maze on the southern downs, cut through the grass to the chalk",
+      "from": [
+        770.5,
+        1067.3
+      ],
+      "to": [
+        780.5,
+        1081.1
+      ],
+      "width": 1.3,
+      "mat": "chalk_white"
+    },
+    {
+      "year": -4179,
+      "event": "place",
+      "cause": "the post at the mouth of the turf maze",
+      "structure": "barrow_post",
+      "at": [
+        787.0,
+        1096
+      ],
+      "bearing": 270,
+      "poi": "the turf maze"
+    },
+    {
+      "year": -4178,
+      "event": "place",
+      "cause": "what the maze is walked to: a shaft cut twenty metres into the chalk at its heart, collared and ochred, with air coming steadily up out of it as it does at the Long Barrow",
+      "structure": "wind_shaft",
+      "at": [
+        742,
+        1096
+      ],
+      "bearing": 0,
+      "poi": "the shaft at the heart of the maze"
+    },
+    {
+      "year": -3600,
+      "event": "earthwork",
+      "cause": "the Long Barrow, heaped before any of the round mounds and kerbed at its east end",
+      "parts": [
+        {
+          "from": [
+            708,
+            566
+          ],
+          "to": [
+            748,
+            566
+          ],
+          "width": 9,
+          "top": 3.6
+        }
+      ],
+      "slope": 2.0,
+      "relative": true,
+      "poi": "the Long Barrow"
+    },
+    {
+      "year": -3590,
+      "event": "place",
+      "cause": "the mouth of the Long Barrow, its closing slab pushed aside long ago and never put back",
+      "structure": "long_barrow_mouth",
+      "at": [
+        754,
+        566
+      ],
+      "bearing": 90,
+      "poi": "the mouth of the Long Barrow"
+    },
+    {
+      "year": -3580,
+      "event": "path",
+      "cause": "the grass round the forecourt, combed flat and away by the air that comes steadily out of the mouth, in all weathers",
+      "from": [
+        757,
+        566
+      ],
+      "to": [
+        765,
+        566
+      ],
+      "width": 9,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -3400,
+      "event": "region",
+      "cause": "the barrow ridge, where the dead go",
+      "name": "barrows",
+      "at": [
+        742,
+        640
+      ],
+      "radius": 170
+    },
+    {
+      "year": -3300,
+      "event": "region",
+      "cause": "the hilltop round the Tepe, which the villages still keep clear of grass",
+      "name": "tepe",
+      "at": "tepe",
+      "radius": 26
+    },
+    {
+      "year": -3200,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        735,
+        527
+      ],
+      "radius": 7.0,
+      "thickness": 4.5,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -3160,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        783,
+        626
+      ],
+      "radius": 6.0,
+      "thickness": 4.0,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -3120,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        690,
+        551
+      ],
+      "radius": 3.5,
+      "thickness": 2.8,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -3100,
+      "event": "place",
+      "cause": "a kerb of chalk blocks set round the foot of the mound",
+      "structure": "kurgan_kerb",
+      "at": [
+        735,
+        527
+      ],
+      "bearing": 90
+    },
+    {
+      "year": -3080,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        775,
+        595
+      ],
+      "radius": 7.0,
+      "thickness": 4.5,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -3080,
+      "event": "place",
+      "cause": "a split oak post standing on the crown of the mound",
+      "structure": "barrow_post",
+      "at": [
+        735,
+        527
+      ],
+      "bearing": 45
+    },
+    {
+      "year": -3060,
+      "event": "place",
+      "cause": "a kerb of chalk blocks set round the foot of the mound",
+      "structure": "kurgan_kerb",
+      "at": [
+        783,
+        626
+      ],
+      "bearing": 30
+    },
+    {
+      "year": -3040,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        680,
+        736
+      ],
+      "radius": 9.0,
+      "thickness": 4.8,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -3000,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        786,
+        677
+      ],
+      "radius": 5.0,
+      "thickness": 3.5,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -3000,
+      "event": "region",
+      "cause": "the one mound in the field that is green when the rest are gold",
+      "name": "green_kurgan",
+      "at": "green_kurgan",
+      "radius": 11
+    },
+    {
+      "year": -2990,
+      "event": "place",
+      "cause": "the post on the green kurgan, which nobody renews and which does not rot",
+      "structure": "barrow_post",
+      "at": [
+        778,
+        498
+      ],
+      "bearing": 20,
+      "poi": "the green kurgan"
+    },
+    {
+      "year": -2980,
+      "event": "place",
+      "cause": "a kerb of chalk blocks set round the foot of the mound",
+      "structure": "kurgan_kerb",
+      "at": [
+        775,
+        595
+      ],
+      "bearing": 90
+    },
+    {
+      "year": -2960,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        724,
+        582
+      ],
+      "radius": 5.0,
+      "thickness": 3.5,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2960,
+      "event": "place",
+      "cause": "a split oak post standing on the crown of the mound",
+      "structure": "barrow_post",
+      "at": [
+        775,
+        595
+      ],
+      "bearing": 90
+    },
+    {
+      "year": -2920,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        661,
+        773
+      ],
+      "radius": 5.0,
+      "thickness": 3.5,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2920,
+      "event": "place",
+      "cause": "a split oak post standing on the crown of the mound",
+      "structure": "barrow_post",
+      "at": [
+        680,
+        736
+      ],
+      "bearing": 135
+    },
+    {
+      "year": -2880,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        672,
+        797
+      ],
+      "radius": 7.0,
+      "thickness": 4.5,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2840,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        722,
+        731
+      ],
+      "radius": 9.0,
+      "thickness": 4.8,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2840,
+      "event": "place",
+      "cause": "a split oak post standing on the crown of the mound",
+      "structure": "barrow_post",
+      "at": [
+        724,
+        582
+      ],
+      "bearing": 90
+    },
+    {
+      "year": -2800,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        712,
+        764
+      ],
+      "radius": 10.0,
+      "thickness": 5.2,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2780,
+      "event": "place",
+      "cause": "a kerb of chalk blocks set round the foot of the mound",
+      "structure": "kurgan_kerb",
+      "at": [
+        672,
+        797
+      ],
+      "bearing": 30
+    },
+    {
+      "year": -2760,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        804,
+        652
+      ],
+      "radius": 4.0,
+      "thickness": 3.0,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2720,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        743,
+        778
+      ],
+      "radius": 4.0,
+      "thickness": 3.0,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2720,
+      "event": "place",
+      "cause": "a split oak post standing on the crown of the mound",
+      "structure": "barrow_post",
+      "at": [
+        722,
+        731
+      ],
+      "bearing": 90
+    },
+    {
+      "year": -2680,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        778,
+        498
+      ],
+      "radius": 5.0,
+      "thickness": 3.5,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2680,
+      "event": "place",
+      "cause": "a split oak post standing on the crown of the mound",
+      "structure": "barrow_post",
+      "at": [
+        712,
+        764
+      ],
+      "bearing": 0
+    },
+    {
+      "year": -2640,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        752,
+        805
+      ],
+      "radius": 3.5,
+      "thickness": 2.8,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2600,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        669,
+        637
+      ],
+      "radius": 9.0,
+      "thickness": 4.8,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2600,
+      "event": "place",
+      "cause": "a split oak post standing on the crown of the mound",
+      "structure": "barrow_post",
+      "at": [
+        743,
+        778
+      ],
+      "bearing": 90
+    },
+    {
+      "year": -2560,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        734,
+        689
+      ],
+      "radius": 6.0,
+      "thickness": 4.0,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2520,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        768,
+        562
+      ],
+      "radius": 5.0,
+      "thickness": 3.5,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2480,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        736,
+        648
+      ],
+      "radius": 17.0,
+      "thickness": 8.1,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2480,
+      "event": "place",
+      "cause": "a split oak post standing on the crown of the mound",
+      "structure": "barrow_post",
+      "at": [
+        669,
+        637
+      ],
+      "bearing": 45
+    },
+    {
+      "year": -2460,
+      "event": "place",
+      "cause": "a kerb of chalk blocks set round the foot of the mound",
+      "structure": "kurgan_kerb",
+      "at": [
+        734,
+        689
+      ],
+      "bearing": 60
+    },
+    {
+      "year": -2440,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        702,
+        596
+      ],
+      "radius": 3.5,
+      "thickness": 2.8,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2400,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        694,
+        670
+      ],
+      "radius": 4.0,
+      "thickness": 3.0,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2360,
+      "event": "deposit",
+      "cause": "a kurgan heaped over the dead, the chalk out of its own ring ditch",
+      "at": [
+        763,
+        707
+      ],
+      "radius": 6.0,
+      "thickness": 4.0,
+      "mat": "chalk_white",
+      "shape": "dome"
+    },
+    {
+      "year": -2360,
+      "event": "place",
+      "cause": "a split oak post standing on the crown of the mound",
+      "structure": "barrow_post",
+      "at": [
+        736,
+        648
+      ],
+      "bearing": 135,
+      "poi": "the Mare's Barrow"
+    },
+    {
+      "year": -2260,
+      "event": "place",
+      "cause": "a kerb of chalk blocks set round the foot of the mound",
+      "structure": "kurgan_kerb",
+      "at": [
+        763,
+        707
+      ],
+      "bearing": 30
+    },
+    {
+      "year": -2240,
+      "event": "place",
+      "cause": "a split oak post standing on the crown of the mound",
+      "structure": "barrow_post",
+      "at": [
+        763,
+        707
+      ],
+      "bearing": 0
+    },
+    {
+      "year": -600,
+      "event": "settlement",
+      "cause": "Durn, in a hollow on the south bank of the Narrow: eleven round houses, the longhouse, granaries and pens",
+      "name": "durn",
+      "at": "durn",
+      "radius": 78,
+      "houses": 11,
+      "buildings": [
+        "round_house",
+        "round_house",
+        "round_house_small",
+        "round_house"
+      ],
+      "extras": [
+        {
+          "structure": "longhouse",
+          "count": 1,
+          "near": "centre"
+        },
+        {
+          "structure": "granary",
+          "count": 2,
+          "near": "centre"
+        },
+        {
+          "structure": "stock_pen",
+          "count": 2,
+          "near": "edge"
+        },
+        {
+          "structure": "hurdle_fence",
+          "count": 6,
+          "near": "edge"
+        },
+        {
+          "structure": "drying_rack",
+          "count": 3,
+          "near": "edge"
+        },
+        {
+          "structure": "camp_hearth",
+          "count": 1,
+          "near": "edge"
+        }
+      ],
+      "slots": {
+        "wall": "daub",
+        "roof": "thatch",
+        "timber": "oak_post",
+        "floor": "packed_dirt",
+        "hurdle": "stick_wood"
+      },
+      "path": "chalk_rubble"
+    },
+    {
+      "year": -595,
+      "event": "region",
+      "cause": "the trodden ground of Durn",
+      "name": "steading",
+      "at": "durn",
+      "radius": 48
+    },
+    {
+      "year": -590,
+      "event": "region",
+      "cause": "a walled barley plot below Durn",
+      "name": "barley",
+      "at": [
+        362,
+        806
+      ],
+      "radius": 26
+    },
+    {
+      "year": -589,
+      "event": "region",
+      "cause": "a walled barley plot below Durn",
+      "name": "barley",
+      "at": [
+        430,
+        870
+      ],
+      "radius": 22
+    },
+    {
+      "year": -588,
+      "event": "region",
+      "cause": "the ground under the great oak below Durn, older than the village and left alone",
+      "name": "greatoak",
+      "at": [
+        470,
+        814
+      ],
+      "radius": 9
+    },
+    {
+      "year": -520,
+      "event": "settlement",
+      "cause": "Crest, in the lee of a ridge north of the barrow field: seven houses and a longhouse, the diggers' village",
+      "name": "crest",
+      "at": "crest",
+      "radius": 58,
+      "houses": 7,
+      "buildings": [
+        "round_house",
+        "round_house_small",
+        "round_house"
+      ],
+      "extras": [
+        {
+          "structure": "longhouse",
+          "count": 1,
+          "near": "centre"
+        },
+        {
+          "structure": "granary",
+          "count": 2,
+          "near": "centre"
+        },
+        {
+          "structure": "stock_pen",
+          "count": 1,
+          "near": "edge"
+        },
+        {
+          "structure": "hurdle_fence",
+          "count": 4,
+          "near": "edge"
+        },
+        {
+          "structure": "drying_rack",
+          "count": 2,
+          "near": "edge"
+        },
+        {
+          "structure": "camp_hearth",
+          "count": 1,
+          "near": "edge"
+        }
+      ],
+      "slots": {
+        "wall": "daub",
+        "roof": "thatch",
+        "timber": "oak_post",
+        "floor": "packed_dirt",
+        "hurdle": "stick_wood"
+      },
+      "path": "chalk_rubble"
+    },
+    {
+      "year": -515,
+      "event": "region",
+      "cause": "the trodden ground of Crest",
+      "name": "steading",
+      "at": "crest",
+      "radius": 44
+    },
+    {
+      "year": -510,
+      "event": "region",
+      "cause": "Crest's one barley plot, in the lee of the ridge",
+      "name": "barley",
+      "at": [
+        882,
+        452
+      ],
+      "radius": 20
+    },
+    {
+      "year": -300,
+      "event": "canyon",
+      "cause": "an open flint pit, dug down to the upper nodule band and left",
+      "path": [
+        [
+          1240,
+          668
+        ],
+        [
+          1262,
+          664
+        ]
+      ],
+      "width": 7,
+      "depth": 5,
+      "wall": 0.5,
+      "bench": 4,
+      "meander": 2,
+      "floor": "chalk_rubble"
+    },
+    {
+      "year": -299,
+      "event": "deposit",
+      "cause": "the spoil heaped beside a flint pit",
+      "at": [
+        1226,
+        680
+      ],
+      "radius": 11,
+      "thickness": 2.2,
+      "mat": "chalk_rubble",
+      "shape": "dome"
+    },
+    {
+      "year": -299,
+      "event": "canyon",
+      "cause": "an open flint pit, dug down to the upper nodule band and left",
+      "path": [
+        [
+          1282,
+          676
+        ],
+        [
+          1304,
+          684
+        ]
+      ],
+      "width": 6,
+      "depth": 4.5,
+      "wall": 0.5,
+      "bench": 4,
+      "meander": 2,
+      "floor": "chalk_rubble"
+    },
+    {
+      "year": -298,
+      "event": "deposit",
+      "cause": "the spoil heaped beside a flint pit",
+      "at": [
+        1268,
+        688
+      ],
+      "radius": 11,
+      "thickness": 2.2,
+      "mat": "chalk_rubble",
+      "shape": "dome"
+    },
+    {
+      "year": -298,
+      "event": "canyon",
+      "cause": "an open flint pit, dug down to the upper nodule band and left",
+      "path": [
+        [
+          1252,
+          724
+        ],
+        [
+          1274,
+          732
+        ]
+      ],
+      "width": 7,
+      "depth": 5,
+      "wall": 0.5,
+      "bench": 4,
+      "meander": 2,
+      "floor": "chalk_rubble"
+    },
+    {
+      "year": -297,
+      "event": "deposit",
+      "cause": "the spoil heaped beside a flint pit",
+      "at": [
+        1238,
+        736
+      ],
+      "radius": 11,
+      "thickness": 2.2,
+      "mat": "chalk_rubble",
+      "shape": "dome"
+    },
+    {
+      "year": -297,
+      "event": "canyon",
+      "cause": "an open flint pit, dug down to the upper nodule band and left",
+      "path": [
+        [
+          1300,
+          716
+        ],
+        [
+          1318,
+          706
+        ]
+      ],
+      "width": 6,
+      "depth": 4,
+      "wall": 0.5,
+      "bench": 4,
+      "meander": 2,
+      "floor": "chalk_rubble"
+    },
+    {
+      "year": -296,
+      "event": "deposit",
+      "cause": "the spoil heaped beside a flint pit",
+      "at": [
+        1286,
+        728
+      ],
+      "radius": 11,
+      "thickness": 2.2,
+      "mat": "chalk_rubble",
+      "shape": "dome"
+    },
+    {
+      "year": -290,
+      "event": "place",
+      "cause": "the diggers' windbreak at the pits, used in the dry months only",
+      "structure": "windbreak",
+      "at": [
+        1266,
+        696
+      ],
+      "bearing": 250,
+      "poi": "the summer camp"
+    },
+    {
+      "year": -289,
+      "event": "place",
+      "cause": "a hut at the summer camp",
+      "structure": "round_house_small",
+      "at": [
+        1246,
+        702
+      ],
+      "bearing": 250
+    },
+    {
+      "year": -288,
+      "event": "place",
+      "cause": "a hut at the summer camp",
+      "structure": "round_house_small",
+      "at": [
+        1278,
+        712
+      ],
+      "bearing": 250
+    },
+    {
+      "year": -287,
+      "event": "place",
+      "cause": "a hut at the summer camp",
+      "structure": "round_house_small",
+      "at": [
+        1256,
+        682
+      ],
+      "bearing": 250
+    },
+    {
+      "year": -286,
+      "event": "place",
+      "cause": "the camp's hearth",
+      "structure": "camp_hearth",
+      "at": [
+        1264,
+        708
+      ],
+      "bearing": 0
+    },
+    {
+      "year": -285,
+      "event": "place",
+      "cause": "the bone house at the summer camp: skulls for a footing, ribs for rafters and hides lashed over them, because nothing grows up here to build with",
+      "structure": "bone_house",
+      "at": [
+        1254,
+        688
+      ],
+      "bearing": 240,
+      "poi": "the bone house"
+    },
+    {
+      "year": -285,
+      "event": "place",
+      "cause": "picks and a knapping floor left at a pit's edge",
+      "structure": "digger_gear",
+      "at": [
+        1246,
+        672
+      ],
+      "bearing": 200
+    },
+    {
+      "year": -284,
+      "event": "place",
+      "cause": "a stock fence of mammoth ribs at the summer camp",
+      "structure": "bone_fence",
+      "at": [
+        1280,
+        690
+      ],
+      "bearing": 160
+    },
+    {
+      "year": -284,
+      "event": "place",
+      "cause": "picks and a knapping floor left at a pit's edge",
+      "structure": "digger_gear",
+      "at": [
+        1288,
+        680
+      ],
+      "bearing": 200
+    },
+    {
+      "year": -283,
+      "event": "place",
+      "cause": "a stock fence of mammoth ribs at the summer camp",
+      "structure": "bone_fence",
+      "at": [
+        1274,
+        720
+      ],
+      "bearing": 70
+    },
+    {
+      "year": -283,
+      "event": "place",
+      "cause": "picks and a knapping floor left at a pit's edge",
+      "structure": "digger_gear",
+      "at": [
+        1258,
+        728
+      ],
+      "bearing": 200
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        452,
+        778
+      ],
+      "to": [
+        500,
+        740
+      ],
+      "width": 1.6,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        500,
+        740
+      ],
+      "to": [
+        548,
+        690
+      ],
+      "width": 1.6,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        548,
+        690
+      ],
+      "to": [
+        580,
+        650
+      ],
+      "width": 1.6,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        580,
+        650
+      ],
+      "to": [
+        592,
+        622
+      ],
+      "width": 1.6,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        600,
+        606
+      ],
+      "to": [
+        648,
+        592
+      ],
+      "width": 1.6,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        648,
+        592
+      ],
+      "to": [
+        700,
+        578
+      ],
+      "width": 1.6,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        700,
+        578
+      ],
+      "to": [
+        742,
+        572
+      ],
+      "width": 1.6,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        742,
+        572
+      ],
+      "to": [
+        756,
+        566
+      ],
+      "width": 1.6,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        742,
+        572
+      ],
+      "to": [
+        760,
+        540
+      ],
+      "width": 1.5,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        760,
+        540
+      ],
+      "to": [
+        776,
+        510
+      ],
+      "width": 1.5,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        776,
+        510
+      ],
+      "to": [
+        800,
+        476
+      ],
+      "width": 1.5,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        800,
+        476
+      ],
+      "to": [
+        824,
+        440
+      ],
+      "width": 1.5,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        742,
+        578
+      ],
+      "to": [
+        736,
+        618
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        736,
+        618
+      ],
+      "to": [
+        730,
+        668
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        730,
+        668
+      ],
+      "to": [
+        718,
+        720
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        718,
+        720
+      ],
+      "to": [
+        708,
+        768
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        840,
+        420
+      ],
+      "to": [
+        910,
+        428
+      ],
+      "width": 1.5,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        910,
+        428
+      ],
+      "to": [
+        986,
+        450
+      ],
+      "width": 1.5,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        986,
+        450
+      ],
+      "to": [
+        1058,
+        490
+      ],
+      "width": 1.5,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        1058,
+        490
+      ],
+      "to": [
+        1096,
+        536
+      ],
+      "width": 1.5,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        1096,
+        536
+      ],
+      "to": [
+        1118,
+        596
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        1118,
+        596
+      ],
+      "to": [
+        1130,
+        664
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        1130,
+        664
+      ],
+      "to": [
+        1140,
+        724
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        1140,
+        724
+      ],
+      "to": [
+        1146,
+        748
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        1096,
+        536
+      ],
+      "to": [
+        1150,
+        560
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        1150,
+        560
+      ],
+      "to": [
+        1206,
+        600
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        1206,
+        600
+      ],
+      "to": [
+        1244,
+        648
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        1244,
+        648
+      ],
+      "to": [
+        1262,
+        688
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        520,
+        300
+      ],
+      "to": [
+        536,
+        266
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        536,
+        266
+      ],
+      "to": [
+        550,
+        240
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        550,
+        240
+      ],
+      "to": [
+        558,
+        226
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        552,
+        214
+      ],
+      "to": [
+        524,
+        192
+      ],
+      "width": 1.3,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        524,
+        192
+      ],
+      "to": [
+        486,
+        176
+      ],
+      "width": 1.3,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        486,
+        176
+      ],
+      "to": [
+        440,
+        162
+      ],
+      "width": 1.3,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        440,
+        162
+      ],
+      "to": [
+        392,
+        146
+      ],
+      "width": 1.3,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        392,
+        146
+      ],
+      "to": [
+        340,
+        130
+      ],
+      "width": 1.3,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        340,
+        130
+      ],
+      "to": [
+        292,
+        118
+      ],
+      "width": 1.3,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        292,
+        118
+      ],
+      "to": [
+        242,
+        112
+      ],
+      "width": 1.3,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        708,
+        772
+      ],
+      "to": [
+        714,
+        822
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        714,
+        822
+      ],
+      "to": [
+        722,
+        876
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        722,
+        876
+      ],
+      "to": [
+        728,
+        932
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        728,
+        932
+      ],
+      "to": [
+        734,
+        992
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        734,
+        992
+      ],
+      "to": [
+        740,
+        1046
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        740,
+        1046
+      ],
+      "to": [
+        742,
+        1082
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        1272,
+        712
+      ],
+      "to": [
+        1288,
+        760
+      ],
+      "width": 1.3,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        1288,
+        760
+      ],
+      "to": [
+        1306,
+        812
+      ],
+      "width": 1.3,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        1306,
+        812
+      ],
+      "to": [
+        1324,
+        866
+      ],
+      "width": 1.3,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        1324,
+        866
+      ],
+      "to": [
+        1340,
+        910
+      ],
+      "width": 1.3,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        1340,
+        910
+      ],
+      "to": [
+        1348,
+        934
+      ],
+      "width": 1.3,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        424,
+        800
+      ],
+      "to": [
+        412,
+        760
+      ],
+      "width": 1.6,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        412,
+        760
+      ],
+      "to": [
+        404,
+        724
+      ],
+      "width": 1.6,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        404,
+        724
+      ],
+      "to": [
+        400,
+        706
+      ],
+      "width": 1.6,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        396,
+        716
+      ],
+      "to": [
+        380,
+        800
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        380,
+        800
+      ],
+      "to": [
+        364,
+        890
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        364,
+        890
+      ],
+      "to": [
+        346,
+        990
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        346,
+        990
+      ],
+      "to": [
+        334,
+        1090
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -250,
+      "event": "path",
+      "cause": "a trail trodden through the grass and kept open by use",
+      "from": [
+        334,
+        1090
+      ],
+      "to": [
+        328,
+        1166
+      ],
+      "width": 1.4,
+      "mat": "chalk_rubble"
+    },
+    {
+      "year": -240,
+      "event": "place",
+      "cause": "a post at the parting of the trails below the Tepe",
+      "structure": "offering_post",
+      "at": [
+        598,
+        612
+      ],
+      "bearing": 200,
+      "poi": "the offering post"
+    },
+    {
+      "year": -239,
+      "event": "place",
+      "cause": "a post where the trail leaves the barrow ridge for the Gape",
+      "structure": "offering_post",
+      "at": [
+        1098,
+        534
+      ],
+      "bearing": 300
+    },
+    {
+      "year": -238,
+      "event": "place",
+      "cause": "a post at the ford on the Narrow",
+      "structure": "offering_post",
+      "at": [
+        408,
+        708
+      ],
+      "bearing": 90
+    },
+    {
+      "year": -237,
+      "event": "place",
+      "cause": "the post on the rim of the frost hollow, set facing in: the trail goes round it and the sheep are not let down",
+      "structure": "offering_post",
+      "at": [
+        558,
+        222
+      ],
+      "bearing": 180,
+      "poi": "the frost hollow"
+    },
+    {
+      "year": -236,
+      "event": "place",
+      "cause": "the post where the diggers stopped working east: beyond it the chalk gives bone, not flint",
+      "structure": "offering_post",
+      "at": [
+        1346,
+        928
+      ],
+      "bearing": 120,
+      "poi": "the Bone Downs"
+    },
+    {
+      "year": -200,
+      "event": "place",
+      "cause": "the Gape: the mouth of the cave system in the head of the deepest combe",
+      "structure": "cave_mouth",
+      "at": [
+        1304,
+        770
+      ],
+      "bearing": 270,
+      "poi": "the mouth of the Gape"
+    },
+    {
+      "year": -199,
+      "event": "place",
+      "cause": "the lower mouth, in the head of the combe south of the Gape",
+      "structure": "cave_mouth",
+      "at": [
+        1278,
+        938
+      ],
+      "bearing": 270
+    },
+    {
+      "year": -198,
+      "event": "place",
+      "cause": "a cave bear's bed at the mouth, bone trodden into the chalk",
+      "structure": "bear_den",
+      "at": [
+        1292,
+        772
+      ],
+      "bearing": 90
+    },
+    {
+      "year": -197,
+      "event": "place",
+      "cause": "a cave bear's bed at the mouth, bone trodden into the chalk",
+      "structure": "bear_den",
+      "at": [
+        1266,
+        936
+      ],
+      "bearing": 90
+    },
+    {
+      "year": -196,
+      "event": "place",
+      "cause": "a long-toothed cat scratched on a block at the mouth of the Gape, by someone who went in far enough to see one",
+      "structure": "cat_scratch",
+      "at": [
+        1298,
+        764
+      ],
+      "bearing": 250,
+      "poi": "the scratched cat"
+    }
+  ]
+}

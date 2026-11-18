@@ -1,0 +1,41 @@
+{
+  "name": "jaguar",
+  "version": 2,
+  "introduced_by": "base",
+  "notes": "Jaguar: stockier and shorter-tailed than a cougar, golden under black rosettes, keeping to the river jungle.",
+  "colors": {"coat": [214, 170, 86], "belly": [238, 230, 206], "spot": [36, 28, 24], "muzzle": [238, 230, 206]},
+  "behaviour": {
+    "walk_speed": 1.2,
+    "flee_speed": 8.0,
+    "wary": 20,
+    "flightiness": 0.35,
+    "hunts": ["deer", "boar", "capybara"],
+    "spawn_chance": 0.05,
+    "swims": true,
+    "active": "nocturnal",
+    "off_hours": 0.1
+  },
+  "like": "cougar",
+  "scale": 1.15,
+  "extra_ops": [
+    {
+      "op": "repeat",
+      "count": 7,
+      "step": [0, 0, 3],
+      "ops": [
+        {"op": "recolour", "at": [11, 11, 8], "until": [13, 13, 9], "from": "coat", "to": "spot"},
+        {"op": "recolour", "at": [19, 11, 9], "until": [21, 13, 10], "from": "coat", "to": "spot"},
+        {"op": "recolour", "at": [14, 13, 8], "until": [15, 15, 9], "from": "coat", "to": "spot"},
+        {"op": "recolour", "at": [17, 13, 10], "until": [18, 15, 11], "from": "coat", "to": "spot"}
+      ]
+    },
+    {
+      "op": "repeat",
+      "count": 4,
+      "step": [0, 0, 3],
+      "ops": [{"op": "recolour", "at": [15, 8, 23], "until": [17, 11, 24], "from": "coat", "to": "spot"}]
+    },
+    {"op": "set", "at": [13, 15, 4], "mat": "spot", "part": "head"},
+    {"op": "set", "at": [19, 15, 4], "mat": "spot", "part": "head"}
+  ]
+}

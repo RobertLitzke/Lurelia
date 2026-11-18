@@ -1,0 +1,24 @@
+{
+  "name": "road_barrier",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A striped barricade and a ROAD CLOSED board where a road ends.",
+  "size": [40, 12, 6],
+  "anchor": [20, 0, 3],
+  "tags": ["road"],
+  "slots": {"post": "weathered_planks", "red": "station_red", "white": "sign_white"},
+  "ops": [
+    {"op": "box", "from": [2, 0, 2], "to": [4, 9, 4], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [36, 0, 2], "to": [38, 9, 4], "mat": "post", "part": "timber"},
+    {
+      "op": "repeat",
+      "count": 4,
+      "step": [8, 0, 0],
+      "ops": [
+        {"op": "box", "from": [4, 5, 2], "to": [8, 8, 3], "mat": "red", "part": "frame"},
+        {"op": "box", "from": [8, 5, 2], "to": [12, 8, 3], "mat": "white", "part": "frame"}
+      ]
+    },
+    {"op": "box", "from": [12, 8, 2], "to": [28, 11, 3], "mat": "white", "part": "frame"}
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "live_oak",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Southern live oak: a vast low dome on a short black trunk, limbs reaching out sideways, hung with moss.",
+  "form": "branching",
+  "height": [9, 13],
+  "trunk_radius": [0.7, 0.95],
+  "buttress": 0.6,
+  "crown_radius": [5.5, 7.0],
+  "bark": "live_oak_bark",
+  "leaf": "live_oak_leaves",
+  "curve": "droop",
+  "canopy": "cloud",
+  "leader": 0.15,
+  "fill": 0.9,
+  "spread": 1.0,
+  "dome": 0.35,
+  "limb": 0.6,
+  "max_slope": 0.6,
+  "affords": ["perch", "nest"]
+}

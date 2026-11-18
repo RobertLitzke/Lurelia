@@ -1,0 +1,17 @@
+{
+  "name": "icicle",
+  "version": 1,
+  "introduced_by": "icezeto",
+  "notes": "An icicle hanging from a high ceiling. Passable, so a body runs through it rather than catching on it.",
+  "smooth": true,
+  "passable": true,
+  "glints": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [176, 198, 214],
+    "alt": [130, 166, 198],
+    "scale": 2,
+    "contrast": 0.6,
+    "calm": {"base": [182, 204, 218], "alt": [140, 174, 204]}
+  }
+}

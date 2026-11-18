@@ -1,0 +1,19 @@
+{
+  "name": "jackrabbit",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Black-tailed jackrabbit: a big desert hare with long black-tipped ears that bolts early and runs far.",
+  "colors": {"rabbit": [168, 140, 104]},
+  "behaviour": {"walk_speed": 1.1, "flee_speed": 7.5, "wary": 9, "flees_from": ["player", "coyote", "fox"]},
+  "like": "rabbit",
+  "scale": 1.3,
+  "extra_ops": [
+    {"op": "box", "from": [14, 21, 11], "to": [15, 24, 12], "mat": "rabbit", "part": "ear_l"},
+    {"op": "box", "from": [14, 20, 10], "to": [15, 23, 11], "mat": "pink", "part": "ear_l"},
+    {"op": "box", "from": [14, 24, 11], "to": [15, 25, 12], "mat": "dark", "part": "ear_l"},
+    {"op": "box", "from": [17, 21, 11], "to": [18, 24, 12], "mat": "rabbit", "part": "ear_r"},
+    {"op": "box", "from": [17, 20, 10], "to": [18, 23, 11], "mat": "pink", "part": "ear_r"},
+    {"op": "box", "from": [17, 24, 11], "to": [18, 25, 12], "mat": "dark", "part": "ear_r"}
+  ],
+  "vary": {"size": 0.08}
+}

@@ -1,0 +1,16 @@
+{
+  "name": "lily_pad",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Giant lily pad: thick, waxy green with pale radial veins. Firm enough to stand on.",
+  "id": 242,
+  "smooth": false,
+  "texture": {
+    "pattern": "rings",
+    "base": [78, 128, 58],
+    "alt": [104, 152, 72],
+    "scale": 3,
+    "contrast": 0.8,
+    "calm": {"base": [86, 132, 64], "alt": [108, 150, 78]}
+  }
+}

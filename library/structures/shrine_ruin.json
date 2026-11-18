@@ -1,0 +1,26 @@
+{
+  "name": "shrine_ruin",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "A ruined shrine of the Order in the jungle: a stone platform, broken pillars of different heights, a fallen one, a lantern. Level ground.",
+  "size": [32, 22, 32],
+  "anchor": [16, 0, 16],
+  "foundation": 4,
+  "decays": true,
+  "tags": ["order", "ruin"],
+  "slots": {"stone": "temple_stone"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [32, 2, 32], "mat": "stone", "part": "floor"},
+    {"op": "box", "from": [4, 2, 4], "to": [28, 3, 28], "mat": "stone", "part": "floor"},
+    {"op": "box", "from": [6, 3, 6], "to": [9, 20, 9], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [23, 3, 6], "to": [26, 12, 9], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [6, 3, 23], "to": [9, 9, 26], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [23, 3, 23], "to": [26, 17, 26], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [5, 20, 5], "to": [27, 22, 10], "mat": "stone", "part": "stone"},
+    {"op": "log", "base": [11, 4, 24], "radius": 1.6, "length": 13, "axis": "x", "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [14, 3, 14], "to": [18, 5, 18], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [15, 5, 15], "to": [17, 8, 17], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [14, 8, 14], "to": [18, 10, 18], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [15, 8, 15], "to": [17, 9, 17], "mat": "lantern_film"}
+  ]
+}

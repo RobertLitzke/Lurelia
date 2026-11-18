@@ -1,0 +1,16 @@
+{
+  "name": "panel_dark",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Charcoal fibre-cement siding: newer townhouses and apartment blocks.",
+  "id": 172,
+  "smooth": false,
+  "texture": {
+    "pattern": "coursed",
+    "base": [62, 64, 68],
+    "alt": [54, 56, 60],
+    "scale": 1,
+    "contrast": 1.0,
+    "calm": {"base": [76, 78, 84], "alt": [66, 68, 74]}
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "coral_teal",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Table and plate coral the colour of the jade water over it.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [84, 168, 152],
+    "alt": [66, 142, 130],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [90, 174, 158], "alt": [72, 148, 136]}
+  }
+}

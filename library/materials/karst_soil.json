@@ -1,0 +1,16 @@
+{
+  "name": "karst_soil",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Dark leaf mould and red-brown earth caught on the tops of the karst's ledges and bulges. Faceted with the rock.",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [92, 72, 52],
+    "alt": [112, 88, 60],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [98, 78, 56], "alt": [116, 92, 64]}
+  },
+  "facet": true
+}

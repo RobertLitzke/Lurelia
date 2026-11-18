@@ -1,0 +1,18 @@
+{
+  "name": "granite_stack",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Granite boulders stacked three and four high as the dome they split off weathered away, the top one overhanging. Scatter on and round a kopje; it levels nothing.",
+  "size": [26, 34, 26],
+  "anchor": [13, 0, 13],
+  "level": false,
+  "decays": false,
+  "tags": ["natural", "granite"],
+  "slots": {"rock": "granite", "lichen": "rock_lichen"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [13, 6, 13], "radius": [11, 7, 10], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [12, 15, 14], "radius": [8, 6, 7.5], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [15, 23, 12], "radius": [6, 5, 5.5], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [11, 28, 13], "radius": [3.5, 3, 3.5], "mat": "lichen"}
+  ]
+}

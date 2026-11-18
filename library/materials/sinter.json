@@ -1,0 +1,15 @@
+{
+  "name": "sinter",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Silica sinter round a hot spring: a pale grey-cream crust laid down in thin terraces, warm to stand on and never under snow.",
+  "smooth": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [196, 190, 174],
+    "alt": [168, 160, 146],
+    "scale": 5,
+    "contrast": 0.6,
+    "calm": {"base": [204, 198, 184], "alt": [178, 170, 156]}
+  }
+}

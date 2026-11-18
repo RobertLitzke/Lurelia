@@ -1,0 +1,33 @@
+{
+  "name": "hoodoo_tall",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A hoodoo: a pinnacle of soft banded tuff left standing under a harder capstone as the slope around it washed away.",
+  "size": [26, 122, 26],
+  "anchor": [13, 0, 13],
+  "foundation": 4,
+  "level": false,
+  "decays": false,
+  "tags": ["natural", "landmark", "hoodoo"],
+  "slots": {"rust": "hoodoo_rust", "pale": "hoodoo_pale"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [13.0, 0, 13.0], "radius": [12.0, 14.4, 11.2], "mat": "rust"},
+    {"op": "ellipsoid", "centre": [12.9229, 7.49902, 13.5681], "radius": [7.73746, 10.4986, 6.94418], "mat": "rust"},
+    {"op": "ellipsoid", "centre": [12.4979, 18.1636, 12.9145], "radius": [7.19764, 8.63124, 6.37314], "mat": "rust"},
+    {"op": "ellipsoid", "centre": [13.1527, 29.479, 12.8339], "radius": [6.94143, 10.6629, 6.68632], "mat": "rust"},
+    {"op": "ellipsoid", "centre": [13.5307, 40.8241, 12.3011], "radius": [4.0821, 9.48535, 3.50617], "mat": "rust"},
+    {"op": "ellipsoid", "centre": [12.7221, 51.4879, 13.1455], "radius": [6.43188, 9.23813, 5.78116], "mat": "rust"},
+    {"op": "cylinder", "base": [13.0, 51.4879, 13.0], "radius": 6.23892, "height": 2, "mat": "pale"},
+    {"op": "ellipsoid", "centre": [12.9317, 61.6963, 12.6451], "radius": [6.01575, 8.74889, 6.6138], "mat": "rust"},
+    {"op": "ellipsoid", "centre": [12.7044, 72.8866, 12.5675], "radius": [5.77205, 10.4171, 5.32333], "mat": "rust"},
+    {"op": "cylinder", "base": [13.0, 72.8866, 13.0], "radius": 5.59889, "height": 1, "mat": "pale"},
+    {"op": "ellipsoid", "centre": [12.8184, 83.2524, 13.7329], "radius": [3.44024, 8.26196, 3.65294], "mat": "rust"},
+    {"op": "cylinder", "base": [13.0, 83.2524, 13.0], "radius": 3.33703, "height": 1, "mat": "pale"},
+    {"op": "ellipsoid", "centre": [12.8007, 94.5379, 13.3342], "radius": [4.62912, 10.8425, 4.42057], "mat": "rust"},
+    {"op": "ellipsoid", "centre": [12.739, 104.379, 12.6979], "radius": [4.77945, 7.2726, 4.08063], "mat": "rust"},
+    {"op": "cylinder", "base": [13.0, 104.379, 13.0], "radius": 4.63606, "height": 1, "mat": "pale"},
+    {"op": "ellipsoid", "centre": [12.2175, 112.467, 12.9439], "radius": [4.56526, 6.95952, 4.43609], "mat": "rust"},
+    {"op": "cylinder", "base": [13.0, 108, 13.0], "radius": 3.2, "height": 6, "mat": "rust"},
+    {"op": "ellipsoid", "centre": [13.0, 115, 13.0], "radius": [6.30142, 3.5, 5.68245], "mat": "pale"}
+  ]
+}

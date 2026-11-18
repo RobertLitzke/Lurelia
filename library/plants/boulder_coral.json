@@ -1,0 +1,14 @@
+{
+  "name": "boulder_coral",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Boulder coral: big rose-coloured domes, some as big as a car, a few smaller ones grown against them.",
+  "form": "coral_mound",
+  "height": [1.6, 3.0],
+  "trunk_radius": [0.1, 0.1],
+  "crown_radius": [1.3, 2.4],
+  "bark": "coral_rose",
+  "leaf": "coral_rose",
+  "max_slope": 1.4,
+  "water_depth": [1.0, 25]
+}

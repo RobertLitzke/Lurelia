@@ -1,0 +1,31 @@
+{
+  "name": "lechwe",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Red lechwe: a chestnut antelope of the flood meadows, hocks always wet, running in splashing herds through water a foot deep. The males carry long horns swept back in a shallow lyre.",
+  "colors": {"coat": [172, 108, 52], "belly": [240, 236, 228], "antler": [214, 196, 160]},
+  "behaviour": {
+    "movement": "wade",
+    "walk_speed": 1.2,
+    "flee_speed": 9.0,
+    "wary": 22,
+    "flightiness": 1.6,
+    "swims": true,
+    "group": {"size": [8, 30], "spacing": 2.4, "range": 48, "alignment": 1.3, "cohesion": 1.5}
+  },
+  "like": "deer",
+  "scale": 0.95,
+  "extra_ops": [
+    {"op": "box", "from": [12, 25, 4], "to": [22, 32, 9], "mat": "air", "part": "head"},
+    {"op": "box", "from": [12, 25, 7], "to": [14, 27, 8], "mat": "coat", "part": "ear_l"},
+    {"op": "box", "from": [19, 25, 7], "to": [21, 27, 8], "mat": "coat", "part": "ear_r"},
+    {"op": "box", "from": [15, 26, 6], "to": [16, 29, 7], "mat": "antler", "part": "head"},
+    {"op": "box", "from": [17, 26, 6], "to": [18, 29, 7], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [15, 29, 7], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [17, 29, 7], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [15, 30, 8], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [17, 30, 8], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [15, 31, 7], "mat": "antler", "part": "head"},
+    {"op": "set", "at": [17, 31, 7], "mat": "antler", "part": "head"}
+  ]
+}

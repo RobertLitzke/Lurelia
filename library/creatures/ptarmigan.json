@@ -1,0 +1,27 @@
+{
+  "name": "ptarmigan",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Rock ptarmigan in winter white, crouched in the snow on the fell in small coveys and only seen when they burst up from under your feet. They fly fast and low on whirring wings when flushed.",
+  "half_w": 0.18,
+  "height": 0.22,
+  "colors": {
+    "body": [244, 244, 240],
+    "head": [240, 240, 236],
+    "beak": [26, 26, 28],
+    "wing": [248, 248, 246],
+    "tail": [24, 24, 28],
+    "legs": [236, 236, 232]
+  },
+  "behaviour": {
+    "movement": "flock",
+    "walk_speed": 8.0,
+    "flee_speed": 15.0,
+    "wary": 7,
+    "flightiness": 2.0,
+    "fly_height": 4,
+    "group": {"size": [3, 8], "spacing": 1.2, "range": 5, "separation": 1.0, "alignment": 1.2, "cohesion": 1.2}
+  },
+  "like": "starling",
+  "scale": 1.6
+}

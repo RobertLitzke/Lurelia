@@ -1,0 +1,15 @@
+{
+  "name": "stall_green",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Green-and-white striped canvas over a market stall.",
+  "smooth": false,
+  "texture": {
+    "pattern": "strata",
+    "base": [40, 112, 70],
+    "alt": [232, 228, 214],
+    "scale": 3,
+    "contrast": 0.9,
+    "calm": {"base": [48, 120, 78], "alt": [240, 236, 222]}
+  }
+}

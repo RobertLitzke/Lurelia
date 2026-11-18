@@ -1,0 +1,15 @@
+{
+  "name": "coral_tip",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "The pale growing tips of branching coral, nearly white.",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [238, 228, 204],
+    "alt": [222, 210, 184],
+    "scale": 5,
+    "contrast": 0.6,
+    "calm": {"base": [244, 234, 210], "alt": [228, 216, 190]}
+  }
+}

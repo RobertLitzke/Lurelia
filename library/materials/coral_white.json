@@ -1,0 +1,15 @@
+{
+  "name": "coral_white",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Lophelia, the cold-water coral of the deep fjords: bone-white branches with a pink cast at the tips.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [232, 226, 214],
+    "alt": [214, 200, 192],
+    "scale": 5,
+    "contrast": 0.8,
+    "calm": {"base": [236, 230, 218], "alt": [220, 206, 198]}
+  }
+}

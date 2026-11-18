@@ -1,0 +1,29 @@
+{
+  "name": "stilt_walkway",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "A plank boardwalk on posts 1.5 m over the water, 8 m long, starting at the anchor and running toward local +Z; posts every 2.5 m, a rail on one side. A kayak passes under it between the posts. Base sea.",
+  "size": [6, 16, 32],
+  "anchor": [3, 0, 0],
+  "foundation": 24,
+  "level": false,
+  "base": "sea",
+  "tags": ["lowmouth", "walkway"],
+  "slots": {"deck": "weathered_planks", "post": "timber_frame"},
+  "ops": [
+    {"op": "box", "from": [0, 10, 0], "to": [6, 11, 32], "mat": "deck", "part": "floor"},
+    {"op": "box", "from": [0, 0, 1], "to": [1, 10, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [5, 0, 1], "to": [6, 10, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [0, 0, 11], "to": [1, 10, 12], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [5, 0, 11], "to": [6, 10, 12], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [0, 0, 21], "to": [1, 10, 22], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [5, 0, 21], "to": [6, 10, 22], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [0, 0, 31], "to": [1, 10, 32], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [5, 0, 31], "to": [6, 10, 32], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [5, 11, 1], "to": [6, 14, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [5, 11, 11], "to": [6, 14, 12], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [5, 11, 21], "to": [6, 14, 22], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [5, 11, 31], "to": [6, 14, 32], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [5, 14, 0], "to": [6, 15, 32], "mat": "post", "part": "timber"}
+  ]
+}

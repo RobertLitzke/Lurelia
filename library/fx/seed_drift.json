@@ -1,0 +1,19 @@
+{
+  "name": "seed_drift",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "Down and seed on a summer breeze, barely falling.",
+  "shape": "puff",
+  "count": [1, 1],
+  "speed": [0.0, 0.2],
+  "cone_deg": 90,
+  "life": [6.0, 10.0],
+  "size": [0.02, 0.02],
+  "gravity": 0.08,
+  "drag": 1.5,
+  "wind": 0.9,
+  "flutter": 0.25,
+  "color": [250, 248, 235],
+  "alpha": 0.85,
+  "near_fade": 0.4
+}

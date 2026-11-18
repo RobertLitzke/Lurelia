@@ -1,0 +1,14 @@
+{
+  "name": "skystone_chip",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A splinter of skystone lying in the bloom.",
+  "display": "skystone chip",
+  "voxel": 0.035,
+  "colors": {"glassblack": [30, 24, 44], "wing": [170, 120, 255, 1.8]},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 3, 16], "radius": [3, 3.5, 2.5], "mat": "glassblack"},
+    {"op": "set", "at": [16, 6, 16], "mat": "wing"},
+    {"op": "set", "at": [15, 4, 18], "mat": "wing"}
+  ]
+}

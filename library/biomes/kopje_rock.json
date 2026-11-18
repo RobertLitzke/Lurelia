@@ -1,0 +1,26 @@
+{
+  "name": "kopje_rock",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "A kopje: bare granite dome and the boulders split off it, lichen in the shade, a rock fig rooted in a crack, and lions asleep on the warm stone.",
+  "priority": 16,
+  "rules": {"region": "stacks", "slope": [0.12, 4.0], "elev": [4, 80]},
+  "surface": "granite",
+  "subsurface": "granite",
+  "rock": "granite",
+  "map_color": [140, 139, 138],
+  "plants": [
+    {"plant": "rock_lichen", "density": 0.5, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "rock_moss", "density": 0.18, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "cliff_banyan", "density": 0.004, "placement": {"verb": "lone", "params": {"spacing": 30}}},
+    {"plant": "mopane", "density": 0.006, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [{"structure": "granite_stack", "density": 0.0012, "placement": {"verb": "lone", "params": {"spacing": 26}}}],
+  "creatures": [
+    {"creature": "lion", "count": 5},
+    {"creature": "marmot", "count": 6},
+    {"creature": "vulture", "count": 3},
+    {"creature": "bat", "count": 10},
+    {"creature": "lizard", "count": 10}
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "karst_scree",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Scattered small blocks and stones at a tower's foot. Slot stone: the tower's rock.",
+  "size": [27, 7, 24],
+  "anchor": [13, 0, 12],
+  "foundation": 0,
+  "level": false,
+  "decays": false,
+  "tags": ["karst", "rubble"],
+  "slots": {"stone": "karst_limestone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [5.1, 1.7, 5.1], "radius": [3.4, 2.5, 3.4], "mat": "stone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [13.6, 1.7, 8.5], "radius": [4.2, 2.5, 3.4], "mat": "stone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [22.1, 1.7, 5.1], "radius": [3.1, 2.0, 3.1], "mat": "stone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [10.2, 1.7, 17.0], "radius": [3.7, 2.5, 4.2], "mat": "stone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [20.4, 1.7, 18.7], "radius": [2.5, 1.7, 2.5], "mat": "stone", "part": "stone"}
+  ]
+}

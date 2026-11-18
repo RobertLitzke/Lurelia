@@ -1,0 +1,16 @@
+{
+  "name": "flint_grass",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The cover of the Flint Down: thin tawny-khaki grass with chalk and black flint showing through everywhere.",
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [120, 116, 94],
+    "alt": [94, 92, 84],
+    "scale": 6,
+    "contrast": 0.8,
+    "calm": {"base": [138, 134, 110], "alt": [106, 104, 94]}
+  },
+  "grass": {"sparse": 0.04, "dense": 0.3, "short": 1.8}
+}

@@ -1,0 +1,11 @@
+{
+  "name": "garter_snake",
+  "version": 2,
+  "introduced_by": "glassfall",
+  "notes": "Common garter snake, three quarters of a metre of olive and dark bands: the snake you actually meet, crossing a meadow path or lying out on a warm stone by the water. Quick to leave and carries no rattle.",
+  "colors": {"skin": [98, 104, 70]},
+  "behaviour": {"walk_speed": 0.55, "flee_speed": 2.0, "wary": 4, "flightiness": 1.4, "warns": false, "active": "diurnal"},
+  "like": "rattlesnake",
+  "scale": 0.56,
+  "extra_ops": [{"op": "box", "from": [15, 1, 27], "to": [17, 4, 28], "mat": "air", "part": "tail"}]
+}

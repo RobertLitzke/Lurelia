@@ -1,0 +1,15 @@
+{
+  "name": "stockfish",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Cod split and hung in pairs to dry in the frost: grey-gold, stiff as boards.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [176, 160, 128],
+    "alt": [146, 132, 104],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [184, 168, 136], "alt": [154, 140, 112]}
+  }
+}

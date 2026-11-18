@@ -1,0 +1,16 @@
+{
+  "name": "juniper_foliage",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Blue-green juniper scale leaves.",
+  "id": 123,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [100, 114, 96],
+    "alt": [118, 130, 108],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [110, 122, 102], "alt": [126, 136, 114]}
+  }
+}

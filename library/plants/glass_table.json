@@ -1,0 +1,14 @@
+{
+  "name": "glass_table",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "A table of lilac glass, light coming through its plate.",
+  "form": "coral_table",
+  "height": [0.6, 1.2],
+  "trunk_radius": [0.14, 0.18],
+  "crown_radius": [1.0, 2.0],
+  "bark": "glass_coral_violet",
+  "leaf": "glass_coral_violet",
+  "max_slope": 1.4,
+  "water_depth": [1.5, 22]
+}

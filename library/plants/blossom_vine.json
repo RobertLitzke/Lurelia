@@ -1,0 +1,13 @@
+{
+  "name": "blossom_vine",
+  "version": 1,
+  "introduced_by": "faerie",
+  "notes": "The faerie wood's vine: longer strands hung with rose-lilac blossom, from the trees only.",
+  "height": [3.0, 7.0],
+  "bark": "blossom_vine_leaves",
+  "leaf": "blossom_vine_leaves",
+  "like": "hanging_vine",
+  "hosts": ["tree"],
+  "affords": ["nectar"],
+  "autumn": "autumn_vine"
+}

@@ -1,0 +1,78 @@
+{
+  "name": "hemlow",
+  "size_m": 1024,
+  "height_m": 96,
+  "sea_level_m": 12,
+  "underwater": {"visibility": 9, "light": 0.18},
+  "seed": 621,
+  "sun": {"latitude": 48},
+  "seeds": 1,
+  "rock": [
+    [
+      "oolite",
+      1.0
+    ]
+  ],
+  "spawn": [
+    360,
+    478
+  ],
+  "spawn_bearing": 90,
+  "seasons": ["spring", "summer", "autumn", "winter"],
+  "start_season": "summer",
+  "weather": {
+    "sun": 1.3,
+    "clouds": 0.9,
+    "rain": 0.5,
+    "fog": 0.35,
+    "heat": 0.25,
+    "snow": 0.15
+  },
+  "start_weather": "sun",
+  "default_biome": "hollins",
+  "seabed_biome": "seabed",
+  "start_hour": 17.6,
+  "biomes": [
+    "hollins",
+    "hemlow_meadow",
+    "hemlow_green",
+    "hem_banks",
+    "wisp_moss",
+    "edge_hanger",
+    "lantern_spout",
+    "hob_clearing",
+    "beach",
+    "seabed"
+  ],
+  "strata": [
+    [
+      "oolite",
+      0
+    ],
+    [
+      "oolite_cream",
+      21
+    ],
+    [
+      "oolite",
+      22.2
+    ],
+    [
+      "oolite_cream",
+      27
+    ],
+    [
+      "oolite",
+      27.6
+    ],
+    [
+      "oolite_cream",
+      33
+    ],
+    [
+      "oolite",
+      34
+    ]
+  ],
+  "moss": 1.2
+}

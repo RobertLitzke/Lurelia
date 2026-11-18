@@ -1,0 +1,40 @@
+{
+  "name": "goose",
+  "version": 2,
+  "introduced_by": "glassfall",
+  "notes": "paddle: Canada goose: brown-grey with a black neck and a white chin strap. Gaggles float near the shore, and lift off together, honking, when you come near. The base of every waterfowl.",
+  "colors": {
+    "body": [140, 118, 96],
+    "head": [24, 24, 30],
+    "neck": [24, 24, 30],
+    "beak": [24, 24, 30],
+    "wing": [110, 92, 74],
+    "tail": [24, 24, 30],
+    "legs": [36, 28, 24],
+    "white": [240, 236, 228]
+  },
+  "behaviour": {
+    "movement": "paddle",
+    "walk_speed": 1.0,
+    "flee_speed": 9,
+    "wary": 16,
+    "flightiness": 0.9,
+    "fly_height": 4,
+    "flight": "flap",
+    "wingbeat": 2.6,
+    "group": {"size": [3, 9], "spacing": 1.5, "range": 8, "separation": 1.0, "alignment": 1.0, "cohesion": 1.0},
+    "active": "diurnal",
+    "off_hours": 0.45
+  },
+  "like": "starling",
+  "scale": 3.0,
+  "extra_ops": [
+    {"op": "recolour", "at": [13, 7, 7], "until": [20, 12, 13], "from": "head", "to": "body"},
+    {"op": "box", "from": [15, 9, 7], "to": [17, 10, 9], "mat": "air", "part": "head"},
+    {"op": "box", "from": [15, 9, 9], "to": [17, 15, 11], "mat": "neck", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 15.5, 8.5], "radius": [1.4, 1.4, 2], "mat": "head", "part": "head"},
+    {"op": "box", "from": [15, 15, 5], "to": [17, 16, 7], "mat": "beak", "part": "head"},
+    {"op": "recolour", "at": [14, 14, 8], "until": [19, 16, 10], "from": "head", "to": "white"}
+  ],
+  "vary": {"size": 0.06, "shade": 0.05}
+}

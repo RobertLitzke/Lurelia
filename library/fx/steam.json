@@ -1,0 +1,19 @@
+{
+  "name": "steam",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Steam off a hot spring in frost: thick white billows that rise, swell and are taken by the wind, thinning to nothing.",
+  "shape": "puff",
+  "count": [1, 1],
+  "speed": [0.6, 1.4],
+  "cone_deg": 18,
+  "life": [4.0, 7.0],
+  "size": [0.5, 3.2],
+  "size_jitter": 0.3,
+  "gravity": -0.35,
+  "drag": 0.6,
+  "wind": 0.8,
+  "color": [236, 240, 244],
+  "alpha": 0.32,
+  "near_fade": 1.5
+}

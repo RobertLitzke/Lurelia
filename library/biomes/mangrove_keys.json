@@ -1,0 +1,36 @@
+{
+  "name": "mangrove_keys",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "The new mouth: red mangroves on their prop roots in the shallows, black mangroves on the mud keys, channels winding between, the river's silt settling.",
+  "priority": 10,
+  "rules": {"region": "mouth", "amphibious": true},
+  "surface": "delta_mud",
+  "subsurface": "silt",
+  "map_color": [60, 120, 90],
+  "plants": [
+    {
+      "plant": "red_mangrove",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 24, "min": 0.3, "max": 0.6}}
+    },
+    {"plant": "black_mangrove", "density": 0.01, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "cattail",
+      "density": 0.7,
+      "placement": {"verb": "clustered", "params": {"size": 22, "min": 0.72, "max": 0.735}}
+    }
+  ],
+  "creatures": [
+    {"creature": "brown_pelican", "count": 6},
+    {"creature": "roseate_spoonbill", "count": 6},
+    {"creature": "great_egret", "count": 4},
+    {"creature": "cormorant", "count": 4},
+    {"creature": "crocodile", "count": 10},
+    {"creature": "sea_turtle", "count": 3},
+    {"creature": "alligator_gar", "count": 3},
+    {"creature": "heron", "count": 4},
+    {"creature": "herring", "count": 24}
+  ],
+  "collectibles": [{"item": "seashell", "density": 0.0003, "placement": {"verb": "scatter", "params": {}}}]
+}

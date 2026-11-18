@@ -1,0 +1,26 @@
+{
+  "name": "faerie",
+  "version": 1,
+  "introduced_by": "seattle_faerie",
+  "notes": "The same streets and buildings gone over to the wood: cobbles under moss, grass on the flat roofs, ivy up the walls, and the street trees doubled and turned. Used by local/worlds/seattle_faerie. The remap catches materials the import file names itself (roof and street-tree choices per building), which no role here covers.",
+  "like": "modern",
+  "road": "fae_cobbles",
+  "pavement": "moss_flagstone",
+  "deck": "mossy_stone",
+  "deck_top": "fae_cobbles",
+  "plinths": ["mossy_stone", "brick_brown", "fieldstone"],
+  "ivy": 0.7,
+  "ivy_mat": "ivy_leaves",
+  "tree_boost": 0.6,
+  "remap": {
+    "road_asphalt": "fae_cobbles",
+    "concrete": "mossy_stone",
+    "pavement": "moss_flagstone",
+    "roof_tar": "rooftop_grass",
+    "shingle_dark": "shingle_moss",
+    "shingle_brown": "shingle_moss",
+    "street_maple": "gold_maple",
+    "street_oak": "great_oak",
+    "birch": "pale_birch"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "ship_trim",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "The ship's rail and deckhouse trim, once white, now the colour of old ice.",
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [196, 196, 188],
+    "alt": [176, 178, 172],
+    "scale": 5,
+    "contrast": 0.5,
+    "calm": {"base": [204, 204, 196], "alt": [184, 186, 180]}
+  }
+}

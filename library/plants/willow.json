@@ -1,0 +1,14 @@
+{
+  "name": "willow",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "River banks.",
+  "form": "weeping",
+  "height": [7, 10],
+  "trunk_radius": [0.3, 0.42],
+  "crown_radius": [2.6, 3.4],
+  "bark": "bark",
+  "leaf": "willow_leaves",
+  "max_slope": 0.4,
+  "autumn": "leaves_autumn"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "straw_bound",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Straw bound tight in bundles, golden and bristling.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [214, 172, 92],
+    "alt": [184, 142, 70],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [222, 180, 100], "alt": [192, 150, 78]}
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "stingray",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Southern stingray: a sandy diamond a metre and a bit across, lying half buried on the sand of the grooves and the lagoon, gliding off when disturbed.",
+  "colors": {"back": [170, 150, 112], "belly": [236, 236, 230], "dark": [120, 104, 78]},
+  "behaviour": {
+    "habit": "rest",
+    "walk_speed": 0.6,
+    "flee_speed": 2.2,
+    "wary": 3,
+    "flightiness": 1.0,
+    "flees_from": ["player"],
+    "leap": 0,
+    "shallows": 1.0,
+    "spawn_chance": 1.0,
+    "group": {"size": [1, 1]}
+  },
+  "like": "manta_ray",
+  "scale": 0.3
+}

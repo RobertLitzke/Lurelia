@@ -1,0 +1,17 @@
+{
+  "name": "karst_limestone",
+  "version": 2,
+  "introduced_by": "jadewater",
+  "notes": "Pale blue-grey layered limestone: the towers and the Old Wall. v2: drawn in flat facets (surface nets lit like sloped ground) instead of smoothed into slopes, so tower walls and the Old Wall's cliffs read as smooth rock, not one-voxel steps.",
+  "id": 230,
+  "smooth": false,
+  "texture": {
+    "pattern": "strata",
+    "base": [132, 146, 156],
+    "alt": [150, 162, 170],
+    "scale": 2,
+    "contrast": 0.6,
+    "calm": {"base": [128, 142, 154], "alt": [144, 156, 166]}
+  },
+  "facet": true
+}

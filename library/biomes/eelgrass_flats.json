@@ -1,0 +1,16 @@
+{
+  "name": "eelgrass_flats",
+  "version": 3,
+  "introduced_by": "lowmouth",
+  "notes": "Drowned meadow: fields of eelgrass over the sheltered salt shallows inside a reef or a lagoon, growing under the water instead of stopping at the waterline, with turtles grazing it. Fresh water has its own: backwater_flats, which carries the lily pads.",
+  "priority": 3,
+  "rules": {"underwater": true, "elev": [-2.4, -0.25], "coast": [-220, -2]},
+  "surface": "eelgrass",
+  "subsurface": "silt",
+  "map_color": [84, 132, 110],
+  "creatures": [
+    {"creature": "herring", "count": 20},
+    {"creature": "sea_turtle", "count": 10},
+    {"creature": "stingray", "count": 1}
+  ]
+}

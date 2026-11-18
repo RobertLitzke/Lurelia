@@ -1,0 +1,23 @@
+{
+  "name": "glassmoth",
+  "version": 2,
+  "introduced_by": "glassfall",
+  "notes": "A large moth with faintly glowing violet wings, seen near skystone.",
+  "voxel": 0.025,
+  "half_w": 0.1,
+  "height": 0.1,
+  "colors": {"mothbody": [60, 40, 90], "wing": [170, 120, 255, 1.8]},
+  "behaviour": {"movement": "flutter", "fly_height": 1.2, "flightiness": 0.35, "active": "nocturnal", "off_hours": 0.03},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 16, 16.5], "radius": [0.9, 0.9, 3.0], "mat": "mothbody"},
+    {"op": "ellipsoid", "centre": [16, 16.2, 13], "radius": [1.0, 1.0, 1.0], "mat": "mothbody"},
+    {"op": "ellipsoid", "centre": [12.2, 16.6, 14.8], "radius": [3.8, 0.45, 2.2], "mat": "wing"},
+    {"op": "ellipsoid", "centre": [19.8, 16.6, 14.8], "radius": [3.8, 0.45, 2.2], "mat": "wing"},
+    {"op": "ellipsoid", "centre": [13.2, 16.4, 18.2], "radius": [2.8, 0.45, 1.9], "mat": "wing"},
+    {"op": "ellipsoid", "centre": [18.8, 16.4, 18.2], "radius": [2.8, 0.45, 1.9], "mat": "wing"},
+    {"op": "set", "at": [15, 17, 11], "mat": "mothbody"},
+    {"op": "set", "at": [14, 18, 10], "mat": "mothbody"},
+    {"op": "set", "at": [17, 17, 11], "mat": "mothbody"},
+    {"op": "set", "at": [18, 18, 10], "mat": "mothbody"}
+  ]
+}

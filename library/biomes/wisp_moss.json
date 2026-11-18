@@ -1,0 +1,48 @@
+{
+  "name": "wisp_moss",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "The Wisp Moss round Hemmere: sphagnum and peat pools, reedmace, willow scrub, dead alders standing in the wet; marsh lights over it after sunset.",
+  "priority": 11,
+  "rules": {"region": "moss"},
+  "surface": "bog_moss",
+  "subsurface": "peat",
+  "map_color": [130, 120, 70],
+  "plants": [
+    {
+      "plant": "reedmace",
+      "density": 0.14,
+      "placement": {"verb": "clustered", "params": {"size": 7, "min": 0.45, "max": 1.0}}
+    },
+    {
+      "plant": "willow",
+      "density": 0.0018,
+      "placement": {"verb": "clustered", "params": {"size": 25, "min": 0.3, "max": 1.0}}
+    },
+    {"plant": "alder", "density": 0.001, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "snag", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "broken_snag", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "heather",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.3, "max": 1.0}}
+    },
+    {"plant": "birch", "density": 0.0008, "placement": {"verb": "edge", "params": {"width": 18, "inner": 0.0}}}
+  ],
+  "creatures": [
+    {"creature": "marsh_light", "count": 16},
+    {"creature": "firefly", "count": 60},
+    {"creature": "heron", "count": 2},
+    {"creature": "faerie_heron", "count": 2},
+    {"creature": "goose", "count": 10},
+    {"creature": "swan", "count": 2},
+    {"creature": "mallard", "count": 10},
+    {"creature": "dragonfly", "count": 10},
+    {"creature": "glass_dragonfly", "count": 8},
+    {"creature": "meadowhawk", "count": 6},
+    {"creature": "frog", "count": 8},
+    {"creature": "fae_toad", "count": 3}
+  ],
+  "mist": 0.2,
+  "water": {"shallow": [74, 100, 72], "deep": [26, 42, 32]}
+}

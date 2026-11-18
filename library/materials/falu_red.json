@@ -1,0 +1,15 @@
+{
+  "name": "falu_red",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Falu red board cladding: the iron-ochre paint of every rorbu and barn on the coast, weathered toward brick.",
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [142, 40, 32],
+    "alt": [122, 34, 28],
+    "scale": 5,
+    "contrast": 0.6,
+    "calm": {"base": [150, 48, 40], "alt": [130, 42, 36]}
+  }
+}

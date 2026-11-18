@@ -1,0 +1,15 @@
+{
+  "name": "salt_crust",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The white crust round Saltmere: salt dried in plates over grey mud, cracked into polygons.",
+  "smooth": true,
+  "texture": {
+    "pattern": "cracks",
+    "base": [210, 206, 192],
+    "alt": [186, 180, 164],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [212, 208, 196], "alt": [190, 184, 170]}
+  }
+}

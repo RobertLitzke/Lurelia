@@ -1,0 +1,53 @@
+{
+  "name": "white_church",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "The hamlet's white wooden church: a plain nave with tall lamplit windows, a square tower with a tarred stepped spire, the door in the tower (local -Z).",
+  "size": [32, 93, 66],
+  "anchor": [15, 0, 9],
+  "foundation": 6,
+  "level": true,
+  "tags": ["kaldvik", "house"],
+  "ops": [
+    {"op": "box", "from": [0, 0, 14], "to": [30, 1, 64], "mat": "weathered_planks", "part": "floor"},
+    {"op": "walls", "from": [0, 1, 14], "to": [30, 26, 64], "mat": "white_siding", "thick": 1, "part": "wall"},
+    {
+      "op": "gable",
+      "from": [-1, 26, 13],
+      "to": [31, 26, 65],
+      "axis": "z",
+      "mat": "roof_tar",
+      "rise": 1,
+      "part": "roof"
+    },
+    {
+      "op": "gable",
+      "from": [0, 26, 63],
+      "to": [30, 26, 64],
+      "axis": "z",
+      "mat": "white_siding",
+      "rise": 1,
+      "part": "wall"
+    },
+    {"op": "box", "from": [0, 8, 19], "to": [1, 20, 22], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [29, 8, 19], "to": [30, 20, 22], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [0, 8, 28], "to": [1, 20, 31], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [29, 8, 28], "to": [30, 20, 31], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [0, 8, 37], "to": [1, 20, 40], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [29, 8, 37], "to": [30, 20, 40], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [0, 8, 46], "to": [1, 20, 49], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [29, 8, 46], "to": [30, 20, 49], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [0, 8, 55], "to": [1, 20, 58], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [29, 8, 55], "to": [30, 20, 58], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [8, 0, 2], "to": [22, 50, 16], "mat": "white_siding", "part": "wall"},
+    {"op": "box", "from": [12, 1, 2], "to": [18, 13, 3], "mat": "door_red", "part": "timber"},
+    {"op": "box", "from": [13, 36, 2], "to": [17, 42, 3], "mat": "window_warm", "part": "glass"},
+    {"op": "box", "from": [7, 50, 1], "to": [23, 52, 17], "mat": "roof_tar", "part": "roof"},
+    {"op": "box", "from": [8, 52, 2], "to": [22, 59, 16], "mat": "roof_tar", "part": "roof"},
+    {"op": "box", "from": [10, 59, 4], "to": [20, 66, 14], "mat": "roof_tar", "part": "roof"},
+    {"op": "box", "from": [12, 66, 6], "to": [18, 73, 12], "mat": "roof_tar", "part": "roof"},
+    {"op": "box", "from": [13, 73, 7], "to": [17, 80, 11], "mat": "roof_tar", "part": "roof"},
+    {"op": "box", "from": [14, 80, 8], "to": [16, 87, 10], "mat": "roof_tar", "part": "roof"},
+    {"op": "box", "from": [14, 87, 8], "to": [16, 92, 10], "mat": "star_gold", "part": "metal"}
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "tomb_lime",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Whitewashed plaster over brick: the raised tombs, stained grey where the water stood.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [222, 218, 206],
+    "alt": [194, 190, 178],
+    "scale": 5,
+    "contrast": 0.6,
+    "calm": {"base": [220, 216, 204], "alt": [196, 192, 182]}
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "great_egret",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "wade: Great egret: tall and all white with a yellow bill, stalking the shallows.",
+  "colors": {"heron": [240, 236, 228], "white": [240, 236, 228], "beak": [240, 190, 40], "dark": [36, 28, 24]},
+  "like": "heron"
+}

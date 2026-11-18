@@ -1,0 +1,54 @@
+{
+  "name": "heron",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "wade: Grey heron: stalks the shallows and stands still for long spells; when you come close it takes off on huge slow wings, flies thirty or forty metres along the water and lands again. The base of every long-legged wader.",
+  "voxel": 0.055,
+  "half_w": 0.2,
+  "height": 1.0,
+  "colors": {"dark": [36, 28, 24], "heron": [128, 140, 152], "white": [240, 236, 228], "beak": [240, 190, 40]},
+  "behaviour": {
+    "movement": "wade",
+    "walk_speed": 0.5,
+    "flee_speed": 4.0,
+    "wary": 14,
+    "flightiness": 1.3,
+    "juvenile_flightiness": 1.2,
+    "flees_from": ["player"],
+    "fly_height": 6,
+    "flight": "flap",
+    "wingbeat": 1.7
+  },
+  "ops": [
+    {"op": "box", "from": [15, 0, 17], "to": [16, 9, 18], "mat": "dark", "part": "leg_l"},
+    {"op": "box", "from": [17, 0, 17], "to": [18, 9, 18], "mat": "dark", "part": "leg_r"},
+    {"op": "ellipsoid", "centre": [16.5, 11, 17], "radius": [2.3, 2.3, 4.6], "mat": "heron"},
+    {"op": "recolour_below", "y": 10, "from": "heron", "to": "white"},
+    {"op": "box", "from": [15, 10, 21], "to": [18, 12, 24], "mat": "heron", "part": "tail"},
+    {"op": "box", "from": [16, 12, 11], "to": [17, 17, 13], "mat": "white", "part": "neck"},
+    {"op": "ellipsoid", "centre": [16.5, 17.5, 10.5], "radius": [1.2, 1.2, 1.6], "mat": "white", "part": "head"},
+    {"op": "box", "from": [16, 17, 5], "to": [17, 18, 9], "mat": "beak", "part": "head"},
+    {"op": "box", "from": [16, 18, 11], "to": [17, 19, 13], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [9, 12, 13], "to": [14, 13, 20], "mat": "heron", "part": "wing_l"},
+    {"op": "box", "from": [1, 12, 14], "to": [9, 13, 19], "mat": "heron", "part": "wing_l_tip"},
+    {"op": "box", "from": [1, 12, 17], "to": [9, 13, 19], "mat": "dark", "part": "wing_l_tip"},
+    {"op": "box", "from": [19, 12, 13], "to": [24, 13, 20], "mat": "heron", "part": "wing_r"},
+    {"op": "box", "from": [24, 12, 14], "to": [32, 13, 19], "mat": "heron", "part": "wing_r_tip"},
+    {"op": "box", "from": [24, 12, 17], "to": [32, 13, 19], "mat": "dark", "part": "wing_r_tip"}
+  ],
+  "rig": {
+    "plan": "bird",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16.5, 12.5, 12.5]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16.5, 17, 11]},
+      {"name": "wing_l", "role": "wing", "parent": "body", "joint": [14, 12.5, 16], "side": "l"},
+      {"name": "wing_l_tip", "role": "wing", "parent": "wing_l", "joint": [9, 12.5, 16], "side": "l"},
+      {"name": "wing_r", "role": "wing", "parent": "body", "joint": [19, 12.5, 16], "side": "r"},
+      {"name": "wing_r_tip", "role": "wing", "parent": "wing_r", "joint": [24, 12.5, 16], "side": "r"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 11, 21]},
+      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [15.5, 9, 17.5], "side": "l", "pair": 0},
+      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [17.5, 9, 17.5], "side": "r", "pair": 0}
+    ]
+  }
+}

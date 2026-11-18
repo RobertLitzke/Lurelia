@@ -1,0 +1,16 @@
+{
+  "name": "fall_ice",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Waterfall ice: white and bubbly where it froze fast, in drips and bulges.",
+  "smooth": false,
+  "glints": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [222, 232, 240],
+    "alt": [196, 214, 228],
+    "scale": 5,
+    "contrast": 0.5,
+    "calm": {"base": [226, 234, 242], "alt": [204, 220, 232]}
+  }
+}

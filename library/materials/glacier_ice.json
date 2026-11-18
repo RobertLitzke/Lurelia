@@ -1,0 +1,16 @@
+{
+  "name": "glacier_ice",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Glacier ice: old compressed ice, white at the surface and blue in every crack and hollow, glinting where the low sun catches it.",
+  "smooth": true,
+  "glints": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [196, 218, 232],
+    "alt": [138, 182, 214],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [206, 224, 236], "alt": [152, 192, 220]}
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "plank_walk",
+  "version": 1,
+  "introduced_by": "routing engine",
+  "notes": "A boardwalk 2 m over whatever is below: a 2 m plank deck on timber posts every 3 m, a rail on the left only, so a boat passes under it between the posts.",
+  "ground": "deck",
+  "width": 2.0,
+  "mat": "weathered_planks",
+  "lift": 1.5,
+  "deck": {"thick": 0.25, "mat": "weathered_planks", "under": "timber_frame"},
+  "rails": [{"side": "left", "out": 0.0, "from": 0.75, "to": 1.0, "thick": 0.25, "mat": "timber_frame"}],
+  "posts": [{"side": "left", "out": 0.0, "every": 3.0, "size": [0.25, 1.0, 0.25], "mat": "timber_frame"}],
+  "piers": {"every": 3.0, "radius": 0.3, "mat": "timber_frame", "min_drop": 0.4},
+  "tags": ["walkway"]
+}

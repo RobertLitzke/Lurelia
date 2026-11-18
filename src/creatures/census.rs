@@ -1,0 +1,155 @@
+//! Counting creatures for the headless stats, and naming the one under the
+//! crosshair.
+
+use super::age::{Age, Stage};
+use super::circle::Gull;
+use super::flit::Flit;
+use super::flock::Flyer;
+use super::terrain::Terrain;
+use super::walk::Critter;
+use super::{Creature, Look, Pathing, Species};
+use glam::Vec3;
+use std::collections::BTreeMap;
+
+/// Creatures alive now by species.
+pub fn census(world: &hecs::World, species: &[Species]) -> BTreeMap<String, usize> {
+    let mut out = BTreeMap::new();
+    for c in world.query::<&Creature>().iter() {
+        if c.species < species.len() {
+            *out.entry(super::display_name(species, c.species).to_string()).or_insert(0) += 1;
+        }
+    }
+    out
+}
+
+/// How many are alive toward each species' biome quota: a rare morph
+/// counts toward the parent it stands in for.
+pub fn quota(world: &hecs::World) -> crate::util::FxHashMap<usize, u32> {
+    let mut have = crate::util::FxHashMap::default();
+    for c in world.query::<&Creature>().iter() {
+        *have.entry(c.spawned_for).or_insert(0) += 1;
+    }
+    have
+}
+
+/// Walkers, flocking birds and flitting birds (legacy animals included).
+pub fn critter_count(world: &hecs::World) -> usize {
+    world.query::<&Critter>().iter().count() + world.query::<&Flyer>().iter().count() + world.query::<&Flit>().iter().count()
+}
+
+/// Rigged creatures by current activity, and flitting birds by where they are.
+pub fn activities(world: &hecs::World, land: Option<&crate::world::fields::World>) -> BTreeMap<String, usize> {
+    let mut out = BTreeMap::new();
+    for a in world.query::<&crate::anim::Anim>().iter() {
+        if let Some(l) = &a.life {
+            let posture = if l.level > 1.5 {
+                " (down)"
+            } else if l.level > 0.5 {
+                " (sitting)"
+            } else {
+                ""
+            };
+            *out.entry(format!("{}{posture}", l.act.name())).or_insert(0) += 1;
+        }
+        if let Some(f) = &a.flight {
+            let what = if f.fold > 0.5 {
+                "bird perched"
+            } else if f.flapping > 0.5 {
+                "bird beating"
+            } else {
+                "bird gliding"
+            };
+            *out.entry(what.to_string()).or_insert(0) += 1;
+        }
+    }
+    // Snakes: what each is doing (creatures/snake.rs).
+    for s in world.query::<&super::snake::Serpent>().iter() {
+        *out.entry(format!("snake {}", s.doing())).or_insert(0) += 1;
+    }
+    // Flitting birds: on a shrub or tree top, on the ground, or flying.
+    for (f, look) in world.query::<(&Flit, &Look)>().iter() {
+        let rise = land.map_or(0.0, |l| look.pos.y - l.f.height(look.pos.x, look.pos.z));
+        let what = if !f.perched() {
+            "flit: flying"
+        } else if rise > 0.5 {
+            "flit: on a top"
+        } else {
+            "flit: on the ground"
+        };
+        *out.entry(what.to_string()).or_insert(0) += 1;
+    }
+    out
+}
+
+/// Birds sitting this step, and those sitting on water (which they should not).
+pub fn count_sitting(world: &hecs::World, terrain: &Terrain, stats: &mut Pathing) {
+    for (look, flit, fl) in world.query::<(&Look, Option<&Flit>, Option<&Flyer>)>().iter() {
+        let sitting = flit.is_some_and(|f| f.perched()) || fl.is_some_and(|f| f.perched);
+        if sitting {
+            stats.birds_sitting += 1;
+            let low = terrain.height(look.pos.x, look.pos.z).is_none_or(|g| look.pos.y - g < 0.6);
+            stats.birds_on_water += (low && terrain.wet(look.pos.x, look.pos.z)) as u32;
+        }
+    }
+}
+
+/// The creature under a ray, nearest first: (distance, display name).
+/// The name is built only for the winner; this runs every frame.
+pub fn identify(world: &hecs::World, species: &[Species], models: &[crate::models::Model], origin: Vec3, dir: Vec3, max: f32) -> Option<(f32, String)> {
+    enum Who {
+        Species(usize),
+        /// The random island's deer, rabbit or fox, by the model it wears.
+        Legacy(usize),
+        Gull,
+    }
+    let mut best: Option<(f32, Who, Stage)> = None;
+    for (look, me, crit, gull, age) in world.query::<(&Look, Option<&Creature>, Option<&Critter>, Option<&Gull>, Option<&Age>)>().iter() {
+        let who = match (me, crit, gull) {
+            (Some(c), _, _) => Who::Species(c.species),
+            (_, Some(_), _) => Who::Legacy(look.model),
+            (_, _, Some(_)) => Who::Gull,
+            _ => continue,
+        };
+        if matches!(who, Who::Species(s) if s >= species.len()) {
+            continue;
+        }
+        let stage = age.map_or(Stage::Adult, |a| a.stage);
+        // The ray is tested against the whole animal, not a point at its
+        // feet: aim at a giraffe's neck and it is a giraffe.
+        let (h, hw) = models.get(look.model).map_or((1.0, 0.5), |m| (m.height, m.half_w));
+        // Something lying on the ground is a low mound; something standing
+        // is a column from its knees to its head.
+        let (lo, hi) = if stage == Stage::Dead { (0.0, (h * 0.25).min(0.4)) } else { (h * 0.2, h * 0.92) };
+        let Some((t, d)) = ray_to_upright(origin, dir, look.pos, lo, hi) else {
+            continue;
+        };
+        if !(0.0..max).contains(&t) {
+            continue;
+        }
+        // A little more forgiving with distance, so far animals can be named.
+        if d < (hw + 0.25).max(0.6) + t * 0.01 && best.as_ref().map_or(true, |b| t < b.0) {
+            best = Some((t, who, stage));
+        }
+    }
+    let (t, who, stage) = best?;
+    let name = match who {
+        Who::Species(s) => super::display_name(species, s).to_string(),
+        Who::Legacy(m) => super::spawn::legacy(m).map_or("animal", |l| l.name).to_string(),
+        Who::Gull => "GULL".to_string(),
+    };
+    Some((t, format!("{}{}", name.replace('_', " "), stage.label()).to_uppercase()))
+}
+
+/// Closest approach of a ray to the upright segment from `foot + lo` to
+/// `foot + hi`: how far along the ray it happens, and how far off it passes.
+fn ray_to_upright(origin: Vec3, dir: Vec3, foot: Vec3, lo: f32, hi: f32) -> Option<(f32, f32)> {
+    let w = foot - origin;
+    let wd = w.dot(dir);
+    // |w + sY|^2 - ((w + sY).dir)^2 as a quadratic in the height s.
+    let a = 1.0 - dir.y * dir.y;
+    let b = w.y - wd * dir.y;
+    let s = if a > 1e-4 { (-b / a).clamp(lo, hi) } else { (lo + hi) * 0.5 };
+    let v = w + Vec3::Y * s;
+    let t = v.dot(dir);
+    Some((t, (v - dir * t).length()))
+}

@@ -1,0 +1,39 @@
+{
+  "name": "wisteria",
+  "version": 3,
+  "introduced_by": "faerie",
+  "notes": "vine: Wisteria: a woody vine hung with long racemes, over trees and down cliffs. It comes in three colours, each cluster one of them: violet, lilac and a rare white. v3: the colours are morphs rather than the one lilac material (not drawn yet). v2: was a weeping tree; worlds that had it plant flowering_cherry instead.",
+  "form": "vine",
+  "height": [4, 11],
+  "trunk_radius": [0.0, 0.0],
+  "crown_radius": [1.5, 3.5],
+  "bark": "wisteria_leaves",
+  "leaf": "wisteria_leaves",
+  "morphs": [
+    {
+      "name": "violet",
+      "weight": 6,
+      "shades": 3,
+      "notes": "The deep violet of a raceme's top, the commonest.",
+      "colors": {"leaf": [[132, 104, 196], [162, 134, 222]]}
+    },
+    {
+      "name": "lilac",
+      "weight": 3,
+      "shades": 2,
+      "notes": "The pale lilac the racemes fade to further down.",
+      "colors": {"leaf": [[176, 152, 220], [204, 184, 236]]}
+    },
+    {
+      "name": "white",
+      "weight": 1,
+      "shades": 2,
+      "notes": "The white wisteria, one vine in ten.",
+      "colors": {"leaf": [[230, 228, 238], [246, 246, 250]]}
+    }
+  ],
+  "max_slope": 9,
+  "hosts": ["tree", "cliff"],
+  "affords": ["nectar"],
+  "autumn": "autumn_vine"
+}

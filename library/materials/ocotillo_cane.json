@@ -1,0 +1,16 @@
+{
+  "name": "ocotillo_cane",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Ocotillo canes: grey-green, ridged and thorny.",
+  "id": 202,
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [104, 102, 78],
+    "alt": [64, 60, 48],
+    "scale": 8,
+    "contrast": 1.0,
+    "calm": {"base": [112, 110, 88], "alt": [76, 72, 58]}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "deck_floor",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "Grey steel floor plate in metre panels: the deck of the works. Flat and crisp on purpose, so the arena reads as straight lines rather than ground.",
+  "smooth": false,
+  "crisp": true,
+  "texture": {
+    "pattern": "coursed",
+    "base": [92, 94, 95],
+    "alt": [80, 82, 84],
+    "scale": 1,
+    "contrast": 1.0,
+    "calm": {"base": [102, 104, 105], "alt": [90, 92, 94]}
+  }
+}

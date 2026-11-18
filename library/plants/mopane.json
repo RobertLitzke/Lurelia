@@ -1,0 +1,14 @@
+{
+  "name": "mopane",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Mopane: a scrubby thicket of butterfly leaf on thin stems, head high, on the thinnest sand. Turns coppery in the dry.",
+  "form": "shrub",
+  "height": [2.2, 4.0],
+  "trunk_radius": [0.1, 0.16],
+  "crown_radius": [1.2, 1.9],
+  "bark": "pale_bark",
+  "leaf": "live_oak_leaves",
+  "max_slope": 0.8,
+  "autumn": "leaves_autumn"
+}

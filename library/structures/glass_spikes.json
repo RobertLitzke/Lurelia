@@ -1,0 +1,19 @@
+{
+  "name": "glass_spikes",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Spikes of the same glass as the crater floor, pushing up through the turf.",
+  "size": [18, 26, 18],
+  "anchor": [9, 0, 9],
+  "level": false,
+  "decays": false,
+  "tags": ["natural", "strange"],
+  "slots": {"glass": "glass_spike"},
+  "ops": [
+    {"op": "cylinder", "base": [9, 0, 9], "radius": 1.6, "height": 24, "mat": "glass", "part": "glass"},
+    {"op": "cylinder", "base": [5, 0, 7], "radius": 1.2, "height": 14, "mat": "glass", "part": "glass"},
+    {"op": "cylinder", "base": [13, 0, 6], "radius": 1.0, "height": 18, "mat": "glass", "part": "glass"},
+    {"op": "cylinder", "base": [6, 0, 13], "radius": 1.1, "height": 10, "mat": "glass", "part": "glass"},
+    {"op": "cylinder", "base": [12, 0, 13], "radius": 1.3, "height": 16, "mat": "glass", "part": "glass"}
+  ]
+}

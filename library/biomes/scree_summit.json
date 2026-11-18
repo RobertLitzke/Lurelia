@@ -1,0 +1,22 @@
+{
+  "name": "scree_summit",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "priority": 4,
+  "rules": {"elev": [62, 200]},
+  "surface": "scree",
+  "subsurface": "tuff",
+  "rock": "basalt",
+  "map_color": [140, 132, 128],
+  "plants": [
+    {"plant": "heather", "density": 0.015, "placement": {"verb": "clustered", "params": {"size": 12}}},
+    {"plant": "rock_lichen", "density": 0.12}
+  ],
+  "features": [
+    {"structure": "cairn", "density": 0.0002, "placement": {"verb": "lone", "params": {"spacing": 80}}},
+    {"structure": "boulder", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "rock_outcrop", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [{"creature": "marmot", "count": 5}, {"creature": "bumblebee", "count": 2}],
+  "collectibles": []
+}

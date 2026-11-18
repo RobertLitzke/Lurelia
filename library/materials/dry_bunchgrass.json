@@ -1,0 +1,16 @@
+{
+  "name": "dry_bunchgrass",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Tan, summer-dry bunchgrass. Only a tint: the grass tufts on pine_duff take this colour (mesh/sprites.rs).",
+  "id": 145,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [176, 150, 98],
+    "alt": [158, 136, 90],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [172, 150, 102], "alt": [156, 136, 92]}
+  }
+}

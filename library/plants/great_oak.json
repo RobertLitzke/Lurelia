@@ -1,0 +1,21 @@
+{
+  "name": "great_oak",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "An old, tall oak: a wide domed crown of foliage over visible spreading limbs, hollow underneath.",
+  "form": "branching",
+  "height": [15, 20],
+  "trunk_radius": [0.8, 1.05],
+  "buttress": 0.7,
+  "crown_radius": [4.5, 6.0],
+  "bark": "bark",
+  "leaf": "leaves",
+  "curve": "arch",
+  "canopy": "lobes",
+  "leader": 0.1,
+  "fill": 0.75,
+  "spread": 1.0,
+  "dome": 1.0,
+  "max_slope": 0.45,
+  "autumn": "leaves_autumn"
+}

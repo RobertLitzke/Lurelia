@@ -1,0 +1,21 @@
+{
+  "name": "hammock",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "A hammock: a tree island in the sawgrass, a little higher and dry, thick with cabbage palm, oak, strangler fig and palmetto.",
+  "priority": 10,
+  "rules": {"region": "sawgrass", "elev": [0.25, 20]},
+  "surface": "marsh_grass",
+  "subsurface": "dirt",
+  "map_color": [80, 120, 60],
+  "plants": [
+    {"plant": "cabbage_palm", "density": 0.008, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "live_oak", "density": 0.0015, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "small_fig", "density": 0.001, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "saw_palmetto", "density": 0.04, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "spanish_moss", "density": 0.6, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [{"structure": "bottle_tree", "density": 8e-05, "placement": {"verb": "lone", "params": {"spacing": 120}}}],
+  "creatures": [{"creature": "deer", "count": 4}, {"creature": "boar", "count": 2}, {"creature": "firefly", "count": 40}],
+  "collectibles": [{"item": "purple_bottle", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}]
+}

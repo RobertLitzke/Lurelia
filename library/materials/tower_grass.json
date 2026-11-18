@@ -1,0 +1,16 @@
+{
+  "name": "tower_grass",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Short wind-cropped grass and moss on the tower tops and the top of the Old Wall.",
+  "id": 250,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [92, 112, 58],
+    "alt": [82, 102, 52],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [96, 116, 62], "alt": [86, 106, 56]}
+  }
+}

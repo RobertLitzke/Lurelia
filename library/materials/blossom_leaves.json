@@ -1,0 +1,16 @@
+{
+  "name": "blossom_leaves",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Pink blossom on flowering cherries.",
+  "id": 173,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [226, 168, 190],
+    "alt": [204, 140, 166],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [232, 182, 200], "alt": [214, 156, 178]}
+  }
+}

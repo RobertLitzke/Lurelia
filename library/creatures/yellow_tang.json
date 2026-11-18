@@ -1,0 +1,10 @@
+{
+  "name": "yellow_tang",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Yellow tang: all lemon-yellow, grazing over the coral in small loose groups.",
+  "colors": {"body": [240, 200, 44], "band": [240, 200, 44], "fin": [236, 236, 230]},
+  "behaviour": {"habit": "open", "walk_speed": 0.7, "group": {"size": [3, 7], "spacing": 0.6, "range": 3}, "above_bed": [0.4, 2.2]},
+  "like": "butterflyfish",
+  "scale": 1.1
+}

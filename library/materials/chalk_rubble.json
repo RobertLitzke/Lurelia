@@ -1,0 +1,15 @@
+{
+  "name": "chalk_rubble",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Broken chalk and flint underfoot: the trails, the pit floors and the bared ground of the Tepe.",
+  "smooth": true,
+  "texture": {
+    "pattern": "gravel",
+    "base": [170, 162, 146],
+    "alt": [150, 144, 132],
+    "scale": 11,
+    "contrast": 0.5,
+    "calm": {"base": [172, 164, 150], "alt": [154, 148, 138]}
+  }
+}

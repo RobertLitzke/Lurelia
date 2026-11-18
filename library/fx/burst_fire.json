@@ -1,0 +1,19 @@
+{
+  "name": "burst_fire",
+  "version": 1,
+  "introduced_by": "rocket_blast",
+  "notes": "The fireball: orange billows thrown out fast and stopped short by the air, rising as they burn out.",
+  "shape": "puff",
+  "count": [14, 18],
+  "speed": [3.0, 9.0],
+  "cone_deg": 180,
+  "life": [0.25, 0.55],
+  "size": [0.35, 1.15],
+  "size_jitter": 0.35,
+  "gravity": -2.0,
+  "drag": 5.5,
+  "color": [255, 146, 38],
+  "alpha": 0.85,
+  "glow": 2.6,
+  "near_fade": 1.0
+}

@@ -1,0 +1,16 @@
+{
+  "name": "prickly_pear_fruit",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Prickly pear fruit and flowers: magenta tunas, with a few yellow blooms.",
+  "id": 209,
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [164, 40, 92],
+    "alt": [222, 190, 70],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [168, 56, 102], "alt": [220, 192, 84]}
+  }
+}

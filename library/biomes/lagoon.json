@@ -1,0 +1,24 @@
+{
+  "name": "lagoon",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "An atoll's lagoon: pale sand under clear shallow water, here and there a brain coral.",
+  "priority": 20,
+  "rules": {"underwater": true, "region": "lagoon"},
+  "surface": "sand",
+  "subsurface": "reef_lime",
+  "rock": "reef_lime",
+  "fringe": 0,
+  "map_color": [120, 210, 200],
+  "plants": [
+    {"plant": "brain_coral", "density": 0.004, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "finger_coral", "density": 0.004, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "stingray", "count": 7},
+    {"creature": "yellow_tang", "count": 21},
+    {"creature": "reef_chromis", "count": 70},
+    {"creature": "sea_turtle", "count": 4},
+    {"creature": "reef_manta", "count": 2}
+  ]
+}

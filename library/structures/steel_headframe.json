@@ -1,0 +1,40 @@
+{
+  "name": "steel_headframe",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A 1950s steel headframe the uranium men put up over an old shaft, rusting. Over an old shaft 1.5 m square and 27 m deep, lined in concrete, with a concrete collar.",
+  "size": [20, 172, 20],
+  "anchor": [10, 112, 10],
+  "foundation": 4,
+  "tags": ["harlow", "industry"],
+  "slots": {"iron": "rust_iron", "slab": "concrete"},
+  "ops": [
+    {"op": "box", "from": [2, 112, 2], "to": [18, 113, 18], "mat": "slab", "part": "floor"},
+    {"op": "box", "from": [3, 113, 3], "to": [5, 164, 5], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [15, 113, 3], "to": [17, 164, 5], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [3, 113, 15], "to": [5, 164, 17], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [15, 113, 15], "to": [17, 164, 17], "mat": "iron", "part": "metal"},
+    {
+      "op": "repeat",
+      "count": 6,
+      "step": [0, 8, 0],
+      "ops": [
+        {"op": "box", "from": [3, 120, 3], "to": [17, 121, 5], "mat": "iron", "part": "metal"},
+        {"op": "box", "from": [3, 120, 15], "to": [17, 121, 17], "mat": "iron", "part": "metal"},
+        {"op": "box", "from": [3, 120, 3], "to": [5, 121, 17], "mat": "iron", "part": "metal"},
+        {"op": "box", "from": [15, 120, 3], "to": [17, 121, 17], "mat": "iron", "part": "metal"}
+      ]
+    },
+    {"op": "box", "from": [2, 164, 2], "to": [18, 166, 18], "mat": "iron", "part": "metal"},
+    {"op": "disc", "centre": [10, 168, 10], "radius": 3.5, "thick": 1, "axis": "x", "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [6, 0, 6], "to": [14, 112, 14], "mat": "slab", "part": "stone"},
+    {
+      "op": "repeat",
+      "count": 14,
+      "step": [0, 8, 0],
+      "ops": [{"op": "box", "from": [5, 2, 5], "to": [15, 4, 15], "mat": "slab", "part": "stone"}]
+    },
+    {"op": "box", "from": [5, 112, 5], "to": [15, 114, 15], "mat": "slab", "part": "stone"},
+    {"op": "box", "from": [7, 4, 7], "to": [13, 115, 13], "mat": "carve"}
+  ]
+}

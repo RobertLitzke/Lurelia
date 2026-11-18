@@ -1,0 +1,16 @@
+{
+  "name": "bog_moss",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Sphagnum lawn of the Wisp Moss: wet green moss with rusty-red and ochre patches.",
+  "id": 65,
+  "smooth": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [104, 126, 60],
+    "alt": [146, 104, 62],
+    "scale": 5,
+    "contrast": 0.8,
+    "calm": {"base": [108, 128, 64], "alt": [146, 110, 70]}
+  }
+}

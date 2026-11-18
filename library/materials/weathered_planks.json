@@ -1,0 +1,15 @@
+{
+  "name": "weathered_planks",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 34,
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [126, 116, 102],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [150, 140, 124],
+    "calm": {"base": [160, 146, 126], "alt": [172, 158, 136]}
+  }
+}

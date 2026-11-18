@@ -1,0 +1,17 @@
+{
+  "name": "nutria",
+  "version": 2,
+  "introduced_by": "lowmouth",
+  "notes": "wade: Nutria: a big brown water rat with orange teeth, grazing the banks and swimming off when you come.",
+  "colors": {
+    "coat": [110, 82, 56],
+    "belly": [128, 96, 60],
+    "mane": [110, 82, 56],
+    "nose": [36, 28, 24],
+    "tusk": [214, 140, 40],
+    "dark": [36, 28, 24]
+  },
+  "behaviour": {"active": "nocturnal", "off_hours": 0.15},
+  "like": "capybara",
+  "scale": 0.5
+}

@@ -1,0 +1,16 @@
+{
+  "name": "reef_rock",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Rocky reef under the kelp: dark stone crusted with pink coralline and urchins.",
+  "id": 207,
+  "smooth": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [70, 66, 66],
+    "alt": [150, 92, 104],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [86, 82, 80], "alt": [150, 104, 112]}
+  }
+}

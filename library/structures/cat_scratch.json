@@ -1,0 +1,26 @@
+{
+  "name": "cat_scratch",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A chalk block with a long-toothed cat scratched into its face and ochred: a low body, a heavy head, two teeth past the jaw, the tail up. The carved face is on local -Z.",
+  "size": [20, 14, 12],
+  "anchor": [10, 0, 6],
+  "foundation": 4,
+  "level": false,
+  "decays": false,
+  "tags": ["windbarrow", "cave"],
+  "slots": {"stone": "chalk_grey", "paint": "ochre"},
+  "ops": [
+    {"op": "box", "from": [1, 0, 3], "to": [19, 13, 9], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [4, 6, 2], "to": [15, 7, 3], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [4, 5, 2], "to": [5, 7, 3], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [3, 7, 2], "to": [6, 10, 3], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [3, 4, 2], "to": [4, 7, 3], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [5, 3, 2], "to": [6, 7, 3], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [6, 3, 2], "to": [7, 6, 3], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [9, 3, 2], "to": [10, 6, 3], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [12, 3, 2], "to": [13, 6, 3], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [14, 7, 2], "to": [15, 10, 3], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [15, 9, 2], "to": [17, 10, 3], "mat": "paint", "part": "stone"}
+  ]
+}

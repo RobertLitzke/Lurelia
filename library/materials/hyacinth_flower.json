@@ -1,0 +1,15 @@
+{
+  "name": "hyacinth_flower",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Water hyacinth flowers: pale lilac spikes with a yellow eye.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [164, 136, 204],
+    "alt": [200, 176, 228],
+    "scale": 9,
+    "contrast": 0.8,
+    "calm": {"base": [164, 140, 204], "alt": [198, 176, 226]}
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "cane_field",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Sugar cane in blocks taller than a man, dirt rows between.",
+  "priority": 8,
+  "rules": {"region": "cane"},
+  "surface": "cane_soil",
+  "subsurface": "silt",
+  "fringe": 0,
+  "map_color": [170, 190, 90],
+  "plants": [
+    {
+      "plant": "sugar_cane",
+      "density": 0.12,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.2, "max": 0.35}}
+    }
+  ],
+  "creatures": [{"creature": "boar", "count": 3}, {"creature": "crow", "count": 8}, {"creature": "jackrabbit", "count": 3}]
+}

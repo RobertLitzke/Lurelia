@@ -1,0 +1,24 @@
+{
+  "name": "sea_torii",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "A great torii standing in the sea, its feet in the water, 5.5 m tall. Base sea; the posts fill down to the sea floor. Front local -Z.",
+  "size": [24, 24, 4],
+  "anchor": [12, 0, 2],
+  "foundation": 20,
+  "level": false,
+  "decays": false,
+  "base": "sea",
+  "tags": ["order", "gate"],
+  "slots": {"post": "coral_lacquer", "top": "trim_dark"},
+  "ops": [
+    {"op": "box", "from": [5, 0, 1], "to": [7, 22, 3], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [17, 0, 1], "to": [19, 22, 3], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [3, 17, 1], "to": [21, 18, 3], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [11, 18, 1], "to": [13, 21, 3], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [2, 21, 0], "to": [22, 22, 4], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [1, 22, 0], "to": [23, 23, 4], "mat": "top", "part": "timber"},
+    {"op": "box", "from": [0, 23, 0], "to": [2, 24, 4], "mat": "top", "part": "timber"},
+    {"op": "box", "from": [22, 23, 0], "to": [24, 24, 4], "mat": "top", "part": "timber"}
+  ]
+}

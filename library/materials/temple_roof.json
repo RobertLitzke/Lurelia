@@ -1,0 +1,16 @@
+{
+  "name": "temple_roof",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Dark grey-green roof tiles in long rows.",
+  "id": 246,
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [74, 86, 84],
+    "alt": [60, 70, 70],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [80, 92, 90], "alt": [68, 78, 78]}
+  }
+}

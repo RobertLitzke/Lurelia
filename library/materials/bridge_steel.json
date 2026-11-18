@@ -1,0 +1,16 @@
+{
+  "name": "bridge_steel",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Grey-green painted steel of the arch bridge.",
+  "id": 137,
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [118, 130, 124],
+    "alt": [100, 110, 106],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [128, 140, 134], "alt": [110, 120, 116]}
+  }
+}

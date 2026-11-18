@@ -1,0 +1,17 @@
+{
+  "name": "red_boulder",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A rounded sandstone boulder fallen from the cliffs.",
+  "size": [20, 14, 18],
+  "anchor": [10, 0, 9],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"rock": "kayenta_ledges"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [10, 2, 9], "radius": [9, 4.5, 7.5], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [12, 4, 7], "radius": [6, 3.5, 5], "mat": "rock"},
+    {"op": "ellipsoid", "centre": [6, 2, 12], "radius": [4, 3, 4], "mat": "rock"}
+  ]
+}

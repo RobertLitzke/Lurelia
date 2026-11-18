@@ -1,0 +1,52 @@
+{
+  "name": "pinyon_juniper",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "The bench between the Red and White Cliffs: pinyon and juniper woodland over sage.",
+  "priority": 4,
+  "rules": {"elev": [48, 78]},
+  "surface": "red_sand",
+  "subsurface": "red_sand",
+  "map_color": [150, 130, 86],
+  "plants": [
+    {
+      "plant": "pinyon",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.35, "max": 0.6}}
+    },
+    {
+      "plant": "juniper",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 34, "min": 0.3, "max": 0.6}}
+    },
+    {"plant": "sagebrush", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "gambel_oak",
+      "density": 0.002,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.55, "max": 0.7}}
+    },
+    {"plant": "dead_juniper", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "prickly_pear",
+      "density": 0.0015,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.45, "max": 0.62}}
+    }
+  ],
+  "features": [{"structure": "red_boulder", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "mule_deer", "count": 4},
+    {"creature": "rabbit", "count": 4},
+    {"creature": "coyote", "count": 2},
+    {"creature": "crow", "count": 3},
+    {"creature": "sparrow", "count": 6},
+    {"creature": "javelina", "count": 4},
+    {"creature": "cougar", "count": 1},
+    {"creature": "badger", "count": 1},
+    {"creature": "rattlesnake", "count": 2},
+    {"creature": "gopher_snake", "count": 3}
+  ],
+  "collectibles": [
+    {"item": "arrowhead", "density": 6e-05, "placement": {"verb": "scatter", "params": {}}},
+    {"item": "pottery_shard", "density": 4e-05, "placement": {"verb": "scatter", "params": {}}}
+  ]
+}

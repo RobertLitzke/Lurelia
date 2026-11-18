@@ -1,0 +1,12 @@
+{
+  "name": "fern",
+  "version": 2,
+  "introduced_by": "glassfall",
+  "notes": "Sword fern on the forest floor: a ring of arching fronds drawn as sprites.",
+  "form": "herb",
+  "height": [0.6, 1.0],
+  "crown_radius": [0.5, 0.8],
+  "bark": "dead_wood",
+  "leaf": "fern",
+  "max_slope": 0.9
+}

@@ -1,0 +1,14 @@
+{
+  "name": "bear_tooth",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A cave bear's canine, as long as a finger, with a hole bored through the root: picked up round the cave mouths and worn.",
+  "display": "bear's tooth",
+  "voxel": 0.018,
+  "colors": {"tooth": [226, 216, 190], "tooth_dark": [168, 150, 118]},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 3, 16], "radius": [2.2, 2.4, 7], "mat": "tooth"},
+    {"op": "ellipsoid", "centre": [16, 3, 22], "radius": [2.8, 2.8, 3.0], "mat": "tooth_dark"},
+    {"op": "cylinder", "base": [16, 0, 22], "radius": 1.0, "height": 7, "mat": "tooth_dark"}
+  ]
+}

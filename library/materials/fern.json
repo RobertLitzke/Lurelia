@@ -1,0 +1,15 @@
+{
+  "name": "fern",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 52,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [60, 112, 44],
+    "alt": [96, 140, 60],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [80, 120, 54], "alt": [104, 140, 66]}
+  }
+}

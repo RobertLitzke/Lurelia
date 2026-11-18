@@ -1,0 +1,15 @@
+{
+  "name": "salt_mud",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Grey-brown salt mud: the bed of Saltmere and the flats that come out of it in summer.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [120, 112, 98],
+    "alt": [136, 128, 112],
+    "scale": 6,
+    "contrast": 0.5,
+    "calm": {"base": [124, 116, 104], "alt": [138, 130, 116]}
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "path_dirt",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 30,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [150, 120, 86],
+    "scale": 6,
+    "contrast": 1.0,
+    "alt": [128, 100, 70],
+    "calm": {"base": [184, 146, 102], "alt": [170, 134, 94]}
+  }
+}

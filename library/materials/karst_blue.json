@@ -1,0 +1,17 @@
+{
+  "name": "karst_blue",
+  "version": 2,
+  "introduced_by": "jadewater",
+  "notes": "A blue-grey limestone, cold in colour: a few towers stand out in it. v2: drawn in flat facets (surface nets lit like sloped ground) instead of smoothed into slopes, so tower walls and the Old Wall's cliffs read as smooth rock, not one-voxel steps.",
+  "id": 228,
+  "smooth": false,
+  "texture": {
+    "pattern": "strata",
+    "base": [104, 124, 146],
+    "alt": [124, 142, 160],
+    "scale": 3,
+    "contrast": 0.6,
+    "calm": {"base": [108, 128, 150], "alt": [126, 144, 162]}
+  },
+  "facet": true
+}

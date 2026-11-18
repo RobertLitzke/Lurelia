@@ -1,0 +1,110 @@
+{
+  "name": "bone_outcrop",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A mammoth weathering out of the chalk: the dome of a skull, one tusk curving out of the ground and three ribs standing clear of it. Settles on the ground; faces local -Z.",
+  "size": [30, 14, 26],
+  "anchor": [14, 0, 13],
+  "foundation": 3,
+  "level": false,
+  "decays": false,
+  "tags": ["windbarrow"],
+  "slots": {"bone": "old_bone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [12, 2, 12], "radius": [5.5, 4.0, 5.0], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [12, 1, 17], "radius": [3.0, 2.4, 3.2], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [12.0, 3.0, 9.0], "radius": [1.5, 1.5, 1.5], "mat": "bone", "part": "stone"},
+    {
+      "op": "ellipsoid",
+      "centre": [11.3, 3.5, 8.6],
+      "radius": [1.43636, 1.43636, 1.43636],
+      "mat": "bone",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [10.7, 4.0, 8.2],
+      "radius": [1.37273, 1.37273, 1.37273],
+      "mat": "bone",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [9.9, 4.5, 7.9],
+      "radius": [1.30909, 1.30909, 1.30909],
+      "mat": "bone",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [9.2, 4.9, 7.6],
+      "radius": [1.24545, 1.24545, 1.24545],
+      "mat": "bone",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [8.4, 5.2, 7.3],
+      "radius": [1.18182, 1.18182, 1.18182],
+      "mat": "bone",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [7.6, 5.4, 7.2],
+      "radius": [1.11818, 1.11818, 1.11818],
+      "mat": "bone",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [6.7, 5.6, 7.0],
+      "radius": [1.05455, 1.05455, 1.05455],
+      "mat": "bone",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [5.9, 5.6, 7.0],
+      "radius": [0.990909, 0.990909, 0.990909],
+      "mat": "bone",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [4.9, 5.5, 6.9],
+      "radius": [0.927273, 0.927273, 0.927273],
+      "mat": "bone",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [4.0, 5.4, 6.9],
+      "radius": [0.863636, 0.863636, 0.863636],
+      "mat": "bone",
+      "part": "stone"
+    },
+    {"op": "ellipsoid", "centre": [3.0, 5.1, 7.0], "radius": [0.8, 0.8, 0.8], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [19.0, 1.0, 10.0], "radius": [1.1, 1.1, 1.1], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [19.4, 2.7, 10.2], "radius": [1.05, 1.05, 1.05], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [19.8, 4.4, 10.5], "radius": [1.0, 1.0, 1.0], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [20.2, 5.8, 10.8], "radius": [0.95, 0.95, 0.95], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [20.7, 6.9, 11.0], "radius": [0.9, 0.9, 0.9], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [21.1, 7.6, 11.2], "radius": [0.85, 0.85, 0.85], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [21.5, 8.0, 11.5], "radius": [0.8, 0.8, 0.8], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [22.0, 1.0, 14.0], "radius": [1.1, 1.1, 1.1], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [22.4, 2.7, 14.2], "radius": [1.05, 1.05, 1.05], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [22.8, 4.4, 14.5], "radius": [1.0, 1.0, 1.0], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [23.2, 5.8, 14.8], "radius": [0.95, 0.95, 0.95], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [23.7, 6.9, 15.0], "radius": [0.9, 0.9, 0.9], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [24.1, 7.6, 15.2], "radius": [0.85, 0.85, 0.85], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [24.5, 8.0, 15.5], "radius": [0.8, 0.8, 0.8], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [24.0, 1.0, 19.0], "radius": [1.1, 1.1, 1.1], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [24.4, 2.7, 19.2], "radius": [1.05, 1.05, 1.05], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [24.8, 4.4, 19.5], "radius": [1.0, 1.0, 1.0], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [25.2, 5.8, 19.8], "radius": [0.95, 0.95, 0.95], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [25.7, 6.9, 20.0], "radius": [0.9, 0.9, 0.9], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [26.1, 7.6, 20.2], "radius": [0.85, 0.85, 0.85], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [26.5, 8.0, 20.5], "radius": [0.8, 0.8, 0.8], "mat": "bone", "part": "stone"}
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "vine_leaves",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Hanging vine strands: small dark leaves on a thin stem. Passable, so the player walks through a curtain of them.",
+  "id": 188,
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [58, 96, 44],
+    "alt": [82, 122, 56],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [66, 106, 50], "alt": [88, 128, 62]}
+  }
+}

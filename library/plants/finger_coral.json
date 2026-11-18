@@ -1,0 +1,15 @@
+{
+  "name": "finger_coral",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Finger coral: a low gold cushion bristling with short blunt fingers.",
+  "form": "coral_finger",
+  "height": [0.5, 0.9],
+  "trunk_radius": [0.11, 0.13],
+  "crown_radius": [0.6, 1.0],
+  "bark": "coral_gold",
+  "leaf": "coral_gold",
+  "max_slope": 1.4,
+  "water_depth": [0.5, 15],
+  "stems": [7, 12]
+}

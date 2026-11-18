@@ -1,0 +1,19 @@
+{
+  "name": "drowned_parish",
+  "version": 2,
+  "introduced_by": "lowmouth",
+  "notes": "The bay over the old parish: open brown water a metre or two deep, a church tower and the tops of tombs and roofs standing out of it, lily pads over the drowned lots.",
+  "priority": 11,
+  "rules": {"region": "parish", "amphibious": true},
+  "surface": "delta_mud",
+  "subsurface": "silt",
+  "map_color": [110, 130, 140],
+  "features": [{"structure": "hyacinth_raft", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "brown_pelican", "count": 4},
+    {"creature": "anhinga", "count": 3},
+    {"creature": "alligator", "count": 2},
+    {"creature": "alligator_gar", "count": 4}
+  ],
+  "collectibles": [{"item": "settler_coin", "density": 4e-05, "placement": {"verb": "scatter", "params": {}}}]
+}

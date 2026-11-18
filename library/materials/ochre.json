@@ -1,0 +1,15 @@
+{
+  "name": "ochre",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Red ochre, still in the grooves of the carving and on the posts.",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [146, 78, 56],
+    "alt": [128, 66, 46],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [150, 84, 62], "alt": [132, 72, 52]}
+  }
+}

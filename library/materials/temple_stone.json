@@ -1,0 +1,16 @@
+{
+  "name": "temple_stone",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Grey granite of the lanterns, statues and steps, lichened.",
+  "id": 248,
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [148, 148, 138],
+    "alt": [124, 126, 118],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [156, 156, 146], "alt": [136, 138, 130]}
+  }
+}

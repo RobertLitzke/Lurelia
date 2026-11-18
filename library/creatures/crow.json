@@ -1,0 +1,19 @@
+{
+  "name": "crow",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Crows wheel over open burned ground.",
+  "half_w": 0.2,
+  "height": 0.25,
+  "behaviour": {
+    "movement": "circle",
+    "fly_height": 7,
+    "walk_speed": 1.2,
+    "flee_speed": 6.0,
+    "wary": 8.0,
+    "flightiness": 0.9,
+    "group": null
+  },
+  "like": "starling",
+  "scale": 1.70068
+}

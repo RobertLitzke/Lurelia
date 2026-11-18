@@ -1,0 +1,17 @@
+{
+  "name": "wall_plate_coral",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Plate coral shelving out of a reef wall in tiers. A crust plant: its biome density is the chance a 4 m stretch of wall carries a colony, and it keeps to the depths it names.",
+  "form": "crust",
+  "height": [0.5, 30],
+  "trunk_radius": [0.0, 0.0],
+  "crown_radius": [0.35, 0.7],
+  "bark": "coral_rose",
+  "leaf": "coral_rose",
+  "max_slope": 9,
+  "crust": "bracket",
+  "hosts": ["rock"],
+  "shaded": false,
+  "water_depth": [1.5, 35]
+}

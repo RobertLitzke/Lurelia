@@ -1,0 +1,16 @@
+{
+  "name": "door_wood",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "A painted wooden front door.",
+  "id": 153,
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [112, 58, 44],
+    "alt": [96, 48, 38],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [124, 66, 50], "alt": [108, 56, 44]}
+  }
+}

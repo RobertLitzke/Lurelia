@@ -1,0 +1,17 @@
+{
+  "name": "burst_debris",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "Dirt and stone thrown by a burst, in the ground's colour.",
+  "shape": "chip",
+  "count": [14, 22],
+  "speed": [3.0, 8.0],
+  "cone_deg": 70,
+  "life": [0.8, 1.6],
+  "size": [0.03, 0.03],
+  "size_jitter": 0.5,
+  "gravity": 9.8,
+  "drag": 0.3,
+  "settle": true,
+  "material": true
+}

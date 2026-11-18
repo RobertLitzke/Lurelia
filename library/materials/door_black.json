@@ -1,0 +1,16 @@
+{
+  "name": "door_black",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "A front door painted gloss black.",
+  "id": 179,
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [32, 32, 36],
+    "alt": [42, 42, 46],
+    "scale": 1,
+    "contrast": 0.4,
+    "calm": {"base": [44, 44, 48], "alt": [54, 54, 58]}
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "thimbleberry",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "herb: Thimbleberry, a waist-high patch of canes with big maple-like leaves in clearings and along forest edges, drawn as sprites (layer thimbleberry).",
+  "form": "herb",
+  "height": [0.8, 1.3],
+  "trunk_radius": [0.0, 0.0],
+  "crown_radius": [0.6, 0.9],
+  "bark": "dead_wood",
+  "leaf": "thimbleberry",
+  "max_slope": 0.9
+}

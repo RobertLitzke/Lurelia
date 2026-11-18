@@ -1,0 +1,15 @@
+{
+  "name": "canvas",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 46,
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [208, 196, 168],
+    "scale": 3,
+    "contrast": 0.6,
+    "alt": [184, 170, 140],
+    "calm": {"base": [222, 208, 178]}
+  }
+}

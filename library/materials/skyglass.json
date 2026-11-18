@@ -1,0 +1,15 @@
+{
+  "name": "skyglass",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 23,
+  "smooth": true,
+  "texture": {
+    "pattern": "glass",
+    "base": [26, 22, 40],
+    "scale": 3,
+    "contrast": 1.0,
+    "alt": [190, 170, 240],
+    "calm": {"base": [40, 34, 62], "alt": [170, 150, 220]}
+  }
+}

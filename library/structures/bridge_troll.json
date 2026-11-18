@@ -1,0 +1,27 @@
+{
+  "name": "bridge_troll",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Landmark: a concrete troll under the north end of the bridge, clutching a car.",
+  "size": [40, 24, 28],
+  "anchor": [20, 0, 14],
+  "level": false,
+  "decays": false,
+  "tags": ["landmark", "art"],
+  "slots": {"troll": "troll_concrete", "car": "siding_slate", "cap": "roof_vent", "dark": "trim_dark"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [20, 0, 18], "radius": [19, 8, 10], "mat": "troll", "part": "stone"},
+    {"op": "ellipsoid", "centre": [20, 9, 16], "radius": [10, 10, 9], "mat": "troll", "part": "stone"},
+    {"op": "ellipsoid", "centre": [20, 15, 18], "radius": [11, 6, 9], "mat": "troll", "part": "stone"},
+    {"op": "ellipsoid", "centre": [20, 10, 7], "radius": [2.5, 3, 3], "mat": "troll", "part": "stone"},
+    {"op": "ellipsoid", "centre": [16, 13, 9], "radius": [2.5, 1.5, 1], "mat": "troll", "part": "stone"},
+    {"op": "disc", "centre": [24, 12.5, 8.4], "radius": 2, "thick": 1, "axis": "z", "mat": "cap", "part": "metal"},
+    {"op": "ellipsoid", "centre": [16, 12, 8.6], "radius": [1, 1, 0.6], "mat": "dark", "part": "stone"},
+    {"op": "ellipsoid", "centre": [20, 6, 9], "radius": [4, 1, 1.5], "mat": "dark", "part": "stone"},
+    {"op": "ellipsoid", "centre": [6, 3, 8], "radius": [6, 3, 4], "mat": "car", "part": "metal"},
+    {"op": "ellipsoid", "centre": [6, 5, 8], "radius": [3.5, 2.5, 3], "mat": "car", "part": "metal"},
+    {"op": "ellipsoid", "centre": [8, 4, 4], "radius": [5, 3, 3], "mat": "troll", "part": "stone"},
+    {"op": "ellipsoid", "centre": [3, 6, 5], "radius": [2, 3, 1.5], "mat": "troll", "part": "stone"},
+    {"op": "ellipsoid", "centre": [32, 2, 10], "radius": [5, 3, 5], "mat": "troll", "part": "stone"}
+  ]
+}

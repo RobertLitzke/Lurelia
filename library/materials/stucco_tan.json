@@ -1,0 +1,16 @@
+{
+  "name": "stucco_tan",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Tan stucco render.",
+  "id": 166,
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [184, 164, 132],
+    "alt": [170, 150, 120],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [190, 172, 140], "alt": [176, 158, 128]}
+  }
+}

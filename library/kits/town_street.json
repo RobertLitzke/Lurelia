@@ -1,0 +1,15 @@
+{
+  "name": "town_street",
+  "version": 1,
+  "introduced_by": "routing engine",
+  "notes": "A paved town street: 7 m of asphalt, a kerb, a planting strip and a 2 m pavement each side. Lamp posts every 24 m on both kerbs.",
+  "ground": "grade",
+  "width": 7.0,
+  "mat": "road_asphalt",
+  "shoulder": "road_gravel",
+  "margin": 5.0,
+  "walk": {"width": 2.0, "gap": 0.8, "mat": "pavement", "kerb": "concrete", "side": "both"},
+  "posts": [{"side": "both", "out": 0.5, "every": 24.0, "size": [0.25, 3.5, 0.25], "mat": "rust_iron"}],
+  "span": "steel_span",
+  "tags": ["road", "town"]
+}

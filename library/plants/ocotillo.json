@@ -1,0 +1,17 @@
+{
+  "name": "ocotillo",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "canes: Ocotillo: a fan of whip-like thorny canes from one root crown, tipped with scarlet flames of flowers in spring only (flower_seasons).",
+  "form": "canes",
+  "height": [3.0, 5.5],
+  "trunk_radius": [0.14, 0.14],
+  "crown_radius": [0.8, 1.2],
+  "bark": "ocotillo_cane",
+  "leaf": "ocotillo_cane",
+  "max_slope": 1.1,
+  "stems": [10, 18],
+  "flower": "ocotillo_flower",
+  "affords": ["nectar"],
+  "flower_seasons": ["spring"]
+}

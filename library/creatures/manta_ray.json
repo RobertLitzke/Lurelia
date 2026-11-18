@@ -1,0 +1,50 @@
+{
+  "name": "manta_ray",
+  "version": 2,
+  "introduced_by": "glassfall",
+  "notes": "school: Manta ray, about 4.5 m across: black above and white below, gliding alone or in pairs a little under the surface on slow ripples of its wings. Rare, and now and then it leaps clear. The base of every ray.",
+  "voxel": 0.14,
+  "half_w": 1.2,
+  "height": 0.7,
+  "colors": {"back": [36, 28, 24], "belly": [240, 236, 228], "dark": [24, 24, 30]},
+  "behaviour": {
+    "movement": "school",
+    "walk_speed": 1.1,
+    "flee_speed": 2.6,
+    "wary": 6,
+    "flightiness": 0.0,
+    "leap": 0.15,
+    "spawn_chance": 0.02,
+    "group": {"size": [1, 2], "spacing": 6, "range": 14, "separation": 1.0, "alignment": 1.0, "cohesion": 0.6},
+    "active": "any"
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 4, 15], "radius": [4.5, 2.2, 8], "mat": "back"},
+    {"op": "box", "from": [8, 3, 10], "to": [12, 5, 22], "mat": "back", "part": "wing_l"},
+    {"op": "box", "from": [4, 3, 12], "to": [8, 5, 20], "mat": "back", "part": "wing_l_mid"},
+    {"op": "box", "from": [0, 4, 14], "to": [4, 5, 18], "mat": "back", "part": "wing_l_tip"},
+    {"op": "box", "from": [20, 3, 10], "to": [24, 5, 22], "mat": "back", "part": "wing_r"},
+    {"op": "box", "from": [24, 3, 12], "to": [28, 5, 20], "mat": "back", "part": "wing_r_mid"},
+    {"op": "box", "from": [28, 4, 14], "to": [32, 5, 18], "mat": "back", "part": "wing_r_tip"},
+    {"op": "box", "from": [12, 3, 6], "to": [14, 5, 9], "mat": "back"},
+    {"op": "box", "from": [18, 3, 6], "to": [20, 5, 9], "mat": "back"},
+    {"op": "box", "from": [16, 4, 23], "to": [17, 5, 31], "mat": "back", "part": "tail"},
+    {"op": "recolour_below", "y": 4, "from": "back", "to": "belly"},
+    {"op": "set", "at": [12, 5, 9], "mat": "dark"},
+    {"op": "set", "at": [19, 5, 9], "mat": "dark"}
+  ],
+  "vary": {"size": 0.1, "shade": 0.04},
+  "rig": {
+    "plan": "ray",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "wing_l", "role": "wing", "parent": "body", "joint": [12, 4, 16], "side": "l"},
+      {"name": "wing_l_mid", "role": "wing", "parent": "wing_l", "joint": [8, 4, 16], "side": "l"},
+      {"name": "wing_l_tip", "role": "wing", "parent": "wing_l_mid", "joint": [4, 4.5, 16], "side": "l"},
+      {"name": "wing_r", "role": "wing", "parent": "body", "joint": [20, 4, 16], "side": "r"},
+      {"name": "wing_r_mid", "role": "wing", "parent": "wing_r", "joint": [24, 4, 16], "side": "r"},
+      {"name": "wing_r_tip", "role": "wing", "parent": "wing_r_mid", "joint": [28, 4.5, 16], "side": "r"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 4.5, 23]}
+    ]
+  }
+}

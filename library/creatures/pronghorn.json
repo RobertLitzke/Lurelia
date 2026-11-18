@@ -1,0 +1,99 @@
+{
+  "name": "pronghorn",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Pronghorn: tan and white, short black horns, the fastest thing on the open flats. Small herds.",
+  "voxel": 0.058,
+  "half_w": 0.26,
+  "height": 1.25,
+  "colors": {"pronghorn": [196, 140, 84], "white": [240, 236, 228], "dark": [36, 28, 24], "black": [24, 24, 30]},
+  "behaviour": {
+    "movement": "graze",
+    "walk_speed": 1.4,
+    "flee_speed": 11,
+    "wary": 26,
+    "flightiness": 1.5,
+    "juvenile_flightiness": 1.3,
+    "flees_from": ["player", "coyote"],
+    "group": {"size": [2, 7], "spacing": 3.0, "range": 18, "alignment": 1.0, "cohesion": 1.0}
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 15, 17], "radius": [3.8, 3.8, 8], "mat": "pronghorn"},
+    {"op": "recolour_below", "y": 13, "from": "pronghorn", "to": "white"},
+    {"op": "box", "from": [13, 2, 11], "to": [15, 13, 13], "mat": "pronghorn", "part": "leg_fl"},
+    {"op": "box", "from": [13, 0, 11], "to": [15, 2, 13], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [13, 2, 22], "to": [15, 13, 24], "mat": "pronghorn", "part": "leg_hl"},
+    {"op": "box", "from": [13, 0, 22], "to": [15, 2, 24], "mat": "dark", "part": "leg_hl"},
+    {"op": "box", "from": [18, 2, 11], "to": [20, 13, 13], "mat": "pronghorn", "part": "leg_fr"},
+    {"op": "box", "from": [18, 0, 11], "to": [20, 2, 13], "mat": "dark", "part": "leg_fr"},
+    {"op": "box", "from": [18, 2, 22], "to": [20, 13, 24], "mat": "pronghorn", "part": "leg_hr"},
+    {"op": "box", "from": [18, 0, 22], "to": [20, 2, 24], "mat": "dark", "part": "leg_hr"},
+    {"op": "box", "from": [15, 16, 8], "to": [18, 23, 11], "mat": "pronghorn", "part": "neck"},
+    {"op": "box", "from": [15, 19, 8], "to": [18, 20, 11], "mat": "white", "part": "neck"},
+    {"op": "box", "from": [15, 17, 7], "to": [18, 18, 9], "mat": "white", "part": "neck"},
+    {"op": "box", "from": [14, 21, 3], "to": [19, 25, 9], "mat": "pronghorn", "part": "head"},
+    {"op": "box", "from": [14, 21, 5], "to": [19, 22, 8], "mat": "white", "part": "head"},
+    {"op": "box", "from": [15, 21, 2], "to": [18, 23, 3], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [14, 24, 5], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [18, 24, 5], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [13, 24, 7], "to": [14, 27, 8], "mat": "pronghorn", "part": "ear_l"},
+    {"op": "box", "from": [19, 24, 7], "to": [20, 27, 8], "mat": "pronghorn", "part": "ear_r"},
+    {"op": "box", "from": [15, 25, 6], "to": [16, 29, 7], "mat": "black", "part": "head"},
+    {"op": "box", "from": [17, 25, 6], "to": [18, 29, 7], "mat": "black", "part": "head"},
+    {"op": "set", "at": [15, 27, 5], "mat": "black", "part": "head"},
+    {"op": "set", "at": [17, 27, 5], "mat": "black", "part": "head"},
+    {"op": "set", "at": [15, 29, 7], "mat": "black", "part": "head"},
+    {"op": "set", "at": [17, 29, 7], "mat": "black", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 15, 24.5], "radius": [3.2, 3.2, 1.8], "mat": "white"}
+  ],
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16.5, 17, 10.5]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16.5, 22.5, 8.5]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [13.5, 24, 7.5], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [19.5, 24, 7.5], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14, 13, 12], "side": "l", "pair": 0},
+      {
+        "name": "leg_fl_low",
+        "role": "leg",
+        "parent": "leg_fl",
+        "joint": [14, 7, 12],
+        "claims": [[[13, 0, 11], [15, 7, 13]]],
+        "side": "l",
+        "pair": 0
+      },
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [19, 13, 12], "side": "r", "pair": 0},
+      {
+        "name": "leg_fr_low",
+        "role": "leg",
+        "parent": "leg_fr",
+        "joint": [19, 7, 12],
+        "claims": [[[18, 0, 11], [20, 7, 13]]],
+        "side": "r",
+        "pair": 0
+      },
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14, 13, 23], "side": "l", "pair": 1},
+      {
+        "name": "leg_hl_low",
+        "role": "leg",
+        "parent": "leg_hl",
+        "joint": [14, 7, 23],
+        "claims": [[[13, 0, 22], [15, 7, 24]]],
+        "side": "l",
+        "pair": 1
+      },
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [19, 13, 23], "side": "r", "pair": 1},
+      {
+        "name": "leg_hr_low",
+        "role": "leg",
+        "parent": "leg_hr",
+        "joint": [19, 7, 23],
+        "claims": [[[18, 0, 22], [20, 7, 24]]],
+        "side": "r",
+        "pair": 1
+      }
+    ]
+  }
+}

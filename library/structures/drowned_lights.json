@@ -1,0 +1,19 @@
+{
+  "name": "drowned_lights",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Lamplight in a sunken_house: a lit attic window in its front gable just over the water, and the front windows lit under it. Place exactly over one (same spot, bearing and height).",
+  "size": [22, 18, 36],
+  "anchor": [11, 0, 17],
+  "foundation": 0,
+  "level": false,
+  "decays": false,
+  "tags": ["parish"],
+  "slots": {"lamp": "lamplit_glass", "sill": "weathered_planks"},
+  "ops": [
+    {"op": "box", "from": [9, 14, 0], "to": [13, 17, 1], "mat": "lamp", "part": "glass"},
+    {"op": "box", "from": [8, 13, 0], "to": [14, 14, 1], "mat": "sill", "part": "timber"},
+    {"op": "box", "from": [3, 5, 2], "to": [6, 9, 3], "mat": "lamp", "part": "glass"},
+    {"op": "box", "from": [16, 5, 2], "to": [19, 9, 3], "mat": "lamp", "part": "glass"}
+  ]
+}

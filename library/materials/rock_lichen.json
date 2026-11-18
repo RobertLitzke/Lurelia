@@ -1,0 +1,16 @@
+{
+  "name": "rock_lichen",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Lichen on rock: pale grey-green crusts with the bare rock showing between them.",
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [150, 132, 104],
+    "alt": [182, 188, 164],
+    "scale": 7,
+    "contrast": 1.0,
+    "calm": {"base": [158, 142, 114], "alt": [190, 196, 176]}
+  }
+}

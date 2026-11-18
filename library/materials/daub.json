@@ -1,0 +1,15 @@
+{
+  "name": "daub",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Wattle and daub, limewashed: the walls of the houses, cream going grey where the rain drives on them.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [212, 198, 168],
+    "alt": [192, 178, 148],
+    "scale": 5,
+    "contrast": 0.6,
+    "calm": {"base": [216, 202, 174], "alt": [196, 182, 154]}
+  }
+}

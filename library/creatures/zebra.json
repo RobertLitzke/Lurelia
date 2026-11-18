@@ -1,0 +1,36 @@
+{
+  "name": "zebra",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Plains zebra: a striped horse. A small herd brought to the island for a menagerie that never opened, and they stayed.",
+  "colors": {
+    "coat": [240, 236, 228],
+    "belly": [240, 236, 228],
+    "mane": [24, 24, 30],
+    "muzzle": [24, 24, 30],
+    "stripe": [24, 24, 30]
+  },
+  "behaviour": {"wary": 14, "flightiness": 1.0},
+  "like": "horse",
+  "scale": 0.92,
+  "extra_ops": [
+    {
+      "op": "repeat",
+      "count": 8,
+      "step": [0, 0, 2],
+      "ops": [{"op": "recolour", "at": [10, 9, 9], "until": [23, 21, 10], "from": "coat", "to": "stripe"}]
+    },
+    {
+      "op": "repeat",
+      "count": 4,
+      "step": [0, 2, 0],
+      "ops": [{"op": "recolour", "at": [10, 13, 6], "until": [23, 14, 11], "from": "coat", "to": "stripe"}]
+    },
+    {
+      "op": "repeat",
+      "count": 5,
+      "step": [0, 2, 0],
+      "ops": [{"op": "recolour", "at": [12, 2, 9], "until": [21, 3, 25], "from": "coat", "to": "stripe"}]
+    }
+  ]
+}

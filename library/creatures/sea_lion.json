@@ -1,0 +1,15 @@
+{
+  "name": "sea_lion",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Steller sea lion: big and tawny, louder and bolder than the seals, hauled out in groups on the basalt.",
+  "colors": {"seal": [150, 112, 74], "belly": [168, 130, 90], "spot": [150, 112, 74]},
+  "behaviour": {
+    "walk_speed": 0.45,
+    "flee_speed": 2.0,
+    "wary": 10,
+    "group": {"size": [2, 6], "spacing": 2.6, "range": 12, "alignment": 0.5, "cohesion": 1.0}
+  },
+  "like": "harbor_seal",
+  "scale": 1.35
+}

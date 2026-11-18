@@ -1,0 +1,32 @@
+{
+  "name": "glass_reef",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Glassfall's strange reef, nearest the strewn field: staghorn, tables and fans of pale glass, faintly lit, among the ordinary coral.",
+  "priority": 23,
+  "rules": {"underwater": true, "region": "fore_reef", "strange": [0.25, 1.0]},
+  "surface": "reef_lime",
+  "subsurface": "reef_lime",
+  "rock": "reef_lime",
+  "fringe": 0,
+  "map_color": [170, 220, 240],
+  "plants": [
+    {
+      "plant": "glass_staghorn",
+      "density": 0.06,
+      "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.3, "max": 0.55}}
+    },
+    {"plant": "glass_table", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "glass_fan", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "staghorn_coral", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "brain_coral", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "plate_coral", "density": 0.015, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "anthias", "count": 140},
+    {"creature": "reef_chromis", "count": 105},
+    {"creature": "butterflyfish", "count": 10},
+    {"creature": "angelfish", "count": 4},
+    {"creature": "reef_manta", "count": 2}
+  ]
+}

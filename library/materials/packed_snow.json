@@ -1,0 +1,16 @@
+{
+  "name": "packed_snow",
+  "version": 1,
+  "introduced_by": "icezeto",
+  "notes": "Snow blown in through the vents and trodden flat along the walls: white with blue in the hollows.",
+  "smooth": true,
+  "glints": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [160, 168, 180],
+    "alt": [136, 150, 166],
+    "scale": 6,
+    "contrast": 0.5,
+    "calm": {"base": [168, 176, 188], "alt": [144, 158, 174]}
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "leaf_fall",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "A leaf coming off a tree in its autumn colour, swinging as it falls, then lying a while.",
+  "shape": "leaf",
+  "count": [1, 1],
+  "speed": [0.0, 0.3],
+  "cone_deg": 60,
+  "life": [9.0, 15.0],
+  "size": [0.075, 0.075],
+  "size_jitter": 0.25,
+  "gravity": 1.2,
+  "drag": 2.2,
+  "wind": 0.5,
+  "settle": true,
+  "flutter": 0.55,
+  "material": true
+}

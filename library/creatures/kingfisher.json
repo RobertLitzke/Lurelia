@@ -1,0 +1,17 @@
+{
+  "name": "kingfisher",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Kingfisher: a flash of electric blue with an orange breast, flitting between the willows and reeds along the Hem.",
+  "colors": {
+    "body": [40, 130, 190],
+    "head": [40, 110, 170],
+    "wing": [40, 130, 190],
+    "tail": [40, 110, 170],
+    "breast": [222, 120, 52],
+    "head_cap": [60, 170, 210]
+  },
+  "behaviour": {"flightiness": 1.3},
+  "like": "sparrow",
+  "scale": 0.85
+}

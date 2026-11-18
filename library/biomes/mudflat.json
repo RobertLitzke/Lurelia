@@ -1,0 +1,32 @@
+{
+  "name": "mudflat",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Mud where the river's silt comes out at the mouth's edge: a few wet bars, drift logs and dead snags, wading birds walking it, mist lying on it at dawn and dusk.",
+  "priority": 11,
+  "rules": {"region": "mouth", "elev": [0.0, 0.3]},
+  "surface": "delta_mud",
+  "subsurface": "silt",
+  "map_color": [140, 124, 96],
+  "plants": [
+    {
+      "plant": "cattail",
+      "density": 0.7,
+      "placement": {"verb": "clustered", "params": {"size": 22, "min": 0.68, "max": 0.695}}
+    },
+    {"plant": "cypress_snag", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [
+    {"structure": "fallen_log", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "lily_pads", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "heron", "count": 2},
+    {"creature": "sandhill_crane", "count": 2},
+    {"creature": "great_egret", "count": 2},
+    {"creature": "roseate_spoonbill", "count": 4},
+    {"creature": "crocodile", "count": 2}
+  ],
+  "collectibles": [{"item": "seashell", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}],
+  "mist": 0.4
+}

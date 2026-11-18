@@ -1,0 +1,13 @@
+{
+  "name": "umbrella_pine",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Wind-shaped coastal pine with a flat crown.",
+  "form": "umbrella",
+  "height": [7, 10],
+  "trunk_radius": [0.25, 0.35],
+  "crown_radius": [2.8, 3.6],
+  "bark": "bark",
+  "leaf": "pine",
+  "squash": 0.55
+}

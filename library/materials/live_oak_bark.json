@@ -1,0 +1,15 @@
+{
+  "name": "live_oak_bark",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Live oak bark: near-black, deeply furrowed into blocks.",
+  "smooth": false,
+  "texture": {
+    "pattern": "cracks",
+    "base": [72, 64, 56],
+    "alt": [52, 46, 40],
+    "scale": 5,
+    "contrast": 0.8,
+    "calm": {"base": [76, 68, 60], "alt": [56, 50, 44]}
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "sniper_rifle",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "One shot, four hundred metres, no falloff, and twice the damage in the top of a body: a head shot kills outright and anything else leaves a man who has to go and find a health pack. The right button is the sight rather than a second mode -- it narrows the view to a third and does not fire, so nobody loses a round into the floor reaching for it. Five in the magazine and two and a bit seconds to fill it, which is the whole of its weakness: miss twice in a corridor and whoever you missed is on top of you.",
+  "display": "SNIPER RIFLE",
+  "slot": 10,
+  "ammo_max": 50,
+  "ammo_start": 16,
+  "mag": 5,
+  "reload_s": 2.2,
+  "zoom": 0.3,
+  "fire": {
+    "kind": "hitscan",
+    "rpm": 68.0,
+    "damage": 55.0,
+    "range": 400.0,
+    "falloff": 1.0,
+    "head_mult": 2.2,
+    "kick": 1.7,
+    "tracer": [0.95, 0.96, 1.0],
+    "tracer_s": 0.15
+  },
+  "view": "sniper",
+  "tint": [0.33, 0.35, 0.3]
+}

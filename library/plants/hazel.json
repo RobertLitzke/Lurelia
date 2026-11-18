@@ -1,0 +1,12 @@
+{
+  "name": "hazel",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Understory shrub.",
+  "form": "shrub",
+  "height": [1.5, 2.6],
+  "crown_radius": [1.1, 1.7],
+  "bark": "bark",
+  "leaf": "leaves",
+  "autumn": "leaves_autumn"
+}

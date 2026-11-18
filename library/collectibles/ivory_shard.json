@@ -1,0 +1,14 @@
+{
+  "name": "ivory_shard",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A curved splinter off a mammoth tusk, weathered out of the chalk: cream going brown along the cracks.",
+  "display": "splinter of ivory",
+  "voxel": 0.02,
+  "colors": {"tooth": [226, 216, 190], "tooth_dark": [168, 150, 118]},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 2, 12], "radius": [1.8, 1.5, 5], "mat": "tooth"},
+    {"op": "ellipsoid", "centre": [17.5, 2, 19], "radius": [1.5, 1.3, 4], "mat": "tooth"},
+    {"op": "ellipsoid", "centre": [19.5, 2, 24], "radius": [1.2, 1.1, 2.4], "mat": "tooth_dark"}
+  ]
+}

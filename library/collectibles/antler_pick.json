@@ -1,0 +1,15 @@
+{
+  "name": "antler_pick",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A red-deer antler with its tines cut back to one, worn smooth at the grip: the tool the flint comes out with.",
+  "display": "antler pick",
+  "voxel": 0.022,
+  "colors": {"antler": [206, 186, 148], "antler_dark": [160, 138, 102]},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 2, 16], "radius": [1.8, 1.6, 9], "mat": "antler"},
+    {"op": "box", "from": [15, 1, 7], "to": [17, 3, 10], "mat": "antler_dark"},
+    {"op": "box", "from": [12, 1, 8], "to": [15, 3, 10], "mat": "antler"},
+    {"op": "box", "from": [16, 1, 22], "to": [20, 3, 24], "mat": "antler"}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "sea_fan_red",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "A red sea fan, on the deeper wall.",
+  "form": "sea_fan",
+  "height": [1.8, 2.8],
+  "trunk_radius": [0.06, 0.08],
+  "crown_radius": [1.0, 1.6],
+  "bark": "fan_red",
+  "leaf": "fan_red",
+  "max_slope": 3.0,
+  "water_depth": [6, 35]
+}

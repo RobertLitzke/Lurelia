@@ -1,0 +1,14 @@
+{
+  "name": "table_coral_teal",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "A table coral the jade colour of the water.",
+  "form": "coral_table",
+  "height": [0.5, 1.0],
+  "trunk_radius": [0.13, 0.17],
+  "crown_radius": [0.8, 1.7],
+  "bark": "coral_teal",
+  "leaf": "coral_teal",
+  "max_slope": 1.4,
+  "water_depth": [1.5, 20]
+}

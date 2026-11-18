@@ -1,0 +1,16 @@
+{
+  "name": "kelp",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "kelp: Giant kelp: stipes rising from a holdfast on the reef to the surface, blades all the way up and a floating canopy. Grows only under 3 to 16 m of sea; height is the share of that depth it reaches.",
+  "form": "kelp",
+  "height": [0.95, 1.0],
+  "trunk_radius": [0.15, 0.2],
+  "crown_radius": [0.9, 1.3],
+  "bark": "kelp_stipe",
+  "leaf": "kelp_blade",
+  "squash": 0.5,
+  "max_slope": 1.5,
+  "stems": [2, 4],
+  "water_depth": [3.0, 16.0]
+}

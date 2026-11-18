@@ -1,0 +1,16 @@
+{
+  "name": "prickly_pear_pad",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Prickly pear pads: grey-green with rows of pale spine clusters.",
+  "id": 208,
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [100, 124, 70],
+    "alt": [196, 186, 120],
+    "scale": 8,
+    "contrast": 1.0,
+    "calm": {"base": [106, 128, 78], "alt": [196, 188, 130]}
+  }
+}

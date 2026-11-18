@@ -1,0 +1,14 @@
+{
+  "name": "gambel_oak",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Gambel oak brush under the pines and on the plateau edge.",
+  "form": "shrub",
+  "height": [1.6, 3.2],
+  "trunk_radius": [0.08, 0.14],
+  "crown_radius": [1.0, 1.6],
+  "bark": "bark",
+  "leaf": "leaves",
+  "max_slope": 0.9,
+  "autumn": "leaves_autumn"
+}

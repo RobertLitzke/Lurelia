@@ -1,0 +1,16 @@
+{
+  "name": "red_mangrove",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Red mangrove: a low dark crown on a tangle of arching prop roots, standing in the shallows of the river mouth.",
+  "form": "mangrove",
+  "height": [3, 11],
+  "trunk_radius": [0.3, 0.45],
+  "crown_radius": [2.4, 4.6],
+  "bark": "mangrove_bark",
+  "leaf": "mangrove_leaves",
+  "max_slope": 0.8,
+  "stems": [5, 8],
+  "standing_water": [0.05, 1.7],
+  "affords": ["perch", "cover"]
+}

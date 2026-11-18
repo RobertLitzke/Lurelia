@@ -1,0 +1,20 @@
+{
+  "name": "city_commercial",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Commercial and industrial land: little planted.",
+  "priority": 8,
+  "rules": {"region": "city_commercial"},
+  "surface": "lawn_grass",
+  "subsurface": "dirt",
+  "fringe": 0,
+  "map_color": [170, 160, 140],
+  "plants": [
+    {"plant": "bigleaf_maple", "density": 0.0012, "placement": {"verb": "lone", "params": {"spacing": 12}}},
+    {
+      "plant": "salal",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 8, "min": 0.0, "max": 1.0}}
+    }
+  ]
+}

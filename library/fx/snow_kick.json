@@ -1,0 +1,18 @@
+{
+  "name": "snow_kick",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "Snow kicked up by feet or a wheel; white whatever the ground's texture says.",
+  "shape": "puff",
+  "count": [3, 5],
+  "speed": [0.8, 2.0],
+  "cone_deg": 40,
+  "life": [0.5, 1.0],
+  "size": [0.06, 0.3],
+  "size_jitter": 0.3,
+  "gravity": 1.5,
+  "drag": 2.5,
+  "wind": 0.6,
+  "color": [245, 248, 255],
+  "alpha": 0.55
+}

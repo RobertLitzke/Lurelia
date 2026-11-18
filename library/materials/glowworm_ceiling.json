@@ -1,0 +1,18 @@
+{
+  "name": "glowworm_ceiling",
+  "version": 2,
+  "introduced_by": "hemlow",
+  "notes": "The roof of Lantern Hole: wet stone with scattered blue-green glow-worm lights. v2: grey stone between the lights, and only the lights glow (glow_specks), with threads hanging down.",
+  "id": 67,
+  "smooth": false,
+  "glow": 1.2,
+  "texture": {
+    "pattern": "noise",
+    "base": [92, 96, 98],
+    "alt": [80, 84, 86],
+    "scale": 8,
+    "contrast": 1.0,
+    "calm": {"base": [96, 100, 102], "alt": [84, 88, 90]}
+  },
+  "glow_specks": true
+}

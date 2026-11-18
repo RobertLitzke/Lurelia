@@ -1,0 +1,26 @@
+{
+  "name": "sunken_house",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "A parish house sunk to its eaves in the bay: board walls under the water, a shingle roof and a brick chimney standing out of it. Place with height -2.5 (its floor that far under the sea). Door on local -Z.",
+  "size": [22, 27, 36],
+  "anchor": [11, 0, 17],
+  "foundation": 0,
+  "level": false,
+  "tags": ["parish"],
+  "slots": {
+    "wall": "siding_grey",
+    "roof": "shingle_moss",
+    "door": "door_wood",
+    "chimney": "brick_brown",
+    "window": "pane_glass"
+  },
+  "ops": [
+    {"op": "walls", "from": [1, 0, 1], "to": [21, 13, 33], "mat": "wall", "thick": 1, "part": "wall"},
+    {"op": "gable", "from": [0, 13, 0], "to": [22, 13, 34], "axis": "z", "mat": "roof", "rise": 1, "part": "roof"},
+    {"op": "box", "from": [9, 0, 1], "to": [13, 9, 2], "mat": "door", "part": "timber"},
+    {"op": "box", "from": [9, 13, 33], "to": [13, 26, 36], "mat": "chimney", "part": "wall"},
+    {"op": "box", "from": [3, 5, 1], "to": [6, 9, 2], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [16, 5, 1], "to": [19, 9, 2], "mat": "window", "part": "glass"}
+  ]
+}

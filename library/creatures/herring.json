@@ -1,0 +1,35 @@
+{
+  "name": "herring",
+  "version": 2,
+  "introduced_by": "glassfall",
+  "notes": "Atlantic herring: a silver fish about 30 cm long with a blue-green back, in schools of ten to twenty near the shore. The base of every schooling fish.",
+  "voxel": 0.0125,
+  "half_w": 0.04,
+  "height": 0.08,
+  "colors": {"herring": [62, 92, 104], "silver": [150, 158, 168], "fin": [62, 92, 104], "dark": [36, 28, 24]},
+  "behaviour": {
+    "movement": "school",
+    "walk_speed": 1.2,
+    "flee_speed": 3.5,
+    "wary": 5,
+    "flightiness": 1.4,
+    "flees_from": ["player"],
+    "leap": 0.5,
+    "group": {"size": [10, 18], "spacing": 0.5, "range": 3, "separation": 1.0, "alignment": 1.2, "cohesion": 1.0},
+    "active": "any"
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16.5, 6, 14], "radius": [1.7, 2.8, 10], "mat": "herring"},
+    {"op": "recolour_below", "y": 6, "from": "herring", "to": "silver"},
+    {"op": "box", "from": [16, 8, 11], "to": [17, 10, 15], "mat": "fin"},
+    {"op": "set", "at": [15, 7, 7], "mat": "dark"},
+    {"op": "set", "at": [17, 7, 7], "mat": "dark"},
+    {"op": "ellipsoid", "centre": [16.5, 6, 25], "radius": [0.8, 1.4, 2.2], "mat": "silver", "part": "tail"},
+    {"op": "box", "from": [16, 2, 26], "to": [17, 6, 29], "mat": "fin", "part": "tail"},
+    {"op": "box", "from": [16, 7, 26], "to": [17, 11, 29], "mat": "fin", "part": "tail"}
+  ],
+  "rig": {
+    "plan": "fish",
+    "bones": [{"name": "body", "role": "root"}, {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 6, 23]}]
+  }
+}

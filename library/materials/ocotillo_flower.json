@@ -1,0 +1,16 @@
+{
+  "name": "ocotillo_flower",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "The ocotillo's scarlet spring flower spikes.",
+  "id": 203,
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [208, 50, 32],
+    "alt": [238, 104, 44],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [206, 64, 42], "alt": [230, 110, 56]}
+  }
+}

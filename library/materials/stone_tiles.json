@@ -1,0 +1,16 @@
+{
+  "name": "stone_tiles",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Stone slate roofing: small grey-brown limestone slates in diminishing courses, crusted with lichen.",
+  "id": 63,
+  "smooth": false,
+  "texture": {
+    "pattern": "coursed",
+    "base": [84, 80, 74],
+    "alt": [104, 98, 88],
+    "scale": 9,
+    "contrast": 0.9,
+    "calm": {"base": [92, 88, 80], "alt": [110, 104, 94]}
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "naust",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "A boathouse: low dry-stone walls under a turf roof, the boat door in the gable end that faces the water (local -X).",
+  "size": [42, 24, 24],
+  "anchor": [21, 0, 12],
+  "foundation": 6,
+  "level": true,
+  "tags": ["kaldvik", "house"],
+  "ops": [
+    {"op": "walls", "from": [1, 0, 1], "to": [41, 11, 23], "mat": "fieldstone", "thick": 2, "part": "stone"},
+    {
+      "op": "gable",
+      "from": [0, 11, 0],
+      "to": [42, 11, 24],
+      "axis": "x",
+      "mat": "turf_roof",
+      "rise": 1,
+      "part": "roof"
+    },
+    {
+      "op": "gable",
+      "from": [1, 11, 1],
+      "to": [2, 11, 23],
+      "axis": "x",
+      "mat": "weathered_planks",
+      "rise": 1,
+      "part": "timber"
+    },
+    {
+      "op": "gable",
+      "from": [40, 11, 1],
+      "to": [41, 11, 23],
+      "axis": "x",
+      "mat": "weathered_planks",
+      "rise": 1,
+      "part": "timber"
+    },
+    {"op": "box", "from": [1, 0, 5], "to": [3, 10, 19], "mat": "weathered_planks", "part": "timber"}
+  ]
+}

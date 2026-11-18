@@ -1,0 +1,13 @@
+{
+  "name": "icefall",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "A frozen waterfall. Its voxels are built down the wall by the `icefall` event; this entry only names the placement. `base: rim` keeps it where the event hung it: natural features are otherwise dropped onto the lowest ground under their footprint, which for a fall is the fjord floor.",
+  "size": [1, 1, 1],
+  "anchor": [0, 0, 0],
+  "level": false,
+  "decays": false,
+  "base": "rim",
+  "tags": ["natural"],
+  "ops": []
+}

@@ -1,0 +1,25 @@
+{
+  "name": "city_park",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "City parks: lawn under big scattered trees.",
+  "priority": 9,
+  "rules": {"region": "city_park"},
+  "surface": "lawn_grass",
+  "subsurface": "dirt",
+  "fringe": 0,
+  "map_color": [110, 170, 90],
+  "plants": [
+    {"plant": "bigleaf_maple", "density": 0.0015, "placement": {"verb": "lone", "params": {"spacing": 18}}},
+    {"plant": "giant_fir", "density": 0.0006, "placement": {"verb": "lone", "params": {"spacing": 24}}},
+    {"plant": "salal", "density": 0.01, "placement": {"verb": "edge", "params": {"width": 10, "inner": 0.002}}},
+    {"plant": "fern", "density": 0.006, "placement": {"verb": "edge", "params": {"width": 10, "inner": 0.001}}}
+  ],
+  "creatures": [
+    {"creature": "crow", "count": 2},
+    {"creature": "woodpecker", "count": 1},
+    {"creature": "northern_flicker", "count": 1},
+    {"creature": "squirrel", "count": 4},
+    {"creature": "bat", "count": 3}
+  ]
+}

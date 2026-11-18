@@ -1,0 +1,16 @@
+{
+  "name": "white_siding",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Weathered white clapboard.",
+  "id": 133,
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [212, 206, 192],
+    "alt": [186, 178, 162],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [214, 208, 194], "alt": [192, 184, 168]}
+  }
+}

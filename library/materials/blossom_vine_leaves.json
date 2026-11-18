@@ -1,0 +1,17 @@
+{
+  "name": "blossom_vine_leaves",
+  "version": 1,
+  "introduced_by": "faerie",
+  "notes": "Trailing blossom vine: rose-lilac flowers among green. Passable.",
+  "id": 189,
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [196, 150, 206],
+    "alt": [96, 130, 70],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [204, 162, 214], "alt": [106, 140, 80]}
+  }
+}

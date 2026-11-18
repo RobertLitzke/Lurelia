@@ -1,0 +1,21 @@
+{
+  "name": "flood_post",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "The flood post at a landing: a squared post with the year's high water cut into it as notches, the two that overtopped it marked by a crosspiece. Face the notched side at the water.",
+  "size": [7, 12, 7],
+  "anchor": [3, 0, 3],
+  "level": true,
+  "decays": true,
+  "tags": ["marker"],
+  "slots": {"post": "oak_post"},
+  "ops": [
+    {"op": "box", "from": [2, 0, 2], "to": [5, 11, 5], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [2, 2, 1], "to": [5, 3, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [2, 4, 1], "to": [5, 5, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [2, 6, 1], "to": [5, 7, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [2, 8, 1], "to": [5, 9, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [2, 10, 1], "to": [5, 11, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [1, 7, 1], "to": [6, 8, 2], "mat": "post", "part": "timber"}
+  ]
+}

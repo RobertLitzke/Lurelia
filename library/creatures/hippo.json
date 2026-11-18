@@ -1,0 +1,98 @@
+{
+  "name": "hippo",
+  "version": 2,
+  "introduced_by": "thornpan",
+  "notes": "Hippo: three tonnes of grey barrel on stumps, eyes, ears and nostrils set on the top of the head so it can lie in a pool with everything else under the water. Gives way to nothing and runs faster than it looks.",
+  "voxel": 0.14,
+  "half_w": 0.91,
+  "height": 1.81,
+  "colors": {"coat": [122, 106, 102], "belly": [160, 126, 118], "nose": [150, 110, 100], "dark": [36, 28, 24]},
+  "behaviour": {
+    "movement": "wade",
+    "walk_speed": 0.5,
+    "flee_speed": 7.0,
+    "wary": 16,
+    "flightiness": 0.25,
+    "juvenile_flightiness": 0.5,
+    "flees_from": ["player"],
+    "swims": true,
+    "group": {"size": [2, 6], "spacing": 3.0, "range": 14, "alignment": 0.8, "cohesion": 1.3},
+    "active": "nocturnal",
+    "off_hours": 0.35
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 9, 17], "radius": [6.4, 4.6, 8.8], "mat": "coat"},
+    {"op": "recolour_below", "y": 7, "from": "coat", "to": "belly"},
+    {"op": "box", "from": [11, 2, 8], "to": [15, 8, 12], "mat": "coat", "part": "leg_fl"},
+    {"op": "box", "from": [11, 0, 8], "to": [15, 2, 12], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [17, 2, 8], "to": [21, 8, 12], "mat": "coat", "part": "leg_fr"},
+    {"op": "box", "from": [17, 0, 8], "to": [21, 2, 12], "mat": "dark", "part": "leg_fr"},
+    {"op": "box", "from": [11, 2, 21], "to": [15, 8, 25], "mat": "coat", "part": "leg_hl"},
+    {"op": "box", "from": [11, 0, 21], "to": [15, 2, 25], "mat": "dark", "part": "leg_hl"},
+    {"op": "box", "from": [17, 2, 21], "to": [21, 8, 25], "mat": "coat", "part": "leg_hr"},
+    {"op": "box", "from": [17, 0, 21], "to": [21, 2, 25], "mat": "dark", "part": "leg_hr"},
+    {"op": "box", "from": [12, 6, 7], "to": [20, 13, 10], "mat": "coat", "part": "neck"},
+    {"op": "ellipsoid", "centre": [16, 9.5, 5], "radius": [5.4, 3.6, 4.4], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [10, 6, 1], "to": [22, 11, 5], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [11, 6, 1], "to": [21, 8, 3], "mat": "nose", "part": "head"},
+    {"op": "set", "at": [12, 11, 2], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [19, 11, 2], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [11, 12, 6], "to": [13, 14, 8], "mat": "coat", "part": "ear_l"},
+    {"op": "box", "from": [19, 12, 6], "to": [21, 14, 8], "mat": "coat", "part": "ear_r"},
+    {"op": "set", "at": [12, 12, 5], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [19, 12, 5], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [15, 8, 25], "to": [17, 11, 27], "mat": "coat", "part": "tail"}
+  ],
+  "vary": {"size": 0.1, "shade": 0.06, "hue": 0.02},
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16, 9, 10]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16, 9.5, 7.5]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [12, 11.5, 7], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [20, 11.5, 7], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [13, 8, 10], "side": "l", "pair": 0},
+      {
+        "name": "leg_fl_low",
+        "role": "leg",
+        "parent": "leg_fl",
+        "joint": [13, 4, 10],
+        "claims": [[[11, 0, 8], [15, 4, 12]]],
+        "side": "l",
+        "pair": 0
+      },
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [19, 8, 10], "side": "r", "pair": 0},
+      {
+        "name": "leg_fr_low",
+        "role": "leg",
+        "parent": "leg_fr",
+        "joint": [19, 4, 10],
+        "claims": [[[17, 0, 8], [21, 4, 12]]],
+        "side": "r",
+        "pair": 0
+      },
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [13, 8, 23], "side": "l", "pair": 1},
+      {
+        "name": "leg_hl_low",
+        "role": "leg",
+        "parent": "leg_hl",
+        "joint": [13, 4, 23],
+        "claims": [[[11, 0, 21], [15, 4, 25]]],
+        "side": "l",
+        "pair": 1
+      },
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [19, 8, 23], "side": "r", "pair": 1},
+      {
+        "name": "leg_hr_low",
+        "role": "leg",
+        "parent": "leg_hr",
+        "joint": [19, 4, 23],
+        "claims": [[[17, 0, 21], [21, 4, 25]]],
+        "side": "r",
+        "pair": 1
+      },
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 10, 24.5]}
+    ]
+  }
+}

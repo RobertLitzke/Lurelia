@@ -1,0 +1,16 @@
+{
+  "name": "tree_moss",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Moss on bark: green blotches with bark-brown showing between them, so a mossed trunk reads as moss over bark.",
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [96, 70, 46],
+    "alt": [86, 118, 58],
+    "scale": 9,
+    "contrast": 1.0,
+    "calm": {"base": [104, 78, 52], "alt": [96, 128, 66]}
+  }
+}

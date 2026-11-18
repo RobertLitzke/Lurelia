@@ -1,0 +1,37 @@
+{
+  "name": "woodpecker",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "cling: Downy woodpecker: small, black and white with a red patch on the head. Clings upright to trunks, drums, hitches up and round them, and bounds off to the next tree. The base of every woodpecker.",
+  "colors": {
+    "body": [24, 24, 30],
+    "head": [24, 24, 30],
+    "beak": [36, 28, 24],
+    "wing": [24, 24, 30],
+    "tail": [24, 24, 30],
+    "legs": [36, 28, 24],
+    "white": [240, 236, 228],
+    "red": [200, 50, 40]
+  },
+  "behaviour": {
+    "movement": "cling",
+    "walk_speed": 5,
+    "flee_speed": 9,
+    "wary": 8,
+    "flightiness": 1.2,
+    "flight": "bound",
+    "group": {"size": [1, 2], "spacing": 4, "range": 10}
+  },
+  "like": "starling",
+  "scale": 1.05,
+  "extra_ops": [
+    {"op": "recolour_below", "y": 8, "from": "body", "to": "white"},
+    {"op": "recolour", "at": [14, 9, 8], "until": [19, 10, 12], "from": "head", "to": "white"},
+    {"op": "set", "at": [16, 11, 12], "mat": "red", "part": "head"},
+    {"op": "box", "from": [15, 9, 6], "to": [17, 10, 9], "mat": "beak", "part": "head"},
+    {"op": "set", "at": [12, 9, 14], "mat": "white", "part": "wing_l"},
+    {"op": "set", "at": [20, 9, 14], "mat": "white", "part": "wing_r"},
+    {"op": "set", "at": [13, 9, 16], "mat": "white", "part": "wing_l"},
+    {"op": "set", "at": [19, 9, 16], "mat": "white", "part": "wing_r"}
+  ]
+}

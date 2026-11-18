@@ -1,0 +1,16 @@
+{
+  "name": "concrete",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Poured concrete: pump island, slab, abutments.",
+  "id": 134,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [176, 172, 164],
+    "alt": [156, 152, 146],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [184, 180, 172], "alt": [166, 162, 156]}
+  }
+}

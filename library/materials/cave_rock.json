@@ -1,0 +1,16 @@
+{
+  "name": "cave_rock",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Dark wet limestone of Lantern Hole's walls and floor, stained grey-brown and slick.",
+  "id": 76,
+  "smooth": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [52, 50, 48],
+    "alt": [64, 60, 56],
+    "scale": 3,
+    "contrast": 0.7,
+    "calm": {"base": [54, 52, 50], "alt": [66, 62, 58]}
+  }
+}

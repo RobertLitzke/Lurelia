@@ -1,0 +1,26 @@
+{
+  "name": "cave_formations_tall",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Stalactites, stalagmites and a column for a cave chamber about 8 m high: place with `height` at the chamber floor.",
+  "size": [24, 68, 24],
+  "anchor": [12, 12, 12],
+  "level": false,
+  "decays": false,
+  "tags": ["hemlow", "cave"],
+  "slots": {"flow": "flowstone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [5, 58, 18], "radius": [2.2, 25.3, 2.5], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [12, 58, 10], "radius": [2.0, 29.0, 1.7], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [11, 58, 16], "radius": [1.7, 26.5, 1.7], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [6, 58, 4], "radius": [2.1, 23.9, 2.5], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [20, 58, 7], "radius": [2.3, 21.3, 2.6], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [14, 58, 15], "radius": [2.0, 29.6, 1.8], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [12, 58, 14], "radius": [2.1, 22.4, 2.1], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [4, 6, 13], "radius": [3.0, 14.7, 2.5], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [13, 6, 11], "radius": [3.2, 12.6, 3.6], "mat": "flow", "part": "stone"},
+    {"op": "cylinder", "base": [12, 0, 14], "radius": 2.2, "height": 64, "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [12, 10, 14], "radius": [4.0, 6, 4.0], "mat": "flow", "part": "stone"},
+    {"op": "ellipsoid", "centre": [12, 46, 14], "radius": [3.6, 7, 3.6], "mat": "flow", "part": "stone"}
+  ]
+}

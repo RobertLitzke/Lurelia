@@ -1,0 +1,16 @@
+{
+  "name": "station_red",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Faded red paint: the station canopy fascia and pumps.",
+  "id": 135,
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [170, 56, 44],
+    "alt": [150, 48, 40],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [176, 70, 58], "alt": [160, 62, 52]}
+  }
+}

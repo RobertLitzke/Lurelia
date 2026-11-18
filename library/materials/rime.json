@@ -1,0 +1,16 @@
+{
+  "name": "rime",
+  "version": 1,
+  "introduced_by": "icezeto",
+  "notes": "Hoar frost grown over a ceiling or the top of a wall: feathery white crystals that glitter in the lamplight.",
+  "smooth": false,
+  "glints": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [140, 154, 170],
+    "alt": [112, 132, 154],
+    "scale": 3,
+    "contrast": 0.6,
+    "calm": {"base": [148, 162, 178], "alt": [120, 140, 162]}
+  }
+}

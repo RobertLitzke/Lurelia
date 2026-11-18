@@ -1,0 +1,25 @@
+{
+  "name": "palm_island",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "A palm island in the delta: a sand knoll a metre and a half up, ringed with fan palms grown from nuts that went through an elephant, with grass on its crown and usually one baobab.",
+  "priority": 14,
+  "rules": {"region": "spread", "elev": [1.6, 8], "slope": [0, 0.6]},
+  "surface": "savanna_grass",
+  "subsurface": "shore_sand",
+  "map_color": [164, 168, 102],
+  "plants": [
+    {"plant": "cabbage_palm", "density": 0.02, "placement": {"verb": "edge", "params": {"width": 10, "inner": 0.004}}},
+    {"plant": "baobab", "density": 0.0012, "placement": {"verb": "lone", "params": {"spacing": 40}}},
+    {"plant": "acacia", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "sawgrass", "density": 0.02, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [{"structure": "termite_mound", "density": 0.0006, "placement": {"verb": "lone", "params": {"spacing": 30}}}],
+  "creatures": [
+    {"creature": "warthog", "count": 6},
+    {"creature": "macaque", "count": 4},
+    {"creature": "glossy_starling", "count": 8},
+    {"creature": "firefly", "count": 20}
+  ],
+  "collectibles": [{"item": "seashell", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}]
+}

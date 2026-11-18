@@ -1,0 +1,16 @@
+{
+  "name": "herring_shoal",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Winter herring in the fjord: shoals of a hundred and more balled up tight a few metres under the surface, flashing silver as they turn, the reason the orcas and humpbacks come in.",
+  "behaviour": {
+    "habit": "bait",
+    "walk_speed": 1.4,
+    "flee_speed": 4.0,
+    "leap": 0,
+    "depth": [1.2, 6],
+    "shallows": 3,
+    "group": {"size": [80, 150], "spacing": 0.25, "range": 2.0, "separation": 1.0, "alignment": 1.5, "cohesion": 2.0}
+  },
+  "like": "herring"
+}

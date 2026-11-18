@@ -1,0 +1,19 @@
+{
+  "name": "ring_wall",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "The Ringstone: a dry-stone enclosure fifteen metres across, coursed and fitted without mortar, with one gap and a paved middle. Built by people who were gone before the present ones came. Place it on a kopje shoulder, gap downhill.",
+  "size": [61, 10, 61],
+  "anchor": [30, 0, 30],
+  "foundation": 6,
+  "level": true,
+  "decays": true,
+  "tags": ["ruin", "enclosure"],
+  "slots": {"stone": "cotswold_stone", "paving": "moss_flagstone"},
+  "ops": [
+    {"op": "cylinder", "base": [30, 0, 30], "radius": 29, "height": 9, "mat": "stone", "part": "stone"},
+    {"op": "cylinder", "base": [30, 0, 30], "radius": 25, "height": 9, "mat": "air"},
+    {"op": "box", "from": [26, 0, 0], "to": [34, 9, 30], "mat": "air"},
+    {"op": "cylinder", "base": [30, 0, 30], "radius": 12, "height": 2, "mat": "paving", "part": "floor"}
+  ]
+}

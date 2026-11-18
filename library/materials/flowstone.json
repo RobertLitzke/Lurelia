@@ -1,0 +1,16 @@
+{
+  "name": "flowstone",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Pale cream calcite of the stalactites and stalagmites, wet and faintly translucent.",
+  "id": 77,
+  "smooth": false,
+  "texture": {
+    "pattern": "strata",
+    "base": [196, 186, 162],
+    "alt": [214, 206, 186],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [200, 190, 166], "alt": [216, 208, 190]}
+  }
+}

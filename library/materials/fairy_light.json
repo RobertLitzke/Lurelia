@@ -1,0 +1,17 @@
+{
+  "name": "fairy_light",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "A string of small warm bulbs, lit from dusk.",
+  "smooth": false,
+  "glow": 2.6,
+  "texture": {
+    "pattern": "flat",
+    "base": [255, 226, 164],
+    "alt": [255, 236, 190],
+    "scale": 4,
+    "contrast": 0.2,
+    "calm": {"base": [255, 234, 172], "alt": [255, 244, 198]}
+  },
+  "night_glow": true
+}

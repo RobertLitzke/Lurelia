@@ -1,0 +1,21 @@
+{
+  "name": "camp_hearth",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "An open hearth in a village yard: a chalk-block kerb 3.5 m across with ash and charcoal in it and a tripod of poles over it.",
+  "size": [20, 18, 20],
+  "anchor": [10, 0, 10],
+  "foundation": 2,
+  "level": false,
+  "tags": ["windbarrow"],
+  "slots": {"stone": "chalk_block", "ash": "ash", "char": "charcoal", "timber": "oak_post"},
+  "ops": [
+    {"op": "cylinder", "base": [10, 0, 10], "radius": 7, "height": 2, "mat": "stone", "part": "stone"},
+    {"op": "cylinder", "base": [10, 0, 10], "radius": 5.4, "height": 2, "mat": "ash", "part": "floor"},
+    {"op": "cylinder", "base": [10, 0, 10], "radius": 3.0, "height": 1, "mat": "char", "part": "floor"},
+    {"op": "box", "from": [4, 2, 10], "to": [5, 16, 11], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [15, 2, 10], "to": [16, 16, 11], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [10, 2, 4], "to": [11, 16, 5], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [5, 15, 5], "to": [15, 16, 15], "mat": "timber", "part": "timber"}
+  ]
+}

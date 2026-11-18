@@ -1,0 +1,21 @@
+{
+  "name": "barracuda",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Barracuda: long, silver and still, hanging in the open water off the wall, then gone in one flick.",
+  "colors": {"herring": [112, 120, 126], "silver": [150, 158, 168], "fin": [36, 28, 24]},
+  "behaviour": {
+    "habit": "patrol",
+    "walk_speed": 1.2,
+    "flee_speed": 5.0,
+    "wary": 2,
+    "flightiness": 0.3,
+    "leap": 0,
+    "depth": [2, 10],
+    "shallows": 3,
+    "group": {"size": [1, 3], "spacing": 2.0, "range": 6},
+    "hunts": ["sardine", "reef_chromis", "anthias", "kelp_perch", "yellow_tang"]
+  },
+  "like": "herring",
+  "scale": 4.0
+}

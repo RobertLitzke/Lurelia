@@ -1,0 +1,16 @@
+{
+  "name": "fall_ice_blue",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "The older, denser ice of a frozen fall: deep clear blue in bands.",
+  "smooth": false,
+  "glints": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [120, 176, 214],
+    "alt": [92, 150, 198],
+    "scale": 5,
+    "contrast": 0.5,
+    "calm": {"base": [132, 184, 218], "alt": [104, 160, 204]}
+  }
+}

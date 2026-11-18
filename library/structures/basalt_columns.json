@@ -1,0 +1,22 @@
+{
+  "name": "basalt_columns",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A cluster of columnar basalt, the tops at different heights.",
+  "size": [24, 32, 24],
+  "anchor": [12, 0, 12],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"rock": "basalt"},
+  "ops": [
+    {"op": "cylinder", "base": [5, 0, 5], "radius": 3, "height": 26, "mat": "rock"},
+    {"op": "cylinder", "base": [11, 0, 6], "radius": 3, "height": 20, "mat": "rock"},
+    {"op": "cylinder", "base": [17, 0, 5], "radius": 2.8, "height": 30, "mat": "rock"},
+    {"op": "cylinder", "base": [8, 0, 12], "radius": 3, "height": 14, "mat": "rock"},
+    {"op": "cylinder", "base": [15, 0, 13], "radius": 3, "height": 22, "mat": "rock"},
+    {"op": "cylinder", "base": [5, 0, 18], "radius": 2.6, "height": 10, "mat": "rock"},
+    {"op": "cylinder", "base": [12, 0, 19], "radius": 3, "height": 17, "mat": "rock"},
+    {"op": "cylinder", "base": [19, 0, 17], "radius": 2.6, "height": 8, "mat": "rock"}
+  ]
+}

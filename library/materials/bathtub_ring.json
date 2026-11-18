@@ -1,0 +1,16 @@
+{
+  "name": "bathtub_ring",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "White mineral crust left on the cliffs as the reservoir fell.",
+  "id": 106,
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [226, 222, 210],
+    "alt": [200, 194, 180],
+    "scale": 8,
+    "contrast": 1.0,
+    "calm": {"base": [226, 222, 210], "alt": [204, 198, 184]}
+  }
+}

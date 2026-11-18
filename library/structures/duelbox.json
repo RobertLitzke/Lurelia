@@ -1,0 +1,28 @@
+{
+  "name": "duelbox",
+  "version": 1,
+  "introduced_by": "duelbox",
+  "notes": "One empty room, written by worlds/duelbox/make_box.py: fifty-eight metres by thirty-four, a flat floor on a plinth, four walls, a roof and six lamps. Nothing to hide behind, which is the point -- it is a bench for weapons, not a map. Edit the script, not this file.",
+  "size": [248, 80, 152],
+  "anchor": [124, 0, 76],
+  "foundation": 4,
+  "level": true,
+  "decays": false,
+  "tags": ["arena", "works"],
+  "ops": [
+    {"op": "box", "from": [8, 0, 8], "to": [240, 19, 144], "mat": "concrete", "part": "stone"},
+    {"op": "box", "from": [8, 19, 8], "to": [240, 20, 144], "mat": "deck_floor", "part": "floor"},
+    {"op": "box", "from": [8, 20, 8], "to": [240, 68, 12], "mat": "works_panel_pale", "part": "wall"},
+    {"op": "box", "from": [8, 20, 140], "to": [240, 68, 144], "mat": "works_panel_pale", "part": "wall"},
+    {"op": "box", "from": [8, 20, 8], "to": [12, 68, 144], "mat": "works_panel_pale", "part": "wall"},
+    {"op": "box", "from": [236, 20, 8], "to": [240, 68, 144], "mat": "works_panel_pale", "part": "wall"},
+    {"op": "box", "from": [8, 68, 8], "to": [240, 72, 144], "mat": "corrugated_tin", "part": "roof"},
+    {"op": "box", "from": [123, 19, 12], "to": [125, 20, 140], "mat": "hazard_stripe", "part": "floor"},
+    {"op": "box", "from": [53, 67, 47], "to": [59, 68, 49], "mat": "works_lamp", "part": "glass"},
+    {"op": "box", "from": [53, 67, 103], "to": [59, 68, 105], "mat": "works_lamp", "part": "glass"},
+    {"op": "box", "from": [121, 67, 47], "to": [127, 68, 49], "mat": "works_lamp", "part": "glass"},
+    {"op": "box", "from": [121, 67, 103], "to": [127, 68, 105], "mat": "works_lamp", "part": "glass"},
+    {"op": "box", "from": [189, 67, 47], "to": [195, 68, 49], "mat": "works_lamp", "part": "glass"},
+    {"op": "box", "from": [189, 67, 103], "to": [195, 68, 105], "mat": "works_lamp", "part": "glass"}
+  ]
+}

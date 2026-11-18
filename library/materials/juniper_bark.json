@@ -1,0 +1,24 @@
+{
+  "name": "juniper_bark",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Shaggy grey-brown juniper bark.",
+  "id": 122,
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [128, 108, 90],
+    "alt": [98, 84, 72],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [140, 120, 102], "alt": [112, 98, 86]}
+  },
+  "top": {
+    "pattern": "rings",
+    "base": [150, 120, 92],
+    "alt": [120, 96, 74],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [160, 130, 102], "alt": [130, 106, 84]}
+  }
+}

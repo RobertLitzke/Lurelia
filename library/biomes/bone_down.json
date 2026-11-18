@@ -1,0 +1,43 @@
+{
+  "name": "bone_down",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The Bone Downs: a stretch of the Flint Down where it is mammoth bone that weathers out of the chalk and not flint. Skulls and ribs stand out of the rubble, ivory splinters lie about, and the diggers will not work it.",
+  "priority": 13,
+  "rules": {"region": "bone"},
+  "surface": "bone_rubble",
+  "subsurface": "chalk_white",
+  "rock": "chalk_white",
+  "map_color": [204, 196, 168],
+  "plants": [
+    {
+      "plant": "feather_tussock",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.3, "max": 0.8}}
+    },
+    {
+      "plant": "sagebrush",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 12, "min": 0.2, "max": 0.9}}
+    },
+    {"plant": "juniper", "density": 0.0008, "placement": {"verb": "lone", "params": {"spacing": 28}}}
+  ],
+  "features": [
+    {"structure": "bone_outcrop", "density": 0.0009, "placement": {"verb": "scatter", "params": {"seat": 2.0}}},
+    {"structure": "boulder", "density": 0.0004}
+  ],
+  "creatures": [
+    {"creature": "crow", "count": 6},
+    {"creature": "eagle", "count": 2},
+    {"creature": "cave_bear", "count": 1},
+    {"creature": "marmot", "count": 4},
+    {"creature": "steppe_wolf", "count": 1},
+    {"creature": "lizard", "count": 4},
+    {"creature": "wind_skate", "count": 2}
+  ],
+  "collectibles": [
+    {"item": "ivory_shard", "density": 0.0016, "placement": {"verb": "scatter", "params": {}}},
+    {"item": "bear_tooth", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}},
+    {"item": "flint_blade", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "sign_yellow",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Yellow paint: road signs and the course start gate.",
+  "id": 140,
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [214, 176, 60],
+    "alt": [196, 160, 52],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [216, 182, 72], "alt": [200, 166, 64]}
+  }
+}

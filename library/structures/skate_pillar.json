@@ -1,0 +1,24 @@
+{
+  "name": "skate_pillar",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The thirteenth pillar: a carved T-pillar of the Tepe stone, 7.5 m and the tallest of them, standing alone on the open grass of the empty north with a wind skate cut into its broad south face and ochred. Broad faces along local X, the carving on local -Z.",
+  "size": [22, 34, 22],
+  "anchor": [10, 0, 10],
+  "foundation": 10,
+  "level": false,
+  "decays": false,
+  "tags": ["windbarrow", "temple"],
+  "slots": {"pillar": "carved_limestone", "paint": "ochre"},
+  "ops": [
+    {"op": "box", "from": [3, 0, 7], "to": [17, 26, 13], "mat": "pillar", "part": "stone"},
+    {"op": "box", "from": [1, 26, 6], "to": [19, 30, 14], "mat": "pillar", "part": "stone"},
+    {"op": "box", "from": [7, 17, 7], "to": [13, 18, 8], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [5, 18, 7], "to": [15, 19, 8], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [3, 19, 7], "to": [17, 20, 8], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [5, 20, 7], "to": [15, 21, 8], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [7, 21, 7], "to": [13, 22, 8], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [9, 13, 7], "to": [11, 17, 8], "mat": "paint", "part": "stone"},
+    {"op": "box", "from": [8, 12, 7], "to": [12, 13, 8], "mat": "paint", "part": "stone"}
+  ]
+}

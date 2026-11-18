@@ -1,0 +1,16 @@
+{
+  "name": "river_gravel",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Rounded grey-brown pebbles on a river bed, seen through the water.",
+  "id": 252,
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [128, 118, 100],
+    "alt": [92, 86, 76],
+    "scale": 7,
+    "contrast": 1.0,
+    "calm": {"base": [140, 128, 106], "alt": [108, 100, 86]}
+  }
+}

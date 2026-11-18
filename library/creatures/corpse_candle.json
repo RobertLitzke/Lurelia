@@ -1,0 +1,13 @@
+{
+  "name": "corpse_candle",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "drift: A corpse candle over the barrow field: a cold yellow flame the size of a fist with a dim halo, drifting between the mounds after dark and pulsing slowly. The villages say it is the breath going by.",
+  "voxel": 0.03,
+  "half_w": 0.1,
+  "height": 0.1,
+  "colors": {"wisp": [252, 240, 168, 3.0], "halo": [214, 186, 96, 1.4]},
+  "behaviour": {"movement": "drift", "fly_height": 1.3, "blink": 0.09},
+  "like": "marsh_light",
+  "scale": 1.0
+}

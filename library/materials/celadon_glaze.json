@@ -1,0 +1,15 @@
+{
+  "name": "celadon_glaze",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Celadon stoneware: a jade-green glaze, crazed fine, the trade jars of the Jadewater wreck.",
+  "smooth": false,
+  "texture": {
+    "pattern": "cracks",
+    "base": [138, 178, 150],
+    "alt": [118, 158, 132],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [144, 184, 156], "alt": [124, 164, 138]}
+  }
+}

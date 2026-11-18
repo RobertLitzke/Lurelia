@@ -1,0 +1,16 @@
+{
+  "name": "redwood_bark",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Coast redwood bark: deep red-brown, thick and stringy in long vertical ridges.",
+  "id": 200,
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [118, 56, 38],
+    "alt": [92, 42, 30],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [128, 70, 50], "alt": [104, 56, 42]}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "river_mud",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Damp brown silt and sand along a river's waterline.",
+  "id": 253,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [112, 98, 74],
+    "alt": [138, 122, 92],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [128, 112, 84], "alt": [148, 132, 100]}
+  }
+}

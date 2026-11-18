@@ -1,0 +1,108 @@
+{
+  "name": "giraffe",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Giraffe: five metres of leg and neck with a small body slung between them, browsing the tops of the thorn trees. Walks both legs of a side together and has no interest in people at all.",
+  "voxel": 0.155,
+  "half_w": 0.5,
+  "height": 4.9,
+  "colors": {
+    "coat": [176, 128, 74],
+    "belly": [226, 210, 180],
+    "nose": [150, 110, 100],
+    "horn": [214, 196, 160],
+    "dark": [36, 28, 24]
+  },
+  "behaviour": {
+    "movement": "graze",
+    "walk_speed": 0.8,
+    "flee_speed": 9.0,
+    "wary": 20,
+    "flightiness": 0.5,
+    "juvenile_flightiness": 0.8,
+    "flees_from": ["player"],
+    "group": {"size": [2, 5], "spacing": 6.0, "range": 26, "alignment": 0.6, "cohesion": 0.8}
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 18, 18], "radius": [3.4, 3.2, 5.4], "mat": "coat"},
+    {"op": "ellipsoid", "centre": [16, 19.5, 13], "radius": [3.3, 3.4, 3.4], "mat": "coat"},
+    {"op": "recolour_below", "y": 16, "from": "coat", "to": "belly"},
+    {"op": "box", "from": [13, 2, 12], "to": [15, 17, 14], "mat": "coat", "part": "leg_fl"},
+    {"op": "box", "from": [13, 0, 12], "to": [15, 2, 14], "mat": "dark", "part": "leg_fl"},
+    {"op": "box", "from": [18, 2, 12], "to": [20, 17, 14], "mat": "coat", "part": "leg_fr"},
+    {"op": "box", "from": [18, 0, 12], "to": [20, 2, 14], "mat": "dark", "part": "leg_fr"},
+    {"op": "box", "from": [13, 2, 21], "to": [15, 16, 23], "mat": "coat", "part": "leg_hl"},
+    {"op": "box", "from": [13, 0, 21], "to": [15, 2, 23], "mat": "dark", "part": "leg_hl"},
+    {"op": "box", "from": [18, 2, 21], "to": [20, 16, 23], "mat": "coat", "part": "leg_hr"},
+    {"op": "box", "from": [18, 0, 21], "to": [20, 2, 23], "mat": "dark", "part": "leg_hr"},
+    {"op": "box", "from": [14, 21, 11], "to": [18, 22, 15], "mat": "coat", "part": "neck"},
+    {"op": "box", "from": [14, 22, 11], "to": [18, 23, 15], "mat": "coat", "part": "neck"},
+    {"op": "box", "from": [14, 23, 10], "to": [18, 24, 14], "mat": "coat", "part": "neck"},
+    {"op": "box", "from": [14, 24, 10], "to": [18, 25, 14], "mat": "coat", "part": "neck"},
+    {"op": "box", "from": [14, 25, 9], "to": [18, 26, 13], "mat": "coat", "part": "neck"},
+    {"op": "box", "from": [14, 26, 9], "to": [18, 27, 13], "mat": "coat", "part": "neck"},
+    {"op": "box", "from": [14, 27, 8], "to": [18, 28, 12], "mat": "coat", "part": "neck"},
+    {"op": "box", "from": [14, 28, 4], "to": [18, 31, 10], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [15, 28, 2], "to": [18, 30, 4], "mat": "nose", "part": "head"},
+    {"op": "set", "at": [14, 30, 6], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [17, 30, 6], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [13, 30, 7], "to": [15, 32, 9], "mat": "coat", "part": "ear_l"},
+    {"op": "box", "from": [17, 30, 7], "to": [19, 32, 9], "mat": "coat", "part": "ear_r"},
+    {"op": "box", "from": [15, 31, 5], "to": [16, 33, 6], "mat": "horn", "part": "head"},
+    {"op": "box", "from": [16, 31, 5], "to": [17, 33, 6], "mat": "horn", "part": "head"},
+    {"op": "box", "from": [15, 16, 23], "to": [17, 20, 25], "mat": "coat", "part": "tail"},
+    {"op": "box", "from": [15, 13, 24], "to": [17, 16, 26], "mat": "dark", "part": "tail"}
+  ],
+  "vary": {"size": 0.12, "shade": 0.1, "hue": 0.03},
+  "rig": {
+    "plan": "quadruped",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16, 20, 11.5]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16, 28, 9]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [14, 30, 8], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [18, 30, 8], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14, 17, 13], "side": "l", "pair": 0},
+      {
+        "name": "leg_fl_low",
+        "role": "leg",
+        "parent": "leg_fl",
+        "joint": [14, 9, 13],
+        "claims": [[[13, 0, 12], [15, 9, 14]]],
+        "side": "l",
+        "pair": 0
+      },
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [19, 17, 13], "side": "r", "pair": 0},
+      {
+        "name": "leg_fr_low",
+        "role": "leg",
+        "parent": "leg_fr",
+        "joint": [19, 9, 13],
+        "claims": [[[18, 0, 12], [20, 9, 14]]],
+        "side": "r",
+        "pair": 0
+      },
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14, 17, 22], "side": "l", "pair": 1},
+      {
+        "name": "leg_hl_low",
+        "role": "leg",
+        "parent": "leg_hl",
+        "joint": [14, 9, 22],
+        "claims": [[[13, 0, 21], [15, 9, 23]]],
+        "side": "l",
+        "pair": 1
+      },
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [19, 17, 22], "side": "r", "pair": 1},
+      {
+        "name": "leg_hr_low",
+        "role": "leg",
+        "parent": "leg_hr",
+        "joint": [19, 9, 22],
+        "claims": [[[18, 0, 21], [20, 9, 23]]],
+        "side": "r",
+        "pair": 1
+      },
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 18, 23]}
+    ]
+  }
+}

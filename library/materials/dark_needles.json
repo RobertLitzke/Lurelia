@@ -1,0 +1,15 @@
+{
+  "name": "dark_needles",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 40,
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [20, 50, 46],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [34, 70, 60],
+    "calm": {"base": [24, 62, 58], "alt": [32, 74, 66]}
+  }
+}

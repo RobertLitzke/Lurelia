@@ -1,0 +1,14 @@
+{
+  "name": "pottery_shard",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Pieces of the settlers’ crockery, around the village.",
+  "display": "pottery shard",
+  "voxel": 0.03,
+  "colors": {"terracotta": [184, 96, 60], "cream": [236, 222, 196]},
+  "ops": [
+    {"op": "box", "from": [10, 0, 12], "to": [22, 2, 20], "mat": "terracotta"},
+    {"op": "box", "from": [10, 2, 12], "to": [22, 4, 14], "mat": "terracotta"},
+    {"op": "box", "from": [12, 0, 17], "to": [18, 2, 20], "mat": "cream"}
+  ]
+}

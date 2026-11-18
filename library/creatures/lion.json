@@ -1,0 +1,29 @@
+{
+  "name": "lion",
+  "version": 2,
+  "introduced_by": "base",
+  "notes": "Lion: a heavy tawny cat with a dark mane over its shoulders and a tufted tail. Lives in prides, so it walks in twos and threes.",
+  "colors": {"coat": [206, 170, 112], "belly": [226, 212, 184], "mane": [122, 84, 44], "muzzle": [226, 212, 184]},
+  "behaviour": {
+    "walk_speed": 1.1,
+    "flee_speed": 8.0,
+    "wary": 22,
+    "flightiness": 0.3,
+    "hunts": ["zebra", "deer", "pronghorn"],
+    "spawn_chance": 0.08,
+    "group": {"size": [1, 3], "spacing": 2.6, "range": 14, "alignment": 0.8, "cohesion": 1.2},
+    "active": "nocturnal",
+    "off_hours": 0.15
+  },
+  "like": "cougar",
+  "scale": 1.35,
+  "extra_ops": [
+    {"op": "ellipsoid", "centre": [16, 12.5, 7.5], "radius": [5.2, 4.8, 4.0], "mat": "mane", "part": "neck"},
+    {"op": "ellipsoid", "centre": [16, 13, 5], "radius": [3.2, 2.8, 3.0], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [15, 10, 1], "to": [18, 11, 4], "mat": "muzzle", "part": "head"},
+    {"op": "set", "at": [16, 12, 1], "mat": "mane", "part": "head"},
+    {"op": "set", "at": [14, 14, 3], "mat": "mane", "part": "head"},
+    {"op": "set", "at": [18, 14, 3], "mat": "mane", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 9, 29.5], "radius": [1.7, 1.7, 1.8], "mat": "mane", "part": "tail"}
+  ]
+}

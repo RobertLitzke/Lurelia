@@ -1,0 +1,16 @@
+{
+  "name": "siding_grey",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Grey painted lap siding.",
+  "id": 161,
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [140, 140, 136],
+    "alt": [124, 124, 120],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [150, 150, 146], "alt": [134, 134, 130]}
+  }
+}

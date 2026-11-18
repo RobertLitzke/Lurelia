@@ -1,0 +1,28 @@
+{
+  "name": "reef_flat",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "The reef flat behind the crest, a metre or so under: low brain and finger coral on pale rubble, sand between.",
+  "priority": 20,
+  "rules": {"underwater": true, "region": "reef_flat"},
+  "surface": "reef_lime",
+  "subsurface": "reef_lime",
+  "rock": "reef_lime",
+  "fringe": 0,
+  "map_color": [150, 190, 170],
+  "plants": [
+    {"plant": "brain_coral", "density": 0.03, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "finger_coral",
+      "density": 0.05,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.3, "max": 0.6}}
+    },
+    {"plant": "staghorn_coral", "density": 0.015, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "reef_chromis", "count": 105},
+    {"creature": "yellow_tang", "count": 28},
+    {"creature": "butterflyfish", "count": 10},
+    {"creature": "parrotfish", "count": 7}
+  ]
+}

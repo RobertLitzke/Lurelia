@@ -1,0 +1,13 @@
+{
+  "name": "saw_palmetto",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Saw palmetto: low clumps of grey-green fans under the oaks and on the hammocks, drawn as sprites.",
+  "form": "herb",
+  "height": [0.8, 1.2],
+  "crown_radius": [0.8, 1.2],
+  "bark": "palm_trunk",
+  "leaf": "palmetto_fronds",
+  "max_slope": 0.7,
+  "standing_water": [-5, -0.1]
+}

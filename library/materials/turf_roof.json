@@ -1,0 +1,15 @@
+{
+  "name": "turf_roof",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "A turf roof: grass sods over birch bark, brown and sere in winter.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [92, 86, 58],
+    "alt": [72, 70, 46],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [100, 94, 66], "alt": [80, 78, 54]}
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "fae_wood",
+  "version": 1,
+  "introduced_by": "faerie",
+  "notes": "Green belts grown to deep wood.",
+  "priority": 9,
+  "rules": {"region": "city_wood"},
+  "surface": "forest_floor",
+  "subsurface": "dirt",
+  "fringe": 0,
+  "map_color": [50, 110, 66],
+  "plants": [
+    {"plant": "blossom_vine", "density": 0.2, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "giant_fir", "density": 0.01, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "bigleaf_maple", "density": 0.008, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "fern", "density": 0.06, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "salal", "density": 0.04, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "moss_bear", "count": 1},
+    {"creature": "moss_tortoise", "count": 2},
+    {"creature": "sky_ray", "count": 3},
+    {"creature": "pileated_woodpecker", "count": 1},
+    {"creature": "fae_badger", "count": 1}
+  ]
+}

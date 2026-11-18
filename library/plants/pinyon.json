@@ -1,0 +1,14 @@
+{
+  "name": "pinyon",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Pinyon pine: small, round and bushy, on the benches between the cliffs.",
+  "form": "broad",
+  "height": [4, 7],
+  "trunk_radius": [0.18, 0.28],
+  "crown_radius": [1.5, 2.2],
+  "bark": "juniper_bark",
+  "leaf": "pinyon_needles",
+  "squash": 0.75,
+  "max_slope": 1.0
+}

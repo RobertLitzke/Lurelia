@@ -1,0 +1,16 @@
+{
+  "name": "hoodoo_pale",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 54,
+  "smooth": false,
+  "texture": {
+    "pattern": "strata",
+    "base": [222, 200, 172],
+    "scale": 3,
+    "contrast": 1.0,
+    "alt": [236, 218, 192],
+    "calm": {"base": [234, 210, 178], "alt": [244, 226, 198]}
+  },
+  "round": true
+}

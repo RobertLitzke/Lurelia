@@ -1,0 +1,16 @@
+{
+  "name": "pine_duff",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Orange-brown ponderosa needle litter on the plateau floor.",
+  "id": 113,
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [106, 76, 52],
+    "alt": [90, 66, 48],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [114, 84, 58], "alt": [100, 74, 54]}
+  }
+}

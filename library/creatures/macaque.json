@@ -1,0 +1,14 @@
+{
+  "name": "macaque",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Macaque: grey-brown with a bare pink face and a stub of a tail, bold round temples and paths where people feed it.",
+  "colors": {"coat": [146, 134, 110], "belly": [206, 198, 180], "face": [214, 164, 150], "dark": [36, 28, 24]},
+  "behaviour": {"wary": 7, "walk_speed": 1.1},
+  "like": "monkey",
+  "scale": 1.05,
+  "extra_ops": [
+    {"op": "box", "from": [12, 9, 20], "to": [20, 20, 30], "mat": "air", "part": "tail"},
+    {"op": "ellipsoid", "centre": [16, 12, 22], "radius": [1.2, 1.2, 2.2], "mat": "coat", "part": "tail"}
+  ]
+}

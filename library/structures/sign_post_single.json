@@ -1,0 +1,13 @@
+{
+  "name": "sign_post_single",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "One squared timber post with a small board on top: a trail sign or a finger post. The board is drawn as plates (world/places.rs), not voxels.",
+  "size": [3, 9, 3],
+  "anchor": [1, 0, 0],
+  "foundation": 4,
+  "level": false,
+  "tags": ["sign"],
+  "slots": {"timber": "timber_frame"},
+  "ops": [{"op": "box", "from": [0, 0, 0], "to": [2, 8, 2], "mat": "timber", "part": "timber"}]
+}

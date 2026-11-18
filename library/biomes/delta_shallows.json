@@ -1,0 +1,18 @@
+{
+  "name": "delta_shallows",
+  "version": 2,
+  "introduced_by": "thornpan",
+  "notes": "The channel beds: clean white sand under water a metre or two deep, clear enough to count the fish in it. The sand is why the flood runs clear by the time it is past the first islands.",
+  "priority": 3,
+  "rules": {"underwater": true},
+  "surface": "shore_sand",
+  "subsurface": "shore_sand",
+  "map_color": [196, 196, 168],
+  "plants": [{"plant": "water_lily", "density": 0.05, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "channel_catfish", "count": 14},
+    {"creature": "trout", "count": 16, "morph": "golden"},
+    {"creature": "crocodile", "count": 4},
+    {"creature": "otter", "count": 4}
+  ]
+}

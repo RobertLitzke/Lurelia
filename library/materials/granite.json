@@ -1,0 +1,16 @@
+{
+  "name": "granite",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Granite: the country's floor where it stands up in domes, grey speckled light and dark, weathering off in curved shells. Drawn in facets so a whaleback reads as rock, not steps.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [142, 140, 138],
+    "alt": [110, 110, 112],
+    "scale": 5,
+    "contrast": 0.9,
+    "calm": {"base": [146, 145, 144], "alt": [116, 116, 118]}
+  },
+  "facet": true
+}

@@ -1,0 +1,17 @@
+{
+  "name": "autumn_vine",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A hanging vine in autumn and winter: the stem gone brown, its small leaves red (the leaf cards take maple_red's colour, mesh/sprites.rs). Passable, like the green vine.",
+  "smooth": false,
+  "passable": true,
+  "foliage": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [116, 78, 46],
+    "alt": [146, 96, 56],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [122, 82, 50], "alt": [150, 100, 60]}
+  }
+}

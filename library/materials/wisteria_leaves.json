@@ -1,0 +1,17 @@
+{
+  "name": "wisteria_leaves",
+  "version": 2,
+  "introduced_by": "faerie",
+  "notes": "Hanging lilac wisteria blossom. v2: the strands of the wisteria vine, so passable like any vine; the racemes are sprites.",
+  "id": 186,
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [168, 140, 214],
+    "alt": [140, 116, 196],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [178, 152, 222], "alt": [152, 128, 206]}
+  }
+}

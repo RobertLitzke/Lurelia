@@ -1,0 +1,20 @@
+{
+  "name": "quarry_hut",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Plank shed where the skystone diggers kept their tools.",
+  "size": [16, 16, 16],
+  "anchor": [8, 0, 0],
+  "foundation": 4,
+  "tags": ["settler"],
+  "slots": {"wall": "weathered_planks", "timber": "timber_frame", "roof": "weathered_planks"},
+  "ops": [
+    {"op": "walls", "from": [0, 0, 0], "to": [16, 8, 16], "mat": "wall", "thick": 1, "part": "timber"},
+    {"op": "box", "from": [6, 0, 0], "to": [10, 7, 1], "mat": "air"},
+    {"op": "box", "from": [0, 0, 0], "to": [1, 8, 1], "mat": "timber", "part": "frame"},
+    {"op": "box", "from": [15, 0, 0], "to": [16, 8, 1], "mat": "timber", "part": "frame"},
+    {"op": "box", "from": [0, 0, 15], "to": [1, 8, 16], "mat": "timber", "part": "frame"},
+    {"op": "box", "from": [15, 0, 15], "to": [16, 8, 16], "mat": "timber", "part": "frame"},
+    {"op": "gable", "from": [0, 8, 0], "to": [16, 8, 16], "axis": "x", "mat": "roof", "rise": 1, "part": "roof"}
+  ]
+}

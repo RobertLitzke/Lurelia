@@ -1,0 +1,17 @@
+{
+  "name": "karst_pale",
+  "version": 2,
+  "introduced_by": "jadewater",
+  "notes": "The palest bed of the limestone, almost white, near the tops of the towers. v2: drawn in flat facets (surface nets lit like sloped ground) instead of smoothed into slopes, so tower walls and the Old Wall's cliffs read as smooth rock, not one-voxel steps.",
+  "id": 232,
+  "smooth": false,
+  "texture": {
+    "pattern": "cracks",
+    "base": [170, 180, 186],
+    "alt": [150, 162, 170],
+    "scale": 4,
+    "contrast": 0.6,
+    "calm": {"base": [168, 178, 186], "alt": [150, 162, 172]}
+  },
+  "facet": true
+}

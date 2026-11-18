@@ -1,0 +1,17 @@
+{
+  "name": "modern",
+  "version": 1,
+  "introduced_by": "seattle",
+  "notes": "The city as the importer means it: asphalt roads, concrete, tar and shingle. What a `city` event uses when it names no kit.",
+  "road": "road_asphalt",
+  "pavement": "pavement",
+  "glass": "pane_glass",
+  "metal": "roof_vent",
+  "deck": "concrete",
+  "deck_top": "road_asphalt",
+  "rail": "bridge_steel",
+  "chimney": "brick_brown",
+  "porch_floor": "door_wood",
+  "doors": ["door_wood", "door_red", "door_blue", "door_green", "door_black", "door_yellow", "door_black"],
+  "plinths": ["concrete", "brick_brown", "fieldstone"]
+}

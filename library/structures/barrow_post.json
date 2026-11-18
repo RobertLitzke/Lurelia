@@ -1,0 +1,20 @@
+{
+  "name": "barrow_post",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A split-oak post 3.5 m tall standing on a kurgan's crown, ringed with red ochre, chalk blocks packed round its foot. Broad faces along local X.",
+  "size": [16, 18, 16],
+  "anchor": [8, 0, 8],
+  "foundation": 8,
+  "level": false,
+  "decays": false,
+  "tags": ["windbarrow", "barrow"],
+  "slots": {"stone": "chalk_block", "timber": "oak_post", "paint": "ochre"},
+  "ops": [
+    {"op": "cylinder", "base": [8, 0, 8], "radius": 4.2, "height": 2, "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [6, 1, 7], "to": [10, 13, 10], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [6, 13, 7], "to": [10, 14, 10], "mat": "paint", "part": "timber"},
+    {"op": "box", "from": [7, 14, 8], "to": [9, 16, 9], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [6, 9, 7], "to": [10, 10, 10], "mat": "paint", "part": "timber"}
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "prairie",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "What a forest becomes for a lifetime after fire.",
+  "priority": 8,
+  "rules": {"burn_age": [0, 150]},
+  "surface": "prairie_grass",
+  "subsurface": "dirt",
+  "map_color": [200, 172, 90],
+  "plants": [
+    {"plant": "snag", "density": 0.0025, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "aspen", "density": 0.03, "placement": {"verb": "edge", "params": {"width": 22, "inner": 0.03}}},
+    {"plant": "sapling_pine", "density": 0.02, "placement": {"verb": "edge", "params": {"width": 30, "inner": 0.05}}},
+    {"plant": "fireweed", "density": 0.03, "placement": {"verb": "clustered", "params": {"size": 20}}},
+    {"plant": "hawthorn", "density": 0.004, "placement": {"verb": "edge", "params": {"width": 20.0, "inner": 0.04}}}
+  ],
+  "features": [{"structure": "boulder", "density": 0.0003, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "rabbit", "count": 8},
+    {"creature": "crow", "count": 3},
+    {"creature": "deer", "count": 2},
+    {"creature": "starling", "count": 70},
+    {"creature": "sparrow", "count": 6},
+    {"creature": "horse", "count": 5},
+    {"creature": "bee", "count": 6},
+    {"creature": "bumblebee", "count": 3},
+    {"creature": "northern_flicker", "count": 1},
+    {"creature": "bison", "count": 4},
+    {"creature": "badger", "count": 1},
+    {"creature": "gopher_snake", "count": 2},
+    {"creature": "garter_snake", "count": 2}
+  ],
+  "collectibles": [{"item": "pine_cone", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}}]
+}

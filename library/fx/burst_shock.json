@@ -1,0 +1,17 @@
+{
+  "name": "burst_shock",
+  "version": 1,
+  "introduced_by": "rocket_blast",
+  "notes": "A few streaks of blue-white off the shock front, the cold colour against the fire.",
+  "shape": "streak",
+  "count": [6, 9],
+  "speed": [14.0, 22.0],
+  "cone_deg": 180,
+  "life": [0.08, 0.16],
+  "size": [0.035, 0.01],
+  "drag": 3.0,
+  "color": [150, 205, 255],
+  "alpha": 1.0,
+  "glow": 3.5,
+  "near_fade": 0.5
+}

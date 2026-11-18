@@ -1,0 +1,39 @@
+{
+  "name": "sabretooth",
+  "version": 2,
+  "introduced_by": "windbarrow",
+  "notes": "skulk: Sabretoothed cat: heavier in the shoulder than a cougar and tawny with faint flank spots, a pair of long pale canines hanging past its jaw. Hunts horses and saiga, alone, and is rarely seen.",
+  "colors": {
+    "coat": [198, 154, 98],
+    "belly": [232, 222, 198],
+    "muzzle": [210, 180, 140],
+    "dark": [36, 28, 24],
+    "tusk": [232, 222, 194],
+    "spot": [146, 110, 62]
+  },
+  "behaviour": {
+    "movement": "skulk",
+    "walk_speed": 1.2,
+    "flee_speed": 9.0,
+    "wary": 24,
+    "flees_from": ["player"],
+    "hunts": ["przewalski_horse", "saiga", "deer", "rabbit"],
+    "spawn_chance": 0.05,
+    "active": "crepuscular",
+    "off_hours": 0.15
+  },
+  "like": "cougar",
+  "scale": 1.3,
+  "extra_ops": [
+    {"op": "box", "from": [15, 7, 1], "to": [16, 11, 2], "mat": "tusk", "part": "head"},
+    {"op": "box", "from": [17, 7, 1], "to": [18, 11, 2], "mat": "tusk", "part": "head"},
+    {"op": "set", "at": [15, 6, 2], "mat": "tusk", "part": "head"},
+    {"op": "set", "at": [17, 6, 2], "mat": "tusk", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 13, 12], "radius": [4.0, 3.0, 3.4], "mat": "coat"},
+    {"op": "set", "at": [13, 11, 15], "mat": "spot"},
+    {"op": "set", "at": [19, 11, 17], "mat": "spot"},
+    {"op": "set", "at": [13, 10, 20], "mat": "spot"},
+    {"op": "set", "at": [19, 12, 13], "mat": "spot"}
+  ],
+  "vary": {"size": 0.08, "shade": 0.1, "hue": 0.03}
+}

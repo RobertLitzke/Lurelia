@@ -1,0 +1,97 @@
+{
+  "notes": "Dust and red rock, graded like a Western: bleached gold at your feet, salmon through the middle distance, the mesas going dusty violet, six slabs so each line of cliffs takes its own colour, and a little gradient map for the warm midtones. Warm sun, cool shadow.",
+  "ramp": [
+    {
+      "at": 0.0,
+      "color": [
+        1.0,
+        0.82,
+        0.5
+      ]
+    },
+    {
+      "at": 0.3,
+      "color": [
+        0.98,
+        0.54,
+        0.4
+      ]
+    },
+    {
+      "at": 0.6,
+      "color": [
+        0.66,
+        0.34,
+        0.56
+      ]
+    },
+    {
+      "at": 1.0,
+      "color": [
+        0.26,
+        0.2,
+        0.58
+      ]
+    }
+  ],
+  "map": [
+    {
+      "at": 0.0,
+      "color": [
+        0.1,
+        0.11,
+        0.22
+      ]
+    },
+    {
+      "at": 0.35,
+      "color": [
+        0.36,
+        0.22,
+        0.2
+      ]
+    },
+    {
+      "at": 0.7,
+      "color": [
+        0.82,
+        0.48,
+        0.24
+      ]
+    },
+    {
+      "at": 1.0,
+      "color": [
+        1.0,
+        0.92,
+        0.74
+      ]
+    }
+  ],
+  "ambient": [
+    0.32,
+    0.72,
+    1.12
+  ],
+  "sun_tint": [
+    1.18,
+    0.9,
+    0.54
+  ],
+  "knobs": {
+    "ramp_reach": 700.0,
+    "ramp_curve": 0.35,
+    "ramp_bands": 6.0,
+    "ramp_value": 0.6,
+    "haze_ramp": 0.95,
+    "haze_density": 1.5,
+    "haze_height": 160.0,
+    "sky_ramp": 0.3,
+    "sky_reach": 0.3,
+    "shade_ramp": 0.8,
+    "sun_side": 0.4,
+    "map_amount": 0.16,
+    "saturation": 1.1,
+    "contrast": 0.36
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "bubbles",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "A diver's breath out, or a kick: a few small silver bubbles that wobble up toward the surface, quicker as they go.",
+  "shape": "puff",
+  "count": [5, 9],
+  "speed": [0.3, 0.7],
+  "cone_deg": 30,
+  "life": [1.6, 2.6],
+  "size": [0.025, 0.07],
+  "gravity": -2.4,
+  "drag": 1.2,
+  "wind": 0.0,
+  "color": [225, 245, 250],
+  "alpha": 0.55,
+  "near_fade": 0.08
+}

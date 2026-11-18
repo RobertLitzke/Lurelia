@@ -1,0 +1,44 @@
+{
+  "name": "bloom",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Where the skystone changed what grows. Strongest at the crater, fading along the strewn field.",
+  "priority": 10,
+  "rules": {"strange": [0.38, 1.0]},
+  "surface": "pale_grass",
+  "subsurface": "ash",
+  "map_color": [176, 160, 200],
+  "plants": [
+    {
+      "plant": "spiral_pine",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 35, "min": 0.4, "max": 0.6}}
+    },
+    {
+      "plant": "spiral_pine",
+      "density": 0.004,
+      "placement": {"verb": "gradient", "field": "strange", "params": {"min": 0.4, "max": 0.8}}
+    },
+    {"plant": "pale_birch", "density": 0.004, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "glassbloom",
+      "density": 0.02,
+      "placement": {"verb": "gradient", "field": "strange", "params": {"min": 0.55, "max": 0.95}}
+    }
+  ],
+  "features": [
+    {
+      "structure": "glass_spikes",
+      "density": 0.0007,
+      "placement": {"verb": "gradient", "params": {"min": 0.6, "max": 1.0}, "field": "strange"}
+    }
+  ],
+  "creatures": [{"creature": "pale_hare", "count": 6}, {"creature": "glassmoth", "count": 8}],
+  "collectibles": [
+    {
+      "item": "skystone_chip",
+      "density": 0.002,
+      "placement": {"verb": "gradient", "params": {"min": 0.45, "max": 0.9}, "field": "strange"}
+    }
+  ]
+}

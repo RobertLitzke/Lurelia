@@ -1,0 +1,12 @@
+{
+  "name": "cave_passage",
+  "version": 1,
+  "introduced_by": "routing engine",
+  "notes": "A walkable passage bored through rock at the height the ribbon names: 3 m across, 3 m of headroom, a level floor of cave rock. Routed like any other line, so a cave network is a network.",
+  "ground": "bore",
+  "width": 3.0,
+  "mat": "cave_rock",
+  "clear": 3.0,
+  "deck": {"thick": 0.5, "mat": "cave_rock"},
+  "tags": ["cave"]
+}

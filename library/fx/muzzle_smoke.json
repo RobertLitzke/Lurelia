@@ -1,0 +1,19 @@
+{
+  "name": "muzzle_smoke",
+  "version": 1,
+  "introduced_by": "particles",
+  "notes": "Smoke out of the muzzle after a shot.",
+  "shape": "puff",
+  "count": [3, 5],
+  "speed": [0.6, 1.6],
+  "cone_deg": 18,
+  "life": [0.5, 1.0],
+  "size": [0.04, 0.32],
+  "size_jitter": 0.3,
+  "gravity": -0.3,
+  "drag": 3.5,
+  "wind": 0.6,
+  "color": [200, 200, 198],
+  "alpha": 0.28,
+  "near_fade": 0.6
+}

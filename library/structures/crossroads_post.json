@@ -1,0 +1,23 @@
+{
+  "name": "crossroads_post",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "The finger post where the levee road crosses the parish road: four boards pointing four ways, and a lantern on a crook beside it. Stand it in the middle of the crossing.",
+  "size": [15, 17, 15],
+  "anchor": [7, 0, 7],
+  "foundation": 2,
+  "level": false,
+  "decays": false,
+  "tags": ["crossroads"],
+  "slots": {"post": "timber_frame", "board": "weathered_planks", "lamp": "lamplit_glass"},
+  "ops": [
+    {"op": "box", "from": [7, 0, 7], "to": [8, 16, 8], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [0, 13, 7], "to": [7, 14, 8], "mat": "board", "part": "timber"},
+    {"op": "box", "from": [8, 11, 7], "to": [15, 12, 8], "mat": "board", "part": "timber"},
+    {"op": "box", "from": [7, 9, 0], "to": [8, 10, 7], "mat": "board", "part": "timber"},
+    {"op": "box", "from": [7, 14, 8], "to": [8, 15, 15], "mat": "board", "part": "timber"},
+    {"op": "box", "from": [12, 0, 12], "to": [13, 14, 13], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [10, 13, 12], "to": [12, 14, 13], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [10, 11, 12], "to": [11, 13, 13], "mat": "lamp", "part": "glass"}
+  ]
+}

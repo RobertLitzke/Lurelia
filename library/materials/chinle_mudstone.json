@@ -1,0 +1,16 @@
+{
+  "name": "chinle_mudstone",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Banded purple, grey and pale blue mudstone at the bottom of the stack; badlands and petrified logs.",
+  "id": 100,
+  "smooth": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [150, 118, 138],
+    "alt": [168, 164, 176],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [168, 136, 152], "alt": [178, 174, 184]}
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "beach",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "priority": 5,
+  "rules": {"coast": [0, 9], "elev": [0, 2.5]},
+  "surface": "sand",
+  "subsurface": "sand",
+  "map_color": [222, 206, 150],
+  "plants": [
+    {
+      "plant": "beach_pea",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.45, "max": 0.6}}
+    }
+  ],
+  "features": [{"structure": "flat_rock", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "gull", "count": 4},
+    {"creature": "sea_turtle", "count": 2},
+    {"creature": "harbor_seal", "count": 2},
+    {"creature": "goose", "count": 6},
+    {"creature": "mallard", "count": 4}
+  ],
+  "collectibles": [{"item": "seashell", "density": 0.004, "placement": {"verb": "scatter", "params": {}}}]
+}

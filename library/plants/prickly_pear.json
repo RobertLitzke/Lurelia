@@ -1,0 +1,15 @@
+{
+  "name": "prickly_pear",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "pads: Prickly pear: a low sprawl of flat jointed pads, magenta fruit on the top ones. Bees visit its flowers.",
+  "form": "pads",
+  "height": [0.7, 1.3],
+  "trunk_radius": [0.13, 0.15],
+  "crown_radius": [0.6, 1.1],
+  "bark": "prickly_pear_pad",
+  "max_slope": 1.0,
+  "stems": [2, 5],
+  "flower": "prickly_pear_fruit",
+  "affords": ["nectar", "cover"]
+}

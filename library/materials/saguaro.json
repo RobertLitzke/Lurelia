@@ -1,0 +1,16 @@
+{
+  "name": "saguaro",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Saguaro skin: ribbed green with pale spine rows.",
+  "id": 204,
+  "smooth": false,
+  "texture": {
+    "pattern": "columns",
+    "base": [82, 104, 66],
+    "alt": [64, 84, 52],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [90, 108, 74], "alt": [72, 90, 60]}
+  }
+}

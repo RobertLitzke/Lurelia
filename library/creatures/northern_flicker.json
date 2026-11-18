@@ -1,0 +1,27 @@
+{
+  "name": "northern_flicker",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Northern flicker: a big brown woodpecker barred with black, spotted below, with a red moustache. Often feeds on the ground and in open woods.",
+  "colors": {
+    "body": [150, 112, 74],
+    "head": [140, 118, 96],
+    "wing": [150, 112, 74],
+    "tail": [36, 28, 24],
+    "white": [214, 196, 160],
+    "red": [200, 50, 40]
+  },
+  "behaviour": {"wary": 10},
+  "like": "woodpecker",
+  "scale": 1.6,
+  "extra_ops": [
+    {
+      "op": "repeat",
+      "count": 4,
+      "step": [0, 0, 2],
+      "ops": [{"op": "recolour", "at": [13, 9, 12], "until": [20, 11, 13], "from": "body", "to": "tail"}]
+    },
+    {"op": "set", "at": [15, 9, 9], "mat": "red", "part": "head"},
+    {"op": "set", "at": [17, 9, 9], "mat": "red", "part": "head"}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "kayenta_ledges",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Purple-red ledgy sandstone and siltstone between the two cliff formers.",
+  "id": 102,
+  "smooth": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [140, 78, 70],
+    "alt": [118, 68, 66],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [156, 94, 84], "alt": [138, 84, 80]}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "siding_slate",
+  "version": 1,
+  "introduced_by": "city",
+  "notes": "Slate-blue painted lap siding.",
+  "id": 159,
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [96, 112, 130],
+    "alt": [84, 98, 116],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [108, 124, 142], "alt": [96, 110, 128]}
+  }
+}

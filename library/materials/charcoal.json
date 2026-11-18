@@ -1,0 +1,15 @@
+{
+  "name": "charcoal",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "id": 22,
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [30, 28, 28],
+    "scale": 6,
+    "contrast": 1.0,
+    "alt": [62, 56, 50],
+    "calm": {"base": [52, 46, 44]}
+  }
+}

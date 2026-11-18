@@ -1,0 +1,17 @@
+{
+  "name": "star_gold",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "The star on the market spruce.",
+  "smooth": false,
+  "glow": 3.5,
+  "texture": {
+    "pattern": "flat",
+    "base": [255, 214, 96],
+    "alt": [255, 230, 140],
+    "scale": 4,
+    "contrast": 0.2,
+    "calm": {"base": [255, 222, 104], "alt": [255, 238, 148]}
+  },
+  "night_glow": true
+}

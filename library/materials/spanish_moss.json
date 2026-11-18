@@ -1,0 +1,16 @@
+{
+  "name": "spanish_moss",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Spanish moss: grey-green beards hanging from the oaks and cypress. Passable.",
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "grain",
+    "base": [128, 134, 116],
+    "alt": [106, 114, 98],
+    "scale": 9,
+    "contrast": 0.8,
+    "calm": {"base": [126, 132, 114], "alt": [108, 116, 100]}
+  }
+}
