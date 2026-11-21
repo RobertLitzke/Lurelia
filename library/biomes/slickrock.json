@@ -1,6 +1,6 @@
 {
   "name": "slickrock",
-  "version": 1,
+  "version": 2,
   "introduced_by": "redrock",
   "notes": "Bare sloping sandstone: fins, domes, canyon benches. A juniper in a crack here and there.",
   "priority": 6,
@@ -20,6 +20,8 @@
     {"creature": "condor", "count": 1},
     {"creature": "cougar", "count": 1},
     {"creature": "canyon_bat", "count": 4},
-    {"creature": "rattlesnake", "count": 2}
-  ]
+    {"creature": "rattlesnake", "count": 2},
+    {"creature": "raven", "count": 2}
+  ],
+  "sound": {"ground": "stone"}
 }

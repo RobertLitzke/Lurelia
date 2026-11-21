@@ -1,0 +1,16 @@
+{
+  "name": "brine_mud",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Grey-pink mud under the brine at the low end of the pan, slick and faintly rosy with the shrimp.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [178, 164, 160],
+    "alt": [160, 148, 146],
+    "scale": 4,
+    "contrast": 0.7,
+    "calm": {"base": [182, 168, 164], "alt": [166, 154, 150]}
+  },
+  "floods": true
+}

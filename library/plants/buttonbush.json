@@ -1,0 +1,23 @@
+{
+  "name": "buttonbush",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Buttonbush: a leaning shrub of grey stems at the water's edge, glossy leaves, white pincushion flower balls at the tips in summer.",
+  "form": "canes",
+  "height": [1.8, 3.2],
+  "trunk_radius": [0.06, 0.09],
+  "crown_radius": [1.0, 1.6],
+  "bark": "buttonbush_bark",
+  "leaf": "leaves",
+  "canopy": "tufts",
+  "max_slope": 0.9,
+  "autumn": "leaves_autumn",
+  "stems": [6, 10],
+  "cane_lean": 0.4,
+  "cane_bend": 0.05,
+  "cane_spurs": 0.5,
+  "flower": "buttonbush_balls",
+  "flower_tips": true,
+  "flower_seasons": ["summer"],
+  "affords": ["nectar"]
+}

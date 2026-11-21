@@ -1,0 +1,19 @@
+{
+  "name": "dwarf_birch",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Dwarf birch: knee-high scrub of dark red-brown stems on the fell, small round leaves that go red and gold, bare twigs over the snow in winter. You walk through it.",
+  "form": "canes",
+  "height": [0.5, 1.0],
+  "trunk_radius": [0.05, 0.05],
+  "crown_radius": [0.6, 1.0],
+  "bark": "dwarf_birch_bark",
+  "leaf": "leaves",
+  "canopy": "tufts",
+  "max_slope": 0.9,
+  "autumn": "leaves_autumn",
+  "stems": [8, 14],
+  "cane_lean": 0.5,
+  "cane_bend": 0.05,
+  "cane_spurs": 0.6
+}

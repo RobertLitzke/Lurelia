@@ -1,0 +1,17 @@
+{
+  "name": "weapon_pad_rocket_launcher",
+  "version": 1,
+  "introduced_by": "arena",
+  "notes": "The platform under the rocket launcher pickup in the shooter: a half-height slab in the gun's own colour, stamped under the pad by the shooter's rules when the pad finds its floor, so the spot can be seen and read when the gun has been taken. Ammo pads for the same gun stand on the same colour.",
+  "smooth": false,
+  "slab": true,
+  "glow": 0.6,
+  "texture": {
+    "pattern": "noise",
+    "base": [255, 70, 60],
+    "alt": [209, 57, 49],
+    "scale": 4,
+    "contrast": 0.3,
+    "calm": {"base": [255, 70, 60], "alt": [209, 57, 49]}
+  }
+}

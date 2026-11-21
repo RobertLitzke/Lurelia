@@ -1,0 +1,15 @@
+{
+  "name": "tamarisk_flowers",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Tamarisk flower plumes: soft pink.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [218, 146, 166],
+    "alt": [196, 120, 146],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [224, 152, 172], "alt": [202, 126, 152]}
+  }
+}

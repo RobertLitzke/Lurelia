@@ -1,0 +1,15 @@
+{
+  "name": "eye_mat",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The rim of a brine eye: microbial mats in rings, orange at the waterline going olive and then white where the salt takes over.",
+  "smooth": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [192, 146, 104],
+    "alt": [146, 148, 108],
+    "scale": 3,
+    "contrast": 0.8,
+    "calm": {"base": [192, 152, 112], "alt": [150, 152, 114]}
+  }
+}

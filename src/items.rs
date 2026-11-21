@@ -12,7 +12,7 @@ use crate::world::store::Store;
 use glam::Vec3;
 
 pub struct Gem {
-    /// Legacy gems: the 24 m cell. World items: (item index, -1).
+    /// Legacy gems: the 24 m cell. World items: (`World::item_keys`, -2).
     pub cell: (i32, i32),
     pub spin: bool,
     /// What it is (a library collectible's display name), for the HUD.
@@ -73,7 +73,7 @@ pub fn world_items(
     player: Vec3,
 ) {
     for (k, it) in land.items.iter().enumerate() {
-        let key = (k as i32, -1);
+        let key = item_key(land, k);
         if spawned.contains(&key) || collected.contains(&key) {
             continue;
         }
@@ -130,12 +130,34 @@ pub fn collect(world: &mut hecs::World, dt: f32, player: Vec3) -> Vec<((i32, i32
         .collect()
 }
 
+/// What the save remembers world item `k` by.
+pub fn item_key(land: &Land, k: usize) -> (i32, i32) {
+    (land.item_keys.get(k).map_or(k as i32, |&key| key as i32), ITEM_TAG)
+}
+
+/// The second half of a world item's key in the found set.
+const ITEM_TAG: i32 = -2;
+/// What saves before the keys used: (index into the world's items, -1).
+const INDEX_TAG: i32 = -1;
+
+/// Saves written before items had keys remember a find by its place in the
+/// world's list. Read those against the world as it is now, which is right
+/// unless the list has changed since; nothing better can be done with them.
+pub fn upgrade_found(collected: &mut HashSet<(i32, i32)>, land: &Land) {
+    let old: Vec<(i32, i32)> = collected.iter().copied().filter(|&(k, tag)| tag == INDEX_TAG && k >= 0).collect();
+    for (k, tag) in old {
+        if k as usize >= land.items.len() {
+            continue;
+        }
+        collected.remove(&(k, tag));
+        collected.insert(item_key(land, k as usize));
+    }
+}
+
 /// How many things of this display name have been collected.
 pub fn found_count(collected: &HashSet<(i32, i32)>, land: &Land, item_models: &HashMap<String, crate::worldload::ItemModel>, display: &str) -> usize {
-    collected
-        .iter()
-        .filter(|&&(k, tag)| tag == -1 && k >= 0)
-        .filter_map(|&(k, _)| land.items.get(k as usize))
-        .filter(|it| item_models.get(&it.kind).is_some_and(|m| m.display == display))
+    (0..land.items.len())
+        .filter(|&k| collected.contains(&item_key(land, k)))
+        .filter(|&k| item_models.get(&land.items[k].kind).is_some_and(|m| m.display == display))
         .count()
 }

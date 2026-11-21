@@ -1,0 +1,16 @@
+{
+  "name": "jump_pad",
+  "version": 1,
+  "introduced_by": "arena",
+  "notes": "The floor of a jump pad: a disc of warm amber light, so a pad that throws you can be seen from across the room. Painted by the arena tools over the floor under every kicker; it is floor, nothing more.",
+  "smooth": false,
+  "glow": 1.1,
+  "texture": {
+    "pattern": "rings",
+    "base": [255, 176, 72],
+    "alt": [236, 146, 48],
+    "scale": 4,
+    "contrast": 0.6,
+    "calm": {"base": [255, 176, 72], "alt": [236, 146, 48]}
+  }
+}

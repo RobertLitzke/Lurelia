@@ -12,5 +12,6 @@
   "max_slope": 0.8,
   "stems": [5, 8],
   "standing_water": [0.05, 1.7],
-  "affords": ["perch", "cover"]
+  "affords": ["perch", "cover"],
+  "thin_limbs": 0.2
 }

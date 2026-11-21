@@ -76,6 +76,35 @@ pub struct PlantDef {
     /// (default about 0.54, an ocotillo's fan); 0.1 for cane standing straight.
     #[serde(default)]
     pub cane_lean: Option<f32>,
+    /// Form "canes" with canopy "tufts": how far a cane arches over toward
+    /// its tip (default about 0.04-0.11, a buckthorn's arch); 0 for canes
+    /// that stand straight (sugar cane, hazel).
+    #[serde(default)]
+    pub cane_bend: Option<f32>,
+    /// Form "canes" with canopy "tufts": the chance of a short side spur on
+    /// each cane segment (default 0.4, thorny); 0 for clean stems.
+    #[serde(default)]
+    pub cane_spurs: Option<f32>,
+    /// Form "canes" with canopy "tufts": `flower` sits in clusters at the
+    /// cane tips (rabbitbrush, roses) instead of packed along the stems.
+    #[serde(default)]
+    pub flower_tips: bool,
+    /// Form "canes" with canopy "tufts": the chance of a leaf tuft at each
+    /// joint on the upper half of a cane and at a spur's tip (default 1, a
+    /// leafy shrub); low for near-leafless switches (broom, ephedra, reeds).
+    #[serde(default)]
+    pub cane_leaves: Option<f32>,
+    /// Limbs thinner than this radius, metres, are drawn as sticks: one thin
+    /// line of voxels meshed as a smooth tube along the limb (a thread),
+    /// instead of a lumpy chain two or three voxels thick. For twiggy and
+    /// gnarled trees, mangrove prop roots, bare winter crowns. Leave unset
+    /// on dense forests: each stick costs about 15-20 quads a metre.
+    #[serde(default)]
+    pub thin_limbs: Option<f32>,
+    /// Form "canes" with canopy "tufts": an umbel at each cane tip, a mop of
+    /// thin rays this long, metres (papyrus).
+    #[serde(default)]
+    pub cane_umbel: Option<f32>,
     /// Form "branching": 0 to 1, how far the leaf clusters at the limb tips
     /// are filled out into one domed crown, a shell of foliage over the limbs
     /// that stays hollow underneath (great oaks). 0: separate clumps. Default
@@ -95,7 +124,8 @@ pub struct PlantDef {
     /// "lobes" (one lobe over each big limb, notches between, the default),
     /// "layers" (flat tiers, an elder), "tufts" (leaves on the twigs only, an
     /// open crown), "cloud" (one soft mass) or "vase" (tall lobes leaning in,
-    /// a beech).
+    /// a beech). Form "canes" with "tufts": a thorny shrub of arching canes
+    /// with spurs, leaf tufts and berries along the stems (sea buckthorn).
     #[serde(default)]
     pub canopy: Option<crate::world::flora::Canopy>,
     /// Form "branching", canopy "lobes": 0 to 1, how often the gap between

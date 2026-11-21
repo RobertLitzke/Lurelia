@@ -57,6 +57,8 @@ pub struct Args {
     /// (headless) every weapon view-model from several angles
     /// (src/combat/sheet.rs).
     pub gun_sheet: bool,
+    /// (headless) the bots posed in a row of states (brain/sheet.rs).
+    pub bot_sheet: bool,
     pub style: Option<Style>,
     pub blocky: bool,
     pub show_help: bool,
@@ -76,8 +78,16 @@ pub struct Args {
     /// Run the bot tournament: how many rounds each entrant plays.
     pub tourney: Option<u32>,
     pub tourney_seconds: Option<f32>,
+    pub league: Option<u32>,
+    pub league_weapon: Option<String>,
     /// Rounds of the weapon bench (`tools::duel`).
     pub duel: Option<u32>,
+    /// Seeds of the capture-the-flag bench (`tools::ctf`), seconds a match,
+    /// and bots a side.
+    pub ctf: Option<u32>,
+    pub ctf_seconds: Option<f32>,
+    pub ctf_size: Option<u32>,
+    pub ctf_skill: Option<String>,
     pub duel_seconds: Option<f32>,
     /// Only this weapon's row of the table, for a quick check on one gun.
     pub duel_weapon: Option<String>,
@@ -103,6 +113,10 @@ pub struct Args {
     /// (headless) render every creature, plant, biome and find of the world
     /// into a review page in this folder (src/tools/catalog.rs).
     pub catalog: Option<PathBuf>,
+    /// Render the ambience at the camera to this WAV file and exit
+    /// (src/sound/bake.rs), `secs` seconds of it.
+    pub sound_bake: Option<PathBuf>,
+    pub secs: f32,
     /// Open the EDIT page (src/editor) as soon as the world is in, on this
     /// creature or plant; an empty name opens it on the first creature.
     pub edit: Option<String>,
@@ -170,6 +184,9 @@ Headless (no window):
   --showcase            stand one of each creature model in front of the camera
   --anim-sheet NAME     (headless) a rigged creature with each bone bent in turn
   --gun-sheet           (headless) every weapon from several angles, one sheet
+  --bot-sheet           (headless) the bots posed in a row of states (idle, walk, run,
+                        sprint, backpedal, strafe, aim up/down, jump, firing), side view
+                        above and three-quarter view below; use with --pos and --look
   --map FILE            write a shaded top-down map of the world as PNG and exit
   --profile-gen         time terrain generation and meshing on one thread
   --world NAME          play worlds/NAME or local/worlds/NAME (default glassfall; random = a noise-generated island)
@@ -181,9 +198,17 @@ Headless (no window):
   --validate            check the library and the world, print problems, then exit
   --tourney N           score the bots on how they move, N rounds each (no window)
   --tourney-seconds S   how long each round lasts (default 60)
+  --league N            five tuned bots in one match, N seeds x five slots, scored
+                        on objectives and on moving like a player (no window)
+  --league-weapon W     the same with one gun only (a weapon name, or all for each in turn)
   --duel N              bench the weapons against each other, N rounds (no window)
   --duel-seconds S      how long each duel lasts (default 45)
   --duel-weapon NAME    only this gun's row of the table
+  --ctf N               capture the flag: the team brain against two controls,
+                        N seeds with the sides swapped (no window)
+  --ctf-seconds S       how long each match lasts (default 300)
+  --ctf-size K          bots a side, 1 to 4 (default 3)
+  --ctf-skill NAME      the bots' difficulty (default average)
   --ride bike|wing|launch|rope|climb|kayak  (headless) ride for --ride-secs (default 4) before
                         the screenshot: the bike, gliding from --pos, a glide launched from
                         the ground, the rope thrown at the view, walking into a wall, or
@@ -215,6 +240,12 @@ Catalogue (a review page of everything in one world; see GUIDE.md):
   --only KINDS          with --catalog: creatures, plants, biomes and/or finds, comma separated
   --match NAMES         with --catalog: only entries whose name contains one of these;
                         the rest of an existing catalogue in DIR is kept
+
+Sound (see GUIDE.md, \"Sound\"):
+  --sound-bake FILE     render the ambience heard at the camera (--pos/--ground,
+                        --look, --hour, --weather, --season) into FILE.wav, print
+                        what made it and how loud it came out, then exit
+  --secs N              with --sound-bake: seconds to render (default 20)
 ";
 
 pub fn parse_args() -> Args {
@@ -253,6 +284,7 @@ pub fn parse_args() -> Args {
         showcase: false,
         anim_sheet: None,
         gun_sheet: false,
+        bot_sheet: false,
         style: None,
         blocky: false,
         show_help: false,
@@ -266,7 +298,13 @@ pub fn parse_args() -> Args {
         validate: false,
         tourney: None,
         tourney_seconds: None,
+        league: None,
+        league_weapon: None,
         duel: None,
+        ctf: None,
+        ctf_seconds: None,
+        ctf_size: None,
+        ctf_skill: None,
         duel_seconds: None,
         duel_weapon: None,
         ride: None,
@@ -282,6 +320,8 @@ pub fn parse_args() -> Args {
         book: None,
         edit: None,
         catalog: None,
+        sound_bake: None,
+        secs: 20.0,
         only: None,
         matching: None,
         mode: None,
@@ -418,7 +458,13 @@ pub fn parse_args() -> Args {
             "--validate" => a.validate = true,
             "--tourney" => a.tourney = Some(count(&mut i)),
             "--tourney-seconds" => a.tourney_seconds = Some(span(&mut i, 1.0, 36000.0)),
+            "--league" => a.league = Some(count(&mut i)),
+            "--league-weapon" => a.league_weapon = Some(val(&mut i)),
             "--duel" => a.duel = Some(count(&mut i)),
+            "--ctf" => a.ctf = Some(count(&mut i)),
+            "--ctf-seconds" => a.ctf_seconds = Some(span(&mut i, 1.0, 36000.0)),
+            "--ctf-size" => a.ctf_size = Some(count(&mut i)),
+            "--ctf-skill" => a.ctf_skill = Some(val(&mut i)),
             "--duel-seconds" => a.duel_seconds = Some(span(&mut i, 1.0, 36000.0)),
             "--duel-weapon" => a.duel_weapon = Some(val(&mut i)),
             "--ride" => a.ride = Some(val(&mut i)),
@@ -433,6 +479,8 @@ pub fn parse_args() -> Args {
             "--keep" => a.keep = true,
             "--book" => a.book = Some(count(&mut i) as usize),
             "--catalog" => a.catalog = Some(val(&mut i).into()),
+            "--sound-bake" => a.sound_bake = Some(val(&mut i).into()),
+            "--secs" => a.secs = span(&mut i, 0.5, 600.0),
             "--only" => a.only = Some(val(&mut i)),
             "--match" => a.matching = Some(val(&mut i)),
             "--map" => a.map = Some(val(&mut i).into()),
@@ -452,6 +500,7 @@ pub fn parse_args() -> Args {
             }
             "--anim-sheet" => a.anim_sheet = Some(val(&mut i)),
             "--gun-sheet" => a.gun_sheet = true,
+            "--bot-sheet" => a.bot_sheet = true,
             "--threads" => a.threads = (count(&mut i) as usize).max(1),
             "-h" | "--help" => {
                 print!("{HELP}");

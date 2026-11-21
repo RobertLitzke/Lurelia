@@ -26,6 +26,9 @@ use std::time::Duration;
 pub const STEP: f32 = 1.0 / 60.0;
 /// How near the camera a `WorldVent` must be to breathe, metres.
 const VENT_REACH: f32 = 220.0;
+/// The hour the EDIT page's studio is lit at: late morning, the sun high
+/// enough to light every side but the shadow still showing the shape.
+const STUDIO_HOUR: f32 = 10.5;
 /// Falling snow round the camera: half-width of the box (m) and flakes a
 /// second in full snow.
 const SNOW_BOX: f32 = 13.0;
@@ -214,6 +217,19 @@ pub struct Game {
     /// lying (world/season.rs). It runs on the game clock too, and a turn of
     /// the year has the loaded columns built again.
     pub year: crate::world::season::Year,
+    /// What the weather has left on the ground: wet, puddles, frost and fog
+    /// in the hollows (world/damp.rs). Stepped with the weather; not saved,
+    /// so a world opens on ground that suits the sky it opens under.
+    pub damp: crate::world::damp::Damp,
+    /// Lightning out of a dry storm (world/lightning.rs): stepped on the
+    /// wall clock, since a strike is over in half a second.
+    pub lightning: crate::world::lightning::Lightning,
+    /// Prints and trampled grass left by the animals and the player
+    /// (creatures/sign.rs). Not saved: a world opens on clean ground.
+    pub marks: crate::creatures::sign::Marks,
+    /// Metres the player has walked since their last bootprint, and which
+    /// foot it was.
+    boot: (f32, bool),
     pub streamer: Streamer,
     pub store: Store,
     pub player: Player,
@@ -227,10 +243,11 @@ pub struct Game {
     /// the step that runs them (src/world_parts.rs).
     pub parts: crate::world_parts::WorldParts,
     pub models: Vec<Model>,
-    /// The models' colours (models::PALETTE_SLOTS), handed to the renderer with them.
+    /// The models' colours, handed to the renderer with them: the fixed
+    /// block (models::FIXED_SLOTS), then each library model's own block.
     pub palette: Vec<[f32; 4]>,
-    /// How many of the palette's library colour slots the loaded world filled.
-    /// The EDIT page appends its subject's colours after these.
+    /// How many colours the loaded world's library model blocks take, after
+    /// the fixed block. The EDIT page puts its subject's block after these.
     pub library_colours: usize,
     /// The models or their palette changed while the game was running (the
     /// EDIT page): the window hands them to the renderer again.
@@ -302,6 +319,8 @@ pub struct Game {
     pub last_render: FrameStats,
     pub gpu_name: String,
     pub freeze_creatures: bool,
+    /// Instances a headless tool adds to every frame (the bot pose sheet).
+    pub extra_inst: Vec<(usize, crate::models::Instance)>,
     /// Index of the first ride model (bike, flyer) in `models`.
     pub ride_models: usize,
     /// Index of the first weapon view-model in `models` (combat/viewmodel.rs).
@@ -320,6 +339,9 @@ pub struct Game {
     /// The EDIT page is open (src/editor): the gun is put away and the
     /// shooter's rules stay parked, since a studio is no place for a match.
     pub editing: bool,
+    /// While editing, light the studio itself rather than leaving it in the
+    /// world's hour, weather and grade (`studio_lit`).
+    pub studio_light: bool,
     /// The world's own spawn point and bearing: where a shooter's rules send
     /// a body back when they name no spawns of their own.
     home: (Vec3, f32),
@@ -390,7 +412,7 @@ impl Game {
         // last one are that match, not the map, and a world you are
         // exploring is the only place where what you dug is worth keeping,
         // which is the same line the saved position is on below.
-        let arena = launch.mode == crate::launch::Mode::Fps;
+        let arena = launch.mode.is_match();
         let edits = if fresh || arena { EditMap::default() } else { load_edits(&save_dir.join("edits.bin")) };
         let progress: Option<Progress> = if fresh { None } else { load_progress(&save_dir.join("progress.json")) };
         // The seasons this world has, and the one it opens in: the launch
@@ -406,7 +428,10 @@ impl Game {
             .unwrap_or_else(|| calendar.first());
         // The year turns on the clock, so a held clock holds the season; a
         // season picked by hand on the launch screen holds it as well.
-        let turning = launch.day_night && launch.season.is_none();
+        // A map in space holds its hour, so the stars it is lit by stay out.
+        let space = loaded.as_ref().is_some_and(|l| l.world.def.space);
+        let gravity = loaded.as_ref().map(|l| l.world.def.gravity).unwrap_or_default();
+        let turning = launch.day_night && launch.season.is_none() && !space;
         // The sun stands as high as the season it opens in puts it.
         crate::render::daylight::set_declination(start_season.phase().declination);
         // The hour this run opens at: the launch screen's pick (a preset,
@@ -418,6 +443,9 @@ impl Game {
             .or_else(|| loaded.as_ref().and_then(|l| l.world.def.start_hour))
             .map_or(crate::world::clock::START, crate::world::clock::wrap);
         let mut year = crate::world::season::Year::new(start_season, calendar, spec.seed, start_hour, turning);
+        if let Some(l) = loaded.as_ref() {
+            year.set_snows(crate::world::weather::Climate::from_weights(&l.world.def.weather).has(crate::world::weather::Kind::Snow));
+        }
         year.day = progress.as_ref().map_or(0, |p| p.day);
         let mut player = Player::new(spawn + Vec3::Y * 0.5, yaw);
         let mut ride = Ride::default();
@@ -427,7 +455,7 @@ impl Game {
             // are exploring. A match opens on a spawn point, so remembering
             // the spot the last one ended on puts you back in it every
             // time -- which on one imported map is the bottom of the water.
-            if launch.mode != crate::launch::Mode::Fps {
+            if !launch.mode.is_match() {
                 player = Player::new(Vec3::from(p.pos), p.yaw);
                 player.pitch = p.pitch;
             }
@@ -444,11 +472,13 @@ impl Game {
         let mut library_colours = 0;
         let mut platforms = crate::platforms::Platforms::default();
         let mut portals = crate::portals::Portals::default();
+        // A match's arena is held at full detail end to end.
+        let arena_box = loaded.as_ref().and_then(|l| l.world.def.shooter.as_ref()).and_then(|sh| crate::stream::arena_box(&sh.nav));
         if let Some(l) = loaded {
+            // The library models' blocks, straight after the fixed block,
+            // which is where their `block` offsets were counted from.
             library_colours = l.colours.len();
-            for (slot, c) in models::LIBRARY_COLOURS.zip(&l.colours) {
-                palette[slot] = *c;
-            }
+            palette.extend_from_slice(&l.colours);
             let base = models.len();
             models.extend(l.models.into_iter().map(|mut m| {
                 for r in m.rig.as_mut().into_iter().chain(m.skeleton.as_mut()) {
@@ -478,17 +508,22 @@ impl Game {
         let cam_save = progress.as_ref().and_then(|p| p.camera.clone());
         let camera = Camera::new(cam_save, finds, pool, spec.seed, camera::scrapbook::Scrapbook::open(&save_dir));
         let mut streamer = Streamer::new(gen, edits, view_m, threads);
+        streamer.full_box = arena_box;
         streamer.set_smooth(settings.slopes, Vec3::ZERO);
         // Which part of the year the first columns are built for. Nothing is
         // loaded yet, so this costs no rebuild.
         streamer.set_turn(year.turn(), Vec3::ZERO);
         Ok(Self {
             hour: start_hour,
-            clock_running: launch.day_night,
+            clock_running: launch.day_night && !space,
+            damp: crate::world::damp::Damp::settled(&weather.sky()).with_override(std::env::var("VG_DAMP").ok().as_deref()),
+            lightning: crate::world::lightning::Lightning::new(spec.seed as u32),
+            marks: crate::creatures::sign::Marks::default(),
+            boot: (0.0, false),
             weather,
             year,
             streamer,
-            store: Store { height_vox, ..Store::default() },
+            store: Store { height_vox, gravity, ..Store::default() },
             player,
             ride,
             ents,
@@ -532,6 +567,7 @@ impl Game {
             last_render: FrameStats::default(),
             gpu_name: String::new(),
             freeze_creatures: false,
+            extra_inst: Vec::new(),
             ride_models: usize::MAX,
             weapon_models: usize::MAX,
             camera,
@@ -539,6 +575,7 @@ impl Game {
             activity: None,
             parked: None,
             editing: false,
+            studio_light: true,
             home: (spawn, -yaw.to_degrees()),
             launch,
             screenshot_request: false,
@@ -678,6 +715,13 @@ impl Game {
     /// Put the match aside while the EDIT page is open, and pick it up again
     /// when the page closes: a page opened in the middle of a deathmatch
     /// should not be shot at while it is used (src/editor).
+    /// Whether the frame is lit by the EDIT page's studio rather than the
+    /// world: a fixed sun, a clear sky and the default grade, so grey bark is
+    /// grey and not gold in a low sun (`studio_light`).
+    pub fn studio_lit(&self) -> bool {
+        self.editing && self.studio_light
+    }
+
     pub fn set_editing(&mut self, on: bool) {
         self.editing = on;
         if on {
@@ -719,6 +763,26 @@ impl Game {
             rules.bots = self.launch.roster();
         }
         rules.target_score = self.launch.target;
+        // The launch screen's mode decides what kind of match the world's
+        // rules are played as: a world with a `ctf` block still plays a
+        // deathmatch when that is what was asked for.
+        use crate::launch::Mode;
+        rules.teams = matches!(self.launch.mode, Mode::Team | Mode::Ctf);
+        rules.player_team = self.launch.side;
+        match (self.launch.mode, rules.ctf.as_mut()) {
+            // What the launch screen asked for; nothing asked for (the
+            // command line) keeps the world's own.
+            (Mode::Ctf, Some(c)) => {
+                if self.launch.captures > 0 {
+                    c.captures = self.launch.captures;
+                }
+                if self.launch.minutes > 0 {
+                    c.time_s = self.launch.minutes as f32 * 60.0;
+                }
+            }
+            (Mode::Ctf, None) => {}
+            _ => rules.ctf = None,
+        }
         if rules.spoil.is_none() {
             rules.spoil = w.def.rock.first().map(|r| r.0.clone());
         }
@@ -778,6 +842,12 @@ impl Game {
     }
 
     pub fn stream(&mut self, sink: &mut dyn ChunkSink, budget: Duration) {
+        // Settle which `when` structures stand before the streamer plans, so
+        // the first columns are built without the ones that should not be
+        // there: every flag starts out standing, and a far column built with
+        // the structure in drew it, and its shadow, until it came round to
+        // being rebuilt (Saltmirror's pad 12 at dusk).
+        self.update_conditional();
         let fwd = self.player.forward();
         self.streamer.update(self.player.pos, fwd, sink, &mut self.store, budget);
     }
@@ -820,13 +890,26 @@ impl Game {
             // are stepped together.
             let sky = self.weather.sky();
             self.weather.lean(self.year.phase().weather);
+            let lying = self.year.lying();
             if let Some(turn) = self.year.advance(step, self.hour, sky.snow) {
                 let p = self.player.pos;
                 self.streamer.set_turn(turn, p);
             }
+            let conditions = crate::world::damp::Conditions {
+                sky,
+                sun_y: crate::render::daylight::sun_dir(self.hour).y,
+                cold: self.frost_cold(),
+                melt: (lying - self.year.lying()).max(0.0),
+            };
+            self.damp.advance(step, &conditions);
+            self.marks.advance(step, &sky);
             if let Some(k) = self.year.wants_weather() {
                 self.weather.nudge(k);
             }
+        }
+        if !self.activity.as_ref().is_some_and(|a| a.pauses_world()) {
+            let sky = self.weather.sky();
+            self.lightning.advance(dt, &sky, self.player.pos);
         }
         self.frame_ms.push_back(dt * 1000.0);
         while self.frame_ms.len() > 240 {
@@ -1095,6 +1178,9 @@ impl Game {
             return;
         }
         let p = self.player.pos;
+        // The moon is out once the sun is 5 degrees down (render/daylight.rs
+        // fades it in from 3 to 7).
+        let moon_out = crate::render::daylight::sun_dir(self.hour).y < -(5.0f32.to_radians().sin());
         for (k, when) in &w.when {
             let Some(flag) = w.shown.get(*k as usize) else {
                 continue;
@@ -1103,7 +1189,7 @@ impl Game {
             let (x0, z0, x1, z1) = (x0 as f32 * 0.25, z0 as f32 * 0.25, x1 as f32 * 0.25, z1 as f32 * 0.25);
             let c = glam::Vec2::new((x0 + x1) * 0.5, (z0 + z1) * 0.5);
             let was = flag.load(std::sync::atomic::Ordering::Relaxed);
-            let now = when.stands(self.hour, c.distance(glam::Vec2::new(p.x, p.z)), was);
+            let now = when.stands(self.hour, c.distance(glam::Vec2::new(p.x, p.z)), moon_out, was);
             if now != was {
                 flag.store(now, std::sync::atomic::Ordering::Relaxed);
                 self.streamer.regen_area(x0 - 1.0, z0 - 1.0, x1 + 1.0, z1 + 1.0, p);
@@ -1170,6 +1256,7 @@ impl Game {
         if let Some(sh) = a.shooter_mut() {
             let cues = sh.combat.take_cues();
             self.combat_fx(&cues);
+            self.combat_sounds(&cues);
         }
         if let Some(m) = a.note() {
             self.note(&m);
@@ -1196,7 +1283,6 @@ impl Game {
             return;
         }
         self.time += STEP;
-        self.update_conditional();
         let slopes = self.streamer.smooth();
         // The EDIT page's camera owns the eye while it is open (editor/cam.rs),
         // so the body is left standing where it was and put back untouched
@@ -1207,6 +1293,15 @@ impl Game {
             self.player.update(&mut self.ride, input, &self.store, self.sea, water, slopes, STEP);
             self.step_fx(before, water.0);
             self.dive_extras();
+            // Off the edge of a map in space with no match on to kill you:
+            // back to the spawn, rather than standing on the world's floor
+            // under it. A match does its own (Shooter `scald`).
+            if self.activity.is_none() && !self.player.fly {
+                let void = self.generator().world.as_ref().and_then(|w| w.def.shooter.as_ref()).and_then(|s| s.void_m);
+                if void.is_some_and(|v| self.player.pos.y < v) {
+                    self.player = Player::new(self.home.0 + Vec3::Y * 0.5, self.player.yaw);
+                }
+            }
         } else {
             self.player.prev_pos = self.player.pos;
         }
@@ -1215,7 +1310,7 @@ impl Game {
             // travel (creatures/startle.rs). Flying with the cheat on reads
             // as standing still, so nothing bolts from a camera in the sky.
             let vel = if self.player.fly { Vec3::ZERO } else { self.player.body.vel };
-            let threat = crate::creatures::startle::Threat::new(self.player.pos, vel, self.ride.mode).crouched(self.player.crouch);
+            let threat = self.player_threat(vel);
             let gen = self.streamer.generator();
             self.ents.hour = self.hour;
             self.ents.sky = self.weather.sky();
@@ -1226,6 +1321,7 @@ impl Game {
             self.ents.update(STEP, &self.store, gen, &threat, slopes, &self.models);
             // Spray the animals threw up this step (creatures/swim.rs).
             self.fx.take(&mut self.ents.cues);
+            self.lay_marks();
         }
         if self.spawned && !self.editing {
             self.hitch_step(input.focus_far && !self.camera.active);
@@ -1239,6 +1335,125 @@ impl Game {
     /// (`before` is its footing, velocity and position going in), what the
     /// trees are dropping, and the pool moved on. Cosmetic only: nothing
     /// here is read back by the simulation.
+    /// Lay what feet left this step (creatures/sign.rs): the walkers'
+    /// footfalls, and a bootprint each stride the player walks.
+    fn lay_marks(&mut self) {
+        let soft = self.damp.soft();
+        // Dev hook: VG_MARKS=1 lays a short trail of each foot ahead of the
+        // player once the world is in, so the prints can be judged in a
+        // headless shot; on ground that keeps no print they show nothing.
+        if self.marks.version == 0 && self.spawned && std::env::var("VG_MARKS").is_ok() {
+            use crate::creatures::sign::{Foot, Step};
+            let f = self.player.forward();
+            let fwd = Vec3::new(f.x, 0.0, f.z).normalize_or(Vec3::Z);
+            let across = Vec3::new(-fwd.z, 0.0, fwd.x);
+            let yaw = (-fwd.x).atan2(-fwd.z);
+            let feet = [(Foot::Hoof, 1.4f32), (Foot::Paw, 0.6), (Foot::Bear, 1.3), (Foot::Bird, 1.0), (Foot::Boot, 1.8)];
+            for (row, (foot, height)) in feet.into_iter().enumerate() {
+                for i in 0..6 {
+                    let side = if i % 2 == 0 { 0.06 } else { -0.06 } * height;
+                    let mut pos = self.player.pos + fwd * (2.0 + i as f32 * 0.6 * height.max(0.8)) + across * ((row as f32 - 2.0) * 0.9 + side);
+                    // Down the column to the first solid ground, then onto
+                    // the drawn (sloped) surface.
+                    let (vx, vz) = ((pos.x * 4.0).floor() as i32, (pos.z * 4.0).floor() as i32);
+                    let top = ((pos.y + 4.0) * 4.0).floor() as i32;
+                    if let Some(vy) = (0..64).map(|d| top - d).find(|&y| self.store.get(vx, y, vz).is_some_and(|m| m != crate::world::material::AIR && !crate::world::matlib::has(m, crate::world::matlib::flag::FOLIAGE))) {
+                        pos.y = (vy + 1) as f32 / 4.0;
+                        pos.y += crate::physics::drawn_ground_lift(&self.store, pos);
+                    }
+                    let step = Step { pos, yaw, foot, height };
+                    let ground = crate::creatures::sign::ground_at(&self.store, pos + Vec3::Y * 0.5);
+                    self.marks.lay(&step, ground, 1.0);
+                }
+            }
+        }
+        for step in std::mem::take(&mut self.ents.steps) {
+            let ground = crate::creatures::sign::ground_at(&self.store, step.pos);
+            self.marks.lay(&step, ground, soft);
+        }
+        let on_foot = self.ride.mode == crate::ride::Mode::Foot && self.player.body.on_ground && !self.player.fly && !self.player.swimming && self.activity.is_none();
+        if !on_foot {
+            return;
+        }
+        let d = self.player.pos - self.player.prev_pos;
+        let moved = Vec3::new(d.x, 0.0, d.z).length();
+        if moved > 1.0 {
+            return;
+        }
+        self.boot.0 += moved;
+        if self.boot.0 < 0.75 {
+            return;
+        }
+        self.boot = (0.0, !self.boot.1);
+        let f = self.player.forward();
+        let fwd = Vec3::new(f.x, 0.0, f.z).normalize_or(Vec3::Z);
+        let across = Vec3::new(-fwd.z, 0.0, fwd.x) * if self.boot.1 { 0.13 } else { -0.13 };
+        let step = crate::creatures::sign::Step {
+            pos: self.player.pos + across,
+            yaw: (-fwd.x).atan2(-fwd.z),
+            foot: crate::creatures::sign::Foot::Boot,
+            height: 1.8,
+        };
+        let ground = crate::creatures::sign::ground_at(&self.store, step.pos);
+        self.marks.lay(&step, ground, soft);
+    }
+
+    /// How the animals sense the player this step (creatures/startle.rs):
+    /// where, how fast, how they travel and crouch, how loud the ground
+    /// underfoot is with the wet on it and the rain over it, and where the
+    /// wind takes their scent. The wind is the world's one direction
+    /// (`world::WIND`, which the grass leans with, so the player can read
+    /// it), swung a little by the gusts; on a still day the scent pools.
+    fn player_threat(&self, vel: Vec3) -> crate::creatures::startle::Threat {
+        let sky = self.weather.sky();
+        let under = crate::fx::hooks::ground_under(&self.store, self.player.pos);
+        let tread = crate::creatures::sign::tread_of(under);
+        let snow = if self.year.turn().snow > 0 { 0.6 } else { 1.0 };
+        let loud = tread.loudness(self.damp.wet) * snow;
+        let masked = sky.rain * 0.7;
+        let w = crate::world::WIND;
+        let swing = (self.time * 0.23).sin() * 0.6 * sky.gustiness();
+        let (s, c) = swing.sin_cos();
+        let toward = Vec3::new(w.x * c - w.y * s, 0.0, w.x * s + w.y * c);
+        let carry = sky.wind.clamp(0.0, 1.2) * (1.0 - 0.5 * sky.rain);
+        let pool = (1.0 - sky.wind / 0.35).clamp(0.0, 1.0);
+        crate::creatures::startle::Threat::new(self.player.pos, vel, self.ride.mode)
+            .crouched(self.player.crouch)
+            .heard(loud, masked)
+            .scented(toward, if pool > 0.0 { 0.0 } else { carry }, pool)
+    }
+
+    /// How readily frost forms on a clear night in this part of this world's
+    /// How strong the mirage is just now, 0 to 1 (post.wgsl `mirage`): the
+    /// world's own strength, at full in the heat and at about half on a fair
+    /// day, only with the sun well up, and gone once the ground is wet.
+    fn mirage(&self) -> f32 {
+        let k = self.generator().world.as_ref().map_or(0.0, |w| w.def.mirage);
+        if k <= 0.0 {
+            return 0.0;
+        }
+        let sky = self.weather.sky();
+        let air = (sky.heat + 0.5 * (1.0 - sky.overcast) * (1.0 - sky.cover.max(0.0))).min(1.0) * (1.0 - sky.rain);
+        let sun_y = crate::render::daylight::sun_dir(self.hour).y;
+        let noon = ((sun_y - 0.35) / 0.4).clamp(0.0, 1.0);
+        let dry = 1.0 - (self.damp.wet * 1.5).min(1.0);
+        (k * air * noon * dry).clamp(0.0, 1.0)
+    }
+
+    /// year (world/damp.rs `Conditions::cold`): every winter night can, a
+    /// spring or autumn one half as hard, a summer one never. A country
+    /// whose climate never snows gets a touch of it at most.
+    fn frost_cold(&self) -> f32 {
+        use crate::world::season::Season;
+        let season = match self.year.season {
+            Season::Winter => 1.0,
+            Season::Spring | Season::Autumn => 0.55,
+            Season::Summer => 0.0,
+        };
+        let snows = self.weather.climate().has(crate::world::weather::Kind::Snow);
+        season * if snows { 1.0 } else { 0.25 }
+    }
+
     fn step_fx(&mut self, before: (bool, Vec3, Vec3), water: f32) {
         use crate::world::season::Season;
         if !self.fx.on {
@@ -1319,6 +1534,38 @@ impl Game {
         self.fx.step(STEP, &self.store);
     }
 
+    /// A fight's cues as sounds (src/sound): what a round struck, by what
+    /// it is made of, now and then a ricochet off something hard, and the
+    /// bursts. The shots themselves are posted where they are fired.
+    fn combat_sounds(&self, cues: &[crate::combat::Cue]) {
+        use crate::combat::Cue;
+        use crate::sound::{emit, Kind, Noise};
+        for c in cues {
+            match *c {
+                Cue::Impact { at, dir } => {
+                    let d = dir.normalize_or(Vec3::NEG_Y);
+                    let p = at + d * 0.06;
+                    let m = self.store.get((p.x * 4.0).floor() as i32, (p.y * 4.0).floor() as i32, (p.z * 4.0).floor() as i32).unwrap_or(AIR);
+                    if m == AIR {
+                        continue;
+                    }
+                    let g = crate::sound::watch::ground_of(m);
+                    emit(Noise::at(Kind::Impact(g), at, 0.6));
+                    // One round in four whines off rock or metal; which one
+                    // is down to where it struck, so it needs no generator.
+                    let hash = ((at.x * 12.9898 + at.y * 78.233 + at.z * 37.719).sin() * 43_758.547).fract().abs();
+                    if g == crate::sound::Ground::Stone && hash < 0.25 {
+                        emit(Noise::at(Kind::Ricochet, at, 0.5));
+                    }
+                }
+                Cue::Burst { at, radius, look: crate::library::SplashLook::Goo } => emit(Noise::at(Kind::Splat(radius), at, 1.2)),
+                Cue::Burst { at, radius, .. } => emit(Noise::at(Kind::Burst(radius), at, 2.0 * (radius / 3.0).clamp(0.4, 2.0).sqrt())),
+                Cue::Sparks { at } => emit(Noise::at(Kind::Sparks, at, 0.6)),
+                Cue::Muzzle { .. } => {}
+            }
+        }
+    }
+
     /// A fight's cues as particles: smoke and sparks at a muzzle, chips off
     /// a wall in its own colour, the smoke and dirt of a burst.
     fn combat_fx(&mut self, cues: &[crate::combat::Cue]) {
@@ -1353,7 +1600,18 @@ impl Game {
                     self.fx.burst("impact_sparks", at, Vec3::Y, 0, 2.0);
                     self.fx.burst("bore_sparks", at, Vec3::Y, 0, 1.5);
                 }
-                Cue::Burst { at, radius } => {
+                Cue::Burst { at, radius, look: crate::library::SplashLook::Goo } => {
+                    // Slime, not fire: a pale green flash, a green spray
+                    // that hangs and drips, droplets flung out and falling,
+                    // and a sour green haze where the smoke would be.
+                    let k = (radius / 3.0).clamp(0.5, 2.0);
+                    self.fx.burst("goo_burst_flash", at, Vec3::Y, 0, 1.0);
+                    self.fx.burst_in("goo_burst", at, radius * 0.08, Vec3::Y, 0, k);
+                    self.fx.burst_in("goo_burst_deep", at, radius * 0.1, Vec3::Y, 0, k);
+                    self.fx.burst("goo_burst_drops", at, Vec3::Y, 0, k);
+                    self.fx.burst("goo_burst_haze", at, Vec3::Y, 0, k);
+                }
+                Cue::Burst { at, radius, .. } => {
                     let k = (radius / 3.0).clamp(0.5, 2.0);
                     // A white flash, an orange fireball with a red edge that
                     // outlasts it, sparks and a few cold streaks off the
@@ -1440,6 +1698,10 @@ impl Game {
         if changes.is_empty() && refused {
             self.note("BEDROCK: TOO DEEP TO DIG");
         }
+        if !changes.is_empty() {
+            let m = self.store.get(hit[0], hit[1], hit[2]).unwrap_or(AIR);
+            crate::sound::emit(crate::sound::Noise::at(crate::sound::Kind::Dig(crate::sound::watch::ground_of(m)), c * 0.25, 0.9));
+        }
         self.streamer.edit(&mut self.store, &changes);
     }
 
@@ -1463,6 +1725,10 @@ impl Game {
                 }
             }
         }
+        if let Some((v, _)) = changes.first() {
+            let at = Vec3::new(v[0] as f32, v[1] as f32, v[2] as f32) * 0.25;
+            crate::sound::emit(crate::sound::Noise::at(crate::sound::Kind::Place, at, 0.8));
+        }
         self.streamer.edit(&mut self.store, &changes);
     }
 
@@ -1475,6 +1741,13 @@ impl Game {
             return self.ride.head(&self.player, alpha);
         }
         self.player.eye(alpha)
+    }
+
+    /// Where the ear is and which way it faces: the camera this frame is
+    /// drawn from (sound/bed.rs).
+    pub fn listener(&self) -> (Vec3, Vec3) {
+        let c = self.camera();
+        (c.eye, c.fwd)
     }
 
     fn camera(&self) -> crate::rig::Camera {
@@ -1576,10 +1849,20 @@ impl Game {
         }
         // The moving parts keep stepping in a paused world; nothing else does.
         let alpha = self.still_alpha.unwrap_or(self.alpha);
-        self.ents.instances(alpha, &self.models, &mut self.inst);
+        let (store, sea) = (&self.store, self.sea);
+        let ground = |x: f32, z: f32| {
+            use crate::world::gen::VPM;
+            store.ground_vox((x * VPM).floor() as i32, (z * VPM).floor() as i32).map(|g| (g / VPM).max(sea))
+        };
+        self.ents.instances(alpha, &self.models, &ground, &mut self.inst);
         let pinned_from = self.inst.len();
         if let (Some(a), true) = (&self.activity, self.weapon_models != usize::MAX) {
             a.instances(&self.player, alpha, self.weapon_models, &self.models, &mut self.inst);
+        }
+        // A match parked behind screenshot mode still has its bots standing
+        // where they were; only the gun in the player's hands goes.
+        if let (Some(a), true) = (&self.parked, self.in_screenshot() && self.weapon_models != usize::MAX) {
+            a.parked_instances(&self.player, alpha, self.weapon_models, &self.models, &mut self.inst);
         }
         self.ride.show_body = self.in_screenshot();
         if let Some(i) = self.ride.instance(&self.player, alpha, self.ride_models, &self.models) {
@@ -1592,6 +1875,7 @@ impl Game {
         self.ride.gear(&self.player, &self.store, alpha, self.ride_models, &self.models, &mut self.inst);
         self.ride.tokens(self.ride_models, &self.models, &mut self.inst);
         self.ride.moored_instance(self.time, self.ride_models, &self.models, &mut self.inst);
+        self.inst.extend(self.extra_inst.iter().cloned());
         let pinned_to = self.inst.len();
         self.parts.platforms.instances(self.alpha, &self.models, &mut self.inst);
         self.cull_instances(aspect, pinned_from..pinned_to);
@@ -1668,7 +1952,9 @@ impl Game {
         let view = Mat4::look_to_rh(eye, fwd, cam.up);
         let fov = (self.fov() * cam.fov_scale).min(2.2);
         let proj = Mat4::perspective_infinite_reverse_rh(fov, aspect, NEAR);
-        let highlight = self.target.map(|(h, _)| {
+        // No dig outline on the EDIT page: the camera there is the studio's,
+        // and the box would sit on the floor beside the subject in every shot.
+        let highlight = self.target.filter(|_| !self.editing).map(|(h, _)| {
             let a = Vec3::new(h[0] as f32, h[1] as f32, h[2] as f32) / 4.0;
             (a, a + Vec3::splat(0.25))
         });
@@ -1692,20 +1978,34 @@ impl Game {
             entities: &self.inst,
             plates: &self.plates,
             fx: &self.fx,
+            marks: &self.marks,
             lamps: &self.lamps,
             shadows: self.settings.shadows,
             style: self.settings.style,
             slopes: self.streamer.smooth(),
             speed_fx: cam.speed_fx,
             streaks: cam.streaks,
-            hour: self.hour,
-            sky: self.weather.sky(),
-            season: self.year.phase(),
+            // The EDIT page's own light: a fixed sun in a clear sky.
+            hour: if self.studio_lit() { STUDIO_HOUR } else { self.hour },
+            sky: if self.studio_lit() { crate::world::weather::Sky::default() } else { self.weather.sky() },
+            season: {
+                let mut p = self.year.phase();
+                let dry = self.generator().world.as_ref().map_or(0.0, |w| w.def.straw);
+                p.straw = p.straw.max(dry).min(1.0);
+                p
+            },
+            damp: if self.studio_lit() { [0.0; 4] } else { self.damp.uniform() },
+            ground_fog: if self.studio_lit() { 0.0 } else { self.damp.mist() },
+            bolt: if self.studio_lit() { [0.0; 4] } else { self.lightning.uniform() },
+            mirage: if self.studio_lit() { 0.0 } else { self.mirage() },
             snow_cover: {
                 let lying = self.year.turn().snow as f32 * 0.5;
                 let floor = self.generator().world.as_ref().map_or(0.0, |w| w.def.snow_cover);
                 lying.max(floor).min(1.0)
             },
+            space: self.generator().world.as_ref().is_some_and(|w| w.def.space),
+            plain_grade: self.studio_lit(),
+            studio: self.generator().studio_floor.read().ok().and_then(|f| *f).map(|f| (f.x, f.z, f.half_m + crate::world::gen::STUDIO_BANK_M)),
             lens: (self.camera.active && self.camera.raised && self.camera.book.is_none() && self.activity.is_none()).then(|| self.camera.lens.fx(self.camera.orient, aspect, true)),
         }
     }
@@ -1731,7 +2031,8 @@ impl Game {
 
     /// What the crosshair is on: the nearest creature or find if one is in
     /// front of the ground, else the material under the pointer with its id,
-    /// how far off it is and which voxel it is. For the stats HUD.
+    /// how far off it is and which voxel it is, and the library structure the
+    /// voxel belongs to if it is part of one. For the stats HUD.
     fn aim_debug(&self) -> String {
         const RANGE: f32 = 120.0;
         let eye = self.eye(self.alpha);
@@ -1750,7 +2051,40 @@ impl Game {
         let m = self.store.get(v[0], v[1], v[2]).unwrap_or(AIR);
         let base = crate::world::matlib::base(m);
         let grain = if base != m { format!("/{base}") } else { String::new() };
-        format!("{} #{m}{grain}  {block_t:.1}M  {} {} {}", material::name(m), v[0], v[1], v[2])
+        let within = self.structure_at(v).map_or(String::new(), |n| format!("  IN {n}"));
+        format!("{} #{m}{grain}  {block_t:.1}M  {} {} {}{within}", material::name(m), v[0], v[1], v[2])
+    }
+
+    /// The name of the placed structure whose shape is solid at world voxel
+    /// `v`, counting the foundation it fills down under its bottom row. A
+    /// voxel inside a structure's box that the shape leaves empty is the
+    /// terrain's, so the name only shows on the structure itself.
+    fn structure_at(&self, v: [i32; 3]) -> Option<&str> {
+        use crate::world::shape::{unrotate, CARVE};
+        let w = self.generator().world.as_ref()?;
+        let (mx, mz) = (v[0] as f32 * 0.25, v[2] as f32 * 0.25);
+        for k in w.placed_near(mx, mz, mx, mz) {
+            let k = k as usize;
+            // Not standing just now (`place` `when`).
+            if w.shown.get(k).is_some_and(|s| !s.load(std::sync::atomic::Ordering::Relaxed)) {
+                continue;
+            }
+            let p = &w.placed[k];
+            let s = &w.shapes[p.shape];
+            let (x0, z0, x1, z1) = p.footprint(&w.shapes);
+            if v[0] < x0 || v[0] >= x1 || v[2] < z0 || v[2] >= z1 {
+                continue;
+            }
+            let def = &w.lib.structures[p.def];
+            let (lx, lz) = unrotate(v[0] - x0, v[2] - z0, s.size, p.rot);
+            let ly = v[1] - p.origin[1];
+            let ly = if ly < 0 && ly >= -def.foundation { 0 } else { ly };
+            let (m, _) = s.get(lx, ly, lz);
+            if m != AIR && m != CARVE {
+                return Some(&def.name);
+            }
+        }
+        None
     }
 
     /// A small north-up map of the ground around the player, drawn from the
@@ -1909,6 +2243,13 @@ impl Game {
         }
         if let Some(a) = &self.activity {
             a.hud(hud, w, h, s, self.fov());
+            let marks = a.marks(&self.player);
+            if !marks.is_empty() {
+                let cam = self.camera();
+                let fov = (self.fov() * cam.fov_scale).min(2.2);
+                let vp = Mat4::perspective_infinite_reverse_rh(fov, w / h.max(1.0), NEAR) * Mat4::look_to_rh(cam.eye, cam.fwd, cam.up);
+                crate::modes::draw_marks(hud, &marks, vp, w, h, s);
+            }
             if let Some((m, t)) = &self.message {
                 let a = t.min(1.0);
                 let mw = Hud::text_width(m, s * 1.5);
@@ -2197,7 +2538,7 @@ fn task_pool(species: &[crate::entities::Species], models: &[Model], gen: &Gener
         }
         let mover = sp.verb().mover;
         let (flies, walks) = match mover {
-            Mover::School | Mover::Breach | Mover::Buzz { .. } => continue,
+            Mover::School | Mover::Breach | Mover::Creep | Mover::Buzz { .. } => continue,
             Mover::Flock { .. } | Mover::Circle { .. } | Mover::Flit | Mover::Cling => (true, false),
             Mover::Walk { .. } => (false, models.get(sp.model).is_some_and(|m| m.rig.is_some())),
             _ => (false, false),
@@ -2571,7 +2912,8 @@ impl Game {
             }
             return;
         }
-        if !grab {
+        // Out of breath, nobody takes hold: the diver is on the way up.
+        if !grab || self.player.dive.breath <= 0.0 {
             return;
         }
         let me = self.player.pos + Vec3::Y * crate::player::dive::DIVE_EYE;

@@ -2,7 +2,7 @@
   "name": "bear_den",
   "version": 1,
   "introduced_by": "windbarrow",
-  "notes": "A cave bear's bed: a trodden floor of chalk rubble and bone 5 m across with long bones and a skull lying in it. Place inside a cave chamber with `height` at the chamber floor; level false, so it beds into the rubble.",
+  "notes": "A cave bear's bed: a trodden floor of chalk rubble and bone 5 m across with long bones and a skull lying in it. Place inside a cave chamber with `height` at the chamber floor (in a `passage`, its `height - 0.55 * radius`); level false, so it beds into the rubble.",
   "size": [32, 6, 32],
   "anchor": [16, 0, 16],
   "foundation": 3,

@@ -1,0 +1,15 @@
+{
+  "name": "reed_leaves",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Common reed leaves: long grey-green blades along the canes.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [112, 140, 84],
+    "alt": [96, 124, 70],
+    "scale": 7,
+    "contrast": 0.7,
+    "calm": {"base": [118, 146, 90], "alt": [102, 130, 76]}
+  }
+}

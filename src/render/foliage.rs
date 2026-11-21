@@ -30,15 +30,79 @@ pub const STALK_FAR: f32 = STALK_FADE[1] + CHUNK_SLACK;
 pub const GRASS_FAR: f32 = GRASS_FADE[1] + CHUNK_SLACK;
 /// Chunks further than this draw no fill tufts.
 pub const NEAR: f32 = FILL_FADE[1] + CHUNK_SLACK;
-/// Chunks nearer than this draw no far cover. There is no far limit: the
-/// cover is what the distance is made of, so every loaded column draws it.
-pub const PATCH_NEAR: f32 = PATCH_FADE[0] - CHUNK_SLACK;
+/// A chunk wholly nearer than PATCH_FADE[0] draws no far cover (judged by
+/// its farthest corner, render/mod.rs). There is no far limit: the cover is
+/// what the distance is made of, so every loaded column draws it.
 pub const PATCH_FAR: f32 = 1.0e6;
+
+/// The trampled-grass map (creatures/sign.rs): `TRAMPLE_N` cells of
+/// `TRAMPLE_CELL` metres a side round the camera, its corner moved in
+/// `TRAMPLE_STEP` jumps so it does not have to be rebuilt every step. The
+/// shader works the corner out from the camera the same way.
+pub const TRAMPLE_N: u32 = 128;
+pub const TRAMPLE_CELL: f32 = 0.5;
+pub const TRAMPLE_STEP: f32 = 8.0;
+
+/// The trampled map's corner for a camera at `eye` (x, z metres).
+pub fn trample_origin(eye: glam::Vec3) -> [f32; 2] {
+    let half = TRAMPLE_N as f32 * TRAMPLE_CELL * 0.5;
+    [(eye.x / TRAMPLE_STEP).floor() * TRAMPLE_STEP - half, (eye.z / TRAMPLE_STEP).floor() * TRAMPLE_STEP - half]
+}
+
+/// The trampled map's texels: r how flat (0 standing, 1 laid down), g and b
+/// the way it was laid (x and z, 0.5 for none).
+pub fn trample_texels(marks: &crate::creatures::sign::Marks, origin: [f32; 2], out: &mut Vec<u8>) {
+    use crate::creatures::sign::Kind;
+    let n = TRAMPLE_N as usize;
+    out.clear();
+    out.resize(n * n * 4, 0);
+    for px in out.chunks_exact_mut(4) {
+        px[1] = 128;
+        px[2] = 128;
+    }
+    for s in &marks.signs {
+        if s.kind != Kind::Trampled {
+            continue;
+        }
+        // A bigger body lays it flatter, and it springs back as it wears.
+        let flat = ((s.size - 0.25) / 0.5).clamp(0.35, 1.0) * (1.0 - s.wear).clamp(0.0, 1.0);
+        let (gx, gz) = ((s.pos.x - origin[0]) / TRAMPLE_CELL, (s.pos.z - origin[1]) / TRAMPLE_CELL);
+        let r = s.size / TRAMPLE_CELL;
+        let fwd = (-s.yaw.sin(), -s.yaw.cos());
+        let (lo_x, hi_x) = ((gx - r).floor().max(0.0) as usize, ((gx + r).ceil() as usize).min(n - 1));
+        let (lo_z, hi_z) = ((gz - r).floor().max(0.0) as usize, ((gz + r).ceil() as usize).min(n - 1));
+        if gx + r < 0.0 || gz + r < 0.0 || gx - r > n as f32 || gz - r > n as f32 {
+            continue;
+        }
+        for z in lo_z..=hi_z {
+            for x in lo_x..=hi_x {
+                let d = ((x as f32 + 0.5 - gx).powi(2) + (z as f32 + 0.5 - gz).powi(2)).sqrt() / r;
+                if d >= 1.0 {
+                    continue;
+                }
+                let v = flat * (1.0 - d * d);
+                let i = (z * n + x) * 4;
+                let had = out[i] as f32 / 255.0;
+                if v > had {
+                    out[i] = (v * 255.0) as u8;
+                    out[i + 1] = ((fwd.0 * 0.5 + 0.5) * 255.0) as u8;
+                    out[i + 2] = ((fwd.1 * 0.5 + 0.5) * 255.0) as u8;
+                }
+            }
+        }
+    }
+}
 
 pub struct Foliage {
     pub pipeline: wgpu::RenderPipeline,
     pub motes: wgpu::RenderPipeline,
     pub bg: wgpu::BindGroup,
+    /// Grass and low plants pressed flat (creatures/sign.rs), round the camera.
+    trample: wgpu::Texture,
+    /// What the trampled map was last built from: the marks' version and its
+    /// corner.
+    trample_key: Option<(u64, [f32; 2])>,
+    trample_px: Vec<u8>,
     /// Off with the environment variable VOXEL_FOLIAGE=0, for comparisons.
     pub on: bool,
     /// Draw fill tufts and grass only as far as they show (NEAR, GRASS_FAR).
@@ -97,11 +161,27 @@ impl Foliage {
             mipmap_filter: wgpu::FilterMode::Linear,
             ..Default::default()
         });
+        let trample = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("trampled"),
+            size: wgpu::Extent3d {
+                width: TRAMPLE_N,
+                height: TRAMPLE_N,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8Unorm,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        let trample_view = trample.create_view(&Default::default());
         let bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("sprites"),
             entries: &[
                 super::bgl_entry(0, super::tex_ty(wgpu::TextureViewDimension::D2Array, true)),
                 super::bgl_entry(1, wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering)),
+                super::bgl_entry(2, super::tex_ty(wgpu::TextureViewDimension::D2, true)),
             ],
         });
         let bg = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -115,6 +195,10 @@ impl Foliage {
                 wgpu::BindGroupEntry {
                     binding: 1,
                     resource: wgpu::BindingResource::Sampler(&samp),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: wgpu::BindingResource::TextureView(&trample_view),
                 },
             ],
         });
@@ -216,7 +300,46 @@ impl Foliage {
         });
         let on = std::env::var("VOXEL_FOLIAGE").map(|v| v != "0").unwrap_or(true);
         let ranges = std::env::var("VOXEL_SPRITE_RANGES").map(|v| v != "0").unwrap_or(true);
-        Self { pipeline, motes, bg, on, ranges }
+        Self {
+            pipeline,
+            motes,
+            bg,
+            trample,
+            trample_key: None,
+            trample_px: Vec::new(),
+            on,
+            ranges,
+        }
+    }
+
+    /// Rebuild the trampled map when the marks have changed or the camera has
+    /// carried its corner on to the next step.
+    pub fn upload_trample(&mut self, queue: &wgpu::Queue, marks: &crate::creatures::sign::Marks, eye: glam::Vec3) {
+        let origin = trample_origin(eye);
+        if self.trample_key == Some((marks.version, origin)) {
+            return;
+        }
+        self.trample_key = Some((marks.version, origin));
+        trample_texels(marks, origin, &mut self.trample_px);
+        queue.write_texture(
+            wgpu::TexelCopyTextureInfo {
+                texture: &self.trample,
+                mip_level: 0,
+                origin: wgpu::Origin3d::ZERO,
+                aspect: wgpu::TextureAspect::All,
+            },
+            &self.trample_px,
+            wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(4 * TRAMPLE_N),
+                rows_per_image: Some(TRAMPLE_N),
+            },
+            wgpu::Extent3d {
+                width: TRAMPLE_N,
+                height: TRAMPLE_N,
+                depth_or_array_layers: 1,
+            },
+        );
     }
 }
 

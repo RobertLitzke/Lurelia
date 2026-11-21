@@ -3,11 +3,17 @@
   "version": 1,
   "introduced_by": "glassfall",
   "notes": "Light-loving, quick to colonise.",
-  "form": "birch",
+  "form": "branching",
   "height": [8, 11],
   "trunk_radius": [0.14, 0.2],
   "crown_radius": [1.4, 1.8],
   "bark": "birch_bark",
   "leaf": "birch_leaves",
-  "autumn": "leaves_autumn"
+  "curve": "droop",
+  "canopy": "cloud",
+  "leader": 0.9,
+  "fill": 0.5,
+  "spread": 0.25,
+  "autumn": "leaves_autumn",
+  "thin_limbs": 0.12
 }

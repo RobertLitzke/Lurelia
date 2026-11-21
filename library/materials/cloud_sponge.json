@@ -1,0 +1,15 @@
+{
+  "name": "cloud_sponge",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Cloud sponge: soft lobes of glass the colour of old paper.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [214, 204, 184],
+    "alt": [194, 182, 160],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [214, 206, 188], "alt": [196, 186, 166]}
+  }
+}

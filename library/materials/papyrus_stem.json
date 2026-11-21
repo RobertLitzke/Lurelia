@@ -1,0 +1,15 @@
+{
+  "name": "papyrus_stem",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Papyrus stems: smooth bright green, three-sided.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [108, 148, 62],
+    "alt": [92, 130, 52],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [114, 154, 68], "alt": [98, 136, 58]}
+  }
+}

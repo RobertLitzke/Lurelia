@@ -620,6 +620,7 @@ pub const NAMES: [&str; layer::COUNT as usize] = [
     "glow_threads",
     "lily_pad",
     "lily_flower",
+    "lupine",
 ];
 
 fn sprite_dir() -> std::path::PathBuf {
@@ -853,6 +854,7 @@ const PREVIEW_TINT: [[f32; 3]; layer::COUNT as usize] = [
     [1.0, 1.0, 1.0],
     [1.0, 1.0, 1.0],
     [0.26, 0.42, 0.16],
+    [1.0, 1.0, 1.0],
     [1.0, 1.0, 1.0],
 ];
 

@@ -1,0 +1,16 @@
+{
+  "name": "steppe_grass",
+  "version": 1,
+  "introduced_by": "megalith",
+  "notes": "Grazed chalk turf on an arena floor: short grass grazed and dried to tan, ankle-high and even, with the chalk showing through. Unlike the grasses of the downs it grows no stands of long grass (`src/mesh/sprites.rs` names it); its name holds `grass` so the straw (world.json `straw`) reaches it, so nothing on an arena floor is tall enough to hide in.",
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [178, 152, 104],
+    "alt": [156, 132, 90],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [186, 160, 112], "alt": [164, 140, 98]}
+  },
+  "grass": {"sparse": 0.45, "dense": 0.45, "short": 1.0}
+}

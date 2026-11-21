@@ -68,6 +68,20 @@ pub struct Shape {
     /// Per (x, z) column, the height of its highest non-roof voxel + 1: walls
     /// crumble down from here.
     pub col_top: Vec<i32>,
+    /// The `segment` ops' pieces, in local voxel units: drawn by the mesher
+    /// as tubes along their lines where the structure stands (threads).
+    pub threads: Vec<ShapeThread>,
+}
+
+/// One straight piece of a `segment` op.
+#[derive(Clone, Copy, Debug)]
+pub struct ShapeThread {
+    pub a: [f32; 3],
+    pub b: [f32; 3],
+    /// Its radius and the radius its voxels were drawn to, voxels.
+    pub r: f32,
+    pub hull: f32,
+    pub mat: u8,
 }
 
 impl Shape {
@@ -86,6 +100,64 @@ impl Shape {
 
 /// `resolve` maps a material, slot or colour name to an id (0 carves);
 /// unknown names give None and are skipped.
+/// The horizontal direction (x, z) of a log or disc axis ("x" or "z")
+/// turned `yaw` degrees from +x toward +z.
+fn turned_axis(axis: &str, yaw: f32) -> [f32; 2] {
+    let a = yaw.to_radians() + if axis == "x" { 0.0 } else { std::f32::consts::FRAC_PI_2 };
+    [a.cos(), a.sin()]
+}
+
+/// A structure made only of logs and discs (driftwood, bone shards) turned
+/// `yaw` degrees about its anchor, for a feature that may lie at any
+/// bearing rather than only at the four quarter turns. Returns the turned
+/// ops with the new size and anchor, sized to just hold them; None if the
+/// structure has any other op.
+pub fn turn_logs(ops: &[Op], size: [i32; 3], anchor: [i32; 3], yaw: f32) -> Option<(Vec<Op>, [i32; 3], [i32; 3])> {
+    let (sn, cs) = yaw.to_radians().sin_cos();
+    let (ax, az) = (anchor[0] as f32, anchor[2] as f32);
+    let spin = |p: [f32; 3]| {
+        let (u, v) = (p[0] - ax, p[2] - az);
+        [u * cs - v * sn + ax, p[1], u * sn + v * cs + az]
+    };
+    let mut out = Vec::with_capacity(ops.len());
+    let (mut lo, mut hi) = ([f32::MAX; 2], [f32::MIN; 2]);
+    let mut grow = |p: [f32; 3], r: f32| {
+        lo = [lo[0].min(p[0] - r), lo[1].min(p[2] - r)];
+        hi = [hi[0].max(p[0] + r), hi[1].max(p[2] + r)];
+    };
+    for op in ops {
+        match op.clone() {
+            Op::Log { base, radius, length, axis, mat, part, yaw: y0 } => {
+                let b = spin(base);
+                let d = turned_axis(&axis, y0 + yaw);
+                grow(b, radius + 1.0);
+                grow([b[0] + d[0] * length, 0.0, b[2] + d[1] * length], radius + 1.0);
+                out.push(Op::Log { base: b, radius, length, axis, mat, part, yaw: y0 + yaw });
+            }
+            Op::Disc { centre, radius, thick, axis, mat, part, yaw: y0 } => {
+                let c = spin(centre);
+                grow(c, radius + thick + 1.0);
+                out.push(Op::Disc { centre: c, radius, thick, axis, mat, part, yaw: y0 + yaw });
+            }
+            _ => return None,
+        }
+    }
+    if out.is_empty() {
+        return None;
+    }
+    // Shift everything so the turned bounds start at voxel 0.
+    let (sx, sz) = (lo[0].floor(), lo[1].floor());
+    for op in &mut out {
+        if let Op::Log { base: p, .. } | Op::Disc { centre: p, .. } = op {
+            p[0] -= sx;
+            p[2] -= sz;
+        }
+    }
+    let new_size = [(hi[0] - sx).ceil() as i32 + 1, size[1], (hi[1] - sz).ceil() as i32 + 1];
+    let new_anchor = [(ax - sx).round() as i32, anchor[1], (az - sz).round() as i32];
+    Some((out, new_size, new_anchor))
+}
+
 pub fn compile(ops: &[Op], size: [i32; 3], resolve: &dyn Fn(&str) -> Option<u8>) -> Shape {
     let n = (size[0] * size[1] * size[2]).max(0) as usize;
     let mut s = Shape {
@@ -96,6 +168,7 @@ pub fn compile(ops: &[Op], size: [i32; 3], resolve: &dyn Fn(&str) -> Option<u8>)
         top: 0,
         roof: vec![0; (size[0] * size[2]).max(0) as usize],
         col_top: vec![0; (size[0] * size[2]).max(0) as usize],
+        threads: Vec::new(),
     };
     run(&mut s, ops, [0, 0, 0], resolve);
     for z in 0..size[2] {
@@ -218,6 +291,34 @@ fn run(s: &mut Shape, ops: &[Op], off: [i32; 3], resolve: &dyn Fn(&str) -> Optio
                     }
                 }
             }
+            Op::Dish { vertex, radius, depth, thick, tilt, yaw, mat, part } => {
+                let Some(m) = resolve(mat) else { continue };
+                let v = addf(*vertex);
+                let p = part_code(part.as_ref());
+                let (t, w) = (tilt.to_radians(), yaw.to_radians());
+                let axis = [t.sin() * w.cos(), t.cos(), t.sin() * w.sin()];
+                let (r, d, half) = (radius.max(1.0), *depth, thick.max(0.5) * 0.5);
+                let reach = (r * r + d * d).sqrt() + thick + 1.0;
+                for y in (v[1] - reach).floor() as i32..=(v[1] + reach).ceil() as i32 {
+                    for z in (v[2] - reach).floor() as i32..=(v[2] + reach).ceil() as i32 {
+                        for x in (v[0] - reach).floor() as i32..=(v[0] + reach).ceil() as i32 {
+                            let q = [x as f32 + 0.5 - v[0], y as f32 + 0.5 - v[1], z as f32 + 0.5 - v[2]];
+                            let h = q[0] * axis[0] + q[1] * axis[1] + q[2] * axis[2];
+                            let rr = ((q[0] - h * axis[0]).powi(2) + (q[1] - h * axis[1]).powi(2) + (q[2] - h * axis[2]).powi(2)).sqrt();
+                            if rr > r {
+                                continue;
+                            }
+                            // Distance from the surface h = d (rr / r)^2,
+                            // measured across it rather than along the axis
+                            // so the shell keeps its thickness up the rim.
+                            let slope = 2.0 * d * rr / (r * r);
+                            if (h - d * (rr / r).powi(2)).abs() / (1.0 + slope * slope).sqrt() <= half {
+                                put(s, x, y, z, m, p);
+                            }
+                        }
+                    }
+                }
+            }
             Op::Cylinder { base, radius, height, mat, part } => {
                 let Some(m) = resolve(mat) else { continue };
                 let b = addf(*base);
@@ -248,6 +349,41 @@ fn run(s: &mut Shape, ops: &[Op], off: [i32; 3], resolve: &dyn Fn(&str) -> Optio
                 axis,
                 mat,
                 part,
+                yaw,
+            } if *yaw != 0.0 => {
+                let Some(m) = resolve(mat) else { continue };
+                let d = turned_axis(axis, *yaw);
+                let m = crate::world::matlib::grained(m, crate::world::matlib::Axis::of(glam::Vec3::new(d[0], 0.0, d[1])));
+                let b = addf(*base);
+                let p = part_code(part.as_ref());
+                let r = *radius;
+                // The same log as the square one below: voxel centres from 0
+                // to `length` along it, within `r` of its centre line across.
+                let e = [b[0] + d[0] * length, b[2] + d[1] * length];
+                let (x0, x1) = ((b[0].min(e[0]) - r).floor() as i32 - 1, (b[0].max(e[0]) + r).ceil() as i32 + 1);
+                let (z0, z1) = ((b[2].min(e[1]) - r).floor() as i32 - 1, (b[2].max(e[1]) + r).ceil() as i32 + 1);
+                for y in (b[1] - r).floor() as i32..=(b[1] + r).ceil() as i32 {
+                    let dy = y as f32 + 0.5 - b[1];
+                    for z in z0..=z1 {
+                        for x in x0..=x1 {
+                            let (u, v) = (x as f32 + 0.5 - b[0], z as f32 + 0.5 - b[2]);
+                            let t = u * d[0] + v * d[1];
+                            let across = u * -d[1] + v * d[0];
+                            if (0.0..*length).contains(&t) && across * across + dy * dy <= r * r {
+                                put(s, x, y, z, m, p);
+                            }
+                        }
+                    }
+                }
+            }
+            Op::Log {
+                base,
+                radius,
+                length,
+                axis,
+                mat,
+                part,
+                ..
             } => {
                 let Some(m) = resolve(mat) else { continue };
                 // Wood grain along the log.
@@ -279,6 +415,37 @@ fn run(s: &mut Shape, ops: &[Op], off: [i32; 3], resolve: &dyn Fn(&str) -> Optio
                 axis,
                 mat,
                 part,
+                yaw,
+            } if *yaw != 0.0 => {
+                let Some(m) = resolve(mat) else { continue };
+                let n = turned_axis(axis, *yaw);
+                let c = addf(*centre);
+                let p = part_code(part.as_ref());
+                let r = *radius;
+                let ri = r.ceil() as i32 + 2;
+                let half = (thick * 0.5).max(0.5);
+                for y in c[1] as i32 - ri..=c[1] as i32 + ri {
+                    let dy = y as f32 + 0.5 - c[1];
+                    for z in c[2] as i32 - ri..=c[2] as i32 + ri {
+                        for x in c[0] as i32 - ri..=c[0] as i32 + ri {
+                            let (u, v) = (x as f32 + 0.5 - c[0], z as f32 + 0.5 - c[2]);
+                            let w = u * n[0] + v * n[1];
+                            let side = u * -n[1] + v * n[0];
+                            if w.abs() <= half && side * side + dy * dy <= r * r {
+                                put(s, x, y, z, m, p);
+                            }
+                        }
+                    }
+                }
+            }
+            Op::Disc {
+                centre,
+                radius,
+                thick,
+                axis,
+                mat,
+                part,
+                ..
             } => {
                 let Some(m) = resolve(mat) else { continue };
                 let c = addf(*centre);
@@ -303,6 +470,35 @@ fn run(s: &mut Shape, ops: &[Op], off: [i32; 3], resolve: &dyn Fn(&str) -> Optio
                 let Some(m) = resolve(mat) else { continue };
                 let a = add(*at);
                 put(s, a[0], a[1], a[2], m, part_code(part.as_ref()));
+            }
+            Op::Segment { points, radius, mat, part } => {
+                let Some(m) = resolve(mat) else { continue };
+                let p = part_code(part.as_ref());
+                // One line of voxels joined at least at their corners, as
+                // stamp.rs draws a tube limb: the thread covers exactly these.
+                let hull = radius.max(0.62);
+                for w in points.windows(2) {
+                    let (a, b) = (addf(w[0]), addf(w[1]));
+                    let lo = |k: usize| (a[k].min(b[k]) - hull).floor() as i32;
+                    let hi = |k: usize| (a[k].max(b[k]) + hull).ceil() as i32;
+                    let d = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
+                    let l2 = (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]).max(1e-6);
+                    for y in lo(1)..=hi(1) {
+                        for z in lo(2)..=hi(2) {
+                            for x in lo(0)..=hi(0) {
+                                let c = [x as f32 + 0.5, y as f32 + 0.5, z as f32 + 0.5];
+                                let t = (((c[0] - a[0]) * d[0] + (c[1] - a[1]) * d[1] + (c[2] - a[2]) * d[2]) / l2).clamp(0.0, 1.0);
+                                let q = [a[0] + d[0] * t - c[0], a[1] + d[1] * t - c[1], a[2] + d[2] * t - c[2]];
+                                if q[0] * q[0] + q[1] * q[1] + q[2] * q[2] < hull * hull {
+                                    put(s, x, y, z, m, p);
+                                }
+                            }
+                        }
+                    }
+                    if m != 0 {
+                        s.threads.push(ShapeThread { a, b, r: *radius, hull, mat: m });
+                    }
+                }
             }
             Op::RecolourBelow { y, from, to } => {
                 let (Some(f), Some(t)) = (resolve(from), resolve(to)) else {

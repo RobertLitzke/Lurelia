@@ -1,0 +1,15 @@
+{
+  "name": "broom_flowers",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Broom flowers: bright yellow pea flowers crowded along the switches, late spring.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [236, 200, 40],
+    "alt": [214, 170, 30],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [242, 206, 46], "alt": [220, 176, 36]}
+  }
+}

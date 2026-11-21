@@ -1,0 +1,19 @@
+{
+  "name": "cloud_sponge",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "A cloud sponge: soft lobes of glass two metres across, the colour of old paper.",
+  "size": [16, 9, 16],
+  "anchor": [8, 0, 8],
+  "level": false,
+  "decays": false,
+  "base": "bed",
+  "tags": ["natural"],
+  "slots": {"sponge": "cloud_sponge"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [8, 2, 8], "radius": [6, 2.5, 6], "mat": "sponge"},
+    {"op": "ellipsoid", "centre": [5, 4.5, 6], "radius": [3, 3, 3], "mat": "sponge"},
+    {"op": "ellipsoid", "centre": [11, 5, 9], "radius": [3.2, 3.5, 3.2], "mat": "sponge"},
+    {"op": "ellipsoid", "centre": [7, 6.5, 11], "radius": [2.4, 2.4, 2.4], "mat": "sponge"}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "rib_shoals",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Shallow water over sand off the beach, eelgrass in the hollows.",
+  "priority": 3,
+  "rules": {"underwater": true, "elev": [-7, 0]},
+  "surface": "sand",
+  "subsurface": "sand",
+  "map_color": [110, 150, 160],
+  "plants": [],
+  "features": [],
+  "creatures": [
+    {"creature": "herring", "count": 30},
+    {"creature": "harbor_seal", "count": 2},
+    {"creature": "cormorant", "count": 3},
+    {"creature": "brown_pelican", "count": 2},
+    {"creature": "stingray", "count": 1},
+    {"creature": "sea_otter", "count": 1},
+    {"creature": "walrus", "count": 3},
+    {"creature": "bone_crab", "count": 2}
+  ],
+  "collectibles": []
+}

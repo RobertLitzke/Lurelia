@@ -1,0 +1,18 @@
+{
+  "name": "drift_pile",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Driftwood piled where the storm left it: three trunks across each other at the foot of the dunes.",
+  "size": [64, 18, 64],
+  "anchor": [32, 0, 32],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"wood": "silver_deadwood"},
+  "ops": [
+    {"op": "log", "base": [2, 2.2, 30], "radius": 2.2, "length": 60, "axis": "x", "mat": "wood"},
+    {"op": "log", "base": [28, 5.6, 2], "radius": 1.8, "length": 58, "axis": "z", "mat": "wood"},
+    {"op": "log", "base": [10, 8.8, 40], "radius": 1.5, "length": 46, "axis": "x", "mat": "wood"},
+    {"op": "disc", "centre": [2, 4, 30], "radius": 5, "thick": 2, "axis": "x", "mat": "wood"}
+  ]
+}

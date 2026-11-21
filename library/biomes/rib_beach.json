@@ -1,0 +1,28 @@
+{
+  "name": "rib_beach",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The wide flat beach: wet grey-brown sand that holds the sky, as far as you can see each way.",
+  "priority": 6,
+  "rules": {"coast": [0, 210], "elev": [0, 3.2]},
+  "surface": "wet_sand",
+  "subsurface": "sand",
+  "map_color": [150, 142, 128],
+  "plants": [],
+  "features": [
+    {"structure": "bone_shard", "density": 0.00012, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "drift_log", "density": 3e-05, "placement": {"verb": "scatter", "params": {"along": 45}}},
+    {"structure": "titan_tooth", "density": 3e-05, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "gull", "count": 8},
+    {"creature": "brown_pelican", "count": 4},
+    {"creature": "harbor_seal", "count": 3},
+    {"creature": "crow", "count": 2},
+    {"creature": "walrus", "count": 8},
+    {"creature": "bone_crab", "count": 3},
+    {"creature": "black_oystercatcher", "count": 4},
+    {"creature": "albatross", "count": 4}
+  ],
+  "collectibles": [{"item": "seashell", "density": 0.003, "placement": {"verb": "scatter", "params": {}}}]
+}

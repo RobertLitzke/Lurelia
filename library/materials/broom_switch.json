@@ -1,0 +1,15 @@
+{
+  "name": "broom_switch",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Broom: green ribbed switches, nearly leafless.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [86, 124, 52],
+    "alt": [72, 108, 44],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [92, 130, 58], "alt": [78, 114, 50]}
+  }
+}

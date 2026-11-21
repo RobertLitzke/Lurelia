@@ -1,0 +1,19 @@
+{
+  "name": "ephedra",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Mormon tea (ephedra): a broom of jointed yellow-green stems knee to waist high, leafless, on the sand and the slickrock benches. You walk through it.",
+  "form": "canes",
+  "height": [0.6, 1.2],
+  "trunk_radius": [0.05, 0.05],
+  "crown_radius": [0.5, 0.8],
+  "bark": "ephedra_stem",
+  "leaf": "ephedra_tips",
+  "canopy": "tufts",
+  "max_slope": 0.9,
+  "stems": [16, 26],
+  "cane_lean": 0.35,
+  "cane_bend": 0.0,
+  "cane_spurs": 0.7,
+  "cane_leaves": 0.0
+}

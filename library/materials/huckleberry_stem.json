@@ -1,0 +1,16 @@
+{
+  "name": "huckleberry_stem",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Red huckleberry stems: bright green and angled. Passable: knee-high growth you walk through.",
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "grain",
+    "base": [92, 128, 58],
+    "alt": [74, 108, 46],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [98, 134, 64], "alt": [80, 114, 52]}
+  }
+}

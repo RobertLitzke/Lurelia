@@ -1,0 +1,16 @@
+{
+  "name": "teleport_pad",
+  "version": 1,
+  "introduced_by": "arena",
+  "notes": "The floor of a teleporter: a disc of violet light, so a pad that sends you somewhere can be seen from across the room. Painted by the arena tools over the floor under every teleporter; it is floor, nothing more.",
+  "smooth": false,
+  "glow": 1.1,
+  "texture": {
+    "pattern": "rings",
+    "base": [182, 128, 255],
+    "alt": [150, 100, 236],
+    "scale": 4,
+    "contrast": 0.6,
+    "calm": {"base": [182, 128, 255], "alt": [150, 100, 236]}
+  }
+}

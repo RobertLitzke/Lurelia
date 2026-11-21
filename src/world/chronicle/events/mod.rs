@@ -47,6 +47,7 @@ registry! {
     lava_tube: LavaTube,
     passage: Passage,
     tower: TowerEvent,
+    skeleton: Skeleton,
     erode_rims: ErodeRims,
     path: Path,
     moisture: Moisture,
@@ -82,6 +83,11 @@ registry! {
     atoll: Atoll,
     cenote: Cenote,
     vent: Vent,
+    terrain: Terrain,
+    drainage: Drainage,
+    glaciate: Glaciate,
+    seat: Seat,
+    strandline: Strandline,
 }
 
 pub fn find(name: &str) -> Option<&'static EventType> {

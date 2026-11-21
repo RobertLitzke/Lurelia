@@ -54,12 +54,37 @@ const TAP: u8 = 4;
 
 /// One key being tapped twice, which is all a dodge is from outside the
 /// body.
-#[derive(Default)]
+///
+/// It is also the hand that keeps a bot from dodging by accident. The body
+/// reads two presses of a key inside `Player::double_tap`'s window as a
+/// dodge whoever made them, and a brain whose wanted heading wobbles across
+/// a key's threshold presses, lets go and presses again several times a
+/// second. Measured in the league: the brain asked for five dodges a minute
+/// and the body took thirty-eight, which is the "they dodge sideways faster
+/// than I can" of play. A person does not re-press a key that fast without
+/// meaning to, so this hand will not either: outside a tap it refuses a
+/// press of a key pressed less than `GUARD` steps ago.
 pub struct Tapper {
     /// Steps of the tap left; 0 is nothing in progress.
     left: u8,
     key: Dodge,
+    /// Per key, forward, back, left, right: down last step, and steps since
+    /// it last went down.
+    was: [bool; 4],
+    since: [u16; 4],
 }
+
+impl Default for Tapper {
+    fn default() -> Self {
+        // Every key as if last pressed long ago, or a body's first press of
+        // each key would be held back.
+        Tapper { left: 0, key: Dodge::Forward, was: [false; 4], since: [u16::MAX; 4] }
+    }
+}
+
+/// Body steps a key must wait after going down before it may go down again
+/// unbidden: 0.3 s, past the body's 0.26 s double-tap window.
+const GUARD: u16 = 18;
 
 impl Tapper {
     /// One **body** step, not one frame. The bodies run on the fixed step
@@ -69,7 +94,40 @@ impl Tapper {
     /// `want` is a fresh request, taken only when nothing is already being
     /// tapped. What comes back is the want's own keys with that one key
     /// driven by the tap instead.
-    pub fn step(&mut self, want: Option<Dodge>, mut mv: MoveInput) -> MoveInput {
+    pub fn step(&mut self, want: Option<Dodge>, mv: MoveInput) -> MoveInput {
+        let tapping = self.left > 0 || want.is_some();
+        let mut out = self.tap(want, mv);
+        let keys = [&mut out.forward, &mut out.back, &mut out.left, &mut out.right];
+        let tapped = self.key as usize;
+        for (i, k) in keys.into_iter().enumerate() {
+            let meant = tapping && i == tapped;
+            if *k && !self.was[i] && !meant && self.since[i] < GUARD {
+                *k = false;
+            }
+            // Nor reverse a sidestep it has only just begun: a side key may
+            // not go down within `GUARD` of the other one going down. The
+            // league found 38% of reversals came after under 0.3 s.
+            let other = match i {
+                2 => Some(3),
+                3 => Some(2),
+                _ => None,
+            };
+            if let Some(o) = other {
+                if *k && !self.was[i] && !meant && self.since[o] < GUARD {
+                    *k = false;
+                }
+            }
+            if *k && !self.was[i] {
+                self.since[i] = 0;
+            } else {
+                self.since[i] = self.since[i].saturating_add(1);
+            }
+            self.was[i] = *k;
+        }
+        out
+    }
+
+    fn tap(&mut self, want: Option<Dodge>, mut mv: MoveInput) -> MoveInput {
         if self.left == 0 {
             match want {
                 Some(d) => {
@@ -95,6 +153,7 @@ impl Tapper {
     }
 
     /// Mid-tap: a second dodge asked for now would be dropped.
+    #[cfg(test)]
     pub fn busy(&self) -> bool {
         self.left > 0
     }
@@ -174,6 +233,28 @@ pub fn drive(yaw: f32, w: &Want) -> MoveInput {
     }
 }
 
+/// The keys for a body that is not aiming at anybody: forward, steering with
+/// the head, as a person runs. A side key goes down only when the way is more
+/// than `side` (a sine) off the facing, so a bot following a path while its
+/// head comes round holds W rather than flicking A and D. `drive` presses a
+/// side key at about twenty degrees, which is right for a strafe and wrong
+/// for a run.
+pub fn drive_running(yaw: f32, w: &Want, side: f32) -> MoveInput {
+    let mut mv = drive(yaw, w);
+    let (sy, cy) = yaw.sin_cos();
+    let fwd = Vec3::new(-sy, 0.0, -cy);
+    let right = Vec3::new(cy, 0.0, -sy);
+    let level = Vec3::new(w.go.x, 0.0, w.go.z).normalize_or_zero();
+    let f = level.dot(fwd);
+    let r = level.dot(right) + w.strafe;
+    if f > 0.0 && r.abs() < side {
+        mv.left = false;
+        mv.right = false;
+        mv.forward = level != Vec3::ZERO;
+    }
+    mv
+}
+
 /// Is there floor ahead? A body about to walk off a ledge it did not mean to
 /// is the commonest way a bot looks stupid, so steering checks for itself.
 /// `ahead` metres in front of `foot`, and `drop` metres is how far down
@@ -212,11 +293,21 @@ pub fn clear(store: &crate::world::store::Store, foot: Vec3, dir: Vec3, ahead: f
 /// Sliding rather than stopping is the point. A bot that stops when its line
 /// is blocked has given up on the fight; one that slides finds the doorway,
 /// because a doorway is the direction that stops being blocked.
-pub fn around(store: &crate::world::store::Store, foot: Vec3, go: Vec3, ahead: f32, half_w: f32, height: f32) -> Vec3 {
+///
+/// It keeps to one side of the wall. The fan used to take the first clear
+/// heading and always tried the same side first, so a body at the corner of
+/// a doorframe slid one
+/// way, found that side blocked a step later, slid back, and did that several
+/// times a second. The league counted it: over half of a roaming bot's
+/// hundred sidestep reversals a minute were this. Given the side it slid to
+/// last (`keep`, +1 or -1, 0 for no preference), this tries every heading on
+/// that side before any on the other, and says which side it took (0 when
+/// the way was clear and no slide was needed).
+pub fn around_keeping(store: &crate::world::store::Store, foot: Vec3, go: Vec3, ahead: f32, half_w: f32, height: f32, keep: f32) -> (Vec3, f32) {
     let level = Vec3::new(go.x, 0.0, go.z);
     let d = level.length();
     if d < 1e-4 || clear(store, foot, level, ahead, half_w, height) {
-        return go;
+        return (go, 0.0);
     }
     let side = Vec3::new(-level.z, 0.0, level.x) / d;
     let fwd = level / d;
@@ -227,10 +318,16 @@ pub fn around(store: &crate::world::store::Store, foot: Vec3, go: Vec3, ahead: f
     // 8-20% of pressed ticks going nowhere. The last pair leans backward
     // along the wall, which is how a body gets out of a corner it has
     // walked into rather than grinding the inside of it.
-    for (along, back) in [(1.0, 0.35), (-1.0, 0.35), (1.0, 0.0), (-1.0, 0.0), (1.0, -0.35), (-1.0, -0.35), (1.0, -0.9), (-1.0, -0.9)] {
+    let fan: [(f32, f32); 8] = if keep != 0.0 {
+        let (a, b) = (keep.signum(), -keep.signum());
+        [(a, 0.35), (a, 0.0), (a, -0.35), (b, 0.35), (b, 0.0), (b, -0.35), (a, -0.9), (b, -0.9)]
+    } else {
+        [(1.0, 0.35), (-1.0, 0.35), (1.0, 0.0), (-1.0, 0.0), (1.0, -0.35), (-1.0, -0.35), (1.0, -0.9), (-1.0, -0.9)]
+    };
+    for (along, back) in fan {
         let slide = (side * along + fwd * back).normalize_or_zero();
         if clear(store, foot, slide, ahead, half_w, height) {
-            return slide * d;
+            return (slide * d, along);
         }
     }
     // Boxed in on every side: keep the want it came with rather than
@@ -243,7 +340,7 @@ pub fn around(store: &crate::world::store::Store, foot: Vec3, go: Vec3, ahead: f
     // asking to move. So the one case where a bot most needs shoving out of
     // something was the one case nothing was watching. Measured: the bot
     // that reconsiders most often stood motionless for 72% of a round.
-    go
+    (go, 0.0)
 }
 
 /// Would a step `ahead` metres this way put a foot in something that burns?
@@ -303,16 +400,6 @@ pub fn aside(store: &crate::world::store::Store, foot: Vec3, heading: Vec3, ahea
         }
     }
     None
-}
-
-/// A sidestep that reverses now and then rather than circling forever:
-/// `phase` is seconds, `period` how long each leg lasts.
-pub fn weave(phase: f32, period: f32) -> f32 {
-    if (phase / period.max(0.1)).floor() as i32 % 2 == 0 {
-        1.0
-    } else {
-        -1.0
-    }
 }
 
 /// The same, with legs of uneven length so it does not read as a metronome.
@@ -402,14 +489,6 @@ mod tests {
         assert_eq!((a.forward, a.right), (b.forward, b.right));
         let s = drive(0.0, &Want { strafe: 1.0, ..Default::default() });
         assert!(s.right && !s.forward && !s.back && !s.left);
-    }
-
-    /// The weave changes legs.
-    #[test]
-    fn the_weave_turns_round() {
-        assert_eq!(weave(0.1, 1.0), 1.0);
-        assert_eq!(weave(1.1, 1.0), -1.0);
-        assert_eq!(weave(2.1, 1.0), 1.0);
     }
 
     /// The tap is what a player's hand does: let go, press, let go, press,

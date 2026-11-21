@@ -124,6 +124,7 @@ pub fn check_world(args: &Args) -> i32 {
     let (lib, errors) = worldload::library_for(&name);
     let mut problems: Vec<String> = errors;
     problems.extend(lib.validate());
+    problems.extend(crate::brain::avatar::build(Some(&lib), &mut crate::models::palette()).problems);
     println!("library: {}; {} texture layers for this world", lib.summary(), world::matlib::layer_count());
     let dir = worldload::world_dir(&name);
     match world::chronicle::build_world(&dir, lib) {
@@ -132,16 +133,28 @@ pub fn check_world(args: &Args) -> i32 {
                 println!("{}", world::chronicle::gazetteer(&w));
             }
             problems.extend(w.warnings.iter().map(|x| format!("world {name}: {x}")));
+            problems.extend(w.def.gravity.problem().map(|x| format!("world {name}: {x}")));
+            if let Some(sh) = w.def.shooter.as_ref() {
+                problems.extend(crate::shooter::teams::check(sh).into_iter().map(|x| format!("world {name}: {x}")));
+                // Every fighter its own spawn: the player and the most bots
+                // the launch screen offers.
+                if let Some(most) = sh.max_bots {
+                    if most + 1 > sh.spawns.len() {
+                        problems.push(format!("world {name}: max_bots {most} with the player is {} fighters for {} spawns", most + 1, sh.spawns.len()));
+                    }
+                    if most > crate::launch::BOT_NAMES.len() {
+                        problems.push(format!("world {name}: max_bots {most}, and there are names for only {}", crate::launch::BOT_NAMES.len()));
+                    }
+                }
+            }
             let (_, species, _, colours, colour_problems) = worldload::creatures(&w);
             problems.extend(colour_problems.iter().map(|x| format!("world {name}: {x}")));
             // What a new world feature can still spend: voxel ids (a byte,
-            // 17..=254, grain copies included) and creature palette slots.
+            // 17..=254, grain copies included). Creature colours have no
+            // budget (each model has a palette block of its own), so they
+            // are only counted.
             let ids = (17u8..255).filter(|&m| world::matlib::key(m).is_some()).count();
-            println!(
-                "world {name}: budgets: {ids} of 238 material ids, {} of {} creature colours",
-                colours.len(),
-                crate::models::LIBRARY_COLOURS.len()
-            );
+            println!("world {name}: budgets: {ids} of 238 material ids; {} creature and collectible colours", colours.len());
             let used = worldload::used_entries(&w);
             println!(
                 "world {name}: built in {:.0} ms; {} of {} creature species used",

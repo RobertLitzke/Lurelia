@@ -8,11 +8,20 @@
 //    and 1 on a fair day.
 // v: x = how far up the camera looks, so the falling stuff sweeps past as the
 //    view turns; yzw = the sky's horizon colour, which the rain is lit by.
+// m: x = the camera's pitch (radians), y = tan of half the vertical field
+//    of view, z = the heat mirage (0 to 1), w = 1 when reflections are on.
+// c: xyz = the camera, w = sea level.
+// vp, ivp: the frame's view-projection and its inverse, for the
+//    reflections' march (`mirror`).
 struct Post {
     s: vec4<f32>,
     x: vec4<f32>,
     w: vec4<f32>,
     v: vec4<f32>,
+    m: vec4<f32>,
+    c: vec4<f32>,
+    vp: mat4x4<f32>,
+    ivp: mat4x4<f32>,
 };
 @group(0) @binding(1) var<uniform> post: Post;
 // Sun rays: xy = the sun's position on screen (uv), z = strength (0 = none),
@@ -345,6 +354,144 @@ fn fs_post(in: FsTri) -> @location(0) vec4<f32> {
     return vec4<f32>(c, 1.0);
 }
 
+// Where a world point falls on screen: uv, and its view depth (metres in
+// front of the camera; 0 or less behind it).
+fn to_screen(q: vec3<f32>) -> vec3<f32> {
+    let clip = post.vp * vec4<f32>(q, 1.0);
+    if (clip.w <= 0.05) {
+        return vec3<f32>(-1.0, -1.0, 0.0);
+    }
+    let ndc = clip.xy / clip.w;
+    return vec3<f32>(ndc.x * 0.5 + 0.5, 0.5 - ndc.y * 0.5, clip.w);
+}
+
+// How far off the scene is at uv, metres of view depth; very far for sky.
+fn scene_depth(uv: vec2<f32>, dims: vec2<f32>) -> f32 {
+    let d = textureLoad(depth_tex, vec2<i32>(clamp(uv * dims, vec2<f32>(0.0), dims - 1.0)), 0);
+    return select(post.s.z / max(d, 1e-9), 1e9, d <= 0.0);
+}
+
+// Reflections in standing water. The terrain writes alpha over 1 where it
+// holds a pool or a flooded pan, and the water pass adds its own coverage on
+// top of the bed (render/mod.rs), so alpha - 1 is how much of a mirror a
+// pixel is; nothing else ever writes more than 1. From the water's surface
+// (the sea's level for open water, whose own depth is not in the buffer, or
+// the ground itself for a pool) the view is reflected about straight up and
+// marched out across the depth buffer; the first thing it passes behind,
+// within a thickness that grows with distance, is what the water shows, over
+// the sky the scene shader already put there. Off the screen or into the sky
+// it finds nothing and the sky stays.
+fn mirror(px: vec2<f32>, uv: vec2<f32>, c: vec3<f32>) -> vec3<f32> {
+    let dims = vec2<f32>(textureDimensions(hdr));
+    let a = textureLoad(hdr, vec2<i32>(px), 0).a;
+    let m = clamp(a - 1.0, 0.0, 1.0);
+    if (m < 0.02 || post.m.w < 0.5) {
+        return c;
+    }
+    let d = textureLoad(depth_tex, vec2<i32>(px), 0);
+    if (d <= 0.0) {
+        return c;
+    }
+    let ndc = vec4<f32>(uv.x * 2.0 - 1.0, 1.0 - uv.y * 2.0, d, 1.0);
+    let h = post.ivp * ndc;
+    var p = h.xyz / h.w;
+    let cam = post.c.xyz;
+    let v = normalize(p - cam);
+    if (v.y > -0.002) {
+        return c;
+    }
+    // Open water: the bed is what the buffer holds; the mirror is the surface.
+    if (p.y < post.c.w - 0.02 && cam.y > post.c.w) {
+        p = cam + v * ((post.c.w - cam.y) / v.y);
+    }
+    // A slow ripple, so the image shivers rather than standing like glass.
+    let t = post.x.y;
+    let rip = vec2<f32>(sin(p.x * 0.9 + t * 1.7) + sin(p.z * 1.3 - t * 1.1), sin(p.z * 0.8 + t * 1.3) + sin(p.x * 1.1 + t * 0.9)) * 0.0035;
+    let r = normalize(vec3<f32>(v.x + rip.x, -v.y, v.z + rip.y));
+    var tt = 0.6;
+    var prev = 0.0;
+    var hit = -1.0;
+    for (var i = 0; i < 44; i++) {
+        let q = to_screen(p + r * tt);
+        if (q.z <= 0.0 || q.x < 0.0 || q.x > 1.0 || q.y < 0.0 || q.y > 1.0) {
+            break;
+        }
+        let sd = scene_depth(q.xy, dims);
+        if (q.z > sd + 0.05) {
+            if (q.z < sd + max(2.0, sd * 0.06) + tt * 0.08) {
+                hit = tt;
+            }
+            break;
+        }
+        prev = tt;
+        tt *= 1.22;
+    }
+    if (hit < 0.0) {
+        return c;
+    }
+    // Close in on where it crossed.
+    var lo = prev;
+    var hi = hit;
+    for (var i = 0; i < 6; i++) {
+        let mid = (lo + hi) * 0.5;
+        let q = to_screen(p + r * mid);
+        if (q.z > scene_depth(q.xy, dims)) {
+            hi = mid;
+        } else {
+            lo = mid;
+        }
+    }
+    let q = to_screen(p + r * hi);
+    let edge = smoothstep(0.0, 0.06, min(min(q.x, 1.0 - q.x), min(q.y, 1.0 - q.y)));
+    let img = textureLoad(hdr, vec2<i32>(clamp(q.xy * dims, vec2<f32>(0.0), dims - 1.0)), 0).rgb;
+    let cosv = -v.y;
+    let fres = 0.02 + 0.98 * pow(1.0 - cosv, 5.0);
+    return mix(c, img * 0.92, m * mix(fres, 1.0, 0.15) * edge);
+}
+
+// The heat mirage over a flat (world.json `mirage`). Light coming in just
+// under the horizon is bent back up off the hot air over the ground, so the
+// far flat shows what is just above the horizon, upside down and squeezed:
+// sky-coloured water from a hundred and fifty metres out, and anything
+// standing out there floating over its own reflection with its foot lost in
+// it. The air over the flat shimmers. Nearer ground keeps its own colour, so
+// the water is always out ahead and never where you stand.
+fn mirage(uv: vec2<f32>, c: vec3<f32>) -> vec3<f32> {
+    let k = post.m.z;
+    if (k < 0.01) {
+        return c;
+    }
+    let dims = vec2<f32>(textureDimensions(hdr));
+    let pitch = post.m.x;
+    let th = post.m.y;
+    let ny = 1.0 - uv.y * 2.0;
+    let e = pitch + atan(ny * th);
+    if (e > 0.03 || e < -0.06) {
+        return c;
+    }
+    let dist = scene_depth(uv, dims);
+    let far = smoothstep(60.0, 140.0, dist);
+    if (far <= 0.0) {
+        return c;
+    }
+    let t = post.x.y;
+    // The shimmer: a fine waver, strongest at the horizon.
+    let at_line = 1.0 - smoothstep(0.0, 0.03, abs(e));
+    let wav = sin(uv.y * dims.y * 0.7 + t * 9.0) * 0.6 + sin(uv.x * dims.x * 0.04 - t * 5.3) * 0.4;
+    let src = uv + vec2<f32>(wav * 1.2, wav * 0.6) / dims * k * far * at_line;
+    var out = textureLoad(hdr, vec2<i32>(clamp(src * dims, vec2<f32>(0.0), dims - 1.0)), 0).rgb;
+    if (e < 0.0) {
+        // Under the line: what stands four times the angle above it, so the
+        // reflection comes out squeezed, the way a mirage's does.
+        let e2 = -e * 4.0 + wav * 0.0008;
+        let ny2 = tan(e2 - pitch) / th;
+        let v2 = 0.5 - ny2 * 0.5;
+        let up = textureLoad(hdr, vec2<i32>(clamp(vec2<f32>(src.x, v2) * dims, vec2<f32>(0.0), dims - 1.0)), 0).rgb;
+        out = mix(out, up * vec3<f32>(0.96, 0.98, 1.0), k * smoothstep(0.0, 0.002, -e));
+    }
+    return mix(c, out, far);
+}
+
 fn graded(in: FsTri) -> vec3<f32> {
     let p = vec2<i32>(in.clip.xy);
     var c: vec3<f32>;
@@ -353,6 +500,8 @@ fn graded(in: FsTri) -> vec3<f32> {
     } else {
         c = soften_distance(p, textureLoad(hdr, p, 0).rgb);
     }
+    c = mirror(in.clip.xy, in.uv, c);
+    c = mirage(in.uv, c);
     // Speed: a radial blur that leaves the middle sharp and streaks the edges,
     // and a darker rim, both growing with post.s.y.
     let fx = post.s.y;

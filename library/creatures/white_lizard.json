@@ -1,0 +1,16 @@
+{
+  "name": "white_lizard",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "skulk: Bleached earless lizard: the dunes' own lizard, gone nearly as white as the gypsum it runs on, with faint blue on its flanks.",
+  "colors": {"rabbit": [214, 208, 194], "dark": [120, 128, 140], "rabbit_light": [236, 232, 222]},
+  "behaviour": {
+    "movement": "skulk",
+    "walk_speed": 0.5,
+    "flee_speed": 4,
+    "wary": 3.5,
+    "flightiness": 1.7,
+    "flees_from": ["player", "coyote"]
+  },
+  "like": "lizard"
+}

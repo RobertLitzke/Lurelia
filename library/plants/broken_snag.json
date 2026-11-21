@@ -9,5 +9,6 @@
   "crown_radius": [0.6, 1.0],
   "bark": "bark",
   "max_slope": 1.0,
-  "lean": 0.15
+  "lean": 0.15,
+  "thin_limbs": 0.12
 }

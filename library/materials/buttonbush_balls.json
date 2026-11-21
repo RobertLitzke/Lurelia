@@ -1,0 +1,15 @@
+{
+  "name": "buttonbush_balls",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Buttonbush flowers: white pincushion balls, summer.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [236, 232, 214],
+    "alt": [214, 206, 180],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [242, 238, 220], "alt": [220, 212, 186]}
+  }
+}

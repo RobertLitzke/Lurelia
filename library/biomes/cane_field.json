@@ -1,6 +1,6 @@
 {
   "name": "cane_field",
-  "version": 1,
+  "version": 2,
   "introduced_by": "lowmouth",
   "notes": "Sugar cane in blocks taller than a man, dirt rows between.",
   "priority": 8,
@@ -12,9 +12,14 @@
   "plants": [
     {
       "plant": "sugar_cane",
-      "density": 0.12,
+      "density": 0.1,
       "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.2, "max": 0.35}}
     }
   ],
-  "creatures": [{"creature": "boar", "count": 3}, {"creature": "crow", "count": 8}, {"creature": "jackrabbit", "count": 3}]
+  "creatures": [
+    {"creature": "boar", "count": 3},
+    {"creature": "crow", "count": 8},
+    {"creature": "jackrabbit", "count": 3},
+    {"creature": "barn_owl", "count": 1}
+  ]
 }

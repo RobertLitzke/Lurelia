@@ -1,0 +1,17 @@
+{
+  "name": "silver_tree",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Silver tree: a small upright tree of the ravines whose silky leaves turn the whole crown silver in the wind.",
+  "form": "branching",
+  "height": [5.0, 9.0],
+  "trunk_radius": [0.14, 0.22],
+  "crown_radius": [1.3, 1.9],
+  "bark": "pale_bark",
+  "leaf": "silver_leaves",
+  "curve": "sweep",
+  "canopy": "lobes",
+  "leader": 0.6,
+  "fill": 0.5,
+  "max_slope": 0.9
+}

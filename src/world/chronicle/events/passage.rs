@@ -9,6 +9,8 @@ use serde::Deserialize;
 /// passage through a tower or a ridge, open wherever the path leaves the rock.
 /// `lining` names a material for the rock over its roof (a glowing ceiling);
 /// `shafts` vertical chimneys up to the surface, evenly along it.
+/// `height` is the centre line; the floor is flat at `height - 0.55 * radius`
+/// (`gen.rs` `carve_tubes`), which is where a `place` on the floor goes.
 #[derive(Deserialize, Debug)]
 pub struct Passage {
     path: Vec<Pos>,

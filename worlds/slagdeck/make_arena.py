@@ -330,6 +330,7 @@ entry = {
     "name": "slagdeck_arena",
     "version": 1,
     "introduced_by": "slagdeck",
+    "_generated_by": "worlds/slagdeck/make_arena.py",
     "notes": (
         "The whole arena deck as one structure, written by "
         "worlds/slagdeck/make_arena.py: a hall round a slag pit, roofed side "

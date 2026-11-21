@@ -1,5 +1,7 @@
 {
   "name": "slagdeck",
+  "blurb": "A smelting works on a granite shelf off a cold coast: one building, one floor worth fighting over.",
+  "listed": false,
   "size_m": 384,
   "height_m": 64,
   "sea_level_m": 6,
@@ -33,11 +35,12 @@
   },
   "start_weather": "clouds",
   "default_biome": "works_yard",
-  "seabed_biome": "seabed",
+  "seabed_biome": "arena_seabed",
   "start_hour": 15.4,
   "snow_line_m": 400,
   "weathering": 0.0,
   "moss": 0.0,
+  "round_edges": ["deck_ramp", "works_beam", "works_grate", "hazard_stripe", "works_panel", "corrugated_tin", "rust_iron", "works_panel_pale", "deck_floor", "concrete"],
   "modes": [
     "walk",
     "shooter",
@@ -45,7 +48,7 @@
   ],
   "biomes": [
     "works_yard",
-    "seabed"
+    "arena_seabed"
   ],
   "shooter": {
     "weapons": [
@@ -62,7 +65,7 @@
     ],
     "health": 100,
     "armour": 100,
-    "respawn_s": 3.0,
+    "respawn_s": 5.0,
     "give_all": true,
     "bots": [
       {

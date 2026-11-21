@@ -1,0 +1,15 @@
+{
+  "name": "craft_skin",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The hull's skin: dark graphite with a violet sheen at a low angle, smooth as glass, cold in the shade and faintly warm in the sun. Nothing has grown on it.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [46, 44, 54],
+    "alt": [70, 62, 88],
+    "scale": 3,
+    "contrast": 0.8,
+    "calm": {"base": [52, 50, 60], "alt": [74, 66, 92]}
+  }
+}

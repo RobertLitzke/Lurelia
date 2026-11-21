@@ -1,6 +1,6 @@
 {
   "name": "high_meadow",
-  "version": 1,
+  "version": 2,
   "introduced_by": "redrock",
   "notes": "Grass parks on the plateau where the soil stays wet in spring: gold grass, aspen and young pines at the edges.",
   "priority": 5,
@@ -26,6 +26,8 @@
     {"creature": "northern_flicker", "count": 1},
     {"creature": "bison", "count": 5},
     {"creature": "sheep", "count": 6},
-    {"creature": "wolf", "count": 1}
-  ]
+    {"creature": "wolf", "count": 1},
+    {"creature": "mule_deer", "count": 4}
+  ],
+  "sound": {"wind": 1.25}
 }

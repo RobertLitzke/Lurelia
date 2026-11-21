@@ -1,0 +1,16 @@
+{
+  "name": "sitka_spruce",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Sitka spruce at the edge of the forest: tall, dark and blue-green, salt-tolerant, the coast's own tree.",
+  "form": "conifer",
+  "height": [20, 30],
+  "trunk_radius": [0.45, 0.7],
+  "buttress": 0.45,
+  "crown_radius": [3.0, 4.0],
+  "bark": "bark",
+  "leaf": "sitka_needles",
+  "max_slope": 0.8,
+  "crown_base": 0.15,
+  "affords": ["perch"]
+}

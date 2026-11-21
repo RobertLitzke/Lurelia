@@ -1,0 +1,16 @@
+{
+  "name": "cane_stalk",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Sugar cane stalks: yellow-green banded with purple at the joints. Passable: you push through a cane field.",
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "grain",
+    "base": [150, 150, 70],
+    "alt": [118, 84, 96],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [156, 156, 76], "alt": [124, 90, 102]}
+  }
+}

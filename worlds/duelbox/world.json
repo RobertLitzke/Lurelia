@@ -1,5 +1,7 @@
 {
   "name": "duelbox",
+  "blurb": "A bench for duels.",
+  "listed": false,
   "size_m": 256,
   "height_m": 64,
   "sea_level_m": 6,
@@ -31,11 +33,12 @@
   },
   "start_weather": "sun",
   "default_biome": "works_yard",
-  "seabed_biome": "seabed",
+  "seabed_biome": "arena_seabed",
   "start_hour": 13.0,
   "snow_line_m": 400,
   "weathering": 0.0,
   "moss": 0.0,
+  "round_edges": ["works_panel_pale", "concrete", "deck_floor", "corrugated_tin", "hazard_stripe"],
   "modes": [
     "walk",
     "shooter",
@@ -43,7 +46,7 @@
   ],
   "biomes": [
     "works_yard",
-    "seabed"
+    "arena_seabed"
   ],
   "shooter": {
     "weapons": [

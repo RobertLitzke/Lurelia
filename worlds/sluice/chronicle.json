@@ -1,0 +1,31 @@
+{
+  "places": {
+    "yards": [
+      128.0,
+      128.0
+    ]
+  },
+  "events": [
+    {
+      "year": -4000,
+      "event": "landmass",
+      "cause": "A flat granite shelf where the river used to be held back.",
+      "centre": "yards",
+      "radius": 112,
+      "roughness": 0.0,
+      "hills": 0,
+      "ridges": 0,
+      "shelf": 4,
+      "edge_fall": 50
+    },
+    {
+      "year": -1,
+      "event": "place",
+      "cause": "The two pump yards and the drained spillway between them.",
+      "structure": "sluice_yards",
+      "at": "yards",
+      "bearing": 0,
+      "poi": "the sluice"
+    }
+  ]
+}

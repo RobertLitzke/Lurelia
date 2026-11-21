@@ -39,5 +39,6 @@
     {"item": "ivory_shard", "density": 0.0016, "placement": {"verb": "scatter", "params": {}}},
     {"item": "bear_tooth", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}},
     {"item": "flint_blade", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}
-  ]
+  ],
+  "sound": {"wind": 1.3, "notes": "Open downland: the wind never stops."}
 }

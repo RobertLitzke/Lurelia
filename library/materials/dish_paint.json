@@ -1,0 +1,15 @@
+{
+  "name": "dish_paint",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The array's paint after thirty years of sun: a cool aluminium grey gone chalky, rust bleeding from every bolt line. It was white once; next to the salt it never looked it.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [146, 154, 164],
+    "alt": [146, 116, 96],
+    "scale": 3,
+    "contrast": 0.6,
+    "calm": {"base": [150, 158, 168], "alt": [150, 126, 106]}
+  }
+}

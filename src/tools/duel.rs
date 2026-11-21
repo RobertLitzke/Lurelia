@@ -121,6 +121,8 @@ fn bot(name: &str) -> BotDef {
         bold: 0.0,
         steady: 0.0,
         without: Vec::new(),
+        tune: Default::default(),
+        team: None,
     }
 }
 

@@ -1,5 +1,6 @@
 {
   "name": "kaldvik",
+  "blurb": "A northern fjord in early winter: four hours of low sun, a long blue dusk, and the aurora most nights.",
   "size_m": 1024,
   "height_m": 224,
   "sea_level_m": 24,
@@ -66,10 +67,14 @@
     ]
   ],
   "strata_swell": 3,
-  "spawn": [
-    868,
-    474
-  ],
+  "spawn_at": {
+    "from": "fjord_head",
+    "by": [
+      12,
+      0
+    ],
+    "as_if": 90
+  },
   "spawn_bearing": 90,
   "seasons": [
     "winter"
@@ -99,7 +104,10 @@
     "kaldvik_shore",
     "cold_coral",
     "kaldvik_green",
-    "kaldvik_fjord"
+    "kaldvik_fjord",
+    "kelp_forest",
+    "basalt_coast",
+    "black_sand_beach"
   ],
   "water": {
     "shallow": [

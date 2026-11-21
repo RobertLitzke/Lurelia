@@ -56,16 +56,6 @@ impl Reach {
             _ => None,
         }
     }
-
-    pub fn name(self) -> &'static str {
-        match self {
-            Reach::Walk => "walk",
-            Reach::Jump => "jump",
-            Reach::Drop => "drop",
-            Reach::Lift => "lift",
-            Reach::Portal => "portal",
-        }
-    }
 }
 
 /// What a body is willing and able to do.
@@ -132,6 +122,37 @@ struct Edge {
 pub struct Graph {
     pub nodes: Vec<Node>,
     adj: Vec<Vec<Edge>>,
+    /// Walk links the world states but the ground refuses: somewhere along
+    /// the straight line between the two nodes there is no floor within a
+    /// metre, or the floor burns (`unsafe_walk`). Left out of the graph and
+    /// kept here for the headless report.
+    pub refused: Vec<(u16, u16)>,
+}
+
+/// How far apart the checks along a walk link are, metres.
+const WALK_CHECK_M: f32 = 0.4;
+/// How far the floor under a walk link may fall below the line between its
+/// ends before the link counts as crossing a hole: a step, not a pit.
+const WALK_GAP_M: f32 = 1.5;
+
+/// Does the straight line from `a` to `b` cross a hole or burning ground?
+/// A bot follows a walk link as a straight line, so a link drawn diagonally
+/// past the corner of a pit takes every bot that follows it over the edge:
+/// on one arena the one link that did so was where nearly every bot that died
+/// in the slime fell in. A point whose floor cannot be found yet (the chunk
+/// is still loading) is given the benefit of the doubt. Burning floor counts
+/// only between two dry nodes (`fire`): a pool's own links are how a bot
+/// standing in one plans its way out.
+fn unsafe_walk(a: Vec3, b: Vec3, fire: bool, floor: &impl Fn(f32, f32, f32) -> Option<f32>, hurts: &impl Fn(Vec3) -> bool) -> bool {
+    let len = Vec3::new(b.x - a.x, 0.0, b.z - a.z).length();
+    let n = (len / WALK_CHECK_M).ceil() as usize;
+    (1..n).any(|k| {
+        let p = a.lerp(b, k as f32 / n as f32);
+        match floor(p.x, p.z, p.y + FLOOR_SLACK) {
+            Some(y) => y < p.y - WALK_GAP_M || (fire && hurts(Vec3::new(p.x, y, p.z))),
+            None => false,
+        }
+    })
 }
 
 /// What waiting for a lift is worth in metres of walking. Not tuned against
@@ -193,6 +214,7 @@ impl Graph {
             });
         }
         let mut adj = vec![Vec::new(); nodes.len()];
+        let mut refused = Vec::new();
         for (i, l) in def.links.iter().enumerate() {
             let (a, b) = (l.a as usize, l.b as usize);
             if a >= nodes.len() || b >= nodes.len() || a == b {
@@ -203,6 +225,11 @@ impl Graph {
                 warn(format!("nav link {i}: no reach called {}", l.reach));
                 continue;
             };
+            let dry = !nodes[a].hurts && !nodes[b].hurts;
+            if reach == Reach::Walk && unsafe_walk(nodes[a].at, nodes[b].at, dry, &floor, &hurts) {
+                refused.push((a as u16, b as u16));
+                continue;
+            }
             let d = nodes[a].at.distance(nodes[b].at);
             // What it costs to use, which for a lift is mostly not distance.
             // A plate ten metres below its landing is ten metres of travel
@@ -240,7 +267,7 @@ impl Graph {
                 n.hurts = false;
             }
         }
-        Graph { nodes, adj }
+        Graph { nodes, adj, refused }
     }
 
     /// The node nearest `p`, preferring one on roughly the same level: the
@@ -264,9 +291,15 @@ impl Graph {
     /// set off toward a node on the far side of a wall it is standing
     /// against. Falls back to `nearest`.
     pub fn nearest_seen(&self, store: &crate::world::store::Store, from: Vec3, p: Vec3) -> Option<u16> {
+        self.nearest_seen_except(store, from, p, |_| false)
+    }
+
+    /// The same, passing over the nodes `skip` names: a node a bot has just
+    /// failed to walk onto from where it stands is no place to start from.
+    pub fn nearest_seen_except(&self, store: &crate::world::store::Store, from: Vec3, p: Vec3, skip: impl Fn(u16) -> bool) -> Option<u16> {
         let mut best: Option<(u16, f32)> = None;
         for (i, n) in self.nodes.iter().enumerate() {
-            if n.hurts {
+            if n.hurts || skip(i as u16) {
                 continue;
             }
             let flat = Vec3::new(n.at.x - p.x, 0.0, n.at.z - p.z).length();
@@ -281,15 +314,17 @@ impl Graph {
         best.map(|(i, _)| i).or_else(|| self.nearest(p))
     }
 
-    /// The node named `poi`.
-    pub fn poi(&self, name: &str) -> Option<u16> {
-        self.nodes.iter().position(|n| n.poi.as_deref() == Some(name)).map(|i| i as u16)
-    }
-
     /// A\* from `from` to `to` over the links this body can use. The
     /// straight-line distance is an admissible heuristic because no link
     /// costs less than its own length.
     pub fn route(&self, from: u16, to: u16, able: Able) -> Option<Vec<u16>> {
+        self.route_with(from, to, able, |_, _| 0.0)
+    }
+
+    /// The same, with `extra(a, b)` metres added to the link from `a` to
+    /// `b`: how a bot steers its routes off a link it has just failed to
+    /// walk, without ruling it out when there is no other way.
+    pub fn route_with(&self, from: u16, to: u16, able: Able, extra: impl Fn(u16, u16) -> f32) -> Option<Vec<u16>> {
         let n = self.nodes.len();
         if from as usize >= n || to as usize >= n {
             return None;
@@ -335,7 +370,7 @@ impl Graph {
                 if self.nodes[e.to as usize].hurts && !self.nodes[at as usize].hurts {
                     continue;
                 }
-                let g = here + e.cost;
+                let g = here + e.cost + extra(at, e.to);
                 if g + 1e-4 >= best[e.to as usize] {
                     continue;
                 }
@@ -383,12 +418,6 @@ impl Graph {
                 stack.push(e.to);
             }
         }
-    }
-
-    /// Is every node reachable from `from`? What a world's geometry is worth
-    /// checking for, and what `--validate` asks.
-    pub fn all_reachable(&self, from: u16, able: Able) -> Vec<u16> {
-        (0..self.nodes.len() as u16).filter(|&i| self.route(from, i, able).is_none()).collect()
     }
 
     pub fn at(&self, i: u16) -> Option<&Node> {
@@ -622,6 +651,24 @@ mod tests {
         Graph::build(&def, 0.0, |_, _, want| Some(want - FLOOR_SLACK), |_| false, |w| panic!("{w}"))
     }
 
+    /// A walk link drawn across the corner of a pit is left out, and so is
+    /// one across burning floor; a jump over the same pit is kept.
+    #[test]
+    fn a_walk_link_over_a_hole_or_fire_is_refused() {
+        let def = NavDef {
+            nodes: vec![node(0.0, 0.0, 0.0), node(10.0, 0.0, 0.0), node(0.0, 10.0, 0.0), node(10.0, 10.0, 0.0)],
+            links: vec![link(0, 1, "walk"), link(2, 3, "walk"), link(0, 2, "walk"), link(1, 3, "jump")],
+        };
+        // A pit 2.5 m deep across x 4..6 at z < 5, and fire across x 4..6 at z > 5.
+        let floor = |x: f32, _z: f32, want: f32| Some(if (4.0..6.0).contains(&x) { want - FLOOR_SLACK - 2.5 } else { want - FLOOR_SLACK });
+        let hurts = |p: Vec3| (4.0..6.0).contains(&p.x) && p.z > 5.0;
+        let g = Graph::build(&def, 0.0, floor, hurts, |w| panic!("{w}"));
+        assert_eq!(g.refused, vec![(0, 1), (2, 3)]);
+        let able = Able::default();
+        assert!(g.route(0, 2, able).is_some(), "the safe walk went too");
+        assert!(g.route(1, 3, able).is_some(), "the jump went too");
+    }
+
     #[test]
     fn a_link_says_what_it_takes_and_the_search_listens() {
         let g = ladder();
@@ -636,8 +683,8 @@ mod tests {
         assert!(g.route(0, 3, cannot).is_none(), "it planned a jump it cannot make");
         assert_eq!(g.route(0, 2, cannot).map(|p| p.len()), Some(3), "it refused a walk");
         assert_eq!(g.route(2, 2, can), Some(vec![2]));
-        assert_eq!(g.all_reachable(0, cannot), vec![3]);
-        assert!(g.all_reachable(0, can).is_empty());
+        assert_eq!(g.audit(0, cannot).1, vec![3]);
+        assert!(g.audit(0, can).1.is_empty());
     }
 
     /// A drop is one way: you can fall off the gantry and not climb back.

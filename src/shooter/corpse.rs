@@ -23,9 +23,6 @@ use crate::world::material::AIR;
 use crate::world::noise::Rng;
 use crate::world::store::Store;
 use glam::{Quat, Vec3};
-
-/// Metres a second squared: what the dead fall under (`physics::tumble`).
-const GRAVITY: f32 = 24.0;
 /// How much of its speed a point keeps each step in the air, so a body
 /// does not swing for ever.
 const AIR_KEEP: f32 = 0.995;
@@ -41,6 +38,17 @@ const PASSES: usize = 8;
 /// How far past its end a part with nothing hanging off it reaches, metres:
 /// the point its direction is read from.
 const TIP: f32 = 0.16;
+/// Metres a second each joint is thrown outward from the middle of the
+/// body as it dies, so the limbs go out and the body lands spread rather
+/// than folding down into a heap through itself.
+const SPLAY: f32 = 1.8;
+/// Metres a second per metre of height the body is tipped over with, along
+/// the blow if there was one: it goes over like a felled post, head first
+/// and fastest, instead of crumpling straight down.
+const TOPPLE: f32 = 2.2;
+/// The closest two points with no stick between them may come, metres: a
+/// forearm cannot pass through a chest.
+const GAP: f32 = 0.18;
 /// The most corpses kept at once; the oldest goes first.
 pub const MOST: usize = 8;
 
@@ -66,6 +74,11 @@ pub struct Corpse {
     prev: Vec<Vec3>,
     was: Vec<Vec3>,
     sticks: Vec<Stick>,
+    /// Pairs of points with no stick between them, and how close they may
+    /// come (`GAP`, or less if they started closer).
+    apart: Vec<(usize, usize, f32)>,
+    /// The part each point belongs to: its joint, or its tip.
+    owner: Vec<usize>,
     /// For each part: the point it points at, and that direction in its own
     /// frame, taken at the moment of death.
     aim: Vec<usize>,
@@ -73,8 +86,9 @@ pub struct Corpse {
     /// Each part's orientation, now and a step ago.
     rot: Vec<Quat>,
     prev_rot: Vec<Quat>,
-    /// The chest lamps: which part each hangs off, and where in its frame.
-    lamps: Vec<(usize, Vec3)>,
+    /// The chest lamps: which part each hangs off, and where and how it is
+    /// turned in that part's frame.
+    lamps: Vec<(usize, Vec3, Quat)>,
     /// Parts shot off it (bit `k` for part `k`, `LAMP_BIT + j` for lamp
     /// `j`) and the damage put towards the next piece (`Shooter::chip`).
     pub missing: u64,
@@ -89,12 +103,13 @@ impl Corpse {
     /// `parts` each part's joint and orientation in the world at the moment
     /// it died, `lamps` where its lamps were, `vel` what the killing blow
     /// left in it, `dt` the step it will be moved on.
-    pub fn new(bot: usize, parents: &[Option<usize>], parts: &[(Vec3, Quat)], lamps: &[Vec3], vel: Vec3, life: f32, seed: u32, dt: f32) -> Corpse {
+    pub fn new(bot: usize, parents: &[Option<usize>], parts: &[(Vec3, Quat)], lamps: &[(Vec3, Quat)], vel: Vec3, life: f32, seed: u32, dt: f32) -> Corpse {
         let n = parts.len();
         let mut pts: Vec<Vec3> = parts.iter().map(|p| p.0).collect();
         let kids: Vec<Vec<usize>> = (0..n).map(|k| (0..n).filter(|&c| parents[c] == Some(k)).collect()).collect();
         let mut sticks = Vec::new();
         let mut aim = vec![0; n];
+        let mut owner: Vec<usize> = (0..n).collect();
         for k in 0..n {
             if let Some(p) = parents[k] {
                 sticks.push(Stick { a: k, b: p, len: pts[k].distance(pts[p]), part: Some(k) });
@@ -107,6 +122,7 @@ impl Corpse {
                     let from = parents[k].map_or(pts[k] + Vec3::Y, |p| pts[p]);
                     let dir = (pts[k] - from).normalize_or(Vec3::NEG_Y);
                     pts.push(pts[k] + dir * TIP);
+                    owner.push(k);
                     let t = pts.len() - 1;
                     sticks.push(Stick { a: k, b: t, len: TIP, part: Some(k) });
                     aim[k] = t;
@@ -134,18 +150,36 @@ impl Corpse {
         // Every point given the blow, and a little of its own so no two
         // bodies go down the same way.
         let mut rng = Rng::new(seed | 1);
+        // Outward from the middle, and over: along the blow if it had any
+        // sideways in it, any way at all if it did not.
+        let middle = pts[..n].iter().copied().sum::<Vec3>() / n.max(1) as f32;
+        let lowest = pts.iter().map(|p| p.y).fold(f32::MAX, f32::min);
+        let a = rng.unit() * std::f32::consts::TAU;
+        let tip = vel.with_y(0.0).try_normalize().unwrap_or(Vec3::new(a.cos(), 0.0, a.sin()));
         let prev = pts
             .iter()
             .map(|&p| {
                 let wobble = Vec3::new(rng.unit() - 0.5, rng.unit() * 0.5, rng.unit() - 0.5) * 1.2;
-                p - (vel + wobble) * dt
+                let out = (p - middle).with_y(0.0).normalize_or_zero() * SPLAY;
+                let over = tip * (p.y - lowest) * TOPPLE;
+                p - (vel + wobble + out + over) * dt
             })
             .collect();
+        let joined = |a: usize, b: usize| sticks.iter().any(|s: &Stick| (s.a == a && s.b == b) || (s.a == b && s.b == a));
+        let mut apart = Vec::new();
+        for a in 0..pts.len() {
+            for b in a + 1..pts.len() {
+                if !joined(a, b) {
+                    apart.push((a, b, GAP.min(pts[a].distance(pts[b]) * 0.9)));
+                }
+            }
+        }
         let lamps = lamps
             .iter()
-            .map(|&l| {
+            .map(|&(l, r)| {
                 let k = (0..n).min_by(|&a, &b| parts[a].0.distance(l).total_cmp(&parts[b].0.distance(l))).unwrap_or(0);
-                (k, parts[k].1.inverse() * (l - parts[k].0))
+                let inv = parts[k].1.inverse();
+                (k, inv * (l - parts[k].0), inv * r)
             })
             .collect();
         Corpse {
@@ -156,6 +190,8 @@ impl Corpse {
             pts,
             prev,
             sticks,
+            apart,
+            owner,
             aim,
             local,
             prev_rot: rot.clone(),
@@ -180,7 +216,7 @@ impl Corpse {
         for i in 0..self.pts.len() {
             let p = self.pts[i];
             let mut v = (p - self.prev[i]) * AIR_KEEP;
-            v.y -= GRAVITY * dt * dt;
+            v += store.gravity.pull(p) * dt * dt;
             let mut q = p;
             // One axis at a time, down first, so a point that lands slides
             // rather than sticking where it touched.
@@ -202,6 +238,25 @@ impl Corpse {
             self.pts[i] = q;
         }
         for _ in 0..PASSES {
+            // Parts not joined to each other keep out of each other.
+            for &(a, b, gap) in &self.apart {
+                if self.missing & (1 << self.owner[a] | 1 << self.owner[b]) != 0 {
+                    continue;
+                }
+                let d = self.pts[b] - self.pts[a];
+                let len = d.length();
+                if len >= gap || len < 1e-5 {
+                    continue;
+                }
+                let fix = d * ((len - gap) / len * 0.5);
+                let (na, nb) = (self.pts[a] + fix, self.pts[b] - fix);
+                if !solid(na - Vec3::Y * SKIN) {
+                    self.pts[a] = na;
+                }
+                if !solid(nb - Vec3::Y * SKIN) {
+                    self.pts[b] = nb;
+                }
+            }
             for s in &self.sticks {
                 if s.part.is_some_and(|k| self.missing & (1 << k) != 0) {
                     continue;
@@ -239,12 +294,12 @@ impl Corpse {
         (0..self.rot.len()).filter(move |k| self.missing & (1 << k) == 0).map(move |k| (k, self.was[k].lerp(self.pts[k], alpha), self.prev_rot[k].slerp(self.rot[k], alpha)))
     }
 
-    /// Each lamp still on it: which, and where.
-    pub fn lamps(&self, alpha: f32) -> impl Iterator<Item = (usize, Vec3)> + '_ {
-        self.lamps.iter().enumerate().filter(move |(j, _)| self.missing & (1 << (LAMP_BIT + j)) == 0).map(move |(j, &(k, off))| {
+    /// Each lamp still on it: which, where, and how it is turned.
+    pub fn lamps(&self, alpha: f32) -> impl Iterator<Item = (usize, Vec3, Quat)> + '_ {
+        self.lamps.iter().enumerate().filter(move |(j, _)| self.missing & (1 << (LAMP_BIT + j)) == 0).map(move |(j, &(k, off, turn))| {
             let at = self.was[k].lerp(self.pts[k], alpha);
             let rot = self.prev_rot[k].slerp(self.rot[k], alpha);
-            (j, at + rot * off)
+            (j, at + rot * off, rot * turn)
         })
     }
 
@@ -313,6 +368,28 @@ mod tests {
         }
         assert!(c.lowest() > 0.95, "a point went through the floor at 1 m: {}", c.lowest());
         assert!(c.highest() < 1.5, "it is still standing: its top is at {}", c.highest());
+    }
+
+    /// Killed with nothing in the blow, a body still goes over and lands
+    /// spread out, and no part of it ends up inside another.
+    #[test]
+    fn a_body_lands_spread_and_not_through_itself() {
+        let store = floor();
+        let (parents, parts) = figure();
+        for seed in [3, 7, 11, 19] {
+            let mut c = Corpse::new(1, &parents, &parts, &[], Vec3::ZERO, 10.0, seed, 1.0 / 60.0);
+            for _ in 0..240 {
+                c.step(&store, 1.0 / 60.0);
+            }
+            assert!(c.highest() < 1.5, "seed {seed}: it is still standing, top at {}", c.highest());
+            let (lo, hi) = c.pts.iter().fold((Vec3::splat(f32::MAX), Vec3::splat(f32::MIN)), |(lo, hi), p| (lo.min(*p), hi.max(*p)));
+            let spread = (hi - lo).with_y(0.0).length();
+            assert!(spread > 1.2, "seed {seed}: it landed in a heap {spread:.2} m across");
+            for &(a, b, gap) in &c.apart {
+                let d = c.pts[a].distance(c.pts[b]);
+                assert!(d > gap * 0.6, "seed {seed}: points {a} and {b} are {d:.2} m apart, inside each other");
+            }
+        }
     }
 
     /// Thrown, it flies as a whole: the feet leave the floor with the rest

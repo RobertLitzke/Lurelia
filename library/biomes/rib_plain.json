@@ -1,0 +1,43 @@
+{
+  "name": "rib_plain",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The flat behind the beach and between the dune fields: dunegrass and lupine on old sand, wet in the hollows.",
+  "priority": 2,
+  "rules": {"coast": [0, 420]},
+  "surface": "dune_grass",
+  "subsurface": "dune_sand",
+  "map_color": [168, 160, 118],
+  "plants": [
+    {
+      "plant": "lupine",
+      "density": 0.03,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.55, "max": 0.7}}
+    },
+    {
+      "plant": "sea_buckthorn",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 34, "min": 0.58, "max": 0.7}}
+    },
+    {
+      "plant": "beach_pea",
+      "density": 0.01,
+      "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.5, "max": 0.65}}
+    }
+  ],
+  "features": [
+    {
+      "structure": "drift_log",
+      "density": 0.0012,
+      "placement": {"verb": "edge", "params": {"width": 5, "inner": 0.0, "along": 30}, "field": "rib_wrack,rib_beach"}
+    }
+  ],
+  "creatures": [
+    {"creature": "elk", "count": 6},
+    {"creature": "raven", "count": 2},
+    {"creature": "gull", "count": 2},
+    {"creature": "jackrabbit", "count": 3},
+    {"creature": "sparrow", "count": 4}
+  ],
+  "collectibles": []
+}

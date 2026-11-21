@@ -1,0 +1,22 @@
+{
+  "name": "pincushion",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Pincushion protea: a low rounded bush with orange flower heads like pincushions all over its top in spring.",
+  "form": "canes",
+  "height": [0.6, 1.1],
+  "trunk_radius": [0.04, 0.05],
+  "crown_radius": [0.5, 0.7],
+  "bark": "juniper_bark",
+  "leaf": "protea_leaves",
+  "canopy": "tufts",
+  "max_slope": 1.0,
+  "stems": [10, 16],
+  "cane_lean": 0.4,
+  "cane_bend": 0.04,
+  "cane_spurs": 0.5,
+  "flower": "pincushion_flower",
+  "flower_tips": true,
+  "flower_seasons": ["spring", "summer"],
+  "affords": ["nectar"]
+}

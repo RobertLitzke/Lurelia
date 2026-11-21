@@ -1,0 +1,16 @@
+{
+  "name": "bone_lichen",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Lichen and salt on the bone that faces the sky: pale grey-green, almost white where the gulls sit.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [128, 132, 124],
+    "alt": [140, 140, 130],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [132, 136, 128], "alt": [144, 144, 134]}
+  },
+  "round": true
+}

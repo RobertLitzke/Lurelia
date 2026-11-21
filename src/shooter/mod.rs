@@ -14,11 +14,13 @@
 //! player in it at all.
 
 pub mod corpse;
+pub mod flag;
 pub mod gibs;
 mod hold;
 mod hud;
 pub mod pickup;
 pub mod round;
+pub mod teams;
 
 use crate::anim::figure;
 use crate::brain::{self, avatar, duel, nav, person, Bot, Fighter, Foe, Me, Pilot, Score};
@@ -37,6 +39,10 @@ use crate::world::store::Store;
 use glam::{Quat, Vec3};
 use hold::Hold;
 
+/// How much narrower each wheel step makes the view down a sight, and how
+/// many steps there are: the sniper rifle's 0.3 goes down to about 0.07.
+const SIGHT_STEP: f32 = 0.7;
+const SIGHT_STEPS: u8 = 4;
 /// How fast the view settles back after recoil, degrees a second.
 /// Damage a corpse takes for each piece shot off it: about a fifth of a
 /// second of minigun, and a sixth of the pulse beam.
@@ -93,6 +99,9 @@ const SPAWN_SLACK: f32 = 3.0;
 /// bots can spend a minute not finding each other.
 const EARSHOT_S: f32 = 3.0;
 const SHOT_REACH_M: f32 = 40.0;
+/// How old a teammate's sighting may be and still count as seeing somebody
+/// now: a little over the interval a bot looks at (`senses::LOOK_EVERY`).
+const SEEN_FRESH_S: f32 = 0.35;
 
 pub struct Shooter {
     rules: ShooterDef,
@@ -118,6 +127,9 @@ pub struct Shooter {
     /// gun with a `zoom`. The view narrows (`Activity::zoom`) and the HUD
     /// draws the scope.
     pub(crate) sighted: bool,
+    /// Wheel steps of extra magnification down the sight, 0 to `SIGHT_STEPS`.
+    /// Kept when the sight comes down, so the next look is at the same power.
+    sight_steps: u8,
     pub(crate) mark: f32,
     /// How big the hit marker is drawn, 0 to 1 by the damage that set it
     /// off, and whether that was a head shot.
@@ -133,7 +145,7 @@ pub struct Shooter {
     /// Chunks of bodies lying about (gibs.rs): what a blast broke a bot
     /// into, and the pieces shot off a corpse. Seconds since they came off,
     /// and seconds before they are cleared away.
-    gibs: Vec<(f32, f32, Vec<gibs::Gib>)>,
+    gibs: Vec<(f32, f32, Vec<gibs::Gib>, usize)>,
     /// The dead, lying where they fell (corpse.rs). Each is its own thing:
     /// the bot it was has usually respawned long before it is cleared.
     pub(crate) corpses: Vec<corpse::Corpse>,
@@ -196,12 +208,37 @@ pub struct Shooter {
     /// that spotted it stopped exploring and fought it for the rest of the
     /// round, on the deck floor, which is where the spawn is.
     bench: bool,
+    /// What each bot's side has asked of it, bot order (`brain::team`).
+    /// All None in a deathmatch.
+    orders: Vec<Option<brain::Order>>,
+    /// Capture the flag (flag.rs): both flags, and what they did this step,
+    /// which the team brain and the alerts read.
+    pub(crate) flags: flag::Flags,
+    pub(crate) flag_news: Vec<flag::Event>,
+    /// Every flag event of the match, for the headless report.
+    pub(crate) flag_log: Vec<(f32, flag::Event)>,
+    /// The alerts across the top of the screen: what, in whose colour, and
+    /// seconds since it went up (hud.rs). Newest last; one shows at a time.
+    pub(crate) alerts: Vec<(String, [f32; 4], f32)>,
+    /// Each side's planner (`brain::team`), which fills `orders`.
+    pub(crate) team_brains: [brain::team::TeamBrain; 2],
+    /// Role changes under test, per side (`brain::Order::tweaks`).
+    tweaks: [u32; 2],
+    /// When each fighter last died (0 the player, then the bots), for the
+    /// team brain's count of enemies just killed.
+    died_at: Vec<f32>,
 }
 
 /// How tall a pickup's column of light stands on a pad of the middle size,
 /// metres, and where it starts: clear of the blob turning at knee height,
 /// and tall enough to clear a bot standing in front of it.
 const BEACON_M: f32 = 2.4;
+/// How far the foot of a pickup floats over its platform, metres.
+const PICKUP_CLEAR_M: f32 = 0.22;
+/// How opaque a pickup is drawn: the rounds and the guns, and the lit cross
+/// and plate, which light themselves and so can be thinner and still read.
+const PICKUP_A: f32 = 0.7;
+const PICKUP_GLOW_A: f32 = 0.6;
 const BEACON_FOOT_M: f32 = 0.75;
 /// How wide the column is drawn at its foot, metres.
 const BEACON_W_M: f32 = 0.07;
@@ -286,6 +323,7 @@ impl Shooter {
             bots: Vec::new(),
             climb: 0.0,
             sighted: false,
+            sight_steps: 0,
             mark: 0.0,
             mark_size: 0.0,
             mark_head: false,
@@ -308,7 +346,11 @@ impl Shooter {
             hold: Hold::default(),
             bots_to_the_field: false,
             bench: false,
-            round: round::Round::new(rules.target_score),
+            round: match (&rules.ctf, teams::active(rules)) {
+                (Some(c), _) => round::Round::playing(round::Goal::Captures, c.captures, c.time_s),
+                (None, true) => round::Round::playing(round::Goal::TeamKills, rules.target_score, 0.0),
+                _ => round::Round::new(rules.target_score),
+            },
             // The palette slots were filled when the models were built
             // (`Game::add_ride_models`); this call wants the rig, and
             // `build` is pure in the library, so the two agree.
@@ -316,15 +358,30 @@ impl Shooter {
             pickups: pickup::Pickups::default(),
             lures: Vec::new(),
             noises: Vec::new(),
+            orders: Vec::new(),
+            flags: flag::Flags::default(),
+            flag_news: Vec::new(),
+            flag_log: Vec::new(),
+            alerts: Vec::new(),
+            team_brains: Default::default(),
+            tweaks: [0; 2],
+            died_at: Vec::new(),
         };
         let want = rules.bots.clone();
         let mut taken: Vec<Vec3> = Vec::new();
+        // The sides, in a team match: the player's and each bot's.
+        let sides = teams::active(rules).then(|| teams::deal(&want, rules.player_team));
+        if let Some((me, _)) = &sides {
+            sh.me.team = Some(*me);
+        }
+        let mut members = [0usize; 2];
         for (i, def) in want.iter().enumerate() {
+            let team = sides.as_ref().map(|(_, t)| t[i]);
             let Some(base) = person::level(&def.skill) else {
                 eprintln!("world.json shooter: no difficulty called {} (one of {:?})", def.skill, person::NAMES);
                 continue;
             };
-            let at = sh.next_spawn(&taken);
+            let at = sh.next_spawn(&taken, team);
             let pos = sh.floor_at(store, at.at[0], at.at[1], at.ceiling, sh.home.0.y).0;
             taken.push(pos);
             let mut body = Player::new(pos, -at.bearing.to_radians());
@@ -338,9 +395,18 @@ impl Shooter {
             // Its own colour out of the roster, unless the world insisted
             // on one. Nobody has to name a colour for a match to have every
             // bot in it told apart.
-            let tint = def.colour.map_or_else(|| avatar::team_tint(i), |c| [c[0] as f32 / 255.0, c[1] as f32 / 255.0, c[2] as f32 / 255.0]);
+            // In a team match the side's colour, which is the point of a
+            // side, and the world's own colour for a bot is not used.
+            let tint = match team {
+                Some(t) => {
+                    members[t as usize] += 1;
+                    teams::tint(t, members[t as usize] - 1)
+                }
+                None => def.colour.map_or_else(|| avatar::team_tint(i), |c| [c[0] as f32 / 255.0, c[1] as f32 / 255.0, c[2] as f32 / 255.0]),
+            };
             let mut fighter = new_fighter(lib, rules);
             fighter.revive(rules.give_all);
+            fighter.team = team;
             sh.bots.push(Bot::new(
                 &def.name,
                 body,
@@ -348,7 +414,8 @@ impl Shooter {
                 base.flavour(def.bold, def.steady),
                 Box::new(duel::Duel::playing(
                     seed ^ 0x9e37 ^ (i as u32 + 1).wrapping_mul(0x85eb),
-                    duel::Style::without(&def.without, |w| eprintln!("world.json shooter: bot {}: {w}", def.name)),
+                    duel::Style::without(&def.without, |w| eprintln!("world.json shooter: bot {}: {w}", def.name))
+                        .tuned(&def.tune, |w| eprintln!("world.json shooter: bot {}: {w}", def.name)),
                 )),
                 tint,
                 &sh.avatar,
@@ -444,10 +511,22 @@ impl Shooter {
         // stated, which is right to a voxel or two, and `settle_pads` asks
         // again for the ones that need it -- the machinery was already there
         // and had nothing to do, because nothing was ever placed early.
+        if self.flags.is_empty() {
+            if let Some(def) = self.rules.ctf.clone() {
+                let mut bad = Vec::new();
+                self.flags = flag::Flags::new(&def, |x, z, up| self.pad_floor(store, base, x, z, up), |w| bad.push(w));
+                for w in bad {
+                    eprintln!("world.json shooter ctf: {w}");
+                }
+            }
+        }
         if self.pickups.is_empty() && !self.rules.pickups.is_empty() {
             let defs = self.rules.pickups.clone();
             let mut bad = Vec::new();
             self.pickups = pickup::Pickups::new(&defs, |x, z, up| self.pad_floor(store, base, x, z, up), |w| bad.push(w));
+            for p in &mut self.pickups.pads {
+                p.stash = self.rules.ammo_without_gun;
+            }
             for w in bad {
                 eprintln!("world.json shooter pickups: {w}");
             }
@@ -503,12 +582,64 @@ impl Shooter {
             if flat < BEACON_NEAR_M {
                 continue;
             }
-            let tall = BEACON_M * p.size().map_or(1.0, pickup::Size::scale);
+            let tall = BEACON_M * p.scale();
             let t = p.kind.tint();
             for i in 0..BEACON_BANDS {
                 let up = |k: usize| p.at + Vec3::Y * (BEACON_FOOT_M + tall * k as f32 / BEACON_BANDS as f32);
                 let fade = 1.0 - i as f32 / BEACON_BANDS as f32;
                 out.line(up(i), up(i + 1), BEACON_W_M * fade.max(0.3), [t[0], t[1], t[2], BEACON_A * fade * fade]);
+            }
+        }
+    }
+
+    /// Where flag `f` is drawn this frame: on its stand, on the floor, or on
+    /// its carrier's back. None when the player is carrying it, who sees it
+    /// on the HUD instead of in the middle of the view.
+    fn flag_draw_at(&self, f: &flag::Flag, player: &Player, alpha: f32) -> Option<(Vec3, f32)> {
+        match f.state {
+            flag::State::Home => Some((f.stand, 0.0)),
+            flag::State::Dropped { at, .. } => Some((at, 0.6)),
+            flag::State::Carried(0) => None,
+            flag::State::Carried(who) => {
+                let _ = player;
+                let b = self.bots.get(who - 1)?;
+                let at = b.body.prev_pos.lerp(b.body.pos, alpha);
+                // Across its back, a little up, so it sticks out over the
+                // shoulders from in front and is the first thing seen from
+                // behind.
+                let back = Vec3::new(b.body.yaw.sin(), 0.0, b.body.yaw.cos());
+                Some((at + back * 0.28 + Vec3::Y * 0.35, b.body.yaw))
+            }
+        }
+    }
+
+    /// The flags and their stands.
+    fn draw_flags(&self, player: &Player, alpha: f32, shells: usize, models: &[Model], out: &mut Vec<(usize, Instance)>) {
+        for f in &self.flags.flags {
+            let tint = teams::tint(f.team, 0);
+            out.extend(hold::placed(shells + avatar::STAND_M, models, f.stand + Vec3::Y * 0.03, 0.0, Quat::IDENTITY, tint).map(|(m, i)| (m, i.glass(0.8))));
+            let Some((at, yaw)) = self.flag_draw_at(f, player, alpha) else { continue };
+            // A slow sway, so the cloth reads as cloth.
+            let sway = (self.now * 1.7 + f.team as f32 * 2.0).sin() * 0.18;
+            out.extend(hold::placed(shells + avatar::FLAG_M, models, at, yaw + sway, Quat::IDENTITY, tint));
+        }
+    }
+
+    /// A tall column over a flag that is not on its stand, so a dropped
+    /// flag or a carrier can be found from across the map. Depth-tested like
+    /// the pads' columns: it says where, not through walls; the HUD's
+    /// markers do that.
+    fn flag_beacons(&self, player: &Player, out: &mut crate::render::overlay::Overlay) {
+        for f in &self.flags.flags {
+            if f.state == flag::State::Home {
+                continue;
+            }
+            let Some((at, _)) = self.flag_draw_at(f, player, 1.0) else { continue };
+            let t = teams::tint(f.team, 0);
+            for i in 0..BEACON_BANDS {
+                let up = |k: usize| at + Vec3::Y * (2.0 + 6.0 * k as f32 / BEACON_BANDS as f32);
+                let fade = 1.0 - i as f32 / BEACON_BANDS as f32;
+                out.line(up(i), up(i + 1), 0.12 * fade.max(0.3), [t[0], t[1], t[2], 0.45 * fade]);
             }
         }
     }
@@ -553,6 +684,11 @@ impl Shooter {
     /// with no human in it (`tools::tourney`), where the player is a body
     /// standing at the spawn and would otherwise be both a free kill and a
     /// reason for a bot to stop walking the map.
+    /// The pads, for the league's report.
+    pub fn pads(&self) -> &[pickup::Pad] {
+        &self.pickups.pads
+    }
+
     pub fn bench_player(&mut self) {
         self.bench = true;
     }
@@ -575,6 +711,7 @@ impl Shooter {
             "hurts": hurts,
             "marooned": marooned,
             "trapped": trapped,
+            "refused": self.nav.refused,
         })
     }
 
@@ -626,6 +763,9 @@ impl Shooter {
                     "range": b.brain.aiming_at().1,
                     "known": b.brain.aiming_at().2,
                     "seen": b.brain.aiming_at().3,
+                    // Capture the flag: its job, and decisions spent on it.
+                    "job": self.orders.get(b_index(&self.bots, b)).copied().flatten().map(|o| o.role.name()),
+                    "errands": b.brain.errands(),
                 })
             })
             .collect()
@@ -662,7 +802,7 @@ impl Shooter {
     /// without this they keep the stated height for the whole match, which
     /// is a gun sunk in the floor wherever the world file rounded.
     fn settle_pads(&mut self, store: &Store, player: &Player) {
-        if self.pickups.unplaced() == 0 {
+        if self.pickups.unplaced() == 0 && self.flags.unplaced() == 0 {
             return;
         }
         self.pad_due = self.pad_due.saturating_sub(1);
@@ -675,6 +815,9 @@ impl Shooter {
         let mut pads = std::mem::take(&mut self.pickups);
         pads.settle(|x, z, up| self.pad_floor(store, base, x, z, up));
         self.pickups = pads;
+        let mut flags = std::mem::take(&mut self.flags);
+        flags.settle(|x, z, up| self.pad_floor(store, base, x, z, up));
+        self.flags = flags;
     }
 
     /// Where the next body comes back: of a few spawn points drawn at
@@ -684,18 +827,23 @@ impl Shooter {
     /// It used to march down the list in turn, which hands out the same
     /// opening corner every match and, on a list that begins somewhere
     /// awkward, hands out that corner again and again.
-    fn next_spawn(&mut self, away_from: &[Vec3]) -> SpawnPoint {
-        if self.rules.spawns.is_empty() {
+    fn next_spawn(&mut self, away_from: &[Vec3], team: Option<u8>) -> SpawnPoint {
+        // A side's own spawns, and the shared ones; all of them on a map
+        // that marks none for this side.
+        let ours: Vec<SpawnPoint> = self.rules.spawns.iter().filter(|s| team.is_none() || s.team.is_none() || s.team == team).copied().collect();
+        let list = if ours.is_empty() { self.rules.spawns.clone() } else { ours };
+        if list.is_empty() {
             return SpawnPoint {
                 at: [self.home.0.x, self.home.0.z],
                 bearing: self.home.1,
                 ceiling: None,
+                team: None,
             };
         }
         let mut best: Option<(f32, SpawnPoint)> = None;
         for _ in 0..SPAWN_DRAWS {
-            let i = ((self.spawn_rng.unit() * self.rules.spawns.len() as f32) as usize).min(self.rules.spawns.len() - 1);
-            let s = self.rules.spawns[i];
+            let i = ((self.spawn_rng.unit() * list.len() as f32) as usize).min(list.len() - 1);
+            let s = list[i];
             let room = away_from.iter().map(|p| (p.x - s.at[0]).hypot(p.z - s.at[1])).fold(f32::INFINITY, f32::min);
             if best.map_or(true, |(r, _)| room > r) {
                 best = Some((room, s));
@@ -727,8 +875,9 @@ impl Shooter {
             return;
         }
         self.me_to_the_field -= 1;
-        let away: Vec<Vec3> = self.bots.iter().map(|b| b.pos()).collect();
-        let s = self.next_spawn(&away);
+        let mine = self.me.team;
+        let away: Vec<Vec3> = self.bots.iter().filter(|b| mine.is_none() || b.fighter.team != mine).map(|b| b.pos()).collect();
+        let s = self.next_spawn(&away, mine);
         let (pos, found) = self.floor_at(store, s.at[0], s.at[1], s.ceiling, self.home.0.y);
         if !found {
             return; // that corner of the world is not in yet: try again
@@ -748,6 +897,7 @@ impl Shooter {
             height: player.body.height,
             half_w: player.body.half_w,
             alive: self.me.alive(),
+            team: self.me.team,
         });
         for b in &self.bots {
             // Wide enough to cover where the bot was drawn as well as where
@@ -769,6 +919,7 @@ impl Shooter {
                 height: b.height(),
                 half_w: b.half_w() + lag,
                 alive: b.fighter.alive(),
+                team: b.fighter.team,
             });
         }
         out
@@ -850,6 +1001,7 @@ impl Shooter {
             vel: player.body.vel,
             height: player.body.height,
             alive: self.me.alive() && !self.bench,
+            team: self.me.team,
         });
         for (i, b) in self.bots.iter().enumerate() {
             out.push(Foe {
@@ -858,12 +1010,46 @@ impl Shooter {
                 vel: b.vel(),
                 height: b.height(),
                 alive: b.fighter.alive(),
+                team: b.fighter.team,
             });
         }
         out
     }
 
-    fn name_of(&self, who: usize) -> String {
+    /// Where fighter `who` is, if anybody on side `team` other than the
+    /// player can see them right now: a bot's memory, fresh within a look.
+    pub(crate) fn side_sees(&self, team: u8, who: usize) -> Option<Vec3> {
+        let mut seen = Vec::new();
+        for b in self.bots.iter().filter(|b| b.fighter.team == Some(team) && b.fighter.alive()) {
+            seen.clear();
+            b.brain.sightings(&mut seen);
+            if let Some(s) = seen.iter().find(|s| s.who == who && self.now - s.when < SEEN_FRESH_S) {
+                return Some(s.at);
+            }
+        }
+        None
+    }
+
+    /// Fighter `who`'s side, in a team match.
+    fn team_of(&self, who: usize) -> Option<u8> {
+        if who == 0 {
+            self.me.team
+        } else {
+            self.bots.get(who - 1).and_then(|b| b.fighter.team)
+        }
+    }
+
+    /// Two different fighters on the same side.
+    fn teammates(&self, a: usize, b: usize) -> bool {
+        a != b && self.team_of(a).is_some() && self.team_of(a) == self.team_of(b)
+    }
+
+    /// Everybody's side in fighter order, for the round's team board.
+    pub fn sides(&self) -> Vec<Option<u8>> {
+        (0..=self.bots.len()).map(|w| self.team_of(w)).collect()
+    }
+
+    pub(crate) fn name_of(&self, who: usize) -> String {
         match who {
             0 => "YOU".to_string(),
             i => self.bots.get(i - 1).map_or_else(|| format!("#{i}"), |b| b.name.to_uppercase()),
@@ -884,10 +1070,10 @@ impl Shooter {
     /// start from.
     fn break_lamps(&mut self, i: usize, fling: Vec3, blast: bool) {
         let Some(b) = self.bots.get(i) else { return };
-        let av = &self.avatar;
+        let av = self.avatar.body(b.build);
         let lamps = av.lamps(&b.figure, b.body.pos, b.body.yaw, 1.0);
         for l in lamps {
-            self.combat.sparks(l + Vec3::Y * avatar::LAMP_RISE);
+            self.combat.sparks(l.at);
         }
         let pose = b.figure.at(1.0);
         let mut fk = Vec::new();
@@ -900,6 +1086,7 @@ impl Shooter {
             // sends it and lies there after the bot has come back.
             let parents: Vec<Option<usize>> = av.rig.bones.iter().map(|b| b.parent).collect();
             let parts: Vec<(Vec3, Quat)> = fk.iter().map(|&(p, q)| (b.body.pos + yq * p, yq * q)).collect();
+            let lamps: Vec<(Vec3, Quat)> = lamps.iter().map(|l| (l.at, l.rot)).collect();
             self.corpses.push(corpse::Corpse::new(i, &parents, &parts, &lamps, fling, life, seed, STEP));
             if self.corpses.len() > corpse::MOST {
                 self.corpses.remove(0);
@@ -907,10 +1094,10 @@ impl Shooter {
             return;
         }
         let mut parts: Vec<(gibs::Part, Vec3, Quat)> = fk.iter().enumerate().map(|(k, &(p, q))| (gibs::Part::Bone(k), b.body.pos + yq * p, yq * q)).collect();
-        parts.extend(lamps.iter().map(|&l| (gibs::Part::Lamp, l, yq)));
+        parts.extend(lamps.iter().map(|l| (gibs::Part::Lamp, l.at, l.rot)));
         let chest = b.body.pos + Vec3::Y * b.height() * 0.55;
         let chunks = gibs::burst(&parts, chest, fling, seed);
-        self.gibs.push((0.0, life, chunks));
+        self.gibs.push((0.0, life, chunks, b.build));
     }
 
     /// Shoot pieces off the dead. Every round and beam this step
@@ -928,14 +1115,16 @@ impl Shooter {
         if strikes.is_empty() {
             return;
         }
-        let av = &self.avatar;
-        let parents: Vec<Option<usize>> = av.rig.bones.iter().map(|b| b.parent).collect();
-        let mut thrown: Vec<(f32, f32, gibs::Gib)> = Vec::new();
+        // Every build has the same bones, so any of them says whose parent
+        // is whose.
+        let parents: Vec<Option<usize>> = self.avatar.body(0).rig.bones.iter().map(|b| b.parent).collect();
+        let mut thrown: Vec<(f32, f32, gibs::Gib, usize)> = Vec::new();
         let mut sparks = Vec::new();
         for (n, c) in self.corpses.iter_mut().enumerate() {
+            let build = self.bots.get(c.bot).map_or(0, |b| b.build);
             // Every part still on it, where it is now.
             let mut parts: Vec<(gibs::Part, u32, Vec3, Quat)> = c.parts(1.0).map(|(k, p, q)| (gibs::Part::Bone(k), k as u32, p, q)).collect();
-            parts.extend(c.lamps(1.0).map(|(j, l)| (gibs::Part::Lamp, (corpse::LAMP_BIT + j) as u32, l, Quat::IDENTITY)));
+            parts.extend(c.lamps(1.0).map(|(j, l, r)| (gibs::Part::Lamp, (corpse::LAMP_BIT + j) as u32, l, r)));
             if parts.is_empty() {
                 continue;
             }
@@ -982,14 +1171,14 @@ impl Shooter {
                 // Thrown along the shot and out of the body, as a blast
                 // throws a chunk out of a chest.
                 let from = at - along * 0.3;
-                thrown.extend(gibs::burst(&[(part, at, rot)], from, along * CHIP_FLING, seed).into_iter().map(|g| (c.age, c.left, g)));
+                thrown.extend(gibs::burst(&[(part, at, rot)], from, along * CHIP_FLING, seed).into_iter().map(|g| (c.age, c.left, g, build)));
             }
         }
         for at in sparks {
             self.combat.sparks(at);
         }
-        for (age, left, g) in thrown {
-            self.gibs.push((age, left, vec![g]));
+        for (age, left, g, build) in thrown {
+            self.gibs.push((age, left, vec![g], build));
         }
     }
 
@@ -1009,17 +1198,25 @@ impl Shooter {
             self.break_lamps(who - 1, fling, blast);
         }
         let respawn = self.rules.respawn_s;
+        if self.died_at.len() <= who {
+            self.died_at.resize(who + 1, f32::NEG_INFINITY);
+        }
+        self.died_at[who] = self.now;
         if who == 0 {
             self.me.die(at, respawn, fling);
-            self.combat.clear();
             // No note: the HUD already puts YOU DIED across the middle of
             // the screen, and a second copy in the corner message is one
             // too many ways of saying it.
         } else if let Some(b) = self.bots.get_mut(who - 1) {
             b.fighter.die(at, respawn, fling);
         }
-        // A fighter who walked into their own rocket does not get the frag.
-        if by != who {
+        self.combat.clear_sludge_of(who);
+        // A fighter who walked into their own rocket does not get the frag,
+        // and nor does one who killed a teammate.
+        if self.teammates(who, by) {
+            let line = format!("{} KILLED A TEAMMATE, {}", self.name_of(by), self.name_of(who));
+            self.say(line);
+        } else if by != who {
             if by == 0 {
                 self.me.score.kills += 1;
             } else if let Some(k) = self.bots.get_mut(by - 1) {
@@ -1036,7 +1233,8 @@ impl Shooter {
         }
         // The match may have just been won (round.rs).
         let board = self.scores();
-        self.round.after_kill(who, by, &board);
+        let sides = self.sides();
+        self.round.after_kill_in(who, by, &board, &sides);
     }
 
     /// Put the match back to nothing and stand everyone at a spawn again.
@@ -1049,6 +1247,9 @@ impl Shooter {
         }
         self.feed.clear();
         self.combat.clear();
+        self.flags.reset();
+        self.alerts.clear();
+        self.flag_log.clear();
         for who in 0..=self.bots.len() {
             self.come_back(who, player, store);
         }
@@ -1075,12 +1276,16 @@ impl Shooter {
     fn put_at_spawn(&mut self, who: usize, player: &mut Player, store: &Store, heal: bool) {
         // Away from whoever is still up, so a body does not come back in
         // the lap of the one that just shot it.
+        // In a team match, away from the other side: coming back beside a
+        // teammate is no danger.
+        let team = self.team_of(who);
+        let enemy = |t: Option<u8>| team.is_none() || t != team;
         let mut away = Vec::with_capacity(self.bots.len() + 1);
-        if who != 0 && self.me.alive() {
+        if who != 0 && self.me.alive() && enemy(self.me.team) {
             away.push(player.pos);
         }
-        away.extend(self.bots.iter().enumerate().filter(|(i, b)| i + 1 != who && b.fighter.alive()).map(|(_, b)| b.pos()));
-        let s = self.next_spawn(&away);
+        away.extend(self.bots.iter().enumerate().filter(|(i, b)| i + 1 != who && b.fighter.alive() && enemy(b.fighter.team)).map(|(_, b)| b.pos()));
+        let s = self.next_spawn(&away, team);
         let pos = self.floor_at(store, s.at[0], s.at[1], s.ceiling, self.home.0.y).0;
         let yaw = -s.bearing.to_radians();
         if who == 0 {
@@ -1130,6 +1335,22 @@ impl Shooter {
         let lures = &mut self.lures;
         self.noises.retain(|n| now - n.when < EARSHOT_S);
         let noises = &self.noises;
+        let threats: Vec<brain::Threat> = self
+            .combat
+            .shells
+            .iter()
+            .filter(|s| !s.stuck)
+            .map(|s| brain::Threat {
+                at: s.pos,
+                vel: s.vel,
+                // What it falls at here, which the world scales (`Shell::step`).
+                gravity: s.gravity * store.gravity.g,
+                reach: s.splash.as_ref().map_or(0.6, |x| x.radius),
+                by: s.by,
+            })
+            .collect();
+        let mines: Vec<brain::Threat> = self.combat.mines().map(|(at, reach)| brain::Threat { at, vel: Vec3::ZERO, gravity: 0.0, reach, by: 0 }).collect();
+        let orders = &self.orders;
         for (i, b) in self.bots.iter_mut().enumerate() {
             if !b.fighter.alive() {
                 continue;
@@ -1144,14 +1365,14 @@ impl Shooter {
                 fighters: foes,
                 lures,
                 noises,
+                threats: &threats,
+                mines: &mines,
             };
             let me = Me {
                 who: i + 1,
                 foot: b.body.pos,
                 eye: b.body.eye(1.0),
                 vel: b.body.body.vel,
-                yaw: b.body.yaw,
-                pitch: b.body.pitch,
                 on_ground: b.body.body.on_ground,
                 half_w: b.body.body.half_w,
                 height: b.body.body.height,
@@ -1160,6 +1381,8 @@ impl Shooter {
                 struck: b.fighter.struck.take(),
                 guns: &b.fighter.arsenal,
                 person: &b.person,
+                team: b.fighter.team,
+                order: orders.get(i).copied().flatten(),
             };
             b.brain.think(&me, &cx, &mut b.pilot, dt);
             if let Some(slot) = b.pilot.want_slot.take() {
@@ -1183,12 +1406,12 @@ impl Shooter {
                     // it off the gantry (`physics::tumble`).
                     b.body.pos = b.fighter.fell;
                     b.body.prev_pos = b.fighter.fell;
-                    b.figure.die(&self.avatar.rig, self.avatar.voxel, fall);
+                    b.figure.die(&self.avatar.body(b.build).rig, self.avatar.body(b.build).voxel, fall);
                     let thrown = b.fighter.fling.length();
                     if thrown > FLUNG {
                         b.body.body.vel = b.fighter.fling;
                         b.body.body.on_ground = false;
-                        b.figure.hurl(&self.avatar.rig, thrown, fall);
+                        b.figure.hurl(&self.avatar.body(b.build).rig, thrown, fall);
                     } else {
                         // Shot off its feet by nothing much: it drops
                         // where it stood.
@@ -1206,7 +1429,7 @@ impl Shooter {
                     on_ground: b.body.body.on_ground,
                     ..Default::default()
                 };
-                b.figure.step(&self.avatar.rig, self.avatar.voxel, &d);
+                b.figure.step(&self.avatar.body(b.build).rig, self.avatar.body(b.build).voxel, &d);
                 continue;
             }
             b.body.yaw = b.pilot.yaw;
@@ -1238,7 +1461,7 @@ impl Shooter {
                 sprint: b.pilot.mv.sprint,
                 holding: b.fighter.arsenal.current().is_some(),
             };
-            b.figure.step(&self.avatar.rig, self.avatar.voxel, &d);
+            b.figure.step(&self.avatar.body(b.build).rig, self.avatar.body(b.build).voxel, &d);
         }
     }
 
@@ -1249,8 +1472,12 @@ impl Shooter {
                 continue;
             }
             let trigger = self.bots[i].pilot.trigger;
+            self.bots[i].fighter.arsenal.share();
             let shot = self.bots[i].fighter.arsenal.current_mut().map_or(Default::default(), |g| g.pull(trigger, dt));
-            let mode = self.bots[i].fighter.arsenal.current().and_then(|g| g.fired_mode(&shot, trigger).cloned());
+            let mode = self.bots[i].fighter.arsenal.current().and_then(|g| g.fired_mode(&shot, trigger).cloned().map(|mut f| {
+                f.spread_deg += g.bloom();
+                f
+            }));
             // The spade, which is not a shot: a bot holding the Digger cuts
             // the wall in front of it, which is how one at the bottom of a
             // borer hole gets out of it.
@@ -1297,19 +1524,38 @@ impl Shooter {
             b.fighter.forget_blame(dt);
         }
         let mut fallen: Vec<usize> = Vec::new();
+        // Off the edge of a map in space: past `void_m` there is nothing to
+        // land on, so the fall is a death, and like the slag it is the
+        // last shover's kill.
+        let void = self.rules.void_m.unwrap_or(f32::NEG_INFINITY);
+        if self.me.alive() && !self.bench && player.pos.y < void && self.me.take(f32::MAX) {
+            fallen.push(0);
+        }
         if self.me.alive() && !self.bench {
             let dps = hurt_at(store, player.pos, player.body.half_w);
-            if dps > 0.0 && self.me.take(dps * dt) {
-                fallen.push(0);
+            if dps > 0.0 {
+                self.me.score.scalded += dps * dt;
+                if self.me.take(dps * dt) {
+                    self.me.score.scald_deaths += 1;
+                    fallen.push(0);
+                }
             }
         }
         for (i, b) in self.bots.iter_mut().enumerate() {
             if !b.fighter.alive() {
                 continue;
             }
-            let dps = hurt_at(store, b.body.pos, b.body.body.half_w);
-            if dps > 0.0 && b.fighter.take(dps * dt) {
+            if b.body.pos.y < void && b.fighter.take(f32::MAX) {
                 fallen.push(i + 1);
+                continue;
+            }
+            let dps = hurt_at(store, b.body.pos, b.body.body.half_w);
+            if dps > 0.0 {
+                b.fighter.score.scalded += dps * dt;
+                if b.fighter.take(dps * dt) {
+                    b.fighter.score.scald_deaths += 1;
+                    fallen.push(i + 1);
+                }
             }
         }
         for who in fallen {
@@ -1319,9 +1565,255 @@ impl Shooter {
         }
     }
 
+    /// The flags, once a step, after the deaths: a carrier killed this step
+    /// drops what they carried this step.
+    fn play_flags(&mut self, store: &Store, player: &Player, dt: f32) {
+        self.flag_news.clear();
+        if self.flags.is_empty() || self.round.frozen() {
+            return;
+        }
+        let mut bodies = Vec::with_capacity(self.bots.len() + 1);
+        bodies.push(flag::Body {
+            who: 0,
+            team: self.me.team,
+            at: if self.me.alive() { player.pos } else { self.me.fell },
+            alive: self.me.alive() && !self.bench,
+        });
+        for (i, b) in self.bots.iter().enumerate() {
+            bodies.push(flag::Body {
+                who: i + 1,
+                team: b.fighter.team,
+                at: b.pos(),
+                alive: b.fighter.alive(),
+            });
+        }
+        let void = self.rules.void_m.unwrap_or(f32::NEG_INFINITY);
+        // A flag dropped in the air falls to the floor under it.
+        let land = |p: Vec3| voxel_ground(store, p.x, p.z, p.y + 1.0).map_or(p, |(y, _)| Vec3::new(p.x, y, p.z));
+        let lost = |p: Vec3| p.y < void || hurt_at(store, p, 0.3) > 0.0;
+        let news = self.flags.step(dt, &bodies, land, lost);
+        for e in &news {
+            self.flag_log.push((self.now, *e));
+            self.heard_flag(e);
+        }
+        if news.iter().any(|e| matches!(e, flag::Event::Captured { .. })) {
+            let (board, sides) = (self.scores(), self.sides());
+            self.round.after_capture(self.flags.caps, &board, &sides);
+        }
+        self.flag_news = news;
+    }
+
+    /// Run side `team` by another coach (`brain::team::Coach`), for the CTF
+    /// bench's controls.
+    pub fn coach(&mut self, team: u8, coach: brain::team::Coach) {
+        if let Some(b) = self.team_brains.get_mut(team as usize) {
+            b.coach = coach;
+        }
+    }
+
+    /// Play side `team`'s roles with the changes in `mask` (`brain::TWEAKS`),
+    /// for the CTF bench. Who gets which job is untouched.
+    pub fn tweak(&mut self, team: u8, mask: u32) {
+        if let Some(t) = self.tweaks.get_mut(team as usize) {
+            *t = mask;
+        }
+        if let Some(b) = self.team_brains.get_mut(team as usize) {
+            b.tweaks = mask;
+        }
+    }
+
+    /// What each bot is doing, by name, for the tools: its job when it is on
+    /// one.
+    pub fn doings(&self) -> Vec<(Option<u8>, &'static str)> {
+        self.bots.iter().filter(|b| b.fighter.alive()).map(|b| (b.fighter.team, b.brain.doing())).collect()
+    }
+
+    /// Let each side's team brain hand out jobs: on its clock, and at once
+    /// when a flag moved last step. Only in capture the flag; a team
+    /// deathmatch has nothing for a side to plan round, and its bots play as
+    /// they would alone, minus each other.
+    fn plan_teams(&mut self, player: &Player, dt: f32) {
+        self.orders.resize(self.bots.len(), None);
+        if self.flags.flags.len() != 2 || self.nav.is_empty() || self.round.frozen() || self.flags.unplaced() > 0 {
+            self.orders.iter_mut().for_each(|o| *o = None);
+            return;
+        }
+        let news = !self.flag_news.is_empty();
+        let nodes: Vec<Vec3> = (0..self.nav.len() as u16).filter_map(|i| self.nav.at(i).map(|n| n.at)).collect();
+        let stand = |t: u8| self.flags.of(t).map_or(Vec3::ZERO, |f| f.stand);
+        let lanes = brain::team::lanes(&nodes, stand(0), stand(1));
+        for team in 0..2u8 {
+            let mut brain = std::mem::take(&mut self.team_brains[team as usize]);
+            if !brain.due(dt, news) {
+                self.team_brains[team as usize] = brain;
+                continue;
+            }
+            let mut members = Vec::new();
+            if self.me.team == Some(team) {
+                members.push(brain::team::Member {
+                    who: 0,
+                    at: player.pos,
+                    alive: self.me.alive() && !self.bench,
+                    whole: self.me.health / self.me.full_health.max(1.0),
+                    bot: false,
+                });
+            }
+            let mut sightings = Vec::new();
+            for (i, b) in self.bots.iter().enumerate().filter(|(_, b)| b.fighter.team == Some(team)) {
+                members.push(brain::team::Member {
+                    who: i + 1,
+                    at: b.pos(),
+                    alive: b.fighter.alive(),
+                    whole: b.whole(),
+                    bot: true,
+                });
+                if b.fighter.alive() {
+                    b.brain.sightings(&mut sightings);
+                }
+            }
+            // A flag as this side knows it: a carrier's position only when
+            // the carrier is one of ours or one of ours can see them.
+            let view = |t: u8| -> brain::team::FlagView {
+                let f = self.flags.of(t);
+                let seen = match f.map(|f| f.state) {
+                    Some(flag::State::Carried(by)) => {
+                        let at = if self.team_of(by) == Some(team) {
+                            Some(if by == 0 { player.pos } else { self.bots.get(by - 1).map_or(Vec3::ZERO, |b| b.pos()) })
+                        } else {
+                            self.side_sees(team, by)
+                        };
+                        brain::team::Seen::Carried { by, at }
+                    }
+                    Some(flag::State::Dropped { at, .. }) => brain::team::Seen::Dropped(at),
+                    _ => brain::team::Seen::Home,
+                };
+                brain::team::FlagView { stand: stand(t), seen }
+            };
+            let posts = brain::team::posts(&nodes, stand(team), stand(1 - team));
+            // The other side, and how many of them this side saw die lately.
+            let enemies: Vec<usize> = (0..=self.bots.len()).filter(|&w| self.team_of(w).is_some_and(|t| t != team) && (w > 0 || !self.bench)).collect();
+            let foes = enemies.len();
+            let reset = enemies.iter().filter(|&&w| self.died_at.get(w).is_some_and(|&t| self.now - t < brain::team::RESET_S)).count();
+            let cx = brain::team::TeamCtx {
+                now: self.now,
+                members: &members,
+                own: view(team),
+                theirs: view(1 - team),
+                lanes: &lanes,
+                posts: &posts,
+                vantages: &brain::team::vantages(&nodes, stand(team), stand(1 - team)),
+                behind: self.flags.caps[team as usize] < self.flags.caps[1 - team as usize],
+                left: self.round.left(),
+                foes,
+                reset,
+            };
+            let plan = brain.plan(&cx, &sightings, news);
+            for (i, b) in self.bots.iter().enumerate() {
+                if b.fighter.team == Some(team) {
+                    self.orders[i] = plan.iter().find(|(w, _)| *w == i + 1).map(|(_, o)| brain::Order { tweaks: self.tweaks[team as usize], ..*o });
+                }
+            }
+            self.team_brains[team as usize] = brain;
+        }
+    }
+
+    /// The score a flag event earns fighter `who`, if anybody.
+    fn score_of(&mut self, who: usize) -> Option<&mut Score> {
+        if who == 0 {
+            Some(&mut self.me.score)
+        } else {
+            self.bots.get_mut(who - 1).map(|b| &mut b.fighter.score)
+        }
+    }
+
+    /// What a flag event does to the scores, the feed and the alert at the
+    /// top of the screen. The alert is worded for the player's side.
+    fn heard_flag(&mut self, e: &flag::Event) {
+        use flag::Event::*;
+        let flag_team = e.team().min(1);
+        let ours = self.me.team == Some(flag_team);
+        let side = round::TEAM_NAMES[flag_team as usize];
+        let scorer = 1 - flag_team;
+        let (line, alert, ink) = match *e {
+            Taken { by, .. } | PickedUp { by, .. } => {
+                if let Some(s) = self.score_of(by) {
+                    s.grabs += 1;
+                }
+                let alert = match (by, ours) {
+                    (0, _) => "YOU HAVE THE ENEMY FLAG",
+                    (_, true) => "YOUR FLAG HAS BEEN TAKEN",
+                    (_, false) => "WE HAVE THE ENEMY FLAG",
+                };
+                (format!("{} TOOK THE {side} FLAG", self.name_of(by)), Some(alert.to_string()), flag_team)
+            }
+            Dropped { by, .. } => {
+                let alert = if ours { "YOUR FLAG IS DOWN" } else { "THE ENEMY FLAG IS DOWN" };
+                (format!("{} DROPPED THE {side} FLAG", self.name_of(by)), Some(alert.to_string()), flag_team)
+            }
+            Returned { by: Some(by), .. } => {
+                if let Some(s) = self.score_of(by) {
+                    s.returns += 1;
+                }
+                (format!("{} RETURNED THE {side} FLAG", self.name_of(by)), ours.then(|| "YOUR FLAG IS HOME".to_string()), flag_team)
+            }
+            Returned { by: None, .. } => (format!("THE {side} FLAG WENT HOME"), ours.then(|| "YOUR FLAG IS HOME".to_string()), flag_team),
+            Captured { by, .. } => {
+                if let Some(s) = self.score_of(by) {
+                    s.caps += 1;
+                }
+                let who = round::TEAM_NAMES[scorer as usize];
+                (format!("{} CAPTURED THE {side} FLAG", self.name_of(by)), Some(format!("{who} SCORES")), scorer)
+            }
+        };
+        self.say(line);
+        if let Some(a) = alert {
+            self.alerts.push((a, round::TEAM_INK[ink as usize], 0.0));
+            while self.alerts.len() > 3 {
+                self.alerts.remove(0);
+            }
+        }
+    }
+
+    /// Every flag event of the match so far, with when it happened.
+    pub fn flag_log(&self) -> &[(f32, flag::Event)] {
+        &self.flag_log
+    }
+
+    /// Side `team`'s flag as it stands this step, and where it is (on its
+    /// carrier when carried), for the tools.
+    pub fn flag_now(&self, team: u8, player: &Player) -> Option<(flag::State, Vec3)> {
+        let f = self.flags.of(team)?;
+        let at = match f.state {
+            flag::State::Home => f.stand,
+            flag::State::Dropped { at, .. } => at,
+            flag::State::Carried(0) => player.pos,
+            flag::State::Carried(w) => self.bots.get(w - 1).map_or(f.stand, |b| b.pos()),
+        };
+        Some((f.state, at))
+    }
+
+    /// Where side `team`'s stand is, once placed.
+    pub fn flag_stand(&self, team: u8) -> Option<Vec3> {
+        self.flags.of(team).map(|f| f.stand)
+    }
+
+    /// Each side's captures.
+    pub fn captures(&self) -> [u32; 2] {
+        self.flags.caps
+    }
+
     fn settle(&mut self, player: &mut Player) {
         let hits = self.combat.take_hits();
-        for h in hits {
+        for mut h in hits {
+            // A teammate's round lands at `friendly_fire` of its damage and
+            // all of its push: the push is what makes a rocket a lift. A
+            // blow from something that could have hurt its own firer (a
+            // rocket, goo, a bouncing shard) lands in full: aiming a blast
+            // near your own side is a risk you take, as it is near yourself.
+            let friend = self.teammates(h.who, h.by);
+            if friend && !h.risky {
+                h.damage *= self.rules.friendly_fire.clamp(0.0, 1.0);
+            }
             if h.push.length_squared() > 0.0 {
                 if h.who == 0 {
                     player.body.vel += h.push;
@@ -1373,7 +1865,7 @@ impl Shooter {
                 self.bots.get_mut(h.who - 1).is_some_and(|b| {
                     // Who it was, for the brain. Not its own blast, or a
                     // rocket jump would read as somebody shooting at it.
-                    if h.by != h.who {
+                    if h.by != h.who && !friend {
                         b.fighter.struck = Some(h.by);
                     }
                     b.fighter.take(h.damage)
@@ -1398,6 +1890,11 @@ fn lamp_dying(t: f32) -> [f32; 3] {
     let flicker = if k < 1.0 { 0.75 + 0.25 * (t * 47.0).sin() } else { 1.0 };
     let hot = [2.2, 1.0, 0.3];
     [0, 1, 2].map(|c| dark[c] + (hot[c] - dark[c]) * (1.0 - k) * (1.0 - k) * flicker)
+}
+
+/// Which bot in the list `b` is, for a report that walks the list.
+fn b_index(bots: &[Bot], b: &Bot) -> usize {
+    bots.iter().position(|x| std::ptr::eq(x, b)).unwrap_or(usize::MAX)
 }
 
 /// The weapons a world hands out, complaining about names it does not know.
@@ -1446,6 +1943,14 @@ impl Activity for Shooter {
         if std::mem::take(&mut actions.reload) && self.me.arsenal.reload() {
             self.note = Some("RELOADING".into());
         }
+        // Down a sight the wheel is the sight's power rather than the gun:
+        // up for closer, down for wider, never wider than the gun's own zoom.
+        let sight = self.held.1 && self.me.arsenal.current().is_some_and(|g| g.def.zoom > 0.0);
+        if sight && actions.brush_delta != 0 {
+            let up = actions.brush_delta > 0;
+            self.sight_steps = if up { (self.sight_steps + 1).min(SIGHT_STEPS) } else { self.sight_steps.saturating_sub(1) };
+            actions.brush_delta = 0;
+        }
         if actions.brush_delta != 0 {
             self.me.arsenal.cycle(-actions.brush_delta);
             actions.brush_delta = 0;
@@ -1477,6 +1982,7 @@ impl Activity for Shooter {
         // --- the bots: think, move, shoot ---------------------------------
         self.settle_nav(store, player);
         self.settle_pads(store, player);
+        self.pickups.platforms(store, edits);
         self.stand_me(player, store);
         if std::mem::take(&mut self.bots_to_the_field) {
             // Standing them on ground that has finally arrived. Not a
@@ -1485,6 +1991,7 @@ impl Activity for Shooter {
                 self.put_at_spawn(i, player, store, false);
             }
         }
+        self.plan_teams(player, dt);
         let foes = self.foes(player);
         self.think(store, &foes, dt);
         self.step_bodies(store, sea, land, slopes);
@@ -1515,10 +2022,11 @@ impl Activity for Shooter {
                 self.come_back(0, player, store);
             }
         } else {
-            let trigger = match (fire, alt) {
-                (true, _) => Trigger::Fire,
-                (_, true) => Trigger::Alt,
-                _ => Trigger::Off,
+            let trigger = match self.me.arsenal.current_mut() {
+                Some(g) => g.hands(fire, alt),
+                None if fire => Trigger::Fire,
+                None if alt => Trigger::Alt,
+                None => Trigger::Off,
             };
             let eye = player.eye(1.0);
             let aim = player.forward();
@@ -1529,8 +2037,12 @@ impl Activity for Shooter {
             // frame the trigger was down, so a sniper could line a shot up
             // down the sight and never take one down it.
             self.sighted = alt && self.me.arsenal.current().is_some_and(|g| g.def.zoom > 0.0);
+            self.me.arsenal.share();
             let shot = self.me.arsenal.current_mut().map_or(Default::default(), |g| g.pull(trigger, dt));
-            let mode = self.me.arsenal.current().and_then(|g| g.fired_mode(&shot, trigger).cloned());
+            let mode = self.me.arsenal.current().and_then(|g| g.fired_mode(&shot, trigger).cloned().map(|mut f| {
+                f.spread_deg += g.bloom();
+                f
+            }));
             // The spade on the end of the Digger, which bites on its own
             // clock rather than the blast's (`library::DigDef`). It is the
             // one thing in a match that cuts the arena on purpose.
@@ -1574,6 +2086,11 @@ impl Activity for Shooter {
         }
 
         // --- everything in the air ----------------------------------------
+        self.combat.aims.clear();
+        self.combat.aims.push((0, player.eye(1.0), player.forward()));
+        for (i, b) in self.bots.iter().enumerate() {
+            self.combat.aims.push((i + 1, b.body.eye(1.0), b.body.forward()));
+        }
         {
             let mut scene = Scene {
                 store,
@@ -1589,6 +2106,7 @@ impl Activity for Shooter {
         self.settle(player);
         self.chip();
         self.scald(cx.store, player, dt);
+        self.play_flags(cx.store, player, dt);
         self.me.fade(dt);
         if self.combat.kills > kills_before {
             self.mark = MARK_S;
@@ -1596,6 +2114,10 @@ impl Activity for Shooter {
         self.mark = (self.mark - dt).max(0.0);
         self.mark_kill = (self.mark_kill - dt).max(0.0);
         self.streak.1 += dt;
+        for a in &mut self.alerts {
+            a.2 += dt;
+        }
+        self.alerts.retain(|a| a.2 < hud::ALERT_S);
         if let Some((_, _, age)) = &mut self.banner {
             *age += dt;
             if *age > BANNER_S {
@@ -1604,7 +2126,7 @@ impl Activity for Shooter {
         }
         // The dead and the pieces of them, until each is cleared away.
         self.gibs.retain(|g| g.1 > 0.0);
-        for (age, left, g) in &mut self.gibs {
+        for (age, left, g, _) in &mut self.gibs {
             *age += dt;
             *left -= dt;
             gibs::step(g, cx.store, dt);
@@ -1622,6 +2144,16 @@ impl Activity for Shooter {
         self.boost = player.boost_meter();
         // The match itself: is it won, and is another one wanted?
         let board = self.scores();
+        // A match with a clock ends on it; the side ahead in what the match
+        // counts wins.
+        if self.round.left().is_some() {
+            let sides = self.sides();
+            let totals = match self.flags.is_empty() {
+                false => self.flags.caps,
+                true => round::team_kills(&board, &sides),
+            };
+            self.round.tick(dt, totals, &board, &sides);
+        }
         let mut keys = Actions {
             accept: std::mem::take(&mut self.again),
             ..Default::default()
@@ -1653,10 +2185,11 @@ impl Activity for Shooter {
         Some(self)
     }
 
-    /// Down the sniper's sight the view narrows to the gun's own `zoom`.
+    /// Down the sniper's sight the view narrows to the gun's own `zoom`, and
+    /// each wheel step up narrows it by `SIGHT_STEP` again.
     fn zoom(&self) -> f32 {
         match self.sighted {
-            true => self.me.arsenal.current().map_or(1.0, |g| g.def.zoom.clamp(0.05, 1.0)),
+            true => self.me.arsenal.current().map_or(1.0, |g| (g.def.zoom * SIGHT_STEP.powi(self.sight_steps as i32)).clamp(0.05, 1.0)),
             false => 1.0,
         }
     }
@@ -1669,7 +2202,7 @@ impl Activity for Shooter {
 
     /// Everything solid this activity draws: the shells in the air, every
     /// bot's shell and gun, and the gun in the player's own hands.
-    fn instances(&self, player: &Player, alpha: f32, base: usize, models: &[Model], out: &mut Vec<(usize, Instance)>) {
+    fn parked_instances(&self, player: &Player, alpha: f32, base: usize, models: &[Model], out: &mut Vec<(usize, Instance)>) {
         let shells = base + viewmodel::COUNT;
         // Everything in the air, whoever fired it. A shell is laid nose
         // toward model -z like a gun is, so the yaw that points it along its
@@ -1703,8 +2236,8 @@ impl Activity for Shooter {
         // gives you with it. Drawing a corpse is not the same as being able
         // to shoot one -- `hitboxes` still says only the living are there.
         let mut fk = Vec::new();
-        let av = &self.avatar;
         for b in &self.bots {
+            let av = self.avatar.body(b.build);
             let alive = b.fighter.alive();
             if !alive && b.fighter.respawn <= 0.0 {
                 continue;
@@ -1713,35 +2246,26 @@ impl Activity for Shooter {
             if !alive {
                 continue;
             }
-            let lit = avatar::lamp_tint(b.whole(), alive);
+            let side = b.fighter.team.map_or(b.tint, |t| teams::tint(t, 0));
+            let lit = avatar::lamp_colour(side, b.whole());
             let at = b.body.prev_pos.lerp(b.body.pos, alpha);
-            let pose = b.figure.at(alpha);
-            // A corpse goes grey all over and stops flashing: the paint is
-            // the side it was on, and it is not on one any more. The flash
-            // has to go with it or a bot killed by the shot that was already
-            // in the air strobes white while it falls.
             let tint = [b.tint[0], b.tint[1], b.tint[2], b.fighter.hurt / brain::HURT_S];
-            crate::anim::push_parts_at(&av.rig, shells, &pose, models, av.voxel, 1.0, 1.0, av.pivot, at, b.body.yaw, tint, [0.0; 3], &mut fk, out);
-            // Its lamps, front and back: how much of it is left.
-            for lamp in av.lamps(&b.figure, at, b.body.yaw, alpha) {
-                out.extend(hold::placed(shells + avatar::LAMP_M, models, lamp, b.body.yaw, Quat::IDENTITY, lit));
-            }
-            let (gat, gyaw, grot) = b.grip(av, alpha);
-            if let Some(g) = b.fighter.arsenal.current() {
-                out.extend(hold::placed(base + viewmodel::shape(&g.def.view), models, gat, gyaw, grot, [1.0; 3]));
-            }
+            let gun = b.fighter.arsenal.current().map(|g| viewmodel::shape(&g.def.view));
+            draw_bot(av, &b.figure, at, b.body.yaw, alpha, tint, lit, gun, base, models, &mut fk, out);
         }
         // The dead: grey all over, their lamps flaring and guttering out.
         for c in &self.corpses {
+            let av = self.avatar.body(self.bots.get(c.bot).map_or(0, |b| b.build));
             let lit = lamp_dying(c.age);
             for (k, p, q) in c.parts(alpha) {
                 out.extend(hold::placed(shells + av.rig.bones[k].model, models, p, 0.0, q, avatar::DEAD_TINT));
             }
-            for (_, l) in c.lamps(alpha) {
-                out.extend(hold::placed(shells + avatar::LAMP_M, models, l, 0.0, Quat::IDENTITY, lit));
+            for (_, l, r) in c.lamps(alpha) {
+                out.extend(hold::placed(shells + avatar::LAMP_M, models, l, 0.0, r, lit));
             }
         }
-        for (age, _, chunks) in &self.gibs {
+        for (age, _, chunks, build) in &self.gibs {
+            let av = self.avatar.body(*build);
             let lit = lamp_dying(*age);
             for g in chunks {
                 let p = g.prev.lerp(g.pos, alpha);
@@ -1753,48 +2277,61 @@ impl Activity for Shooter {
                 out.extend(hold::placed(model, models, p, 0.0, q, tint));
             }
         }
-        // Whatever is lying about: a lit blob turning on the spot, with a
-        // weapon pad's gun turning above it. The blob is drawn in the lamp's
-        // emissive slot, so it reads at the end of an unlit corridor, which
-        // is where a health pack most needs to be seen from.
+        // Whatever is lying about, turning over its platform: a cross over
+        // health, a breastplate over armour, each as big as what it gives;
+        // the rounds themselves over a pad of ammunition, one look per kind;
+        // the gun over a gun. All of it see-through, so a pickup is a thing
+        // floating there to be taken and not a solid in the way, and the
+        // cross and the plate in the lamp's emissive slot, so they read at
+        // the end of an unlit corridor, which is where a health pack most
+        // needs to be seen from.
         for p in &self.pickups.pads {
             if !p.ready() {
                 continue;
             }
             let spin = self.now * 1.5;
-            let bob = (self.now * 2.0 + p.at.x + p.at.z).sin() * 0.06;
-            let size = p.size().map_or(1.0, pickup::Size::scale);
-            let gun_pad = p.kind == pickup::Kind::Weapon;
-            // A weapon pad's blob is a glow the gun turns over, not a blob
-            // with a gun under it. The model's pivot is the bottom of its
-            // grid and the blob sits two thirds of the way up it, so a pad
-            // placed at standing height puts the blob over everything drawn
-            // with it -- which on a weapon pad is a white lump hanging above
-            // the gun. Dropped to the deck and drawn small, it is the pool
-            // of light the comment on `Kind::tint` always claimed it was.
-            let at = p.at + Vec3::Y * (if gun_pad { 0.0 } else { avatar::PAD_RISE } + bob);
-            let blob = if gun_pad { 0.45 } else { size };
-            out.extend(hold::sized(shells + avatar::PAD_M, models, at, spin, Quat::IDENTITY, p.kind.tint(), blob));
-            // A health pad also carries a cross, the size of what it gives.
-            // Nothing else on the floor says what it is without a word on
-            // it: a weapon pad has its own gun drawn over it, and a health
-            // pack had a blob the same shape as the armour next to it.
-            if p.size().is_some() {
-                let up = at + Vec3::Y * (0.21 + 0.17 * size);
-                out.extend(hold::sized(shells + avatar::CROSS_M, models, up, spin, Quat::IDENTITY, p.kind.tint(), size * 0.55));
-            }
-            // The gun itself, so you can tell a rocket launcher from a flak
-            // hopper without reading anything.
-            if gun_pad {
-                if let Some(name) = p.weapon.as_deref() {
-                    if let Some(g) = self.me.arsenal.guns.iter().find(|g| g.def.name == name) {
-                        let shape = viewmodel::shape(&g.def.view);
-                        let up = at + Vec3::Y * (avatar::PAD_RISE + 0.16);
-                        out.extend(hold::placed(base + shape, models, up, spin, Quat::from_rotation_x(0.35), [1.0; 3]));
-                    }
+            let bob = Vec3::Y * (self.now * 2.0 + p.at.x + p.at.z).sin() * 0.05;
+            let k = p.scale();
+            let glass = |i: Option<(usize, Instance)>, a: f32| i.map(|(m, inst)| (m, inst.glass(a)));
+            let gun = p.weapon.as_deref().and_then(|name| self.me.arsenal.guns.iter().find(|g| g.def.name == name));
+            match (p.kind, gun) {
+                (pickup::Kind::Health, _) | (pickup::Kind::Armour, _) => {
+                    let (model, size, half) = match p.kind {
+                        pickup::Kind::Health => (avatar::CROSS_M, 0.72 * k, 8.0),
+                        _ => (avatar::ARMOUR_M, 0.66 * k, 8.0),
+                    };
+                    // Held so its foot clears the platform whatever its size:
+                    // `half` is the shape's half height in its own voxels, and
+                    // both stand on the middle of a 32-cube.
+                    let tall = half * avatar::LAMP_VOX * size;
+                    let foot = p.at + Vec3::Y * (PICKUP_CLEAR_M + tall - 16.5 * avatar::LAMP_VOX * size) + bob;
+                    out.extend(glass(hold::sized(shells + model, models, foot, spin, Quat::IDENTITY, p.kind.tint(), size), PICKUP_GLOW_A));
+                }
+                (pickup::Kind::Ammo, Some(g)) => {
+                    let look = viewmodel::ammo_look(&g.def);
+                    let foot = p.at + Vec3::Y * PICKUP_CLEAR_M + bob;
+                    out.extend(glass(hold::placed(base + look, models, foot, spin, Quat::IDENTITY, [1.0; 3]), PICKUP_A));
+                }
+                (pickup::Kind::Weapon, Some(g)) => {
+                    // The gun itself, so you can tell a rocket launcher from a
+                    // flak hopper without reading anything.
+                    let shape = viewmodel::shape(&g.def.view);
+                    let up = p.at + Vec3::Y * (avatar::PAD_RISE + 0.16) + bob;
+                    out.extend(glass(hold::placed(base + shape, models, up, spin, Quat::from_rotation_x(0.35), [1.0; 3]), PICKUP_A));
+                }
+                // A pad for a gun nobody carries: the lit blob, which says
+                // something is there if not what.
+                _ => {
+                    let at = p.at + Vec3::Y * avatar::PAD_RISE + bob;
+                    out.extend(glass(hold::sized(shells + avatar::PAD_M, models, at, spin, Quat::IDENTITY, p.kind.tint(), 1.0), PICKUP_GLOW_A));
                 }
             }
         }
+        self.draw_flags(player, alpha, shells, models, out);
+    }
+
+    fn instances(&self, player: &Player, alpha: f32, base: usize, models: &[Model], out: &mut Vec<(usize, Instance)>) {
+        self.parked_instances(player, alpha, base, models, out);
         if !self.alive() {
             return;
         }
@@ -1814,9 +2351,57 @@ impl Activity for Shooter {
         }
     }
 
+    /// What the player's side can mark for them: a flag lying on the floor
+    /// (everybody knows that), a teammate carrying the enemy flag, the enemy
+    /// carrying ours while one of our side has them in sight, and home while
+    /// the player is the one carrying. The same things the team brain is
+    /// allowed to know, so the player is told no more and no less.
+    fn marks(&self, player: &Player) -> Vec<crate::modes::Mark> {
+        let Some(mine) = self.me.team else { return Vec::new() };
+        if self.flags.is_empty() || self.round.frozen() {
+            return Vec::new();
+        }
+        let mut out = Vec::new();
+        let far = |p: Vec3| format!("{:.0} M", (p - player.pos).length());
+        for f in &self.flags.flags {
+            let ink = round::TEAM_INK[(f.team as usize).min(1)];
+            let ours = f.team == mine;
+            match f.state {
+                flag::State::Dropped { at, .. } => {
+                    let what = if ours { "YOUR FLAG" } else { "ENEMY FLAG" };
+                    out.push(crate::modes::Mark { at: at + Vec3::Y, ink, label: format!("{what} {}", far(at)) });
+                }
+                flag::State::Carried(0) => {}
+                flag::State::Carried(who) if !ours => {
+                    if let Some(b) = self.bots.get(who - 1) {
+                        out.push(crate::modes::Mark {
+                            at: b.pos() + Vec3::Y * 2.2,
+                            ink,
+                            label: format!("{} HAS IT", b.name.to_uppercase()),
+                        });
+                    }
+                }
+                flag::State::Carried(who) => {
+                    if let Some(at) = self.side_sees(mine, who) {
+                        out.push(crate::modes::Mark { at: at + Vec3::Y, ink, label: format!("YOUR FLAG {}", far(at)) });
+                    }
+                }
+                flag::State::Home => {}
+            }
+        }
+        if self.flags.carried_by(0).is_some() {
+            if let Some(f) = self.flags.of(mine) {
+                let ink = round::TEAM_INK[(mine as usize).min(1)];
+                out.push(crate::modes::Mark { at: f.stand + Vec3::Y, ink, label: format!("HOME {}", far(f.stand)) });
+            }
+        }
+        out
+    }
+
     fn overlay(&self, player: &Player, out: &mut crate::render::overlay::Overlay) {
         self.combat.draw(player.eye(1.0), out);
         self.beacons(player, out);
+        self.flag_beacons(player, out);
     }
 
     fn hud(&self, h: &mut Hud, w: f32, ht: f32, s: f32, _fov: f32) {
@@ -1825,6 +2410,47 @@ impl Activity for Shooter {
         self.round.draw(h, w, ht, s, &self.scores());
     }
 }
+
+/// One living bot's instances: its parts, its lamp bars and the gun in its
+/// hands. `base` is where the guns' models start and the avatar's follow
+/// them (`Game::add_ride_models`). Shared with the pose sheet
+/// (`brain::sheet`), so the sheet shows exactly what a match draws.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn draw_bot(
+    body: &avatar::Body,
+    fig: &figure::Figure,
+    at: Vec3,
+    yaw: f32,
+    alpha: f32,
+    tint: [f32; 4],
+    lit: [f32; 3],
+    gun: Option<usize>,
+    base: usize,
+    models: &[Model],
+    fk: &mut Vec<(Vec3, Quat)>,
+    out: &mut Vec<(usize, Instance)>,
+) {
+    let shells = base + viewmodel::COUNT;
+    let pose = fig.at(alpha);
+    // The robot's own colours, flashing with the rest when it is hit, and
+    // its side's colour on the uniform.
+    let plain = [1.0, 1.0, 1.0, tint[3]];
+    crate::anim::push_parts_at(&body.base, shells, &pose, models, body.voxel, 1.0, 1.0, body.pivot, at, yaw, plain, [0.0; 3], fk, out);
+    crate::anim::push_parts_at(&body.paint, shells, &pose, models, body.voxel, 1.0, 1.0, body.pivot, at, yaw, avatar::plate(tint), [0.0; 3], fk, out);
+    // Its lamps, front and back: how much of it is left.
+    for lamp in body.lamps(fig, at, yaw, alpha) {
+        out.extend(hold::placed(shells + avatar::LAMP_M, models, lamp.at, 0.0, lamp.rot, lit));
+    }
+    if let Some(shape) = gun {
+        let (gat, gyaw, grot) = fig.grip(&body.rig, body.voxel, 1.0, body.pivot, at, yaw, 0.0, alpha);
+        out.extend(hold::sized(base + shape, models, gat, gyaw, grot, [1.0; 3], BOT_GUN));
+    }
+}
+
+/// How much larger a gun is drawn in a bot's hands than in the player's.
+/// The guns are built to be seen half a metre from the eye, where a third
+/// of the screen is plenty; on a body twenty metres off they read as toys.
+pub(crate) const BOT_GUN: f32 = 1.35;
 
 #[cfg(test)]
 mod tests {
@@ -1863,6 +2489,7 @@ mod tests {
 
     fn rules() -> ShooterDef {
         ShooterDef {
+            max_bots: None,
             weapons: vec!["rocket_launcher".into()],
             spoil: None,
             health: 100.0,
@@ -1874,13 +2501,20 @@ mod tests {
                 at: [2.0, 3.0],
                 bearing: 90.0,
                 ceiling: None,
+                team: None,
             }],
             give_all: true,
+            ammo_without_gun: false,
             bots: Vec::new(),
             nav: NavDef::default(),
             pickups: Vec::new(),
             // No target: these tests fight a match that never ends.
             target_score: 0,
+            void_m: None,
+            friendly_fire: 0.0,
+            player_team: None,
+            teams: false,
+            ctf: None,
         }
     }
 
@@ -1894,6 +2528,7 @@ mod tests {
                 at: [i as f32 * 9.0 - 14.0, 3.0],
                 bearing: 90.0,
                 ceiling: None,
+                team: None,
             })
             .collect();
         r.bots = ["rig", "slag"]
@@ -1905,6 +2540,8 @@ mod tests {
                 bold: 0.0,
                 steady: 0.0,
                 without: Vec::new(),
+                tune: Default::default(),
+                team: None,
             })
             .collect();
         r.nav = NavDef {
@@ -2118,7 +2755,7 @@ mod tests {
         run(&mut sh, &mut player, &store, 30, |_, _| {});
         sh.down(1, 0, &player, Vec3::ZERO, false);
         let body = sh.bots[0].body.pos + Vec3::Y * 0.6;
-        let total = sh.avatar.rig.bones.len() + 3;
+        let total = sh.avatar.body(0).rig.bones.len() + 2;
         // Fire a metre wide of it: nothing.
         for _ in 0..20 {
             sh.combat.strike(body + Vec3::new(-5.0, 0.0, 1.5), body + Vec3::new(5.0, 0.0, 1.5), 4.0);
@@ -2189,7 +2826,7 @@ mod tests {
         assert_eq!((name, streak), (sh.bots[0].name.to_uppercase(), 1));
         assert!(sh.corpses.is_empty(), "a blast kill left a whole corpse");
         let chunks = sh.gibs.first().map(|g| g.2.len()).expect("a blast kill left the body whole");
-        assert_eq!(chunks, sh.avatar.rig.bones.len() + 3, "not every part came off");
+        assert_eq!(chunks, sh.avatar.body(0).rig.bones.len() + 2, "not every part came off");
         // Somebody else's kill does not break the streak; a second of the
         // player's own inside STREAK_S is a double.
         run(&mut sh, &mut player, &store, 30, |_, _| {});
@@ -2207,13 +2844,16 @@ mod tests {
         }
         assert!(sh.bots[0].fighter.alive(), "the bot never came back");
         assert!(!sh.gibs.is_empty(), "the chunks went with the bot's respawn");
-        for _ in 0..60 {
-            if sh.gibs.is_empty() {
-                break;
-            }
-            run(&mut sh, &mut player, &store, 10, |_, _| {});
-        }
-        assert!(sh.gibs.is_empty() && sh.corpses.is_empty(), "the dead were never cleared away");
+        // Both kinds are cleared once their time is up. Judged by age, not
+        // by the lists being empty: the bots go on fighting through the
+        // wait, and a kill of theirs leaves dead of its own.
+        let life = def.respawn_s * CORPSE_LIFE;
+        let steps = ((life + 1.0) / STEP).ceil() as usize;
+        run(&mut sh, &mut player, &store, steps, |_, _| {});
+        let waited = steps as f32 * STEP;
+        assert!(sh.gibs.iter().all(|g| g.0 < waited - 0.5), "the chunks of the first kill were never cleared away");
+        assert!(sh.corpses.iter().all(|c| c.age < waited - 0.5), "the corpse of the second kill was never cleared away");
+        assert!(sh.gibs.iter().all(|g| g.0 <= life + STEP) && sh.corpses.iter().all(|c| c.age <= life + STEP), "something outlived its time");
         assert!(sh.banner.is_none(), "the banner never went away");
     }
 
@@ -2294,14 +2934,20 @@ mod tests {
             out.iter().map(|(m, _)| *m).filter(|m| (body..body + parts).contains(m)).collect()
         };
         let whole = drawn(&sh);
+        let body_base = crate::combat::viewmodel::COUNT;
         assert!(whole.len() > 20, "two living bots drew only {} parts", whole.len());
 
         let fell = sh.bots[0].pos();
         sh.down(1, 0, &player, Vec3::ZERO, false);
         let dead = drawn(&sh);
-        // Exactly as many parts: a body that has fallen is drawn limb for
-        // limb like a standing one, lamp included. Only the gun goes.
-        assert_eq!(dead.len(), whole.len(), "the dead bot stopped being drawn");
+        // Every part: a body that has fallen is drawn limb for limb like a
+        // standing one, lamps included, only whole rather than split into
+        // its uniform and the rest. Only the gun goes.
+        let shown = |r: &crate::anim::Rig| r.bones.iter().filter(|x| !models[body_base + x.model].mesh.quads.is_empty()).count();
+        let b0 = sh.avatar.body(sh.bots[0].build);
+        let living = shown(&b0.base) + shown(&b0.paint) + 2;
+        let fallen = shown(&b0.rig) + 2;
+        assert_eq!(dead.len(), whole.len() - living + fallen, "the dead bot stopped being drawn");
         // A second on, it is down where it fell rather than standing.
         for _ in 0..60 {
             sh.corpses[0].step(&store, 1.0 / 60.0);
@@ -2444,5 +3090,336 @@ mod tests {
         // with three jumps and a dodge, they close and trade faster.
         assert!(dealt > 0.0, "thirty seconds and no damage at all");
         assert!(frags <= 6, "{frags} kills between two bots in thirty seconds");
+    }
+
+    /// Two sides of one bot and the player: the bots are team 0, the player
+    /// team 1, by the launch screen's choice.
+    fn teams_of_two() -> ShooterDef {
+        let mut r = with_bots();
+        r.teams = true;
+        r.player_team = Some(1);
+        r
+    }
+
+    #[test]
+    fn a_team_match_deals_the_sides_and_paints_them() {
+        let (lib, _) = Library::load(std::path::Path::new("."));
+        let store = floor();
+        let sh = Shooter::repeatable(&lib, &teams_of_two(), (Vec3::new(0.0, 2.0, 0.0), 0.0), &store, 5);
+        assert_eq!(sh.sides(), vec![Some(1), Some(0), Some(0)]);
+        assert_eq!(sh.bots[0].tint.map(|c| (c * 10.0) as i32)[2], (teams::tint(0, 0)[2] * 10.0) as i32);
+        assert_eq!(sh.round.goal(), round::Goal::TeamKills);
+        let dm = Shooter::repeatable(&lib, &with_bots(), (Vec3::new(0.0, 2.0, 0.0), 0.0), &store, 5);
+        assert_eq!(dm.sides(), vec![None, None, None], "a deathmatch grew sides");
+    }
+
+    /// A teammate's rocket lifts and does not hurt, and a teammate killed by
+    /// one (friendly fire on) is nobody's kill.
+    #[test]
+    fn a_teammates_blow_pushes_and_scores_nothing() {
+        let (lib, _) = Library::load(std::path::Path::new("."));
+        let store = floor();
+        let mut sh = Shooter::repeatable(&lib, &teams_of_two(), (Vec3::new(0.0, 2.0, 0.0), 0.0), &store, 5);
+        let mut player = Player::new(Vec3::new(0.0, 2.0, 0.0), 0.0);
+        let blow = |who, by, damage, risky| crate::combat::Hit {
+            who,
+            by,
+            damage,
+            push: Vec3::Y * 6.0,
+            fling: Vec3::ZERO,
+            head: false,
+            blast: risky,
+            risky,
+        };
+        sh.combat.land(blow(2, 1, 60.0, false));
+        sh.settle(&mut player);
+        assert_eq!(sh.bots[1].fighter.health, 100.0, "a teammate's round hurt");
+        assert!(sh.bots[1].body.body.vel.y > 5.0, "a teammate's blow did not push");
+        assert_eq!(sh.bots[0].fighter.score.hits, 0, "a blow on a teammate was counted as a hit");
+        // A teammate's rocket, which could as well have hurt its firer,
+        // lands in full.
+        sh.combat.land(blow(2, 1, 20.0, true));
+        sh.settle(&mut player);
+        assert!((sh.bots[1].fighter.health - 80.0).abs() < 0.01, "a teammate's rocket did {}", 100.0 - sh.bots[1].fighter.health);
+        // An enemy's lands in full.
+        sh.combat.land(blow(2, 0, 30.0, false));
+        sh.settle(&mut player);
+        assert!(sh.bots[1].fighter.health < 100.0, "the other side's rocket did nothing");
+        // With friendly fire on, a teammate can kill, and nobody scores.
+        sh.rules.friendly_fire = 1.0;
+        sh.combat.land(blow(2, 1, 500.0, false));
+        sh.settle(&mut player);
+        assert!(!sh.bots[1].fighter.alive());
+        assert_eq!(sh.bots[0].fighter.score.kills, 0, "a team kill scored");
+    }
+
+    /// Two bots on one side never fight each other: half a minute together
+    /// on an open floor and neither lands a round on the other.
+    #[test]
+    fn teammates_do_not_fight() {
+        let (lib, _) = Library::load(std::path::Path::new("."));
+        let store = floor();
+        let mut sh = Shooter::repeatable(&lib, &teams_of_two(), (Vec3::new(0.0, 2.0, 0.0), 0.0), &store, 9);
+        sh.bench_player();
+        let mut player = Player::new(Vec3::new(0.0, 2.0, 0.0), 0.0);
+        run(&mut sh, &mut player, &store, 60 * 30, |_, _| {});
+        let dealt: f32 = sh.bots.iter().map(|b| b.fighter.score.dealt).sum();
+        let shots: u32 = sh.bots.iter().map(|b| b.fighter.score.shots).sum();
+        assert_eq!(shots, 0, "teammates fired {shots} rounds with nobody else about");
+        assert_eq!(dealt, 0.0);
+    }
+
+    /// Capture the flag on the test floor: cyan's stand at x = -20, magenta's
+    /// at x = +20, the player on magenta and no bots.
+    fn ctf_alone() -> ShooterDef {
+        let mut r = rules();
+        r.player_team = Some(1);
+        r.ctf = Some(crate::world::fields::CtfDef {
+            flags: vec![
+                crate::world::fields::FlagDef { team: 0, at: [-12.0, 0.0], up: None },
+                crate::world::fields::FlagDef { team: 1, at: [12.0, 0.0], up: None },
+            ],
+            captures: 2,
+            time_s: 0.0,
+            return_s: 25.0,
+            need_home: true,
+        });
+        r
+    }
+
+    /// The player walks onto cyan's stand, is told so, carries the flag home
+    /// and scores; a second capture wins the match.
+    #[test]
+    fn the_player_takes_the_flag_home_and_scores() {
+        let (lib, _) = Library::load(std::path::Path::new("."));
+        let store = floor();
+        let mut sh = Shooter::repeatable(&lib, &ctf_alone(), (Vec3::new(0.0, 2.0, 0.0), 0.0), &store, 4);
+        sh.pin();
+        let mut player = Player::new(Vec3::new(0.0, 2.0, 0.0), 0.0);
+        run(&mut sh, &mut player, &store, 30, |_, _| {});
+        assert_eq!(sh.flags.flags.len(), 2, "the flags were never placed");
+        assert!(sh.flags.flags.iter().all(|f| f.placed), "a stand never found its floor");
+        assert_eq!(sh.round.goal(), round::Goal::Captures);
+        for k in 0..2 {
+            player.pos = Vec3::new(-12.0, 2.0, 0.0);
+            run(&mut sh, &mut player, &store, 2, |_, _| {});
+            assert_eq!(sh.flags.carried_by(0), Some(0), "standing on cyan's stand did not take its flag");
+            assert!(sh.alerts.iter().any(|(a, _, _)| a == "YOU HAVE THE ENEMY FLAG"), "no alert: {:?}", sh.alerts);
+            player.pos = Vec3::new(12.0, 2.0, 0.0);
+            run(&mut sh, &mut player, &store, 2, |_, _| {});
+            assert_eq!(sh.captures(), [0, k + 1]);
+        }
+        assert_eq!(sh.me.score.caps, 2);
+        assert!(sh.round.frozen() && sh.round.winning_side() == Some(1), "two captures of two did not win it");
+    }
+
+    /// A carrier who dies drops the flag where they fell.
+    #[test]
+    fn a_carrier_who_dies_drops_the_flag() {
+        let (lib, _) = Library::load(std::path::Path::new("."));
+        let store = floor();
+        let mut sh = Shooter::repeatable(&lib, &ctf_alone(), (Vec3::new(0.0, 2.0, 0.0), 0.0), &store, 4);
+        sh.pin();
+        let mut player = Player::new(Vec3::new(0.0, 2.0, 0.0), 0.0);
+        run(&mut sh, &mut player, &store, 30, |_, _| {});
+        player.pos = Vec3::new(-12.0, 2.0, 0.0);
+        run(&mut sh, &mut player, &store, 2, |_, _| {});
+        player.pos = Vec3::new(-5.0, 2.0, 0.0);
+        run(&mut sh, &mut player, &store, 2, |_, _| {});
+        sh.combat.land(crate::combat::Hit {
+            who: 0,
+            by: 0,
+            damage: 500.0,
+            push: Vec3::ZERO,
+            fling: Vec3::ZERO,
+            head: false,
+            blast: false,
+            risky: false,
+        });
+        run(&mut sh, &mut player, &store, 2, |_, _| {});
+        match sh.flags.of(0).map(|f| f.state) {
+            Some(flag::State::Dropped { at, .. }) => assert!((at.x + 5.0).abs() < 0.5, "dropped at {at}"),
+            other => panic!("the flag is {other:?}, not on the floor"),
+        }
+    }
+
+    /// Carrying the flag, the player sees the alert, a border round the
+    /// screen and a mark on the way home, and all of it stays on the screen.
+    #[test]
+    fn carrying_the_flag_is_on_the_hud() {
+        let (lib, _) = Library::load(std::path::Path::new("."));
+        let store = floor();
+        let mut sh = Shooter::repeatable(&lib, &ctf_alone(), (Vec3::new(0.0, 2.0, 0.0), 0.0), &store, 4);
+        sh.pin();
+        let mut player = Player::new(Vec3::new(0.0, 2.0, 0.0), 0.0);
+        run(&mut sh, &mut player, &store, 30, |_, _| {});
+        let (w, h) = (1600.0, 900.0);
+        let mut before = Hud::default();
+        hud::draw(&sh, &mut before, w, h, 2.0);
+        player.pos = Vec3::new(-12.0, 2.0, 0.0);
+        run(&mut sh, &mut player, &store, 2, |_, _| {});
+        let mut during = Hud::default();
+        hud::draw(&sh, &mut during, w, h, 2.0);
+        let border = |hd: &Hud| hd.items.iter().any(|it| it.rect[2] >= w - 1.0 && it.rect[3] < 20.0);
+        assert!(!border(&before) && border(&during), "no border while carrying the flag");
+        assert!(during.items.len() > before.items.len() + 5, "the alert drew next to nothing");
+        let marks = sh.marks(&player);
+        assert!(marks.iter().any(|m| m.label.starts_with("HOME")), "no way home marked: {marks:?}");
+        for it in &during.items {
+            let [x, y, iw, ih] = it.rect;
+            assert!(x >= -1.0 && y >= -1.0 && x + iw <= w + 1.0 && y + ih <= h + 1.0, "drawn off the screen: {:?}", it.rect);
+        }
+    }
+
+    /// Capture the flag on the test floor with bots on both sides, the
+    /// player on cyan and benched. The graph is a line of nodes along x with
+    /// the stands at its ends.
+    fn ctf_with(cyan: usize, magenta: usize) -> ShooterDef {
+        let mut r = with_bots();
+        r.player_team = Some(0);
+        r.nav.nodes = (0..7)
+            .map(|i| NavNode {
+                at: [i as f32 * 4.0 - 12.0, 0.0],
+                up: 0.0,
+                cover: 0.0,
+                poi: None,
+            })
+            .collect();
+        r.nav.links = (0..6)
+            .map(|i| NavLink {
+                a: i,
+                b: i + 1,
+                reach: "walk".into(),
+                cost: 0.0,
+                platform: None,
+                portal: None,
+            })
+            .collect();
+        r.spawns = vec![
+            SpawnPoint { at: [-13.0, 3.0], bearing: 90.0, ceiling: None, team: Some(0) },
+            SpawnPoint { at: [-13.0, -3.0], bearing: 90.0, ceiling: None, team: Some(0) },
+            SpawnPoint { at: [13.0, 3.0], bearing: 270.0, ceiling: None, team: Some(1) },
+            SpawnPoint { at: [13.0, -3.0], bearing: 270.0, ceiling: None, team: Some(1) },
+        ];
+        let bot = |k: usize, team: u8| BotDef {
+            name: format!("b{k}"),
+            skill: "average".into(),
+            colour: None,
+            bold: 0.0,
+            steady: 0.0,
+            without: Vec::new(),
+            tune: Default::default(),
+            team: Some(team),
+        };
+        r.bots = (0..cyan).map(|k| bot(k, 0)).chain((0..magenta).map(|k| bot(cyan + k, 1))).collect();
+        r.ctf = Some(crate::world::fields::CtfDef {
+            flags: vec![
+                crate::world::fields::FlagDef { team: 0, at: [-12.0, 0.0], up: None },
+                crate::world::fields::FlagDef { team: 1, at: [12.0, 0.0], up: None },
+            ],
+            captures: 0,
+            time_s: 0.0,
+            return_s: 25.0,
+            need_home: true,
+        });
+        r
+    }
+
+    /// A lone magenta bot with nobody to stop it is sent for cyan's flag,
+    /// takes it, carries it home and scores, and the team brain is what
+    /// sent it: it is on a job the whole way.
+    #[test]
+    fn a_bot_alone_takes_the_flag_home() {
+        let (lib, _) = Library::load(std::path::Path::new("."));
+        let store = floor();
+        let mut sh = Shooter::repeatable(&lib, &ctf_with(0, 1), (Vec3::new(0.0, 2.0, 0.0), 0.0), &store, 21);
+        sh.bench_player();
+        let mut player = Player::new(Vec3::new(0.0, 2.0, 40.0), 0.0);
+        let mut jobs = std::collections::BTreeSet::new();
+        for _ in 0..40 {
+            run(&mut sh, &mut player, &store, 60, |_, _| {});
+            jobs.insert(sh.bots[0].brain.doing());
+            if sh.captures()[1] > 0 {
+                break;
+            }
+        }
+        assert!(sh.captures()[1] > 0, "forty seconds alone and no capture; jobs seen {jobs:?}, flags {:?}", sh.flags.flags.iter().map(|f| f.state).collect::<Vec<_>>());
+        assert!(jobs.contains("attack") && jobs.contains("carry"), "it was never given the jobs: {jobs:?}");
+    }
+
+    /// With a flag taken, a defender does not stand at its post: it goes
+    /// after the thief.
+    #[test]
+    fn a_taken_flag_sends_the_side_after_it() {
+        let (lib, _) = Library::load(std::path::Path::new("."));
+        let store = floor();
+        let mut sh = Shooter::repeatable(&lib, &ctf_with(2, 0), (Vec3::new(0.0, 2.0, 0.0), 0.0), &store, 22);
+        sh.bench_player();
+        sh.me.team = Some(1);
+        let mut player = Player::new(Vec3::new(0.0, 2.0, 40.0), 0.0);
+        run(&mut sh, &mut player, &store, 60, |_, _| {});
+        // The player, on magenta for this, walks off with cyan's flag.
+        sh.bench = false;
+        player.pos = Vec3::new(-12.0, 2.0, 0.0);
+        run(&mut sh, &mut player, &store, 2, |_, _| {});
+        assert_eq!(sh.flags.carried_by(0), Some(0));
+        player.pos = Vec3::new(4.0, 2.0, 10.0);
+        run(&mut sh, &mut player, &store, 30, |_, _| {});
+        let roles: Vec<_> = (0..2).filter_map(|i| sh.orders[i].map(|o| o.role)).collect();
+        assert!(roles.contains(&brain::Role::Retrieve), "nobody went after the flag: {roles:?}");
+    }
+
+    /// A bot told to hold a post near home gets there and, once it has been
+    /// there a while, stays round it.
+    #[test]
+    fn a_defender_holds_its_post() {
+        let (lib, _) = Library::load(std::path::Path::new("."));
+        let store = floor();
+        let mut sh = Shooter::repeatable(&lib, &ctf_with(3, 0), (Vec3::new(0.0, 2.0, 0.0), 0.0), &store, 23);
+        sh.bench_player();
+        // Jobs for life, so the defence does not change hands at every
+        // capture: what is under test is the defending, not the planning.
+        sh.coach(0, brain::team::Coach::Fixed);
+        let mut player = Player::new(Vec3::new(0.0, 2.0, 40.0), 0.0);
+        let mut on = [0.0f32; 3];
+        let (mut checked, mut far) = (0, 0.0f32);
+        for _ in 0..60 * 30 {
+            run(&mut sh, &mut player, &store, 1, |_, _| {});
+            for i in 0..3 {
+                match sh.orders[i] {
+                    Some(brain::Order { role: brain::Role::Defend, goal: brain::Goal::Hold { post, .. }, .. }) => {
+                        on[i] += 1.0 / 60.0;
+                        if on[i] > 4.0 {
+                            let p = sh.bots[i].pos();
+                            far = far.max(Vec3::new(p.x - post.x, 0.0, p.z - post.z).length());
+                            checked += 1;
+                        }
+                    }
+                    _ => on[i] = 0.0,
+                }
+            }
+        }
+        assert!(checked > 60, "nobody held a post for long enough to check: {checked} steps; orders {:?}", sh.orders);
+        assert!(far < 6.0, "a defender wandered {far:.1} m from its post");
+    }
+
+    /// A capture-the-flag match with a clock ends on it, a level one as a
+    /// draw. The clock was once never wound, and a timed match played on.
+    #[test]
+    fn a_timed_match_ends_on_the_clock() {
+        let (lib, _) = Library::load(std::path::Path::new("."));
+        let store = floor();
+        let mut def = ctf_alone();
+        if let Some(c) = def.ctf.as_mut() {
+            c.time_s = 1.0;
+        }
+        let mut sh = Shooter::repeatable(&lib, &def, (Vec3::new(0.0, 2.0, 0.0), 0.0), &store, 4);
+        sh.pin();
+        let mut player = Player::new(Vec3::new(0.0, 2.0, 0.0), 0.0);
+        run(&mut sh, &mut player, &store, 50, |_, _| {});
+        assert!(!sh.round.frozen(), "it ended early");
+        run(&mut sh, &mut player, &store, 20, |_, _| {});
+        assert!(sh.round.frozen(), "a minute's clock ran out and the match played on");
+        assert_eq!(sh.round.winning_side(), None, "nobody scored and somebody won");
     }
 }

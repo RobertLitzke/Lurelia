@@ -1,0 +1,61 @@
+{
+  "notes": "windbarrow, adjusted for an arena by the steppe style (the arena builder's styles). Chalk steppe: hot gold grass under a cold sky. The strip turns blue by about 300 m and the view is cut into five slabs, so the swell of the downs reads as layer behind layer and the sea beyond comes out cold.",
+  "ambient": [
+    0.3,
+    0.84,
+    1.2
+  ],
+  "sun_tint": [
+    1.14,
+    0.94,
+    0.62
+  ],
+  "ramp": [
+    {
+      "at": 0.0,
+      "color": [
+        0.88230777,
+        0.51554936,
+        0.14970465
+      ]
+    },
+    {
+      "at": 0.22,
+      "color": [
+        0.71832925,
+        0.46128443,
+        0.19852726
+      ]
+    },
+    {
+      "at": 0.5,
+      "color": [
+        0.355999,
+        0.43641752,
+        0.7274336
+      ]
+    },
+    {
+      "at": 1.0,
+      "color": [
+        0.22,
+        0.3,
+        0.6
+      ]
+    }
+  ],
+  "knobs": {
+    "contrast": 0.34,
+    "haze_density": 2.4,
+    "haze_height": 110.0,
+    "haze_ramp": 0.95,
+    "ramp_bands": 1.0,
+    "ramp_curve": 0.35,
+    "ramp_reach": 320.0,
+    "ramp_value": 0.5,
+    "saturation": 0.9,
+    "shade_ramp": 0.75,
+    "sky_ramp": 0.9,
+    "sky_reach": 0.45
+  }
+}

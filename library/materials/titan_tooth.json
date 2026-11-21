@@ -1,0 +1,16 @@
+{
+  "name": "titan_tooth",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Tooth: smoother than the bone and yellower, the enamel cracked along its length.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [150, 144, 128],
+    "alt": [118, 112, 100],
+    "scale": 3,
+    "contrast": 0.7,
+    "calm": {"base": [154, 148, 132], "alt": [122, 116, 104]}
+  },
+  "round": true
+}

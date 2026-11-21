@@ -39,5 +39,6 @@
   "collectibles": [
     {"item": "flint_blade", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}},
     {"item": "pottery_shard", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}
-  ]
+  ],
+  "sound": {"wind": 1.25}
 }

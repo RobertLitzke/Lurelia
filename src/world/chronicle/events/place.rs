@@ -39,7 +39,7 @@ impl Process for Place {
             return "skipped".into();
         };
         let b = match (bearing, face) {
-            (Some(b), _) => *b,
+            (Some(b), _) => *b + 90.0 * cx.turn(at) as f32,
             (None, Some(t)) => crate::util::bearing(cx.pos(t) - p).to_degrees(),
             _ => 0.0,
         };

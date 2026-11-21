@@ -1,0 +1,15 @@
+{
+  "name": "wet_sand",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The wet beach below the last tide line: grey-brown and dark, holding the sky.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [110, 110, 106],
+    "alt": [98, 98, 96],
+    "scale": 4,
+    "contrast": 0.6,
+    "calm": {"base": [112, 112, 108], "alt": [100, 100, 98]}
+  }
+}

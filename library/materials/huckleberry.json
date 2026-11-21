@@ -5,6 +5,7 @@
   "notes": "Marker voxel at the foot of a huckleberry bush; the stems and leaves are sprites (layer huckleberry).",
   "id": 190,
   "smooth": false,
+  "passable": true,
   "texture": {
     "pattern": "speckle",
     "base": [52, 82, 40],

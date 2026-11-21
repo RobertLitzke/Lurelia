@@ -1,0 +1,15 @@
+{
+  "name": "sea_palm",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Sea palm: rubbery olive stipes with a mop of blades, standing on the rock where the surf hits.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [104, 100, 46],
+    "alt": [128, 112, 52],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [108, 104, 56], "alt": [128, 114, 62]}
+  }
+}

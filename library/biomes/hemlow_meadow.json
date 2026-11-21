@@ -21,7 +21,9 @@
       "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.4, "max": 1.0}}
     },
     {"plant": "hazel", "density": 0.004, "placement": {"verb": "edge", "params": {"width": 12, "inner": 0.0}}},
-    {"plant": "hawthorn", "density": 0.004, "placement": {"verb": "lone", "params": {"spacing": 14.0}}}
+    {"plant": "hawthorn", "density": 0.004, "placement": {"verb": "lone", "params": {"spacing": 14.0}}},
+    {"plant": "bramble", "density": 0.003, "placement": {"verb": "edge", "params": {"width": 10, "inner": 0.0}}},
+    {"plant": "blackthorn", "density": 0.0015, "placement": {"verb": "edge", "params": {"width": 10, "inner": 0.0}}}
   ],
   "features": [{"structure": "cotswold_wall", "density": 0.0005, "placement": {"verb": "scatter", "params": {"seat": 1.0}}}],
   "creatures": [

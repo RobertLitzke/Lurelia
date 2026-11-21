@@ -1,7 +1,7 @@
 {
   "name": "ice_panel_dark",
   "version": 1,
-  "introduced_by": "icezeto",
+  "introduced_by": "transmission",
   "notes": "The slate-blue trim and service panels of a frozen base: door frames, plinths, the backs of the galleries. Dark enough that a white wall beside it keeps its edge.",
   "smooth": false,
   "crisp": true,

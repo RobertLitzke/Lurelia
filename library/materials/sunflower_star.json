@@ -1,0 +1,15 @@
+{
+  "name": "sunflower_star",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "A sunflower star's soft body, pink-orange and many-armed.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [214, 128, 96],
+    "alt": [190, 96, 120],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [206, 132, 104], "alt": [186, 106, 126]}
+  }
+}

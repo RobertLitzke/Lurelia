@@ -1,0 +1,15 @@
+{
+  "name": "sloes",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Sloes: small blue-black plums with a pale bloom, autumn.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [70, 72, 110],
+    "alt": [104, 108, 140],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [76, 78, 116], "alt": [110, 114, 146]}
+  }
+}

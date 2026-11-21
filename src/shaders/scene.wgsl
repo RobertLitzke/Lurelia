@@ -199,6 +199,12 @@ fn under_land(world: vec3<f32>) -> f32 {
     if (deep < 0.35) {
         return 1.0;
     }
+    // The EDIT page's platform is cut down into the land with the sky open
+    // over it, and the land's texels laid the sun across it in blocky
+    // patches (backlog #356).
+    if (g.studio.w > 0.5 && all(abs(world.xz - g.studio.xy) <= vec2<f32>(g.studio.z))) {
+        return 1.0;
+    }
     let flat = g.sun_dir.xz;
     let len = length(flat);
     if (len > 0.001) {
@@ -256,9 +262,13 @@ fn cascade_shadow(world: vec3<f32>, n: vec3<f32>) -> f32 {
     // surface and it shadows itself in stripes that crawl as the cascades
     // follow the camera. Cover the filter's reach (about 2.5 texels) at
     // that slope, capped so contact shadows under overhangs survive.
+    // One texel of reach and a cap of 4 are enough: at 2.5 texels and 8 the
+    // bias reached most of a metre on flat ground under a low sun, and every
+    // log, bone and plank lying on it cast a shadow parted from it by a lit
+    // gap, the flat ones none at all (2026-11-20, Ribshore).
     let ndl = clamp(dot(n, g.sun_dir.xyz), 0.02, 1.0);
-    let tanl = min(sqrt(1.0 - ndl * ndl) / ndl, 8.0);
-    let bias = select(0.0004, 0.0009, g.style.x > 0.5) + texel * tanl * 2.5 * max(g.shadow_texel.w, 1.0) / 600.0;
+    let tanl = min(sqrt(1.0 - ndl * ndl) / ndl, 4.0);
+    let bias = select(0.0004, 0.0009, g.style.x > 0.5) + texel * tanl * 1.0 * max(g.shadow_texel.w, 1.0) / 600.0;
     var s = 1.0;
     if (ci == 0u) {
         let sp = shadow_pos(g.shadow_mats[0], p);
@@ -613,6 +623,130 @@ fn face_axes(face: u32) -> mat2x3<f32> {
     return mat2x3<f32>(vec3<f32>(1.0, 0.0, 0.0), vec3<f32>(0.0, -1.0, 0.0));
 }
 
+// ---- what the weather leaves on the ground (world/damp.rs) -----------------
+
+struct Damp {
+    albedo: vec3<f32>,
+    // How much the surface shines with a film of water, 0 to 1.
+    sheen: f32,
+    // Standing water over this point, 0 to 1.
+    pool: f32,
+    // Frost lying here, 0 to 1.
+    frost: f32,
+    // How much of `pool` is a sheet flood over pale flat ground (a salt
+    // pan): an inch of clear water, so the bed shows bright through it.
+    sheet: f32,
+};
+
+// Frost's own colour: the pale grey-blue of rime, not snow's white.
+const RIME: vec3<f32> = vec3<f32>(0.78, 0.83, 0.9);
+
+// Wet, standing water and frost on one terrain fragment, before it is lit.
+// Wet darkens most what faces the sky. Puddles need ground that is level over
+// several metres, lie a little thicker in hollows, and are shaped by a noise
+// that grows them outward as the pools fill. Frost holds on where the sun has
+// not reached since it rose: two amounts from the CPU, picked between by this
+// point's own shadow, so a white edge retreats behind every shadow as the
+// morning goes on. Nothing lies under the land (a cave, a cellar).
+fn damp_ground(albedo: vec3<f32>, world: vec3<f32>, n: vec3<f32>, plant: bool, grassy: bool, floods: bool) -> Damp {
+    var d = Damp(albedo, 0.0, 0.0, 0.0, 0.0);
+    let open = under_land(world);
+    if (open < 0.01) {
+        return d;
+    }
+    let up = smoothstep(-0.2, 0.9, n.y);
+    let wet = g.damp.x * open * mix(0.4, 1.0, up);
+    if (wet > 0.005) {
+        // A film of water stops the surface scattering white light back, so
+        // it goes darker and deeper in colour, the darks most of all.
+        let k = select(1.0, 0.55, plant);
+        d.albedo = pow(max(albedo, vec3<f32>(0.0)), vec3<f32>(1.0 + 0.5 * wet * k)) * (1.0 - 0.25 * wet * k);
+        d.sheen = wet * select(select(1.0, 0.2, plant), 0.0, leafy);
+    }
+    if (g.damp.y > 0.005 && !plant && n.y > 0.9) {
+        let level = smoothstep(0.982, 0.997, land_normal(world.xz).y);
+        let uv = clamp(world.xz / g.fog.w, vec2<f32>(0.002), vec2<f32>(0.998));
+        let smooth_ground = textureSampleLevel(mistmap, samp, uv, 0.0).g;
+        let hollow = 0.55 + 0.45 * smoothstep(0.6, -0.6, world.y - smooth_ground);
+        let shape = vnoise2(world.xz * 0.45) * 0.65 + vnoise2(world.xz * 1.9 + vec2<f32>(7.3, 2.1)) * 0.35;
+        let edge = 0.82 - 0.3 * g.damp.y * hollow;
+        d.pool = level * open * smoothstep(edge, edge + 0.025, shape);
+        // The ground round a pool is soaked darker than the rest, which is
+        // what makes the water read as lying in it rather than painted on.
+        let rim = level * open * smoothstep(edge - 0.07, edge, shape) * (1.0 - d.pool);
+        d.albedo *= 1.0 - 0.35 * rim;
+        if (floods) {
+            // A pan floods from edge to edge on the first standing water and
+            // stays a sheet until it is nearly gone, breaking up into
+            // islands of crust only at the very end.
+            let film = smoothstep(0.003, 0.05, g.damp.y);
+            let islands = smoothstep(0.35, 0.65, shape + (1.0 - film) * 0.6);
+            d.sheet = level * open * film * (1.0 - islands * (1.0 - film) * 0.9);
+            d.pool = max(d.pool, d.sheet);
+        }
+    }
+    let rime = max(g.damp.z, g.damp.w);
+    if (rime > 0.01) {
+        var lit = 0.0;
+        if (g.air_sun.w < 0.5 && dot(n, g.sun_dir.xyz) > 0.0) {
+            lit = shadow_factor(world, n);
+        }
+        let f = mix(g.damp.z, g.damp.w, lit) * open;
+        let lie = vnoise2(world.xz * 3.1) * 0.6 + vnoise2(world.xz * 11.0 + vec2<f32>(2.7, 9.4)) * 0.4;
+        let s = smoothstep(0.2, 0.8, n.y) * smoothstep(0.35, 0.7, lie + f * 0.6) * f * select(0.55, 0.85, grassy) * (1.0 - d.pool);
+        d.albedo = mix(d.albedo, RIME, s);
+        d.frost = s * lit;
+    }
+    return d;
+}
+
+// The shine on wet ground and standing water, and the glitter of frost in
+// the sun, over a lit terrain fragment. A puddle is mostly the sky it
+// reflects over the dark ground under it; rain falling roughens it.
+fn damp_light(col: vec3<f32>, world: vec3<f32>, n: vec3<f32>, d: Damp, footprint: f32) -> vec3<f32> {
+    var c = col;
+    let v = normalize(g.cam_pos.xyz - world);
+    var nn = normalize(mix(n, vec3<f32>(0.0, 1.0, 0.0), d.pool));
+    if (d.pool > 0.0 && g.weather.y > 0.02) {
+        let t = g.cam_pos.w;
+        let r = vec2<f32>(vnoise2(world.xz * 7.0 + vec2<f32>(t * 3.1, 0.0)), vnoise2(world.xz * 7.0 + vec2<f32>(4.2, t * 2.7))) - 0.5;
+        nn = normalize(nn + vec3<f32>(r.x, 0.0, r.y) * 0.18 * g.weather.y * d.pool);
+    }
+    // A wet film shows only a little of the sky; a pool is mostly sky, and
+    // dimmer than the sky itself, since it also shows the dark bed under it.
+    let shine = d.sheen * 0.1 + d.pool * mix(0.7, 0.95, d.sheet);
+    if (shine > 0.0) {
+        // A puddle shows its dark bed; a sheet of an inch over salt shows
+        // the salt, a little greyed.
+        c = mix(c, c * mix(0.35, 0.8, d.sheet), d.pool * 0.85);
+        var r = reflect(-v, nn);
+        r.y = abs(r.y);
+        let fres = 0.02 + 0.98 * pow(1.0 - max(dot(nn, v), 0.0), 5.0);
+        // The sky with its clouds in it: a pool holding only the sky's
+        // gradient reads as a flat pale decal.
+        var sky = sky_color(r);
+        if (d.pool > 0.0) {
+            let lum = dot(sky, vec3<f32>(0.2126, 0.7152, 0.0722));
+            sky = mix(sky, vec3<f32>(lum * 1.15), clouds(r) * 0.8);
+        }
+        c += sky * fres * shine * sky_openness(world);
+        let s = dot(r, g.sun_dir.xyz);
+        if (s > 0.9) {
+            let tight = mix(80.0, 1200.0, d.pool);
+            let sh = shadow_factor(world, nn);
+            c += g.sun_color.rgb * g.sun_color.w * pow(max(s, 0.0), tight) * fres * shine * sh * mix(2.0, 12.0, d.pool);
+        }
+    }
+    if (d.frost > 0.0 && footprint < 0.05) {
+        // Points of rime catching the sun: a sparse hashed grid of 3 cm
+        // cells, faded out before they are smaller than a pixel.
+        let h = hash3u(vec3<i32>(floor(world * 33.0)));
+        let speck = select(0.0, 1.0, (h & 1023u) < 14u);
+        c += g.sun_color.rgb * g.sun_color.w * speck * d.frost * 0.9 * (1.0 - smoothstep(0.02, 0.05, footprint));
+    }
+    return c;
+}
+
 @fragment
 fn fs_terrain(in: TerrainOut) -> @location(0) vec4<f32> {
     let face = in.face_mat.x;
@@ -765,6 +899,15 @@ fn fs_terrain(in: TerrainOut) -> @location(0) vec4<f32> {
     } else if ((m.w & (M_UNDERSTORY | M_CALM_MEADOW)) != 0u) {
         albedo = strawed(albedo);
     }
+    // What the weather has left (world/damp.rs): wet ground goes dark, and
+    // standing water lies on level bare ground. Plants and leaves darken
+    // less and never hold a puddle.
+    let plant = leafy || (m.w & (M_GROWS | M_CALM_LEAF | M_UNDERSTORY | M_CALM_MEADOW)) != 0u;
+    var dmp = Damp(albedo, 0.0, 0.0, 0.0, 0.0);
+    if (glow == 0.0 && (g.damp.x > 0.005 || g.damp.y > 0.003 || g.damp.z > 0.01)) {
+        dmp = damp_ground(albedo, in.world, n_light, plant, (m.w & (M_UNDERSTORY | M_CALM_MEADOW)) != 0u, (m.w & M_FLOODS) != 0u);
+        albedo = dmp.albedo;
+    }
     // Snow lying on whatever faces up: the tops of the leaf blocks in a
     // spruce, ledges, roofs, a log. Patchy, thickest on the flattest faces,
     // with more of it the deeper the snow lies (render FrameParams::snow_cover).
@@ -783,13 +926,18 @@ fn fs_terrain(in: TerrainOut) -> @location(0) vec4<f32> {
         albedo = mix(albedo, snow, s);
     }
     var col = light(albedo, in.world, n_light, in.ao, glow);
+    if (dmp.sheen > 0.0 || dmp.pool > 0.0 || dmp.frost > 0.0) {
+        col = damp_light(col, in.world, n_light, dmp, max(length(dw_x), length(dw_y)));
+    }
     if ((m.w & M_GLINTS) != 0u) {
         let fp = max(length(duv_x), length(duv_y));
         col += glass_glints(in.world, n, uvs, face, fp, (m.w & M_GLINTS_SOFT) != 0u);
     }
     // Fog per pixel: terrain is bound by vertex work, so moving the mist into
-    // vs_terrain made it slower, not faster.
-    return vec4<f32>(apply_fog(col, in.world), 1.0);
+    // vs_terrain made it slower, not faster. Alpha over 1 marks standing
+    // water for the reflections in post.wgsl (`mirror`): every other opaque
+    // surface writes exactly 1.
+    return vec4<f32>(apply_fog(col, in.world), 1.0 + dmp.pool);
 }
 
 // ---- entities --------------------------------------------------------------
@@ -829,7 +977,10 @@ fn vs_entity(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -
     }
     out.world = t[0];
     out.normal = t[1];
-    out.mat = qv.mat;
+    // The palette row: the voxel's slot within its model's block, plus
+    // where that block starts (render/mod.rs `set_models` puts it in the
+    // top half of the quad's second word).
+    out.mat = max(qv.mat, PALETTE_BASE) - PALETTE_BASE + (q.y >> 16u);
     out.ao = qv.ao;
     out.local = qv.local - qv.normal * 0.5;
     out.inst = ii;
@@ -838,7 +989,23 @@ fn vs_entity(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -
 
 @fragment
 fn fs_entity(in: EntityOut) -> @location(0) vec4<f32> {
-    let p = palette[max(in.mat, PALETTE_BASE) - PALETTE_BASE];
+    return vec4<f32>(entity_colour(in), 1.0);
+}
+
+// shift.w 3 and up: drawn see-through (models.rs `GLASS`), the rest its
+// opacity. The edges are held more opaque than the middle, so a glass thing
+// keeps its outline and does not fade to a smear.
+@fragment
+fn fs_entity_glass(in: EntityOut) -> @location(0) vec4<f32> {
+    let inst = einst[in.inst];
+    let a = clamp(inst.shift.w - 3.0, 0.0, 1.0);
+    let v = normalize(g.cam_pos.xyz - in.world);
+    let rim = 1.0 - abs(dot(normalize(in.normal), v));
+    return vec4<f32>(entity_colour(in), clamp(a + 0.4 * rim * rim, 0.0, 1.0));
+}
+
+fn entity_colour(in: EntityOut) -> vec3<f32> {
+    let p = palette[in.mat];
     let inst = einst[in.inst];
     let h = hash3u(vec3<i32>(floor(in.local)));
     let j = f32(h & 255u) / 255.0 - 0.5;
@@ -848,7 +1015,7 @@ fn fs_entity(in: EntityOut) -> @location(0) vec4<f32> {
     let glow = p.w * (1.0 + min(inst.tint.w, 0.0));
     var col = light(albedo, in.world, n, in.ao, glow);
     col = mix(col, vec3<f32>(1.0, 1.0, 1.0), max(inst.tint.w, 0.0));
-    return vec4<f32>(apply_fog(col, in.world), 1.0);
+    return apply_fog(col, in.world);
 }
 
 // ---- sky -------------------------------------------------------------------
@@ -877,6 +1044,9 @@ fn fs_sky(in: FsTri) -> @location(0) vec4<f32> {
         // culled past the underwater fog (render/mod.rs `near_enough`) is
         // not cut out against a darker background.
         return vec4<f32>(haze(g.cam_pos.xyz + dir * 1000.0).rgb, 1.0);
+    }
+    if (g.snow.y > 0.5) {
+        return vec4<f32>(space_sky(dir), 1.0);
     }
     var c = sky_color(dir);
     let night = g.air_sun.w;
@@ -916,17 +1086,41 @@ fn stars(dir: vec3<f32>) -> vec3<f32> {
     if (g.air_sun.w < 0.01 || dir.y < 0.0) {
         return vec3<f32>(0.0);
     }
-    let q = dir * 260.0;
+    return star_field(dir, 260.0, 20u) * smoothstep(0.03, 0.3, dir.y);
+}
+
+// One layer of stars: cells `scale` to the radian, `keep` of every 256 lit.
+fn star_field(dir: vec3<f32>, scale: f32, keep: u32) -> vec3<f32> {
+    let q = dir * scale;
     let cell = floor(q);
     let h = hash3u(vec3<i32>(cell));
-    if ((h & 255u) > 20u) {
+    if ((h & 255u) > keep) {
         return vec3<f32>(0.0);
     }
     let off = vec3<f32>(f32((h >> 8u) & 255u), f32((h >> 16u) & 255u), f32(h >> 24u)) / 255.0 * 0.5 + 0.25;
     let d = length(q - cell - off);
     let b = exp(-d * d / 0.03) * (0.4 + f32((h >> 4u) & 15u) / 15.0 * 1.6);
     let tint = mix(vec3<f32>(0.8, 0.85, 1.0), vec3<f32>(1.0, 0.9, 0.78), f32((h >> 12u) & 1u));
-    return tint * b * smoothstep(0.03, 0.3, dir.y);
+    return tint * b;
+}
+
+// The sky of a map in space (world.json `space`): near-black all the way
+// round, below the horizon as well, with two layers of stars, a faint band
+// of the galaxy across it, and the moon. No air, so no clouds and no mist.
+fn space_sky(dir: vec3<f32>) -> vec3<f32> {
+    // The band: a great circle tilted across the sky, brightest along it,
+    // mottled so it reads as dust and not a stripe.
+    let pole = normalize(vec3<f32>(0.35, 0.55, -0.76));
+    let across = dot(dir, pole);
+    let mottle = 0.6 + 0.4 * sin(dir.x * 23.0 + sin(dir.z * 17.0) * 2.0) * sin(dir.y * 19.0 + dir.x * 7.0);
+    let band = exp(-across * across / 0.02) * mottle;
+    var c = vec3<f32>(0.004, 0.005, 0.011) + vec3<f32>(0.035, 0.032, 0.045) * band;
+    c += star_field(dir, 260.0, 24u);
+    // Fainter, finer stars, many more of them along the band.
+    c += star_field(dir, 640.0, u32(10.0 + 40.0 * band)) * 0.35;
+    let s = dot(dir, g.sun_dir.xyz);
+    c += g.sun_color.rgb * smoothstep(0.99975, 0.99988, s) * 20.0;
+    return c;
 }
 
 // ---- northern lights (render/aurora.rs) -------------------------------------
@@ -1094,11 +1288,19 @@ fn vs_water(@builtin(vertex_index) vi: u32) -> WaterOut {
     let c = quad_corner(vi);
     let r = 4000.0;
     // Sea level falls on a voxel boundary, so shoreline top faces would share the
-    // water's plane and z-fight (blinking at the water's edge). Draw the surface
-    // a few centimetres lower so those faces sit just above it.
-    let world = vec3<f32>(g.cam_pos.x + c.x * r, g.fog.y - 0.05, g.cam_pos.z + c.y * r);
+    // water's plane and z-fight (blinking at the water's edge). The smoothed
+    // ground moves its corners in quarter-voxel steps (6.25 cm), so a flat beach
+    // at sea level has corners at 0 and -6.25 cm: at -5 cm the water lay a
+    // centimetre from those and flickered through the sand at a distance
+    // (Ribshore's beach). Midway between the first and second step keeps every
+    // corner at least 3 cm clear of it.
+    let world = vec3<f32>(g.cam_pos.x + c.x * r, g.fog.y - 0.094, g.cam_pos.z + c.y * r);
     var out: WaterOut;
     out.clip = g.view_proj * vec4<f32>(world, 1.0);
+    // A map in space has no sea, however far down: draw nothing.
+    if (g.snow.y > 0.5) {
+        out.clip = vec4<f32>(0.0, 0.0, -2.0, 1.0);
+    }
     out.world = world;
     out.river = vec4<f32>(0.0);
     out.fall = 0u;

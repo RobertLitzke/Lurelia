@@ -22,6 +22,20 @@ pub struct Network {
     terms: route::Terms,
     #[serde(default = "default_smooth")]
     smooth: f32,
+    /// Lay every link level at this height above the sea instead of on the
+    /// land: with a `bore` kit that is a cave system, its floor at this
+    /// height wherever there is rock, open where a link comes out of a cliff
+    /// or into a pit. Underground nothing on the surface matters, so links
+    /// are not searched for: each runs from node to node, swinging up to
+    /// `wander` m to either side, and the nodes give the network its shape.
+    #[serde(default)]
+    height: Option<f32>,
+    #[serde(default = "default_wander")]
+    wander: f32,
+}
+
+fn default_wander() -> f32 {
+    6.0
 }
 
 #[derive(Deserialize, Debug)]
@@ -31,6 +45,24 @@ struct Link {
     kit: String,
     #[serde(default)]
     terms: Option<route::Terms>,
+}
+
+/// A line from `a` to `b` about a metre between points, swinging to either
+/// side by up to `wander` m and back to nothing at both ends.
+fn level_line(a: Vec2, b: Vec2, wander: f32, seed: u32) -> Vec<Vec2> {
+    let len = a.distance(b).max(1.0);
+    let dir = (b - a) / len;
+    let side = Vec2::new(-dir.y, dir.x);
+    let amp = wander.min(len * 0.22);
+    let steps = len.ceil() as usize;
+    (0..=steps)
+        .map(|s| {
+            let t = s as f32 / steps as f32;
+            let ends = (t * (1.0 - t) * 4.0).min(1.0);
+            let off = crate::world::noise::perlin2(t * len * 0.045, 1.7, seed) * 1.6 + crate::world::noise::perlin2(t * len * 0.13, 5.1, seed) * 0.5;
+            a + dir * (len * t) + side * (off * amp * ends)
+        })
+        .collect()
 }
 
 fn default_smooth() -> f32 {
@@ -79,7 +111,8 @@ impl Process for Network {
             let kit = cx.state.get::<Ribbons>().kits[ki].clone();
             let terms = self.links[k].terms.clone().unwrap_or_else(|| self.terms.clone()).over(&kit);
             let (a, b) = ends[k];
-            match route::find_line(&grid, a, b, &terms) {
+            let found = if self.height.is_some() { Some(level_line(a, b, self.wander, cx.seed.wrapping_add(k as u32))) } else { route::find_line(&grid, a, b, &terms) };
+            match found {
                 Some(line) => {
                     // The ground it took: the next link would rather join it.
                     grid.take(&line, kit.half + 1.0);
@@ -109,6 +142,11 @@ impl Process for Network {
         }
         let mut junctions = 0;
         for (n, (count, half, mat)) in deg.clone() {
+            if self.height.is_some() {
+                // Passages run into each other at a node; nothing to pave.
+                junctions += (count >= 2) as usize;
+                continue;
+            }
             if count < 2 {
                 continue;
             }
@@ -135,7 +173,7 @@ impl Process for Network {
             if line.len() < 2 {
                 continue;
             }
-            let l = route::lay(cx, line, ki, self.smooth);
+            let l = if self.height.is_some() { route::lay_at(cx, line, ki, self.smooth, self.height) } else { route::lay(cx, line, ki, self.smooth) };
             total += l.length;
             spans += l.spans.len();
             laid += 1;

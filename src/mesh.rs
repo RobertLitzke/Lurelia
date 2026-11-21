@@ -49,10 +49,15 @@
 //! inside a block are left out (`in_leaf_block`).
 //! `VOXEL_LEAF_BLOCKS=0` meshes leaves voxel by voxel, for comparisons.
 //!
+//! Leaning stems. A thin stem that leans off an axis is drawn as a slanted
+//! tube fitted through its voxels instead of their faces (mesh/lean.rs).
+//!
 //! A sloped, blended or rounded quad is always 1x1 (a leaf block's 2x2). Each direction's group
 //! keeps its tilted quads (sloped or rounded) at the end; `tilted` counts them,
 //! so the renderer can draw just those where a tilted face might show.
 
+mod lean;
+pub use lean::{Thread, THREAD_MAX_R};
 pub mod quad;
 pub mod sprites;
 
@@ -641,6 +646,7 @@ fn round_corner(v: &[u8; PAD3], f: &mut Option<TreeFields>, x: isize, y: isize, 
     let mut solid = [[[false; 2]; 2]; 2];
     let mut count = 0;
     let mut facet = true;
+    let mut steps = true;
     for (i, si) in solid.iter_mut().enumerate() {
         for (j, sj) in si.iter_mut().enumerate() {
             for (k, s) in sj.iter_mut().enumerate() {
@@ -650,6 +656,7 @@ fn round_corner(v: &[u8; PAD3], f: &mut Option<TreeFields>, x: isize, y: isize, 
                         return None;
                     }
                     facet &= crate::world::matlib::facets(m);
+                    steps &= crate::world::matlib::steps_only(m);
                     *s = true;
                     count += 1;
                 }
@@ -658,6 +665,13 @@ fn round_corner(v: &[u8; PAD3], f: &mut Option<TreeFields>, x: isize, y: isize, 
     }
     if count == 0 || count == 8 {
         return None;
+    }
+    // Built things (`bevel_steps`) move a corner only along the axes where
+    // the shape does not run straight on: none at the edge of a box, only
+    // across at the foot of a stepped pillar, both ways at a stair's lip.
+    let keep = if steps { clean_axes(v, x, y, z) } else { [false; 3] };
+    if keep == [true; 3] {
+        return Some([0; 3]);
     }
     let f = f.get_or_insert_with(|| TreeFields::new(v));
     // Ground in the 4x4x4 voxels around: stay square. The ground rules move a
@@ -707,7 +721,51 @@ fn round_corner(v: &[u8; PAD3], f: &mut Option<TreeFields>, x: isize, y: isize, 
     // Mean in eighths (8 64ths each), rounded half up, then doubled into the
     // sixteenths the packing holds: tree corners keep the eighth-voxel grid
     // they have always rounded to.
-    Some(sum.map(|s| 2 * (2 * s + 8 * n).div_euclid(16 * n).clamp(-4, 4)))
+    let mut o = sum.map(|s| 2 * (2 * s + 8 * n).div_euclid(16 * n).clamp(-4, 4));
+    for a in 0..3 {
+        if keep[a] {
+            o[a] = 0;
+        }
+    }
+    Some(o)
+}
+
+/// For each axis, whether the shape at lattice point (x, y, z) runs straight
+/// on along it: the 2x2 slab of voxels one further out on either side matches
+/// the slab next to the point. All three hold at the edge or corner of a box
+/// two voxels or more across, a wall corner, the foot of a wall and the middle
+/// of a flat face, so every face meeting there runs flat for two voxels; none
+/// at the lip of a staircase of one-voxel steps; only the vertical one along
+/// the stepped outline of an upright pillar.
+fn clean_axes(v: &[u8; PAD3], x: isize, y: isize, z: isize) -> [bool; 3] {
+    let solid = |p: [isize; 3]| {
+        if p[0] < 0 || p[1] < 0 || p[2] < 0 || p[0] as usize >= PAD || p[1] as usize >= PADY || p[2] as usize >= PAD {
+            return None;
+        }
+        Some(v[idx(p[0], p[1], p[2])] != AIR)
+    };
+    let c = [x, y, z];
+    let mut out = [true; 3];
+    for (a, keep) in out.iter_mut().enumerate() {
+        let (b, d) = ((a + 1) % 3, (a + 2) % 3);
+        for i in -1..=0isize {
+            for j in -1..=0isize {
+                let at = |k: isize| {
+                    let mut p = c;
+                    p[a] += k;
+                    p[b] += i;
+                    p[d] += j;
+                    solid(p)
+                };
+                // Outside the padded array: count it as running on.
+                let (o, n, n2, o2) = (at(-2), at(-1), at(0), at(1));
+                if o.is_some() && o != n || o2.is_some() && o2 != n2 {
+                    *keep = false;
+                }
+            }
+        }
+    }
+    out
 }
 
 /// Bevel of a tube's edges, sixteenths of a voxel. An equal-sided octagon
@@ -842,9 +900,11 @@ pub fn mesh_chunk(v: &[u8; PAD3], smooth: bool, out: &mut Mesh) {
 }
 
 /// Mesh a model's voxels (palette materials): square faces, and none of the
-/// terrain's content rules, such as herb markers meshing as air.
-pub fn mesh_model(v: &[u8; PAD3], out: &mut Mesh) {
-    mesh_impl_h(v, false, true, None, None, out);
+/// terrain's content rules, such as herb markers meshing as air. Rods whose
+/// line is known (`models::Grid::rod`) are drawn as round tubes along them
+/// (mesh/lean.rs), the voxels under them hidden.
+pub fn mesh_model_t(v: &[u8; PAD3], threads: &[Thread], out: &mut Mesh) {
+    mesh_impl_t(v, false, true, None, None, false, threads, out);
 }
 
 /// `mesh_chunk` with each padded column's true ground height in voxels
@@ -852,16 +912,23 @@ pub fn mesh_model(v: &[u8; PAD3], out: &mut Mesh) {
 /// `blocks`: mesh foliage as leaf blocks of 2x2x2 voxels (the two finest
 /// levels; see the module notes), when slopes are on.
 pub fn mesh_chunk_h(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, blocks: bool, out: &mut Mesh) {
+    mesh_chunk_t(v, smooth, colh, blocks, &[], out)
+}
+
+/// `mesh_chunk_h` with the threads (thin stems whose line is known, from
+/// `Generator::threads`) that pass through the chunk: they are drawn as
+/// tubes along their lines (mesh/lean.rs).
+pub fn mesh_chunk_t(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, blocks: bool, threads: &[Thread], out: &mut Mesh) {
     let blocks = blocks && smooth && leaf_blocks_on() && v.iter().any(|&m| block_leaf(m));
     // Herb markers (one voxel at the foot of a fern or fireweed) are drawn
     // only as sprites: mesh as if they were air. So are leaves drawn as blocks.
     if blocks || v.iter().any(|&m| sprites::marker(m)) {
         let mut c = pooled(|p| &mut p.marked, 0, 0u8);
         c.extend(v.iter().map(|&m| if sprites::marker(m) || (blocks && block_leaf(m)) { AIR } else { m }));
-        mesh_impl_h(c.as_slice().try_into().unwrap(), smooth, true, colh, blocks.then_some(v), out);
+        mesh_impl_t(c.as_slice().try_into().unwrap(), smooth, true, colh, blocks.then_some(v), true, threads, out);
         POOL.with(|p| p.borrow_mut().marked = c);
     } else {
-        mesh_impl_h(v, smooth, true, colh, None, out);
+        mesh_impl_t(v, smooth, true, colh, None, true, threads, out);
     }
 }
 
@@ -1101,12 +1168,20 @@ fn leaf_blocks(v: &[u8; PAD3], out: &mut Mesh) {
 
 #[cfg(test)]
 fn mesh_impl(v: &[u8; PAD3], smooth: bool, merge: bool, out: &mut Mesh) {
-    mesh_impl_h(v, smooth, merge, None, None, out)
+    mesh_impl_h(v, smooth, merge, None, None, true, out)
 }
 
 /// Mesh `v`; with `leaves`, also the leaf blocks of that array (whose leaves
-/// `v` holds as air).
-fn mesh_impl_h(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, leaves: Option<&[u8; PAD3]>, out: &mut Mesh) {
+/// `v` holds as air). `slabs`: draw slab materials half height, which is
+/// terrain only -- a model's voxels are palette slots, not materials.
+#[allow(clippy::too_many_arguments)]
+#[cfg(test)]
+fn mesh_impl_h(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, leaves: Option<&[u8; PAD3]>, slabs: bool, out: &mut Mesh) {
+    mesh_impl_t(v, smooth, merge, colh, leaves, slabs, &[], out)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn mesh_impl_t(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, leaves: Option<&[u8; PAD3]>, slabs: bool, threads: &[Thread], out: &mut Mesh) {
     out.quads.clear();
     out.sprites.clear();
     out.sprite_fill = 0;
@@ -1116,7 +1191,12 @@ fn mesh_impl_h(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, 
     out.dir_counts = [0; 6];
     out.tails = [[0; 6]; LEANS.len() + 1];
     out.rtails = [[0; 6]; LEANS.len() + 1];
-    let solid = |i: isize| v[i as usize] != AIR;
+    // Leaning stems are drawn as slanted tubes (mesh/lean.rs): their voxels
+    // make no faces of their own and hide none beside them.
+    // A model's threads (mesh_model_t) are drawn though it is not smoothed.
+    let lean = if tubes_on() && (smooth || !threads.is_empty()) { lean::leaning(v, threads, !smooth) } else { None };
+    let leaning = |i: isize| lean.as_ref().is_some_and(|l| l.flags[i as usize]);
+    let solid = |i: isize| v[i as usize] != AIR && !leaning(i);
     let mut corners = if smooth { Some(Corners::new(v, colh)) } else { None };
     // Mask entries: 0 = no face; otherwise material | ao << 8 | 1 << 16 (present)
     // | 1 << 17 when the corners differ or the face is sloped or blended, which
@@ -1140,12 +1220,18 @@ fn mesh_impl_h(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, 
                     let i = row + uu * su;
                     let m = v[i as usize];
                     let mi = (vv * 32 + uu) as usize;
-                    if m == AIR {
+                    if m == AIR || leaning(i) {
                         mask[mi] = 0;
                         continue;
                     }
                     let q = i + toward;
-                    if solid(q) {
+                    // A slab fills only the lower half of its voxel, so it
+                    // hides a face only where it reaches the whole of it: the
+                    // top of what is under it, and the side of a slab beside
+                    // it. Whatever stands on a slab, and the side of a full
+                    // voxel next to one, still shows.
+                    let half = slabs && crate::world::matlib::slab(m);
+                    if solid(q) && !(slabs && crate::world::matlib::slab(v[q as usize]) && (d == 3 || (d != 2 && !half))) {
                         mask[mi] = 0;
                         continue;
                     }
@@ -1162,8 +1248,21 @@ fn mesh_impl_h(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, 
                     let mut rounded = false;
                     let mut gone = false;
                     // A thin stem: bevel the edges that run along it.
-                    let tube = if corners.is_some() && tubes(m) && tubes_on() { tube_face(v, i, d) } else { None };
-                    if let Some((face, chamfers)) = tube {
+                    let tube = if !half && corners.is_some() && tubes(m) && tubes_on() { tube_face(v, i, d) } else { None };
+                    if half {
+                        // A slab: the top face and the top edge of each side
+                        // face come down half a voxel (two quarters). Its
+                        // quads are 1x1, so the corners at the top are the
+                        // ones the v (or u) axis moves up.
+                        if d != 3 {
+                            for k in 0..4 {
+                                let up = d == 2 || (ua == 1 && (k == 1 || k == 2)) || (va == 1 && k >= 2);
+                                if up {
+                                    word2 |= ((-2i32 & 15) as u32) << (4 * k);
+                                }
+                            }
+                        }
+                    } else if let Some((face, chamfers)) = tube {
                         (word2, word3) = pack_round(&face);
                         rounded = true;
                         let mut pos = [0u32; 3];
@@ -1222,7 +1321,12 @@ fn mesh_impl_h(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, 
                                 edge[(c[along] - p[along]) as usize][(c[1] > p[1]) as usize] = c[1] as i32 * 4 + o;
                             }
                         }
-                        if any_round {
+                        if any_round && crate::world::matlib::facets(m) && round.iter().all(|r| *r == [0; 3]) {
+                            // Rounded material in the middle of a flat face:
+                            // no corner moved, so it stays a plain quad and can
+                            // merge (a bevelled arena wall would otherwise be
+                            // one quad a voxel).
+                        } else if any_round {
                             (word2, word3) = pack_round(&round);
                             rounded = true;
                             extran[mi] = 0;
@@ -1312,6 +1416,9 @@ fn mesh_impl_h(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, 
     if let Some(l) = leaves {
         leaf_blocks(l, out);
     }
+    if let Some(l) = &lean {
+        out.quads.extend_from_slice(&l.quads);
+    }
     // Regroup (see Mesh::tails), so the renderer can draw just the part of a
     // group that might show.
     // A stable counting sort by (group, kind, lean class).
@@ -1353,6 +1460,51 @@ mod tests {
 
     fn empty() -> Box<[u8; PAD3]> {
         vec![0u8; PAD3].into_boxed_slice().try_into().unwrap()
+    }
+
+    /// `bevel_steps`: the edges and corners of a box, and the foot of a wall,
+    /// stay square; the lips of a one-voxel staircase are bevelled.
+    #[test]
+    fn clean_corners_of_boxes_stay_square() {
+        let clean = |v: &[u8; PAD3], x, y, z| clean_axes(v, x, y, z) == [true; 3];
+        let mut v = empty();
+        let fill = |v: &mut [u8; PAD3], x: std::ops::Range<isize>, y: std::ops::Range<isize>, z: std::ops::Range<isize>| {
+            for yy in y.clone() {
+                for zz in z.clone() {
+                    for xx in x.clone() {
+                        v[idx(xx, yy, zz)] = PLANKS;
+                    }
+                }
+            }
+        };
+        // Floor up to y = 10, a 4x4x4 box on it at x, z 6..10, and a wall
+        // at x 20..24 running the whole width.
+        fill(&mut v, 0..PAD as isize, 0..10, 0..PAD as isize);
+        fill(&mut v, 6..10, 10..14, 6..10);
+        fill(&mut v, 20..24, 10..20, 0..PAD as isize);
+        assert!(clean(&v, 10, 14, 10), "top corner of the box");
+        assert!(clean(&v, 10, 12, 10), "vertical edge of the box");
+        assert!(clean(&v, 8, 14, 6), "top edge of the box");
+        assert!(clean(&v, 6, 10, 8), "foot of the box");
+        assert!(clean(&v, 20, 10, 16), "foot of the wall");
+        assert!(clean(&v, 14, 10, 16), "middle of the floor");
+        // A staircase down in +z at x 12..16: step k is solid up to 14 - k
+        // over z 12 + k.
+        let mut s = empty();
+        fill(&mut s, 0..PAD as isize, 0..10, 0..PAD as isize);
+        for k in 0..4 {
+            fill(&mut s, 12..16, 10..14 - k, 12 + k..13 + k);
+        }
+        assert!(!clean(&s, 14, 14, 13), "lip of the top step");
+        assert!(!clean(&s, 14, 13, 13), "inside corner of a step");
+        assert!(!clean(&s, 14, 13, 14), "lip of the next step");
+        // An upright pillar whose outline steps one voxel at a time in plan:
+        // its corners move across, never up or down.
+        let mut p = empty();
+        for (x, z) in [(6, 6), (7, 6), (6, 7)] {
+            fill(&mut p, x..x + 1, 10..20, z..z + 1);
+        }
+        assert_eq!(clean_axes(&p, 7, 15, 7), [false, true, false], "stepped outline of a pillar");
     }
 
     /// Padded index of chunk voxel (x, y, z); the margins can be reached with
@@ -1403,6 +1555,45 @@ mod tests {
             out.insert(x + 1, (y + 1) * 4 + o[3]);
         }
         out
+    }
+
+    /// A slab is drawn half a voxel high: its top comes down two quarters,
+    /// the top edge of each side with it, and the bottom stays put. A full
+    /// voxel beside it keeps the side face the slab only half covers, and
+    /// one on top of it keeps its underside.
+    #[test]
+    fn a_slab_is_drawn_half_height() {
+        let (slab, _table) = crate::physics::tests::slab_material();
+        let mut v = empty();
+        v[c(5, 5, 5)] = slab;
+        let mut m = Mesh::default();
+        mesh_chunk(&v, false, &mut m);
+        assert_eq!(m.quads.len(), 6);
+        for q in &m.quads {
+            let d = quad::dir(q);
+            let low = quad_corners(q).iter().map(|c| c[1]).fold(f32::MAX, f32::min);
+            let high = quad_corners(q).iter().map(|c| c[1]).fold(f32::MIN, f32::max);
+            let want = match d {
+                2 => (5.5, 5.5),
+                3 => (5.0, 5.0),
+                _ => (5.0, 5.5),
+            };
+            assert_eq!((low, high), want, "face {d} spans {low} to {high}");
+        }
+        // A full voxel to the east and one on top.
+        v[c(6, 5, 5)] = 1;
+        v[c(5, 6, 5)] = 1;
+        mesh_chunk(&v, false, &mut m);
+        let has = |at: [u32; 3], d: usize| m.quads.iter().any(|q| quad::dir(q) == d && quad::pos(q) == at);
+        assert!(has([6, 5, 5], 1), "the full voxel's west face is hidden by half a voxel of slab");
+        assert!(has([5, 6, 5], 3), "the voxel on the slab lost its underside");
+        assert!(!has([5, 5, 5], 0), "the slab's east face shows against a full voxel");
+        assert!(!has([5, 5, 5], 2), "the slab's top shows under a full voxel");
+        // Two slabs side by side hide each other.
+        v[c(6, 5, 5)] = slab;
+        v[c(5, 6, 5)] = 0;
+        mesh_chunk(&v, false, &mut m);
+        assert!(!m.quads.iter().any(|q| quad::pos(q) == [5, 5, 5] && quad::dir(q) == 0));
     }
 
     #[test]
@@ -1664,7 +1855,7 @@ mod tests {
         for key in keys {
             let (x, z) = (key.x, key.z);
             g.gen_column_with(key, None, &mut scratch, |cy, v, colh| {
-                mesh_impl_h(v, true, false, Some(colh), None, &mut m);
+                mesh_impl_h(v, true, false, Some(colh), None, true, &mut m);
                 checked += m.quads.len();
                 for e in open_edges(&m) {
                     bad.push(format!("chunk ({x}, {cy}, {z}): {e}"));

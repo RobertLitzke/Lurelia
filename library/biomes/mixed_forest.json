@@ -1,6 +1,6 @@
 {
   "name": "mixed_forest",
-  "version": 1,
+  "version": 2,
   "introduced_by": "glassfall",
   "priority": 1,
   "rules": {},
@@ -59,7 +59,12 @@
     {"plant": "stump", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "hawthorn", "density": 0.003, "placement": {"verb": "edge", "params": {"width": 18.0, "inner": 0.03}}},
     {"plant": "shelf_fungus", "density": 0.14},
-    {"plant": "tree_moss", "density": 0.45}
+    {"plant": "tree_moss", "density": 0.45},
+    {
+      "plant": "salal",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.4, "max": 0.6}}
+    }
   ],
   "features": [
     {"structure": "fallen_log", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}},
@@ -83,7 +88,9 @@
     {"creature": "toad", "count": 3},
     {"creature": "bat", "count": 4},
     {"creature": "wolf", "count": 1},
-    {"creature": "garter_snake", "count": 3}
+    {"creature": "garter_snake", "count": 3},
+    {"creature": "tawny_owl", "count": 1},
+    {"creature": "hedgehog", "count": 2}
   ],
   "collectibles": [
     {

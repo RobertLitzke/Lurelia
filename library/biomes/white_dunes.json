@@ -1,0 +1,31 @@
+{
+  "name": "white_dunes",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The white dunes: gypsum piled against the range by the south-west wind, soaptree yuccas on the crests, rabbitbrush in the hollows and pale lizards that match the sand.",
+  "priority": 13,
+  "rules": {"region": "white_dunes"},
+  "surface": "gypsum_sand",
+  "subsurface": "gypsum_sand",
+  "rock": "gypsum_sand",
+  "fringe": 4,
+  "map_color": [240, 238, 230],
+  "plants": [
+    {
+      "plant": "yucca",
+      "density": 0.0016,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.1, "max": 0.9}}
+    },
+    {
+      "plant": "rabbitbrush",
+      "density": 0.003,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.3, "max": 0.8}}
+    },
+    {"plant": "ephedra", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "white_lizard", "count": 12},
+    {"creature": "coyote", "count": 1},
+    {"creature": "jackrabbit", "count": 2}
+  ]
+}

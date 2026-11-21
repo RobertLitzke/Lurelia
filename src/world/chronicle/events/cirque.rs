@@ -43,52 +43,60 @@ impl Process for Cirque {
         let b = self.opens.to_radians();
         let out = Vec2::new(b.sin(), -b.cos());
         let (floor, rim, ice_m) = (self.floor, self.rim, self.ice_m);
-        let mut cut = 0;
-        let mut iced = 0;
-        each_near(&mut cx.f, c, r * 2.2, |f: &mut Fields, i, _d, _| {
-            let p = f.centre(i);
-            let v = p - c;
-            let ahead = v.dot(out);
-            let side = v.perp_dot(out);
-            // The bowl is round behind the centre and drawn out ahead of it,
-            // so it opens into a mouth rather than closing in a crater.
-            let stretch = if ahead > 0.0 { 0.45 } else { 1.0 };
-            let wob = 1.0 + 0.12 * perlin2(p.x * 0.03, p.y * 0.03, seed);
-            let q = (side * side + (ahead * stretch) * (ahead * stretch)).sqrt() / (r * wob);
-            if q >= 1.0 {
-                return;
-            }
-            // Flat in the middle, then the headwall: a cube curve that ends
-            // near vertical at the rim.
-            let target = floor + (rim - floor) * q.powi(3);
-            if target < f.h[i] - 0.05 {
-                f.h[i] = target;
-                f.cause[i] = cause;
-                f.surface[i] = 0;
-                f.cliff[i] = if q > 0.62 { 1.0 } else { 0.0 };
-                cut += 1;
-            }
-            // The glacier: thickest in the hollow, thinning to the headwall's
-            // foot and out along the mouth.
-            if let Some(m) = ice {
-                let reach = 1.0 - smoothstep(0.55, 0.8, q);
-                if reach > 0.0 && f.h[i] < floor + (rim - floor) * 0.25 {
-                    let mut t = ice_m * reach;
-                    // Crevasses: grooves across the flow, where the ice
-                    // bends over the lip toward the mouth.
-                    let across = ahead * 0.22 + perlin2(p.x * 0.05, p.y * 0.05, seed + 1) * 2.0;
-                    let crack = smoothstep(0.93, 0.99, across.sin().abs()) * smoothstep(-0.1, 0.4, ahead / r);
-                    t -= crack * ice_m.min(4.0) * 0.3;
-                    f.h[i] += t.max(0.3);
-                    f.surface[i] = m;
-                    f.cliff[i] = 0.0;
-                    iced += 1;
-                }
-            }
-        });
+        let (cut, iced) = bowl(&mut cx.f, c, r, floor, rim, out, ice, ice_m, seed, cause);
         if let Some(name) = &self.poi {
             cx.pois.push(Poi { name: name.clone(), pos: c, cause });
         }
         format!("cirque r {r:.0} m, floor {floor:.0} m, {cut} m2 cut, glacier {iced} m2")
     }
+}
+
+/// Cut a cirque bowl at `c`, open toward `out` (a unit vector), and with
+/// `ice` lay its glacier in it. Returns the square metres cut and iced.
+#[allow(clippy::too_many_arguments)]
+pub fn bowl(f: &mut Fields, c: Vec2, r: f32, floor: f32, rim: f32, out: Vec2, ice: Option<u8>, ice_m: f32, seed: u32, cause: u16) -> (usize, usize) {
+    let mut cut = 0;
+    let mut iced = 0;
+    each_near(f, c, r * 2.2, |f: &mut Fields, i, _d, _| {
+        let p = f.centre(i);
+        let v = p - c;
+        let ahead = v.dot(out);
+        let side = v.perp_dot(out);
+        // The bowl is round behind the centre and drawn out ahead of it,
+        // so it opens into a mouth rather than closing in a crater.
+        let stretch = if ahead > 0.0 { 0.45 } else { 1.0 };
+        let wob = 1.0 + 0.12 * perlin2(p.x * 0.03, p.y * 0.03, seed);
+        let q = (side * side + (ahead * stretch) * (ahead * stretch)).sqrt() / (r * wob);
+        if q >= 1.0 {
+            return;
+        }
+        // Flat in the middle, then the headwall: a cube curve that ends
+        // near vertical at the rim.
+        let target = floor + (rim - floor) * q.powi(3);
+        if target < f.h[i] - 0.05 {
+            f.h[i] = target;
+            f.cause[i] = cause;
+            f.surface[i] = 0;
+            f.cliff[i] = if q > 0.62 { 1.0 } else { 0.0 };
+            cut += 1;
+        }
+        // The glacier: thickest in the hollow, thinning to the headwall's
+        // foot and out along the mouth.
+        if let Some(m) = ice {
+            let reach = 1.0 - smoothstep(0.55, 0.8, q);
+            if reach > 0.0 && f.h[i] < floor + (rim - floor) * 0.25 {
+                let mut t = ice_m * reach;
+                // Crevasses: grooves across the flow, where the ice
+                // bends over the lip toward the mouth.
+                let across = ahead * 0.22 + perlin2(p.x * 0.05, p.y * 0.05, seed + 1) * 2.0;
+                let crack = smoothstep(0.93, 0.99, across.sin().abs()) * smoothstep(-0.1, 0.4, ahead / r);
+                t -= crack * ice_m.min(4.0) * 0.3;
+                f.h[i] += t.max(0.3);
+                f.surface[i] = m;
+                f.cliff[i] = 0.0;
+                iced += 1;
+            }
+        }
+    });
+    (cut, iced)
 }

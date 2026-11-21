@@ -1,0 +1,17 @@
+{
+  "name": "pickup_pad_health",
+  "version": 1,
+  "introduced_by": "arena",
+  "notes": "The platform under a health pickup in the shooter: a half-height green slab, stamped under the pad by the shooter's rules when the pad finds its floor. Green mends, as the pickup's own tint says.",
+  "smooth": false,
+  "slab": true,
+  "glow": 0.6,
+  "texture": {
+    "pattern": "noise",
+    "base": [90, 235, 120],
+    "alt": [60, 190, 92],
+    "scale": 4,
+    "contrast": 0.3,
+    "calm": {"base": [90, 235, 120], "alt": [60, 190, 92]}
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "canyon_floor",
-  "version": 2,
+  "version": 3,
   "introduced_by": "redrock",
   "notes": "The Sorrel's floodplain on the canyon floor: cottonwood and willow, tamarisk lower down.",
   "priority": 7,
@@ -13,7 +13,8 @@
     {"plant": "cottonwood", "density": 0.008, "placement": {"verb": "riparian", "params": {"width": 8}}},
     {"plant": "tamarisk", "density": 0.01, "placement": {"verb": "riparian", "params": {"width": 5}}},
     {"plant": "rabbitbrush", "density": 0.01, "placement": {"verb": "scatter", "params": {}}},
-    {"plant": "rock_lichen", "density": 0.06}
+    {"plant": "rock_lichen", "density": 0.06},
+    {"plant": "desert_willow", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 10}}}
   ],
   "creatures": [
     {"creature": "heron", "count": 1},
@@ -27,11 +28,13 @@
     {"creature": "desert_toad", "count": 3},
     {"creature": "otter", "count": 1},
     {"creature": "canyon_bat", "count": 5},
-    {"creature": "rattlesnake", "count": 2}
+    {"creature": "rattlesnake", "count": 2},
+    {"creature": "bighorn", "count": 3}
   ],
   "collectibles": [
     {"item": "arrowhead", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}},
     {"item": "pottery_shard", "density": 0.00015, "placement": {"verb": "scatter", "params": {}}}
   ],
+  "sound": {"wind": 0.6, "ground": "stone"},
   "mist": 0.25
 }

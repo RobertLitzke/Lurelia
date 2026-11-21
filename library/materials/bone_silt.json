@@ -1,0 +1,15 @@
+{
+  "name": "bone_silt",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Pale silt round the deep bones, grey sand with bone grit in it.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [150, 150, 140],
+    "alt": [136, 138, 130],
+    "scale": 5,
+    "contrast": 0.6,
+    "calm": {"base": [154, 154, 146], "alt": [140, 142, 134]}
+  }
+}

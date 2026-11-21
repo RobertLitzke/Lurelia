@@ -90,6 +90,9 @@ pub struct Held {
     /// finishes on that button's mode even after the finger comes up.
     volley: u32,
     volley_t: Trigger,
+    /// Extra spread, degrees, for the rounds that left this step: how far
+    /// into its burst the gun was (`FireDef::burst_spread_deg`).
+    bloom: f32,
     /// Whether this body is carrying the gun at all.
     ///
     /// The arsenal holds every weapon the world has, because a slot has to
@@ -98,6 +101,11 @@ pub struct Held {
     /// you are not carrying is skipped by everything that chooses one, and
     /// a pad hands it over (`shooter::pickup`).
     pub have: bool,
+    /// This gun's rounds are a store it shares with other guns
+    /// (`WeaponDef::ammo_type`), and what that store held when the arsenal
+    /// last squared them up (`Arsenal::share`).
+    pub pooled: bool,
+    pool_last: u32,
 }
 
 impl Held {
@@ -117,18 +125,10 @@ impl Held {
             spade: 0.0,
             volley: 0,
             volley_t: Trigger::Off,
+            bloom: 0.0,
             have: true,
-        }
-    }
-
-    /// The same gun, not carried: what a world with pickups starts you with
-    /// in every slot but the one in your hands.
-    pub fn unfound(def: Arc<WeaponDef>) -> Self {
-        Held {
-            ammo: 0,
-            loaded: 0,
-            have: false,
-            ..Held::new(def, false)
+            pooled: false,
+            pool_last: 0,
         }
     }
 
@@ -158,6 +158,12 @@ impl Held {
     }
 
     /// True while it cannot be fired because it is being reloaded.
+    /// Extra spread in degrees for what this gun fired this step. The match
+    /// adds it to the mode's own before the rounds are thrown.
+    pub fn bloom(&self) -> f32 {
+        self.bloom
+    }
+
     pub fn reloading(&self) -> bool {
         self.reload > 0.0
     }
@@ -208,7 +214,7 @@ impl Held {
             // A gun whose right button is a sight has no second mode: the
             // zoom is the whole of what that button does, and a sniper who
             // squeezes it must not loose a round into the floor.
-            Trigger::Alt if self.def.zoom > 0.0 => None,
+            Trigger::Alt if self.def.zoom > 0.0 && self.def.alt.is_none() => None,
             Trigger::Alt => self.def.alt.as_ref().or(Some(&self.def.fire)),
         }
     }
@@ -323,6 +329,8 @@ impl Held {
         let gap = 1.0 / rate.max(0.01);
         self.cool -= dt;
         let mut shots = 0;
+        // The round this step's first shot is in its burst, for the spread.
+        self.bloom = f.burst_spread_deg * self.volley as f32;
         while self.cool <= 0.0 && shots < 4 {
             if !self.spend(f) {
                 self.cool = 0.0;
@@ -418,6 +426,33 @@ impl Held {
         Pulled::none()
     }
 
+    /// The button to pull for a player holding `fire` (left) and `alt`
+    /// (right). On a gun whose right button is a sight and a charge, the
+    /// charge goes only on the left button: letting the sight down without
+    /// it throws the charge away rather than loosing a shot nobody aimed.
+    /// Bots press their buttons one at a time and keep the plain rule, that
+    /// a charge goes when its button comes up.
+    pub fn hands(&mut self, fire: bool, alt: bool) -> Trigger {
+        let sight = self.def.zoom > 0.0 && self.def.alt.as_ref().is_some_and(|a| a.charge_s > 0.0);
+        let charged = self.charge > 0.0 && self.charging == Trigger::Alt;
+        if sight && charged {
+            match (fire, alt) {
+                // Off lets the charge go (`release`).
+                (true, true) => return Trigger::Off,
+                (_, false) => {
+                    self.charge = 0.0;
+                    self.charging = Trigger::Off;
+                }
+                _ => {}
+            }
+        }
+        match (fire, alt) {
+            (true, _) => Trigger::Fire,
+            (_, true) => Trigger::Alt,
+            _ => Trigger::Off,
+        }
+    }
+
     /// Fire the charge that was being built, if there is one.
     fn release(&mut self, t: Trigger) -> Pulled {
         if self.charge <= 0.0 {
@@ -472,7 +507,10 @@ impl Held {
 
     #[allow(dead_code)] // for ammunition pickups, which are not built yet
     pub fn give(&mut self, rounds: u32) {
-        self.ammo = (self.ammo + rounds).min(self.def.ammo_max);
+        // A shared store is capped on what is outside the magazines, since
+        // each gun of the kind has a magazine of its own to fill.
+        let cap = if self.pooled { self.def.ammo_max + (self.ammo - self.spare()) } else { self.def.ammo_max };
+        self.ammo = (self.ammo + rounds).min(cap.max(self.ammo));
         if self.def.mag > 0 && self.loaded == 0 {
             self.start_reload();
         }
@@ -484,7 +522,23 @@ impl Held {
 
     /// Is there room for more rounds? A pad over a full gun stays standing.
     pub fn wants_ammo(&self) -> bool {
-        self.have && !self.unlimited() && self.ammo < self.def.ammo_max
+        let store = if self.pooled { self.spare() } else { self.ammo };
+        self.have && !self.unlimited() && store < self.def.ammo_max
+    }
+
+    /// Rounds in the store and not in the gun: for a gun with no magazine,
+    /// all of them.
+    pub fn spare(&self) -> u32 {
+        if self.def.mag > 0 {
+            self.ammo.saturating_sub(self.loaded)
+        } else {
+            self.ammo
+        }
+    }
+
+    /// Which store its rounds come out of.
+    fn kind(&self) -> &str {
+        self.def.ammo_type.as_deref().unwrap_or(&self.def.name)
     }
 }
 
@@ -506,7 +560,12 @@ impl Arsenal {
             }
         }
         guns.sort_by_key(|g| g.def.slot);
-        Arsenal { guns, held: 0 }
+        for i in 0..guns.len() {
+            guns[i].pooled = (0..guns.len()).any(|j| j != i && guns[j].kind() == guns[i].kind());
+        }
+        let mut a = Arsenal { guns, held: 0 };
+        a.settle();
+        a
     }
 
     pub fn current(&self) -> Option<&Held> {
@@ -563,13 +622,7 @@ impl Arsenal {
             g.charge = 0.0;
             g.burn = 0.0;
         }
-    }
-
-    /// Anything in hand at all? A fighter with nothing is a fighter who
-    /// cannot shoot and is drawn with empty hands, and there is no state in
-    /// a deathmatch where that is what anyone wanted.
-    pub fn armed(&self) -> bool {
-        self.current().is_some()
+        self.settle();
     }
 
     /// Give back everything but what a fighter respawns holding, for a world
@@ -594,11 +647,7 @@ impl Arsenal {
         // to sit in the lowest slot: you come back holding something you can
         // shoot, with the hammer a digit away.
         self.held = first.min(self.guns.len().saturating_sub(1));
-    }
-
-    /// The gun on digit `slot`, carried or not.
-    pub fn slot_mut(&mut self, slot: u32) -> Option<&mut Held> {
-        self.guns.iter_mut().find(|g| g.def.slot == slot)
+        self.settle();
     }
 
     /// The gun of this library name, carried or not.
@@ -608,7 +657,55 @@ impl Arsenal {
 
     /// Reload the weapon in hand, if there is anything to reload.
     pub fn reload(&mut self) -> bool {
+        self.share();
         self.current_mut().is_some_and(|g| g.start_reload())
+    }
+
+    /// Square up the guns that share a store (`WeaponDef::ammo_type`): what
+    /// each one spent or was given since the last time is taken from or put
+    /// into the one store, and every gun of the kind then shows it. Each gun
+    /// keeps its own magazine. Run every step before a gun is pulled, and
+    /// after anything hands rounds over.
+    pub fn share(&mut self) {
+        for i in 0..self.guns.len() {
+            if !self.guns[i].pooled || (0..i).any(|j| self.guns[j].kind() == self.guns[i].kind()) {
+                continue;
+            }
+            let of: Vec<usize> = (i..self.guns.len()).filter(|&j| self.guns[j].kind() == self.guns[i].kind()).collect();
+            let was = self.guns[i].pool_last;
+            if of.iter().any(|&j| self.guns[j].pool_last != was) {
+                self.settle();
+                return;
+            }
+            let cap = of.iter().map(|&j| self.guns[j].def.ammo_max).max().unwrap_or(0) as i64;
+            let moved: i64 = of.iter().map(|&j| self.guns[j].spare() as i64 - was as i64).sum();
+            let store = (was as i64 + moved).clamp(0, cap) as u32;
+            for &j in &of {
+                let g = &mut self.guns[j];
+                g.ammo = g.ammo - g.spare() + store;
+                g.pool_last = store;
+            }
+        }
+    }
+
+    /// Make a shared store whole again after a respawn or a refill set each
+    /// gun's rounds on its own: the store is the most any gun of the kind
+    /// was left with.
+    fn settle(&mut self) {
+        for i in 0..self.guns.len() {
+            if !self.guns[i].pooled {
+                continue;
+            }
+            let kind = self.guns[i].kind().to_string();
+            let of: Vec<usize> = (0..self.guns.len()).filter(|&j| self.guns[j].kind() == kind).collect();
+            let cap = of.iter().map(|&j| self.guns[j].def.ammo_max).max().unwrap_or(0);
+            let store = of.iter().map(|&j| self.guns[j].spare()).max().unwrap_or(0).min(cap);
+            for &j in &of {
+                let g = &mut self.guns[j];
+                g.ammo = g.ammo - g.spare() + store;
+                g.pool_last = store;
+            }
+        }
     }
 
     /// The best weapon with anything in it, for a respawn: the highest slot
@@ -633,6 +730,52 @@ mod tests {
     use super::*;
     use crate::library::{FireKind, WeaponDef};
 
+    /// The sidearm and the minigun take one kind of round out of one store:
+    /// what either fires is gone from both, a pad for either fills both, and
+    /// each keeps its own magazine.
+    #[test]
+    fn guns_of_one_ammo_type_share_a_store() {
+        let mut side = (*gun(600.0, 0.0, 400, 1)).clone();
+        side.name = "side".into();
+        side.mag = 40;
+        side.reload_s = 1.0;
+        side.ammo_start = 100;
+        side.ammo_type = Some("bullets".into());
+        let mut mini = (*gun(600.0, 0.0, 400, 1)).clone();
+        mini.name = "mini".into();
+        mini.slot = 7;
+        mini.ammo_start = 0;
+        mini.ammo_type = Some("bullets".into());
+        let mut a = Arsenal { guns: vec![Held::new(Arc::new(side), false), Held::new(Arc::new(mini), false)], held: 0 };
+        for i in 0..2 {
+            a.guns[i].pooled = true;
+        }
+        a.settle();
+        // 100 rounds, 40 of them in the sidearm: 60 in the store, which is
+        // all the minigun has.
+        assert_eq!((a.guns[0].ammo, a.guns[0].loaded, a.guns[1].ammo), (100, 40, 60));
+        // The minigun fires ten: the sidearm's store is ten short too, and
+        // its magazine is untouched.
+        a.guns[1].ammo -= 10;
+        a.share();
+        assert_eq!((a.guns[0].ammo, a.guns[0].loaded, a.guns[1].ammo), (90, 40, 50));
+        // The sidearm fires five out of its magazine: the store is the same.
+        a.guns[0].ammo -= 5;
+        a.guns[0].loaded -= 5;
+        a.share();
+        assert_eq!(a.guns[1].ammo, 50, "a round from the magazine came out of the store");
+        // A pad for the sidearm fills the minigun as well.
+        a.guns[0].give(30);
+        a.share();
+        assert_eq!(a.guns[1].ammo, 80);
+        // A reload moves rounds from the store into the sidearm.
+        assert!(a.guns[0].start_reload());
+        a.guns[0].reload = 0.001;
+        let _ = a.guns[0].pull(Trigger::Off, 0.01);
+        a.share();
+        assert_eq!((a.guns[0].loaded, a.guns[1].ammo), (40, 75));
+    }
+
     fn gun(rpm: f32, spin_up: f32, ammo: u32, per_shot: u32) -> Arc<WeaponDef> {
         Arc::new(WeaponDef {
             name: "test".into(),
@@ -644,6 +787,7 @@ mod tests {
             ammo_start: ammo,
             mag: 0,
             reload_s: 0.0,
+            ammo_type: None,
             dig: None,
             fire: FireDef {
                 bore_r: 0.0,
@@ -651,10 +795,15 @@ mod tests {
                 spoil_r: 0.0,
                 burst: 0,
                 burst_gap_s: 0.0,
+                burst_spread_deg: 0.0,
+                pierce_m: 0.0,
+                guide: 0.0,
+                ring: false,
                 twist: 0.0,
                 arc_jumps: 0,
                 arc_m: 0.0,
                 arc_keep: 0.5,
+                bend_m: 0.0,
                 cluster: None,
                 kind: FireKind::Hitscan,
                 rpm,
@@ -886,6 +1035,36 @@ mod tests {
             assert_eq!(h.pull(Trigger::Alt, 1.0 / 60.0).shots, 0, "the sight fired a round");
         }
         assert_eq!(h.ammo, 10);
+    }
+
+    /// A sight that charges: letting the sight down throws the charge away,
+    /// and the left button with the sight up lets it go.
+    #[test]
+    fn letting_the_sight_down_does_not_fire() {
+        let mut def = (*gun(60.0, 0.0, 10, 1)).clone();
+        def.zoom = 0.3;
+        let mut alt = def.fire.clone();
+        alt.charge_s = 1.0;
+        alt.charge_mult = 1.5;
+        def.alt = Some(alt);
+        let mut h = Held::new(Arc::new(def), true);
+        let dt = 1.0 / 60.0;
+        let pull = |h: &mut Held, fire, alt| {
+            let t = h.hands(fire, alt);
+            h.pull(t, dt)
+        };
+        for _ in 0..90 {
+            assert_eq!(pull(&mut h, false, true).shots, 0);
+        }
+        assert_eq!(pull(&mut h, false, false).shots, 0, "letting the sight down fired");
+        assert_eq!(h.ammo, 10);
+        for _ in 0..90 {
+            pull(&mut h, false, true);
+        }
+        let p = pull(&mut h, true, true);
+        assert_eq!(p.shots, 1, "the left button did not loose the charge");
+        assert!(p.strength > 1.4, "a full charge went at {}", p.strength);
+        assert_eq!(h.ammo, 9);
     }
 
     /// It stops when the magazine is out, and a shell costs what it says.

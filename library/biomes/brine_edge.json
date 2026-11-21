@@ -1,0 +1,20 @@
+{
+  "name": "brine_edge",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The wet salt round the brine: glasswort in red mats and the flamingos standing in rows along the water.",
+  "priority": 8,
+  "rules": {"coast": [0, 30], "elev": [0, 1.2]},
+  "surface": "brine_mud",
+  "subsurface": "salt_mud",
+  "fringe": 2,
+  "map_color": [200, 150, 140],
+  "plants": [
+    {
+      "plant": "glasswort",
+      "density": 0.03,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.2, "max": 0.9}}
+    }
+  ],
+  "creatures": [{"creature": "flamingo", "count": 70}, {"creature": "heron", "count": 2}, {"creature": "coyote", "count": 1}]
+}

@@ -1,6 +1,6 @@
 {
   "name": "ponderosa_forest",
-  "version": 1,
+  "version": 2,
   "introduced_by": "redrock",
   "notes": "The plateau: open park-like ponderosa pine forest on needle duff, gambel oak beneath, aspen in the damp hollows.",
   "priority": 4,
@@ -54,7 +54,9 @@
     {"creature": "great_horned_owl", "count": 1},
     {"creature": "cougar", "count": 1},
     {"creature": "douglas_squirrel", "count": 3},
-    {"creature": "gopher_snake", "count": 2}
+    {"creature": "gopher_snake", "count": 2},
+    {"creature": "mule_deer", "count": 4}
   ],
-  "collectibles": [{"item": "pine_cone", "density": 0.001, "placement": {"verb": "scatter", "params": {}}}]
+  "collectibles": [{"item": "pine_cone", "density": 0.001, "placement": {"verb": "scatter", "params": {}}}],
+  "sound": {"leaves": 0.7, "notes": "Open pine: needles, and the wind gets in."}
 }

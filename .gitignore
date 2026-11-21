@@ -34,3 +34,7 @@ __pycache__/
 !library/fonts/*.png
 # Build reports the arena tool writes beside its worlds.
 /worlds/*/report.txt
+
+# Machine-local: build-directory rules for this checkout's drive, and crash dumps.
+/CLAUDE.md
+*.stackdump

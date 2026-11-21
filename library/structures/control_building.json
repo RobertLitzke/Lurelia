@@ -1,0 +1,89 @@
+{
+  "name": "control_building",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The array's control building at the hub: forty metres of low concrete with a flat roof, a ribbon of windows shaded by concrete fins down the front (local -Z), the control room's desks in the west half and the correlator hall's racks in the east, and a small dish on a mast at the back corner.",
+  "size": [160, 40, 60],
+  "anchor": [80, 0, 30],
+  "foundation": 6,
+  "decays": true,
+  "tags": ["array", "landmark"],
+  "ops": [
+    {"op": "box", "from": [0, 0, 4], "to": [160, 1, 58], "mat": "concrete", "part": "floor"},
+    {"op": "walls", "from": [2, 1, 8], "to": [158, 18, 56], "mat": "concrete", "thick": 2, "part": "wall"},
+    {"op": "walls", "from": [76, 1, 8], "to": [78, 18, 56], "mat": "concrete", "thick": 2, "part": "wall"},
+    {"op": "box", "from": [76, 1, 28], "to": [78, 10, 34], "mat": "air"},
+    {"op": "box", "from": [6, 8, 8], "to": [154, 14, 10], "mat": "window_glass", "part": "glass"},
+    {
+      "op": "repeat",
+      "count": 13,
+      "step": [12, 0, 0],
+      "ops": [{"op": "box", "from": [6, 8, 8], "to": [7, 14, 10], "mat": "trim_dark", "part": "frame"}]
+    },
+    {"op": "box", "from": [6, 8, 54], "to": [154, 14, 56], "mat": "window_glass", "part": "glass"},
+    {
+      "op": "repeat",
+      "count": 13,
+      "step": [12, 0, 0],
+      "ops": [{"op": "box", "from": [6, 8, 54], "to": [7, 14, 56], "mat": "trim_dark", "part": "frame"}]
+    },
+    {
+      "op": "repeat",
+      "count": 26,
+      "step": [6, 0, 0],
+      "ops": [{"op": "box", "from": [4, 2, 3], "to": [5, 19, 8], "mat": "concrete", "part": "wall"}]
+    },
+    {"op": "box", "from": [0, 18, 2], "to": [160, 20, 58], "mat": "roof_tar", "part": "roof"},
+    {"op": "box", "from": [0, 18, 2], "to": [160, 20, 3], "mat": "trim_white", "part": "roof"},
+    {"op": "box", "from": [36, 1, 8], "to": [44, 11, 10], "mat": "air"},
+    {"op": "box", "from": [110, 1, 54], "to": [118, 11, 56], "mat": "air"},
+    {"op": "box", "from": [32, 11, 2], "to": [48, 12, 8], "mat": "concrete", "part": "roof"},
+    {"op": "box", "from": [84, 1, 16], "to": [150, 9, 19], "mat": "panel_dark", "part": "wall"},
+    {
+      "op": "repeat",
+      "count": 11,
+      "step": [6, 0, 0],
+      "ops": [{"op": "box", "from": [86, 6, 15], "to": [87, 7, 16], "mat": "sign_white", "part": "wall"}]
+    },
+    {"op": "box", "from": [84, 1, 24], "to": [150, 9, 27], "mat": "panel_dark", "part": "wall"},
+    {
+      "op": "repeat",
+      "count": 11,
+      "step": [6, 0, 0],
+      "ops": [{"op": "box", "from": [86, 6, 23], "to": [87, 7, 24], "mat": "sign_white", "part": "wall"}]
+    },
+    {"op": "box", "from": [84, 1, 32], "to": [150, 9, 35], "mat": "panel_dark", "part": "wall"},
+    {
+      "op": "repeat",
+      "count": 11,
+      "step": [6, 0, 0],
+      "ops": [{"op": "box", "from": [86, 6, 31], "to": [87, 7, 32], "mat": "sign_white", "part": "wall"}]
+    },
+    {"op": "box", "from": [84, 1, 40], "to": [150, 9, 43], "mat": "panel_dark", "part": "wall"},
+    {
+      "op": "repeat",
+      "count": 11,
+      "step": [6, 0, 0],
+      "ops": [{"op": "box", "from": [86, 6, 39], "to": [87, 7, 40], "mat": "sign_white", "part": "wall"}]
+    },
+    {"op": "box", "from": [14, 1, 30], "to": [28, 4, 36], "mat": "panel_grey", "part": "wall"},
+    {"op": "box", "from": [14, 4, 34], "to": [28, 8, 36], "mat": "panel_dark", "part": "wall"},
+    {"op": "box", "from": [34, 1, 30], "to": [48, 4, 36], "mat": "panel_grey", "part": "wall"},
+    {"op": "box", "from": [34, 4, 34], "to": [48, 8, 36], "mat": "panel_dark", "part": "wall"},
+    {"op": "box", "from": [54, 1, 30], "to": [68, 4, 36], "mat": "panel_grey", "part": "wall"},
+    {"op": "box", "from": [54, 4, 34], "to": [68, 8, 36], "mat": "panel_dark", "part": "wall"},
+    {"op": "box", "from": [8, 1, 48], "to": [70, 11, 52], "mat": "panel_dark", "part": "wall"},
+    {"op": "cylinder", "base": [148, 20, 48], "radius": 1, "height": 14, "mat": "rust_iron", "part": "metal"},
+    {
+      "op": "dish",
+      "vertex": [148.5, 34, 48.5],
+      "radius": 9,
+      "depth": 3,
+      "thick": 1.2,
+      "tilt": 40,
+      "yaw": 200,
+      "mat": "dish_paint",
+      "part": "metal"
+    }
+  ]
+}

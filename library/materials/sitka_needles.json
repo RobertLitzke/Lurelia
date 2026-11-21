@@ -1,0 +1,15 @@
+{
+  "name": "sitka_needles",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Sitka spruce: stiff blue-green needles, silvery underneath.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [56, 78, 70],
+    "alt": [74, 96, 90],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [62, 82, 74], "alt": [78, 98, 92]}
+  }
+}

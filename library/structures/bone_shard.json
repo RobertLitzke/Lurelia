@@ -1,0 +1,17 @@
+{
+  "name": "bone_shard",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "A length of broken rib or limb bone half sunk in the sand, its broken ends showing the honeycomb.",
+  "size": [40, 10, 14],
+  "anchor": [20, 0, 7],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"bone": "titan_bone", "marrow": "titan_marrow"},
+  "ops": [
+    {"op": "log", "base": [2, 2.5, 7], "radius": 3.5, "length": 36, "axis": "x", "mat": "bone"},
+    {"op": "disc", "centre": [2, 2.5, 7], "radius": 3, "thick": 1, "axis": "x", "mat": "marrow"},
+    {"op": "disc", "centre": [37, 2.5, 7], "radius": 3, "thick": 1, "axis": "x", "mat": "marrow"}
+  ]
+}

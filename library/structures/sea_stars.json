@@ -1,0 +1,22 @@
+{
+  "name": "sea_stars",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Ochre sea stars in a cluster on the rock at the waterline, and one sunflower star a metre and a half across.",
+  "size": [24, 4, 24],
+  "anchor": [12, 0, 12],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"star": "sea_star_ochre", "sun": "sunflower_star"},
+  "ops": [
+    {"op": "box", "from": [2, 0, 5], "to": [9, 1, 6], "mat": "star"},
+    {"op": "box", "from": [13, 0, 8], "to": [20, 1, 9], "mat": "star"},
+    {"op": "box", "from": [6, 0, 16], "to": [13, 1, 17], "mat": "star"},
+    {"op": "box", "from": [5, 0, 2], "to": [6, 1, 9], "mat": "star"},
+    {"op": "box", "from": [16, 0, 5], "to": [17, 1, 12], "mat": "star"},
+    {"op": "box", "from": [9, 0, 13], "to": [10, 1, 20], "mat": "star"},
+    {"op": "ellipsoid", "centre": [18, 0.5, 18], "radius": [5, 0.8, 5], "mat": "sun"},
+    {"op": "ellipsoid", "centre": [18, 1, 18], "radius": [2, 0.8, 2], "mat": "sun"}
+  ]
+}

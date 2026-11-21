@@ -1,0 +1,18 @@
+{
+  "name": "blowhole_spout",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Surf driven up through the titan's blowhole: a ragged column of spray thrown high, falling back on the wind.",
+  "shape": "puff",
+  "count": [40, 56],
+  "speed": [11.0, 17.0],
+  "cone_deg": 9,
+  "life": [1.8, 3.2],
+  "size": [0.4, 1.6],
+  "size_jitter": 0.4,
+  "gravity": 7.0,
+  "drag": 0.9,
+  "wind": 1.2,
+  "color": [236, 242, 244],
+  "alpha": 0.5
+}

@@ -23,11 +23,13 @@ pub enum Pattern {
     Bound,
     /// Wings held in a shallow V, a rare beat (eagles).
     Soar,
+    /// Wings held out flat, a beat or two in half a minute (albatrosses).
+    Sail,
     /// Fast shallow beats (moths, kestrels).
     Hover,
 }
 
-pub const PATTERNS: [&str; 5] = ["flap", "flap_glide", "bound", "soar", "hover"];
+pub const PATTERNS: [&str; 6] = ["flap", "flap_glide", "bound", "soar", "sail", "hover"];
 
 impl Pattern {
     pub fn parse(s: &str) -> Option<Pattern> {
@@ -36,6 +38,7 @@ impl Pattern {
             "flap_glide" => Pattern::FlapGlide,
             "bound" => Pattern::Bound,
             "soar" => Pattern::Soar,
+            "sail" => Pattern::Sail,
             "hover" => Pattern::Hover,
             _ => return None,
         })
@@ -166,6 +169,8 @@ impl Flight {
                 (Pattern::Bound, true) => 0.2 + r * 0.25,
                 (Pattern::Soar, false) => 2.0 / self.beat,
                 (Pattern::Soar, true) => 5.0 + r * 8.0,
+                (Pattern::Sail, false) => 1.5 / self.beat,
+                (Pattern::Sail, true) => 20.0 + r * 20.0,
                 _ => 1.0,
             };
         }
@@ -176,7 +181,7 @@ impl Flight {
         };
         let vy = inp.vel.y;
         // Climbing hard always takes beats; flock jostling up and down doesn't.
-        if vy > 2.0 && self.pattern != Pattern::Soar {
+        if vy > 2.0 && !matches!(self.pattern, Pattern::Soar | Pattern::Sail) {
             want = 1.0;
         }
         if vy < -1.5 && self.pattern != Pattern::Hover && self.pattern != Pattern::Bound {
@@ -245,6 +250,7 @@ impl Flight {
         let (amp, tip_amp, dihedral) = match self.pattern {
             Pattern::Hover => (0.5, 0.3, 0.1),
             Pattern::Soar => (0.6, 0.4, 0.22),
+            Pattern::Sail => (0.5, 0.35, 0.04),
             _ => (0.85, 0.6, 0.08),
         };
         // Big, slow wings beat shallower (a heron's, an eagle's).

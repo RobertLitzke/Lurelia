@@ -62,6 +62,20 @@ pub struct SplashDef {
     /// still reaches as far, but the damage dies away sooner in between.
     #[serde(default = "default_one")]
     pub curve: f32,
+    /// What it looks like going off: `fire` (the default), or `goo`, a
+    /// green burst of slime for the goo gun.
+    #[serde(default)]
+    pub look: SplashLook,
+}
+
+/// How a burst is drawn: which particles it throws and what colour of light
+/// it puts on the room (`Cue::Burst`).
+#[derive(Deserialize, Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum SplashLook {
+    #[default]
+    Fire,
+    Goo,
 }
 
 /// What a shell breaks into where it lands: a handful of little ones thrown
@@ -205,6 +219,13 @@ pub struct FireDef {
     pub arc_m: f32,
     #[serde(default = "default_arc_keep")]
     pub arc_keep: f32,
+    /// Beams: metres wide of a foe's chest the aim line can pass and still
+    /// pull the beam onto them, the beam bending from the muzzle to their
+    /// chest: in effect each foe's hitbox is this much wider for this beam,
+    /// which helps hold a stream on a strafing body. 0 is a beam that goes
+    /// where it is pointed.
+    #[serde(default)]
+    pub bend_m: f32,
     /// Shells: what this one breaks into where it lands. None is every
     /// other shell, which simply goes off.
     #[serde(default)]
@@ -238,6 +259,26 @@ pub struct FireDef {
     /// next, on top of the ordinary `rpm` gap.
     #[serde(default)]
     pub burst_gap_s: f32,
+    /// Degrees of spread added for each round already fired in the burst:
+    /// the first round goes where `spread_deg` says and the later ones
+    /// wander wider as the muzzle climbs. 0 is a burst that stays tight.
+    #[serde(default)]
+    pub burst_spread_deg: f32,
+    /// Metres of solid a round goes through before it stops, and it hollows
+    /// the way it went (a channel `PIERCE_R` across). On a charging mode it
+    /// is the depth at a full charge, scaled down to nothing at a tap. 0 is
+    /// a round that stops at the first wall.
+    #[serde(default)]
+    pub pierce_m: f32,
+    /// Radians a second a shell turns toward wherever the one who fired it
+    /// is pointing: a guided rocket. 0 flies where it was thrown.
+    #[serde(default)]
+    pub guide: f32,
+    /// Pellets go out on the rim of the `spread_deg` cone, evenly round it,
+    /// instead of scattered inside it: one round from each barrel at once,
+    /// the minigun's right button. The ring turns a random amount each shot.
+    #[serde(default)]
+    pub ring: bool,
     /// Which little voxel body is drawn for a shell in flight
     /// (`combat::viewmodel::SHELLS`): "rocket", "grenade" or "shard". Left
     /// out, it is worked out from the mode: a bouncing shell is a grenade, a
@@ -276,6 +317,13 @@ pub struct WeaponDef {
     /// Seconds a reload takes. Ignored without a `mag`.
     #[serde(default)]
     pub reload_s: f32,
+    /// The kind of rounds it takes. Guns that name the same kind draw on
+    /// one store: the sidearm and the minigun both take `bullets`, so a
+    /// round fired from either is gone from both, and a pad for either fills
+    /// both. Left out, a gun's rounds are its own. Guns of one kind must
+    /// agree on `ammo_max`, which is then the store's, magazines aside.
+    #[serde(default)]
+    pub ammo_type: Option<String>,
     pub fire: FireDef,
     #[serde(default)]
     pub alt: Option<FireDef>,

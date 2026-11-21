@@ -158,6 +158,10 @@ impl Editor {
             Item::value("GROUND", Choice::EditGrid, if self.grid { "Grey grid" } else { "The world" }.to_string()),
             Field::Step,
         ));
+        out.push(Row::new(
+            Item::value("LIGHT", Choice::EditLight, if self.world_light { "The world's" } else { "Studio sun" }.to_string()),
+            Field::Step,
+        ));
         // Only a creature and a plant are rolled: a gun and a found thing are
         // the same every time.
         if matches!(self.kind, Kind::Creature | Kind::Plant) {

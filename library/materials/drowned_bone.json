@@ -1,0 +1,16 @@
+{
+  "name": "drowned_bone",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Bone long under the sea: grey-green with a skin of silt and coralline crust.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [126, 138, 128],
+    "alt": [150, 132, 132],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [132, 142, 134], "alt": [152, 136, 136]}
+  },
+  "round": true
+}

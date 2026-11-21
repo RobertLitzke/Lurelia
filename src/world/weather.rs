@@ -1,7 +1,8 @@
 //! The weather: one global state for the whole world, drifting from one kind
 //! of day to another on the game clock.
 //!
-//! Six kinds (`Kind`): sun, heat, clouds, rain, snow, fog. Sun is the fair
+//! Seven kinds (`Kind`): sun, heat, clouds, rain, snow, fog, and the dry
+//! storm, which only a world that names it ever sees. Sun is the fair
 //! afternoon the game was tuned in, so its row is all ones and all zeroes and
 //! nothing about a sunny world has moved. The rest are stated as how far they
 //! lean away from it.
@@ -36,10 +37,14 @@ pub enum Kind {
     Snow,
     /// A thick, quiet, close day.
     Fog,
+    /// A dry storm: a dark deck and lightning out of it, cloud to ground,
+    /// with no rain and no thunder (world/lightning.rs). Desert country at
+    /// the end of a hot day; no world gets it unless it names it.
+    Storm,
 }
 
 /// Every kind, in the order the M key steps through them.
-pub const KINDS: [Kind; 6] = [Kind::Sun, Kind::Heat, Kind::Clouds, Kind::Rain, Kind::Snow, Kind::Fog];
+pub const KINDS: [Kind; 7] = [Kind::Sun, Kind::Heat, Kind::Clouds, Kind::Rain, Kind::Snow, Kind::Fog, Kind::Storm];
 
 impl Kind {
     pub fn name(self) -> &'static str {
@@ -50,6 +55,7 @@ impl Kind {
             Kind::Rain => "rain",
             Kind::Snow => "snow",
             Kind::Fog => "fog",
+            Kind::Storm => "storm",
         }
     }
 
@@ -80,6 +86,7 @@ impl Kind {
                 warmth: 0.0,
                 saturation: 1.0,
                 brightness: 1.0,
+                lightning: 0.0,
             },
             // Heat: the sky scoured of cloud, the air thick and pale with it,
             // the colour pushed, and not a breath of wind.
@@ -95,6 +102,7 @@ impl Kind {
                 warmth: 0.55,
                 saturation: 1.14,
                 brightness: 1.12,
+                lightning: 0.0,
             },
             Kind::Clouds => Sky {
                 cover: 0.5,
@@ -108,6 +116,7 @@ impl Kind {
                 warmth: -0.1,
                 saturation: 0.94,
                 brightness: 0.94,
+                lightning: 0.0,
             },
             Kind::Rain => Sky {
                 cover: 0.9,
@@ -121,6 +130,7 @@ impl Kind {
                 warmth: -0.35,
                 saturation: 0.8,
                 brightness: 0.7,
+                lightning: 0.0,
             },
             // Snow: nearly as closed in as rain, but bright rather than dark,
             // and the air still enough for the flakes to come straight down.
@@ -136,6 +146,7 @@ impl Kind {
                 warmth: -0.2,
                 saturation: 0.7,
                 brightness: 0.98,
+                lightning: 0.0,
             },
             // Fog: the haze does the work. Very little cloud, because the
             // sky overhead is often clear on the morning this is.
@@ -151,6 +162,25 @@ impl Kind {
                 warmth: -0.15,
                 saturation: 0.76,
                 brightness: 0.88,
+                lightning: 0.0,
+            },
+            // The dry storm: a heavy deck that darkens the land and stirs a
+            // wind ahead of it, and lightning, but nothing falls. The light
+            // is dim and cool between the strikes, which is what lets them
+            // show.
+            Kind::Storm => Sky {
+                cover: 0.85,
+                overcast: 0.78,
+                haze: 1.25,
+                mist: 0.0,
+                rain: 0.0,
+                snow: 0.0,
+                heat: 0.2,
+                wind: 1.35,
+                warmth: -0.15,
+                saturation: 0.86,
+                brightness: 0.66,
+                lightning: 1.0,
             },
         }
     }
@@ -165,6 +195,7 @@ impl Kind {
             Kind::Rain => (1.0, 3.5),
             Kind::Snow => (1.5, 4.0),
             Kind::Fog => (1.0, 2.5),
+            Kind::Storm => (0.8, 2.5),
         }
     }
 
@@ -173,12 +204,15 @@ impl Kind {
     /// is the hinge of the whole table.
     fn after(self) -> &'static [(Kind, f32)] {
         match self {
-            Kind::Sun => &[(Kind::Clouds, 1.0), (Kind::Heat, 0.5), (Kind::Fog, 0.2)],
-            Kind::Heat => &[(Kind::Sun, 1.0), (Kind::Clouds, 0.6)],
-            Kind::Clouds => &[(Kind::Sun, 1.0), (Kind::Rain, 0.9), (Kind::Snow, 0.6), (Kind::Fog, 0.4), (Kind::Heat, 0.15)],
+            Kind::Sun => &[(Kind::Clouds, 1.0), (Kind::Heat, 0.5), (Kind::Fog, 0.2), (Kind::Storm, 0.2)],
+            Kind::Heat => &[(Kind::Sun, 1.0), (Kind::Clouds, 0.6), (Kind::Storm, 0.5)],
+            Kind::Clouds => &[(Kind::Sun, 1.0), (Kind::Rain, 0.9), (Kind::Snow, 0.6), (Kind::Fog, 0.4), (Kind::Heat, 0.15), (Kind::Storm, 0.35)],
             Kind::Rain => &[(Kind::Clouds, 1.0), (Kind::Fog, 0.35), (Kind::Snow, 0.2)],
             Kind::Snow => &[(Kind::Clouds, 1.0), (Kind::Fog, 0.3), (Kind::Rain, 0.2)],
             Kind::Fog => &[(Kind::Sun, 1.0), (Kind::Clouds, 0.8), (Kind::Rain, 0.25)],
+            // A dry storm blows itself out into broken cloud or a clear
+            // evening; it never turns to rain, or it would not be dry.
+            Kind::Storm => &[(Kind::Clouds, 1.0), (Kind::Sun, 0.6), (Kind::Heat, 0.15)],
         }
     }
 
@@ -192,6 +226,8 @@ impl Kind {
             Kind::Rain => 0.5,
             Kind::Snow => 0.15,
             Kind::Fog => 0.25,
+            // Only where a world names it.
+            Kind::Storm => 0.0,
         }
     }
 }
@@ -227,6 +263,9 @@ pub struct Sky {
     pub warmth: f32,
     pub saturation: f32,
     pub brightness: f32,
+    /// How often lightning strikes, 0 (never) to 1 (the thick of a dry
+    /// storm): world/lightning.rs.
+    pub lightning: f32,
 }
 
 impl Default for Sky {
@@ -255,6 +294,7 @@ impl Sky {
             warmth: mix(a.warmth, b.warmth, t),
             saturation: mix(a.saturation, b.saturation, t),
             brightness: mix(a.brightness, b.brightness, t),
+            lightning: mix(a.lightning, b.lightning, t),
         }
     }
 
@@ -492,6 +532,11 @@ impl Weather {
     }
 
     /// The numbers this moment of the world looks like.
+    /// What this world's weather may be (world.json `weather`).
+    pub fn climate(&self) -> &Climate {
+        &self.climate
+    }
+
     pub fn sky(&self) -> Sky {
         if self.blend >= 1.0 {
             return self.kind.sky();
@@ -638,8 +683,9 @@ mod tests {
         assert_eq!(w.kind, Kind::Rain);
     }
 
-    /// Left alone it keeps changing, every kind the world allows turns up, and
-    /// it never leaves the six.
+    /// Left alone it keeps changing, and every kind a world with no climate
+    /// of its own allows turns up: all but the dry storm, which only a world
+    /// that names it gets.
     #[test]
     fn it_drifts_through_the_kinds() {
         let mut w = Weather::new(Kind::Sun, Climate::default(), 3, true);
@@ -657,7 +703,8 @@ mod tests {
             assert!(s.haze >= 1.0 && s.rain <= 1.0 && s.snow <= 1.0 && s.wind >= 0.0);
         }
         assert!(changes > 40, "400 game hours brought {changes} changes");
-        assert_eq!(seen.len(), KINDS.len(), "saw {seen:?}");
+        assert_eq!(seen.len(), KINDS.len() - 1, "saw {seen:?}");
+        assert!(!seen.contains("storm"));
     }
 
     /// A world's climate rules kinds out, and the drift never reaches one.

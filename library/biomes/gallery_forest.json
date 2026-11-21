@@ -1,6 +1,6 @@
 {
   "name": "gallery_forest",
-  "version": 1,
+  "version": 2,
   "introduced_by": "thornpan",
   "notes": "Gallery forest: closed high forest along the shaded bank of the upper river, figs rooted into the scarp, vines, ferns, and no view out of it at all.",
   "priority": 18,
@@ -23,6 +23,9 @@
     {"creature": "kingfisher", "count": 4},
     {"creature": "bee_eater", "count": 8},
     {"creature": "frog", "count": 10},
-    {"creature": "firefly", "count": 30}
-  ]
+    {"creature": "firefly", "count": 30},
+    {"creature": "monkey", "count": 8},
+    {"creature": "giraffe", "count": 2}
+  ],
+  "sound": {"wind": 0.65, "leaves": 1.15}
 }

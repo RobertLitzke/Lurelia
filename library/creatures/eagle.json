@@ -2,7 +2,7 @@
   "name": "eagle",
   "version": 1,
   "introduced_by": "glassfall",
-  "notes": "A lone eagle circling high over the slopes and the coast. Never lands where you can see it.",
+  "notes": "A bald eagle: white head, dark body, circling high and alone over the slopes and the coast. Now and then it sits a while on the top of the tallest tree near. When it is hungry it stoops on what it eats in the open below it, a gull in the air or on the sea, a duck, a rabbit, a fish near the surface, and takes it or misses; a kill goes off in its talons, to a tree top if there is one.",
   "half_w": 0.4,
   "height": 0.5,
   "colors": {
@@ -21,6 +21,7 @@
     "flightiness": 0.4,
     "juvenile_flightiness": 0.8,
     "fly_height": 38,
+    "hunts": ["gull", "herring", "mallard", "puffin", "trout", "rabbit"],
     "group": null
   },
   "like": "starling",

@@ -1,0 +1,1867 @@
+{
+ "places": {
+  "hub": [
+   600,
+   860
+  ]
+ },
+ "events": [
+  {
+   "year": -30000000,
+   "event": "terrain",
+   "cause": "a basin floored with the beds of an old lake, and a block of quartzite pushed up along the north-east, standing a hundred metres over the flat and stepping down in spurs and ravines toward the pan",
+   "base": 15.0,
+   "hills": 2.0,
+   "ridges": 1.5,
+   "rough": 0.6,
+   "vary": 0.9,
+   "warp": 80,
+   "scale": 1.4,
+   "relief": [
+    {
+     "at": [
+      1320,
+      230
+     ],
+     "radius": 300,
+     "height": 90,
+     "stretch": [
+      130,
+      1.3
+     ]
+    },
+    {
+     "at": [
+      1090,
+      160
+     ],
+     "radius": 150,
+     "height": 42
+    },
+    {
+     "at": [
+      1470,
+      470
+     ],
+     "radius": 200,
+     "height": 46
+    },
+    {
+     "at": [
+      1500,
+      120
+     ],
+     "radius": 110,
+     "height": -30
+    },
+    {
+     "at": [
+      1210,
+      620
+     ],
+     "radius": 330,
+     "height": 9
+    },
+    {
+     "at": [
+      1450,
+      900
+     ],
+     "radius": 260,
+     "height": 6
+    }
+   ]
+  },
+  {
+   "year": -20000,
+   "event": "strandline",
+   "cause": "the lake that filled the basin in the cold ages, standing for a long time at one height and then at a lower one on its way out: a bench cut round every spur of the range at each",
+   "levels": [
+    38.0,
+    24.0
+   ],
+   "band": 4.0,
+   "strength": 0.8
+  },
+  {
+   "year": -12000,
+   "event": "drainage",
+   "cause": "what rain the range catches, running off it in storms and cutting the ravines, then spreading out over the fans and soaking away into the pan",
+   "name": "kloof",
+   "iters": 20,
+   "strength": 0.3,
+   "wander": 2.2,
+   "source": 2200
+  },
+  {
+   "year": -10000,
+   "event": "subside",
+   "cause": "the old lake's floor, dried to salt and settled dead flat: the Mirror",
+   "at": [
+    620,
+    900
+   ],
+   "radius": 520,
+   "stretch": 1.4,
+   "bearing": 70,
+   "level": [
+    -0.34,
+    -0.22
+   ],
+   "grain": 90,
+   "edge": 90,
+   "ragged": 0.35
+  },
+  {
+   "year": -10000,
+   "event": "subside",
+   "cause": "the old lake's floor, dried to salt and settled dead flat: the Mirror",
+   "at": [
+    300,
+    1150
+   ],
+   "radius": 430,
+   "stretch": 1.3,
+   "bearing": 20,
+   "level": [
+    -0.34,
+    -0.22
+   ],
+   "grain": 90,
+   "edge": 90,
+   "ragged": 0.35
+  },
+  {
+   "year": -10000,
+   "event": "subside",
+   "cause": "the old lake's floor, dried to salt and settled dead flat: the Mirror",
+   "at": [
+    760,
+    1300
+   ],
+   "radius": 380,
+   "stretch": 1.6,
+   "bearing": 95,
+   "level": [
+    -0.34,
+    -0.22
+   ],
+   "grain": 90,
+   "edge": 90,
+   "ragged": 0.35
+  },
+  {
+   "year": -10000,
+   "event": "subside",
+   "cause": "the old lake's floor, dried to salt and settled dead flat: the Mirror",
+   "at": [
+    260,
+    560
+   ],
+   "radius": 360,
+   "stretch": 1.3,
+   "bearing": 160,
+   "level": [
+    -0.34,
+    -0.22
+   ],
+   "grain": 90,
+   "edge": 90,
+   "ragged": 0.35
+  },
+  {
+   "year": -10000,
+   "event": "subside",
+   "cause": "the old lake's floor, dried to salt and settled dead flat: the Mirror",
+   "at": [
+    980,
+    1220
+   ],
+   "radius": 300,
+   "stretch": 1.4,
+   "bearing": 50,
+   "level": [
+    -0.34,
+    -0.22
+   ],
+   "grain": 90,
+   "edge": 90,
+   "ragged": 0.35
+  },
+  {
+   "year": -10000,
+   "event": "subside",
+   "cause": "the old lake's floor, dried to salt and settled dead flat: the Mirror",
+   "at": [
+    560,
+    360
+   ],
+   "radius": 300,
+   "stretch": 1.5,
+   "bearing": 100,
+   "level": [
+    -0.34,
+    -0.22
+   ],
+   "grain": 90,
+   "edge": 90,
+   "ragged": 0.35
+  },
+  {
+   "year": -10000,
+   "event": "subside",
+   "cause": "the old lake's floor, dried to salt and settled dead flat: the Mirror",
+   "at": [
+    40,
+    880
+   ],
+   "radius": 420,
+   "stretch": 1.8,
+   "bearing": 5,
+   "level": [
+    -0.34,
+    -0.22
+   ],
+   "grain": 90,
+   "edge": 90,
+   "ragged": 0.35
+  },
+  {
+   "year": -10000,
+   "event": "subside",
+   "cause": "the old lake's floor, dried to salt and settled dead flat: the Mirror",
+   "at": [
+    480,
+    1520
+   ],
+   "radius": 400,
+   "stretch": 2.0,
+   "bearing": 95,
+   "level": [
+    -0.34,
+    -0.22
+   ],
+   "grain": 90,
+   "edge": 90,
+   "ragged": 0.35
+  },
+  {
+   "year": -10000,
+   "event": "subside",
+   "cause": "the old lake's floor, dried to salt and settled dead flat: the Mirror",
+   "at": [
+    120,
+    160
+   ],
+   "radius": 330,
+   "stretch": 1.4,
+   "bearing": 50,
+   "level": [
+    -0.34,
+    -0.22
+   ],
+   "grain": 90,
+   "edge": 90,
+   "ragged": 0.35
+  },
+  {
+   "year": -10000,
+   "event": "subside",
+   "cause": "the old lake's floor, dried to salt and settled dead flat: the Mirror",
+   "at": [
+    420,
+    60
+   ],
+   "radius": 260,
+   "stretch": 1.8,
+   "bearing": 80,
+   "level": [
+    -0.34,
+    -0.22
+   ],
+   "grain": 90,
+   "edge": 90,
+   "ragged": 0.35
+  },
+  {
+   "year": -10000,
+   "event": "subside",
+   "cause": "the old lake's floor, dried to salt and settled dead flat: the Mirror",
+   "at": [
+    900,
+    1540
+   ],
+   "radius": 260,
+   "stretch": 1.6,
+   "bearing": 100,
+   "level": [
+    -0.34,
+    -0.22
+   ],
+   "grain": 90,
+   "edge": 90,
+   "ragged": 0.35
+  },
+  {
+   "year": -10000,
+   "event": "subside",
+   "cause": "the old lake's floor, dried to salt and settled dead flat: the Mirror",
+   "at": [
+    60,
+    1480
+   ],
+   "radius": 300,
+   "stretch": 1.2,
+   "bearing": 0,
+   "level": [
+    -0.34,
+    -0.22
+   ],
+   "grain": 90,
+   "edge": 90,
+   "ragged": 0.35
+  },
+  {
+   "year": -10000,
+   "event": "subside",
+   "cause": "the old lake's floor, dried to salt and settled dead flat: the Mirror",
+   "at": [
+    1260,
+    1430
+   ],
+   "radius": 210,
+   "stretch": 1.6,
+   "bearing": 65,
+   "level": [
+    -0.34,
+    -0.22
+   ],
+   "grain": 90,
+   "edge": 90,
+   "ragged": 0.35
+  },
+  {
+   "year": -10000,
+   "event": "subside",
+   "cause": "the old lake's floor, dried to salt and settled dead flat: the Mirror",
+   "at": [
+    1130,
+    1180
+   ],
+   "radius": 120,
+   "stretch": 1.3,
+   "bearing": 120,
+   "level": [
+    -0.34,
+    -0.22
+   ],
+   "grain": 90,
+   "edge": 90,
+   "ragged": 0.35
+  },
+  {
+   "year": -9800,
+   "event": "subside",
+   "cause": "the low end of the pan, where the brine never quite dries: a few centimetres of rosy water over mud",
+   "at": [
+    700,
+    1330
+   ],
+   "radius": 125,
+   "stretch": 1.8,
+   "bearing": 100,
+   "level": [
+    0.02,
+    0.1
+   ],
+   "grain": 40,
+   "edge": 40,
+   "ragged": 0.4,
+   "islands": 0.12,
+   "island_size": 10,
+   "island_rise": 0.15
+  },
+  {
+   "year": -9800,
+   "event": "subside",
+   "cause": "the low end of the pan, where the brine never quite dries: a few centimetres of rosy water over mud",
+   "at": [
+    540,
+    1410
+   ],
+   "radius": 85,
+   "stretch": 1.4,
+   "bearing": 40,
+   "level": [
+    0.02,
+    0.1
+   ],
+   "grain": 40,
+   "edge": 40,
+   "ragged": 0.4,
+   "islands": 0.12,
+   "island_size": 10,
+   "island_rise": 0.15
+  },
+  {
+   "year": -9700,
+   "event": "subside",
+   "cause": "the Turquoise: brine rising through the floor of the pan from below and standing in a clear blue-green lake",
+   "at": [
+    150,
+    520
+   ],
+   "radius": 125,
+   "stretch": 1.6,
+   "bearing": 12,
+   "level": [
+    1.4,
+    3.0
+   ],
+   "grain": 45,
+   "edge": 35,
+   "ragged": 0.45,
+   "islands": 0.1,
+   "island_size": 12,
+   "island_rise": 0.3
+  },
+  {
+   "year": -9700,
+   "event": "region",
+   "cause": "the Turquoise and its eyes",
+   "name": "eyes",
+   "at": [
+    150,
+    520
+   ],
+   "radius": 230.0
+  },
+  {
+   "year": -9700,
+   "event": "subside",
+   "cause": "the Turquoise: brine rising through the floor of the pan from below and standing in a clear blue-green lake",
+   "at": [
+    260,
+    650
+   ],
+   "radius": 70,
+   "stretch": 1.3,
+   "bearing": 120,
+   "level": [
+    1.4,
+    3.0
+   ],
+   "grain": 45,
+   "edge": 35,
+   "ragged": 0.45,
+   "islands": 0.1,
+   "island_size": 12,
+   "island_rise": 0.3
+  },
+  {
+   "year": -9700,
+   "event": "region",
+   "cause": "the Turquoise and its eyes",
+   "name": "eyes",
+   "at": [
+    260,
+    650
+   ],
+   "radius": 121.0
+  },
+  {
+   "year": -9600,
+   "event": "subside",
+   "cause": "a brine eye: a spring hole through the salt, deeper than it is wide",
+   "at": [
+    235.7,
+    749.1
+   ],
+   "radius": 11.78984784539339,
+   "level": [
+    2.0,
+    3.5
+   ],
+   "grain": 10,
+   "edge": 4,
+   "ragged": 0.3
+  },
+  {
+   "year": -9600,
+   "event": "region",
+   "cause": "a brine eye",
+   "name": "eyes",
+   "at": [
+    235.7,
+    749.1
+   ],
+   "radius": 25.78984784539339
+  },
+  {
+   "year": -9600,
+   "event": "subside",
+   "cause": "a brine eye: a spring hole through the salt, deeper than it is wide",
+   "at": [
+    272.3,
+    308.9
+   ],
+   "radius": 13.111699356640148,
+   "level": [
+    2.0,
+    3.5
+   ],
+   "grain": 10,
+   "edge": 4,
+   "ragged": 0.3
+  },
+  {
+   "year": -9600,
+   "event": "region",
+   "cause": "a brine eye",
+   "name": "eyes",
+   "at": [
+    272.3,
+    308.9
+   ],
+   "radius": 27.11169935664015
+  },
+  {
+   "year": -9600,
+   "event": "subside",
+   "cause": "a brine eye: a spring hole through the salt, deeper than it is wide",
+   "at": [
+    379.3,
+    558.4
+   ],
+   "radius": 10.698248499325429,
+   "level": [
+    2.0,
+    3.5
+   ],
+   "grain": 10,
+   "edge": 4,
+   "ragged": 0.3
+  },
+  {
+   "year": -9600,
+   "event": "region",
+   "cause": "a brine eye",
+   "name": "eyes",
+   "at": [
+    379.3,
+    558.4
+   ],
+   "radius": 24.69824849932543
+  },
+  {
+   "year": -9600,
+   "event": "subside",
+   "cause": "a brine eye: a spring hole through the salt, deeper than it is wide",
+   "at": [
+    153.4,
+    358.0
+   ],
+   "radius": 13.994546648509164,
+   "level": [
+    2.0,
+    3.5
+   ],
+   "grain": 10,
+   "edge": 4,
+   "ragged": 0.3
+  },
+  {
+   "year": -9600,
+   "event": "region",
+   "cause": "a brine eye",
+   "name": "eyes",
+   "at": [
+    153.4,
+    358.0
+   ],
+   "radius": 27.994546648509164
+  },
+  {
+   "year": -9600,
+   "event": "subside",
+   "cause": "a brine eye: a spring hole through the salt, deeper than it is wide",
+   "at": [
+    88.2,
+    419.6
+   ],
+   "radius": 15.743500640237695,
+   "level": [
+    2.0,
+    3.5
+   ],
+   "grain": 10,
+   "edge": 4,
+   "ragged": 0.3
+  },
+  {
+   "year": -9600,
+   "event": "region",
+   "cause": "a brine eye",
+   "name": "eyes",
+   "at": [
+    88.2,
+    419.6
+   ],
+   "radius": 29.743500640237695
+  },
+  {
+   "year": -9600,
+   "event": "subside",
+   "cause": "a brine eye: a spring hole through the salt, deeper than it is wide",
+   "at": [
+    38.1,
+    505.9
+   ],
+   "radius": 7.485160152342334,
+   "level": [
+    2.0,
+    3.5
+   ],
+   "grain": 10,
+   "edge": 4,
+   "ragged": 0.3
+  },
+  {
+   "year": -9600,
+   "event": "region",
+   "cause": "a brine eye",
+   "name": "eyes",
+   "at": [
+    38.1,
+    505.9
+   ],
+   "radius": 21.485160152342335
+  },
+  {
+   "year": -9600,
+   "event": "subside",
+   "cause": "a brine eye: a spring hole through the salt, deeper than it is wide",
+   "at": [
+    266.0,
+    749.1
+   ],
+   "radius": 14.31585209713585,
+   "level": [
+    2.0,
+    3.5
+   ],
+   "grain": 10,
+   "edge": 4,
+   "ragged": 0.3
+  },
+  {
+   "year": -9600,
+   "event": "region",
+   "cause": "a brine eye",
+   "name": "eyes",
+   "at": [
+    266.0,
+    749.1
+   ],
+   "radius": 28.31585209713585
+  },
+  {
+   "year": -9600,
+   "event": "subside",
+   "cause": "a brine eye: a spring hole through the salt, deeper than it is wide",
+   "at": [
+    219.2,
+    785.7
+   ],
+   "radius": 13.604385319113234,
+   "level": [
+    2.0,
+    3.5
+   ],
+   "grain": 10,
+   "edge": 4,
+   "ragged": 0.3
+  },
+  {
+   "year": -9600,
+   "event": "region",
+   "cause": "a brine eye",
+   "name": "eyes",
+   "at": [
+    219.2,
+    785.7
+   ],
+   "radius": 27.604385319113234
+  },
+  {
+   "year": -9500,
+   "event": "mesa",
+   "cause": "a knoll of quartzite standing out of the lake floor, the lake's island once and the salt's now",
+   "at": [
+    860,
+    1250
+   ],
+   "radius": 34,
+   "height": 13,
+   "warp": 0.4,
+   "stretch": [
+    70,
+    1.8
+   ],
+   "skirt": 14,
+   "talus": 0.4,
+   "cap": "quartzite"
+  },
+  {
+   "year": -9500,
+   "event": "region",
+   "cause": "a rock island",
+   "name": "islands",
+   "at": [
+    860,
+    1250
+   ],
+   "radius": 79.2
+  },
+  {
+   "year": -9500,
+   "event": "mesa",
+   "cause": "a knoll of quartzite standing out of the lake floor, the lake's island once and the salt's now",
+   "at": [
+    270,
+    1240
+   ],
+   "radius": 26,
+   "height": 9,
+   "warp": 0.4,
+   "stretch": [
+    140,
+    2.2
+   ],
+   "skirt": 14,
+   "talus": 0.4,
+   "cap": "quartzite"
+  },
+  {
+   "year": -9500,
+   "event": "region",
+   "cause": "a rock island",
+   "name": "islands",
+   "at": [
+    270,
+    1240
+   ],
+   "radius": 75.2
+  },
+  {
+   "year": -9500,
+   "event": "mesa",
+   "cause": "a knoll of quartzite standing out of the lake floor, the lake's island once and the salt's now",
+   "at": [
+    880,
+    640
+   ],
+   "radius": 22,
+   "height": 7,
+   "warp": 0.4,
+   "stretch": [
+    20,
+    1.5
+   ],
+   "skirt": 14,
+   "talus": 0.4,
+   "cap": "quartzite"
+  },
+  {
+   "year": -9500,
+   "event": "region",
+   "cause": "a rock island",
+   "name": "islands",
+   "at": [
+    880,
+    640
+   ],
+   "radius": 51.0
+  },
+  {
+   "year": -9000,
+   "event": "dunes",
+   "cause": "gypsum the wind took off the dry lake floor, grain by grain, and drove north-east until the range stopped it",
+   "at": [
+    1080,
+    520
+   ],
+   "radius": 230,
+   "spacing": 44,
+   "height": 5.0,
+   "wind_bearing": 45,
+   "mat": "gypsum_sand",
+   "name": "white_dunes"
+  },
+  {
+   "year": -9000,
+   "event": "dunes",
+   "cause": "a second tongue of the white dunes, lower, banked into the bay between the spurs",
+   "at": [
+    1300,
+    700
+   ],
+   "radius": 150,
+   "spacing": 38,
+   "height": 3.5,
+   "wind_bearing": 50,
+   "mat": "gypsum_sand",
+   "name": "white_dunes"
+  },
+  {
+   "year": -5000,
+   "event": "erode_rims",
+   "cause": "ten thousand dry years rounding the top of every crag on the range",
+   "depth": 2.5,
+   "reach": 10,
+   "gullies": 0.4,
+   "min_drop": 4
+  },
+  {
+   "year": -60,
+   "event": "seat",
+   "cause": "the western summit, with the whole pan below it to the south-west",
+   "name": "dome_top",
+   "near": [
+    1060,
+    150
+   ],
+   "within": 110,
+   "rule": "high"
+  },
+  {
+   "year": -60,
+   "event": "seat",
+   "cause": "a hollow behind the eastern ridge, out of sight of the pan and of the fire road",
+   "name": "hollow",
+   "near": [
+    1480,
+    130
+   ],
+   "within": 90,
+   "rule": "low",
+   "elev": [
+    25,
+    120
+   ]
+  },
+  {
+   "year": -60,
+   "event": "seat",
+   "cause": "the end of the fire road, on a shoulder below the eastern ridge",
+   "name": "road_end",
+   "near": [
+    1350,
+    300
+   ],
+   "within": 90,
+   "rule": "flat",
+   "elev": [
+    30,
+    110
+   ],
+   "size": 10
+  },
+  {
+   "year": -60,
+   "event": "seat",
+   "cause": "the open fan at the foot of the range, firm ground clear of the dunes",
+   "name": "camp",
+   "near": [
+    1340,
+    1120
+   ],
+   "within": 120,
+   "rule": "flat",
+   "elev": [
+    1.5,
+    14
+   ],
+   "size": 60
+  },
+  {
+   "year": -32,
+   "event": "place",
+   "cause": "Ilse Varga's optical dome, the first instrument here, its shutter rusted half open",
+   "at": "dome_top",
+   "structure": "optical_dome",
+   "bearing": 225,
+   "age": 32,
+   "poi": "Varga Dome"
+  },
+  {
+   "year": -27,
+   "event": "road",
+   "cause": "the north arm: a graded dirt road out across the salt to the pads",
+   "path": [
+    [
+     600,
+     860
+    ],
+    [
+     588.0,
+     801.2
+    ],
+    [
+     575.6,
+     742.5
+    ],
+    [
+     558.7,
+     684.8
+    ],
+    [
+     552.4,
+     624.8
+    ],
+    [
+     533.9,
+     567.4
+    ],
+    [
+     511.9,
+     510.9
+    ],
+    [
+     492.3,
+     454.0
+    ],
+    [
+     464.9,
+     399.4
+    ],
+    [
+     459.8,
+     338.5
+    ],
+    [
+     431.4,
+     284.2
+    ],
+    [
+     401.5,
+     230.6
+    ],
+    [
+     366.8,
+     178.8
+    ],
+    [
+     351.3,
+     120.7
+    ]
+   ],
+   "width": 5,
+   "mat": "salt_mud",
+   "smooth": 60
+  },
+  {
+   "year": -27,
+   "event": "road",
+   "cause": "the east arm: a graded dirt road out across the salt to the pads",
+   "path": [
+    [
+     600,
+     860
+    ],
+    [
+     653.8,
+     886.6
+    ],
+    [
+     708.3,
+     911.8
+    ],
+    [
+     763.7,
+     934.7
+    ],
+    [
+     818.2,
+     960.0
+    ],
+    [
+     877.5,
+     973.9
+    ],
+    [
+     935.1,
+     991.7
+    ],
+    [
+     990.3,
+     1015.2
+    ],
+    [
+     1046.2,
+     1036.9
+    ],
+    [
+     1108.9,
+     1040.7
+    ],
+    [
+     1161.0,
+     1072.9
+    ]
+   ],
+   "width": 5,
+   "mat": "salt_mud",
+   "smooth": 60
+  },
+  {
+   "year": -27,
+   "event": "road",
+   "cause": "the south-west arm: a graded dirt road out across the salt to the pads",
+   "path": [
+    [
+     600,
+     860
+    ],
+    [
+     549.5,
+     892.4
+    ],
+    [
+     499.3,
+     925.3
+    ],
+    [
+     447.9,
+     956.2
+    ],
+    [
+     397.2,
+     988.3
+    ],
+    [
+     345.1,
+     1018.2
+    ],
+    [
+     286.9,
+     1037.6
+    ],
+    [
+     230.6,
+     1059.8
+    ],
+    [
+     180.9,
+     1094.0
+    ],
+    [
+     117.3,
+     1102.0
+    ]
+   ],
+   "width": 5,
+   "mat": "salt_mud",
+   "smooth": 60
+  },
+  {
+   "year": -26,
+   "event": "place",
+   "cause": "dish 1 on the north arm, parked the way it was left",
+   "at": [
+    633.5,
+    715.3
+   ],
+   "structure": "array_dish",
+   "bearing": 0,
+   "poi": "dish 1"
+  },
+  {
+   "year": -1,
+   "event": "sign",
+   "cause": "the pad's number, on a plate at the roadside",
+   "at": [
+    623.9,
+    713.2
+   ],
+   "text": [
+    "PAD 1"
+   ],
+   "style": "iron_plate",
+   "bearing": 258.38,
+   "age": 24
+  },
+  {
+   "year": -26,
+   "event": "place",
+   "cause": "dish 2 on the north arm, parked the way it was left",
+   "at": [
+    473.5,
+    597.2
+   ],
+   "structure": "array_dish",
+   "bearing": 180,
+   "poi": "dish 2"
+  },
+  {
+   "year": -1,
+   "event": "sign",
+   "cause": "the pad's number, on a plate at the roadside",
+   "at": [
+    481.3,
+    591.2
+   ],
+   "text": [
+    "PAD 2"
+   ],
+   "style": "iron_plate",
+   "bearing": 256.5799999999999,
+   "age": 24
+  },
+  {
+   "year": -26,
+   "event": "place",
+   "cause": "dish 3 on the north arm, parked the way it was left",
+   "at": [
+    542.1,
+    414.5
+   ],
+   "structure": "array_dish_tilted",
+   "bearing": 180,
+   "poi": "dish 3"
+  },
+  {
+   "year": -1,
+   "event": "sign",
+   "cause": "the pad's number, on a plate at the roadside",
+   "at": [
+    532.4,
+    413.0
+   ],
+   "text": [
+    "PAD 3"
+   ],
+   "style": "iron_plate",
+   "bearing": 254.66000000000008,
+   "age": 24
+  },
+  {
+   "year": -26,
+   "event": "place",
+   "cause": "dish 4 on the north arm, parked the way it was left",
+   "at": [
+    357.1,
+    291.6
+   ],
+   "structure": "array_dish",
+   "bearing": 90,
+   "poi": "dish 4"
+  },
+  {
+   "year": -1,
+   "event": "sign",
+   "cause": "the pad's number, on a plate at the roadside",
+   "at": [
+    364.5,
+    285.1
+   ],
+   "text": [
+    "PAD 4"
+   ],
+   "style": "iron_plate",
+   "bearing": 252.62,
+   "age": 24
+  },
+  {
+   "year": -26,
+   "event": "place",
+   "cause": "dish 5 on the north arm, parked the way it was left",
+   "at": [
+    399.9,
+    103.6
+   ],
+   "structure": "array_dish",
+   "bearing": 90,
+   "poi": "dish 5"
+  },
+  {
+   "year": -1,
+   "event": "sign",
+   "cause": "the pad's number, on a plate at the roadside",
+   "at": [
+    390.1,
+    102.8
+   ],
+   "text": [
+    "PAD 5"
+   ],
+   "style": "iron_plate",
+   "bearing": 250.64,
+   "age": 24
+  },
+  {
+   "year": -26,
+   "event": "place",
+   "cause": "dish 6 on the east arm, parked the way it was left",
+   "at": [
+    700.0,
+    975.9
+   ],
+   "structure": "array_dish",
+   "bearing": 180,
+   "poi": "dish 6"
+  },
+  {
+   "year": -1,
+   "event": "sign",
+   "cause": "the pad's number, on a plate at the roadside",
+   "at": [
+    699.8,
+    985.7
+   ],
+   "text": [
+    "PAD 6"
+   ],
+   "style": "iron_plate",
+   "bearing": 25.319999999999993,
+   "age": 24
+  },
+  {
+   "year": -26,
+   "event": "place",
+   "cause": "dish 7 on the east arm, parked the way it was left",
+   "at": [
+    899.9,
+    922.2
+   ],
+   "structure": "array_dish_tilted",
+   "bearing": 90,
+   "poi": "dish 7"
+  },
+  {
+   "year": -1,
+   "event": "sign",
+   "cause": "the pad's number, on a plate at the roadside",
+   "at": [
+    907.1,
+    915.5
+   ],
+   "text": [
+    "PAD 7"
+   ],
+   "style": "iron_plate",
+   "bearing": 23.399999999999977,
+   "age": 24
+  },
+  {
+   "year": -26,
+   "event": "place",
+   "cause": "dish 8 on the east arm, parked the way it was left",
+   "at": [
+    1010.2,
+    1087.5
+   ],
+   "structure": "array_dish",
+   "bearing": 270,
+   "poi": "dish 8"
+  },
+  {
+   "year": -1,
+   "event": "sign",
+   "cause": "the pad's number, on a plate at the roadside",
+   "at": [
+    1010.6,
+    1097.3
+   ],
+   "text": [
+    "PAD 8"
+   ],
+   "style": "iron_plate",
+   "bearing": 21.420000000000016,
+   "age": 24
+  },
+  {
+   "year": -24,
+   "event": "place",
+   "cause": "an east arm pad whose dish was on the transporter, on its way out, the night the array stopped",
+   "at": [
+    1200.1,
+    1008.1
+   ],
+   "structure": "dish_pad",
+   "bearing": 289.62
+  },
+  {
+   "year": -1,
+   "event": "sign",
+   "cause": "the pad's number, on a plate at the roadside",
+   "at": [
+    1206.9,
+    1001.0
+   ],
+   "text": [
+    "PAD 9"
+   ],
+   "style": "iron_plate",
+   "bearing": 19.620000000000005,
+   "age": 24
+  },
+  {
+   "year": -26,
+   "event": "place",
+   "cause": "dish 10 on the south-west arm, parked the way it was left",
+   "at": [
+    440.0,
+    887.5
+   ],
+   "structure": "array_dish",
+   "bearing": 90,
+   "poi": "dish 10"
+  },
+  {
+   "year": -1,
+   "event": "sign",
+   "cause": "the pad's number, on a plate at the roadside",
+   "at": [
+    431.8,
+    882.0
+   ],
+   "text": [
+    "PAD 10"
+   ],
+   "style": "iron_plate",
+   "bearing": 147.8,
+   "age": 24
+  },
+  {
+   "year": -26,
+   "event": "place",
+   "cause": "dish 11 on the south-west arm, parked the way it was left",
+   "at": [
+    336.2,
+    1083.3
+   ],
+   "structure": "array_dish",
+   "bearing": 180,
+   "poi": "dish 11"
+  },
+  {
+   "year": -1,
+   "event": "sign",
+   "cause": "the pad's number, on a plate at the roadside",
+   "at": [
+    337.2,
+    1093.1
+   ],
+   "text": [
+    "PAD 11"
+   ],
+   "style": "iron_plate",
+   "bearing": 150.08000000000004,
+   "age": 24
+  },
+  {
+   "year": -24,
+   "event": "place",
+   "cause": "pad twelve, poured in 1971 for a dish the money never paid for, at the end of the short arm",
+   "at": [
+    120.2,
+    1043.7
+   ],
+   "structure": "dish_pad",
+   "bearing": 62.120000000000005,
+   "poi": "pad 12"
+  },
+  {
+   "year": -1,
+   "event": "place",
+   "cause": "the twelfth dish: seen from far off at midday, white on its pad and parked facing the sky like the others, and gone when you get there",
+   "at": [
+    120.2,
+    1043.7
+   ],
+   "structure": "array_dish",
+   "bearing": 62.120000000000005,
+   "when": {
+    "far": 420,
+    "hours": [
+     10.5,
+     15.5
+    ]
+   },
+   "poi": "the mirage dish"
+  },
+  {
+   "year": -1,
+   "event": "sign",
+   "cause": "the pad's number, on a plate at the roadside",
+   "at": [
+    112.5,
+    1037.6
+   ],
+   "text": [
+    "PAD 12"
+   ],
+   "style": "iron_plate",
+   "bearing": 152.12,
+   "age": 24
+  },
+  {
+   "year": -10,
+   "event": "place",
+   "cause": "the transporter, stopped halfway out the east arm with a dish on its back the night the array closed",
+   "at": [
+    1089.2,
+    1063.8
+   ],
+   "structure": "transporter",
+   "bearing": 289.62,
+   "poi": "the transporter"
+  },
+  {
+   "year": -27,
+   "event": "region",
+   "cause": "the hub, where the arms meet",
+   "name": "hub",
+   "at": [
+    600,
+    860
+   ],
+   "radius": 60
+  },
+  {
+   "year": -26,
+   "event": "place",
+   "cause": "the control building at the hub, the control room in its west half and the correlator in its east",
+   "at": [
+    588.4,
+    891.9
+   ],
+   "structure": "control_building",
+   "bearing": 20,
+   "age": 10,
+   "poi": "the control building"
+  },
+  {
+   "year": -28,
+   "event": "region",
+   "cause": "the camp on the fan",
+   "name": "camp",
+   "at": "camp",
+   "radius": 95
+  },
+  {
+   "year": -28,
+   "event": "village",
+   "cause": "the staff camp: cabins along two dirt lanes on the fan, the mess hall in the middle, the water tower and the generator at the back",
+   "at": "camp",
+   "name": "camp",
+   "radius": 115,
+   "layout": "organic",
+   "bearing": 20,
+   "spacing": 16,
+   "setback": 4,
+   "street": "dirt_lane",
+   "lane": "footpath",
+   "houses": 11,
+   "buildings": [
+    "mess_hall",
+    "aframe_cabin",
+    "prefab_bungalow",
+    "aframe_cabin",
+    "generator_shed",
+    "aframe_cabin",
+    "prefab_bungalow",
+    "water_tank",
+    "aframe_cabin",
+    "prefab_bungalow",
+    "aframe_cabin"
+   ],
+   "walk": "path_dirt",
+   "plot": 7
+  },
+  {
+   "year": -10,
+   "event": "abandon",
+   "cause": "the closing order: everyone gone within the week",
+   "settlement": "camp"
+  },
+  {
+   "year": -27,
+   "event": "route",
+   "cause": "the road from the camp down onto the salt to the hub",
+   "from": "camp",
+   "to": [
+    600,
+    860
+   ],
+   "kit": "dirt_lane",
+   "terms": {
+    "grade": 0.12,
+    "water": 30.0,
+    "wade": 0.2
+   },
+   "poi": "the camp road"
+  },
+  {
+   "year": -28,
+   "event": "route",
+   "cause": "the way in: the road the dishes came by, off the fans from the south-east",
+   "from": [
+    1530,
+    1180
+   ],
+   "to": "camp",
+   "kit": "dirt_lane",
+   "terms": {
+    "grade": 0.12,
+    "water": 30.0,
+    "wade": 0.2
+   }
+  },
+  {
+   "year": -33,
+   "event": "route",
+   "cause": "the fire road up the range to the dome, graded for the trucks that hauled its concrete",
+   "from": "camp",
+   "to": {
+    "from": "dome_top",
+    "by": [
+     -10,
+     18
+    ]
+   },
+   "kit": "dirt_lane",
+   "terms": {
+    "grade": 0.16,
+    "water": 30.0,
+    "wade": 0.2
+   }
+  },
+  {
+   "year": -20,
+   "event": "route",
+   "cause": "the fire road's east branch, along the range toward the ridge, cut for a fire that never came until it did",
+   "from": "road_end",
+   "to": {
+    "from": "camp",
+    "by": [
+     0,
+     -60
+    ]
+   },
+   "kit": "dirt_lane",
+   "terms": {
+    "grade": 0.18,
+    "water": 30.0,
+    "wade": 0.2
+   }
+  },
+  {
+   "year": -10,
+   "event": "place",
+   "cause": "a pickup in the motor pool, parked ten years ago",
+   "at": {
+    "from": "camp",
+    "by": [
+     -28,
+     52
+    ]
+   },
+   "structure": "pickup_truck",
+   "bearing": 30,
+   "slots": {
+    "paint": "truck_teal"
+   }
+  },
+  {
+   "year": -10,
+   "event": "place",
+   "cause": "a pickup in the motor pool, parked ten years ago",
+   "at": {
+    "from": "camp",
+    "by": [
+     -21,
+     55
+    ]
+   },
+   "structure": "pickup_truck",
+   "bearing": 35,
+   "slots": {
+    "paint": "truck_orange"
+   }
+  },
+  {
+   "year": -10,
+   "event": "place",
+   "cause": "a pickup in the motor pool, parked ten years ago",
+   "at": {
+    "from": "camp",
+    "by": [
+     -14,
+     57
+    ]
+   },
+   "structure": "pickup_truck",
+   "bearing": 25,
+   "slots": {
+    "paint": "truck_cream"
+   }
+  },
+  {
+   "year": -10,
+   "event": "place",
+   "cause": "a pickup in the motor pool, parked ten years ago",
+   "at": {
+    "from": "camp",
+    "by": [
+     34,
+     -40
+    ]
+   },
+   "structure": "pickup_truck",
+   "bearing": 110,
+   "slots": {
+    "paint": "truck_orange"
+   }
+  },
+  {
+   "year": -10,
+   "event": "place",
+   "cause": "a pickup left by the control building's door",
+   "at": [
+    574.5,
+    865.6
+   ],
+   "structure": "pickup_truck",
+   "bearing": 290,
+   "slots": {
+    "paint": "truck_cream"
+   }
+  },
+  {
+   "year": -10,
+   "event": "place",
+   "cause": "a pickup by the dome",
+   "at": {
+    "from": "dome_top",
+    "by": [
+     14,
+     20
+    ]
+   },
+   "structure": "pickup_truck",
+   "bearing": 200,
+   "slots": {
+    "paint": "truck_teal"
+   }
+  },
+  {
+   "year": -10,
+   "event": "place",
+   "cause": "the morning team's pickup at the end of the fire road, both doors open; nobody wrote down what they found",
+   "at": "road_end",
+   "structure": "pickup_truck",
+   "bearing": 60,
+   "slots": {
+    "paint": "truck_orange"
+   },
+   "poi": "the last pickup"
+  },
+  {
+   "year": -27,
+   "event": "sign",
+   "cause": "the board at the camp gate",
+   "at": {
+    "from": "camp",
+    "by": [
+     -70,
+     30
+    ]
+   },
+   "style": "highway_board",
+   "text": [
+    "SALTMIRROR",
+    "OBSERVATORY"
+   ],
+   "face": [
+    600,
+    860
+   ],
+   "age": 27
+  },
+  {
+   "year": -10,
+   "event": "fire",
+   "cause": "the burn the craft started when it came down in the hollow, run up the slope by the night wind",
+   "at": "hollow",
+   "radius": 110,
+   "wind_bearing": 40,
+   "stretch": 1.6,
+   "char": "charcoal"
+  },
+  {
+   "year": -10,
+   "event": "region",
+   "cause": "the burn round the wreck",
+   "name": "crash",
+   "at": "hollow",
+   "radius": 150
+  },
+  {
+   "year": -10,
+   "event": "path",
+   "cause": "the scar where it slid into the hollow, ploughed and burned",
+   "from": {
+    "from": "hollow",
+    "by": [
+     -64,
+     46
+    ]
+   },
+   "to": "hollow",
+   "width": 7,
+   "mat": "charcoal"
+  },
+  {
+   "year": -10,
+   "event": "place",
+   "cause": "whatever came down over the range from the south-west, low, slow and with no sound, broken in two at the end of its slide",
+   "at": "hollow",
+   "structure": "craft_hull",
+   "bearing": 40,
+   "poi": "the wreck"
+  },
+  {
+   "year": -10,
+   "event": "bloom",
+   "cause": "something about the wreck itself",
+   "at": "hollow",
+   "radius": 60,
+   "strength": 0.4
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "The Mirror",
+   "kind": "pan",
+   "at": [
+    600,
+    980
+   ],
+   "radius": 560
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "The Brine",
+   "kind": "water",
+   "at": [
+    640,
+    1360
+   ],
+   "radius": 160
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "The Turquoise",
+   "kind": "water",
+   "at": [
+    190,
+    580
+   ],
+   "radius": 200
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "Far Island",
+   "kind": "island",
+   "at": [
+    860,
+    1250
+   ],
+   "radius": 70
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "Long Island",
+   "kind": "island",
+   "at": [
+    270,
+    1240
+   ],
+   "radius": 60
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "The White Dunes",
+   "kind": "dunes",
+   "at": [
+    1120,
+    580
+   ],
+   "radius": 230
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "The Grey Range",
+   "kind": "mountains",
+   "at": [
+    1290,
+    210
+   ],
+   "radius": 300
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "The Hub",
+   "kind": "array",
+   "at": [
+    600,
+    860
+   ],
+   "radius": 70
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "The Camp",
+   "kind": "camp",
+   "at": "camp",
+   "radius": 95
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "Varga Dome",
+   "kind": "summit",
+   "at": "dome_top",
+   "radius": 60
+  },
+  {
+   "year": 0,
+   "event": "area",
+   "cause": "the name this ground goes by",
+   "name": "The Hollow",
+   "kind": "hollow",
+   "at": "hollow",
+   "radius": 90
+  }
+ ]
+}

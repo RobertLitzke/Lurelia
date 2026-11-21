@@ -1,0 +1,25 @@
+{
+  "name": "rib_shelf",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The open sea floor: sand ribbed by the swell, grey under green water.",
+  "priority": 0,
+  "rules": {"underwater": true},
+  "surface": "sand",
+  "subsurface": "sand",
+  "map_color": [56, 96, 120],
+  "plants": [],
+  "features": [{"structure": "cloud_sponge", "density": 5e-05, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "herring_shoal", "count": 120},
+    {"creature": "humpback", "count": 1},
+    {"creature": "orca", "count": 1},
+    {"creature": "moon_jelly", "count": 6},
+    {"creature": "cod", "count": 3},
+    {"creature": "sea_lion", "count": 1},
+    {"creature": "mola", "count": 1},
+    {"creature": "sixgill_shark", "count": 1},
+    {"creature": "albatross", "count": 3}
+  ],
+  "collectibles": []
+}

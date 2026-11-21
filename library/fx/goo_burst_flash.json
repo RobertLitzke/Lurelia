@@ -1,0 +1,18 @@
+{
+  "name": "goo_burst_flash",
+  "version": 1,
+  "introduced_by": "goo_burst",
+  "notes": "The pale green heart of a goo burst, there for a tenth of a second.",
+  "shape": "puff",
+  "count": [3, 4],
+  "speed": [0.0, 0.8],
+  "cone_deg": 180,
+  "life": [0.09, 0.15],
+  "size": [0.5, 1.8],
+  "size_jitter": 0.2,
+  "drag": 4.0,
+  "color": [226, 255, 190],
+  "alpha": 0.95,
+  "glow": 3.5,
+  "near_fade": 1.0
+}

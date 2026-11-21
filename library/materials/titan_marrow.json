@@ -1,0 +1,16 @@
+{
+  "name": "titan_marrow",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The inside of a broken bone: a coarse honeycomb of ochre and grey, open to the weather.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [168, 134, 92],
+    "alt": [134, 124, 110],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [172, 142, 104], "alt": [142, 132, 118]}
+  },
+  "round": true
+}

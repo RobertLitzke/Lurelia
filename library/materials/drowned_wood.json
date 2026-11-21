@@ -1,0 +1,15 @@
+{
+  "name": "drowned_wood",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Spruce wood the salt killed and the weather stripped: cold silver-grey, split along the grain.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [126, 128, 126],
+    "alt": [96, 98, 98],
+    "scale": 4,
+    "contrast": 0.9,
+    "calm": {"base": [132, 134, 132], "alt": [102, 104, 104]}
+  }
+}

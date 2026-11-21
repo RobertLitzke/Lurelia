@@ -13,7 +13,8 @@
       "plant": "tamarisk",
       "density": 0.006,
       "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.45, "max": 0.6}}
-    }
+    },
+    {"plant": "desert_willow", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
     {"creature": "heron", "count": 1},

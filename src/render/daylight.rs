@@ -66,6 +66,7 @@ impl SunPath {
     }
 
     /// The sun's height at noon, degrees.
+    #[cfg(test)]
     pub fn noon_deg(&self) -> f32 {
         90.0 - self.latitude + self.declination
     }

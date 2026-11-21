@@ -1,0 +1,16 @@
+{
+  "name": "craft_glow",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "A seam inside the hull that still gives off a little light: dull amber, steady, brighter at night.",
+  "smooth": false,
+  "glow": 0.6,
+  "texture": {
+    "pattern": "flat",
+    "base": [210, 150, 80],
+    "alt": [230, 170, 96],
+    "scale": 1,
+    "contrast": 0.4,
+    "calm": {"base": [210, 150, 80], "alt": [230, 170, 96]}
+  }
+}

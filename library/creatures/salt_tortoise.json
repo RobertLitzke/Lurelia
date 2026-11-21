@@ -1,0 +1,32 @@
+{
+  "name": "salt_tortoise",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "plod: The salt tortoise: as big as an elephant, its domed shell bleached grey-white and crusted with salt where it lies down in the brine, its skin the grey of the mud. A few of them cross the Mirror, very slowly, from the brine to the islands and back, and take no notice of anyone. Nobody knows how old they are.",
+  "colors": {
+    "shell": [176, 170, 156],
+    "scute": [128, 122, 112],
+    "rim": [150, 144, 132],
+    "belly": [196, 186, 166],
+    "skin": [120, 116, 108],
+    "dark": [40, 36, 34],
+    "salt": [226, 224, 216]
+  },
+  "behaviour": {
+    "movement": "plod",
+    "walk_speed": 0.22,
+    "flee_speed": 0.22,
+    "wary": 2,
+    "flightiness": 0.05,
+    "flees_from": [],
+    "active": "diurnal",
+    "heat": 1.0
+  },
+  "like": "tortoise",
+  "scale": 8.0,
+  "extra_ops": [
+    {"op": "ellipsoid", "centre": [14, 9, 14], "radius": [3, 1.2, 3.5], "mat": "salt"},
+    {"op": "ellipsoid", "centre": [19, 8, 19], "radius": [2.5, 1.2, 2.5], "mat": "salt"},
+    {"op": "set", "at": [16, 10, 17], "mat": "salt"}
+  ]
+}

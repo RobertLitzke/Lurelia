@@ -12,6 +12,7 @@ pub fn draw(l: u32, n: usize) -> Img {
     match l {
         layer::FROND => frond(&mut img, &mut r, n as f32),
         layer::FIREWEED => fireweed(&mut img, &mut r, n as f32),
+        layer::LUPINE => lupine(&mut img, &mut r, n as f32),
         layer::HEATHER => heather(&mut img, &mut r, n as f32),
         layer::GLASSBLOOM => glassbloom(&mut img, &mut r, n as f32),
         layer::SAGE => sage(&mut img, &mut r, n as f32),
@@ -115,6 +116,67 @@ fn frond(img: &mut Img, r: &mut Rng, s: f32) {
 /// opens from the bottom, buds tight and darker toward the nodding tip. Drawn
 /// stretched sideways by 1/ASPECT so it looks right on a card ASPECT as wide as
 /// it is tall (mesh/sprites.rs uses the same number).
+/// Lupine: shorter, stouter spikes than fireweed, packed with violet pea
+/// flowers paling to blue-grey buds at the tip, over fans of fingered leaves
+/// low down.
+fn lupine(img: &mut Img, r: &mut Rng, s: f32) {
+    const ASPECT: f32 = 0.75;
+    let sx = 1.0 / ASPECT;
+    let to = |x: f32, y: f32| [s * 0.5 + x * s * sx, s * (1.0 - y)];
+    let stem_col = [0.06, 0.12, 0.05];
+    let leaf_col = [0.08, 0.16, 0.07];
+    let flower = [0.30, 0.13, 0.55];
+    let bud = [0.30, 0.30, 0.42];
+    // Fans of leaves round the foot: five or six fingers from one point.
+    for _ in 0..7 {
+        let c = to(r.range(-0.3, 0.3), r.range(0.08, 0.3));
+        let base = r.range(-0.4, 0.4) - FRAC_PI_2;
+        for q in 0..6 {
+            let a = base + (q as f32 - 2.5) * 0.42;
+            leaf(img, c, a, s * 0.09 * r.range(0.8, 1.1), s * 0.02, 1.0, leaf_col);
+        }
+    }
+    for i in 0..5 {
+        let x0 = r.range(-0.18, 0.18);
+        let h = if i == 0 { 0.97 } else { r.range(0.6, 0.92) };
+        let lean = r.range(-0.05, 0.05) + x0 * 0.3;
+        let pos = |t: f32| (x0 + lean * t * t, h * t);
+        let (ax, ay) = pos(0.0);
+        let (cx, cy) = pos(0.5);
+        let (bx, by) = pos(1.0);
+        blade(img, to(ax, ay), to(cx, cy), to(bx, by), s * 0.016, s * 0.008, 1.0, 1.4, stem_col);
+        // The spike: whorls of flowers from 45% up, packed close.
+        let nf = 30;
+        for k in 0..nf {
+            let t = 0.45 + 0.55 * k as f32 / nf as f32;
+            let (px, py) = pos(t);
+            let open = 1.0 - k as f32 / nf as f32;
+            let w = 0.035 * (0.45 + 0.55 * open);
+            for side in [-1.0f32, 1.0] {
+                let c = to(px + side * w * r.range(0.6, 1.0), py + r.range(-0.01, 0.01));
+                let tone = r.range(0.8, 1.2);
+                let col = if open > 0.25 { [flower[0] * tone, flower[1] * tone, flower[2] * tone] } else { bud };
+                dot(img, c, s * (0.008 + 0.011 * open), col);
+                // A pale banner on some of the open ones.
+                if open > 0.4 && r.f() < 0.35 {
+                    dot(img, [c[0], c[1] - s * 0.006], s * 0.005, [0.78, 0.74, 0.86]);
+                }
+            }
+        }
+    }
+    let n = (img.len() as f32).sqrt() as usize;
+    for y in 0..n {
+        let t = y as f32 / n as f32;
+        let k = 1.0 - 0.45 * ((t - 0.75) / 0.25).clamp(0.0, 1.0);
+        for x in 0..n {
+            let p = &mut img[y * n + x];
+            for c in 0..3 {
+                p[c] *= k;
+            }
+        }
+    }
+}
+
 fn fireweed(img: &mut Img, r: &mut Rng, s: f32) {
     const ASPECT: f32 = 0.6;
     let sx = 1.0 / ASPECT;

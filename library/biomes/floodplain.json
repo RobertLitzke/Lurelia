@@ -1,6 +1,6 @@
 {
   "name": "floodplain",
-  "version": 2,
+  "version": 3,
   "introduced_by": "glassfall",
   "priority": 6,
   "rules": {"river": [0, 70], "elev": [0, 14], "slope": [0, 0.35]},
@@ -36,7 +36,10 @@
     {"creature": "frog", "count": 6},
     {"creature": "otter", "count": 1},
     {"creature": "bat", "count": 4},
-    {"creature": "garter_snake", "count": 3}
+    {"creature": "garter_snake", "count": 3},
+    {"creature": "great_egret", "count": 3},
+    {"creature": "bullfrog", "count": 4},
+    {"creature": "water_snake", "count": 2}
   ],
   "collectibles": [],
   "mist": 0.75

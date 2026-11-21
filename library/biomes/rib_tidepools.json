@@ -1,0 +1,29 @@
+{
+  "name": "rib_tidepools",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Rock shelves at the waterline under the headland, cut into pools: mussels, sea stars, green anemones, sea palms where the surf hits.",
+  "priority": 7,
+  "rules": {"region": "headland", "elev": [-2.5, 1.5], "coast": [-25, 8], "amphibious": true},
+  "surface": "barnacle_crust",
+  "subsurface": "basalt",
+  "rock": "basalt",
+  "fringe": 0,
+  "map_color": [150, 110, 120],
+  "plants": [],
+  "features": [
+    {"structure": "sea_stars", "density": 0.004, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "anemone_bed", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "mussel_bed", "density": 0.004, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "sea_palms", "density": 0.003, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "harbor_seal", "count": 3},
+    {"creature": "sea_otter", "count": 2},
+    {"creature": "gull", "count": 3},
+    {"creature": "black_oystercatcher", "count": 4},
+    {"creature": "bone_crab", "count": 2},
+    {"creature": "walrus", "count": 4}
+  ],
+  "collectibles": []
+}

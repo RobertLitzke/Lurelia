@@ -1,0 +1,16 @@
+{
+  "name": "cryo_tile",
+  "version": 1,
+  "introduced_by": "transmission",
+  "notes": "Pale floor tiles in a frozen base's labs: small square tiles in close courses, grey-white with darker grout.",
+  "smooth": false,
+  "crisp": true,
+  "texture": {
+    "pattern": "coursed",
+    "base": [150, 158, 162],
+    "alt": [122, 130, 138],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [156, 164, 168], "alt": [130, 138, 146]}
+  }
+}

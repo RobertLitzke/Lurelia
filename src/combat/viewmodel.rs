@@ -163,9 +163,36 @@ pub const BARRELS: usize = SHAPES.len();
 pub const FLASH: usize = SHAPES.len() + 1;
 /// The first of the shell bodies.
 pub const SHELL: usize = SHAPES.len() + 2;
+/// What a pad of rounds is drawn as, one look per kind of ammunition, so a
+/// pad of rockets can be told from a pad of bullets across a hall without
+/// reading anything. Guns that share a store (`ammo_type`) share a look.
+pub const AMMOS: [&str; 8] = ["bullets", "rockets", "scrap", "goo", "bore", "cells", "discs", "sniper"];
+/// The first of the ammunition looks.
+pub const AMMO: usize = SHELL + SHELLS.len();
 /// How many models `models()` returns, so whatever is appended after them
 /// knows where it starts.
-pub const COUNT: usize = SHELL + SHELLS.len();
+pub const COUNT: usize = AMMO + AMMOS.len();
+
+/// Ammunition looks are a little finer than the guns: a can of bullets is a
+/// hand across, and it is held up on its pad rather than at arm's length.
+const AMMO_VOX: f32 = 1.0 / 44.0;
+
+/// Which look a pad of a weapon's rounds is drawn as: its `ammo_type` where
+/// that names one, else read off the gun's own shape.
+pub fn ammo_look(w: &crate::library::WeaponDef) -> usize {
+    let by_type = w.ammo_type.as_deref().and_then(|t| AMMOS.iter().position(|a| *a == t));
+    let by_view = match w.view.as_str() {
+        "launcher" => "rockets",
+        "scrap" => "scrap",
+        "goo" => "goo",
+        "bore" => "bore",
+        "pulse" => "cells",
+        "skipjack" => "discs",
+        "sniper" => "sniper",
+        _ => "bullets",
+    };
+    AMMO + by_type.unwrap_or_else(|| AMMOS.iter().position(|a| *a == by_view).unwrap_or(0))
+}
 
 /// Shell bodies are a tenth the guns' scale: a rocket is about 0.5 m long
 /// and a scrap shard a hand's width, which is what they have to be for one
@@ -225,7 +252,123 @@ pub fn models() -> Vec<Model> {
         m.pivot = Vec3::new(16.0, 16.0, 16.0);
         out.push(m);
     }
+    for name in AMMOS {
+        let mut g = Grid::new();
+        ammo(name, &mut g);
+        // The pivot is the bottom middle of the grid, so a look is placed by
+        // the point it stands on.
+        out.push(g.build(AMMO_VOX, 0.2, 0.4));
+    }
     out
+}
+
+/// An upright round post: `rod` stood on end, for the things that stand.
+fn post(g: &mut Grid, cx: f32, cz: f32, y0: i32, y1: i32, r: f32, c: u8) {
+    for y in y0..y1 {
+        for z in (cz - r).floor() as i32..=(cz + r).ceil() as i32 {
+            for x in (cx - r).floor() as i32..=(cx + r).ceil() as i32 {
+                let (dx, dz) = (x as f32 + 0.5 - cx, z as f32 + 0.5 - cz);
+                if dx * dx + dz * dz <= r * r {
+                    g.set(x, y, z, c);
+                }
+            }
+        }
+    }
+}
+
+/// One ammunition look by name (`AMMOS`), standing on the bottom of the
+/// grid. Each is the thing its gun eats, in the gun's own colours, with
+/// something in it that lights itself so it reads at the end of a dark hall.
+fn ammo(name: &str, g: &mut Grid) {
+    match name {
+        // Rockets: two of them stood on their fins, nose up.
+        "rockets" => {
+            for cx in [12.5f32, 19.5] {
+                post(g, cx, 16.0, 3, 20, 2.6, OLIVE);
+                post(g, cx, 16.0, 11, 13, 3.0, DARK);
+                g.ellipsoid([cx, 21.0, 16.0], [2.4, 3.6, 2.4], RUST);
+                post(g, cx, 16.0, 0, 3, 1.8, HOT);
+                for (dx, dz) in [(1.0f32, 0.0f32), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0)] {
+                    let (x, z) = ((cx + dx * 3.2) as i32, (16.0 + dz * 3.2) as i32);
+                    g.fill([x, 2, z], [x + 1, 7, z + 1], STEEL);
+                }
+            }
+        }
+        // Scrap: a hopper of rust with hot chips heaped over its rim.
+        "scrap" => {
+            g.fill([9, 0, 11], [23, 9, 21], RUST);
+            g.fill([10, 9, 12], [22, 10, 20], DARK);
+            g.fill([9, 3, 10], [23, 5, 22], STEEL);
+            g.fill([11, 10, 13], [15, 13, 16], HOT);
+            g.fill([16, 10, 14], [20, 14, 18], BRASS);
+            g.fill([13, 10, 17], [18, 12, 20], HOT);
+            g.fill([18, 12, 12], [21, 15, 15], RUST);
+        }
+        // Sludge: a glass jar of it, lidded.
+        "goo" => {
+            post(g, 16.0, 16.0, 0, 16, 5.5, GLASS);
+            post(g, 16.0, 16.0, 1, 13, 4.6, GOO);
+            post(g, 16.0, 16.0, 16, 19, 4.4, DARK);
+            post(g, 16.0, 16.0, 19, 20, 2.4, STEEL);
+        }
+        // The bore's feed: a core of cutting light in a steel cage.
+        "bore" => {
+            post(g, 16.0, 16.0, 0, 3, 5.0, DARK);
+            post(g, 16.0, 16.0, 3, 19, 3.0, PLASMA);
+            post(g, 16.0, 16.0, 19, 22, 5.0, DARK);
+            for (dx, dz) in [(1.0f32, 0.0f32), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0)] {
+                post(g, 16.0 + dx * 4.0, 16.0 + dz * 4.0, 3, 19, 0.9, STEEL);
+            }
+        }
+        // A cell for the pulse gun: a dark can with lit windows and copper
+        // at its ends.
+        "cells" => {
+            post(g, 16.0, 16.0, 0, 18, 4.5, DARK);
+            for y in [4, 9, 14] {
+                post(g, 16.0, 16.0, y, y + 2, 4.9, PULSE);
+            }
+            post(g, 16.0, 16.0, 18, 20, 2.6, COPPER);
+            post(g, 16.0, 16.0, 20, 22, 1.4, COPPER);
+        }
+        // Razor discs, a stack of them on a bright plastic spindle.
+        "discs" => {
+            for k in 0..4 {
+                let y = 2 + 3 * k;
+                for z in 4..28 {
+                    for x in 4..28 {
+                        let (dx, dz) = (x as f32 + 0.5 - 16.0, z as f32 + 0.5 - 16.0);
+                        let r = (dx * dx + dz * dz).sqrt();
+                        if (3.0..=9.0).contains(&r) {
+                            g.fill([x, y, z], [x + 1, y + 2, z + 1], if r > 7.5 { EDGE } else { STEEL });
+                        }
+                    }
+                }
+            }
+            post(g, 16.0, 16.0, 0, 16, 2.2, PLASTIC);
+            post(g, 16.0, 16.0, 16, 18, 3.0, PLASTIC_B);
+        }
+        // Sniper rounds: three long ones stood in a clip.
+        "sniper" => {
+            g.fill([9, 0, 13], [23, 4, 19], BLACK);
+            for cx in [11.5f32, 16.0, 20.5] {
+                post(g, cx, 16.0, 4, 18, 1.6, BRASS);
+                post(g, cx, 16.0, 18, 24, 1.2, COPPER);
+                post(g, cx, 16.0, 24, 26, 0.7, COPPER);
+            }
+            post(g, 16.0, 16.0, 2, 3, 6.0, PLASMA);
+        }
+        // Bullets: an ammunition can with a row of rounds standing out of it.
+        _ => {
+            g.fill([9, 0, 12], [23, 9, 20], OLIVE);
+            g.fill([9, 7, 12], [23, 9, 20], DARK);
+            g.fill([8, 3, 11], [24, 4, 21], BRASS);
+            for cx in [11.0f32, 14.0, 17.0, 20.0] {
+                post(g, cx + 0.5, 16.0, 9, 15, 1.3, BRASS);
+                post(g, cx + 0.5, 16.0, 15, 18, 0.9, COPPER);
+            }
+            g.fill([10, 9, 15], [22, 10, 17], HOT);
+        }
+    }
 }
 
 /// A rocket as it flies: a body, a nose, four fins and a flame behind, laid
@@ -308,7 +451,14 @@ fn bolt(g: &mut Grid) {
 }
 
 /// A round rod down the z axis: the shape nearly everything on a gun is.
+/// Up to 3 voxels across it is drawn as a smooth tube (`Grid::rod`, threads
+/// in mesh/lean.rs): barrels, prongs, teeth, plungers. Fatter ones (drums,
+/// tanks, sleeves) stay a circle of voxels, which reads as round at that size.
 fn rod(g: &mut Grid, cx: f32, cy: f32, z0: i32, z1: i32, r: f32, c: u8) {
+    if r <= 3.0 {
+        g.rod([cx, cy, z0 as f32], [cx, cy, z1 as f32], r, c);
+        return;
+    }
     let lo = (cx - r).floor() as i32;
     let hi = (cx + r).ceil() as i32;
     let ly = (cy - r).floor() as i32;

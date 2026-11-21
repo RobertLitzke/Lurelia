@@ -1,6 +1,6 @@
 {
   "name": "lime_beach",
-  "version": 2,
+  "version": 3,
   "introduced_by": "jadewater",
   "notes": "White lime-sand beaches at the foot of the jungle and round the towers.",
   "priority": 6,
@@ -20,7 +20,8 @@
     {"creature": "heron", "count": 5},
     {"creature": "sea_turtle", "count": 2},
     {"creature": "gull", "count": 4},
-    {"creature": "glossy_starling", "count": 20}
+    {"creature": "glossy_starling", "count": 20},
+    {"creature": "jewel_kingfisher", "count": 2}
   ],
   "collectibles": [{"item": "seashell", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}]
 }

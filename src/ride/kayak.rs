@@ -492,7 +492,7 @@ mod tests {
         assert_eq!(p.ride.mode, Mode::Foot);
         let (boat, _) = p.ride.moored.unwrap_or_else(|| panic!("the kayak was not left moored: {:?} {:?}", p.pos, p.ride.note));
         let dt = 1.0 / 60.0;
-        let mut step = |p: &mut Rider, input: MoveInput, secs: f32| {
+        let step = |p: &mut Rider, input: MoveInput, secs: f32| {
             for _ in 0..(secs / dt) as i32 {
                 p.update(&input, &s, 20.0, (20.0, glam::Vec2::ZERO), false, dt);
             }

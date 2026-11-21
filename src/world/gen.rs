@@ -145,6 +145,10 @@ pub struct Tree {
     /// Its flower material, 0 where it has none: the blobs wearing it are its
     /// blossom, which is stripped out of its flowering season.
     pub flower: u8,
+    /// Limbs thinner than this radius, metres, are sticks: drawn as one thin
+    /// line of voxels and meshed as a smooth tube along their own line
+    /// (stamp.rs, mesh/lean.rs), whatever the bark. 0 for none.
+    pub sticks: f32,
 }
 
 pub const NO_PLANT: u16 = u16::MAX;
@@ -182,6 +186,10 @@ pub struct Generator {
 /// the generated ground rather than a set of voxel edits, for two reasons:
 /// nothing of it can end up in somebody's save, and the plant being previewed
 /// is drawn after it, so the platform cannot cut the tree in half.
+/// How far round the EDIT page's platform the ground is cut back, metres.
+/// Inside the eight the studio regenerates beyond its edge (`studio.rs`).
+pub const STUDIO_BANK_M: f32 = 6.0;
+
 #[derive(Clone, Copy, Debug)]
 pub struct StudioFloor {
     /// The middle, in metres.
@@ -191,8 +199,6 @@ pub struct StudioFloor {
     pub half_m: f32,
     /// The top of the platform, metres.
     pub top_m: f32,
-    /// How far above it is cleared, metres.
-    pub clear_m: f32,
     /// The two greys: the field and the grid lines.
     pub pale: u8,
     pub dark: u8,
@@ -214,9 +220,12 @@ impl StudioFloor {
         self.block != 0 && (x - self.block_x).abs() <= self.block_m && (z - self.block_z).abs() <= self.block_m
     }
 
-    /// Whether (x, z) is on the platform.
-    pub fn holds(&self, x: f32, z: f32) -> bool {
-        (x - self.x).abs() <= self.half_m && (z - self.z).abs() <= self.half_m
+
+    /// How far (x, z) is outside the platform's square, metres; 0 on it.
+    pub fn outside(&self, x: f32, z: f32) -> f32 {
+        let dx = ((x - self.x).abs() - self.half_m).max(0.0);
+        let dz = ((z - self.z).abs() - self.half_m).max(0.0);
+        dx.hypot(dz)
     }
 
     /// The grey at (x, z): a line every two metres, a heavier one every ten,
@@ -562,6 +571,7 @@ impl Generator {
                     flare: 0.0,
                     autumn: 0,
                     flower: 0,
+                    sticks: 0.0,
                     pos: base,
                     kind,
                     trunk_h,
@@ -592,6 +602,7 @@ impl Generator {
                     flare: 0.0,
                     autumn: 0,
                     flower: 0,
+                    sticks: 0.0,
                     pos: base,
                     kind,
                     trunk_h,
@@ -634,6 +645,7 @@ impl Generator {
                     flare: 0.0,
                     autumn: 0,
                     flower: 0,
+                    sticks: 0.0,
                     pos: base,
                     kind,
                     trunk_h,
@@ -671,12 +683,201 @@ impl Generator {
         out
     }
 
+    /// The plants near column `key` whose stems are thin tubes (canes,
+    /// spurs: a `tube` bark), for `threads`.
+    pub fn tube_trees(&self, key: ColKey) -> Vec<Tree> {
+        let step = 1i32 << key.lod;
+        let (x0, z0) = (key.x * CHUNK * step, key.z * CHUNK * step);
+        let pad = |v: i32, k: i32| (v + k * step) as f32 * VOXEL;
+        let mut out = self.trees_near(pad(x0, -(M as i32)), pad(z0, -(M as i32)), pad(x0, CHUNK + M as i32), pad(z0, CHUNK + M as i32));
+        out.retain(|t| !t.branches.is_empty() && matches!(t.kind, TreeKind::Broad | TreeKind::Birch | TreeKind::Pine) && (matlib::tubes(t.bark) || t.sticks > 0.0));
+        out
+    }
+
+    /// The threads (mesh/lean.rs) of chunk `cy` of column `key`: each leaning
+    /// limb of `trees` (from `tube_trees`) that passes near it, in the padded
+    /// chunk's voxel coordinates. The hull is the radius stamp.rs draws a
+    /// tube limb to, so the thread covers exactly the voxels of its stem.
+    pub fn threads(trees: &[Tree], key: ColKey, cy: i32) -> Vec<crate::mesh::Thread> {
+        let step = 1i32 << key.lod;
+        let vsize = VOXEL * step as f32;
+        let base = Vec3::new((key.x * CHUNK - M as i32) as f32, (cy * CHUNK - MY as i32) as f32, (key.z * CHUNK - M as i32) as f32);
+        let to = |p: Vec3| p / vsize - base;
+        let (lo, hi) = (Vec3::splat(-1.0), Vec3::new(PAD as f32 + 1.0, PADY as f32 + 1.0, PAD as f32 + 1.0));
+        let mut out = Vec::new();
+        for t in trees {
+            // A tube-barked plant's limbs are all threads, of any tube
+            // material; another plant's sticks (limbs under `sticks`) are
+            // threads of its bark, which its trunk is made of too (`lone`).
+            let tube = matlib::tubes(t.bark);
+            // A deciduous tree in leaf hides its twigs: their thin line of
+            // voxels stays, but the tubes wait for the leaves to fall.
+            let hidden = !tube && t.autumn != AIR && t.leaf != AIR;
+            for &(a, b, r) in &t.branches {
+                if !tube && (hidden || r >= t.sticks) {
+                    continue;
+                }
+                let (pa, pb) = (to(a), to(b));
+                let hull = r.max(0.62 * vsize) / vsize;
+                let rv = r / vsize;
+                if rv > crate::mesh::THREAD_MAX_R || pa.max(pb).cmplt(lo - hull).any() || pa.min(pb).cmpgt(hi + hull).any() {
+                    continue;
+                }
+                // Straight up or along an axis: the voxel faces' own bevel
+                // already draws it round.
+                let d = (pb - pa).normalize_or_zero();
+                if d.abs().max_element() > 0.995 {
+                    continue;
+                }
+                out.push(crate::mesh::Thread { a: pa, b: pb, r: rv, hull, mat: if tube { 0 } else { t.bark }, lone: !tube });
+            }
+        }
+        out
+    }
+
+    /// All the threads of chunk `cy` of column `key`: thin plant stems (from
+    /// `tube_trees`) and thin route rails.
+    pub fn chunk_threads(&self, trees: &[Tree], key: ColKey, cy: i32) -> Vec<crate::mesh::Thread> {
+        let mut out = Self::threads(trees, key, cy);
+        self.rail_threads(key, cy, &mut out);
+        self.structure_threads(key, cy, &mut out);
+        out
+    }
+
+    /// The `segment` pieces of the structures placed near chunk `cy` of
+    /// column `key` (rigging, spokes, braces), turned and moved as the
+    /// structure is (`draw_structures`), as threads.
+    fn structure_threads(&self, key: ColKey, cy: i32, out: &mut Vec<crate::mesh::Thread>) {
+        let Some(w) = &self.world else { return };
+        let step = 1i32 << key.lod;
+        let vsize = VOXEL * step as f32;
+        let base = Vec3::new((key.x * CHUNK - M as i32) as f32, (cy * CHUNK - MY as i32) as f32, (key.z * CHUNK - M as i32) as f32);
+        let (x0, z0) = ((base.x - 1.0) * vsize, (base.z - 1.0) * vsize);
+        let (x1, z1) = ((base.x + PAD as f32 + 1.0) * vsize, (base.z + PAD as f32 + 1.0) * vsize);
+        for k in w.placed_near(x0, z0, x1, z1) {
+            if w.shown.get(k as usize).is_some_and(|s| !s.load(std::sync::atomic::Ordering::Relaxed)) {
+                continue;
+            }
+            let p = &w.placed[k as usize];
+            let s = &w.shapes[p.shape];
+            if s.threads.is_empty() {
+                continue;
+            }
+            let (sx, sz) = (s.size[0] as f32, s.size[2] as f32);
+            // Local voxel units to the chunk's padded voxels: the quarter
+            // turn of `shape::rotate`, taken on continuous coordinates.
+            let to = |q: [f32; 3]| {
+                let (rx, rz) = match p.rot & 3 {
+                    0 => (q[0], q[2]),
+                    1 => (sz - q[2], q[0]),
+                    2 => (sx - q[0], sz - q[2]),
+                    _ => (q[2], sx - q[0]),
+                };
+                let world = Vec3::new(p.origin[0] as f32 + rx, p.origin[1] as f32 + q[1], p.origin[2] as f32 + rz) / VPM;
+                world / vsize - base
+            };
+            let scale = 1.0 / step as f32;
+            for t in &s.threads {
+                let (a, b) = (to(t.a), to(t.b));
+                let hull = t.hull * scale + if step > 1 { 0.5 } else { 0.0 };
+                let lo = a.min(b) - Vec3::splat(hull);
+                let hi = a.max(b) + Vec3::splat(hull);
+                if hi.x < 0.0 || hi.y < 0.0 || hi.z < 0.0 || lo.x > PAD as f32 || lo.y > PADY as f32 || lo.z > PAD as f32 {
+                    continue;
+                }
+                let r = t.r * scale;
+                let d = (b - a).normalize_or_zero();
+                if r > crate::mesh::THREAD_MAX_R || d.abs().max_element() > 0.9999 {
+                    continue;
+                }
+                out.push(crate::mesh::Thread { a, b, r, hull, mat: t.mat, lone: false });
+            }
+        }
+    }
+
+    /// The thin rails of the routes passing chunk `cy` of column `key` (wire
+    /// fences, rope handlines, guard rails: rails no thicker than THIN_RAIL
+    /// either way), as threads along their centrelines. A rail that follows
+    /// the ground is sampled every half metre.
+    fn rail_threads(&self, key: ColKey, cy: i32, out: &mut Vec<crate::mesh::Thread>) {
+        use super::route::kit::{Ground, Side};
+        const THIN_RAIL: f32 = 0.4;
+        let Some(w) = &self.world else { return };
+        if w.ribbons.is_empty() {
+            return;
+        }
+        let step = 1i32 << key.lod;
+        let vsize = VOXEL * step as f32;
+        let base = Vec3::new((key.x * CHUNK - M as i32) as f32, (cy * CHUNK - MY as i32) as f32, (key.z * CHUNK - M as i32) as f32);
+        let to = |p: Vec3| p / vsize - base;
+        let (x0, z0) = ((base.x - 1.0) * vsize, (base.z - 1.0) * vsize);
+        let (x1, z1) = ((base.x + PAD as f32 + 1.0) * vsize, (base.z + PAD as f32 + 1.0) * vsize);
+        let (y0, y1) = ((base.y - 1.0) * vsize, (base.y + PADY as f32 + 1.0) * vsize);
+        for id in w.ribbons.near(x0, z0, x1, z1) {
+            let Some(s) = w.ribbons.segs.get(id as usize) else { continue };
+            let kit = &w.ribbons.kits[s.kit as usize];
+            let follow = kit.ground == Ground::Follow;
+            if !follow && (s.a.y.min(s.b.y) + kit.rise + 1.0 < y0 || s.a.y.max(s.b.y) - kit.drop - 1.0 > y1) {
+                continue;
+            }
+            let (a2, b2) = (glam::Vec2::new(s.a.x, s.a.z), glam::Vec2::new(s.b.x, s.b.z));
+            let len = a2.distance(b2);
+            if len < 1e-3 {
+                continue;
+            }
+            let dir = (b2 - a2) / len;
+            let left = glam::Vec2::new(dir.y, -dir.x);
+            for r in &kit.rails {
+                let tall = r.to - r.from;
+                if r.mat == 0 || r.thick > THIN_RAIL || tall > THIN_RAIL {
+                    continue;
+                }
+                // Where the rail sits across the line (kit.rs `band`).
+                let mid = (kit.half + r.out).max(0.0) + r.thick * 0.5;
+                let sides: &[f32] = match r.side {
+                    Side::Centre => &[0.0],
+                    Side::Left => &[1.0],
+                    Side::Right => &[-1.0],
+                    Side::Both => &[1.0, -1.0],
+                };
+                let up = (r.from + r.to) * 0.5;
+                let rv = (r.thick.min(tall) * 0.5) / vsize;
+                let hull = (r.thick.hypot(tall) * 0.5) / vsize + 0.75;
+                for &sg in sides {
+                    let off = left * sg * mid;
+                    let n = if follow { (len / 0.5).ceil().max(1.0) as usize } else { 1 };
+                    let at = |k: usize| {
+                        let t = k as f32 / n as f32;
+                        let p = a2 + (b2 - a2) * t + off;
+                        let y = if follow { self.column(p.x, p.y).h } else { s.a.y + (s.b.y - s.a.y) * t };
+                        Vec3::new(p.x, y + up, p.y)
+                    };
+                    let mut prev = to(at(0));
+                    for k in 1..=n {
+                        let next = to(at(k));
+                        let lo = prev.min(next) - Vec3::splat(hull);
+                        let hi = prev.max(next) + Vec3::splat(hull);
+                        let d = (next - prev).normalize_or_zero();
+                        let inside = hi.x >= 0.0 && hi.y >= 0.0 && hi.z >= 0.0 && lo.x <= PAD as f32 && lo.y <= PADY as f32 && lo.z <= PAD as f32;
+                        // Dead straight along an axis: its voxels are already a
+                        // clean bar. Anything off it, however slightly, steps.
+                        if inside && d.abs().max_element() <= 0.9999 {
+                            out.push(crate::mesh::Thread { a: prev, b: next, r: rv, hull, mat: r.mat, lone: false });
+                        }
+                        prev = next;
+                    }
+                }
+            }
+        }
+    }
+
     fn trees_grown(&self, x0: f32, z0: f32, x1: f32, z1: f32) -> Vec<Tree> {
         // The EDIT page's plant, if it stands in this box, drawn after the
         // world's own so it is never hidden by them.
         let studio = |mut out: Vec<Tree>| -> Vec<Tree> {
             if let Some(f) = *self.studio_floor.read().unwrap() {
-                out.retain(|t| !f.holds(t.pos.x, t.pos.z));
+                // Off the cut bank as well: its ground is gone from under it.
+                out.retain(|t| f.outside(t.pos.x, t.pos.z) > STUDIO_BANK_M);
             }
             let list = self.studio.read().unwrap();
             if !list.is_empty() {
@@ -976,6 +1177,19 @@ impl Generator {
             lo = lo.min(rlo);
             hi = hi.max(rhi).max(hi + follow);
         }
+        // Skeletons (event `skeleton`): bones standing over or buried under
+        // these columns widen the chunks that must be built.
+        let bone_items = match &self.world {
+            Some(w) if !w.bones.is_empty() => {
+                let (list, blo, bhi) = w.bones.near(pad_x0, pad_z0, pad_x1, pad_z1);
+                if !list.is_empty() {
+                    lo = lo.min(blo);
+                    hi = hi.max(bhi);
+                }
+                list
+            }
+            _ => Vec::new(),
+        };
         // Tunnels under this column: the chunks they pass through must be built.
         let tubes: Vec<super::fields::Tube> = self
             .world
@@ -1155,6 +1369,9 @@ impl Generator {
                 {
                     any_solid = true;
                 }
+                if !bone_items.is_empty() && w.bones.draw(&bone_items, &mut v[..], Vec3::new(pad_x0, y0m, pad_z0), vsize, PAD, PADY, pidx, sea) {
+                    any_solid = true;
+                }
             }
             // The EDIT page's studio floor, over everything the world put
             // here and under the plant it is showing.
@@ -1166,12 +1383,28 @@ impl Generator {
                     for px in 0..PAD {
                         let xm = pad_x0 + (px as f32 + 0.5) * vsize;
                         let zm = pad_z0 + (pz as f32 + 0.5) * vsize;
-                        if !f.holds(xm, zm) {
+                        // Round the platform the hill is cut back at one in
+                        // one, so on a slope its uphill edge is a bank rather
+                        // than a wall of cut ground standing over the floor.
+                        let out = f.outside(xm, zm);
+                        if out > STUDIO_BANK_M {
+                            continue;
+                        }
+                        if out > 0.0 {
+                            for py in 0..PADY {
+                                let ym = fy0 + (py as f32 + 0.5) * vsize;
+                                if ym > f.top_m + out {
+                                    v[pidx(px, py, pz)] = AIR;
+                                }
+                            }
                             continue;
                         }
                         for py in 0..PADY {
                             let ym = fy0 + (py as f32 + 0.5) * vsize;
-                            if ym > f.top_m + f.clear_m || ym <= f.top_m - vsize {
+                            // Everything over the floor is cleared: clearing
+                            // only five metres of it left the hill hanging
+                            // over the uphill end of the platform on a slope.
+                            if ym <= f.top_m - vsize {
                                 continue;
                             }
                             let m = if ym > f.top_m {

@@ -15,7 +15,7 @@
 //! overlap a stale one stay hidden until then. Coarse and fine terrain never draw
 //! over each other and the ground never has holes.
 
-use crate::mesh::{mesh_chunk_h, sprites, Mesh};
+use crate::mesh::{mesh_chunk_t, sprites, Mesh};
 use crate::util::{FxHashMap as HashMap, FxHashSet as HashSet};
 use crate::world::gen::*;
 use crate::world::store::{Store, Voxels};
@@ -127,6 +127,19 @@ pub struct StreamStats {
 /// Free voxel chunks on a background thread. Unloading a few hundred columns
 /// at once (turning, or moving fast) freed thousands of 32 KB boxes on the
 /// main thread, 25 to 55 ms in one frame.
+/// The `full_box` for a match: the box round its walk graph, padded 12 m, if
+/// it is no bigger than an arena. Past `full_m` from the player there is
+/// otherwise no floor in the store, and a bot or a respawn at the far base
+/// of a map wider than that (Starfall) stands on nothing.
+pub fn arena_box(nav: &crate::world::fields::NavDef) -> Option<[f32; 4]> {
+    let mut b = [f32::MAX, f32::MAX, f32::MIN, f32::MIN];
+    for n in &nav.nodes {
+        b = [b[0].min(n.at[0]), b[1].min(n.at[1]), b[2].max(n.at[0]), b[3].max(n.at[1])];
+    }
+    const PAD_M: f32 = 12.0;
+    (b[0] <= b[2] && b[2] - b[0] < 400.0 && b[3] - b[1] < 400.0).then(|| [b[0] - PAD_M, b[1] - PAD_M, b[2] + PAD_M, b[3] + PAD_M])
+}
+
 fn free_later(dead: Vec<Voxels>) {
     static TX: std::sync::OnceLock<Sender<Vec<Voxels>>> = std::sync::OnceLock::new();
     if dead.is_empty() {
@@ -153,6 +166,10 @@ pub struct Streamer {
     pub view_m: f32,
     /// The radius of full detail (level 0), at most the view distance.
     pub full_m: f32,
+    /// A box (min x, min z, max x, max z, metres) kept at full detail however
+    /// far the player is from it: a match's arena, so a bot or a respawn at
+    /// the far end of a map wider than `full_m` has a floor to stand on.
+    pub full_box: Option<[f32; 4]>,
     roots: Vec<ColKey>,
     max_lod: u8,
     chunk_versions: HashMap<(i32, i32, i32), u32>,
@@ -205,6 +222,7 @@ impl Streamer {
             last_center: None,
             view_m,
             full_m: view_m.min(FULL_DETAIL_M),
+            full_box: None,
             roots,
             max_lod,
             chunk_versions: HashMap::default(),
@@ -343,7 +361,11 @@ impl Streamer {
 
     fn visit(&self, k: ColKey, p: Vec3, out: &mut HashSet<ColKey>) {
         let reach = if k.lod == 1 { self.full_m } else { self.view_m * (1u32 << k.lod.saturating_sub(1)) as f32 };
-        if k.lod > 0 && k.dist_m(p.x, p.z) < reach {
+        let held = self.full_box.is_some_and(|[x0, z0, x1, z1]| {
+            let (lo, hi) = k.footprint_m();
+            lo.x < x1 && hi.x > x0 && lo.y < z1 && hi.y > z0
+        });
+        if k.lod > 0 && (k.dist_m(p.x, p.z) < reach || held) {
             for c in k.children() {
                 self.visit(c, p, out);
             }
@@ -750,9 +772,12 @@ fn worker(s: Arc<Shared>, tx: Sender<JobResult>) {
                 };
                 let mut chunks = Vec::with_capacity(8);
                 let edits = if local.is_empty() { None } else { Some(&local) };
+                // Thin leaning stems are drawn along their own lines (mesh/lean.rs).
+                let tube_trees = s.gen.tube_trees(key);
                 let (solid_below, count) = s.gen.gen_column_with(key, edits, &mut scratch, |cy, padded, colh| {
+                    let threads = s.gen.chunk_threads(&tube_trees, key, cy);
                     // Leaf blocks on the two finest levels (mesh.rs module notes).
-                    mesh_chunk_h(padded, smooth, Some(colh), key.lod <= 1, &mut mesh);
+                    mesh_chunk_t(padded, smooth, Some(colh), key.lod <= 1, &threads, &mut mesh);
                     // Every level scatters: the coarse ones carry only the far
                     // cover (sprites.rs), which is what keeps the distance
                     // from being bare ground. Its cells and its cards are in
@@ -790,7 +815,9 @@ fn worker(s: Arc<Shared>, tx: Sender<JobResult>) {
                         colh[pz * PAD + px] = s.gen.ground_vox(x, z) - (chunk.1 * 32 - MY as i32) as f32;
                     }
                 }
-                mesh_chunk_h(&padded, smooth, Some(&colh), true, &mut mesh);
+                let key = crate::world::gen::ColKey { lod: 0, x: chunk.0, z: chunk.2 };
+                let threads = s.gen.chunk_threads(&s.gen.tube_trees(key), key, chunk.1);
+                mesh_chunk_t(&padded, smooth, Some(&colh), true, &threads, &mut mesh);
                 (mesh.sprite_fill, mesh.sprite_grass, mesh.sprite_patch, mesh.sprite_stalk) = sprites::scatter(
                     &padded,
                     smooth,

@@ -1,0 +1,15 @@
+{
+  "name": "drowned_pole",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "A drowned spruce that has lost its limbs: a bare silver pole, broken off high, a few stubs left.",
+  "form": "snag",
+  "height": [8.0, 18.0],
+  "trunk_radius": [0.2, 0.3],
+  "crown_radius": [0.8, 1.4],
+  "bark": "drowned_wood",
+  "max_slope": 1.0,
+  "lean": 0.06,
+  "standing_water": [-2.5, 3.5],
+  "affords": ["perch"]
+}

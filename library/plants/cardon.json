@@ -1,0 +1,12 @@
+{
+  "name": "cardon",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "cactus: Cardon: the tallest of the columnar cacti, grey-green and deep-ribbed, its arms leaving the trunk low and climbing beside it like organ pipes. On the gravel fans with the saguaros.",
+  "form": "cactus",
+  "height": [6.0, 13.0],
+  "trunk_radius": [0.5, 0.65],
+  "crown_radius": [1.2, 1.2],
+  "bark": "cardon_skin",
+  "max_slope": 0.8
+}

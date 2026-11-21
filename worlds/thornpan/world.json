@@ -1,23 +1,43 @@
 {
   "name": "thornpan",
+  "blurb": "An inland delta in a dry country: the flood comes down into the savanna and the herds follow it.",
   "size_m": 1536,
-  "height_m": 96,
+  "height_m": 128,
   "sea_level_m": 20,
-  "underwater": {"visibility": 5, "light": 0.3},
+  "underwater": {
+    "visibility": 5,
+    "light": 0.3
+  },
   "seed": 1964,
-  "sun": {"latitude": 30},
-  "seeds": 1,
+  "sun": {
+    "latitude": 30
+  },
   "rock": [
-    ["granite", 1.0]
+    [
+      "granite",
+      1.0
+    ]
   ],
   "strata": [
-    ["granite", 0],
-    ["barnacle_crust", 45.4],
-    ["granite", 46.6]
+    [
+      "granite",
+      0
+    ],
+    [
+      "barnacle_crust",
+      45.4
+    ],
+    [
+      "granite",
+      46.6
+    ]
   ],
-  "spawn": [866, 540],
+  "spawn_at": "overlook",
   "spawn_bearing": 232,
-  "seasons": ["summer", "winter"],
+  "seasons": [
+    "summer",
+    "winter"
+  ],
   "start_season": "summer",
   "weather": {
     "sun": 1.6,
@@ -34,10 +54,26 @@
   "weathering": 0.6,
   "moss": 0.1,
   "water": {
-    "shallow": [150, 178, 168],
-    "deep": [46, 92, 96]
+    "shallow": [
+      150,
+      178,
+      168
+    ],
+    "deep": [
+      46,
+      92,
+      96
+    ]
   },
-  "modes": ["walk", "glide", "climb", "rope", "kayak", "screenshot", "camera"],
+  "modes": [
+    "walk",
+    "glide",
+    "climb",
+    "rope",
+    "kayak",
+    "screenshot",
+    "camera"
+  ],
   "biomes": [
     "golden_savanna",
     "flood_meadow",
@@ -45,6 +81,7 @@
     "kopje_rock",
     "gallery_forest",
     "pan_floor",
-    "delta_shallows"
+    "delta_shallows",
+    "salt_shore"
   ]
 }

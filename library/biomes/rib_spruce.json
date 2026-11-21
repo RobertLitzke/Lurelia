@@ -1,0 +1,36 @@
+{
+  "name": "rib_spruce",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The strip of Sitka spruce behind the dunes: dark, wet, mossy, fern underneath.",
+  "priority": 3,
+  "rules": {"elev": [3, 200], "coast": [420, 5000]},
+  "surface": "pine_duff",
+  "subsurface": "dirt",
+  "map_color": [42, 66, 54],
+  "plants": [
+    {"plant": "sitka_spruce", "density": 0.028, "placement": {"verb": "clustered", "params": {"size": 40}}},
+    {"plant": "shore_pine", "density": 0.004, "placement": {"verb": "edge", "params": {"width": 24, "inner": 0.002}}},
+    {"plant": "salal", "density": 0.06, "placement": {"verb": "clustered", "params": {"size": 16}}},
+    {"plant": "huckleberry", "density": 0.02, "placement": {"verb": "clustered", "params": {"size": 14}}},
+    {"plant": "fern", "density": 0.05, "placement": {"verb": "clustered", "params": {"size": 12}}},
+    {"plant": "sapling_fir", "density": 0.006, "placement": {"verb": "clustered", "params": {"size": 16}}},
+    {"plant": "snag", "density": 0.0008, "placement": {"verb": "lone", "params": {"spacing": 30}}},
+    {"plant": "tree_moss", "density": 0.4, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "alder", "density": 0.01, "placement": {"verb": "riparian", "params": {"width": 14}}},
+    {"plant": "red_osier", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 10}}}
+  ],
+  "features": [
+    {"structure": "mossy_log", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "fallen_trunk", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "elk", "count": 5},
+    {"creature": "raven", "count": 2},
+    {"creature": "douglas_squirrel", "count": 4},
+    {"creature": "great_horned_owl", "count": 1},
+    {"creature": "deer", "count": 3},
+    {"creature": "eagle", "count": 2}
+  ],
+  "collectibles": []
+}

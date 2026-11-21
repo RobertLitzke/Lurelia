@@ -1,0 +1,16 @@
+{
+  "name": "rib_mat",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Mats of white and orange bacteria on the silt closest to the bone.",
+  "priority": 7,
+  "rules": {"underwater": true, "region": "mat"},
+  "surface": "bacterial_mat",
+  "subsurface": "sand",
+  "fringe": 5,
+  "map_color": [200, 170, 140],
+  "plants": [],
+  "features": [],
+  "creatures": [],
+  "collectibles": []
+}

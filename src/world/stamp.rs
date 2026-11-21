@@ -79,8 +79,29 @@ fn woody(t: &Tree, v: &mut [u8; PAD3], o: Vec3, vsize: f32, leaf_seed: u32) -> b
     // yields no leaf surface at all and the bark behind it shows through
     // the crown. Both passes below take their numbers from here.
     let tree = t.trunk_r >= 0.12;
-    let snap = |m: f32| if tree { (m / vsize).round() * vsize } else { m };
-    let stem_min: f32 = if tree { 0.19 } else { 0.0 };
+    // Past full detail a trunk centred on a voxel corner needs a radius of
+    // 0.71 voxels to reach the four voxel centres round it, and a thinner
+    // one (a drowned spruce's 0.3 m at 0.5 m or 1 m voxels) drew nothing,
+    // leaving its limbs, which grow with the voxel, floating in the air.
+    // Such a trunk is centred on a voxel instead and is at least that one
+    // column.
+    let slim = tree && vsize > 0.3 && t.trunk_r < 0.75 * vsize;
+    let snap = |m: f32| {
+        if slim {
+            ((m / vsize).floor() + 0.5) * vsize
+        } else if tree {
+            (m / vsize).round() * vsize
+        } else {
+            m
+        }
+    };
+    let stem_min: f32 = if slim {
+        0.55 * vsize
+    } else if tree {
+        0.19
+    } else {
+        0.0
+    };
     let c = Vec3::new(snap(t.pos.x), t.pos.y, snap(t.pos.z));
     // Root flare: lobes like buttress roots, gone by a few metres up.
     let flare_h = (t.flare * 4.0).max(1.0);
@@ -192,7 +213,22 @@ fn woody(t: &Tree, v: &mut [u8; PAD3], o: Vec3, vsize: f32, leaf_seed: u32) -> b
                 // coarser levels they grow with the voxel, or a limb thinner
                 // than a voxel falls apart into floating pieces.
                 let (thin, chain) = (0.8 * vsize, 0.72 * vsize);
+                // A thin stem (`tube` bark: canes, bamboo) is drawn as one
+                // line of voxels, joined at their corners where it leans:
+                // the mesher fits a slanted tube through such a line
+                // (mesh/lean.rs), and the face-connected chain below would
+                // make it two or three voxels thick on a diagonal.
+                // So is a limb thinner than the plant's `thin_limbs` (sticks),
+                // whatever its bark.
+                let tube = matlib::tubes(t.bark);
                 for &(a, b, r) in &t.branches {
+                    if tube || r < t.sticks {
+                        let rr = r.max(0.62 * vsize);
+                        let pad = Vec3::splat(rr + 0.05);
+                        let wood = matlib::grained(t.bark, matlib::Axis::of(b - a));
+                        raster(a.min(b) - pad, a.max(b) + pad, v, &|p: Vec3| if seg_dist2(p, a, b) < rr * rr { wood } else { AIR });
+                        continue;
+                    }
                     let pad = Vec3::splat(if vsize > 0.3 { r.max(chain) + 0.05 } else { r + 0.05 });
                     // Grain along the limb (matlib::grained).
                     let wood = matlib::grained(t.bark, matlib::Axis::of(b - a));

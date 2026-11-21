@@ -1,0 +1,47 @@
+{
+  "name": "fynbos",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The fynbos on the range: a low grey-green fleece of heath and restio reed with proteas standing out of it, pincushions in the open and rock showing through everywhere.",
+  "priority": 9,
+  "rules": {"elev": [20, 400], "slope": [0, 1.0]},
+  "surface": "fynbos_grass",
+  "subsurface": "dirt",
+  "rock": "quartzite",
+  "map_color": [118, 126, 100],
+  "plants": [
+    {
+      "plant": "heather",
+      "density": 0.09,
+      "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.0, "max": 1.0}}
+    },
+    {
+      "plant": "restio",
+      "density": 0.08,
+      "placement": {"verb": "clustered", "params": {"size": 12, "min": 0.1, "max": 1.0}}
+    },
+    {
+      "plant": "protea",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 24, "min": 0.2, "max": 1.0}}
+    },
+    {
+      "plant": "pincushion",
+      "density": 0.01,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.2, "max": 1.0}}
+    },
+    {
+      "plant": "sagebrush",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.0, "max": 1.0}}
+    },
+    {"plant": "rock_lichen", "density": 0.25, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "rock_hyrax", "count": 10},
+    {"creature": "eagle", "count": 1},
+    {"creature": "raven", "count": 2},
+    {"creature": "lizard", "count": 4},
+    {"creature": "bee", "count": 6}
+  ]
+}

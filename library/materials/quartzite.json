@@ -1,0 +1,15 @@
+{
+  "name": "quartzite",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Grey quartzite: the range's rock, hard and grainy, in thick beds with darker partings between them.",
+  "smooth": false,
+  "texture": {
+    "pattern": "strata",
+    "base": [132, 132, 130],
+    "alt": [108, 110, 112],
+    "scale": 3,
+    "contrast": 0.9,
+    "calm": {"base": [138, 138, 136], "alt": [116, 118, 120]}
+  }
+}

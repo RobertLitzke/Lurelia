@@ -1,5 +1,6 @@
 {
   "name": "redrock",
+  "blurb": "A high desert where a plateau of pine forest breaks off in red cliffs, canyons and arches.",
   "size_m": 1536,
   "height_m": 160,
   "sea_level_m": 10,
@@ -21,7 +22,7 @@
     ["pink_limestone", 100],
     ["basalt", 108]
   ],
-  "spawn": [586, 552],
+  "spawn": [486, 519],
   "spawn_bearing": 70,
   "seasons": ["spring", "summer", "autumn", "winter"],
   "start_season": "summer",

@@ -1,0 +1,16 @@
+{
+  "name": "craft_rib",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "A rib of the hull's frame lying in the fynbos, curved like a whale's, with a scrap of skin still on it.",
+  "size": [20, 12, 20],
+  "anchor": [10, 0, 10],
+  "level": false,
+  "decays": false,
+  "tags": ["wreck"],
+  "ops": [
+    {"op": "segment", "points": [[2, 1, 4], [6, 6, 8], [12, 8, 12], [18, 6, 14]], "radius": 1.0, "mat": "craft_tile"},
+    {"op": "segment", "points": [[4, 1, 14], [9, 4, 12]], "radius": 0.8, "mat": "craft_tile"},
+    {"op": "disc", "centre": [12, 3, 8], "radius": 3.5, "thick": 1, "axis": "x", "mat": "craft_skin", "yaw": 70}
+  ]
+}

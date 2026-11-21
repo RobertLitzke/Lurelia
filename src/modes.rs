@@ -120,15 +120,6 @@ pub struct ActivityCtx<'a> {
     pub edits: &'a mut Vec<([i32; 3], u8)>,
 }
 
-impl ActivityCtx<'_> {
-    /// The water surface over a point (a river's, else the sea) and the
-    /// current there, as `Player::update` wants it. The same answer
-    /// `Game::water_at` gives.
-    pub fn water_at(&self, p: glam::Vec3) -> (f32, glam::Vec2) {
-        crate::game::water_at(self.land, self.sea, self.store, p)
-    }
-}
-
 /// A way of playing layered over the walking game: screenshot mode now, a race or
 /// a shooter later. It may freeze the world, take the camera, use some
 /// actions itself and draw its own HUD. The game runs at most one; to add
@@ -159,6 +150,12 @@ pub trait Activity: Send {
     }
     /// Its HUD; `fov` is the vertical field of view in radians.
     fn hud(&self, _hud: &mut crate::render::hud::Hud, _w: f32, _h: f32, _s: f32, _fov: f32) {}
+    /// Places in the world to mark on the HUD through walls: a dropped flag,
+    /// a teammate carrying one. `Game` projects them, because it has the
+    /// camera and the activity does not (`draw_marks`).
+    fn marks(&self, _player: &crate::player::Player) -> Vec<Mark> {
+        Vec::new()
+    }
     /// Lines to draw into the world this frame (tracers, gates, sight lines).
     fn overlay(&self, _player: &crate::player::Player, _out: &mut crate::render::overlay::Overlay) {}
     /// Models to draw this frame, as `(index, instance)`. `base` is where
@@ -166,6 +163,9 @@ pub trait Activity: Send {
     /// appends them). A gun held in the camera's frame goes here rather than
     /// on the HUD, so it takes the light of the room it is in.
     fn instances(&self, _player: &crate::player::Player, _alpha: f32, _base: usize, _models: &[crate::models::Model], _out: &mut Vec<(usize, crate::models::Instance)>) {}
+    /// The same while parked behind screenshot mode: what stands in the world
+    /// (bots, pickups, flags), without anything held in the camera's frame.
+    fn parked_instances(&self, _player: &crate::player::Player, _alpha: f32, _base: usize, _models: &[crate::models::Model], _out: &mut Vec<(usize, crate::models::Instance)>) {}
     /// A line for the corner of the screen, taken once (a weapon's name, a
     /// death).
     fn note(&mut self) -> Option<String> {
@@ -199,6 +199,69 @@ pub trait Activity: Send {
     fn exit(&mut self, _player: &mut crate::player::Player) {}
 }
 
+/// A place an activity wants marked on the HUD: where, in what colour, and
+/// a word or two to go with it.
+#[derive(Clone, Debug)]
+pub struct Mark {
+    pub at: glam::Vec3,
+    pub ink: [f32; 4],
+    pub label: String,
+}
+
+/// Draw `marks` over the view: a diamond on the point with its label under
+/// it, or, for a point off the screen or behind the camera, the same pinned
+/// to the edge of the screen in the direction it lies.
+pub fn draw_marks(hud: &mut crate::render::hud::Hud, marks: &[Mark], view_proj: glam::Mat4, w: f32, h: f32, s: f32) {
+    let inset = 24.0 * s;
+    for m in marks {
+        let Some((x, y, edge)) = screen_spot(m.at, view_proj, w, h, inset) else { continue };
+        let r = (5.0 * s).floor();
+        let a = if edge { 0.7 } else { 0.9 };
+        // A diamond of three bars, which reads at a glance and is not a
+        // crosshair.
+        let ink = [m.ink[0], m.ink[1], m.ink[2], m.ink[3] * a];
+        hud.rect(x - r, y - 1.0 * s, r * 2.0, 2.0 * s, ink);
+        hud.rect(x - 1.0 * s, y - r, 2.0 * s, r * 2.0, ink);
+        hud.rect(x - r * 0.5, y - r * 0.5, r, r, [ink[0], ink[1], ink[2], ink[3] * 0.6]);
+        let tw = crate::render::hud::Hud::text_width(&m.label, s);
+        let lx = (x - tw * 0.5).clamp(2.0, w - tw - 2.0);
+        hud.label(lx + s, y + r + 2.0 * s + s, s, [0.0, 0.0, 0.0, 0.5 * a], &m.label);
+        hud.label(lx, y + r + 2.0 * s, s, ink, &m.label);
+    }
+}
+
+/// Where a point in the world falls on a `w` by `h` screen, and whether it
+/// had to be pinned to the edge to be on it at all.
+pub fn screen_spot(at: glam::Vec3, view_proj: glam::Mat4, w: f32, h: f32, inset: f32) -> Option<(f32, f32, bool)> {
+    let c = view_proj * at.extend(1.0);
+    if c.w.abs() < 1e-5 {
+        return None;
+    }
+    let behind = c.w < 0.0;
+    let (mut nx, mut ny) = (c.x / c.w, c.y / c.w);
+    if behind {
+        // Behind the camera the projection mirrors: turn it back round and
+        // push it off the screen so it is pinned to the near edge.
+        nx = -nx;
+        ny = -ny;
+        let k = 1.0 / nx.abs().max(ny.abs()).max(1e-3);
+        nx *= k * 1.5;
+        ny *= k * 1.5;
+    }
+    let (hx, hy) = (w * 0.5, h * 0.5);
+    let (mut x, mut y) = (hx + nx * hx, hy - ny * hy);
+    let off = behind || x < inset || x > w - inset || y < inset || y > h - inset;
+    if off {
+        // Along the line from the middle of the screen to the point, as far
+        // as the inset edge.
+        let (dx, dy) = (x - hx, y - hy);
+        let k = ((hx - inset) / dx.abs().max(1e-3)).min((hy - inset) / dy.abs().max(1e-3));
+        x = hx + dx * k;
+        y = hy + dy * k;
+    }
+    Some((x, y, off))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -211,5 +274,18 @@ mod tests {
         assert!(!a.has(ModeId::Glide) && !a.has(ModeId::Shooter));
         assert_eq!(bad, ["jetpack"]);
         assert!(Allowed::default().has(ModeId::Rope));
+    }
+
+    #[test]
+    fn a_mark_ahead_is_on_the_screen_and_one_behind_is_pinned_to_an_edge() {
+        let (w, h) = (1600.0, 900.0);
+        let proj = glam::Mat4::perspective_infinite_reverse_rh(1.2, w / h, 0.05);
+        let vp = proj * glam::Mat4::look_to_rh(glam::Vec3::ZERO, glam::Vec3::NEG_Z, glam::Vec3::Y);
+        let (x, y, edge) = screen_spot(glam::Vec3::new(0.0, 0.0, -10.0), vp, w, h, 20.0).unwrap();
+        assert!(!edge && (x - 800.0).abs() < 1.0 && (y - 450.0).abs() < 1.0, "straight ahead drew at {x},{y}");
+        let (x, y, edge) = screen_spot(glam::Vec3::new(3.0, 0.0, 10.0), vp, w, h, 20.0).unwrap();
+        assert!(edge, "a point behind was not pinned");
+        assert!(x > 800.0, "behind and to the right was pinned to the left: {x}");
+        assert!((20.0..=w - 20.0).contains(&x) && (20.0..=h - 20.0).contains(&y));
     }
 }

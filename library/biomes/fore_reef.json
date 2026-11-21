@@ -1,6 +1,6 @@
 {
   "name": "fore_reef",
-  "version": 1,
+  "version": 2,
   "introduced_by": "underwater",
   "notes": "The fore reef: spurs of coral running down to the drop-off, the richest water on the reef: staghorn thickets, tables, plates, brain and boulder coral, sponges and fans.",
   "priority": 20,
@@ -28,7 +28,17 @@
     {"plant": "boulder_coral", "density": 0.008, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "finger_coral", "density": 0.03, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "tube_sponge", "density": 0.012, "placement": {"verb": "scatter", "params": {}}},
-    {"plant": "sea_fan", "density": 0.01, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "sea_fan", "density": 0.01, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "sea_whip",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.3, "max": 1.0}}
+    },
+    {
+      "plant": "sea_whip_violet",
+      "density": 0.01,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.3, "max": 1.0}}
+    }
   ],
   "creatures": [
     {"creature": "reef_chromis", "count": 210},
@@ -39,6 +49,8 @@
     {"creature": "parrotfish", "count": 10},
     {"creature": "grouper", "count": 4},
     {"creature": "sea_turtle", "count": 4},
-    {"creature": "reef_manta", "count": 3}
+    {"creature": "reef_manta", "count": 3},
+    {"creature": "reef_shark", "count": 2},
+    {"creature": "whale_shark", "count": 1}
   ]
 }

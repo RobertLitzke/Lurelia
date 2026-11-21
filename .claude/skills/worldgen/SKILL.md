@@ -35,8 +35,8 @@ is one file plus a registry line ("Adding an event" in `reference.md`).
    Strangeness should have a source and fade with distance from it.
 
 2. **Story to events.** List the story's events and map each to a process from
-   `reference.md` (landmass, volcano, impact, river, avulsion, settlement,
-   fire, deposit, place, abandon, region, path, ...). Every event needs a `cause`
+   `reference.md` (terrain, drainage, glaciate, volcano, impact, river,
+   avulsion, settlement, fire, deposit, place, abandon, region, path, ...). Every event needs a `cause`
    in the story's words. If the story needs a process that doesn't exist, choose
    the nearest existing one and note the missing verb for the user.
 
@@ -47,23 +47,33 @@ is one file plus a registry line ("Adding an event" in `reference.md`).
    previous world uses; make `name_v2` or a new name instead. New materials
    leave out `id`: the game gives each world its own ids at load, since
    voxels are a byte and the library holds more materials than fit at once.
-   Creature and collectible colours share 128 palette slots per world: reuse
-   exact RGB values of existing colours where you can. List
+   Each creature and collectible model has its own palette block of up to
+   192 colours, with no limit per world, so pick colours freely. List
    your biomes in `world.json` `biomes`, or every library biome competes in
-   your world (and yours in the others that lack the list). When done, run
+   your world (and yours in the others that lack the list). Write library
+   entries as JSON files directly, not from a `make_library.py`: the JSON is
+   the source, and a script run later would overwrite every hand edit made
+   since. Only an entry computed from code (a whole arena, an imported map)
+   keeps a script, and it names it in `"_generated_by"` (library/README.md,
+   "Rules"). Before editing an entry, check it has no `_generated_by`; if it
+   has, change the script instead. When done, run
    `python tools/libfmt.py --catalogue` so the files are canonical and the
    catalogue is current.
 
-4. **Write `world.json` and `chronicle.json`.** Start with the landmass and
-   large landforms, run `--gazetteer` and `--map` to see where things landed,
-   then place rivers, settlements and single structures by named `places`. You
+4. **Write `world.json` and `chronicle.json`.** Generate the land, do not
+   draw it: a `terrain` sketch, then `drainage` (and `glaciate` in ice
+   country), as Kaldvik does. Read "Layout" below first. Run `--gazetteer`
+   and `--map` to see where things landed, then place what stands on the
+   land from names the generator left or a `seat` found (`{"from": name,
+   "by": [..]}`), so it follows the land when a setting changes. You
    are bad at guessing coordinates blind: build often and read the map. The
    gazetteer ends with a height table every 64 m; `VG_PROBE=x,z,2` before
    `--gazetteer` adds a 2 m grid round one point, which is how to put a
-   structure against a canyon wall or a cliff foot. For a world with many
-   repeated events (a ring of hoodoos, a row of fins, side canyons), write a
-   small `make_chronicle.py` in the world folder that writes the JSON, as
-   Redrock does; the JSON stays the source the game reads.
+   structure against a canyon wall or a cliff foot. For many repeated events
+   (a ring of hoodoos, a row of fins, side canyons), a throwaway script may
+   write them into `chronicle.json` once, but don't leave it in the world
+   folder: the JSON is the source, people edit it by hand, and a script run
+   later would undo every one of those edits (library/README.md, "Rules").
 
 4b. **Grade it (optional).** A world may carry its own colour in
    `worlds/<name>/look.json`: a patch over whichever style it is seen in, with
@@ -75,7 +85,9 @@ is one file plus a registry line ("Adding an event" in `reference.md`).
    the plain style, which is a fine answer.
 
 5. **Build and look.** From the repository root (a separate `--target-dir`
-   keeps this build from fighting any other build running at the same time):
+   keeps this build from fighting any other build running at the same time;
+   delete `target/world` with `rm -rf` once the world is finished, since each
+   build directory takes 1.5 to 3 GB):
 
    ```bash
    cargo build --release --target-dir target/world
@@ -112,6 +124,51 @@ is one file plus a registry line ("Adding an event" in `reference.md`).
 8. **Record it.** Add a short section to `GUIDE.md` under "Worlds and the library" (premise,
    what's in it, its anomalies), list new library entries in the commit or
    summary, and tell the user which verbs were missing.
+
+## Layout
+
+Worlds laid out by hand read as robotic on the overhead map: a round
+island, a few straight lines of features parallel or at right angles to
+each other, round lakes, evenly spaced copies. On the ground
+they can look fine. The cause is the method: `landmass` (a disc) and then
+landforms stamped from coordinates an author typed, with nothing linking
+them. So:
+
+- **The `--map` is a deliverable.** Open it at every iteration and judge the
+  layout before anything else. A world is not done while its map shows a
+  ruled line, two features at a right angle, a circle, or a row of the same
+  thing at even spacing.
+- **Start from `terrain`, not `landmass`,** unless the story is a small round
+  island. Land should run off at least one edge of the map.
+- **Let water lay out the valleys.** `drainage` and `glaciate` find their own
+  courses and their own tributaries. Steer them with a `course` in the
+  sketch and an `inflow`; never draw the river.
+- **Do not type a line.** If a feature must be drawn (`escarpment`, `canyon`,
+  `vale`, `trough`), give it five or more points that are not in a row, and
+  never two points sharing an x or a z.
+- **No loops of copies.** A script that places `for k in range(n)` at a fixed
+  step makes a comb. Scatter with jitter in position, size and bearing, or
+  let the generator place them.
+- **Every river has a source.** It rises at a spring and grows (`rise`),
+  comes in over the edge (`from_edge`), or runs out of a lake. One that
+  starts full width in the middle of a field is the first thing a player
+  notices.
+- **Pin things to a found river by its points, and re-pin after changes.**
+  `sorrel_9` is the ninth point along the river, so anything that changes
+  the river's length (a basin at its mouth) moves every point. Check on the
+  `--map` where a bridge or a cliff dwelling landed whenever it must sit on
+  a particular reach.
+- **A wood is several woods.** One biome over a whole forest reads as
+  boring however good its trees are. Split it by rule, not by hand: one
+  kind on the high ground (`elev`), one in wet hollows (`seat` rule `low` +
+  `moisture`), a few `glade` regions, and a core that is plainly different.
+  Hemlow's Hollins is the example.
+- **Caves are networks.** See `network` in the reference: nodes in loops at
+  one `height`, chambers, mouths, a pit, lamps. Never a row of hand-laid
+  `passage` tubes, which reads as a drain, not a cave.
+- **Vary the relief.** Give the sketch high ground and basins of different
+  sizes in different quarters, and leave `vary` up, so one part of the map
+  is rugged and another plain.
 
 ## Rules of thumb
 

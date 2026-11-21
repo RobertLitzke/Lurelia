@@ -32,5 +32,6 @@
     {"creature": "heron", "count": 4},
     {"creature": "herring", "count": 24}
   ],
-  "collectibles": [{"item": "seashell", "density": 0.0003, "placement": {"verb": "scatter", "params": {}}}]
+  "collectibles": [{"item": "seashell", "density": 0.0003, "placement": {"verb": "scatter", "params": {}}}],
+  "sound": {"wind": 0.85, "ground": "water"}
 }

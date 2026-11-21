@@ -1,0 +1,15 @@
+{
+  "name": "whip_orange",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Sea whip: a flexible gorgonian rod, orange-yellow, its polyps a fuzz along it.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [214, 132, 48],
+    "alt": [236, 170, 78],
+    "scale": 5,
+    "contrast": 0.8,
+    "calm": {"base": [220, 138, 54], "alt": [242, 176, 84]}
+  }
+}

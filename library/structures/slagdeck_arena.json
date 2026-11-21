@@ -2,6 +2,7 @@
   "name": "slagdeck_arena",
   "version": 1,
   "introduced_by": "slagdeck",
+  "_generated_by": "worlds/slagdeck/make_arena.py",
   "notes": "The whole arena deck as one structure, written by worlds/slagdeck/make_arena.py: a hall round a slag pit, roofed side rooms with galleries over them, a walkway ring six metres up, a platform over the north walkway, and corridors behind the hall. Place it level with bearing 0; its anchor is the middle of the footprint at yard level. Edit the script, not this file.",
   "size": [345, 69, 281],
   "anchor": [176, 0, 144],

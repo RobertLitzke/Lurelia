@@ -56,6 +56,10 @@ crate::util::named! {
         /// Named in ANIMATION.md, with no motors yet: it moves as a quadruped.
         Flutterer = "flutterer",
         Ray = "ray",
+        /// Eight legs out to the sides and two claws, walking sideways.
+        Crab = "crab",
+        /// A body and eight arms, each posed along a path of its own.
+        Octopus = "octopus",
     }
 }
 
@@ -432,6 +436,8 @@ fn walk_parts(ops: &[Op], f: &mut dyn FnMut(&str)) {
             | Op::Cylinder { part, .. }
             | Op::Log { part, .. }
             | Op::Disc { part, .. }
+            | Op::Dish { part, .. }
+            | Op::Segment { part, .. }
             | Op::Set { part, .. } => {
                 if let Some(p) = part {
                     f(p);

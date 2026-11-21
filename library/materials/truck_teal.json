@@ -1,0 +1,15 @@
+{
+  "name": "truck_teal",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Factory teal on a 1970s pickup, sun-faded to the colour of an old swimming pool, rust coming through the bonnet.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [104, 146, 140],
+    "alt": [140, 90, 60],
+    "scale": 4,
+    "contrast": 0.7,
+    "calm": {"base": [112, 150, 144], "alt": [146, 100, 72]}
+  }
+}

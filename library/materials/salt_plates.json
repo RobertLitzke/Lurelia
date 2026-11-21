@@ -1,0 +1,16 @@
+{
+  "name": "salt_plates",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The Mirror's crust: hard salt a hand thick over grey mud, dried into plates half a metre across whose raised rims are whiter than the plates. Seen from a dish rim the whole pan is a net of them.",
+  "smooth": true,
+  "texture": {
+    "pattern": "cracks",
+    "base": [202, 200, 194],
+    "alt": [230, 229, 224],
+    "scale": 2,
+    "contrast": 0.55,
+    "calm": {"base": [210, 208, 202], "alt": [230, 229, 225]}
+  },
+  "floods": true
+}

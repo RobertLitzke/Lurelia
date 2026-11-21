@@ -27,6 +27,7 @@
     "arc_jumps": 4,
     "arc_m": 7.0,
     "arc_keep": 0.5,
+    "bend_m": 0.45,
     "twist": 14.0,
     "kick": 0.0,
     "tracer": [0.69, 1.0, 0.77],

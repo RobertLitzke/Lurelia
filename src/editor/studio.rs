@@ -27,9 +27,6 @@ use glam::Vec3;
 
 /// Half the platform's side, metres.
 const HALF_M: f32 = 12.0;
-/// How far above the platform is cleared, metres: enough for a bull elk and
-/// most shrubs, and not so much that a tall tree loses its crown.
-const CLEAR_M: f32 = 5.0;
 /// The block of material the page stands on the platform when a material is
 /// being edited: half its side and how tall it is, metres. Two metres across
 /// shows a whole tile of the texture on three faces at once, and standing
@@ -73,15 +70,14 @@ pub struct Studio {
     /// platform laid only around the subject leaves the view in a wall,
     /// looking at the back of it.
     pub home: Vec3,
-    /// The way they were facing, level: the subject stands this way off.
-    face: Vec3,
     /// The turntable.
     pub cam: Cam,
-    /// How many models, species and library colours the world itself had, so
-    /// dropping the subject is a truncate.
+    /// How many models, species and palette colours the world itself had, so
+    /// dropping the subject is a truncate. The subject's palette block
+    /// starts at `base_colours`.
     base_models: usize,
     base_species: usize,
-    pub base_colours: usize,
+    base_colours: usize,
     /// The species the subject was loaded as, once it has been.
     pub species: Option<usize>,
     /// The prop standing in the studio, for a kind that has no species, and
@@ -135,11 +131,10 @@ impl Studio {
         Studio {
             at,
             home,
-            face,
             cam: Cam::new(at, home, 1.8),
             base_models: game.models.len(),
             base_species: game.ents.species.len(),
-            base_colours: game.library_colours,
+            base_colours: crate::models::FIXED_SLOTS + game.library_colours,
             species: None,
             prop: None,
             props: Vec::new(),
@@ -212,7 +207,6 @@ impl Studio {
             z: self.home.z,
             half_m: HALF_M.max(self.reach() + 6.0),
             top_m: gy,
-            clear_m: CLEAR_M,
             pale,
             dark,
             block: self.block,
@@ -245,6 +239,20 @@ impl Studio {
         game.streamer.regen_area(self.home.x - r, self.home.z - r, self.home.x + r, self.home.z + r, p);
     }
 
+    /// Where the subject's palette block starts: straight after the world's
+    /// own blocks. What its models' `block` is set to.
+    pub fn block(&self) -> u32 {
+        self.base_colours as u32
+    }
+
+    /// Make `colours` the subject's palette block, in place of whatever
+    /// block it had, and have the palette uploaded again.
+    pub fn paint_block(&self, game: &mut Game, colours: &[[f32; 4]]) {
+        game.palette.resize(self.base_colours, [1.0, 0.0, 1.0, 0.0]);
+        game.palette.extend_from_slice(colours);
+        game.palette_dirty = true;
+    }
+
     /// Hand the game an edited creature as a species of its own, replacing
     /// whatever subject was loaded before. Returns what the build complained
     /// about, if anything.
@@ -252,12 +260,7 @@ impl Studio {
         self.drop_subject(game);
         let index = game.ents.species.len();
         let mut built = built;
-        for (k, c) in built.colours.iter().enumerate() {
-            let slot = crate::models::LIBRARY_COLOURS.start + self.base_colours + k;
-            if slot < crate::models::LIBRARY_COLOURS.end {
-                game.palette[slot] = *c;
-            }
-        }
+        self.paint_block(game, &built.colours);
         game.models.append(&mut built.models);
         game.ents.species.push(built.species);
         game.models_dirty = true;
@@ -275,12 +278,7 @@ impl Studio {
     /// on, but a gun reads broadside, which is a quarter turn from that.
     pub fn load_prop(&mut self, game: &mut Game, models: Vec<Model>, colours: &[[f32; 4]], turn: f32) {
         self.drop_subject(game);
-        for (k, c) in colours.iter().enumerate() {
-            let slot = crate::models::LIBRARY_COLOURS.start + self.base_colours + k;
-            if slot < crate::models::LIBRARY_COLOURS.end {
-                game.palette[slot] = *c;
-            }
-        }
+        self.paint_block(game, colours);
         let first = game.models.len();
         let n = models.len();
         let mut models = models;

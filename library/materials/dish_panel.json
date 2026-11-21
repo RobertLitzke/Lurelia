@@ -1,0 +1,15 @@
+{
+  "name": "dish_panel",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The dish's reflecting surface: aluminium panels in rings, each a slightly different grey, the seams between them darker, dust lying in the bottom of the bowl.",
+  "smooth": false,
+  "texture": {
+    "pattern": "coursed",
+    "base": [164, 170, 178],
+    "alt": [130, 136, 146],
+    "scale": 2,
+    "contrast": 0.6,
+    "calm": {"base": [166, 172, 180], "alt": [136, 142, 152]}
+  }
+}

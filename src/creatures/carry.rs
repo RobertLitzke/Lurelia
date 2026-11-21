@@ -45,6 +45,11 @@ const JOSTLE: f32 = 0.5;
 /// How far in front of the head joint the mouth is, in carrier heights.
 const MUZZLE: f32 = 0.35;
 
+/// A bird of prey with a kill in its talons, until clock time `until`.
+pub struct Talons {
+    pub until: f32,
+}
+
 /// Prey being carried off by the entity that caught it.
 pub struct Carried {
     pub by: hecs::Entity,
@@ -72,13 +77,26 @@ pub fn take(world: &mut hecs::World, species: &[Species], models: &[Model], kill
             continue;
         };
         let carrier_h = world.get::<&Look>(hunter).ok().and_then(|l| models.get(l.model).map(|m| m.height)).unwrap_or(1.0);
-        let drag = dragged(prey_m.height, carrier_h);
+        // A bird of prey carries what it takes in its talons, whatever its
+        // size, and lets go of it after a while.
+        let flier = world.get::<&super::flock::Flyer>(hunter).is_ok();
+        let drag = !flier && dragged(prey_m.height, carrier_h);
         let limp = Ragdoll::new(rig, prey_m.voxel, victim.id() ^ 0x5add);
         // It is a body now: no mover, no collision box, no family.
         let _ = world.remove_one::<Critter>(victim);
         let _ = world.remove_one::<crate::physics::Body>(victim);
         let _ = world.remove_one::<super::herd::Kin>(victim);
         let _ = world.remove_one::<Anim>(victim);
+        // Nor any of the other movers: it is not flying, floating, swimming
+        // or hopping any more.
+        let _ = world.remove_one::<super::flock::Flyer>(victim);
+        let _ = world.remove_one::<super::circle::Gull>(victim);
+        let _ = world.remove_one::<super::fowl::Paddler>(victim);
+        let _ = world.remove_one::<super::swim::Fish>(victim);
+        let _ = world.remove_one::<super::flit::Flit>(victim);
+        if flier {
+            let _ = world.insert_one(hunter, Talons { until: now + CARRY_S * 2.0 });
+        }
         let leaves_bones = world.get::<&Creature>(victim).map(|c| species[c.species].ages.bones).unwrap_or(false);
         let mut age = Age::fresh_kill(now);
         if !leaves_bones {
@@ -118,7 +136,11 @@ pub fn update(world: &mut hecs::World, models: &[Model], dt: f32, now: f32, terr
     let mut drops: Vec<hecs::Entity> = Vec::new();
     let mut fk = Vec::new();
     for (e, c, _) in world.query::<(hecs::Entity, &Carried, &Look)>().iter() {
-        let done = world.get::<&Critter>(c.by).map(|cr| cr.mood != Mood::Feed).unwrap_or(true);
+        let talons = world.get::<&Talons>(c.by).ok().map(|t| t.until);
+        let done = match talons {
+            Some(until) => now > until,
+            None => world.get::<&Critter>(c.by).map(|cr| cr.mood != Mood::Feed).unwrap_or(true),
+        };
         let Ok(cl) = world.get::<&Look>(c.by) else {
             drops.push(e);
             continue;
@@ -131,6 +153,11 @@ pub fn update(world: &mut hecs::World, models: &[Model], dt: f32, now: f32, terr
             continue;
         };
         let speed = (cl.pos - cl.prev_pos).length() / dt.max(1e-3);
+        if talons.is_some() {
+            // In the talons, under the body.
+            moves.push((e, cl.pos, cl.yaw, speed));
+            continue;
+        }
         // The mouth: the head or jaw joint of the carrier, as it is drawn.
         let mouth = match cm.rig.as_ref() {
             Some(rig) => {
@@ -188,6 +215,9 @@ pub fn update(world: &mut hecs::World, models: &[Model], dt: f32, now: f32, terr
     }
 
     for e in drops {
+        if let Ok(by) = world.get::<&Carried>(e).map(|c| c.by) {
+            let _ = world.remove_one::<Talons>(by);
+        }
         let _ = world.remove_one::<Carried>(e);
         // It lies where it was let go. Nothing steps the ragdoll of a body
         // that is not in a mouth, so run it to a standstill here: waking it

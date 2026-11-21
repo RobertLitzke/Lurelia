@@ -187,6 +187,17 @@ pub fn run_headless(args: Args) {
         sheet.lines().iter().for_each(|l| println!("{l}"));
         gun_sheet = Some(sheet);
     }
+    if args.bot_sheet {
+        let eye = game.eye(1.0);
+        let yaw = game.player.yaw;
+        let mut palette = crate::models::palette();
+        let av = crate::brain::avatar::build(game.library(), &mut palette);
+        let sheet = crate::brain::sheet::spawn(&av, eye, yaw);
+        sheet.lines().iter().for_each(|l| println!("{l}"));
+        let mut out = Vec::new();
+        sheet.instances(&av, game.weapon_models, &game.models, &mut out);
+        game.extra_inst = out;
+    }
     if let Some(name) = &args.anim_sheet {
         let eye = game.eye(1.0);
         let yaw = game.player.yaw;
@@ -732,7 +743,7 @@ pub fn run_headless(args: Args) {
             "nav_nodes": sh.nav().len(),
             "match_s": sh.elapsed(),
             "pads_standing": sh.pads_standing(),
-            "scores": sh.scores().iter().map(|(n, c)| serde_json::json!({ "who": n, "kills": c.kills, "deaths": c.deaths, "shots": c.shots, "hits": c.hits, "dealt": c.dealt })).collect::<Vec<_>>(),
+            "scores": sh.scores().iter().map(|(n, c)| serde_json::json!({ "who": n, "kills": c.kills, "deaths": c.deaths, "shots": c.shots, "hits": c.hits, "dealt": c.dealt, "scalded": c.scalded, "scald_deaths": c.scald_deaths })).collect::<Vec<_>>(),
             "bots": sh.bot_report(),
             "nav_audit": sh.nav_audit(),
         });
@@ -913,6 +924,7 @@ fn menu_shot(gpu: &Gpu, target: &wgpu::Texture, view: &wgpu::TextureView, format
                 let at = menu::drop_at(&l, 0);
                 let list = menu::drop_items(&l, 0);
                 let mut dm = Menu { at, ..Menu::default() };
+                menu::dim(&mut hud, wf, hf);
                 menu::draw_dropdown(&mut hud, &mut dm, &list, anchor, at, wf, hf);
             }
         }

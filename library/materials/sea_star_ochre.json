@@ -1,0 +1,15 @@
+{
+  "name": "sea_star_ochre",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Ochre sea stars, orange and purple, stuck to the rock at the waterline.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [196, 104, 52],
+    "alt": [120, 60, 104],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [190, 110, 64], "alt": [124, 70, 108]}
+  }
+}

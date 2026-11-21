@@ -8,5 +8,6 @@
   "trunk_radius": [0.85, 1.35],
   "crown_radius": [3.2, 4.6],
   "bark": "baobab_bark",
-  "max_slope": 0.5
+  "max_slope": 0.5,
+  "thin_limbs": 0.5
 }

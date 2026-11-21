@@ -1,0 +1,36 @@
+{
+  "name": "hollins_glade",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A glade in the Hollins: a ring of open grass and flowers the trees stop at, with nothing anyone can point to that keeps them out.",
+  "priority": 6,
+  "rules": {"region": "glade"},
+  "surface": "wildflower_grass",
+  "subsurface": "dirt",
+  "map_color": [156, 200, 110],
+  "plants": [
+    {"plant": "hawthorn", "density": 0.002, "placement": {"verb": "edge", "params": {"width": 10, "inner": 0.0}}},
+    {"plant": "cottage_rose", "density": 0.003, "placement": {"verb": "edge", "params": {"width": 8, "inner": 0.0}}},
+    {
+      "plant": "glassbloom",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 7, "min": 0.7, "max": 1.0}}
+    },
+    {"plant": "fern", "density": 0.05, "placement": {"verb": "edge", "params": {"width": 8, "inner": 0.0}}},
+    {"plant": "bramble", "density": 0.006, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [],
+  "creatures": [
+    {"creature": "rabbit", "count": 8},
+    {"creature": "pale_hare", "count": 4},
+    {"creature": "deer", "count": 3},
+    {"creature": "fae_horse", "count": 1},
+    {"creature": "firefly", "count": 120},
+    {"creature": "lantern_moth", "count": 26},
+    {"creature": "bumblebee", "count": 6},
+    {"creature": "glow_bee", "count": 8},
+    {"creature": "sky_ray", "count": 2},
+    {"creature": "barn_owl", "count": 1}
+  ],
+  "collectibles": [{"item": "hag_stone", "density": 0.001, "placement": {"verb": "scatter", "params": {}}}]
+}

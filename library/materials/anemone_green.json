@@ -1,0 +1,15 @@
+{
+  "name": "anemone_green",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Giant green anemones: thick jade columns, the tentacles paler.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [74, 150, 112],
+    "alt": [130, 188, 150],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [86, 150, 118], "alt": [132, 182, 150]}
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "lupine",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Purple lupine in drifts on the dunes, drawn as sprites.",
+  "form": "herb",
+  "height": [0.7, 1.1],
+  "crown_radius": [0.5, 0.8],
+  "bark": "dead_wood",
+  "leaf": "lupine",
+  "max_slope": 0.9,
+  "affords": ["nectar"]
+}

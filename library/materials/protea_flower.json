@@ -1,0 +1,15 @@
+{
+  "name": "protea_flower",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "A protea's flower head: a cup of pink bracts round a silver-white crown.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [214, 132, 144],
+    "alt": [226, 204, 200],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [210, 140, 150], "alt": [222, 204, 200]}
+  }
+}

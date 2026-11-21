@@ -1,0 +1,8 @@
+{
+  "name": "lupine",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Purple lupine (drawn as sprites): violet spikes over fans of leaves.",
+  "smooth": false,
+  "texture": {"pattern": "noise", "base": [76, 96, 64], "alt": [90, 80, 120], "scale": 5, "contrast": 1.0}
+}

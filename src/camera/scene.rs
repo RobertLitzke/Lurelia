@@ -207,7 +207,7 @@ pub fn look(view: &View, lens: Lens, orient: Orient, hour: f32, world: &hecs::Wo
             (Some(c), _, _) => match species.get(c.species) {
                 Some(sp) => {
                     // Fish and whales are out of reach under the water.
-                    if matches!(sp.verb().mover, Mover::School | Mover::Breach) && look.pos.y < sea - 0.3 {
+                    if matches!(sp.verb().mover, Mover::School | Mover::Breach | Mover::Creep) && look.pos.y < sea - 0.3 {
                         continue;
                     }
                     (display(&sp.name), sp.like.as_deref().map(display))

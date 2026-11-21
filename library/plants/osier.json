@@ -1,0 +1,19 @@
+{
+  "name": "osier",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Osier willow: a stool of long straight orange-red withies by the water, narrow leaves in tufts, cut for baskets. Brightest bare in winter.",
+  "form": "canes",
+  "height": [2.0, 3.4],
+  "trunk_radius": [0.04, 0.06],
+  "crown_radius": [0.8, 1.2],
+  "bark": "osier_withy",
+  "leaf": "leaves",
+  "canopy": "tufts",
+  "max_slope": 0.9,
+  "autumn": "leaves_autumn",
+  "stems": [12, 20],
+  "cane_lean": 0.25,
+  "cane_bend": 0.01,
+  "cane_spurs": 0.1
+}

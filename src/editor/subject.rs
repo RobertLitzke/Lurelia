@@ -1,15 +1,15 @@
 //! Building one edited entry into something the engine can draw, without
 //! touching what the world already loaded.
 //!
-//! A creature's models, species and palette colours are appended after the
-//! world's own (`Game::load_subject`), so stepping a knob costs one model
+//! A creature's models, species and palette block are appended after the
+//! world's own (`Studio::load_creature`), so stepping a knob costs one model
 //! build rather than a reload, and dropping the subject is a truncate: no
 //! entity but the subject's own ever refers to them.
 //!
 //! This mirrors the per-creature part of `worldload::creatures`. The two are
-//! kept apart on purpose: the loader builds every creature of a world at once
-//! and shares colours between them, while the editor builds one at a time,
-//! over and over, and must leave the world's own models alone.
+//! kept apart on purpose: the loader builds every creature of a world at once,
+//! while the editor builds one at a time, over and over, and must leave the
+//! world's own models alone.
 
 use crate::creatures::Species;
 use crate::library::{CreatureDef, Library, PlantDef};
@@ -30,22 +30,20 @@ pub struct Built {
     /// stands a hand high and spans a metre of wing -- and the studio's
     /// camera frames on it.
     pub span: f32,
-    /// Which palette slot each colour name was given, sorted by name. A
-    /// colour edit can repaint the palette and leave the model alone, but
-    /// only while this has not moved: identical colours share a slot, so one
-    /// of them changing can shift every slot after it.
+    /// Which slot of its palette block each colour name was given, sorted by
+    /// name. A colour edit can repaint the palette and leave the model
+    /// alone, but only while this has not moved: identical colours share a
+    /// slot, so one of them changing can shift every slot after it.
     pub paint: Vec<(String, u8)>,
 }
 
-/// The palette an entry wants: the colours to append, which slot each name
-/// takes, and the two bone slots every skeleton gets.
+/// The palette block an entry wants: its colours, which slot of the block
+/// each name takes, and the two bone slots a skeleton gets.
 pub struct Paint {
     pub colours: Vec<[f32; 4]>,
     pub slot: HashMap<String, u8>,
     pub bone: u8,
     pub bone_dark: u8,
-    /// True when the entry wants more colours than the world has left.
-    pub overflowed: bool,
 }
 
 impl Paint {
@@ -59,35 +57,21 @@ impl Paint {
 
 /// Work out an entry's colours without building anything else, so painting
 /// one need not rebuild the model.
-pub fn paint_of(def: &CreatureDef, colour_base: usize) -> Paint {
+pub fn paint_of(def: &CreatureDef) -> Paint {
     let mut colours: Vec<[f32; 4]> = Vec::new();
-    let room = models::LIBRARY_COLOURS.len();
-    let slot_for = |lin: [f32; 4], colours: &mut Vec<[f32; 4]>| -> u8 {
-        let k = colours.iter().position(|x| x == &lin).unwrap_or_else(|| {
-            colours.push(lin);
-            colours.len() - 1
-        });
-        (models::LIBRARY_COLOURS.start + (colour_base + k).min(room - 1)) as u8 + 1
-    };
-    // Bone and shadowed bone, the same two colours the loader gives every
-    // skeleton in a world.
-    let bone = slot_for(models::linear_colour(&[238.0, 232.0, 214.0]), &mut colours);
-    let bone_dark = slot_for(models::linear_colour(&[186.0, 176.0, 152.0]), &mut colours);
     let mut slot: HashMap<String, u8> = HashMap::new();
     let mut names: Vec<&String> = def.colors.keys().collect();
     names.sort();
     for name in names {
-        let s = slot_for(models::linear_colour(&def.colors[name]), &mut colours);
+        let s = models::block_slot(&mut colours, 0, models::linear_colour(&def.colors[name]));
         slot.insert(name.clone(), s);
     }
-    let overflowed = colour_base + colours.len() > room;
-    Paint {
-        colours,
-        slot,
-        bone,
-        bone_dark,
-        overflowed,
-    }
+    // Bone and shadowed bone, the same two colours the loader puts at the
+    // end of the block of a creature with a skeleton. Here they are always
+    // there, whether a skeleton comes of it or not.
+    let bone = models::block_slot(&mut colours, 0, models::linear_colour(&[238.0, 232.0, 214.0]));
+    let bone_dark = models::block_slot(&mut colours, 0, models::linear_colour(&[186.0, 176.0, 152.0]));
+    Paint { colours, slot, bone, bone_dark }
 }
 
 /// The species row an entry asks for, with the model it is already drawn by
@@ -118,17 +102,14 @@ pub fn row(def: &CreatureDef, lib: &Library, model: usize, index: usize, bones: 
 }
 
 /// Build `def` as a species of its own. `model_base` is the index its first
-/// model will take in `Game::models`, `colour_base` how many library colours
-/// the palette already holds, and `index` the species index it will take (its
-/// own quota).
-pub fn creature(def: &CreatureDef, lib: &Library, model_base: usize, colour_base: usize, index: usize) -> Result<Built, String> {
+/// model will take in `Game::models`, `block` where its colours will start in
+/// the palette (`Studio::block`), and `index` the species index it will take
+/// (its own quota).
+pub fn creature(def: &CreatureDef, lib: &Library, model_base: usize, block: u32, index: usize) -> Result<Built, String> {
     let mut problems: Vec<String> = Vec::new();
-    let room = models::LIBRARY_COLOURS.len();
-    let paint = paint_of(def, colour_base);
+    let paint = paint_of(def);
     let (bone, bone_dark) = (paint.bone, paint.bone_dark);
-    if paint.overflowed {
-        problems.push(format!("no palette slot left for {}: the world already uses all {room} library colours", def.name));
-    }
+    problems.extend(models::block_problem(&def.name, paint.colours.len()));
     let resolve = |n: &str| -> Option<u8> {
         if n == "air" {
             return Some(0);
@@ -168,6 +149,9 @@ pub fn creature(def: &CreatureDef, lib: &Library, model_base: usize, colour_base
     let species = row(def, lib, model_base, index, has_bones);
     let mut out = vec![model];
     out.extend(parts);
+    for m in &mut out {
+        m.block = block;
+    }
     let slots = paint.slots();
     Ok(Built {
         models: out,
@@ -195,24 +179,18 @@ pub struct Prop {
 /// has no species and nothing drives it, so this is the creature build with
 /// everything but the model taken out (`worldload::creatures` builds the
 /// world's own the same way).
-pub fn collectible(def: &crate::library::CollectibleDef, colour_base: usize) -> Result<Prop, String> {
+/// `block` is where its colours will start in the palette.
+pub fn collectible(def: &crate::library::CollectibleDef, block: u32) -> Result<Prop, String> {
     let mut colours: Vec<[f32; 4]> = Vec::new();
     let mut problems: Vec<String> = Vec::new();
-    let room = models::LIBRARY_COLOURS.len();
     let mut slot: HashMap<String, u8> = HashMap::new();
     let mut names: Vec<&String> = def.colors.keys().collect();
     names.sort();
     for name in names {
-        let lin = models::linear_colour(&def.colors[name]);
-        let k = colours.iter().position(|x| x == &lin).unwrap_or_else(|| {
-            colours.push(lin);
-            colours.len() - 1
-        });
-        slot.insert(name.clone(), (models::LIBRARY_COLOURS.start + (colour_base + k).min(room - 1)) as u8 + 1);
+        let s = models::block_slot(&mut colours, 0, models::linear_colour(&def.colors[name]));
+        slot.insert(name.clone(), s);
     }
-    if colour_base + colours.len() > room {
-        problems.push(format!("no palette slot left for {}: the world already uses all {room} library colours", def.name));
-    }
+    problems.extend(models::block_problem(&def.name, colours.len()));
     let resolve = |n: &str| -> Option<u8> {
         if n == "air" {
             return Some(0);
@@ -225,7 +203,8 @@ pub fn collectible(def: &crate::library::CollectibleDef, colour_base: usize) -> 
     }
     let span = span_of(&s, def.voxel);
     let tall = (s.top.max(1) as f32 * def.voxel).max(0.02);
-    let model = models::from_cells(&s.mat, def.voxel, span * 0.5, tall);
+    let mut model = models::from_cells(&s.mat, def.voxel, span * 0.5, tall);
+    model.block = block;
     Ok(Prop {
         models: vec![model],
         colours,

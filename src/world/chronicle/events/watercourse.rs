@@ -45,6 +45,13 @@ pub struct Watercourse {
     branches: Vec<Branch>,
     #[serde(default)]
     terms: route::Terms,
+    /// Metres over which it grows from a trickle to its full size (see
+    /// `river`). 0: full-grown from its first metre.
+    #[serde(default)]
+    rise: f32,
+    /// It comes in from beyond the world: carried back to the nearest edge.
+    #[serde(default)]
+    from_edge: bool,
 }
 
 #[derive(Deserialize, Debug)]
@@ -99,8 +106,10 @@ impl Process for Watercourse {
         let bed = cx.mat(&self.bed);
         let bank = self.bank.as_ref().map_or(0, |x| cx.mat(x));
         let trunk = wander(&trunk, self.meander, cx.seed);
+        let trunk = if self.from_edge { super::river::to_edge(&cx.f, &trunk) } else { trunk };
         let fall = cx.f.height(a.x, a.y) - cx.f.height(b.x, b.y);
-        cut(cx, &self.name, &trunk, self.width, self.depth, bed, bank, self.floor);
+        let grown = super::river::head(cx, &self.name, &trunk, self.width, self.depth, bed, bank, self.floor, self.rise);
+        cut(cx, &self.name, &trunk[grown..], self.width, self.depth, bed, bank, self.floor);
         // The trunk's ground is dear to a branch: a distributary that fell
         // straight back into it would not be one.
         grid.take(&trunk, self.width * 0.5 + 2.0);

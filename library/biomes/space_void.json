@@ -1,0 +1,16 @@
+{
+  "name": "space_void",
+  "version": 1,
+  "introduced_by": "starfall",
+  "notes": "The ground under a map that floats in space (`sky space`): it lies below the world's floor and is never built, so nothing grows or lives on it. Every plant or animal a biome put there would hang in the void under the map.",
+  "priority": 12,
+  "rules": {"elev": [-200, 200]},
+  "surface": "ballast",
+  "subsurface": "asphalt",
+  "fringe": 0,
+  "map_color": [20, 20, 32],
+  "plants": [],
+  "creatures": [],
+  "collectibles": [],
+  "sound": {"wind": 0, "grass": 0, "notes": "Under a map floating in space: nothing to hear."}
+}

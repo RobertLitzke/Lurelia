@@ -1,0 +1,19 @@
+{
+  "name": "goo_burst_drops",
+  "version": 1,
+  "introduced_by": "goo_burst",
+  "notes": "Droplets of slime flung out of a goo burst, arcing down and glowing.",
+  "shape": "puff",
+  "count": [18, 24],
+  "speed": [5.0, 13.0],
+  "cone_deg": 150,
+  "life": [0.5, 1.0],
+  "size": [0.08, 0.03],
+  "size_jitter": 0.3,
+  "gravity": 12.0,
+  "drag": 1.0,
+  "color": [170, 255, 70],
+  "alpha": 1.0,
+  "glow": 3.0,
+  "near_fade": 0.5
+}

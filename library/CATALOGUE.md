@@ -11,31 +11,54 @@ game (local/README.md).
 | id | name | from | used by | notes |
 |---|---|---|---|---|
 | ? | acacia_leaf | thornpan | local, thornpan | Acacia leaf: fine grey-green pinnate leaf, thin enough to see sky through, massed into a flat top. |
-| ? | autumn_vine | glassfall | glassfall, hemlow, jadewater, local, redrock, thornpan, windbarrow | A hanging vine in autumn and winter: the stem gone brown, its small leaves red (the leaf cards take maple_red's colour, mesh/sprites.rs). Passable, like the green vine. |
+| ? | anemone_green | ribshore | local, ribshore | Giant green anemones: thick jade columns, the tentacles paler. |
+| ? | autumn_vine | glassfall | glassfall, hemlow, jadewater, kaldvik, local, redrock, thornpan, windbarrow | A hanging vine in autumn and winter: the stem gone brown, its small leaves red (the leaf cards take maple_red's colour, mesh/sprites.rs). Passable, like the green vine. |
+| ? | bacterial_mat | ribshore | local, ribshore | Mats of bacteria on the sea floor round the youngest bone: white and orange, slick. |
+| ? | baleen_plate | ribshore | unused | Baleen: dark plates of keratin, fraying to bristle at their edges. |
 | ? | bamboo_grass | jadewater | jadewater, local | The bamboo forest's floor: long green grass between the culms, greener and wetter than the litter it grew through. |
 | ? | baobab_bark | thornpan | local, thornpan | Baobab bark: smooth, thick and pewter grey with a pink cast, pleated in soft vertical folds on a trunk far too wide for its height. |
-| ? | barley_grass | windbarrow | local, windbarrow | A small walled barley plot: thin ranks of pale ears over worked chalk soil. |
-| ? | barnacle_crust | thornpan | glassfall, jadewater, thornpan | Barnacle crust: a metre-thick band of cemented shell plates on every rock face at thirty-four metres, the old lake's waterline. Grey-white, pitted, and wrong in a country with no sea. |
+| ? | barley_grass | windbarrow | hemlow, local, windbarrow | A small walled barley plot: thin ranks of pale ears over worked chalk soil. |
+| ? | barnacle_crust | thornpan | glassfall, jadewater, local, ribshore, thornpan | Barnacle crust: a metre-thick band of cemented shell plates on every rock face at thirty-four metres, the old lake's waterline. Grey-white, pitted, and wrong in a country with no sea. |
 | ? | bauble_red | kaldvik | kaldvik | Red glass baubles and the lights in them. |
+| ? | blackberries | hemlow | hemlow, local | Blackberries: glossy black with a red one here and there, late summer and autumn. |
+| ? | blackthorn_bark | hemlow | hemlow, local, windbarrow | Blackthorn stems: near black, dense with thorny spurs. |
+| ? | bone_barnacles | ribshore | unused | Barnacles on the bone between the tides: grey-white cemented plates, pitted, sharp to the hand. |
 | ? | bone_floor | windbarrow | windbarrow | The floor of a bear chamber: earth trodden black by generations of bears, with old bone broken through it. |
+| ? | bone_lichen | ribshore | unused | Lichen and salt on the bone that faces the sky: pale grey-green, almost white where the gulls sit. |
 | ? | bone_rubble | windbarrow | local, windbarrow | The ground of the Bone Downs: chalk rubble with splinters and knuckles of old ivory broken through it. |
+| ? | bone_silt | ribshore | local, ribshore | Pale silt round the deep bones, grey sand with bone grit in it. |
 | ? | bottle_blue | lowmouth | local, lowmouth | Cobalt-blue bottle glass hung on the bottle trees, faintly lit from inside. |
 | ? | bottle_violet | lowmouth | local, lowmouth | Violet bottle glass on the bottle trees. |
-| ? | candle_flame | lowmouth | lowmouth | Candle flames and lamp wicks: a small warm light. |
+| ? | bramble_cane | hemlow | hemlow, local | Bramble canes: purple-red, prickly, arching over and rooting at the tips. |
+| ? | bramble_leaves | hemlow | hemlow, local | Bramble leaves: dark green, in threes and fives. |
+| ? | brine_mud | saltmirror | local, saltmirror | Grey-pink mud under the brine at the low end of the pan, slick and faintly rosy with the shrimp. |
+| ? | broom_flowers | windbarrow | local, windbarrow | Broom flowers: bright yellow pea flowers crowded along the switches, late spring. |
+| ? | broom_leaves | windbarrow | local, windbarrow | Broom's few small leaves among the switches. |
+| ? | broom_switch | windbarrow | local, windbarrow | Broom: green ribbed switches, nearly leafless. |
+| ? | buckthorn_berries | ribshore | local, ribshore | Sea buckthorn berries: dense clusters of orange along the stems. |
+| ? | buckthorn_leaves | ribshore | local, ribshore | Sea buckthorn's narrow leaves, silver-grey above and paler below. |
+| ? | buckthorn_wood | ribshore | local, ribshore | Sea buckthorn stems: dark grey-brown bark, rough, set with thorns. |
+| ? | bull_kelp_float | ribshore | local, ribshore | Bull kelp float: a round olive-brown bulb at the surface. |
+| ? | buttonbush_balls | lowmouth | local, lowmouth | Buttonbush flowers: white pincushion balls, summer. |
+| ? | buttonbush_bark | lowmouth | local, lowmouth | Buttonbush stems: grey-brown. |
+| ? | candle_flame | lowmouth | lowmouth, megalith | Candle flames and lamp wicks: a small warm light. |
 | ? | cane_char | lowmouth | local, lowmouth | A burned cane field: black stubble and grey ash in rows. |
 | ? | cane_leaves | lowmouth | local, lowmouth | Sugar cane: tall jointed stalks and long ribbon leaves, fresh green. |
 | ? | cane_soil | lowmouth | local, lowmouth | Dark worked soil between the cane rows. |
-| ? | carved_limestone | windbarrow | thornpan, windbarrow | The Tepe's pillars: a hard cream limestone from somewhere else, worked smooth and carved in low relief. |
-| ? | cattail_head | lowmouth | local, lowmouth, thornpan | A cattail's stem and brown velvet head (drawn as a stalk sprite). |
-| ? | cattail_leaves | lowmouth | local, lowmouth, thornpan | Cattail leaves: tall dark green straps standing out of the shallows (drawn as sprites). |
-| ? | cave_chalk | windbarrow | windbarrow | The walls of the caves: dry chalk, grey-brown where water once ran down the joints, and pale enough to hold what light comes in at the mouths and down the shafts. |
+| ? | cane_stalk | lowmouth | local, lowmouth | Sugar cane stalks: yellow-green banded with purple at the joints. Passable: you push through a cane field. |
+| ? | cardon_skin | saltmirror | local, saltmirror | Cardon skin: deep-ribbed grey-green, paler down the ribs, greyer than a saguaro's. |
+| ? | carved_limestone | windbarrow | megalith, thornpan, windbarrow | The Tepe's pillars: a hard cream limestone from somewhere else, worked smooth and carved in low relief. |
+| ? | cattail_head | lowmouth | glassfall, jadewater, local, lowmouth, thornpan | A cattail's stem and brown velvet head (drawn as a stalk sprite). |
+| ? | cattail_leaves | lowmouth | glassfall, jadewater, local, lowmouth, thornpan | Cattail leaves: tall dark green straps standing out of the shallows (drawn as sprites). |
+| ? | cave_chalk | windbarrow | megalith, windbarrow | The walls of the caves: dry chalk, grey-brown where water once ran down the joints, and pale enough to hold what light comes in at the mouths and down the shafts. |
 | ? | celadon_glaze | underwater | jadewater | Celadon stoneware: a jade-green glaze, crazed fine, the trade jars of the Jadewater wreck. |
 | ? | chalk | lowmouth | lowmouth | Chalk or cornmeal drawn on the ground at the crossroads: thin pale lines. |
-| ? | chalk_block | windbarrow | windbarrow | Chalk cut in blocks: the barrow kerbs, the Tepe's bench wall and the lining of the passage. |
-| ? | chalk_grey | windbarrow | local, windbarrow | A greyer, harder bed of the chalk low in the stack, stained along its joints. |
-| ? | chalk_rubble | windbarrow | local, windbarrow | Broken chalk and flint underfoot: the trails, the pit floors and the bared ground of the Tepe. |
-| ? | chalk_white | windbarrow | local, windbarrow | White chalk: soft, thickly bedded limestone, the bones of the whole country. Shows on every scarp and hoof-cut. |
-| ? | coolant_pool | icezeto | transmission | A sump of reactor coolant left to pool where the slag was: cyan, faintly lit from inside and cold enough to kill. Twelve damage a second, the same as the slag it stands in for. |
+| ? | chalk_block | windbarrow | megalith, windbarrow | Chalk cut in blocks: the barrow kerbs, the Tepe's bench wall and the lining of the passage. |
+| ? | chalk_grey | windbarrow | local, megalith, windbarrow | A greyer, harder bed of the chalk low in the stack, stained along its joints. |
+| ? | chalk_rubble | windbarrow | local, megalith, saltmirror, windbarrow | Broken chalk and flint underfoot: the trails, the pit floors and the bared ground of the Tepe. |
+| ? | chalk_white | windbarrow | local, megalith, windbarrow | White chalk: soft, thickly bedded limestone, the bones of the whole country. Shows on every scarp and hoof-cut. |
+| ? | cloud_sponge | ribshore | local, ribshore | Cloud sponge: soft lobes of glass the colour of old paper. |
+| ? | coolant_pool | transmission | porch | A sump of reactor coolant left to pool where the slag was: cyan, faintly lit from inside and cold enough to kill. Twelve damage a second, the same as the slag it stands in for. |
 | ? | coral_brain | underwater | glassfall, jadewater, local | Brain coral: olive-green with paler meandering grooves. |
 | ? | coral_cream | underwater | glassfall, jadewater, local | Table coral: cream with a faint green cast. |
 | ? | coral_gold | underwater | glassfall, jadewater, local | Finger coral: mustard gold, bristling. |
@@ -45,77 +68,140 @@ game (local/README.md).
 | ? | coral_tip | underwater | glassfall, jadewater, local | The pale growing tips of branching coral, nearly white. |
 | ? | coral_violet | underwater | glassfall, jadewater, local | Violet plate coral, darker in its folds. |
 | ? | coral_white | underwater | kaldvik, local | Lophelia, the cold-water coral of the deep fjords: bone-white branches with a pink cast at the tips. |
-| ? | cryo_lamp | icezeto | transmission | A cold strip light in a frozen base: blue-white, the only warm-looking thing about it is that it works. |
+| ? | coralline_pink | ribshore | unused | Coralline algae: a pink crust on every rock the sea covers. |
+| ? | craft_glow | saltmirror | saltmirror | A seam inside the hull that still gives off a little light: dull amber, steady, brighter at night. |
+| ? | craft_skin | saltmirror | local, saltmirror | The hull's skin: dark graphite with a violet sheen at a low angle, smooth as glass, cold in the shade and faintly warm in the sun. Nothing has grown on it. |
+| ? | craft_tile | saltmirror | local, saltmirror | The hull's underside: close black tiles, each a little scorched, some gone. |
+| ? | cryo_lamp | transmission | porch, starfall, transmission | A cold strip light in a frozen base: blue-white, the only warm-looking thing about it is that it works. |
+| ? | cryo_tile | transmission | starfall, transmission | Pale floor tiles in a frozen base's labs: small square tiles in close courses, grey-white with darker grout. |
 | ? | cypress_bark | lowmouth | local, lowmouth | Bald cypress bark: fibrous, peeling in long grey-brown strips with red-brown beneath. |
 | ? | cypress_needles | lowmouth | local, lowmouth | Bald cypress foliage: soft feathery sprays of needles, a light olive green. |
-| ? | daub | windbarrow | thornpan, windbarrow | Wattle and daub, limewashed: the walls of the houses, cream going grey where the rain drives on them. |
-| ? | deck_floor | slagdeck | duelbox, slagdeck | Grey steel floor plate in metre panels: the deck of the works. Flat and crisp on purpose, so the arena reads as straight lines rather than ground. |
+| ? | daub | windbarrow | hemlow, kaldvik, megalith, thornpan, windbarrow | Wattle and daub, limewashed: the walls of the houses, cream going grey where the rain drives on them. |
+| ? | deck_floor | slagdeck | ctfbox, duelbox, slagdeck, sluice | Grey steel floor plate in metre panels: the deck of the works. Flat and crisp on purpose, so the arena reads as straight lines rather than ground. |
 | ? | deck_ramp | slagdeck | slagdeck | The same plate as deck_floor but smoothed, so a stepped ramp or a stair is drawn as one slope. Use it on anything that climbs. |
-| ? | delta_mud | lowmouth | local, lowmouth | Soft grey-brown delta mud: the bed of the open water and the mudflats, smooth and wet. |
-| ? | downland_grass | windbarrow | local, windbarrow | Short chalk turf: close-cropped grass gone khaki with thyme and small flowers in it, the chalk showing through on the crowns. v2: drifts between cool khaki and dry gold across the down, declared rather than taking the shared meadow ramp. |
-| ? | eelgrass | lowmouth | jadewater, local, lowmouth | Drowned meadow: fine dark-green grass on a soft bed, growing under the water as land grass grows over it. Its sprites are not hidden at the waterline (underwater). |
-| ? | fae_mire | local | porch | The pit in an overgrown arena: still water gone luminous and sour, bright enough to light the walls above it and poisonous enough to kill anything that wades in. Close to the moss in colour and all but flat, so that what marks it out from the grass at the edge is the light coming off it rather than a pattern. Twelve damage a second, the same as the slag it stands in for, so a hazard the map was built around is still a hazard after the greening. |
+| ? | delta_mud | lowmouth | glassfall, jadewater, local, lowmouth | Soft grey-brown delta mud: the bed of the open water and the mudflats, smooth and wet. |
+| ? | desert_willow_bark | redrock | local, redrock | Desert willow stems: grey-brown, thin. |
+| ? | desert_willow_flowers | redrock | local, redrock | Desert willow flowers: lilac-pink trumpets at the stem tips, spring and summer. |
+| ? | desert_willow_leaves | redrock | local, redrock | Desert willow leaves: long, narrow, light green. |
+| ? | dish_paint | saltmirror | saltmirror | The array's paint after thirty years of sun: a cool aluminium grey gone chalky, rust bleeding from every bolt line. It was white once; next to the salt it never looked it. |
+| ? | dish_panel | saltmirror | saltmirror | The dish's reflecting surface: aluminium panels in rings, each a slightly different grey, the seams between them darker, dust lying in the bottom of the bowl. |
+| ? | downland_grass | windbarrow | local, megalith, windbarrow | Short chalk turf: close-cropped grass gone khaki with thyme and small flowers in it, the chalk showing through on the crowns. v2: drifts between cool khaki and dry gold across the down, declared rather than taking the shared meadow ramp. |
+| ? | drowned_bone | ribshore | unused | Bone long under the sea: grey-green with a skin of silt and coralline crust. |
+| ? | drowned_wood | ribshore | local, ribshore | Spruce wood the salt killed and the weather stripped: cold silver-grey, split along the grain. |
+| ? | dune_grass | ribshore | local, ribshore | Dunegrass on the stabilised dunes: tan blades with a little green at the root, tall and combed one way by the wind. |
+| ? | dune_sand | ribshore | local, ribshore | Dry dune sand, pale and fine, rippled by the wind. |
+| ? | dwarf_birch_bark | kaldvik | kaldvik, local | Dwarf birch stems: dark red-brown. Passable. |
+| ? | eelgrass | lowmouth | glassfall, jadewater, local, lowmouth | Drowned meadow: fine dark-green grass on a soft bed, growing under the water as land grass grows over it. Its sprites are not hidden at the waterline (underwater). |
+| ? | ephedra_stem | redrock | local, redrock, saltmirror | Mormon tea: jointed yellow-green stems, no leaves to speak of. Passable. |
+| ? | ephedra_tips | redrock | local, redrock, saltmirror | Mormon tea: the bushy upper joints, yellow-green. Passable. |
+| ? | eye_bed | saltmirror | local, saltmirror | The bed of the turquoise water: pale gypsum mud under a skin of green-blue algae, white where it shelves up. |
+| ? | eye_mat | saltmirror | local, saltmirror | The rim of a brine eye: microbial mats in rings, orange at the waterline going olive and then white where the salt takes over. |
+| ? | fae_mire | local | unused | The pit in an overgrown arena: still water gone luminous and sour, bright enough to light the walls above it and poisonous enough to kill anything that wades in. Close to the moss in colour and all but flat, so that what marks it out from the grass at the edge is the light coming off it rather than a pattern. Twelve damage a second, the same as the slag it stands in for, so a hazard the map was built around is still a hazard after the greening. |
 | ? | fairy_light | kaldvik | kaldvik | A string of small warm bulbs, lit from dusk. |
 | ? | fall_ice | kaldvik | kaldvik | Waterfall ice: white and bubbly where it froze fast, in drips and bulges. |
-| ? | fall_ice_blue | kaldvik | transmission | The older, denser ice of a frozen fall: deep clear blue in bands. |
-| ? | falu_red | kaldvik | kaldvik | Falu red board cladding: the iron-ochre paint of every rorbu and barn on the coast, weathered toward brick. |
+| ? | fall_ice_blue | kaldvik | porch, starfall, transmission | The older, denser ice of a frozen fall: deep clear blue in bands. |
+| ? | falu_red | kaldvik | kaldvik, saltmirror | Falu red board cladding: the iron-ochre paint of every rorbu and barn on the coast, weathered toward brick. |
+| ? | fan_gravel | saltmirror | local, saltmirror | Grey quartzite gravel washed out of the ravines and spread over the fans at the foot of the range, with sand between the stones. |
 | ? | fan_purple | underwater | glassfall, jadewater, local | Sea fans: purple lattices standing across the swell. |
 | ? | fan_red | underwater | glassfall, jadewater, kaldvik, local | Red sea fans on the deep wall. |
 | ? | feathergrass | windbarrow | local, windbarrow | Feathergrass: the steppe's cover, a tall bunchgrass with a silver-gold summer awn, tawny over bare chalk between the tussocks. |
 | ? | flint | windbarrow | windbarrow | Knapped flint: the working floors and the spoil, glassy blue-grey under a chalk-white cortex. |
 | ? | flint_band | windbarrow | windbarrow | A band of flint nodules in the chalk: hard blue-black lumps in a level line along every face that reaches it. |
 | ? | flint_grass | windbarrow | local, windbarrow | The cover of the Flint Down: thin tawny-khaki grass with chalk and black flint showing through everywhere. |
-| ? | frost_deck | icezeto | transmission | Floor plate under a skin of frost: grey steel courses gone pale, with the boot-worn lines a little darker. |
+| ? | frost_deck | transmission | porch, starfall, transmission | Floor plate under a skin of frost: grey steel courses gone pale, with the boot-worn lines a little darker. |
 | ? | frost_grass | windbarrow | local, windbarrow | The grass of a frost hollow: every blade rimed white and glittering, whatever the hour and whatever the season. |
-| ? | glacier_ice | kaldvik | unused | Glacier ice: old compressed ice, white at the surface and blue in every crack and hollow, glinting where the low sun catches it. |
+| ? | fynbos_grass | saltmirror | local, saltmirror | Fynbos ground: grey sandy soil under a low fleece of restio reeds and heath, greyer and finer than grass. |
+| ? | glacier_ice | kaldvik | starfall | Glacier ice: old compressed ice, white at the surface and blue in every crack and hollow, glinting where the low sun catches it. |
 | ? | glass_coral | underwater | glassfall, local | Glassfall's strange coral near the strewn field: clear pale cyan, faintly lit from inside, as if grown from the glass the sky threw down. |
 | ? | glass_coral_violet | underwater | glassfall, local | The strange coral's violet form: lilac glass with a faint light in it. |
-| ? | granite | thornpan | duelbox, local, porch, slagdeck, thornpan, transmission | Granite: the country's floor where it stands up in domes, grey speckled light and dark, weathering off in curved shells. Drawn in facets so a whaleback reads as rock, not steps. |
+| ? | glasswort | saltmirror | local, saltmirror | Glasswort at the brine's edge: jointed succulent stems, green at the root and red where the salt has turned them. |
+| ? | granite | thornpan | ctfbox, duelbox, local, megalith, porch, slagdeck, sluice, starfall, thornpan, transmission | Granite: the country's floor where it stands up in domes, grey speckled light and dark, weathering off in curved shells. Drawn in facets so a whaleback reads as rock, not steps. |
+| ? | gypsum_sand | saltmirror | local, saltmirror | Gypsum sand blown off the old lake floor and piled against the range: white, fine and cool underfoot, rippled by the south-west wind. |
 | ? | hawthorn_flower | base | glassfall, hemlow, local, redrock, windbarrow | Hawthorn blossom: dense white heads with a pink flush, lying over the crown in May. |
-| ? | hazard_stripe | slagdeck | duelbox, slagdeck, transmission | Yellow and black warning paint along the edge of every drop. |
+| ? | hazard_stripe | slagdeck | ctfbox, duelbox, saltmirror, slagdeck, sluice | Yellow and black warning paint along the edge of every drop. |
+| ? | hazel_bark | glassfall | glassfall, hemlow, jadewater, local | Hazel stems: smooth grey-brown with pale lenticels. |
+| ? | hazel_catkins | glassfall | glassfall, hemlow, jadewater, local | Hazel catkins: pale yellow lambs' tails hanging on the bare stems, late winter. |
+| ? | huckleberry_stem | glassfall | glassfall, local, ribshore | Red huckleberry stems: bright green and angled. Passable: knee-high growth you walk through. |
 | ? | hyacinth_flower | lowmouth | local, lowmouth | Water hyacinth flowers: pale lilac spikes with a yellow eye. |
 | ? | hyacinth_leaves | lowmouth | local, lowmouth | Water hyacinth: glossy round leaves on swollen floating stalks, a mat over the water. |
-| ? | ice_panel | icezeto | transmission | Wall panelling in a frozen base: off-white composite in metre courses, a little blue in the joints, rime in the seams. The bright surface that makes the place read as built rather than dug. |
-| ? | ice_panel_dark | icezeto | transmission | The slate-blue trim and service panels of a frozen base: door frames, plinths, the backs of the galleries. Dark enough that a white wall beside it keeps its edge. |
-| ? | ice_wall | icezeto | transmission | The glacier a frozen base is cut into, where it is left as wall: blue-grey ice with darker blue in the blotches. Darker than glacier_ice, which is written for a fjord under open sky; indoors that one glares and every corner disappears. |
-| ? | icicle | icezeto | transmission | An icicle hanging from a high ceiling. Passable, so a body runs through it rather than catching on it. |
-| ? | karst_moss | jadewater | porch | Thick green moss streaking down the karst walls where water runs, and on the shady sides of ledges. Faceted with the rock. |
+| ? | ice_panel | transmission | porch, starfall, transmission | Wall panelling in a frozen base: off-white composite in metre courses, a little blue in the joints, rime in the seams. The bright surface that makes the place read as built rather than dug. |
+| ? | ice_panel_amber | transmission | transmission | Composite wall panelling in a frozen base, painted signal amber: the comms and array rooms, warm against the ice. |
+| ? | ice_panel_dark | transmission | transmission | The slate-blue trim and service panels of a frozen base: door frames, plinths, the backs of the galleries. Dark enough that a white wall beside it keeps its edge. |
+| ? | ice_panel_mint | transmission | starfall, transmission | Composite wall panelling in a frozen base, a pale laboratory green: the cryo-labs, clean and a little clinical. |
+| ? | ice_panel_rust | transmission | starfall, transmission | Composite wall panelling in a frozen base, painted oxide red: armouries and airlocks, the rooms that keep the weapons. |
+| ? | ice_panel_teal | transmission | starfall, transmission | Composite wall panelling in a frozen base, painted the deep teal of the coolant plant: the colour of a base's core rooms. |
+| ? | ice_panel_violet | transmission | starfall, transmission | Composite wall panelling in a frozen base, a cold violet: the uplink and transmitter bays, high and bright. |
+| ? | ice_wall | transmission | porch, starfall, transmission | The glacier a frozen base is cut into, where it is left as wall: blue-grey ice with darker blue in the blotches. Darker than glacier_ice, which is written for a fjord under open sky; indoors that one glares and every corner disappears. |
+| ? | icicle | transmission | porch, starfall, transmission | An icicle hanging from a high ceiling. Passable, so a body runs through it rather than catching on it. |
+| ? | jump_pad | arena | megalith, porch, starfall, transmission | The floor of a jump pad: a disc of warm amber light, so a pad that throws you can be seen from across the room. Painted by the arena tools over the floor under every kicker; it is floor, nothing more. |
+| ? | karst_moss | jadewater | unused | Thick green moss streaking down the karst walls where water runs, and on the shady sides of ledges. Faceted with the rock. |
 | ? | karst_soil | jadewater | jadewater, local | Dark leaf mould and red-brown earth caught on the tops of the karst's ledges and bulges. Faceted with the rock. |
 | ? | lantern_glass | kaldvik | kaldvik | A street lantern's glass, lit from dusk. |
-| ? | live_oak_bark | lowmouth | local, lowmouth, windbarrow | Live oak bark: near-black, deeply furrowed into blocks. |
+| ? | live_oak_bark | lowmouth | hemlow, local, lowmouth, windbarrow | Live oak bark: near-black, deeply furrowed into blocks. |
 | ? | live_oak_leaves | lowmouth | local, lowmouth, thornpan | Live oak leaves: small, leathery and dark olive, evergreen. |
-| ? | mangrove_bark | lowmouth | local, lowmouth | Mangrove bark: smooth grey-brown prop roots and stems, mud-stained near the water. |
-| ? | mangrove_leaves | lowmouth | local, lowmouth | Red mangrove leaves: thick, glossy and dark green. |
+| ? | lupine | ribshore | local, ribshore | Purple lupine (drawn as sprites): violet spikes over fans of leaves. |
+| ? | mangrove_bark | lowmouth | jadewater, local, lowmouth | Mangrove bark: smooth grey-brown prop roots and stems, mud-stained near the water. |
+| ? | mangrove_leaves | lowmouth | jadewater, local, lowmouth | Red mangrove leaves: thick, glossy and dark green. |
+| ? | marrow_pit | ribshore | unused | The cells of the honeycomb, dark and damp. |
 | ? | marsh_grass | lowmouth | local, lowmouth, thornpan | Coarse tawny-green marsh grass on the levee toes, the chenier and the hammock edges (grass sprites grow on it). |
-| ? | oak_post | windbarrow | glassfall, jadewater, local, thornpan, windbarrow | Split oak, adze-dressed and weathered silver: the house posts, the barrow posts and the granary legs. |
-| ? | ochre | windbarrow | windbarrow | Red ochre, still in the grooves of the carving and on the posts. |
+| ? | mural_blue | saltmirror | saltmirror | The night sky on the mess hall's mural, a deep blue gone chalky. |
+| ? | mussel_black | ribshore | local, ribshore | Mussels packed in beds, blue-black, with gooseneck barnacles among them. |
+| ? | oak_post | windbarrow | glassfall, hemlow, jadewater, kaldvik, local, thornpan, windbarrow | Split oak, adze-dressed and weathered silver: the house posts, the barrow posts and the granary legs. |
+| ? | ochre | windbarrow | saltmirror, windbarrow | Red ochre, still in the grooves of the carving and on the posts. |
 | ? | ochre_board | kaldvik | kaldvik | Board cladding painted yellow ochre, the other colour of a northern hamlet. |
+| ? | ochre_wash | megalith | megalith, saltmirror | Limewash with red ochre through it, pale and worn: the red team's colour on Megalith's carved stone, as `woad` is the blue team's. Paler than the ochre in the Tepe's grooves, so a whole wall of it does not read as brick. |
 | ? | old_bone | windbarrow | local, windbarrow | Long bones and skulls dry on a cave floor: ivory going brown where the earth has stained them. |
+| ? | osier_withy | hemlow | hemlow, local, windbarrow | Osier withies: long straight shoots, orange-red, brightest in winter. |
 | ? | oyster_shell | lowmouth | local, lowmouth | Old oyster shell, grey-white and broken: the chenier's beaches and the shell road. |
-| ? | packed_snow | icezeto | local, transmission | Snow blown in through the vents and trodden flat along the walls: white with blue in the hollows. |
+| ? | packed_snow | transmission | local, porch, starfall, transmission | Snow blown in through the vents and trodden flat along the walls: white with blue in the hollows. |
 | ? | palm_frond | lowmouth | jadewater, local, lowmouth, thornpan | Palmetto and cabbage palm fronds: stiff fans of grey-green blades. |
 | ? | palm_trunk | lowmouth | jadewater, local, lowmouth, thornpan | Cabbage palm trunk, ringed with old frond scars. |
 | ? | palmetto_fronds | lowmouth | jadewater, local, lowmouth | Saw palmetto fans: stiff grey-green blades (drawn as sprites). |
+| ? | papyrus_head | thornpan | local, thornpan | Papyrus heads: a mop of fine green rays. |
+| ? | papyrus_stem | thornpan | local, thornpan | Papyrus stems: smooth bright green, three-sided. |
+| ? | pickup_pad_armour | arena | unused | The platform under an armour pickup in the shooter: a half-height blue slab, stamped under the pad by the shooter's rules when the pad finds its floor. Blue shields, as the pickup's own tint says. |
+| ? | pickup_pad_health | arena | unused | The platform under a health pickup in the shooter: a half-height green slab, stamped under the pad by the shooter's rules when the pad finds its floor. Green mends, as the pickup's own tint says. |
+| ? | pincushion_flower | saltmirror | local, saltmirror | Pincushion protea: round heads of orange styles, each tipped with a yellow pin. |
+| ? | plumose_white | ribshore | local, ribshore | Plumose anemones: tall white stalks with feathery crowns. |
+| ? | protea_flower | saltmirror | local, saltmirror | A protea's flower head: a cup of pink bracts round a silver-white crown. |
+| ? | protea_leaves | saltmirror | local, saltmirror | Protea leaves: stiff, leathery and grey-green, edged red on the young ones. |
+| ? | quartzite | saltmirror | local, saltmirror | Grey quartzite: the range's rock, hard and grainy, in thick beds with darker partings between them. |
+| ? | quartzite_dark | saltmirror | saltmirror | The darker beds of the range's quartzite, iron-stained, that make the bands on every crag. |
+| ? | rabbitbrush_flowers | redrock | local, redrock, saltmirror, thornpan | Rabbitbrush flower heads: dense mustard yellow, late summer into autumn. |
+| ? | rabbitbrush_stem | redrock | local, redrock, saltmirror, thornpan | Rabbitbrush stems: felted grey-green. Passable. |
 | ? | rawhide | windbarrow | windbarrow | Hides scraped, smoked brown and lashed over a frame: the cover of the bone house and the windbreak. |
+| ? | red_berries | glassfall | glassfall, local, redrock, ribshore | Small red berries and thimble fruit, summer. |
+| ? | red_osier_bark | ribshore | local, ribshore | Red-osier dogwood stems: bright red, reddest in winter. |
+| ? | reed_cane | thornpan | local, thornpan | Common reed canes: straw green, jointed. Passable. |
+| ? | reed_leaves | thornpan | local, thornpan | Common reed leaves: long grey-green blades along the canes. |
 | ? | reef_lime | underwater | glassfall, jadewater, local | Pale reef limestone: the dead coral a reef stands on, cream and grey, pocked. |
 | ? | ribbon_red | kaldvik | kaldvik | Red ribbon wound round a straw goat. |
-| ? | rime | icezeto | transmission | Hoar frost grown over a ceiling or the top of a wall: feathery white crystals that glitter in the lamplight. |
-| ? | rock_lichen | base | glassfall, kaldvik, local, redrock, thornpan, windbarrow | Lichen on rock: pale grey-green crusts with the bare rock showing between them. |
+| ? | rime | transmission | porch, starfall, transmission | Hoar frost grown over a ceiling or the top of a wall: feathery white crystals that glitter in the lamplight. |
+| ? | rock_lichen | base | glassfall, kaldvik, local, megalith, redrock, ribshore, saltmirror, thornpan, windbarrow | Lichen on rock: pale grey-green crusts with the bare rock showing between them. |
 | ? | rock_moss | base | glassfall, hemlow, jadewater, local, thornpan | Moss on stone: dark damp green in blotches with the grey stone showing between them. |
+| ? | rose_cane | hemlow | hemlow, local | Rose canes: green flushed red, prickly. |
+| ? | rose_flowers | hemlow | hemlow, local | Rose flowers: pink, in clusters at the cane tips, summer. |
 | ? | sail_frozen | kaldvik | kaldvik | Canvas furled on the yards and frozen stiff, grey-white and crusted. |
 | ? | salt_crust | windbarrow | local, thornpan, windbarrow | The white crust round Saltmere: salt dried in plates over grey mud, cracked into polygons. |
-| ? | salt_mud | windbarrow | local, thornpan, windbarrow | Grey-brown salt mud: the bed of Saltmere and the flats that come out of it in summer. |
+| ? | salt_mud | windbarrow | local, saltmirror, thornpan, windbarrow | Grey-brown salt mud: the bed of Saltmere and the flats that come out of it in summer. |
+| ? | salt_plates | saltmirror | local, saltmirror | The Mirror's crust: hard salt a hand thick over grey mud, dried into plates half a metre across whose raised rims are whiter than the plates. Seen from a dish rim the whole pan is a net of them. |
 | ? | savanna_grass | thornpan | local, thornpan | Savanna grass: tall tussock grass gone gold in the dry, standing over pale sand that shows through between the tufts. |
-| ? | sawgrass_blades | lowmouth | local, lowmouth, thornpan, windbarrow | Sawgrass: tough tawny-green blades with toothed edges, in tussocks out of the water. |
+| ? | sawgrass_blades | lowmouth | local, lowmouth, saltmirror, thornpan, windbarrow | Sawgrass: tough tawny-green blades with toothed edges, in tussocks out of the water. |
 | ? | sea_ice | kaldvik | kaldvik | Old sea ice: white-grey, wind-polished in places, faintly blue where it is clear. |
+| ? | sea_palm | ribshore | local, ribshore | Sea palm: rubbery olive stipes with a mop of blades, standing on the rock where the surf hits. |
+| ? | sea_star_ochre | ribshore | local, ribshore | Ochre sea stars, orange and purple, stuck to the rock at the waterline. |
 | ? | shelf_fungus | base | glassfall, hemlow, jadewater, local, lowmouth, redrock, thornpan | Bracket fungus: plain cream, a shade darker here and there, on the shelves that stand out from old trunks. |
 | ? | ship_hull | kaldvik | kaldvik | A wooden ship's hull, black with tar and greenheart sheathing, rimed white where the spray froze on it. |
 | ? | ship_rigging | kaldvik | kaldvik | Tarred spars and standing rigging, furred with hoar frost. |
 | ? | ship_trim | kaldvik | kaldvik | The ship's rail and deckhouse trim, once white, now the colour of old ice. |
-| ? | silver_deadwood | lowmouth | local, lowmouth | Dead cypress and cedar weathered silver-grey, split along the grain: the ghost forest's snags, the bottle trees, the figure's cane. Drawn as thin stems (bevelled, not rounded), so slim branches stay joined. |
+| ? | shore_pine_needles | ribshore | local, ribshore | Shore pine: short yellow-green needles in tufts at the branch ends. |
+| ? | silver_deadwood | lowmouth | glassfall, jadewater, local, lowmouth, ribshore | Dead cypress and cedar weathered silver-grey, split along the grain: the ghost forest's snags, the bottle trees, the figure's cane. Drawn as thin stems (bevelled, not rounded), so slim branches stay joined. |
+| ? | silver_leaves | saltmirror | local, saltmirror | Silver tree leaves: long and covered in silky hairs, so the whole crown flashes silver when the wind turns them. |
 | ? | sinter | kaldvik | kaldvik | Silica sinter round a hot spring: a pale grey-cream crust laid down in thin terraces, warm to stand on and never under snow. |
 | ? | sinter_stain | kaldvik | unused | Sinter stained by the mats of algae and bacteria in the run-off: rust orange shading to olive where the water cools. |
+| ? | sitka_needles | ribshore | local, ribshore | Sitka spruce: stiff blue-green needles, silvery underneath. |
 | ? | slag_pool | slagdeck | slagdeck | The pit at the middle of the deck: slag still hot enough to light the walls above it, and hot enough to kill anything that wades in. Twelve damage a second, so crossing a corner of it costs a little and standing in it is about eight seconds of life. |
+| ? | sloes | hemlow | hemlow, local, windbarrow | Sloes: small blue-black plums with a pale bloom, autumn. |
 | ? | sludge | slagdeck | unused | What the goo gun leaves behind: a wet olive mass that clings where it lands, slumps when nothing holds it up, and is about to go off. It gives off a little light of its own, which is how you spot a doorway somebody has mined. Named in Rust (combat::sludge), so it is in worldload::ENGINE_MATERIALS and every world reaches it. |
 | ? | spanish_moss | lowmouth | local, lowmouth | Spanish moss: grey-green beards hanging from the oaks and cypress. Passable. |
 | ? | sponge_orange | underwater | glassfall, jadewater, local | Barrel sponge: burnt orange, pocked. |
@@ -123,82 +209,112 @@ game (local/README.md).
 | ? | stall_green | kaldvik | kaldvik | Green-and-white striped canvas over a market stall. |
 | ? | stall_red | kaldvik | kaldvik | Red-and-white striped canvas over a market stall. |
 | ? | star_gold | kaldvik | kaldvik | The star on the market spruce. |
-| ? | stick_wood | lowmouth | local, lowmouth, porch, thornpan, windbarrow | Peeled sticks lashed into lattices: grey, dry, a little twisted. |
+| ? | steppe_grass | megalith | megalith | Grazed chalk turf on an arena floor: short grass grazed and dried to tan, ankle-high and even, with the chalk showing through. Unlike the grasses of the downs it grows no stands of long grass (`src/mesh/sprites.rs` names it); its name holds `grass` so the straw (world.json `straw`) reaches it, so nothing on an arena floor is tall enough to hide in. |
+| ? | stick_wood | lowmouth | hemlow, kaldvik, local, lowmouth, thornpan, windbarrow | Peeled sticks lashed into lattices: grey, dry, a little twisted. |
 | ? | stockfish | kaldvik | kaldvik | Cod split and hung in pairs to dry in the frost: grey-gold, stiff as boards. |
 | ? | straw_bound | kaldvik | kaldvik | Straw bound tight in bundles, golden and bristling. |
+| ? | sunflower_star | ribshore | local, ribshore | A sunflower star's soft body, pink-orange and many-armed. |
 | ? | swamp_muck | lowmouth | local, lowmouth | Black-brown swamp mud under the cypress: wet, with a litter of rusty needles. |
-| ? | terracotta | underwater | jadewater | Unglazed red earthenware: storage jars, a little paler where the sea has worn them. |
+| ? | switchcane_culm | lowmouth | local, lowmouth | Switchcane culms: olive green, jointed. Passable: you push through a canebrake. |
+| ? | tamarisk_bark | redrock | local, redrock, saltmirror | Tamarisk stems: red-brown, thin and many. |
+| ? | tamarisk_flowers | redrock | local, redrock, saltmirror | Tamarisk flower plumes: soft pink. |
+| ? | teleport_pad | arena | megalith, porch, starfall, transmission | The floor of a teleporter: a disc of violet light, so a pad that sends you somewhere can be seen from across the room. Painted by the arena tools over the floor under every teleporter; it is floor, nothing more. |
+| ? | terracotta | underwater | jadewater, saltmirror | Unglazed red earthenware: storage jars, a little paler where the sea has worn them. |
+| ? | thimbleberry_cane | glassfall | glassfall, local, redrock | Thimbleberry canes: pale brown with shreddy bark. Passable. |
+| ? | titan_bone | ribshore | local, ribshore | The titan's bone: dark wet grey, stained by the sea and the sand, paler where the rain runs. |
+| ? | titan_eye | ribshore | ribshore | The light in the titan's eye: the lighthouse lantern's amber, faint, lit only at night. |
+| ? | titan_marrow | ribshore | local, ribshore | The inside of a broken bone: a coarse honeycomb of ochre and grey, open to the weather. |
+| ? | titan_tooth | ribshore | local, ribshore | Tooth: smoother than the bone and yellower, the enamel cracked along its length. |
 | ? | tomb_lime | lowmouth | lowmouth | Whitewashed plaster over brick: the raised tombs, stained grey where the water stood. |
-| ? | tree_moss | base | glassfall, hemlow, jadewater, local, lowmouth, thornpan, windbarrow | Moss on bark: green blotches with bark-brown showing between them, so a mossed trunk reads as moss over bark. |
+| ? | transporter_yellow | saltmirror | saltmirror | The transporter's paint: a highway-machine yellow faded to mustard, worn to rust along every edge. |
+| ? | tree_moss | base | glassfall, hemlow, jadewater, local, lowmouth, ribshore, thornpan, windbarrow | Moss on bark: green blotches with bark-brown showing between them, so a mossed trunk reads as moss over bark. |
+| ? | truck_cream | saltmirror | saltmirror | Two-tone cream on a 1970s pickup, gone the colour of old teeth, rust along the sills. |
+| ? | truck_orange | saltmirror | saltmirror | Harvest orange on a 1970s pickup, faded pale, rust coming through the bonnet. |
+| ? | truck_teal | saltmirror | saltmirror | Factory teal on a 1970s pickup, sun-faded to the colour of an old swimming pool, rust coming through the bonnet. |
+| ? | try_brick | ribshore | ribshore | Fire brick, blackened with old soot: the try-works where the blubber was boiled. |
 | ? | tupelo_leaves | lowmouth | local, lowmouth | Water tupelo leaves: broad, a dull mid green. |
 | ? | turf_roof | kaldvik | kaldvik | A turf roof: grass sods over birch bark, brown and sere in winter. |
 | ? | turf_wall | kaldvik | kaldvik | Turf walls: blocks of sod laid in herringbone courses on a stone footing. |
 | ? | water_lily | lowmouth | local, lowmouth, thornpan | Water lily: the marker a lily plant grows from, drawn only as pads lying flat on the water over it (floating). Its colour is the pads' green. |
-| ? | window_warm | kaldvik | kaldvik | A window with a lamp behind it: dark glass by day, warm amber from dusk. |
+| ? | weapon_pad_bore | arena | unused | The platform under the bore pickup in the shooter: a half-height slab in the gun's own colour, stamped under the pad by the shooter's rules when the pad finds its floor, so the spot can be seen and read when the gun has been taken. Ammo pads for the same gun stand on the same colour. |
+| ? | weapon_pad_digger | arena | unused | The platform under the digger pickup in the shooter: a half-height slab in the gun's own colour, stamped under the pad by the shooter's rules when the pad finds its floor, so the spot can be seen and read when the gun has been taken. Ammo pads for the same gun stand on the same colour. |
+| ? | weapon_pad_goo_gun | arena | unused | The platform under the goo gun pickup in the shooter: a half-height slab in the gun's own colour, stamped under the pad by the shooter's rules when the pad finds its floor, so the spot can be seen and read when the gun has been taken. Ammo pads for the same gun stand on the same colour. |
+| ? | weapon_pad_minigun | arena | unused | The platform under the minigun pickup in the shooter: a half-height slab in the gun's own colour, stamped under the pad by the shooter's rules when the pad finds its floor, so the spot can be seen and read when the gun has been taken. Ammo pads for the same gun stand on the same colour. |
+| ? | weapon_pad_pulse_gun | arena | unused | The platform under the pulse gun pickup in the shooter: a half-height slab in the gun's own colour, stamped under the pad by the shooter's rules when the pad finds its floor, so the spot can be seen and read when the gun has been taken. Ammo pads for the same gun stand on the same colour. |
+| ? | weapon_pad_rocket_launcher | arena | unused | The platform under the rocket launcher pickup in the shooter: a half-height slab in the gun's own colour, stamped under the pad by the shooter's rules when the pad finds its floor, so the spot can be seen and read when the gun has been taken. Ammo pads for the same gun stand on the same colour. |
+| ? | weapon_pad_scrap_gun | arena | unused | The platform under the scrap gun pickup in the shooter: a half-height slab in the gun's own colour, stamped under the pad by the shooter's rules when the pad finds its floor, so the spot can be seen and read when the gun has been taken. Ammo pads for the same gun stand on the same colour. |
+| ? | weapon_pad_sidearm | arena | unused | The platform under the sidearm pickup in the shooter: a half-height slab in the gun's own colour, stamped under the pad by the shooter's rules when the pad finds its floor, so the spot can be seen and read when the gun has been taken. Ammo pads for the same gun stand on the same colour. |
+| ? | weapon_pad_skipjack | arena | unused | The platform under the skipjack pickup in the shooter: a half-height slab in the gun's own colour, stamped under the pad by the shooter's rules when the pad finds its floor, so the spot can be seen and read when the gun has been taken. Ammo pads for the same gun stand on the same colour. |
+| ? | weapon_pad_sniper_rifle | arena | unused | The platform under the sniper rifle pickup in the shooter: a half-height slab in the gun's own colour, stamped under the pad by the shooter's rules when the pad finds its floor, so the spot can be seen and read when the gun has been taken. Ammo pads for the same gun stand on the same colour. |
+| ? | wet_sand | ribshore | local, ribshore | The wet beach below the last tide line: grey-brown and dark, holding the sky. |
+| ? | whip_orange | underwater | glassfall, jadewater, local | Sea whip: a flexible gorgonian rod, orange-yellow, its polyps a fuzz along it. |
+| ? | whip_violet | underwater | glassfall, jadewater, local | Sea whip: a flexible gorgonian rod, violet, its polyps a fuzz along it. |
+| ? | window_warm | kaldvik | kaldvik, ribshore | A window with a lamp behind it: dark glass by day, warm amber from dusk. |
+| ? | woad | megalith | megalith | A woad-blue limewash, pale and worn through to the cream in places: the blue team's colour on Megalith's carved stone, as `ochre_wash` is the red team's. |
 | ? | works_beam | slagdeck | slagdeck | Charcoal structural steel: columns, trusses, the lips of the catwalks. |
 | ? | works_grate | slagdeck | slagdeck, transmission | Walkway grating, dark and close-barred. |
-| ? | works_lamp | slagdeck | duelbox, slagdeck | A lamp strip under the galleries: the only thing still lit in the shops, and the only way to see in them. |
+| ? | works_lamp | slagdeck | ctfbox, duelbox, slagdeck | A lamp strip under the galleries: the only thing still lit in the shops, and the only way to see in them. |
 | ? | works_panel | slagdeck | slagdeck | Painted sheet on the arena's walls: one flat grey, no pattern at all, so corners and openings stay sharp. |
-| ? | works_panel_pale | slagdeck | duelbox, slagdeck | The paler grey panel, for the walls that need to stand off the darker ones. |
+| ? | works_panel_pale | slagdeck | ctfbox, duelbox, slagdeck, sluice | The paler grey panel, for the walls that need to stand off the darker ones. |
 | ? | xmas_spruce | kaldvik | kaldvik | The market spruce's boughs, dense and dark. |
 | ? | young_ice | kaldvik | unused | New ice a few nights old: thin, dark and glassy, the water showing grey through it. |
-| 17 | basalt | glassfall | glassfall, kaldvik, local, redrock |  |
+| 17 | basalt | glassfall | glassfall, kaldvik, local, redrock, ribshore |  |
 | 18 | tuff | glassfall | glassfall, local |  |
-| 19 | black_sand | glassfall | glassfall, local |  |
-| 20 | ash | glassfall | glassfall, local, thornpan, windbarrow |  |
+| 19 | black_sand | glassfall | glassfall, kaldvik, local |  |
+| 20 | ash | glassfall | glassfall, local, saltmirror, thornpan, windbarrow |  |
 | 21 | silt | glassfall | glassfall, jadewater, local, lowmouth |  |
-| 22 | charcoal | glassfall | glassfall, hemlow, redrock, thornpan, windbarrow |  |
+| 22 | charcoal | glassfall | glassfall, hemlow, kaldvik, redrock, saltmirror, thornpan, windbarrow |  |
 | 23 | skyglass | glassfall | glassfall |  |
 | 24 | prairie_grass | glassfall | glassfall, local, redrock |  |
 | 25 | pale_grass | glassfall | glassfall, local |  |
-| 26 | glowmoss | glassfall | glassfall, hemlow |  |
-| 27 | river_water | glassfall | jadewater, redrock, thornpan |  |
+| 26 | glowmoss | glassfall | glassfall, hemlow, local |  |
+| 27 | river_water | glassfall | jadewater, megalith, thornpan, transmission |  |
 | 28 | river_cobbles | glassfall | redrock |  |
 | 29 | dry_bed | glassfall | glassfall |  |
-| 30 | path_dirt | glassfall | glassfall, hemlow, local, redrock, thornpan |  |
-| 31 | fieldstone | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, redrock, thornpan |  |
-| 32 | mossy_stone | glassfall | glassfall, local, porch |  |
-| 33 | thatch | glassfall | glassfall, hemlow, local, lowmouth, redrock, thornpan, windbarrow |  |
-| 34 | weathered_planks | glassfall | glassfall, hemlow, jadewater, kaldvik, local, lowmouth, redrock, thornpan |  |
-| 35 | timber_frame | glassfall | glassfall, hemlow, local, lowmouth, redrock, thornpan |  |
-| 36 | slate | glassfall | duelbox, glassfall, hemlow, kaldvik, local, porch, redrock, slagdeck, transmission |  |
-| 37 | rust_iron | glassfall | glassfall, hemlow, local, lowmouth, redrock, slagdeck |  |
-| 38 | pale_bark | glassfall | glassfall, hemlow, local, thornpan |  |
+| 30 | path_dirt | glassfall | glassfall, hemlow, kaldvik, local, redrock, ribshore, saltmirror, thornpan |  |
+| 31 | fieldstone | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, redrock, ribshore, thornpan |  |
+| 32 | mossy_stone | glassfall | glassfall, kaldvik, local |  |
+| 33 | thatch | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, redrock, thornpan, windbarrow |  |
+| 34 | weathered_planks | glassfall | glassfall, hemlow, jadewater, kaldvik, local, lowmouth, redrock, ribshore, thornpan |  |
+| 35 | timber_frame | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, redrock, ribshore, saltmirror, thornpan |  |
+| 36 | slate | glassfall | ctfbox, duelbox, glassfall, hemlow, kaldvik, local, megalith, porch, redrock, slagdeck, sluice, starfall, transmission |  |
+| 37 | rust_iron | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, redrock, ribshore, saltmirror, slagdeck |  |
+| 38 | pale_bark | glassfall | glassfall, hemlow, local, saltmirror, thornpan |  |
 | 39 | pale_needles | glassfall | glassfall, hemlow, local |  |
-| 40 | dark_needles | glassfall | glassfall, hemlow, kaldvik, local, porch |  |
+| 40 | dark_needles | glassfall | glassfall, hemlow, kaldvik, local, ribshore |  |
 | 41 | willow_leaves | glassfall | glassfall, hemlow, local, lowmouth, windbarrow |  |
-| 42 | heather | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, windbarrow |  |
-| 43 | dead_wood | glassfall | glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, thornpan, windbarrow |  |
+| 42 | heather | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, megalith, ribshore, saltmirror, windbarrow |  |
+| 43 | dead_wood | glassfall | glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, redrock, ribshore, saltmirror, thornpan, windbarrow |  |
 | 44 | meadow_grass | glassfall | glassfall, hemlow, local, lowmouth, windbarrow |  |
 | 45 | scree | glassfall | glassfall, local | Gravel in the classic style (large, low-contrast stones); saturated keeps cracks, darker and at 70% contrast. |
-| 46 | canvas | glassfall | glassfall, lowmouth, thornpan, windbarrow |  |
+| 46 | canvas | glassfall | glassfall, kaldvik, lowmouth, ribshore, thornpan, windbarrow |  |
 | 47 | lichen_rock | glassfall | glassfall, hemlow, local, redrock, windbarrow |  |
 | 48 | glass_spike | glassfall | glassfall, local |  |
-| 49 | forest_floor | glassfall | glassfall, hemlow, local, porch |  |
-| 50 | shore_grass | glassfall | glassfall, local |  |
-| 51 | maple_red | glassfall | glassfall, hemlow, local, lowmouth, porch |  |
-| 52 | fern | glassfall | glassfall, hemlow, jadewater, local, lowmouth, porch, thornpan |  |
+| 49 | forest_floor | glassfall | glassfall, hemlow, local |  |
+| 50 | shore_grass | glassfall | glassfall, hemlow, kaldvik, local, ribshore |  |
+| 51 | maple_red | glassfall | glassfall, hemlow, local, lowmouth |  |
+| 52 | fern | glassfall | glassfall, hemlow, jadewater, local, lowmouth, ribshore, thornpan |  |
 | 53 | hoodoo_rust | glassfall | glassfall, redrock |  |
 | 54 | hoodoo_pale | glassfall | glassfall, redrock |  |
 | 55 | fireweed | glassfall | glassfall, local, redrock | Marker voxel at the foot of a fireweed clump; the stems and flowers are sprites (layer fireweed). |
-| 56 | glassbloom | glassfall | glassfall, hemlow, local, porch | Marker voxel at the foot of a glassbloom; the blades are sprites (layer glassbloom). |
+| 56 | glassbloom | glassfall | glassfall, hemlow, local | Marker voxel at the foot of a glassbloom; the blades are sprites (layer glassbloom). |
 | 60 | oolite | hemlow | hemlow, local | Honey-coloured oolitic limestone in thick beds: the face of Hemlow Edge and the bones of the upland. |
 | 61 | oolite_cream | hemlow | hemlow | A paler, creamier bed of the oolite that makes a level band along the Edge. |
 | 62 | cotswold_stone | hemlow | glassfall, hemlow, jadewater, local, lowmouth, redrock, thornpan | Coursed honey limestone walling, dressed at the corners: every building in Hemlow. |
 | 63 | stone_tiles | hemlow | hemlow, local | Stone slate roofing: small grey-brown limestone slates in diminishing courses, crusted with lichen. |
 | 64 | wildflower_grass | hemlow | hemlow, local | Hay-meadow turf thick with flowers: buttercup, scabious, knapweed, ox-eye daisy, poppies (sprites as on prairie grass). |
-| 65 | bog_moss | hemlow | hemlow, local, lowmouth | Sphagnum lawn of the Wisp Moss: wet green moss with rusty-red and ochre patches. |
-| 66 | peat | hemlow | hemlow, local, lowmouth | Black-brown peat under the mere and the bog pools. |
+| 65 | bog_moss | hemlow | glassfall, hemlow, local, lowmouth | Sphagnum lawn of the Wisp Moss: wet green moss with rusty-red and ochre patches. |
+| 66 | peat | hemlow | glassfall, hemlow, local, lowmouth | Black-brown peat under the mere and the bog pools. |
 | 67 | glowworm_ceiling | hemlow | hemlow | The roof of Lantern Hole: wet stone with scattered blue-green glow-worm lights. v2: grey stone between the lights, and only the lights glow (glow_specks), with threads hanging down. |
-| 69 | lamplit_glass | hemlow | hemlow, local, lowmouth | Leaded window panes with lamplight behind them: Hemlow leaves a lamp in every window on Midsummer Eve. |
+| 69 | lamplit_glass | hemlow | hemlow, kaldvik, local, lowmouth, ribshore | Leaded window panes with lamplight behind them: Hemlow leaves a lamp in every window on Midsummer Eve. |
 | 70 | beech_bark | hemlow | hemlow, local | Smooth pale grey beech bark with darker mottling. |
 | 71 | beech_leaves | hemlow | hemlow, local | Fresh bright-green beech leaves in flat sprays. |
 | 72 | elder_flower | hemlow | hemlow, local | Elder blossom: flat cream corymbs that lie on the crown's green. |
 | 73 | rose_bush | hemlow | hemlow, local | Cottage-garden and dog roses: green leaves thick with pink blooms. |
-| 74 | reed_green | hemlow | hemlow, local, lowmouth, thornpan, windbarrow | Long grey-green leaves and stems of reedmace. |
-| 75 | reedmace_head | hemlow | hemlow, local, lowmouth, thornpan, windbarrow | The velvet brown seed heads of reedmace. |
-| 76 | cave_rock | hemlow | hemlow, local | Dark wet limestone of Lantern Hole's walls and floor, stained grey-brown and slick. |
-| 77 | flowstone | hemlow | hemlow | Pale cream calcite of the stalactites and stalagmites, wet and faintly translucent. |
+| 74 | reed_green | hemlow | glassfall, hemlow, local, lowmouth, thornpan, windbarrow | Long grey-green leaves and stems of reedmace. |
+| 75 | reedmace_head | hemlow | glassfall, hemlow, local, lowmouth, thornpan, windbarrow | The velvet brown seed heads of reedmace. |
+| 76 | cave_rock | hemlow | local | Dark wet limestone of Lantern Hole's walls and floor, stained grey-brown and slick. |
+| 77 | flowstone | hemlow | unused | Pale cream calcite of the stalactites and stalagmites, wet and faintly translucent. |
 | 100 | chinle_mudstone | redrock | local, redrock | Banded purple, grey and pale blue mudstone at the bottom of the stack; badlands and petrified logs. |
 | 101 | wingate_sandstone | redrock | redrock | Dark red-orange sandstone that breaks in sheer walls (the Red Cliffs). |
 | 102 | kayenta_ledges | redrock | local, redrock | Purple-red ledgy sandstone and siltstone between the two cliff formers. |
@@ -211,99 +327,99 @@ game (local/README.md).
 | 109 | slickrock | redrock | local, redrock | Bare rounded sandstone underfoot, blotched with lichen and varnish. |
 | 110 | wash_sand | redrock | glassfall, local, redrock | Pale tan sand and pebbles in a dry wash or canyon floor. |
 | 112 | cinders | redrock | local, redrock | Black and oxblood volcanic cinders around the cone. |
-| 113 | pine_duff | redrock | local, redrock | Orange-brown ponderosa needle litter on the plateau floor. |
+| 113 | pine_duff | redrock | local, redrock, ribshore | Orange-brown ponderosa needle litter on the plateau floor. |
 | 114 | lake_mud | redrock | local, redrock | Grey-tan mud the falling lake left, cracked into plates. |
-| 115 | asphalt | redrock | duelbox, local, redrock, slagdeck | Old sun-faded highway asphalt. |
+| 115 | asphalt | redrock | ctfbox, duelbox, local, redrock, slagdeck, sluice, starfall | Old sun-faded highway asphalt. |
 | 116 | road_gravel | redrock | local, redrock | Road shoulder gravel. |
-| 117 | packed_dirt | redrock | glassfall, hemlow, local, lowmouth, redrock, thornpan, windbarrow | Bulldozed and ridden-in dirt of the bike course. |
+| 117 | packed_dirt | redrock | glassfall, hemlow, kaldvik, local, lowmouth, redrock, ribshore, saltmirror, thornpan, windbarrow | Bulldozed and ridden-in dirt of the bike course. |
 | 118 | tailings | redrock | redrock | Pale yellow crushed rock from the stamp mill. |
 | 119 | shore_sand | redrock | local, redrock, thornpan | Pale lake-shore sand above the waterline. |
 | 120 | ponderosa_bark | redrock | local, redrock | Ponderosa bark: orange plates with dark seams. |
 | 121 | ponderosa_needles | redrock | local, redrock | Long ponderosa needles, yellow-green. |
-| 122 | juniper_bark | redrock | kaldvik, local, redrock, thornpan, windbarrow | Shaggy grey-brown juniper bark. |
+| 122 | juniper_bark | redrock | kaldvik, local, redrock, saltmirror, thornpan, windbarrow | Shaggy grey-brown juniper bark. |
 | 123 | juniper_foliage | redrock | kaldvik, local, redrock, windbarrow | Blue-green juniper scale leaves. |
 | 124 | pinyon_needles | redrock | local, redrock | Short dark pinyon needles. |
-| 125 | sage | redrock | local, redrock, thornpan, windbarrow | Silver-green sagebrush. |
-| 126 | rabbitbrush | redrock | local, redrock, thornpan | Marker voxel at the foot of a rabbitbrush bush; the stems and flowers are sprites (layer rabbitbrush). |
+| 125 | sage | redrock | local, redrock, saltmirror, thornpan, windbarrow | Silver-green sagebrush. |
+| 126 | rabbitbrush | redrock | local, redrock, saltmirror, thornpan | Marker voxel at the foot of a rabbitbrush bush; the stems and flowers are sprites (layer rabbitbrush). |
 | 127 | cottonwood_leaves | redrock | local, lowmouth, redrock | Bright cottonwood leaves along the river. |
-| 128 | cottonwood_bark | redrock | glassfall, hemlow, kaldvik, local, lowmouth, redrock | Grey, deeply furrowed cottonwood bark. |
-| 129 | tamarisk | redrock | local, redrock | Feathery grey-green tamarisk with pink flower plumes. |
-| 130 | yucca_leaves | redrock | local, redrock | Stiff yucca blades. |
-| 131 | corrugated_tin | redrock | duelbox, glassfall, lowmouth, redrock, slagdeck, thornpan | Galvanised corrugated iron, streaked with rust. |
+| 128 | cottonwood_bark | redrock | glassfall, hemlow, kaldvik, local, lowmouth, redrock, ribshore | Grey, deeply furrowed cottonwood bark. |
+| 129 | tamarisk | redrock | local, redrock, saltmirror | Feathery grey-green tamarisk with pink flower plumes. |
+| 130 | yucca_leaves | redrock | local, redrock, saltmirror | Stiff yucca blades. |
+| 131 | corrugated_tin | redrock | ctfbox, duelbox, glassfall, lowmouth, redrock, ribshore, saltmirror, slagdeck, sluice, thornpan | Galvanised corrugated iron, streaked with rust. |
 | 132 | red_stone | redrock | redrock | Laid red sandstone blocks: Bitterwater chapel, Harlow's stone buildings, the granaries. |
-| 133 | white_siding | redrock | kaldvik, lowmouth, redrock | Weathered white clapboard. |
-| 134 | concrete | redrock | duelbox, local, lowmouth, redrock, slagdeck | Poured concrete: pump island, slab, abutments. |
-| 135 | station_red | redrock | lowmouth, redrock | Faded red paint: the station canopy fascia and pumps. |
-| 136 | window_glass | redrock | kaldvik, lowmouth, redrock | Dark window glass (glints in the sun). |
-| 137 | bridge_steel | redrock | local, lowmouth, redrock | Grey-green painted steel of the arch bridge. |
-| 138 | sign_white | redrock | lowmouth, redrock | White painted sign board. |
-| 139 | tyre_rubber | redrock | redrock | Old tyres, the course markers. |
-| 140 | sign_yellow | redrock | lowmouth, redrock | Yellow paint: road signs and the course start gate. |
+| 133 | white_siding | redrock | kaldvik, lowmouth, redrock, ribshore | Weathered white clapboard. |
+| 134 | concrete | redrock | ctfbox, duelbox, kaldvik, local, lowmouth, redrock, saltmirror, slagdeck, sluice | Poured concrete: pump island, slab, abutments. |
+| 135 | station_red | redrock | lowmouth, redrock, saltmirror | Faded red paint: the station canopy fascia and pumps. |
+| 136 | window_glass | redrock | kaldvik, lowmouth, redrock, saltmirror | Dark window glass (glints in the sun). |
+| 137 | bridge_steel | redrock | local, lowmouth, redrock, saltmirror | Grey-green painted steel of the arch bridge. |
+| 138 | sign_white | redrock | lowmouth, redrock, saltmirror | White painted sign board. |
+| 139 | tyre_rubber | redrock | redrock, saltmirror | Old tyres, the course markers. |
+| 140 | sign_yellow | redrock | lowmouth, redrock, saltmirror | Yellow paint: road signs and the course start gate. |
 | 141 | petrified_wood | redrock | local, redrock | Wood turned to stone: red, amber and grey bands. |
-| 142 | desert_planks | redrock | glassfall, redrock | Boards dried silver-grey and brown by a century of desert sun. |
-| 143 | agave_stalk | redrock | local, redrock | Marker voxel at the heart of a flowering agave; the stalk and its yellow flower clusters are sprites (layers agave_stalk, agave_stalk_dry). |
-| 144 | yucca_stalk | redrock | local, redrock | Marker voxel at the heart of a flowering yucca; the spike of creamy bells is a sprite (layer yucca_stalk). |
+| 142 | desert_planks | redrock | glassfall, redrock, saltmirror | Boards dried silver-grey and brown by a century of desert sun. |
+| 143 | agave_stalk | redrock | local, redrock, saltmirror | Marker voxel at the heart of a flowering agave; the stalk and its yellow flower clusters are sprites (layers agave_stalk, agave_stalk_dry). |
+| 144 | yucca_stalk | redrock | local, redrock, saltmirror | Marker voxel at the heart of a flowering yucca; the spike of creamy bells is a sprite (layer yucca_stalk). |
 | 145 | dry_bunchgrass | redrock | unused | Tan, summer-dry bunchgrass. Only a tint: the grass tufts on pine_duff take this colour (mesh/sprites.rs). |
 | 146 | coral_sand | redrock | local, redrock | Pale coral-pink wind-blown sand of the dune field: finer and pinker than the red desert sand. |
 | 150 | pavement | city | local | Concrete sidewalk slabs. |
-| 151 | ballast | city | duelbox, local, slagdeck | Railway ballast: grey crushed rock. |
+| 151 | ballast | city | ctfbox, duelbox, local, slagdeck, sluice, starfall | Railway ballast: grey crushed rock. |
 | 152 | lawn_grass | city | hemlow, local | Mown city lawn and verge grass. |
-| 153 | door_wood | city | hemlow, lowmouth | A painted wooden front door. |
+| 153 | door_wood | city | hemlow, kaldvik, lowmouth, ribshore | A painted wooden front door. |
 | 154 | roof_vent | city | local | Galvanised rooftop vents and units. |
-| 155 | roof_tar | city | kaldvik, lowmouth | Flat tar-and-gravel roofing. |
-| 156 | shingle_dark | city | kaldvik, local, lowmouth | Dark composition shingles. |
-| 157 | shingle_brown | city | porch | Brown cedar-look shingles. |
-| 158 | shingle_moss | city | glassfall, hemlow, lowmouth | Old shingles going green with moss in a wet climate. |
+| 155 | roof_tar | city | kaldvik, lowmouth, ribshore, saltmirror | Flat tar-and-gravel roofing. |
+| 156 | shingle_dark | city | kaldvik, local, lowmouth, saltmirror | Dark composition shingles. |
+| 157 | shingle_brown | city | unused | Brown cedar-look shingles. |
+| 158 | shingle_moss | city | glassfall, hemlow, kaldvik, lowmouth, ribshore | Old shingles going green with moss in a wet climate. |
 | 159 | siding_slate | city | local, lowmouth | Slate-blue painted lap siding. |
 | 160 | siding_sage | city | lowmouth | Sage-green painted lap siding. |
 | 161 | siding_grey | city | lowmouth | Grey painted lap siding. |
-| 162 | siding_cream | city | lowmouth | Cream painted lap siding. |
+| 162 | siding_cream | city | lowmouth, saltmirror | Cream painted lap siding. |
 | 163 | siding_rust | city | lowmouth | Barn-red painted lap siding. |
-| 164 | siding_teal | city | lowmouth | Deep teal painted lap siding. |
-| 165 | brick_brown | city | hemlow, local, lowmouth | Dark brown face brick. |
+| 164 | siding_teal | city | lowmouth, saltmirror | Deep teal painted lap siding. |
+| 165 | brick_brown | city | hemlow, kaldvik, local, lowmouth, ribshore, saltmirror | Dark brown face brick. |
 | 166 | stucco_tan | city | unused | Tan stucco render. |
-| 167 | panel_grey | city | unused | Grey fibre-cement panels on newer blocks. |
-| 168 | trim_white | city | kaldvik, lowmouth | White painted trim boards. |
-| 169 | trim_dark | city | jadewater, local, lowmouth | Dark metal trim and parapet caps. |
+| 167 | panel_grey | city | saltmirror | Grey fibre-cement panels on newer blocks. |
+| 168 | trim_white | city | kaldvik, lowmouth, ribshore, saltmirror | White painted trim boards. |
+| 169 | trim_dark | city | jadewater, local, lowmouth, saltmirror | Dark metal trim and parapet caps. |
 | 170 | troll_concrete | city | local | Rough grey ferro-concrete, the troll's skin. |
 | 171 | road_asphalt | city | local | City street asphalt with a clean edge at the kerb (crisp: no blending into the verge). |
-| 172 | panel_dark | city | unused | Charcoal fibre-cement siding: newer townhouses and apartment blocks. |
+| 172 | panel_dark | city | saltmirror | Charcoal fibre-cement siding: newer townhouses and apartment blocks. |
 | 173 | blossom_leaves | city | hemlow, jadewater, local | Pink blossom on flowering cherries. |
-| 174 | salal_leaves | city | hemlow, local, porch | Salal: thick, glossy, dark evergreen leaves of the Northwest understorey. |
-| 175 | pane_glass | city | lowmouth | Window panes: an even dark blue-grey that catches the sun (glints by name), no speckle. |
-| 176 | door_red | city | hemlow, kaldvik, local, lowmouth | A front door painted deep red. |
-| 177 | door_blue | city | hemlow, local, lowmouth | A front door painted navy. |
+| 174 | salal_leaves | city | glassfall, hemlow, local, ribshore | Salal: thick, glossy, dark evergreen leaves of the Northwest understorey. |
+| 175 | pane_glass | city | kaldvik, lowmouth, ribshore | Window panes: an even dark blue-grey that catches the sun (glints by name), no speckle. |
+| 176 | door_red | city | hemlow, kaldvik, local, lowmouth, ribshore | A front door painted deep red. |
+| 177 | door_blue | city | hemlow, local, lowmouth, saltmirror | A front door painted navy. |
 | 178 | door_green | city | hemlow, local, lowmouth | A front door painted forest green. |
-| 179 | door_black | city | hemlow, lowmouth | A front door painted gloss black. |
-| 180 | door_yellow | city | hemlow, lowmouth | A front door painted mustard yellow. |
-| 181 | moss_grass | faerie | hemlow, jadewater, local, porch, windbarrow | Deep, soft moss-and-grass ground of the enchanted city. v2: grows its own tufts rather than taking the shared default, thick and half again as tall, since it is the floor of a wood growing indoors and short lawn read as mown. |
-| 182 | ivy_leaves | faerie | porch | Ivy climbing the walls: glossy dark green. |
-| 183 | fae_cobbles | faerie | hemlow, porch | Old cobbles with moss in every joint, where the asphalt was. |
+| 179 | door_black | city | hemlow, kaldvik, lowmouth, ribshore | A front door painted gloss black. |
+| 180 | door_yellow | city | hemlow, lowmouth, saltmirror | A front door painted mustard yellow. |
+| 181 | moss_grass | faerie | hemlow, jadewater, local, windbarrow | Deep, soft moss-and-grass ground of the enchanted city. v2: grows its own tufts rather than taking the shared default, thick and half again as tall, since it is the floor of a wood growing indoors and short lawn read as mown. |
+| 182 | ivy_leaves | faerie | unused | Ivy climbing the walls: glossy dark green. |
+| 183 | fae_cobbles | faerie | hemlow | Old cobbles with moss in every joint, where the asphalt was. |
 | 184 | moss_flagstone | faerie | hemlow, local, thornpan | Flagstones gone green at the edges. |
 | 185 | rooftop_grass | faerie | unused | A roof gone to meadow. |
-| 186 | wisteria_leaves | faerie | jadewater, local | Hanging lilac wisteria blossom. v2: the strands of the wisteria vine, so passable like any vine; the racemes are sprites. |
+| 186 | wisteria_leaves | faerie | hemlow, jadewater, local | Hanging lilac wisteria blossom. v2: the strands of the wisteria vine, so passable like any vine; the racemes are sprites. |
 | 187 | gold_leaves | faerie | hemlow, local | Leaves that stay gold all year, faintly bright in shade. |
-| 188 | vine_leaves | glassfall | glassfall, hemlow, jadewater, local, porch, redrock, thornpan, windbarrow | Hanging vine strands: small dark leaves on a thin stem. Passable, so the player walks through a curtain of them. |
+| 188 | vine_leaves | glassfall | glassfall, hemlow, jadewater, kaldvik, local, redrock, thornpan, windbarrow | Hanging vine strands: small dark leaves on a thin stem. Passable, so the player walks through a curtain of them. |
 | 189 | blossom_vine_leaves | faerie | hemlow, local | Trailing blossom vine: rose-lilac flowers among green. Passable. |
-| 190 | huckleberry | glassfall | glassfall, local | Marker voxel at the foot of a huckleberry bush; the stems and leaves are sprites (layer huckleberry). |
+| 190 | huckleberry | glassfall | glassfall, local, ribshore | Marker voxel at the foot of a huckleberry bush; the stems and leaves are sprites (layer huckleberry). |
 | 191 | thimbleberry | glassfall | glassfall, local, redrock | Marker voxel at the foot of a thimbleberry bush; the stems and big leaves are sprites (layer thimbleberry). |
-| 192 | log_moss | glassfall | glassfall, hemlow, local, lowmouth, porch, windbarrow | Moss over the top of an old fallen log: green blotches over grey wood. |
+| 192 | log_moss | glassfall | glassfall, hemlow, local, lowmouth, ribshore, windbarrow | Moss over the top of an old fallen log: green blotches over grey wood. |
 | 200 | redwood_bark | glassfall | glassfall, local | Coast redwood bark: deep red-brown, thick and stringy in long vertical ridges. |
 | 201 | redwood_needles | glassfall | glassfall, local | Redwood foliage: flat dark sprays. |
-| 202 | ocotillo_cane | redrock | local, redrock | Ocotillo canes: grey-green, ridged and thorny. |
-| 203 | ocotillo_flower | redrock | local, redrock | The ocotillo's scarlet spring flower spikes. |
-| 204 | saguaro | redrock | local, redrock | Saguaro skin: ribbed green with pale spine rows. |
-| 205 | kelp_stipe | glassfall | glassfall, local | Giant kelp stipe: olive-brown, rope-like. |
-| 206 | kelp_blade | glassfall | glassfall, local | Giant kelp blades: translucent golden brown. |
-| 207 | reef_rock | glassfall | glassfall, jadewater, local | Rocky reef under the kelp: dark stone crusted with pink coralline and urchins. |
-| 208 | prickly_pear_pad | redrock | local, redrock | Prickly pear pads: grey-green with rows of pale spine clusters. |
-| 209 | prickly_pear_fruit | redrock | local, redrock | Prickly pear fruit and flowers: magenta tunas, with a few yellow blooms. |
-| 210 | cholla | redrock | local, redrock | Cholla: a pale straw glow of dense spines over green joints. |
-| 211 | agave | redrock | local, redrock | Agave leaves: thick, blue-grey, spine-tipped. |
-| 212 | beach_pea_leaves | glassfall | glassfall, hemlow, local | Beach pea: low trailing green leaves with magenta-purple pea flowers. |
+| 202 | ocotillo_cane | redrock | local, redrock, saltmirror | Ocotillo canes: grey-green, ridged and thorny. |
+| 203 | ocotillo_flower | redrock | local, redrock, saltmirror | The ocotillo's scarlet spring flower spikes. |
+| 204 | saguaro | redrock | local, redrock, saltmirror | Saguaro skin: ribbed green with pale spine rows. |
+| 205 | kelp_stipe | glassfall | glassfall, hemlow, kaldvik, local, ribshore | Giant kelp stipe: olive-brown, rope-like. |
+| 206 | kelp_blade | glassfall | glassfall, hemlow, kaldvik, local, ribshore | Giant kelp blades: translucent golden brown. |
+| 207 | reef_rock | glassfall | glassfall, hemlow, jadewater, kaldvik, local, ribshore | Rocky reef under the kelp: dark stone crusted with pink coralline and urchins. |
+| 208 | prickly_pear_pad | redrock | local, redrock, saltmirror | Prickly pear pads: grey-green with rows of pale spine clusters. |
+| 209 | prickly_pear_fruit | redrock | local, redrock, saltmirror | Prickly pear fruit and flowers: magenta tunas, with a few yellow blooms. |
+| 210 | cholla | redrock | local, redrock, saltmirror | Cholla: a pale straw glow of dense spines over green joints. |
+| 211 | agave | redrock | local, redrock, saltmirror | Agave leaves: thick, blue-grey, spine-tipped. |
+| 212 | beach_pea_leaves | glassfall | glassfall, hemlow, local, ribshore | Beach pea: low trailing green leaves with magenta-purple pea flowers. |
 | 226 | karst_dark | jadewater | jadewater | A dark grey limestone, almost slate: some towers are cut from it. v2: drawn in flat facets (surface nets lit like sloped ground) instead of smoothed into slopes, so tower walls and the Old Wall's cliffs read as smooth rock, not one-voxel steps. |
 | 227 | karst_light | jadewater | jadewater | A very pale limestone, nearly white with a cream cast: the palest towers. v2: drawn in flat facets (surface nets lit like sloped ground) instead of smoothed into slopes, so tower walls and the Old Wall's cliffs read as smooth rock, not one-voxel steps. |
-| 228 | karst_blue | jadewater | jadewater | A blue-grey limestone, cold in colour: a few towers stand out in it. v2: drawn in flat facets (surface nets lit like sloped ground) instead of smoothed into slopes, so tower walls and the Old Wall's cliffs read as smooth rock, not one-voxel steps. |
+| 228 | karst_blue | jadewater | jadewater, saltmirror | A blue-grey limestone, cold in colour: a few towers stand out in it. v2: drawn in flat facets (surface nets lit like sloped ground) instead of smoothed into slopes, so tower walls and the Old Wall's cliffs read as smooth rock, not one-voxel steps. |
 | 229 | vine_mantle | jadewater | jadewater | A tower wrapped in vines and moss so thickly no rock shows: solid, so it can be climbed. v2: faceted with the rock. |
 | 230 | karst_limestone | jadewater | jadewater, local | Pale blue-grey layered limestone: the towers and the Old Wall. v2: drawn in flat facets (surface nets lit like sloped ground) instead of smoothed into slopes, so tower walls and the Old Wall's cliffs read as smooth rock, not one-voxel steps. |
 | 231 | karst_streaked | jadewater | jadewater, local | A darker band of the limestone, streaked grey-black where water runs down the faces. v2: drawn in flat facets (surface nets lit like sloped ground) instead of smoothed into slopes, so tower walls and the Old Wall's cliffs read as smooth rock, not one-voxel steps. |
@@ -311,22 +427,22 @@ game (local/README.md).
 | 233 | lime_sand | jadewater | jadewater, local | White lime sand of the lagoon floor; under shallow water it turns the sea turquoise. |
 | 234 | bamboo_culm | jadewater | jadewater, local | Golden bamboo culms with green nodes. Passable: you push between the stalks. |
 | 235 | giant_culm | jadewater | jadewater, local | Giant bamboo: thick green-gold culms banded at the nodes. |
-| 236 | bamboo_leaves | jadewater | jadewater, local | Narrow yellow-green bamboo leaves in feathery sprays. |
+| 236 | bamboo_leaves | jadewater | jadewater, local, lowmouth | Narrow yellow-green bamboo leaves in feathery sprays. |
 | 237 | banyan_bark | jadewater | jadewater, local, lowmouth, thornpan | Smooth grey banyan bark, fluted where the aerial roots have fused into the trunk. |
 | 238 | banyan_leaves | jadewater | jadewater, local, lowmouth, thornpan | Banyan foliage: thick, glossy, dark green. |
-| 240 | lantern_film | jadewater | jadewater, local, porch | The living film on cave ceilings and cenote overhangs: damp karst rock pricked with points of cold blue light, threads of it hanging down. v2: was bright cyan all over; now plain damp rock whose points of light the shader adds (glow_specks). |
+| 240 | lantern_film | jadewater | jadewater, local | The living film on cave ceilings and cenote overhangs: damp karst rock pricked with points of cold blue light, threads of it hanging down. v2: was bright cyan all over; now plain damp rock whose points of light the shader adds (glow_specks). |
 | 241 | lumen_moss | jadewater | jadewater, local | Moss on the cenote rims, faintly lit by the film beneath it. |
-| 242 | lily_pad | jadewater | jadewater, local, lowmouth | Giant lily pad: thick, waxy green with pale radial veins. Firm enough to stand on. |
+| 242 | lily_pad | jadewater | glassfall, jadewater, local, lowmouth | Giant lily pad: thick, waxy green with pale radial veins. Firm enough to stand on. |
 | 243 | lily_flower | jadewater | jadewater, local, lowmouth | Pale pink-white lily petals that glow a little at the base. |
 | 244 | coral_lacquer | jadewater | jadewater, local | Coral-red lacquer on the Order's bridges and gates; it has not faded. |
-| 245 | temple_wood | jadewater | jadewater, local, porch | Dark cedar of the temple's posts and beams, gone grey at the edges. |
+| 245 | temple_wood | jadewater | jadewater, local | Dark cedar of the temple's posts and beams, gone grey at the edges. |
 | 246 | temple_roof | jadewater | jadewater, local | Dark grey-green roof tiles in long rows. |
 | 247 | shoji_paper | jadewater | jadewater | Paper screens on a fine wooden lattice, yellowed. |
 | 248 | temple_stone | jadewater | jadewater, local | Grey granite of the lanterns, statues and steps, lichened. |
 | 249 | bamboo_litter | jadewater | jadewater, local | Pale gold drift of fallen bamboo leaves on the forest floor. |
 | 250 | tower_grass | jadewater | jadewater, local | Short wind-cropped grass and moss on the tower tops and the top of the Old Wall. |
 | 251 | jungle_floor | jadewater | jadewater, local, thornpan | Dark jungle floor: leaf litter, roots and moss under the banyans. |
-| 252 | river_gravel | glassfall | glassfall, hemlow, local, windbarrow | Rounded grey-brown pebbles on a river bed, seen through the water. |
+| 252 | river_gravel | glassfall | glassfall, hemlow, local, ribshore, windbarrow | Rounded grey-brown pebbles on a river bed, seen through the water. |
 | 253 | river_mud | glassfall | glassfall, hemlow, local, lowmouth, windbarrow | Damp brown silt and sand along a river's waterline. |
 
 ## Plants
@@ -334,119 +450,149 @@ game (local/README.md).
 | name | from | used by | notes |
 |---|---|---|---|
 | acacia | thornpan | local, thornpan | umbrella: Thorn acacia: a flat-topped umbrella of fine grey-green leaf on a short trunk, the crown wider than the tree is tall. |
-| agave | redrock | local, redrock | canes: Agave: a rosette of thick blue-grey spine-tipped leaves splayed from the ground. |
-| alder | glassfall | glassfall, hemlow, jadewater, local, lowmouth, windbarrow | broad: Wet ground, nitrogen fixer. |
-| aspen | glassfall | glassfall, local, redrock | birch: Pioneer of burn edges; half of them turn gold. |
+| agave | redrock | local, redrock, saltmirror | canes: Agave: a rosette of thick blue-grey spine-tipped leaves splayed from the ground. |
+| alder | glassfall | glassfall, hemlow, jadewater, local, lowmouth, ribshore, windbarrow | branching: Wet ground, nitrogen fixer. |
+| aspen | glassfall | glassfall, local, redrock | branching: Pioneer of burn edges; half of them turn gold. |
 | bald_cypress | lowmouth | local, lowmouth | branching: Bald cypress: a tall flat-crowned tree standing in the black water on a great flared, buttressed foot. |
 | banyan | jadewater | jadewater, local, thornpan | branching: Banyan: a huge spreading fig on a buttressed, fluted grey trunk; grows out of cliffs as cliff_banyan. |
 | baobab | thornpan | local, thornpan | branching: Baobab: a grey barrel of a trunk, three to five metres through, under a sparse crown of thick limbs held up like roots. Bare for much of the year; the crown is open enough to see sky through. |
 | barrel_sponge | underwater | glassfall, jadewater, local | sponge: A barrel sponge: one squat orange barrel, older than anything round it. |
-| beach_pea | glassfall | glassfall, hemlow, local | shrub: Beach pea: a low mat of trailing leaves and purple pea flowers on the sand above the tide line. |
+| beach_pea | glassfall | glassfall, hemlow, local, ribshore | shrub: Beach pea: a low mat of trailing leaves and purple pea flowers on the sand above the tide line. |
 | beech | hemlow | hemlow, local | branching: A tall beech of the Hollins and the Edge hangers: smooth grey trunk, a high dome of fresh green. |
-| bigleaf_maple | city | hemlow, local, porch | branching: The Northwest's big maple: green, broad, mossy-limbed. Street and yard tree. |
-| birch | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, windbarrow | birch: Light-loving, quick to colonise. |
-| black_mangrove | lowmouth | local, lowmouth | broad: Black mangrove: a bushy tree on the mud banks just above the tide. |
+| bigleaf_maple | city | hemlow, local | branching: The Northwest's big maple: green, broad, mossy-limbed. Street and yard tree. |
+| birch | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, windbarrow | branching: Light-loving, quick to colonise. |
+| black_mangrove | lowmouth | jadewater, local, lowmouth | branching: Black mangrove: a bushy tree on the mud banks just above the tide. |
+| blackthorn | hemlow | hemlow, local, windbarrow | canes: Blackthorn: a dense thicket of near-black thorny stems, small leaves, sloes thick along the stems in autumn. Hedges and the field corners. |
 | blossom_vine | faerie | hemlow, local | The faerie wood's vine: longer strands hung with rose-lilac blossom, from the trees only. |
 | boulder_coral | underwater | glassfall, jadewater, local | coral_mound: Boulder coral: big rose-coloured domes, some as big as a car, a few smaller ones grown against them. |
 | brain_coral | underwater | glassfall, jadewater, local | coral_mound: Brain coral: an olive dome scored with meandering grooves. |
-| broken_snag | glassfall | glassfall, hemlow, local, lowmouth, redrock, windbarrow | snag: The lower trunk of a dead tree snapped off two to four metres up, bark still on, leaning a little. |
+| bramble | hemlow | hemlow, local | canes: Bramble: a sprawl of purple-red prickly canes arching over and down, dark leaves, blackberries along the canes in late summer and autumn. In hedges, glades and the field edges. |
+| broken_snag | glassfall | glassfall, hemlow, local, lowmouth, redrock, saltmirror, windbarrow | snag: The lower trunk of a dead tree snapped off two to four metres up, bark still on, leaning a little. |
+| broom | windbarrow | local, windbarrow | canes: Broom: a fountain of green whip-like switches, nearly leafless, crowded along their length with yellow pea flowers in late spring and early summer. On the chalk and the poor ground. |
+| bull_kelp | ribshore | local, ribshore | kelp: Bull kelp: one bare whip of a stipe from the rock to the surface, a round float on top and long blades streaming from it along the surface. Grows only under 3 to 16 m of sea; height is the share of that depth it reaches. |
+| buttonbush | lowmouth | local, lowmouth | canes: Buttonbush: a leaning shrub of grey stems at the water's edge, glossy leaves, white pincushion flower balls at the tips in summer. |
 | cabbage_palm | lowmouth | jadewater, local, lowmouth, thornpan | umbrella: Cabbage palm: a ringed grey trunk with a round head of stiff fan fronds (sprite fans round the head). |
-| cattail | lowmouth | local, lowmouth, thornpan | herb: Cattails: tall strap leaves in clumps in the shallows, most with a stem carrying a brown velvet head; drawn as sprites, so a kayak slides through them. |
-| cholla | redrock | local, redrock | branching: Cholla: a small shrubby cactus of short jointed arms, pale with dense spines that glow against the light. |
+| cardon | saltmirror | local, saltmirror | cactus: Cardon: the tallest of the columnar cacti, grey-green and deep-ribbed, its arms leaving the trunk low and climbing beside it like organ pipes. On the gravel fans with the saguaros. |
+| cattail | lowmouth | glassfall, jadewater, local, lowmouth, thornpan | herb: Cattails: tall strap leaves in clumps in the shallows, most with a stem carrying a brown velvet head; drawn as sprites, so a kayak slides through them. |
+| cholla | redrock | local, redrock, saltmirror | branching: Cholla: a small shrubby cactus of short jointed arms, pale with dense spines that glow against the light. |
 | cliff_banyan | jadewater | jadewater, local, thornpan | branching: A banyan that started in a crack in a cliff: smaller, grown out of the rock face on steep ground. |
-| cottage_rose | hemlow | hemlow, local | shrub: Roses in the cottage gardens and wild dog rose in the hedges: a pink-flowered shrub. |
+| common_reed | thornpan | local, thornpan | canes: Common reed (phragmites): tall straight canes in beds along the water, grey-green blades in tufts up their top half. |
+| cottage_rose | hemlow | hemlow, local | canes: Roses in the cottage gardens and wild dog rose in the hedges: prickly canes arching over, pink flowers in clusters at their tips in summer. |
 | cottonwood | redrock | local, lowmouth, redrock | branching: Cottonwood: big spreading trees along the river where there is water. |
-| cypress_snag | lowmouth | local, lowmouth | snag: A dead cypress, grey and barkless: the ghost forest where salt water reached the old swamp. |
+| cypress_snag | lowmouth | glassfall, jadewater, local, lowmouth | snag: A dead cypress, grey and barkless: the ghost forest where salt water reached the old swamp. |
 | dead_baobab | thornpan | local, thornpan | snag: A baobab that died standing: the same grey barrel with its limbs bare and broken short. On the pan rim they stand in groups, holding nothing. |
 | dead_juniper | redrock | local, redrock | snag: A silvered dead juniper, twisted, still standing. |
+| desert_willow | redrock | local, redrock | canes: Desert willow: a few thin leaning stems in the washes, narrow light-green leaves, lilac trumpet flowers at the tips in spring and summer. |
+| drowned_pole | ribshore | local, ribshore | snag: A drowned spruce that has lost its limbs: a bare silver pole, broken off high, a few stubs left. |
+| drowned_spruce | ribshore | local, ribshore | branching: A spruce the sea killed three hundred years ago and left standing: a thin silver pole up to twenty metres tall, a few dead limbs high up, its foot in the water. |
+| drowned_stump | ribshore | unused | snag: The stump of a spruce the sea drowned three hundred years ago: silver, thick, root-flared, its top snapped off jagged. |
+| dwarf_birch | kaldvik | kaldvik, local | canes: Dwarf birch: knee-high scrub of dark red-brown stems on the fell, small round leaves that go red and gold, bare twigs over the snow in winter. You walk through it. |
 | elder | hemlow | hemlow, local | branching: Elder in hedges and at the wood's edge: several arching stems from one root, flat tiers of leaves, and cream corymbs lying on top at midsummer. |
 | elkhorn_coral | underwater | glassfall, jadewater, local | coral_antler: Elkhorn: a few thick limbs flattening into broad palms that face up into the surge, on the crest where the swell breaks. |
-| feather_tussock | windbarrow | local, windbarrow | herb: A big feathergrass tussock standing out of the sward, its awns silver-gold and bent downwind; drawn as sprites, so you walk through it. v2: three muted coats in drifts about 35 m across. |
-| fern | glassfall | glassfall, hemlow, jadewater, local, lowmouth, porch, thornpan | herb: Sword fern on the forest floor: a ring of arching fronds drawn as sprites. |
+| ephedra | redrock | local, redrock, saltmirror | canes: Mormon tea (ephedra): a broom of jointed yellow-green stems knee to waist high, leafless, on the sand and the slickrock benches. You walk through it. |
+| feather_tussock | windbarrow | local, thornpan, windbarrow | herb: A big feathergrass tussock standing out of the sward, its awns silver-gold and bent downwind; drawn as sprites, so you walk through it. v2: three muted coats in drifts about 35 m across. |
+| fern | glassfall | glassfall, hemlow, jadewater, local, lowmouth, ribshore, thornpan | herb: Sword fern on the forest floor: a ring of arching fronds drawn as sprites. |
 | finger_coral | underwater | glassfall, jadewater, local | coral_finger: Finger coral: a low gold cushion bristling with short blunt fingers. |
-| fir | glassfall | glassfall, hemlow, kaldvik, local, porch | columnar: Tall, narrow, dark: the high slopes. |
+| fir | glassfall | glassfall, hemlow, kaldvik, local | columnar: Tall, narrow, dark: the high slopes. |
 | fireweed | glassfall | glassfall, local, redrock | herb: First colour back after a burn: clumps of magenta spikes drawn as sprites. |
-| flowering_cherry | city | hemlow, jadewater, local | broad: Ornamental cherry in a planting strip: low, wide, pink. |
-| gambel_oak | redrock | local, redrock | shrub: Gambel oak brush under the pines and on the plateau edge. |
+| flowering_cherry | city | hemlow, jadewater, local | branching: Ornamental cherry in a planting strip: low, wide, pink. |
+| gambel_oak | redrock | local, redrock | branching: Gambel oak brush under the pines and on the plateau edge. |
 | giant_bamboo | jadewater | jadewater, local | bamboo: Giant bamboo: clumps of thick green-gold culms 14-22 m tall, nodding at the tips, leaves on the upper half. Solid. |
-| giant_fir | glassfall | glassfall, hemlow, local, porch | An old fir well above the canopy; a landmark on the slopes. Old and wind-beaten: its whorls no longer sit level. |
+| giant_fir | glassfall | glassfall, hemlow, local | An old fir well above the canopy; a landmark on the slopes. Old and wind-beaten: its whorls no longer sit level. |
 | glass_fan | underwater | glassfall, local | sea_fan: A fan of glass threads standing across the swell. |
 | glass_staghorn | underwater | glassfall, local | coral_branch: Glassfall's strange staghorn: clear cyan glass branches, faintly lit, nearest the strewn field. |
 | glass_table | underwater | glassfall, local | coral_table: A table of lilac glass, light coming through its plate. |
 | glassbloom | glassfall | glassfall, hemlow, local | herb: A shrub whose leaves are hard and glassy: a fan of faceted violet blades, drawn as sprites. Found only near skystone. |
+| glasswort | saltmirror | local, saltmirror | shrub: Glasswort: a low mat of jointed red succulent stems round the brine, the only thing that grows where the salt is wet. |
 | gold_maple | faerie | hemlow, local | branching: A maple whose leaves stay gold all year: the first sign of the change. |
 | golden_bamboo | jadewater | jadewater, local | bamboo: Golden bamboo of the gorges: dense clumps of thin culms 6-11 m tall that you push through (the culms are passable). |
 | great_oak | glassfall | glassfall, hemlow, local | branching: An old, tall oak: a wide domed crown of foliage over visible spreading limbs, hollow underneath. |
-| hanging_vine | glassfall | glassfall, hemlow, jadewater, local, redrock, thornpan, windbarrow | vine: A climbing vine that has reached the top and hangs back down: strands from the crowns of broadleaf trees, or a curtain over the lip of a cliff. `height` is the strand length, `crown_radius` the width of a cliff curtain. |
+| hanging_vine | glassfall | glassfall, hemlow, jadewater, kaldvik, local, redrock, thornpan, windbarrow | vine: A climbing vine that has reached the top and hangs back down: strands from the crowns of broadleaf trees, or a curtain over the lip of a cliff. `height` is the strand length, `crown_radius` the width of a cliff curtain. |
 | hawthorn | base | glassfall, hemlow, local, redrock, windbarrow | branching: Hawthorn: a small, hard, twiggy tree of hedges, field corners and wood edge, often several stems from one root, smothered in white blossom in spring. |
-| hazel | glassfall | glassfall, hemlow, jadewater, local | shrub: Understory shrub. |
-| heather | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, windbarrow | herb: Low purple shrub of poor, open ground: a mat of wiry stems with mauve bells, drawn as sprites. |
-| huckleberry | glassfall | glassfall, local | herb: Red huckleberry, a loose knee-to-waist-high bush of arching stems and small oval leaves on the forest floor, drawn as sprites (layer huckleberry); you can walk through it. |
+| hazel | glassfall | glassfall, hemlow, jadewater, local | canes: Hazel: a coppiced stool of straight grey-brown stems fanning up from one root, leaves in tufts, catkins on the bare stems in late winter. |
+| heather | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, megalith, ribshore, saltmirror, windbarrow | herb: Low purple shrub of poor, open ground: a mat of wiry stems with mauve bells, drawn as sprites. |
+| huckleberry | glassfall | glassfall, local, ribshore | canes: Red huckleberry: a loose knee-to-waist-high bush of bright green angled stems arching over, small oval leaves, red berries in summer. You walk through it. |
 | juniper | redrock | kaldvik, local, redrock, windbarrow | gnarled: Utah juniper: a short leaning trunk that splits low into twisted limbs, each ending in a flat clump of scale leaves; often one limb is dead. Grows out of cracks in bare rock. |
 | karst_pine | jadewater | jadewater, local | umbrella: The small wind-twisted pine of the tower tops: flat-crowned, 3-6 m. |
 | karst_vine | jadewater | jadewater, local | vine: The long vine curtains of the karst: strands 5-16 m down every tower lip and ledge. |
-| kelp | glassfall | glassfall, local | kelp: Giant kelp: stipes rising from a holdfast on the reef to the surface, blades all the way up and a floating canopy. Grows only under 3 to 16 m of sea; height is the share of that depth it reaches. |
+| kelp | glassfall | glassfall, hemlow, kaldvik, local | kelp: Giant kelp: stipes rising from a holdfast on the reef to the surface, blades all the way up and a floating canopy. Grows only under 3 to 16 m of sea; height is the share of that depth it reaches. |
 | lightning_pine | glassfall | unused | snag: A pine killed by lightning and burnt black, still standing among the living ones. About one pine in fifty. |
 | live_oak | lowmouth | local, lowmouth | branching: Southern live oak: a vast low dome on a short black trunk, limbs reaching out sideways, hung with moss. |
 | lophelia | underwater | kaldvik, local | coral_branch: Lophelia: white cold-water coral in bushy thickets on the deep fjord walls, red fans and cod among it. |
+| lupine | ribshore | local, ribshore | herb: Purple lupine in drifts on the dunes, drawn as sprites. |
 | maple | glassfall | glassfall, local | branching: A branching maple; most of them have turned red. |
-| mopane | thornpan | local, thornpan | shrub: Mopane: a scrubby thicket of butterfly leaf on thin stems, head high, on the thinnest sand. Turns coppery in the dry. |
-| mother_oak | windbarrow | local, windbarrow | branching: The great oak below Durn: a vast domed crown on a short, hugely buttressed black trunk, wider than it is tall and old enough that the village has always called it that. One tree only, in its own region. |
-| oak | glassfall | glassfall, hemlow, jadewater, local, lowmouth, thornpan | broad: Broad canopy hardwood of the lowland woods. |
-| ocotillo | redrock | local, redrock | canes: Ocotillo: a fan of whip-like thorny canes from one root crown, tipped with scarlet flames of flowers in spring only (flower_seasons). |
+| mopane | thornpan | local, thornpan | branching: Mopane: a scrubby thicket of butterfly leaf on thin stems, head high, on the thinnest sand. Turns coppery in the dry. |
+| mother_oak | windbarrow | hemlow, local, windbarrow | branching: The great oak below Durn: a vast domed crown on a short, hugely buttressed black trunk, wider than it is tall and old enough that the village has always called it that. One tree only, in its own region. |
+| oak | glassfall | glassfall, hemlow, jadewater, local, lowmouth, thornpan | branching: Broad canopy hardwood of the lowland woods. |
+| ocotillo | redrock | local, redrock, saltmirror | canes: Ocotillo: a fan of whip-like thorny canes from one root crown, tipped with scarlet flames of flowers in spring only (flower_seasons). |
+| osier | hemlow | hemlow, local, windbarrow | canes: Osier willow: a stool of long straight orange-red withies by the water, narrow leaves in tufts, cut for baskets. Brightest bare in winter. |
 | pale_birch | glassfall | glassfall, hemlow, local | A birch bleached by the bloom. |
+| papyrus | thornpan | local, thornpan | canes: Papyrus: dense stands of bright green stems twice a man's height, each topped with a mop of fine rays arching out and over, along the channels. |
+| pincushion | saltmirror | local, saltmirror | canes: Pincushion protea: a low rounded bush with orange flower heads like pincushions all over its top in spring. |
 | pine | glassfall | glassfall, kaldvik, local | conifer: Upland conifer. Branches thrown up at the ends, and a less regular cone than a fir. |
-| pinyon | redrock | local, redrock | broad: Pinyon pine: small, round and bushy, on the benches between the cliffs. |
+| pinyon | redrock | local, redrock | branching: Pinyon pine: small, round and bushy, on the benches between the cliffs. |
 | plate_coral | underwater | glassfall, jadewater, local | coral_plate: Plate coral: violet plates overlapping in a whorl, like a head of lettuce. |
 | ponderosa | redrock | local, redrock | broad: Mature ponderosa pine: a tall orange trunk bare for most of its height and a rounded open crown. |
-| prickly_pear | redrock | local, redrock | pads: Prickly pear: a low sprawl of flat jointed pads, magenta fruit on the top ones. Bees visit its flowers. |
-| rabbitbrush | redrock | local, redrock, thornpan | herb: Rubber rabbitbrush: a rounded bush of upright grey-green stems topped with yellow flower heads, drawn as sprites (layer rabbitbrush), in washes and disturbed ground. |
-| red_mangrove | lowmouth | local, lowmouth | mangrove: Red mangrove: a low dark crown on a tangle of arching prop roots, standing in the shallows of the river mouth. |
+| prickly_pear | redrock | local, redrock, saltmirror | pads: Prickly pear: a low sprawl of flat jointed pads, magenta fruit on the top ones. Bees visit its flowers. |
+| protea | saltmirror | local, saltmirror | canes: King protea: a bush of stiff grey-green stems, each one ending in a cup-shaped pink flower head the size of a plate, from winter into spring. The burn round the wreck is thick with them. |
+| rabbitbrush | redrock | local, redrock, saltmirror, thornpan | canes: Rubber rabbitbrush: a rounded bush of many upright felted grey-green stems, each topped with mustard-yellow flower heads in late summer and autumn, in washes and disturbed ground. You walk through it. |
+| red_mangrove | lowmouth | jadewater, local, lowmouth | mangrove: Red mangrove: a low dark crown on a tangle of arching prop roots, standing in the shallows of the river mouth. |
+| red_osier | ribshore | local, ribshore | canes: Red-osier dogwood: thickets of bright red stems in the wet hollows and along the creeks, leaves in tufts, red against the grey all winter. |
 | redwood | glassfall | glassfall, local | conifer: Coast redwood: the tallest trees in the library, a fluted red trunk bare for half its height and a narrow dark crown. Groves in the wet lowland valleys. The foliage hangs; the crown is a narrow spire for its height. |
-| reedmace | hemlow | hemlow, local, lowmouth, thornpan, windbarrow | canes: Reedmace (bulrush) in the bog pools and along the Hem: stiff stems topped with brown velvet heads. |
-| rock_lichen | base | glassfall, kaldvik, local, redrock, thornpan, windbarrow | crust: Lichen on bare rock: pale crusts on cliff and boulder faces, on every aspect, so it is not limited to the shaded side. |
+| reedmace | hemlow | glassfall, hemlow, local, lowmouth, thornpan, windbarrow | canes: Reedmace (bulrush) in the bog pools and along the Hem: stiff stems topped with brown velvet heads. |
+| restio | saltmirror | local, saltmirror | herb: Restio: tussocks of jointed reed, tawny and green, the grass of the fynbos. Drawn as sprites. |
+| rock_lichen | base | glassfall, kaldvik, local, megalith, redrock, ribshore, saltmirror, thornpan, windbarrow | crust: Lichen on bare rock: pale crusts on cliff and boulder faces, on every aspect, so it is not limited to the shaded side. |
 | rock_moss | base | glassfall, hemlow, jadewater, local, thornpan | crust: Moss on the shaded faces of rock: patches down a bank or a crag that never gets the midday sun. A crust plant; its density is the chance per 4 m cell of steep ground. |
-| sagebrush | redrock | local, redrock, thornpan, windbarrow | shrub: Big sagebrush, the grey-green cover of the open desert. |
-| saguaro | redrock | local, redrock | cactus: Saguaro: a ribbed green column with a rounded top; old ones carry up to five arms that leave the trunk level and turn up. |
-| salal | city | local, porch | shrub: Salal: a knee-high evergreen shrub under trees and along yards and strips. |
-| sapling_fir | glassfall | glassfall, kaldvik, local | sapling: A young fir in the understorey: a narrow dark cone from knee to twice head height. |
-| sapling_maple | glassfall | glassfall, local | birch: A young broadleaf, head high to twice that, waiting in the shade for a gap in the canopy. |
+| sagebrush | redrock | local, redrock, saltmirror, thornpan, windbarrow | shrub: Big sagebrush, the grey-green cover of the open desert. |
+| saguaro | redrock | local, redrock, saltmirror | cactus: Saguaro: a ribbed green column with a rounded top; old ones carry up to five arms that leave the trunk level and turn up. |
+| salal | city | glassfall, local, ribshore | shrub: Salal: a knee-high evergreen shrub under trees and along yards and strips. |
+| sapling_fir | glassfall | glassfall, kaldvik, local, ribshore | sapling: A young fir in the understorey: a narrow dark cone from knee to twice head height. |
+| sapling_maple | glassfall | glassfall, local | branching: A young broadleaf, head high to twice that, waiting in the shade for a gap in the canopy. |
 | sapling_pine | glassfall | glassfall, local, redrock | sapling: Young pine coming back after fire. Bushy and upswept, like the pines it will grow into. |
 | saw_palmetto | lowmouth | jadewater, local, lowmouth | herb: Saw palmetto: low clumps of grey-green fans under the oaks and on the hammocks, drawn as sprites. |
 | sawgrass | lowmouth | local, lowmouth, thornpan | herb: Sawgrass: low tussocks of toothed tawny blades out of the shallow water, drawn as sprites (a kayak slides through them). |
+| sea_buckthorn | ribshore | local, ribshore | canes: Sea buckthorn in thickets on the dunes: stiff thorny canes rising upright and arching over, sparse silver leaves, the stems crowded with orange berries from midsummer through autumn, bare grey in winter. |
 | sea_fan | underwater | glassfall, jadewater, local | sea_fan: A sea fan: a purple lattice spread flat across the swell; the fans on one reef all face the same way. |
 | sea_fan_red | underwater | glassfall, jadewater, kaldvik, local | sea_fan: A red sea fan, on the deeper wall. |
+| sea_whip | underwater | glassfall, jadewater, local | canes: Sea whips: a clump of thin unbranched rods a metre or two long, orange-yellow, leaning and curving with the surge. Under 3 to 25 m of sea. |
+| sea_whip_violet | underwater | glassfall, jadewater, local | Violet sea whips, the same rods in a cooler colour, deeper on the wall. |
 | shelf_fungus | base | glassfall, hemlow, jadewater, local, lowmouth, redrock, thornpan | crust: Bracket fungus on old trunks: half-shelves standing out from the bark in twos and threes. A crust plant, so its biome density is the chance a tree carries a colony, and `height` the band of trunk it keeps to. |
+| shore_pine | ribshore | local, ribshore | gnarled: Shore pine: a low pine the wind twists, leaning off the sea, its trunk splitting low into crooked limbs that end in flat pads of needles, the whole crown wider than it is tall. |
+| silver_tree | saltmirror | local, saltmirror | branching: Silver tree: a small upright tree of the ravines whose silky leaves turn the whole crown silver in the wind. |
+| sitka_spruce | ribshore | local, ribshore | conifer: Sitka spruce at the edge of the forest: tall, dark and blue-green, salt-tolerant, the coast's own tree. |
 | small_fig | jadewater | jadewater, local, lowmouth, thornpan | broad: A small fig tree, 3-5 m, that grows anywhere it gets a root in: tower tops, ledges, the backs of beaches. |
-| snag | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, redrock | snag: Standing dead tree, often fire-killed. |
+| snag | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, redrock, ribshore | snag: Standing dead tree, often fire-killed. |
 | spanish_moss | lowmouth | local, lowmouth | vine: Spanish moss: grey beards hanging from the crowns of the live oaks and cypress. |
 | spiral_pine | glassfall | glassfall, local | spiral: Grows in a slow helix and comes out pale where the strangeness is strong. Nobody knows why. |
 | staghorn_coral | underwater | glassfall, jadewater, local | coral_branch: Staghorn: limbs forking up and out from one foot, ochre with pale blunt tips; in thickets on the fore reef. |
 | staghorn_violet | underwater | glassfall, jadewater, local | coral_branch: A violet staghorn, the same build in a cooler colour. |
-| street_maple | city | unused | branching: A planted street maple: smaller and tidier than the bigleaf, a few leaves turning. |
-| street_oak | city | unused | broad: A red oak planted along a street: tall, round, dark green. |
-| stump | glassfall | glassfall, local, redrock | snag: A knee-high stump where a tree snapped off long ago, grey bark still on. |
-| sugar_cane | lowmouth | local, lowmouth | herb: Sugar cane: dense clumps of straight jointed stalks taller than a man, ribbon leaves arching over; drawn as sprites. |
+| street_maple | city | local | branching: A planted street maple: smaller and tidier than the bigleaf, a few leaves turning. |
+| street_oak | city | local | branching: A red oak planted along a street: tall, round, dark green. |
+| stump | glassfall | glassfall, hemlow, local, redrock | snag: A knee-high stump where a tree snapped off long ago, grey bark still on. |
+| sugar_cane | lowmouth | local, lowmouth | canes: Sugar cane: dense clumps of straight jointed stalks taller than a man, banded yellow-green and purple, ribbon leaves at their tops. You push through it. |
+| switchcane | lowmouth | local, lowmouth | canes: Switchcane: the delta's own bamboo, canebrakes of thin olive culms two to five metres tall under the bottomland trees. You push through it. |
 | table_coral | underwater | glassfall, jadewater, local | coral_table: Table coral: a stalk and a wide flat plate, fish hanging in its shade. |
 | table_coral_teal | underwater | glassfall, jadewater, local | coral_table: A table coral the jade colour of the water. |
-| tamarisk | redrock | local, redrock | broad: Tamarisk thickets on the lake shore and the lower river, pink in flower. |
-| thimbleberry | glassfall | glassfall, local, redrock | herb: Thimbleberry, a waist-high patch of canes with big maple-like leaves in clearings and along forest edges, drawn as sprites (layer thimbleberry). |
-| tree_moss | base | glassfall, hemlow, jadewater, local, lowmouth, thornpan, windbarrow | crust: Moss up the shaded side of a trunk: patches of green felt on the north face. A crust plant; its biome density is the chance a tree carries it. |
+| tamarisk | redrock | local, redrock, saltmirror | canes: Tamarisk thickets on the lake shore and the lower river: many thin red-brown stems arching out, feathery grey-green foliage, pink plumes at the tips in spring and summer. |
+| thimbleberry | glassfall | glassfall, local, redrock | canes: Thimbleberry: a waist-high patch of unarmed canes with big maple-like leaves, red thimble fruit at the tips in summer, in clearings and along forest edges. You walk through it. |
+| tree_moss | base | glassfall, hemlow, jadewater, local, lowmouth, ribshore, thornpan, windbarrow | crust: Moss up the shaded side of a trunk: patches of green felt on the north face. A crust plant; its biome density is the chance a tree carries it. |
 | tube_sponge | underwater | glassfall, jadewater, local | sponge: Tube sponges: fat purple tubes standing in a cluster. |
-| umbrella_pine | glassfall | glassfall, jadewater, local | umbrella: Wind-shaped coastal pine with a flat crown. |
+| umbrella_pine | glassfall | glassfall, hemlow, jadewater, kaldvik, local | umbrella: Wind-shaped coastal pine with a flat crown. |
 | wall_plate_coral | underwater | glassfall, jadewater, local | crust: Plate coral shelving out of a reef wall in tiers. A crust plant: its biome density is the chance a 4 m stretch of wall carries a colony, and it keeps to the depths it names. |
 | water_lily | lowmouth | local, lowmouth, thornpan | herb: Water lily: a root on the bed in still shallow water, drawn as a raft of pads lying flat on the surface with now and then a bloom. Sprites only, so a boat slides over it. |
-| water_tupelo | lowmouth | local, lowmouth | broad: Water tupelo: a swollen-footed swamp tree with a narrow crown of light green, among the cypress. |
+| water_tupelo | lowmouth | local, lowmouth | branching: Water tupelo: a swollen-footed swamp tree with a narrow crown of light green, among the cypress. |
 | willow | glassfall | glassfall, hemlow, local, lowmouth, windbarrow | weeping: River banks. |
-| wisteria | faerie | jadewater, local | vine: Wisteria: a woody vine hung with long racemes, over trees and down cliffs. It comes in three colours, each cluster one of them: violet, lilac and a rare white. v3: the colours are morphs rather than the one lilac material (not drawn yet). v2: was a weeping tree; worlds that had it plant flowering_cherry instead. |
+| wisteria | faerie | hemlow, jadewater, local | vine: Wisteria: a woody vine hung with long racemes, over trees and down cliffs. It comes in three colours, each cluster one of them: violet, lilac and a rare white. v3: the colours are morphs rather than the one lilac material (not drawn yet). v2: was a weeping tree; worlds that had it plant flowering_cherry instead. |
 | young_ponderosa | redrock | local, redrock | conifer: Ponderosa pine under about eighty years, still cone-shaped, crown starting a third of the way up. |
 | young_redwood | glassfall | glassfall, local | conifer: A redwood of a century or so, already taller than the firs round it. |
-| yucca | redrock | local, redrock | shrub: Narrowleaf yucca: a stiff clump of blades on sandy slopes. |
+| yucca | redrock | local, redrock, saltmirror | shrub: Narrowleaf yucca: a stiff clump of blades on sandy slopes. |
 
 ## Structures
 
 | name | from | used by | notes |
 |---|---|---|---|
+| aframe_cabin | saltmirror | saltmirror | A staff A-frame (1968): a steep shingle roof down to a plank deck, the front gable (local -Z) all glass, a stove pipe through the back of the roof. Half the camp lived in these. |
+| anemone_bed | ribshore | local, ribshore | Giant green anemones packed in a pool, jade columns with pale tentacles. |
 | arch_bridge | redrock | redrock | The 1929 steel deck-arch bridge that carries the highway over Sorrel Canyon: two arched ribs, posts up to a concrete deck, low railings. 88 m long along local X; base rim hangs it from the canyon rims. |
 | arch_double | redrock | unused | A fin pierced twice, two openings side by side with a pillar between and a small window above it. Long axis local X. |
 | arch_high_window | redrock | unused | A tall fin, 25 m, with a window worn through it high up, sky showing through. Long axis local X. |
@@ -454,24 +600,29 @@ game (local/README.md).
 | arch_ribbon | redrock | unused | A long, thin ribbon of an arch, 35 m across with a span barely 2.5 m thick: the next one to fall. Long axis local X. |
 | arch_span | redrock | unused | A broad sandstone arch, 28 m across and 14 m high, its span about 5 m thick. Long axis local X; stands on open ground. |
 | arch_young | redrock | unused | A young arch: a fin with a deep alcove eaten into its side and a hole just broken through at the back. Long axis local X. |
-| arena_porch | arena_porch | porch | The whole porch arena as one structure, generated by a map tool rather than written by hand. |
-| arena_transmission | arena_transmission | transmission | The whole transmission arena as one structure, generated by a map tool rather than written by hand. |
+| arena_megalith | arena_megalith | megalith | The whole of the hand-drawn megalith arena as one structure, built by tools/arena. Written by the tool, not by hand: edit the map, not this file. |
+| arena_porch | arena_porch | porch | The whole of the hand-drawn porch arena as one structure, built by tools/arena. Written by the tool, not by hand: edit the map, not this file. |
+| arena_starfall | arena_starfall | starfall | The whole of the hand-drawn starfall arena as one structure, built by tools/arena. Written by the tool, not by hand: edit the map, not this file. |
+| arena_transmission | arena_transmission | transmission | The whole of the hand-drawn transmission arena as one structure, built by tools/arena. Written by the tool, not by hand: edit the map, not this file. |
+| array_dish | saltmirror | saltmirror | One of the eleven dishes of the Saltmirror Array, built larger than life: a hundred-metre bowl over a lattice of ribs and hoops, a quadripod holding the feed cabin forty metres over it, a yoke on a splayed pedestal with stairs up its back (local +Z) to the turntable. Parked facing the zenith. Stands on its own concrete pad. |
+| array_dish_tilted | saltmirror | saltmirror | An array dish parked part-way down, its bowl tipped thirty-five degrees off the zenith toward the front (local -Z), the lattice behind it showing. |
 | bait_shop | lowmouth | lowmouth | Theriot's bait and tackle at the river landing: a board shack on short piers with a porch, a painted sign over it and a tin roof. Door on local -Z. |
 | baobab_cistern | thornpan | thornpan | The cistern tree: a hollow baobab sealed with clay at the bottom and kept full of water against the end of the dry, with pegs hammered up the outside and a low door to dip from. Face the door downhill toward the path. |
 | baobab_tomb | thornpan | thornpan | The tomb tree: a hollow baobab closed with a dressed slab, two generations of one family inside. Face the slab toward open ground; nothing opens it. |
 | barge_wreck | lowmouth | lowmouth | A rusted cane barge sunk on the river bank, broken across the middle, its little deckhouse still at the stern (local +Z). Base sea. |
 | barrow_post | windbarrow | windbarrow | A split-oak post 3.5 m tall standing on a kurgan's crown, ringed with red ochre, chalk blocks packed round its foot. Broad faces along local X. |
-| basalt_boulder | kaldvik | kaldvik, local | A boulder of black basalt the ice dropped where it melted, an erratic, rimed on its windward side. |
+| basalt_boulder | kaldvik | kaldvik, local, ribshore | A boulder of black basalt the ice dropped where it melted, an erratic, rimed on its windward side. |
 | basalt_columns | glassfall | glassfall, kaldvik, local, redrock | A cluster of columnar basalt, the tops at different heights. |
-| bear_den | windbarrow | windbarrow | A cave bear's bed: a trodden floor of chalk rubble and bone 5 m across with long bones and a skull lying in it. Place inside a cave chamber with `height` at the chamber floor; level false, so it beds into the rubble. |
+| bear_den | windbarrow | windbarrow | A cave bear's bed: a trodden floor of chalk rubble and bone 5 m across with long bones and a skull lying in it. Place inside a cave chamber with `height` at the chamber floor (in a `passage`, its `height - 0.55 * radius`); level false, so it beds into the rubble. |
 | bee_bank | thornpan | thornpan | A carmine bee-eater colony: fifteen metres of cut earth bank honeycombed with nest holes, a sand apron at its foot. Face it at the water on the outside of a bend; place bee_eaters with it. |
 | bell_house | jadewater | jadewater | An open bell house: four posts, a small tiled roof, and a big green bronze bell hanging inside. |
 | beset_ship | kaldvik | kaldvik | An old polar expedition's barquentine, 44 m long, caught in the cove ice and abandoned: hull standing out of the floe, pressure ridges along her port side, masts leaning to starboard, sails frozen on the yards. Long axis local X, bow at +X; `base: sea`. |
 | bone_fence | windbarrow | windbarrow | A 10 m run of stock fence built of mammoth ribs set upright in the chalk with a rail lashed along them, for ground where no hazel grows. Long axis local X. |
-| bone_house | windbarrow | windbarrow | A house of mammoth where there is no timber: a footing ring of eight skulls with their sockets showing, ribs arched over them, hides lashed over the upper ribs only, five pairs of tusks arching clear over the roof and two more crossing over the doorway. 6 m across; door on local -Z. |
+| bone_house | windbarrow | windbarrow | A house of mammoth where there is no timber: a footing ring of eight skulls with their sockets showing, ribs arched over them, hides lashed over the upper ribs only, five pairs of tusks arching clear over the roof and two more crossing over the doorway. 7 m across; door on local -Z. |
 | bone_outcrop | windbarrow | local, windbarrow | A mammoth weathering out of the chalk: the dome of a skull, one tusk curving out of the ground and three ribs standing clear of it. Settles on the ground; faces local -Z. |
+| bone_shard | ribshore | local, ribshore | A length of broken rib or limb bone half sunk in the sand, its broken ends showing the honeycomb. |
 | bottle_tree | lowmouth | local, lowmouth | A bottle tree: a dead cypress trunk with its limbs cut short, a blue or violet bottle pushed over the end of each to catch what wanders by at night. Faces anywhere. |
-| boulder | glassfall | glassfall, local, redrock, windbarrow | A rounded boulder, lichened. |
+| boulder | glassfall | glassfall, hemlow, local, redrock, windbarrow | A rounded boulder, lichened. |
 | brick_cistern | lowmouth | lowmouth | A round brick cistern 5 m across that caught rainwater for the sugar house, open at the top, two rusted iron hoops round it. |
 | brick_quarters | lowmouth | lowmouth | The sugar house's quarters: a roofless row of three brick rooms, a door and a window each on local -Z, a chimney stack between each pair. Give it an age. |
 | brick_wall_ruin | lowmouth | lowmouth | The last wall of a brick building, standing alone with an arched doorway through it and buttresses at the ends; faces local -Z. |
@@ -483,42 +634,57 @@ game (local/README.md).
 | cane_store | lowmouth | lowmouth | Mire's general store: a board store on piers with a sign across the porch roof and a tin roof. Door on local -Z. |
 | careened_hull | thornpan | thornpan | A ship on her beam ends on the salt: eighteen metres of hull lying open to the sky with her masts still up and barnacles along the bilge. One of these only; lay it on the pan. |
 | cat_scratch | windbarrow | windbarrow | A chalk block with a long-toothed cat scratched into its face and ochred: a low body, a heavy head, two teeth past the jaw, the tail up. The carved face is on local -Z. |
-| cave_formations | hemlow | hemlow | A few stalactites, stalagmites and one column for a cave passage about 5 m high: place with `height` at the passage floor (sea + passage height - radius); the stalactites start above the ceiling and hang down. |
-| cave_formations_tall | hemlow | hemlow | Stalactites, stalagmites and a column for a cave chamber about 8 m high: place with `height` at the chamber floor. |
+| cave_formations | hemlow | unused | A few stalactites, stalagmites and one column for a cave passage about 5 m high: place with `height` at the passage floor (sea + passage height - radius); the stalactites start above the ceiling and hang down. |
+| cave_formations_tall | hemlow | unused | Stalactites, stalagmites and a column for a cave chamber about 8 m high: place with `height` at the chamber floor. |
 | cave_mouth | windbarrow | windbarrow | A cave mouth in a chalk slope: carves an opening 4 m wide and 3 m high 16 m straight back into the hill, with fallen chalk blocks round the threshold. Place at the foot of a slope facing out (local -Z), on the line of a `passage` so the two meet. |
 | cemetery | redrock | redrock | Harlow's cemetery on the hill: a picket fence, wooden crosses and two stones. |
 | chapel | glassfall | glassfall, redrock | Small steep-roofed chapel with a bell-cote over the door. |
 | charcoal_clamp | hemlow | hemlow | A charcoal burner's clamp: a low earth-covered mound with a glowing vent on top, and beside it the burner's round hut of poles. |
-| chopping_block | hemlow | hemlow | A chopping block with an axe left in it and split logs round it. |
+| chopping_block | hemlow | hemlow, kaldvik | A chopping block with an axe left in it and split logs round it. |
 | cliff_granaries | redrock | redrock | Stone granaries of the canyon people in an alcove in a canyon wall: carves the alcove about 11 m up and 9-12 m back from the point, lays its floor flat, builds three small sealed rooms, and heaps a talus ramp below. Place on the canyon floor at the wall's foot, facing out (local -Z). |
+| cloud_sponge | ribshore | local, ribshore | A cloud sponge: soft lobes of glass two metres across, the colour of old paper. |
+| control_building | saltmirror | saltmirror | The array's control building at the hub: forty metres of low concrete with a flat roof, a ribbon of windows shaded by concrete fins down the front (local -Z), the control room's desks in the west half and the correlator hall's racks in the east, and a small dish on a mast at the back corner. |
 | cotswold_cottage | hemlow | hemlow, local | A two-up two-down Cotswold cottage of honey stone under a steep stone-slate roof, stone gable ends, a chimney at each end, a hood over the door and lamplit mullioned windows. Door on local -Z. |
 | cotswold_house | hemlow | hemlow, local | A two-storey Cotswold house: honey stone, stone-slate roof, two gabled dormers in the front wall, end chimneys, lamplit mullioned windows. Door on local -Z. |
 | cotswold_row | hemlow | hemlow | A terrace of three small Cotswold cottages under one stone-slate roof, each with its own painted door and chimney. Doors on local -Z. |
 | cotswold_thatch | hemlow | hemlow, local | A low thatched cottage of honey stone, the thatch carried deep over the eaves and round the ends, one chimney through the ridge. Door on local -Z. |
 | cotswold_wall | hemlow | hemlow, local | A 10 m length of honey dry-stone field wall with a coping of stones on edge and a field gate in it. Long axis local X. |
+| craft_debris | saltmirror | local, saltmirror | A piece of the hull: two bent plates of skin and tile standing on edge where they fell, half in the ash. |
+| craft_hull | saltmirror | saltmirror | Whatever came down in the hollow: a lifting body twenty-five metres long, dark graphite with a violet sheen, broken in two and torn open along its right side (local +X), black tiles on its belly, ribs inside and two seams that still glow amber at night. Nose to local -Z. Nobody has said what it is. |
+| craft_rib | saltmirror | local, saltmirror | A rib of the hull's frame lying in the fynbos, curved like a whale's, with a scrap of skin still on it. |
 | crossroads_figure | lowmouth | lowmouth | A tall thin man standing at the crossroads in a long dark coat and a wide hat, leaning on a cane. Faces local -Z. |
 | crossroads_offering | lowmouth | lowmouth | Left at the crossroads in the night: a figure drawn in chalk on the road, candles burning round it, a bottle and a glass. Flat on the ground; put it in the middle of a crossing. |
 | crossroads_post | lowmouth | lowmouth | The finger post where the levee road crosses the parish road: four boards pointing four ways, and a lantern on a crook beside it. Stand it in the middle of the crossing. |
+| ctfbox | ctfbox | ctfbox | One long room for capture the flag, written by worlds/ctfbox/make_box.py: ninety-two metres by thirty-two, a flag stand at each end, two pillars in each half, a roof and ten lamps. A bench for the team brain, not a map. Edit the script, not this file. |
 | cypress_knees | lowmouth | local, lowmouth | A cluster of cypress knees: knobbly cones of root standing out of the black water round a cypress. Base sea; they rise from the mud to half a metre over the surface. |
 | digger_gear | windbarrow | windbarrow | Flint diggers' gear left at a pit edge: a hide spread on the chalk, a heap of knapped flakes, an antler pick leaning on a stake and another lying. Faces local -Z. |
+| dish_pad | saltmirror | saltmirror | Pad twelve: a concrete pad poured for a dish that never came, four footings with their anchor bolts rusting and the cable trench running off toward the hub (local +Z). |
 | dovecote | hemlow | hemlow | A round stone dovecote with a conical stone-slate roof and a little timber lantern on top where the doves go in and out. Door on local -Z. |
+| drift_log | ribshore | local, ribshore | A whole spruce trunk the winter storms threw up the beach, bleached silver, its root plate still on. |
+| drift_pile | ribshore | local, ribshore | Driftwood piled where the storm left it: three trunks across each other at the foot of the dunes. |
+| drift_shelter | ribshore | local, ribshore | A driftwood shelter: logs leaned against a ridge pole in a ring, the kind people build on this coast and leave. |
 | drowned_church | lowmouth | lowmouth | St. Anne of the Marrow, the parish church that went down with the old lobe: a white board church with a square front tower (local -Z), its floor a metre under the bay. Base sea; give it an age so the roof is going. |
 | drowned_lights | lowmouth | lowmouth | Lamplight in a sunken_house: a lit attic window in its front gable just over the water, and the front windows lit under it. Place exactly over one (same spot, bearing and height). |
+| drowned_stump | ribshore | local, ribshore | The stump of a spruce the sea drowned three hundred years ago: silver, round, flared at the root, snapped off jagged at chest height. |
+| drowned_stump_tall | ribshore | local, ribshore | A drowned spruce that broke higher: a silver trunk three metres tall, flared at the root and splintered at the top. |
 | drying_rack | windbarrow | thornpan, windbarrow | Three hides stretched to dry on an oak frame 7 m long, in the yards of Durn. Long axis local X, hides facing local -Z. |
 | duck_blind | lowmouth | lowmouth | A duck blind out in the flats: a plank box on four posts walled with bundled reeds, a slot to look out of on local -Z. Base sea. |
 | duelbox | duelbox | duelbox | One empty room, written by worlds/duelbox/make_box.py: fifty-eight metres by thirty-four, a flat floor on a plinth, four walls, a roof and six lamps. Nothing to hide behind, which is the point -- it is a bench for weapons, not a map. Edit the script, not this file. |
-| fallen_log | glassfall | glassfall, local, lowmouth, redrock | A fallen trunk with its root plate. |
-| fallen_trunk | glassfall | glassfall, hemlow, kaldvik, local, redrock | A middling tree blown down: a 7 m trunk with its small root plate and two snapped limbs lying beside it. |
+| fallen_log | glassfall | glassfall, jadewater, local, lowmouth, redrock | A fallen trunk with its root plate. |
+| fallen_trunk | glassfall | glassfall, hemlow, kaldvik, local, redrock, ribshore | A middling tree blown down: a 7 m trunk with its small root plate and two snapped limbs lying beside it. |
 | false_front | redrock | redrock | A Harlow main-street building: plank walls, a tin gable roof hidden behind a tall square false front, a boardwalk and porch roof. |
 | false_front_wide | redrock | redrock | A wider false-fronted Harlow building, the store or the saloon, with a taller front. |
 | ferry_landing | redrock | redrock | The end of the highway at the lake: a concrete apron, a little toll booth, a sign on posts and bollards. The ramp no longer reaches the water. |
-| field_wall | glassfall | glassfall, local | A length of dry-stone field wall with gaps. |
+| field_wall | glassfall | glassfall, kaldvik, local | A length of dry-stone field wall with gaps. |
 | filling_station | redrock | lowmouth, redrock | Pruitt's filling station (1954): two pumps on an island under a flat canopy, and a small clapboard store with big windows. Front faces the road. |
 | flat_rock | glassfall | glassfall, hemlow, local, windbarrow | A low slab of rock. |
 | flood_post | thornpan | thornpan | The flood post at a landing: a squared post with the year's high water cut into it as notches, the two that overtopped it marked by a crosspiece. Face the notched side at the water. |
 | fort_ruin | lowmouth | lowmouth | Fort St. Jean, a brick half-moon fort that guarded the old pass: a curved wall with embrasures facing the Gulf (local +Z), a straight back wall with a sally port (local -Z), a vaulted magazine and one gun left. Give it an age. |
 | free_arch | redrock | unused | A free-standing sandstone arch on open slickrock, 20 m across and 20 m high, thick in the legs and thin at the top. |
+| gannet_light | ribshore | ribshore | The Gannet Head light: a white tower 27 m tall on a stepped basalt and fieldstone plinth, tapering, banded three times in black, stair windows climbing round it in recesses with stone sills and lintels, a gabled porch with a transomed door up a flight of steps between cheek walls with iron rails, a corbelled gallery on twelve brackets with a railing, a glazed lantern, and a domed cap with a vent, a ball and a lightning rod, 35 m to its tip. Built 1894, kept sixty years, empty since; it does not decay, since a 30 m column crumbles metres off its top at any age and takes the lantern with it. Door on local -Z. |
+| generator_shed | saltmirror | saltmirror | The camp's generator shed: a corrugated tin shed with its doors gone, a red diesel set inside, an exhaust stack up the side and a fuel tank rusting against the back (local +Z). |
 | ghost_steamboat | lowmouth | lowmouth | A sternwheel paddle steamer, two white decks with lamplight at every window and two tall black stacks: the Belle Marrow, lost in the flood of the old century. Bow to local -Z. Base sea. |
+| giant_harpoon | ribshore | ribshore | A harpoon thirty metres long, an iron shaft as thick as a man, rusted through, a barbed head buried in the bone and a chain hanging from its butt. Nobody has said what fired it. |
 | glass_spikes | glassfall | glassfall, local | Spikes of the same glass as the crater floor, pushing up through the turf. |
 | glass_spire | glassfall | glassfall | A needle of skyglass some 50 m tall at the heart of the strewn field, ringed by smaller shards. It flashes in the sun from across the island. |
 | granary | windbarrow | thornpan, windbarrow | A Windbarrow granary: a small daub box on four oak legs, out of reach of mice, under a straw cone. Its hatch is on local -Z. |
@@ -536,7 +702,7 @@ game (local/README.md).
 | hyacinth_raft | lowmouth | local, lowmouth | A floating mat of water hyacinth on still water, glossy leaves and lilac flower spikes, 9 m across. Base sea; it floats at the surface. |
 | icefall | kaldvik | unused | A frozen waterfall. Its voxels are built down the wall by the `icefall` event; this entry only names the placement. `base: rim` keeps it where the event hung it: natural features are otherwise dropped onto the lowest ground under their footprint, which for a fall is the fjord floor. |
 | jar_spill | underwater | jadewater | Trade jars spilled down the sand from a wreck's hold: celadon and plain red earthenware, some standing, most rolled on their sides, crusted over. Twelve metres across. `base: bed`. |
-| jetty | glassfall | glassfall | Plank landing stage on posts, built out from the shore (front, local -Z) over the water. |
+| jetty | glassfall | glassfall, kaldvik, ribshore | Plank landing stage on posts, built out from the shore (front, local -Z) over the water. |
 | jizo_statue | jadewater | jadewater, local | A small stone figure, knee high, with a faded red cloth bib. In rows by the temple paths. Feature. |
 | juke_joint | lowmouth | lowmouth | The juke joint at the crossroads: a tin-roofed board hall with a hand-painted sign, a string of lights along the porch, lamplit windows and the door stood open. Door on local -Z. |
 | karst_block | jadewater | unused | A big fallen block of limestone, 3-4 m across, with a smaller one beside it. Slot stone: the tower's rock. |
@@ -545,32 +711,38 @@ game (local/README.md).
 | kurgan_kerb | windbarrow | windbarrow | A kerb of chalk blocks round the foot of a kurgan, 14 m across and half sunk in the turf. Settles on the ground; centre it on a mound of about that radius. |
 | lamp_post | kaldvik | kaldvik | A street lantern on a black iron post, lit from dusk. |
 | lamp_tower | thornpan | thornpan | The Lamp: a round stone tower on the highest kopje, built to carry a light, twelve metres of it still standing with the lantern floor gone and six window slots round the head. Its door faces the way you climb; the tower looks over the pans. |
-| lighthouse | lowmouth | lowmouth | The light on the chenier's point: a white tower 15 m tall banded in black, the lamp room on top lit day and night. Door on local -Z. |
-| lily_pads | lowmouth | local, lowmouth | A patch of water lilies 8 m across: round pads flat on still water, none in flower. Base sea; it floats at the surface. |
+| lighthouse | lowmouth | kaldvik, lowmouth | The light on the chenier's point: a white tower 15 m tall banded in black, the lamp room on top lit day and night. Door on local -Z. |
+| lily_pads | lowmouth | glassfall, jadewater, local, lowmouth | A patch of water lilies 8 m across: round pads flat on still water, none in flower. Base sea; it floats at the surface. |
 | lily_pads_flowering | lowmouth | local, lowmouth | A patch of water lilies 8 m across: round pads flat on still water, a few white flowers among them. Base sea; it floats at the surface. |
 | lily_raft | jadewater | jadewater | A raft of giant water lilies on the surface of a cenote: seven pads 3.5-5.5 m across with pale flowers, close enough to step between. Base sea; the pads float at sea level. |
 | lily_raft_small | jadewater | jadewater | Three giant lily pads and a flower on a cenote's surface. Base sea. |
-| log_pile | hemlow | hemlow | A woodcutter's stack of cordwood between posts, 6 m long. Long axis local X. |
-| lone_doorway | glassfall | glassfall | A stone doorway standing on its own with nothing behind it. The sill is worn hollow, as if people walked through it for years. |
+| log_pile | hemlow | hemlow, kaldvik | A woodcutter's stack of cordwood between posts, 6 m long. Long axis local X. |
+| lone_doorway | glassfall | glassfall, hemlow | A stone doorway standing on its own with nothing behind it. The sill is worn hollow, as if people walked through it for years. |
 | long_barrow_mouth | windbarrow | windbarrow | The open east end of the Long Barrow: a kerbed forecourt with ochre on its floor, two uprights and a lintel at the mouth, the closing slab pushed aside and lying, and a chalk-lined passage carved 12 m back into the mound. Place at the mound's east end facing out (local -Z); it carves the passage into the earth behind it. |
 | longhouse | windbarrow | windbarrow | The longhouse where a Windbarrow village gathers: 14 m of daub between split-oak posts under a long straw roof, a smoke gap at the ridge, a door at each end of the front wall (local -Z). |
 | market_cross | hemlow | hemlow | The market cross on Hemlow green: three worn steps, a tall shaft and a weathered cross head. |
 | market_spruce | kaldvik | kaldvik | The market's Christmas tree: a tall spruce hung with warm lights and red baubles, a gold star on top. |
+| mess_hall | saltmirror | saltmirror | The camp's mess hall (1966): a long prefab with a flat tin roof, a row of windows down the front (local -Z) and a yellow door, trestle tables still set out inside, and a mural of the sun and the planets in a row along the back wall. |
 | mill | glassfall | glassfall, hemlow | Stone mill with an undershot wheel on its +X side; wants a site beside flowing water. |
 | mine_portal | redrock | glassfall, redrock | The timbered mouth of a Harlow adit, rails running out of it: carves a tunnel 15 m straight back into the hill. Place at the foot of a slope or cliff, facing out. |
 | miner_shack | redrock | glassfall, redrock | A one-room miner's shack of planks with a tin roof and a stovepipe. |
 | mokoro | thornpan | thornpan | A mokoro: a dugout canoe six metres long, drawn up on the sand with its pole laid along the thwart. Place in twos and threes at a landing, bow to the water. |
-| mossy_log | glassfall | glassfall, hemlow, local, lowmouth, windbarrow | An old log, long down and sinking into the duff, moss along its top. |
+| mossy_log | glassfall | glassfall, hemlow, local, lowmouth, ribshore, windbarrow | An old log, long down and sinking into the duff, moss along its top. |
+| mussel_bed | ribshore | local, ribshore | A bed of mussels and gooseneck barnacles on the rock, black and grey. |
 | naust | kaldvik | kaldvik | A boathouse: low dry-stone walls under a turf roof, the boat door in the gable end that faces the water (local -X). |
-| net_shed | lowmouth | lowmouth, thornpan | An open-fronted net shed on posts over the water, nets drying on a rail along its front (local -Z). Base sea. |
+| net_shed | lowmouth | lowmouth, ribshore, thornpan | An open-fronted net shed on posts over the water, nets drying on a rail along its front (local -Z). Base sea. |
 | ochre_house | kaldvik | kaldvik | A small ochre house with a turf roof. Door on local -Z. |
 | offering_post | windbarrow | windbarrow | An oak post 4 m tall at a parting of the trails, a horse skull set on its top facing local -Z and strips of hide and ochred cloth tied below it. |
-| oil_platform | lowmouth | lowmouth | A small oil well platform out in the Gulf: a steel deck on four piles 2.5 m over the water, a wellhead, a shed and a short derrick with a light on top. Base sea; the piles run down to the bed. |
+| oil_platform | lowmouth | lowmouth | A small oil well platform out in the Gulf: a steel deck 16 m square on four cross-braced piles, 6.5 m over the water, a boat landing and ladder on local -Z, a wellhead over its conductor pipe, a tank, a shed and a 19 m lattice derrick with a light on top. Base sea; the piles and the conductor run down to the bed. |
+| optical_dome | saltmirror | saltmirror | Ilse Varga's first instrument (1959): a concrete drum under a white dome on the range's western summit, its shutter rusted half open on the front (local -Z) and the telescope still on its pier inside, with a small concrete hut behind. |
 | ore_cart | redrock | glassfall, redrock | A tipped-over ore cart, rusted to the colour of the ground. |
 | packhorse_bridge | hemlow | hemlow | A medieval packhorse bridge: three low arches, a narrow cobbled deck humped over the middle, low parapets. 16 m along local X; base rim hangs it from the banks, so place it at the river's middle with local X across the stream. |
 | pagoda | jadewater | jadewater | A three-storey pagoda, 6 m square at the foot and 13 m to the top of its lacquered finial; each storey a little narrower under wide tiled eaves. Door on local -Z. |
 | pavilion | jadewater | jadewater, local | An open pavilion of the Order: four posts on a stone footing under a small tiled roof, 4 m square, for looking out from a tower top. Settles on its lowest corner; the footing fills down. |
 | petrified_log | redrock | local, redrock | A petrified log lying on the clay, broken into rounds where it weathered out. |
+| pickup_truck | saltmirror | saltmirror | A 1970s pickup left where it was parked ten years ago: long bonnet, a bench-seat cab, an open bed with nothing in it, tyres flat and the paint faded and rusting through. Front faces local -Z. The paint is the `paint` slot. |
+| plumose_anemones | ribshore | local, ribshore | Plumose anemones on the deep bones and the sea floor: white stalks a metre and a half tall with feathery crowns. |
+| prefab_bungalow | saltmirror | saltmirror | A flat-roofed prefab bungalow for the married staff (1970), clad in painted siding, a door and two windows on the front (local -Z) and an air-conditioner box rusting on the back corner. |
 | pump_station | lowmouth | lowmouth | A concrete pump house on the levee with two rusted pipes running out its back (local +Z) over the bank to the water. Door on local -Z. |
 | quarry_hut | glassfall | glassfall | Plank shed where the skystone diggers kept their tools. |
 | raised_tombs | lowmouth | lowmouth | A row of four whitewashed tombs built above the ground (the dead can't be buried in ground this wet), each with a gabled top and an iron cross. Fronts face local -Z. |
@@ -578,7 +750,7 @@ game (local/README.md).
 | red_house | kaldvik | kaldvik | A two-storey house in Falu red with white trim and a slate roof. Door on local -Z. |
 | ring_wall | thornpan | thornpan | The Ringstone: a dry-stone enclosure fifteen metres across, coursed and fitted without mortar, with one gap and a paved middle. Built by people who were gone before the present ones came. Place it on a kopje shoulder, gap downhill. |
 | road_barrier | redrock | redrock | A striped barricade and a ROAD CLOSED board where a road ends. |
-| rock_outcrop | glassfall | glassfall, local, windbarrow | A tor: weathered blocks of rock stacked on each other. |
+| rock_outcrop | glassfall | glassfall, local, redrock, windbarrow | A tor: weathered blocks of rock stacked on each other. |
 | rope_bridge_24 | jadewater | jadewater | The Order's lacquered rope bridge, 24 m along local X, deck sagging 1.00 m at mid-span, a small red gate at each end. Base rim: place at the gap's middle between two towers whose tops are the same height (mesa `top`), bearing 0 for east-west, 90 for north-south; each end should rest 3-6 m onto a tower. |
 | rope_bridge_32 | jadewater | jadewater | The Order's lacquered rope bridge, 32 m along local X, deck sagging 1.00 m at mid-span, a small red gate at each end. Base rim: place at the gap's middle between two towers whose tops are the same height (mesa `top`), bearing 0 for east-west, 90 for north-south; each end should rest 3-6 m onto a tower. |
 | rope_bridge_40 | jadewater | jadewater | The Order's lacquered rope bridge, 40 m along local X, deck sagging 1.00 m at mid-span, a small red gate at each end. Base rim: place at the gap's middle between two towers whose tops are the same height (mesa `top`), bearing 0 for east-west, 90 for north-south; each end should rest 3-6 m onto a tower. |
@@ -591,22 +763,25 @@ game (local/README.md).
 | round_house | windbarrow | thornpan, windbarrow | A Windbarrow round house: a limewashed daub wall ring 6 m across on oak posts, under a deep conical straw roof. Door on local -Z. |
 | round_house_small | windbarrow | thornpan, windbarrow | A small Windbarrow round house, 4.5 m across: daub on oak posts under a straw cone. Door on local -Z. |
 | ruined_tower | glassfall | glassfall | A round stone watchtower, 21 m, hollow, its crown broken away on one side. Who built it is not in any record. Seen from the coast and the summit. |
+| sea_palms | ribshore | local, ribshore | Sea palms on the surf-beaten rock: rubbery stalks a little under a metre tall, each with a mop of blades. |
 | sea_stack | glassfall | glassfall | A basalt sea stack standing off the coast, ledged, with a cap of grass where the gulls nest. A landmark from the cliffs and a gap to fly through. |
 | sea_stack_low | glassfall | glassfall | A basalt sea stack standing off the coast, ledged, with a cap of grass where the gulls nest. A landmark from the cliffs and a gap to fly through. |
+| sea_stars | ribshore | local, ribshore | Ochre sea stars in a cluster on the rock at the waterline, and one sunflower star a metre and a half across. |
 | sea_torii | jadewater | jadewater | A great torii standing in the sea, its feet in the water, 5.5 m tall. Base sea; the posts fill down to the sea floor. Front local -Z. |
 | settler_house | glassfall | glassfall, redrock | One-room fieldstone cottage, thatched, door on the front (local -Z). |
 | settler_longhouse | glassfall | glassfall | Long stone house with a slate roof and two doors: a family house and its byre. |
 | shrimp_boat_wreck | lowmouth | lowmouth | A shrimp trawler sunk at its mooring: the hull settled in the mud to the gunwales, the wheelhouse and the outrigger mast standing out of the water. Bow to local -Z. Base sea. |
 | shrine_ruin | jadewater | jadewater, local | A ruined shrine of the Order in the jungle: a stone platform, broken pillars of different heights, a fallen one, a lantern. Level ground. |
-| sign_pole_tall | redrock | redrock | Two steel legs holding a big board over a highway shoulder. They run up behind the board to just under its top, the way a real gantry sign is built, so no gap shows under it. The board is drawn as plates (world/places.rs), not voxels. |
-| sign_post_single | glassfall | glassfall, hemlow, lowmouth, redrock | One squared timber post with a small board on top: a trail sign or a finger post. The board is drawn as plates (world/places.rs), not voxels. |
+| sign_pole_tall | redrock | redrock, saltmirror | Two steel legs holding a big board over a highway shoulder. They run up behind the board to just under its top, the way a real gantry sign is built, so no gap shows under it. The board is drawn as plates (world/places.rs), not voxels. |
+| sign_post_single | glassfall | glassfall, hemlow, lowmouth, redrock, saltmirror | One squared timber post with a small board on top: a trail sign or a finger post. The board is drawn as plates (world/places.rs), not voxels. |
 | sign_post_steel | city | unused | A galvanised pole for a street blade or a road sign, 2.9 m to the top. The blade is drawn as plates (world/places.rs), not voxels. |
-| sign_posts_timber | glassfall | glassfall | Two squared timber posts a board is nailed across, 2 m apart: a village notice or a name board at the edge of a settlement. Broad face along local X; the board itself is drawn as plates (world/places.rs), not voxels. |
+| sign_posts_timber | glassfall | glassfall, ribshore | Two squared timber posts a board is nailed across, 2 m apart: a village notice or a name board at the edge of a settlement. Broad face along local X; the board itself is drawn as plates (world/places.rs), not voxels. |
 | sign_stone | hemlow | glassfall, hemlow, jadewater, lowmouth, redrock | A waist-high stone marker with one dressed face: a milestone, a parish bound, a name stone at a lane end. The lettering is drawn as plates (world/places.rs) on the dressed face, which looks along local -Z. |
 | skate_pillar | windbarrow | windbarrow | The thirteenth pillar: a carved T-pillar of the Tepe stone, 7.5 m and the tallest of them, standing alone on the open grass of the empty north with a wind skate cut into its broad south face and ochred. Broad faces along local X, the carving on local -Z. |
 | skep_bench | hemlow | hemlow | Three straw bee skeps on a plank bench under a little lean-to roof. Front local -Z. |
 | slagdeck_arena | slagdeck | slagdeck | The whole arena deck as one structure, written by worlds/slagdeck/make_arena.py: a hall round a slag pit, roofed side rooms with galleries over them, a walkway ring six metres up, a platform over the north walkway, and corridors behind the hall. Place it level with bearing 0; its anchor is the middle of the footprint at yard level. Edit the script, not this file. |
 | slickrock_dome | redrock | local, redrock | A low rounded dome of bare sandstone rising out of the sand. |
+| sluice_yards | sluice | sluice | Sluice's whole map, written by worlds/sluice/make_map.py: two pump yards across a drained spillway, joined by a gantry, the channel and a culvert. Mirror-symmetric about its middle. Edit the script, not this file. |
 | small_window | redrock | redrock | A small arch or window: carves a 9 m hole through the rock of a fin. Long axis local X. |
 | stall_green | kaldvik | kaldvik | A Christmas-market stall: a counter under a striped canvas roof hung with a string of lights, goods on the counter. Counter on local -Z. |
 | stall_red | kaldvik | kaldvik | A Christmas-market stall: a counter under a striped canvas roof hung with a string of lights, goods on the counter. Counter on local -Z. |
@@ -620,7 +795,7 @@ game (local/README.md).
 | stilt_footbridge | lowmouth | lowmouth | A humped plank footbridge 16 m long on posts, running from the anchor toward local +Z: its middle stands 2.5 m over the water with no posts under it, so a kayak passes beneath. Base sea. |
 | stilt_house | lowmouth | lowmouth | A shotgun house on cypress posts over the water: board walls, a tin roof, a front porch facing the channel (local -Z). Floor 2 m over the water; base sea, the posts run down to the mud. |
 | stilt_walkway | lowmouth | unused | A plank boardwalk on posts 1.5 m over the water, 8 m long, starting at the anchor and running toward local +Z; posts every 2.5 m, a rail on one side. A kayak passes under it between the posts. Base sea. |
-| stock_pen | windbarrow | thornpan, windbarrow | A Windbarrow stock pen: a ring of woven hazel hurdles 13 m across on oak stakes, its gate on local -Z. |
+| stock_pen | windbarrow | hemlow, kaldvik, thornpan, windbarrow | A Windbarrow stock pen: a ring of woven hazel hurdles 13 m across on oak stakes, its gate on local -Z. |
 | stockfish_rack | kaldvik | kaldvik | A hjell: a timber rack hung with split cod drying in the frost, in two tiers. |
 | stone_lantern | jadewater | jadewater, local | A granite toro lantern, 2 m tall; the film has grown inside its fire box and it still glows. Feature. |
 | stone_office | redrock | redrock | A small red sandstone building with iron shutters and a parapet: Harlow's assay office or bank, the part of town that lasts. |
@@ -630,21 +805,25 @@ game (local/README.md).
 | sunken_hull | underwater | glassfall, jadewater | A sailing ship's hull on the sea floor, on her beam ends where she settled, masts down along the sand, crusted with reef rock and coral; fish in her shadow and in through the open bilge. `base: bed`. |
 | sunken_ribs | underwater | glassfall | A small boat gone down on the reef: keel and frames standing out of the sand, crusted over, a launch's length. On Glassfall it is the vanished surveyor's. `base: bed`. |
 | sunken_tombs | lowmouth | lowmouth | The parish tombs where the bay came over them: the same whitewashed row, standing in a metre of water. Base sea. |
-| surveyor_camp | glassfall | glassfall | A canvas tent, a cold fire ring, a crate, and a levelled instrument on a tripod, aimed at open sea. |
+| surveyor_camp | glassfall | glassfall, kaldvik | A canvas tent, a cold fire ring, a crate, and a levelled instrument on a tripod, aimed at open sea. |
 | temple_hall | jadewater | jadewater | The main hall of the Order's temple: a stone plinth with steps, a raised floor on cedar posts, paper screens and a big tiled gable roof. Front (steps) local -Z. |
 | tepe_enclosure | windbarrow | windbarrow | The Tepe: a ring of twelve carved T-shaped limestone pillars 3-4 m tall inside a chalk-block bench wall 27 m across, with two taller pillars at the centre; red ochre still in the carving. The way in is on local -Z; stands on a levelled hilltop. |
 | tepe_pillar | windbarrow | windbarrow | A single carved T-pillar of the Tepe's cream limestone, standing where it was left: 4 m tall, its broad faces along local X, ochre in the grooves. |
 | termite_mound | thornpan | local, thornpan | A termite mound: a hard clay cone chest to head high with a chimney or two off the crown, standing in the grass. Scatter on dry ground; it levels nothing. |
+| titan_eye | ribshore | ribshore | A faint amber light filling the titan's eye socket, as if a lamp burned in the skull. It is there only at night: at sunrise the socket is empty bone again. |
+| titan_tooth | ribshore | local, ribshore | A tooth the size of a standing stone, fallen from the titan's jaw: a curved cone 12 m tall, cracked along its length, hooked back where it dropped. |
 | tithe_barn | hemlow | hemlow | The abbey's tithe barn: 25 m long under a huge stone-slate roof, two gabled cart porches on the front (local -Z) with wide doorways right through, slit vents and buttresses. |
 | torii | jadewater | jadewater | A lacquered torii gate, 5 m wide and 4.5 m tall, its dark top beam turned up at the ends. Front local -Z: face it along the avenue. |
 | tower_shrine | jadewater | jadewater, local | A tiny wooden shrine on a stone footing, a metre and a half tall, that the Order set on the tops of towers. Front local -Z. |
+| transporter | saltmirror | saltmirror | The array's transporter: a crawler on two tracks each as wide as a road and ninety metres long, painted highway yellow, with a cab on its front corner. It stopped halfway out the east arm with a dish still on its back, parked facing the zenith like the others. |
+| try_works | ribshore | ribshore | The try-works: a long brick hearth with two iron pots set in it, where the whalers boiled down the blubber, its chimney fallen. |
 | turf_house | kaldvik | kaldvik | An Icelandic turf farmhouse: long sod walls and a grass roof, two white timber gables on the front, one with the door. |
 | tyre_stack | redrock | redrock | Old tyres stacked on the outside of a turn. |
 | village_inn | hemlow | hemlow | The Hob and Lantern, Hemlow's inn: two storeys of honey stone, lit bay windows either side of the door, lanterns, a painted sign hanging from a post on its bracket. Door on local -Z. |
-| water_tank | redrock | redrock | A riveted water tank on four legs. |
-| well | glassfall | glassfall, hemlow, local | Stone well with a winding post and a small roof. |
+| water_tank | redrock | redrock, saltmirror | A riveted water tank on four legs. |
+| well | glassfall | glassfall, hemlow, kaldvik, local | Stone well with a winding post and a small roof. |
 | white_church | kaldvik | kaldvik | The hamlet's white wooden church: a plain nave with tall lamplit windows, a square tower with a tarred stepped spire, the door in the tower (local -Z). |
-| white_house | kaldvik | kaldvik | A white-painted two-storey house, the merchant's, with a tarred roof. Door on local -Z. |
+| white_house | kaldvik | kaldvik, ribshore | A white-painted two-storey house, the merchant's, with a tarred roof. Door on local -Z. |
 | wind_shaft | windbarrow | windbarrow | A shaft 2 m square cut twenty metres down into the chalk at the heart of the turf maze, collared in three courses of blocks with ochre laid along the top, and a lintel on two uprights over the way in (local -Z). Its anchor is at ground level, so it digs below where it is placed. |
 | windbreak | windbarrow | windbarrow | The flint diggers' windbreak: 12 m of hazel hurdling on oak stakes with a hide lean-to behind it. The screen faces the wind on local -Z; the shelter is behind it. |
 | window_high | redrock | redrock | A small window high in a fin over an overhanging alcove at its foot: the start of an arch. |
@@ -652,9 +831,9 @@ game (local/README.md).
 | window_span | redrock | redrock | A wide, low opening carved through a sandstone fin (placed on a `mesa` fin, bearing across it): about 17 m wide and 9 m high, the lintel thinner at one end where a second hollow ate up into it. |
 | window_tall | redrock | redrock | A tall, narrow slot of a window through a fin, leaning a little: about 7 m wide and 15 m high. |
 | window_twin | redrock | redrock | Two openings side by side in one fin, a big one and a small one higher up, the rock between them a thick pillar. |
-| woodcutter_hut | hemlow | hemlow | A woodcutter's plank hut in the wood: mossy shingle roof, a chimney, lamplit windows, and a lean-to woodshed on its +X side stacked with logs. Door on local -Z. |
-| wool_church | hemlow | hemlow | Hemlow's wool church: a square west tower 22 m to its pinnacles with battlements and louvred belfry, a long nave with tall lit windows and buttresses, a lower chancel to the east and a south porch. Tower at local -X; porch on local -Z. |
-| wreck_ribs | thornpan | thornpan | A sea-going hull broken in the reeds: the keel and eleven frames standing out of the grass, barnacle crust to the turn of the bilge. Twelve metres; lay it along the ground anywhere in the flood meadows. |
+| woodcutter_hut | hemlow | hemlow, kaldvik, ribshore | A woodcutter's plank hut in the wood: mossy shingle roof, a chimney, lamplit windows, and a lean-to woodshed on its +X side stacked with logs. Door on local -Z. |
+| wool_church | hemlow | hemlow | Hemlow's wool church: a square west tower 25 m to its pinnacles with battlements and louvred belfry, a long nave with tall lit windows and buttresses, a lower chancel to the east and a south porch. Tower at local -X; porch on local -Z. |
+| wreck_ribs | thornpan | ribshore, thornpan | A sea-going hull broken in the reeds: the keel and eleven frames standing out of the grass, barnacle crust to the turn of the bilge. Twelve metres; lay it along the ground anywhere in the flood meadows. |
 | yule_goat | kaldvik | kaldvik | A julbock: a straw goat three metres high bound in red ribbon, the market's mascot. Faces local +X. |
 
 ## Kits
@@ -665,11 +844,13 @@ game (local/README.md).
 | canopy_walk | routing engine | unused | A rope walkway through the crowns: a 1.5 m plank deck held at the height the ribbon names, netting to shoulder height, sagging 0.8 m between supports. |
 | cattle_track | thornpan | thornpan | A track worn to the dirt by people and cattle, 2.5 m across with sand drifting at its edges: the between-places line in a delta where everything else is water. |
 | cave_passage | routing engine | local | A walkable passage bored through rock at the height the ribbon names: 3 m across, 3 m of headroom, a level floor of cave rock. Routed like any other line, so a cave network is a network. |
-| dirt_lane | routing engine | local | A farm lane: 3.5 m of packed dirt graded into the land, grass verges either side. The everyday line between fields, cottages and a village street. |
-| dry_stone_wall | routing engine | local | A field wall a metre high and half a metre thick, laid dry and following the ground over every hump. Cotswold stone; swap the slot for fieldstone elsewhere. |
-| footpath | routing engine | thornpan | A trodden path 1.4 m wide, graded only enough to read as a path. What a door, a well or a gate is joined to the street by. |
+| chalk_trail | windbarrow | windbarrow | A trail a foot and a half wide trodden through the grass to the bare chalk and kept open by use: white on the downs, seen from a hill a mile off. |
+| dirt_lane | routing engine | local, saltmirror | A farm lane: 3.5 m of packed dirt graded into the land, grass verges either side. The everyday line between fields, cottages and a village street. |
+| dry_stone_wall | routing engine | hemlow, local | A field wall a metre high and half a metre thick, laid dry and following the ground over every hump. Cotswold stone; swap the slot for fieldstone elsewhere. |
+| footpath | routing engine | hemlow, kaldvik, ribshore, saltmirror, thornpan | A trodden path 1.4 m wide, graded only enough to read as a path. What a door, a well or a gate is joined to the street by. |
 | highway_guard | routing engine | local | Two lanes and a shoulder, 9 m wide, with a steel guard rail on posts every 4 m down both edges. Where the land falls away it hands over to steel_span. |
 | hurdle_run | routing engine | thornpan | Woven hazel hurdling between oak stakes, 1.25 m high, stakes every 2.5 m: the plot and yard fences of a downland village, now following any line. The hurdle_fence structure is the same thing cut to a 10 m run on a quarter turn. |
+| lantern_passage | hemlow | hemlow | A cave passage in honey limestone, bored at the height its network names: 4 m across with 4 m of headroom and a pale gravel floor. Lay it with a `network` that has a `height` and it is a cave system; light it with a `lamp` event. |
 | plank_walk | routing engine | local | A boardwalk 2 m over whatever is below: a 2 m plank deck on timber posts every 3 m, a rail on the left only, so a boat passes under it between the posts. |
 | rope_span | routing engine | local | A lacquered rope bridge between two rims: a 2 m plank deck sagging 1.2 m at mid-span, rope handlines and a post each side every 4 m. Replaces the rope_bridge_NN structures, which were the same bridge cut to eight fixed lengths. |
 | sand_lane | thornpan | thornpan | A village lane on a sand island: 2.4 m trodden down to the dark dirt under the sand, with the sand drifting back at its edges. |
@@ -691,8 +872,9 @@ game (local/README.md).
 | name | from | used by | notes |
 |---|---|---|---|
 | acorn_woodpecker | redrock | local, redrock | Acorn woodpecker: a clown-faced black woodpecker with a white face ring and a red cap, in noisy family groups in the pines and oaks. |
+| albatross | ribshore | local, ribshore | glide: Laysan albatross: white head and body, long narrow pale grey wings four and a half metres across, a pale pink hooked bill. A few circle wide over the swell and the strand on wings held out flat and beaten once or twice in half a minute, more like vultures than gulls, and only now and then come down together on the highest ground near, a ridge or a bleached rib, to sit out the fog. Its own model at twice the starling's voxel (scaled 3.8x) so the wings, twice the starling shape's length, fit the 32-voxel grid; the body is the same size in metres as before. |
 | alligator | lowmouth | local, lowmouth | American alligator: broad-snouted and near black, the fresh-water crocodilian of the swamp and the sawgrass. Basking on the banks, and awash among the cypress knees. |
-| alligator_gar | lowmouth | local, lowmouth | Alligator gar: a long armoured fish with a toothy snout, cruising the channels and rolling at the surface. |
+| alligator_gar | lowmouth | jadewater, local, lowmouth | Alligator gar: a long armoured fish with a toothy snout, cruising the channels and rolling at the surface. |
 | anaconda | jadewater | jadewater, local | A four-metre constrictor in the jade shallows and the cenote: olive-dark with blackish blotches, heavy enough that the whole wave of it shows from the bank. Rare, and in no hurry about anything, least of all you. |
 | angelfish | underwater | glassfall, jadewater, local | Queen angelfish: blue and gold, larger than the butterflyfish, hanging by its patch of reef and turning to look at a diver. |
 | anhinga | lowmouth | local, lowmouth | circle: Anhinga, the snakebird: near-black with silver-streaked wings and a very long thin neck, swimming with only the neck out and drying its wings on the snags. |
@@ -700,98 +882,103 @@ game (local/README.md).
 | arctic_fox | kaldvik | kaldvik, local | An arctic fox in its winter coat, white to the tail tip, trotting the shore for whatever the tide and the ravens leave. |
 | aurochs | windbarrow | local, windbarrow | graze: The wild ox the barrow people hunt and have not tamed: black-brown, smooth-backed and taller at the shoulder than a man, with long horns sweeping forward and up. Two herds hold the whole country, so finding one is a day's walk and a sight when it happens. |
 | badger | base | glassfall, hemlow, local, redrock, windbarrow | skulk: Badger: a low, wide grey digger with a white head striped black through the eyes, nosing along hedge and wood edge at dusk and bolting for cover. |
-| barn_owl | hemlow | hemlow, local, lowmouth | circle: Barn owl: pale gold and white, quartering low over the meadows at dusk on soft slow wingbeats. |
+| barn_owl | hemlow | glassfall, hemlow, local, lowmouth, saltmirror, windbarrow | circle: Barn owl: pale gold and white, quartering low over the meadows at dusk on soft slow wingbeats. |
 | barracuda | underwater | glassfall, jadewater, local, lowmouth | Barracuda: long, silver and still, hanging in the open water off the wall, then gone in one flick. |
 | bat | base | glassfall, hemlow, local, lowmouth, thornpan, windbarrow | flutter: A small brown bat: flickers about in tight circles over clearings and water at dusk, never in a straight line for long. |
 | bear | glassfall | glassfall, kaldvik, local, lowmouth, redrock | graze: Black bear: a heavy, slow forager with a tan muzzle, alone and fairly rare. It moves off from people rather than toward them. |
-| bee | glassfall | glassfall, hemlow, local, redrock, thornpan, windbarrow | buzz: Honeybee: goes from flower to flower (plants that afford nectar), hovering at each, in small numbers wherever there is bloom. The base of every bee. Drawn about twice life size so it shows. |
+| bee | glassfall | glassfall, hemlow, local, redrock, saltmirror, thornpan, windbarrow | buzz: Honeybee: goes from flower to flower (plants that afford nectar), hovering at each, in small numbers wherever there is bloom. The base of every bee. Drawn about twice life size so it shows. |
 | bee_eater | thornpan | local, thornpan | flock: Carmine bee-eater: carmine body, blue-green head and a long tail, hunting insects out over the water all morning. Nests in holes in a cut bank, in colonies of hundreds, and follows any grass fire for what it drives up. |
-| bighorn | redrock | local, redrock | graze: Desert bighorn sheep: stocky, grey-brown with a white rump and curled horns; lives on the cliffs and ledges. |
+| bighorn | redrock | glassfall, local, redrock | graze: Desert bighorn sheep: stocky, grey-brown with a white rump and curled horns; lives on the cliffs and ledges. |
 | bison | base | glassfall, local, redrock | graze: Bison: a humped, shaggy-shouldered bull half again as tall as a person and heavy through the barrel, head carried low, grazing the open grass in small bands. It gives way slowly and not far. |
+| black_oystercatcher | ribshore | local, ribshore | wade: Black oystercatcher: a stocky all-black shorebird with a long red bill and pale pink legs. Works the wet rocks and the sand at the tide's edge in pairs, probing for limpets, and flies off low along the shore piping when you come too close. |
 | boar | glassfall | glassfall, hemlow, jadewater, local, lowmouth, windbarrow | graze: Wild boar: a dark bristly barrel on short legs, a long snout and small tusks. Roots through the woods in sounders of mother and young, and bolts crashing through the undergrowth. The base of every pig. |
-| brown_pelican | lowmouth | local, lowmouth | circle: Brown pelican: big and grey-brown, flying low over the bay and the sound and floating on it. |
-| bullfrog | base | local, lowmouth | Bullfrog: twice the frog and olive-dark, sitting heavy in the shallows of a swamp or a slow river. |
-| bumblebee | glassfall | glassfall, hemlow, local, redrock, windbarrow | Bumblebee: big, round, furry, black and yellow, slow from flower to flower in cooler, damper places. |
+| bone_crab | ribshore | local, ribshore | wade: A crab far larger than any living one, near three metres across the legs: a deep rust shell studded with pale knobs over slate-blue legs, one great crushing claw. Scuttles sideways over the shore and the shallows, picking at whatever the tide leaves, and settles flat on the sand to rest. Walks to its right: the model is drawn with that side at -Z. |
+| brown_pelican | lowmouth | jadewater, local, lowmouth, ribshore | circle: Brown pelican: big and grey-brown, flying low over the bay and the sound and floating on it. |
+| bullfrog | base | glassfall, hemlow, local, lowmouth | Bullfrog: twice the frog and olive-dark, sitting heavy in the shallows of a swamp or a slow river. |
+| bumblebee | glassfall | glassfall, hemlow, kaldvik, local, redrock, ribshore, windbarrow | Bumblebee: big, round, furry, black and yellow, slow from flower to flower in cooler, damper places. |
 | butterflyfish | underwater | glassfall, jadewater, local | school: Butterflyfish: a yellow disc of a fish about 20 cm long with a dark band through the eye, in ones and twos picking over the coral. The base of the deep-bodied reef fish. |
-| canyon_bat | base | local, redrock | Canyon bat: the smallest of them, pale sandy over a black face, out early in the evening along the rims and over the pools. |
+| canyon_bat | base | local, redrock, saltmirror | Canyon bat: the smallest of them, pale sandy over a black face, out early in the evening along the rims and over the pools. |
 | capybara | glassfall | glassfall, local | wade: Capybara: the biggest rodent, a russet barrel with a blunt square head and no tail. Families graze the river banks and slip into the water rather than run far; very calm about people. |
 | cave_bear | windbarrow | local, windbarrow | graze: Cave bear: half again the bulk of a black bear, dark brown with a high shoulder hump and a pale muzzle, denning in the chalk caves and out at the mouths at dawn and dusk. |
 | channel_catfish | lowmouth | local, lowmouth, thornpan | Channel catfish: grey-olive, whiskered, in loose groups along the bayous and the channels. |
-| cod | underwater | glassfall, kaldvik, local | Atlantic cod: olive and speckled, hanging over the kelp floor in the cold water. |
+| cod | underwater | glassfall, hemlow, kaldvik, local, ribshore | Atlantic cod: olive and speckled, hanging over the kelp floor in the cold water. |
 | condor | redrock | local, redrock | soar: California condor: black, with a bare pink-grey head and white bands under the wings, 3 m across. Soars for hours on the cliff updrafts, alone or in pairs, and hardly beats its wings. |
-| cormorant | glassfall | glassfall, jadewater, local, lowmouth | circle: Pelagic cormorant: glossy black, long-necked, flying low and straight over the water and sitting on it between dives. |
+| cormorant | glassfall | glassfall, hemlow, jadewater, kaldvik, local, lowmouth, ribshore | circle: Pelagic cormorant: glossy black, long-necked, flying low and straight over the water and sitting on it between dives. |
 | corpse_candle | windbarrow | local, windbarrow | drift: A corpse candle over the barrow field: a cold yellow flame the size of a fist with a dim halo, drifting between the mounds after dark and pulsing slowly. The villages say it is the breath going by. |
 | cougar | base | glassfall, local, redrock | skulk: Cougar: a long, low tan cat with a black-tipped tail, alone and rarely seen. It hunts deer and keeps well away from people. |
 | cow | base | glassfall, hemlow, local, windbarrow | Dairy cow: the bison's frame with the hump shaved off and a straight back, brown over white, standing about the pasture in twos and threes. Pays people no mind. |
-| coyote | redrock | local, lowmouth, redrock | skulk: Coyote: grey-tan, bushy tail with a dark tip; hunts jackrabbits and lizards, keeps its distance. |
-| crocodile | lowmouth | local, lowmouth, thornpan | haulout: American crocodile, grey-olive and narrow-snouted, in the brackish water of the river mouth: hauled out on the mud banks in the sun, it watches you come and slides into the water before you are close. In the water it lies awash with only its back, eyes and snout out, and sinks away when you come close. The base of the delta's crocodilians. |
-| crow | glassfall | glassfall, local, lowmouth, redrock, windbarrow | circle: Crows wheel over open burned ground. |
+| coyote | redrock | local, lowmouth, redrock, ribshore, saltmirror | skulk: Coyote: grey-tan, bushy tail with a dark tip; hunts jackrabbits and lizards, keeps its distance. |
+| crocodile | lowmouth | glassfall, jadewater, local, lowmouth, thornpan | haulout: American crocodile, grey-olive and narrow-snouted, in the brackish water of the river mouth: hauled out on the mud banks in the sun, it watches you come and slides into the water before you are close. In the water it lies awash with only its back, eyes and snout out, and sinks away when you come close. The base of the delta's crocodilians. |
+| crow | glassfall | glassfall, hemlow, local, lowmouth, megalith, redrock, ribshore, thornpan, windbarrow | circle: Crows wheel over open burned ground. |
 | crystal_bat | base | hemlow, jadewater, local | Crystal bat: wings like lit glass, ringing the cenotes and the lantern caves in the dark. |
-| deer | base | glassfall, hemlow, jadewater, local, lowmouth, redrock, windbarrow | graze: Red deer. Usually in small family groups that graze together and bolt together. |
-| desert_toad | base | local, redrock | Desert toad: sand-coloured under dark blotches, out at the canyon pools and the wet sand after rain. |
-| desert_tortoise | redrock | local, redrock | Desert tortoise: smaller and sandier, with a high domed shell; spends the heat of the day in a burrow and the morning cropping desert plants. |
+| deer | base | glassfall, hemlow, jadewater, local, lowmouth, redrock, ribshore, windbarrow | graze: Red deer. Usually in small family groups that graze together and bolt together. |
+| desert_toad | base | local, redrock, saltmirror | Desert toad: sand-coloured under dark blotches, out at the canyon pools and the wet sand after rain. |
+| desert_tortoise | redrock | local, redrock, saltmirror | Desert tortoise: smaller and sandier, with a high domed shell; spends the heat of the day in a burrow and the morning cropping desert plants. |
 | donkey | redrock | local, redrock | Feral burro: the miners' donkeys, turned loose when Harlow emptied. Grey-brown with a pale muzzle and belly, long ears and a dark cross on the shoulders. Small herds round the old town; curious, slow to run. |
-| douglas_squirrel | base | glassfall, local, redrock | Douglas squirrel: a small dark olive squirrel with a rusty orange front, loud in the firs and gone round the trunk in a blink. |
+| douglas_squirrel | base | glassfall, local, redrock, ribshore | Douglas squirrel: a small dark olive squirrel with a rusty orange front, loud in the firs and gone round the trunk in a blink. |
 | dragonfly | glassfall | glassfall, hemlow, jadewater, local, lowmouth, redrock, thornpan, windbarrow | dart: Blue darner: a long blue dragonfly that holds still over the water and darts from spot to spot along the river and the shore. The base of every dragonfly; drawn a little larger than life. |
-| dusk_wren | faerie | hemlow, local, porch | A small jewel-coloured wren with a softly glowing crown. Flits between shrubs in small groups. |
-| eagle | glassfall | glassfall, jadewater, local, redrock, windbarrow | soar: A lone eagle circling high over the slopes and the coast. Never lands where you can see it. |
+| dusk_wren | faerie | hemlow, local | A small jewel-coloured wren with a softly glowing crown. Flits between shrubs in small groups. |
+| eagle | glassfall | glassfall, jadewater, kaldvik, local, megalith, redrock, ribshore, saltmirror, windbarrow | soar: A bald eagle: white head, dark body, circling high and alone over the slopes and the coast. Now and then it sits a while on the top of the tallest tree near. When it is hungry it stoops on what it eats in the open below it, a gull in the air or on the sea, a duck, a rabbit, a fish near the surface, and takes it or misses; a kill goes off in its talons, to a tree top if there is one. |
 | eider | kaldvik | kaldvik, local | Common eiders rafting in the open water off the ice: the drakes white-backed and black-bellied with a green nape, the ducks barred brown. |
 | elephant | base | jadewater, local, thornpan | graze: Elephant: three metres at the shoulder on four grey columns, with great ears, short tusks and a trunk that reaches the ground. Moves in small families and is in no hurry about anyone. |
-| elk | glassfall | glassfall, kaldvik, local, redrock | Elk: bigger and greyer than the red deer, with a dark mane and a wide rack. Herds of three to seven on high ground. |
+| elk | glassfall | glassfall, kaldvik, local, redrock, ribshore | Elk: bigger and greyer than the red deer, with a heavy neck under a dark shaggy mane and a wide rack. Herds of three to seven on high ground. |
 | fae_badger | base | hemlow, local | The faerie wood's badger: bigger and bolder, its grey gone moss-green, the stripes on its head glowing pale at dusk, with toadstools riding on its back. |
-| fae_elephant | base | unused | The faerie wood's elephant: no taller than a pony, pale lilac and mossed along its back, its small tusks glowing at dusk. It lets children walk up to it. |
+| fae_elephant | base | hemlow, local | The faerie wood's elephant: no taller than a pony, pale lilac and mossed along its back, its small tusks glowing at dusk. It lets children walk up to it. |
 | fae_horse | faerie | hemlow, local | The faerie wood's horse: smaller and finer, a soft lilac coat, with a mane and tail that glow violet at dusk. Walks the glades in pairs and lets you come close. |
-| fae_toad | base | hemlow, local, lowmouth | The faerie wood's toad: moss-backed and slow, with pale spots that glow at dusk. It sits where it sits and lets you look at it. |
-| faerie_heron | faerie | hemlow, local, lowmouth | A heron of the faerie wood: white with a trailing plume that glows pale violet, and wings that leave a shimmer as it lifts off. |
-| firefly | hemlow | hemlow, local, lowmouth, thornpan | flutter: Firefly: a small dark beetle whose tail lights green-gold in slow flashes, each on its own rhythm, drifting low over the long grass and the wood's edge at dusk. Drawn well over life size so it shows. |
-| fox | base | glassfall, hemlow, local, windbarrow | skulk: Red fox; hunts rabbits. |
+| fae_toad | base | glassfall, hemlow, local, lowmouth | The faerie wood's toad: moss-backed and slow, with pale spots that glow at dusk. It sits where it sits and lets you look at it. |
+| faerie_heron | faerie | glassfall, hemlow, local, lowmouth | A heron of the faerie wood: white with a trailing plume that glows pale violet, and wings that leave a shimmer as it lifts off. |
+| firefly | hemlow | glassfall, hemlow, local, lowmouth, thornpan | flutter: Firefly: a small dark beetle whose tail lights green-gold in slow flashes, each on its own rhythm, drifting low over the long grass and the wood's edge at dusk. Drawn well over life size so it shows. |
+| flamingo | saltmirror | local, saltmirror | wade: Greater flamingo: pale pink with coral wings edged black, on legs longer than its body. Stands in flocks in the brine at the low end of the pan, heads down, sieving for shrimp, and lifts off all at once in a pink sheet when you come too near. |
+| fox | base | glassfall, hemlow, kaldvik, local, windbarrow | skulk: Red fox; hunts rabbits. |
 | frog | base | glassfall, hemlow, local, lowmouth, redrock, thornpan, windbarrow | splash: Green frog: sits at the water edge with its eyes up over the surface and hops in when you come near. |
 | fruit_bat | base | jadewater, local, thornpan | Fruit bat: a flying fox three times the size of a little bat, rust-collared and dog-faced, circling the fruiting trees in wide slow loops. |
 | garden_eel | underwater | glassfall, jadewater, local | school: Garden eels: a colony of thin spotted eels standing up out of their holes in the sand like a field of stalks, all facing into the current, and all sinking back into the sand as you swim near. |
 | garter_snake | glassfall | glassfall, hemlow, local, redrock | Common garter snake, three quarters of a metre of olive and dark bands: the snake you actually meet, crossing a meadow path or lying out on a warm stone by the water. Quick to leave and carries no rattle. |
+| giant_octopus | ribshore | local, ribshore | creep: Giant Pacific octopus: brick red, mottled, three and a half metres across the arms. Lies on the sea floor with its arms let down over a rock or a fallen rib, creeps from one high spot to the next, and pales toward the colour of the sand as you swim near; pressed too hard, it jets off backwards with its arms streaming behind. |
 | giraffe | thornpan | local, thornpan | graze: Giraffe: five metres of leg and neck with a small body slung between them, browsing the tops of the thorn trees. Walks both legs of a side together and has no interest in people at all. |
-| glass_dragonfly | faerie | hemlow, local, lowmouth | A dragonfly of the faerie wood with a glowing violet body and wings like thin glass. |
+| glass_dragonfly | faerie | glassfall, hemlow, local, lowmouth | A dragonfly of the faerie wood with a glowing violet body and wings like thin glass. |
 | glassmoth | glassfall | glassfall, local | flutter: A large moth with faintly glowing violet wings, seen near skystone. |
 | glossy_starling | jadewater | jadewater, local, thornpan | flock: Glossy starling: a starling in metallic blue-green with a bright orange belly, in quick flocks round the towers and over the beaches. |
 | glow_bee | faerie | hemlow, local | A bee of the faerie wood: gold, softly glowing, drifting between blossoms at dusk. |
-| goose | glassfall | glassfall, hemlow, local, lowmouth, redrock, windbarrow | paddle: Canada goose: brown-grey with a black neck and a white chin strap. Gaggles float near the shore, and lift off together, honking, when you come near. The base of every waterfowl. |
+| goose | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, redrock, thornpan, windbarrow | paddle: Canada goose: brown-grey with a black neck and a white chin strap. Gaggles float near the shore, and lift off together, honking, when you come near. The base of every waterfowl. |
 | gopher_snake | redrock | glassfall, local, redrock | climb: Great Basin gopher snake: cream with dark saddles, longer and slimmer than the rattlesnake it is often mistaken for, and no rattle. It climbs — up a pinyon or a ponderosa in a slow spiral, then out along a limb to lie with its head hanging off it — and comes down to cross open ground to the next tree. |
-| great_egret | lowmouth | local, lowmouth, thornpan | wade: Great egret: tall and all white with a yellow bill, stalking the shallows. |
-| great_horned_owl | hemlow | glassfall, hemlow, local, lowmouth, redrock, windbarrow | circle: Great horned owl: big, mottled grey-brown with a pale throat, quartering slowly over old forest at dusk. Rare: seen now and then, never for long. |
+| great_egret | lowmouth | glassfall, hemlow, jadewater, local, lowmouth, thornpan | wade: Great egret: tall and all white with a yellow bill, stalking the shallows. |
+| great_horned_owl | hemlow | glassfall, hemlow, kaldvik, local, lowmouth, redrock, ribshore, windbarrow | circle: Great horned owl: big, mottled grey-brown with a pale throat, quartering slowly over old forest at dusk. Rare: seen now and then, never for long. |
 | green_tree_snake | jadewater | jadewater, local | climb: Slender green snake of the karst jungle: plain leaf-green above and yellow-cream below, so it is all but invisible until the hanging front of it sways. Spends its days draped along a limb or a bamboo cane and only crosses the ground to reach the next tree. |
 | grouper | underwater | glassfall, jadewater, local | Grouper: a heavy brown fish nearly a metre long that hangs by a coral head or in a cave mouth and watches you. |
-| gull | base | glassfall, hemlow, jadewater, local, lowmouth | circle: Herring gull. |
-| harbor_seal | glassfall | duelbox, glassfall, hemlow, kaldvik, local, porch, slagdeck, transmission, windbarrow | haulout: Harbour seal: grey with dark spots, hauled out on the rocks and sand in small groups. It watches you, then humps down to the sea and is gone with a splash. At sea it swims alone or in pairs among the kelp and along the shelf, turning to look at you. The base of every seal. |
-| hedgehog | hemlow | hemlow, local | Hedgehog: a small brown ball of spines that trundles along the hedge bottoms at dusk and curls up tight when you come close. |
-| heron | glassfall | glassfall, hemlow, jadewater, local, lowmouth, redrock, thornpan, windbarrow | wade: Grey heron: stalks the shallows and stands still for long spells; when you come close it takes off on huge slow wings, flies thirty or forty metres along the water and lands again. The base of every long-legged wader. |
-| herring | glassfall | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, slagdeck, transmission, windbarrow | school: Atlantic herring: a silver fish about 30 cm long with a blue-green back, in schools of ten to twenty near the shore. The base of every schooling fish. |
-| herring_shoal | kaldvik | kaldvik, local | Winter herring in the fjord: shoals of a hundred and more balled up tight a few metres under the surface, flashing silver as they turn, the reason the orcas and humpbacks come in. |
+| gull | base | glassfall, hemlow, jadewater, kaldvik, local, lowmouth, ribshore | circle: Herring gull. |
+| harbor_seal | glassfall | glassfall, hemlow, kaldvik, local, megalith, ribshore, windbarrow | haulout: Harbour seal: grey with dark spots, hauled out on the rocks and sand in small groups. It watches you, then humps down to the sea and is gone with a splash. At sea it swims alone or in pairs among the kelp and along the shelf, turning to look at you. The base of every seal. |
+| hedgehog | hemlow | glassfall, hemlow, local | Hedgehog: a small brown ball of spines that trundles along the hedge bottoms at dusk and curls up tight when you come close. |
+| heron | glassfall | glassfall, hemlow, jadewater, local, lowmouth, redrock, saltmirror, thornpan, windbarrow | wade: Grey heron: stalks the shallows and stands still for long spells; when you come close it takes off on huge slow wings, flies thirty or forty metres along the water and lands again. The base of every long-legged wader. |
+| herring | glassfall | glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, ribshore, windbarrow | school: Atlantic herring: a silver fish about 30 cm long with a blue-green back, in schools of ten to twenty near the shore. The base of every schooling fish. |
+| herring_shoal | kaldvik | glassfall, hemlow, kaldvik, local, megalith, ribshore, windbarrow | Winter herring in the fjord: shoals of a hundred and more balled up tight a few metres under the surface, flashing silver as they turn, the reason the orcas and humpbacks come in. |
 | hippo | thornpan | local, thornpan | wade: Hippo: three tonnes of grey barrel on stumps, eyes, ears and nostrils set on the top of the head so it can lie in a pool with everything else under the water. Gives way to nothing and runs faster than it looks. |
 | horse | glassfall | glassfall, hemlow, local, redrock | graze: Feral horse: bay with a black mane, tail and legs. Small bands graze open grass, a stallion keeping watch, and wheel away at a gallop. The base of every horse. |
 | humanoid | shooter | unused | skulk: The root of everything that stands on two legs and carries something in its hands. It is form, not finish: plain plates in neutral greys, named by what they are for (body, limb, dark, face, foot), so a child that gives nothing but five colours and a few extra ops is a different person. Shaped like a jointed print-in-place figurine: limbs two voxels across and held clear of the trunk, a dark joint between every pair of segments, a narrow waist and a box for a head, because a fighter is read at twenty metres by its gaps and a solid barrel of limbs reads as nothing. Eighteen bones, three to a limb, because this rig is driven by a player's movement rather than by an activity table and has to look right strafing, jumping, landing and dying as well as walking. Nothing lists it in a biome, so it only ever appears where code asks for it by name (the shooter's bots, the EDIT page). |
-| humpback | glassfall | duelbox, glassfall, hemlow, kaldvik, local, porch, slagdeck, transmission, windbarrow | breach: Humpback whale, about 10 m long: black above with long white flippers. Alone offshore in deep water and rare: it dives for half a minute, lies at the surface spouting, and now and then breaches. |
-| jack | underwater | duelbox, glassfall, hemlow, jadewater, local, porch, slagdeck, transmission, windbarrow | Jacks: blue-silver fish in a fast school sweeping along the reef edge and round the bait balls. |
-| jackrabbit | redrock | local, lowmouth, redrock, thornpan | Black-tailed jackrabbit: a big desert hare with long black-tipped ears that bolts early and runs far. |
+| humpback | glassfall | glassfall, hemlow, kaldvik, local, megalith, ribshore, windbarrow | breach: Humpback whale, about 10 m long: black above with long white flippers. Alone offshore in deep water and rare: it dives for half a minute, lies at the surface spouting, and now and then breaches. |
+| jack | underwater | glassfall, hemlow, jadewater, local, megalith, windbarrow | Jacks: blue-silver fish in a fast school sweeping along the reef edge and round the bait balls. |
+| jackrabbit | redrock | local, lowmouth, redrock, ribshore, saltmirror, thornpan | Black-tailed jackrabbit: a big desert hare with long black-tipped ears that bolts early and runs far. |
 | jaguar | base | jadewater, local | Jaguar: stockier and shorter-tailed than a cougar, golden under black rosettes, keeping to the river jungle. |
 | javelina | redrock | local, redrock | Collared peccary: a small grizzled grey-black pig of the desert with a pale band round the shoulders. Bands of four to ten root among the yucca and prickly ground, and huff off together when startled. |
-| jewel_kingfisher | hemlow | unused | Jewel kingfisher: a small kingfisher of the tropics, electric turquoise above and burnt orange below, with a violet-blue crown; flits along the cenote rims and jungle streams. |
-| kelp_perch | underwater | glassfall, local | Kelp perch: small bronze fish in clouds round the kelp stipes, slipping in among them when startled. |
+| jewel_kingfisher | hemlow | jadewater, local | Jewel kingfisher: a small kingfisher of the tropics, electric turquoise above and burnt orange below, with a violet-blue crown; flits along the cenote rims and jungle streams. |
+| kelp_perch | underwater | glassfall, hemlow, kaldvik, local, ribshore | Kelp perch: small bronze fish in clouds round the kelp stipes, slipping in among them when startled. |
 | kingfisher | hemlow | hemlow, local, lowmouth, thornpan, windbarrow | Kingfisher: a flash of electric blue with an orange breast, flitting between the willows and reeds along the Hem. |
 | kite_ray | jadewater | jadewater, local | undulate: Kite ray: a jade-backed ray the size of a door, spotted with cyan light, that flies. Rises from the cenotes and rides the updrafts round the towers. |
 | langur | base | jadewater, local | Langur: pale silver-grey with a black face and hands, and a tail longer than it is, carried in a high loop. |
-| lantern_moth | faerie | hemlow, jadewater, local, porch | flutter: A moth whose wings glow warm gold. They drift low over lawns and under trees. |
+| lantern_moth | faerie | hemlow, jadewater, local | flutter: A moth whose wings glow warm gold. They drift low over lawns and under trees. |
 | lechwe | thornpan | local, thornpan | wade: Red lechwe: a chestnut antelope of the flood meadows, hocks always wet, running in splashing herds through water a foot deep. The males carry long horns swept back in a shallow lyre. |
 | lion | base | local, thornpan | Lion: a heavy tawny cat with a dark mane over its shoulders and a tufted tail. Lives in prides, so it walks in twos and threes. |
-| lizard | redrock | local, redrock, thornpan, windbarrow | skulk: Side-blotched lizard: suns on warm rock and darts off when you come close. |
+| lizard | redrock | local, redrock, saltmirror, thornpan, windbarrow | skulk: Side-blotched lizard: suns on warm rock and darts off when you come close. |
 | macaque | base | jadewater, local, thornpan | Macaque: grey-brown with a bare pink face and a stub of a tail, bold round temples and paths where people feed it. |
-| mallard | glassfall | glassfall, hemlow, local, lowmouth, redrock, windbarrow | Mallard: grey-bodied drakes with green heads and a white collar among brown hens, dabbling in pairs and small groups. |
+| mallard | glassfall | glassfall, hemlow, kaldvik, local, lowmouth, redrock, windbarrow | Mallard: grey-bodied drakes with green heads and a white collar among brown hens, dabbling in pairs and small groups. |
 | mammoth | base | local, windbarrow | Woolly mammoth: the elephant under a deep red-brown fleece, with a humped head and shoulders and tusks curving out, down and up past its trunk. v2 (windbarrow): a fifth bigger and much slower, and the tusks traced as a line of small spheres along a curve instead of three slabs, which read as blocks close up. |
-| manta_ray | glassfall | duelbox, glassfall, hemlow, jadewater, local, porch, slagdeck, transmission, windbarrow | school: Manta ray, about 4.5 m across: black above and white below, gliding alone or in pairs a little under the surface on slow ripples of its wings. Rare, and now and then it leaps clear. The base of every ray. |
+| manta_ray | glassfall | glassfall, hemlow, jadewater, kaldvik, local, megalith, windbarrow | school: Manta ray, about 4.5 m across: black above and white below, gliding alone or in pairs a little under the surface on slow ripples of its wings. Rare, and now and then it leaps clear. The base of every ray. |
 | marmot | glassfall | glassfall, local, thornpan, windbarrow | graze: Lives in the scree: a long, heavy-bodied ground squirrel, grizzled brown with a pale muzzle and a bushy tail. Sits up on a boulder to whistle. |
-| marsh_light | hemlow | hemlow, local, lowmouth | flutter: A will-o'-the-wisp of the Wisp Moss: a pale blue-white ball of light the size of a fist with a fainter halo, drifting low over the bog pools and slowly pulsing. Nobody knows what it is. |
-| meadowhawk | redrock | hemlow, local, lowmouth, redrock, windbarrow | Red meadowhawk: a smaller dragonfly, bright red, perching low over the canyon's backwaters and the lake shore. |
-| monkey | base | unused | skulk: A brown monkey of the river jungle: goes on all fours with its tail up behind it, in troops that keep together and scatter uphill when you come. |
-| moon_jelly | underwater | duelbox, glassfall, hemlow, jadewater, kaldvik, local, porch, slagdeck, transmission, windbarrow | school: Moon jellyfish: a pale lilac bell the size of a plate with four rings in it, drifting, beating slowly upward and sinking between. |
+| marsh_light | hemlow | glassfall, hemlow, local, lowmouth | flutter: A will-o'-the-wisp of the Wisp Moss: a pale blue-white ball of light the size of a fist with a fainter halo, drifting low over the bog pools and slowly pulsing. Nobody knows what it is. |
+| meadowhawk | redrock | glassfall, hemlow, local, lowmouth, redrock, thornpan, windbarrow | Red meadowhawk: a smaller dragonfly, bright red, perching low over the canyon's backwaters and the lake shore. |
+| mola | ribshore | local, ribshore | school: Ocean sunfish: a tall flat grey disc nearly three metres from fin tip to fin tip, with no tail to speak of. Hangs alone just under the surface over deep water, its dorsal fin now and then cutting the swell, and lets you swim right up to it. |
+| monkey | base | jadewater, local, thornpan | skulk: A brown monkey of the river jungle: goes on all fours with its tail up behind it, in troops that keep together and scatter uphill when you come. |
+| moon_jelly | underwater | glassfall, hemlow, jadewater, kaldvik, local, megalith, ribshore, windbarrow | school: Moon jellyfish: a pale lilac bell the size of a plate with four rings in it, drifting, beating slowly upward and sinking between. |
 | moss_bear | faerie | hemlow, local | The faerie wood's bear: larger and slower than a black bear, its coat gone green-brown under a mantle of moss, with pale mushrooms on its back that glow at dusk. It barely minds people. |
 | moss_tortoise | faerie | hemlow, local | The faerie wood's tortoise: big and ancient, its shell grown over with moss and small pale mushrooms that glow at dusk. |
 | mossback_deer | faerie | hemlow, local | A deer with moss grown along its back and antlers that glow faintly green. Shyer than a red deer. |
@@ -799,59 +986,67 @@ game (local/README.md).
 | northern_flicker | glassfall | glassfall, local, redrock | Northern flicker: a big brown woodpecker barred with black, spotted below, with a red moustache. Often feeds on the ground and in open woods. |
 | nutria | lowmouth | local, lowmouth | wade: Nutria: a big brown water rat with orange teeth, grazing the banks and swimming off when you come. |
 | old_pale | lowmouth | local, lowmouth | Old Pale: a white alligator half as long again as any other, seen now and then in the swamp and never twice in the same place. |
-| orca | kaldvik | kaldvik, local | breach: Orcas: a family of four or five following the herring into the fjord in winter, black and white, the bull's fin a head taller than the rest. They breach less than the humpbacks and travel faster. |
-| otter | base | glassfall, hemlow, jadewater, local, lowmouth, redrock, thornpan, windbarrow | wade: River otter: a long low swimmer with a thick tapering tail, up on the bank to eat and back in the water as soon as it sees you. |
-| pale_hare | glassfall | glassfall, kaldvik, local | A hare bleached like the trees in the bloom. It does not run from people. |
+| orca | kaldvik | glassfall, hemlow, kaldvik, local, megalith, ribshore, windbarrow | breach: Orcas: a family of four or five following the herring into the fjord in winter, black and white, the bull's fin a head taller than the rest. They breach less than the humpbacks and travel faster. |
+| otter | base | glassfall, hemlow, jadewater, kaldvik, local, lowmouth, redrock, thornpan, windbarrow | wade: River otter: a long low swimmer with a thick tapering tail, up on the bank to eat and back in the water as soon as it sees you. |
+| pale_hare | glassfall | glassfall, hemlow, kaldvik, local | A hare bleached like the trees in the bloom. It does not run from people. |
 | panda | jadewater | jadewater, local | graze: Giant panda: white with black legs, shoulders, ears and eye patches. Sits in the bamboo eating; slow, and not much bothered by people. |
 | parrotfish | underwater | glassfall, jadewater, local | Parrotfish: half a metre long, teal and pink, crunching coral with its beak; the white sand of the reef is what it leaves. |
 | pileated_woodpecker | glassfall | glassfall, jadewater, local, lowmouth, thornpan | Pileated woodpecker: crow-sized, black with a flaming red crest and a white stripe down the neck. Hacks big oblong holes in snags and old trunks. |
-| pronghorn | redrock | local, redrock | graze: Pronghorn: tan and white, short black horns, the fastest thing on the open flats. Small herds. |
-| przewalski_horse | windbarrow | local, windbarrow | graze: Przewalski's horse: dun, pale round the muzzle and belly, with a short upright black mane and a dark stripe down the back. Bands of mares graze the open grass and wheel away together. |
-| ptarmigan | kaldvik | kaldvik, local | flock: Rock ptarmigan in winter white, crouched in the snow on the fell in small coveys and only seen when they burst up from under your feet. They fly fast and low on whirring wings when flushed. |
-| puffin | glassfall | glassfall, local | circle: Tufted puffin: black with a white face, a big orange-red beak and orange feet. Circles low off the basalt cliffs where it nests and rafts on the sea. |
-| rabbit | base | glassfall, hemlow, local, redrock, windbarrow | hop: Brown rabbit. |
-| rattlesnake | redrock | local, redrock | slither: Western rattlesnake, about 1.2 m: tan with dark bands and a pale belly, a head wider than its neck, and a pale rattle on the tail. Lies coiled or stretched out on warm ground, crawls with its body sliding through a wave that stays where it is put, and when you come close it winds up tight, lifts its head at you and buzzes rather than leaving. The base of every snake in the library. |
-| raven | kaldvik | kaldvik, local | circle: Ravens: a pair that tumble and croak over the hamlet and the stockfish racks all winter. |
-| red_squirrel | base | hemlow, local | Red squirrel: smaller than the grey, rust-red with a cream front and tufted ears, keeping to the conifers and the old hedgerow trees. |
+| pronghorn | redrock | local, redrock, saltmirror | graze: Pronghorn: tan and white, short black horns, the fastest thing on the open flats. Small herds. |
+| przewalski_horse | windbarrow | local, thornpan, windbarrow | graze: Przewalski's horse: dun, pale round the muzzle and belly, with a short upright black mane and a dark stripe down the back. Bands of mares graze the open grass and wheel away together. |
+| ptarmigan | kaldvik | glassfall, kaldvik, local | flock: Rock ptarmigan in winter white, crouched in the snow on the fell in small coveys and only seen when they burst up from under your feet. They fly fast and low on whirring wings when flushed. |
+| puffin | glassfall | glassfall, kaldvik, local, ribshore | circle: Tufted puffin: black with a white face, a big orange-red beak and orange feet. Circles low off the basalt cliffs where it nests and rafts on the sea. |
+| rabbit | base | glassfall, hemlow, kaldvik, local, redrock, windbarrow | hop: Brown rabbit. |
+| rattlesnake | redrock | local, redrock, saltmirror | slither: Western rattlesnake, about 1.2 m: tan with dark bands and a pale belly, a head wider than its neck, and a pale rattle on the tail. Lies coiled or stretched out on warm ground, crawls with its body sliding through a wave that stays where it is put, and when you come close it winds up tight, lifts its head at you and buzzes rather than leaving. The base of every snake in the library. |
+| raven | kaldvik | glassfall, kaldvik, local, redrock, ribshore, saltmirror, windbarrow | circle: Ravens: a pair that tumble and croak over the hamlet and the stockfish racks all winter. |
+| red_squirrel | base | hemlow, kaldvik, local | Red squirrel: smaller than the grey, rust-red with a cream front and tufted ears, keeping to the conifers and the old hedgerow trees. |
 | reef_chromis | underwater | glassfall, jadewater, local | Blue-green chromis: finger-length fish in a shimmering cloud over one coral head, dropping into it all at once when something comes too near. |
 | reef_manta | underwater | glassfall, jadewater, local | The manta at home on the reef: gliding along the wall and over the fore reef in ones and threes, coming to the cleaning stations on the spurs. Common here where the open-sea manta is rare, and as unafraid. |
 | reef_shark | underwater | glassfall, jadewater, local | school: Grey reef shark: about 1.6 m, grey above and white below, cruising the wall and the pass in long slow passes. It minds nobody. |
-| robot | shooter | unused | A walking machine on the humanoid frame: the same eighteen bones, painted as plate and gunmetal, with a lit visor across the face and three recesses for lamps, one on each collar above where a gun held in both hands lies across the chest, and one between the shoulder blades. The plates are near white on purpose, because the shooter tints a bot by whose side it is on and a tint can only ever darken. The lamps themselves are not here: they carry the bot's health, and health is state rather than shape, so src/brain/avatar.rs draws them into the recesses. This is what the deathmatch bots are drawn as. |
-| rockfish | underwater | glassfall, local | Rockfish: orange-red and brown, loose schools hanging in the middle water between the kelp stipes. |
-| roseate_spoonbill | lowmouth | local, lowmouth | wade: Roseate spoonbill: a pink wader sweeping its long spoon-ended bill through the shallows of the mouth and the flats. |
+| robot | shooter | unused | A walking machine on the humanoid frame: the same eighteen bones, painted as plate and gunmetal, with a lit visor across the face, plates over the chest and shoulders and pads on the knees in a colour of their own (uniform, the same white as the body) that the shooter paints in the side's colour, a dark band across the top of the chest and another between the shoulder blades, both above where a gun held in both hands lies across the chest. The plates are near white on purpose, because the shooter tints a bot by whose side it is on and a tint can only ever darken. The lamps themselves are not here: they carry the bot's health, and health is state rather than shape, so src/brain/avatar.rs draws a lit bar along each band. The deathmatch bots are drawn as this entry's three builds (robot_brawny, robot_heavy, robot_lean), which keep the bands at the same height. |
+| robot_brawny | shooter | unused | The robot built heavy in the shoulders: a chest two voxels wider and deeper from the ribs up, and arms three voxels thick instead of two, moved a voxel further out so a gap still shows between arm and chest at twenty metres. The arm joints move out with them, which is why this entry gives the whole rig. One of the three builds a deathmatch bot is drawn as (src/brain/avatar.rs); every build keeps the player's collision box and the chest lamp bands at the same height. |
+| robot_heavy | shooter | unused | The robot built heavy in the middle: a round belly that pushes out in front of the chest and wider hips, and thighs three voxels across instead of two. Arms and chest are the robot's own, so the rig is too. One of the three builds a deathmatch bot is drawn as (src/brain/avatar.rs); every build keeps the player's collision box and the chest lamp bands at the same height. |
+| robot_lean | shooter | unused | The robot built thin and a little tall: scaled up three percent, then a voxel carved off each side of the ribcage and hips and off the front of the ribcage, thighs and shins. The shoulders keep their width so the lamp band across the chest stays whole. One of the three builds a deathmatch bot is drawn as (src/brain/avatar.rs); every build keeps the player's collision box, so this one stands about five centimetres over it. |
+| rock_hyrax | saltmirror | local, saltmirror | skulk: Rock hyrax: a stout grey-brown animal the size of a rabbit with no tail to speak of, in colonies on the quartzite crags, basking in a row on the warm rock in the morning. The eagles hunt them. |
+| rockfish | underwater | glassfall, hemlow, kaldvik, local, ribshore | Rockfish: orange-red and brown, loose schools hanging in the middle water between the kelp stipes. |
+| roseate_spoonbill | lowmouth | glassfall, jadewater, local, lowmouth | wade: Roseate spoonbill: a pink wader sweeping its long spoon-ended bill through the shallows of the mouth and the flats. |
 | sabretooth | windbarrow | local, windbarrow | skulk: Sabretoothed cat: heavier in the shoulder than a cougar and tawny with faint flank spots, a pair of long pale canines hanging past its jaw. Hunts horses and saiga, alone, and is rarely seen. |
-| saiga | windbarrow | local, windbarrow | graze: Saiga: a pale sandy steppe antelope with a swollen down-turned nose and short ridged amber horns. Small groups out on the open grass; the quickest thing here to run. |
-| sandhill_crane | redrock | local, lowmouth, redrock | Sandhill crane: tall and grey with a red crown and a bustle of feathers over the tail. Pairs and small groups stalk wet meadows and river flats, calling, and lift off on broad slow wings. |
-| sardine | underwater | duelbox, glassfall, hemlow, jadewater, local, porch, slagdeck, transmission, windbarrow | Sardines: a bait ball of a hundred or more, turning together, opening round a diver and closing behind. |
-| sea_eagle | kaldvik | kaldvik, local | soar: A white-tailed sea eagle: broad brown wings like a barn door, a pale head and the white wedge of tail, quartering the fjord for fish. |
-| sea_lion | glassfall | glassfall, local | Steller sea lion: big and tawny, louder and bolder than the seals, hauled out in groups on the basalt. |
-| sea_otter | underwater | glassfall, local | school: Sea otter: lying on its back in the kelp canopy, drifting, rolling now and then; it pays a diver little mind. |
-| sea_turtle | glassfall | duelbox, glassfall, hemlow, jadewater, local, lowmouth, porch, slagdeck, transmission, windbarrow | bask: Green sea turtle, a metre long: a rounded olive shell and long front flippers. Hauls out on the sand beaches to bask and drags itself along; when you come close it pulls its head and flippers in under the shell. Now and then it crawls back to the sea and swims off. |
+| saiga | windbarrow | local, thornpan, windbarrow | graze: Saiga: a pale sandy steppe antelope with a swollen down-turned nose and short ridged amber horns. Small groups out on the open grass; the quickest thing here to run. |
+| salt_tortoise | saltmirror | local, saltmirror | plod: The salt tortoise: as big as an elephant, its domed shell bleached grey-white and crusted with salt where it lies down in the brine, its skin the grey of the mud. A few of them cross the Mirror, very slowly, from the brine to the islands and back, and take no notice of anyone. Nobody knows how old they are. |
+| sandhill_crane | redrock | glassfall, jadewater, local, lowmouth, redrock | Sandhill crane: tall and grey with a red crown and a bustle of feathers over the tail. Pairs and small groups stalk wet meadows and river flats, calling, and lift off on broad slow wings. |
+| sardine | underwater | glassfall, hemlow, jadewater, local, megalith, windbarrow | Sardines: a bait ball of a hundred or more, turning together, opening round a diver and closing behind. |
+| sea_eagle | kaldvik | glassfall, kaldvik, local | soar: A white-tailed sea eagle: broad brown wings like a barn door, a pale head and the white wedge of tail, quartering the fjord for fish. |
+| sea_lion | glassfall | glassfall, kaldvik, local, ribshore | Steller sea lion: big and tawny, louder and bolder than the seals, hauled out in groups on the basalt. |
+| sea_otter | underwater | glassfall, hemlow, kaldvik, local, ribshore | school: Sea otter: lying on its back in the kelp canopy, drifting, rolling now and then; it pays a diver little mind. |
+| sea_turtle | glassfall | glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, windbarrow | bask: Green sea turtle, a metre long: a rounded olive shell and long front flippers. Hauls out on the sand beaches to bask and drags itself along; when you come close it pulls its head and flippers in under the shell. Now and then it crawls back to the sea and swims off. |
 | serow | jadewater | jadewater, local | graze: Serow: a small dark goat-antelope of the tower ledges and the top of the Old Wall, with a pale throat. |
 | sheep | base | glassfall, hemlow, local, redrock | graze: Sheep: the bighorn with its horns taken off and a fleece grown over it, white with a dark face and legs, out on the pasture in flocks. |
-| sky_manta | windbarrow | local, windbarrow | undulate: One skate in twenty grown to three metres across, riding well above the rest where they skim the awns. A rare morph of wind_skate, so it stands in for one of them and is never spawned on its own. |
+| sixgill_shark | ribshore | local, ribshore | Bluntnose sixgill shark: four and a half metres of dark brown-grey with one low dorsal fin set far back, six gill slits and pale green eyes. Cruises slowly a metre or two over the deep sea floor, minding nobody; rare. |
+| sky_manta | windbarrow | local, thornpan, windbarrow | undulate: One skate in twenty grown to three metres across, riding well above the rest where they skim the awns. A rare morph of wind_skate, so it stands in for one of them and is never spawned on its own. |
 | sky_ray | faerie | hemlow, local | undulate: A ray that swims through the air of the faerie wood, a metre and a half across, violet-backed with glowing spots, circling slowly a few metres up on rippling wings. |
-| sparrow | glassfall | glassfall, hemlow, jadewater, local, redrock, windbarrow | flit: A small brown sparrow that sits on top of shrubs and small trees, flits from one to the next in short bounding hops, drops to the ground to peck, and bursts away when you come close. Groups of two to six. |
-| squirrel | base | duelbox, glassfall, local, lowmouth, slagdeck | hop: Grey squirrel: bounds over the ground between trees with its tail plumed up behind it, and flicks away round a trunk when you come. |
-| starling | glassfall | glassfall, hemlow, jadewater, local, lowmouth, redrock, windbarrow | flock: Starlings: big flocks that wheel over open ground, settle in a meadow or a tree, and burst up together when you come near. Also the body every perching bird in the library starts from (crow, eagle, sparrow are `like` it). |
+| sparrow | glassfall | glassfall, hemlow, jadewater, local, redrock, ribshore, windbarrow | flit: A small brown sparrow that sits on top of shrubs and small trees, flits from one to the next in short bounding hops, drops to the ground to peck, and bursts away when you come close. Groups of two to six. |
+| squirrel | base | ctfbox, duelbox, glassfall, local, lowmouth, slagdeck, sluice | hop: Grey squirrel: bounds over the ground between trees with its tail plumed up behind it, and flicks away round a trunk when you come. |
+| starling | glassfall | glassfall, hemlow, jadewater, local, lowmouth, megalith, redrock, thornpan, windbarrow | flock: Starlings: big flocks that wheel over open ground, settle in a meadow or a tree, and burst up together when you come near. Also the body every perching bird in the library starts from (crow, eagle, sparrow are `like` it). |
 | steppe_sheep | windbarrow | local, windbarrow | graze: The sheep of the villages, kept in one big flock apiece rather than in knots of a few: twelve to thirty-six together, so a flock is a sight when you come on it and the downs are empty between. |
 | steppe_wolf | windbarrow | local, windbarrow | Grey wolf of the steppe: the same animal as the library wolf, but travelling in families of three to six, so a pack is met rarely and a lone wolf almost never. Hunts horses and saiga. |
-| stingray | underwater | glassfall, jadewater, local, lowmouth | Southern stingray: a sandy diamond a metre and a bit across, lying half buried on the sand of the grooves and the lagoon, gliding off when disturbed. |
-| swan | glassfall | hemlow, local, lowmouth, redrock, windbarrow | Trumpeter swan: big and white with a black bill, alone or in pairs on quiet water, and slow to leave it. |
-| tawny_owl | hemlow | hemlow, local | circle: Tawny owl: a round, rusty-brown wood owl with dark eyes, floating low between the trunks of the Hollins at dusk. |
+| stingray | underwater | glassfall, jadewater, local, lowmouth, ribshore | Southern stingray: a sandy diamond a metre and a bit across, lying half buried on the sand of the grooves and the lagoon, gliding off when disturbed. |
+| swan | glassfall | glassfall, hemlow, local, lowmouth, redrock, thornpan, windbarrow | Trumpeter swan: big and white with a black bill, alone or in pairs on quiet water, and slow to leave it. |
+| tawny_owl | hemlow | glassfall, hemlow, kaldvik, local | circle: Tawny owl: a round, rusty-brown wood owl with dark eyes, floating low between the trunks of the Hollins at dusk. |
 | tiger | base | jadewater, local | Tiger: the cougar's frame half again as big, orange over a white belly and barred head to tail, walking the bamboo alone. |
 | toad | base | glassfall, hemlow, local, lowmouth | Common toad: squatter and warty, dry brown, walking more than hopping and found well away from water as often as beside it. |
 | tortoise | glassfall | glassfall, local | plod: A tortoise about 45 cm long, brown-shelled: it plods, crops low plants, and when you come close pulls its head and legs into the shell until you go. The base of every tortoise and turtle. |
 | trout | redrock | glassfall, local, redrock, thornpan | Rainbow trout stocked in the Redrock reservoir: olive back, pale sides, in loose groups of three to six, and quicker to jump than herring. |
-| unicorn | glassfall | glassfall, hemlow, jadewater, local, lowmouth, redrock, windbarrow | One deer in a hundred is born white with a single faintly glowing horn and no antlers. It lives and runs with ordinary deer and is harder to get near. |
-| vulture | thornpan | local, thornpan | soar: White-backed vulture: a brown soaring plank with a bald head, circling anything dead. Where there are three in the air there is a kill under them. |
+| unicorn | glassfall | glassfall, hemlow, jadewater, local, lowmouth, redrock, ribshore, windbarrow | One deer in a hundred is born white with a single faintly glowing horn and no antlers. It lives and runs with ordinary deer and is harder to get near. |
+| vulture | thornpan | local, saltmirror, thornpan | soar: White-backed vulture: a brown soaring plank with a bald head, circling anything dead. Where there are three in the air there is a kill under them. |
+| walrus | ribshore | local, ribshore | haulout: Pacific walrus: three metres of wrinkled cinnamon hide with pale tusks and a bristled muzzle. Hauls out in heaps on the beach and the low rocks, barely lifts its head when you walk past, and lumbers into the surf only when you all but step on it. |
 | warthog | thornpan | local, thornpan | Warthog: grey, bristled and comic, head down in the grass with its tail straight up when it trots off. Everywhere in the country and the first thing most people see. |
 | water_buffalo | base | jadewater, local, thornpan | Water buffalo: slate grey, low-slung and wide, under a great pair of horns swept back in a crescent. Keeps to the wet ground and wallows. |
-| water_snake | lowmouth | local, lowmouth | swim: Dark banded water snake of the swamp and the sawgrass: swims at the surface with its head out and a long wave running down its body, ducks under when you press it, and hauls out on a bank or a cypress knee to lie in the sun. |
+| water_snake | lowmouth | glassfall, hemlow, local, lowmouth | swim: Dark banded water snake of the swamp and the sawgrass: swims at the surface with its head out and a long wave running down its body, ducks under when you press it, and hauls out on a bank or a cypress knee to lie in the sun. |
 | whale_shark | underwater | glassfall, jadewater, local | school: Whale shark: eight metres of dark blue-grey spotted with white, wide-mouthed, cruising slowly a few metres down. Harmless and unafraid; hold on and it takes you with it. Rare. |
+| white_lizard | saltmirror | local, saltmirror | skulk: Bleached earless lizard: the dunes' own lizard, gone nearly as white as the gypsum it runs on, with faint blue on its flanks. |
 | wildebeest | thornpan | local, thornpan | Blue wildebeest: slate grey, high in the shoulder and low in the head, with a black mane and beard and horns that hook out and up. Grazes the dry grass in long strung-out herds. |
-| wind_skate | windbarrow | local, windbarrow | undulate: Wind skate: a straw-pale ray a metre across that rides the wind over the feathergrass, a hand above the awns, wings rippling. Nobody knows what it eats. |
-| wolf | base | glassfall, local, redrock | Grey wolf: a quarter bigger than a coyote and heavier in the shoulder, hunting deer and elk in twos and threes. Keeps its distance and watches. |
+| wind_skate | windbarrow | local, thornpan, windbarrow | undulate: Wind skate: a straw-pale ray a metre across that rides the wind over the feathergrass, a hand above the awns, wings rippling. Nobody knows what it eats. |
+| wolf | base | glassfall, kaldvik, local, redrock | Grey wolf: a quarter bigger than a coyote and heavier in the shoulder, hunting deer and elk in twos and threes. Keeps its distance and watches. |
 | woodpecker | glassfall | glassfall, hemlow, local | cling: Downy woodpecker: small, black and white with a red patch on the head. Clings upright to trunks, drums, hitches up and round them, and bounds off to the next tree. The base of every woodpecker. |
 | yellow_tang | underwater | glassfall, jadewater, local | Yellow tang: all lemon-yellow, grazing over the coral in small loose groups. |
 | zebra | glassfall | local, thornpan | Plains zebra: a striped horse. A small herd brought to the island for a menagerie that never opened, and they stayed. |
@@ -864,15 +1059,16 @@ game (local/README.md).
 | arrowhead | redrock | local, lowmouth, redrock | A chipped obsidian point from the canyon people, on the benches and the canyon floor. |
 | bear_tooth | windbarrow | local, windbarrow | A cave bear's canine, as long as a finger, with a hole bored through the root: picked up round the cave mouths and worn. |
 | bell_charm | jadewater | jadewater, local | A little bronze bell on a red cord, left at the temple by the Order's visitors. |
-| flint_blade | windbarrow | local, windbarrow | A long blade struck from a flint core, blue-black with a white heel: on the working floors and all along the trails. |
+| flint_blade | windbarrow | local, thornpan, windbarrow | A long blade struck from a flint core, blue-black with a white heel: on the working floors and all along the trails. |
 | hag_stone | hemlow | hemlow, local | A pebble with a hole worn right through it. The village says if you look through one you see the Hollins as they really are. |
+| hull_shard | saltmirror | local, saltmirror | A piece of the hull's skin lying in the fynbos below the wreck: dark, very light for its size, with a violet sheen and an edge that is not quite cold. |
 | ivory_shard | windbarrow | local, thornpan, windbarrow | A curved splinter off a mammoth tusk, weathered out of the chalk: cream going brown along the cracks. |
 | mushroom | glassfall | glassfall, hemlow, local | Fly agaric, in the woods. |
 | petrified_wood | redrock | local, redrock | A chunk of log turned to stone, from the banded clay badlands. |
 | pine_cone | glassfall | glassfall, kaldvik, local, redrock | Under the conifers. |
 | pottery_shard | glassfall | glassfall, local, lowmouth, redrock, windbarrow | Pieces of the settlers’ crockery, around the village. |
 | purple_bottle | redrock | local, lowmouth, redrock | An old clear bottle turned violet by a century of desert sun, around Harlow. |
-| seashell | glassfall | glassfall, hemlow, jadewater, local, lowmouth, thornpan | Washed up on the beaches. |
+| seashell | glassfall | glassfall, hemlow, jadewater, kaldvik, local, lowmouth, ribshore, thornpan | Washed up on the beaches. |
 | settler_coin | glassfall | glassfall, local, lowmouth | A brass coin with a hole in the middle; it glints in the grass. |
 | silver_ore | redrock | local, redrock | A lump of galena-bearing ore that fell off a Harlow ore cart. |
 | skystone | glassfall | glassfall | A buried fragment from the strewn field: black glass with violet glints, faintly warm. |
@@ -884,19 +1080,23 @@ game (local/README.md).
 | name | from | used by | notes |
 |---|---|---|---|
 | arch_country | redrock | local, redrock | The slickrock bench east of the canyon where the fins stand: bare sandstone and red sand worn into arches, windows and potholes. Few plants. |
+| arena_seabed | slagdeck | ctfbox, duelbox, local, porch, slagdeck, sluice, transmission | The sea floor round an arena: sand and nothing living on it, so no whale or shoal turns up under a deck. The open-world seabed with its animals taken out. |
 | backwater_flats | lowmouth | local, lowmouth | The delta's quiet water: eelgrass over silt in the sheltered reaches behind the islands, brown and barely moving, with rafts of lily pads on the surface and hyacinth where it is stillest. The fresh-water twin of eelgrass_flats, which is the salt meadow of a lagoon. |
 | bamboo_forest | jadewater | jadewater, local | Wetter ground east of the Old Wall: giant bamboo in dense patches over long green grass, among small broadleaf trees and ferns, misty. |
 | bamboo_gorge | jadewater | jadewater, local | The narrow misty gorges of the Old Wall: golden bamboo you push through, a few giant clumps, ferns, pandas. |
 | barley_plot | windbarrow | local, windbarrow | A barley plot behind its hurdles: thin ranks of pale ears on worked chalk soil, a few thistles at the fence line. |
 | barrow_field | windbarrow | local, windbarrow | The barrow ridge: turf kept short by the herds over nineteen mounds, chalk kerbs showing through it, oak posts on the crowns, and nothing growing taller than a thistle. |
-| basalt_coast | glassfall | glassfall, local |  |
+| basalt_coast | glassfall | glassfall, kaldvik, local |  |
 | beach | glassfall | glassfall, hemlow, local |  |
-| black_sand_beach | glassfall | glassfall, local |  |
+| black_sand_beach | glassfall | glassfall, kaldvik, local |  |
 | bloom | glassfall | glassfall, local | Where the skystone changed what grows. Strongest at the crater, fading along the strewn field. |
 | blue_hole | underwater | jadewater, local | The bottom of a blue hole: sand in the dark. |
 | bone_down | windbarrow | local, windbarrow | The Bone Downs: a stretch of the Flint Down where it is mammoth bone that weathers out of the chalk and not flint. Skulls and ribs stand out of the rubble, ivory splinters lie about, and the diggers will not work it. |
 | bottomland | lowmouth | local, lowmouth | The delta's ordinary ground: low wet woods of tupelo and oak along the old levees, palmettos under them, moss hanging everywhere. |
+| brine_edge | saltmirror | local, saltmirror | The wet salt round the brine: glasswort in red mats and the flamingos standing in rows along the water. |
+| brine_flat | saltmirror | local, saltmirror | The brine at the low end of the pan: a few centimetres of rosy water over slick mud, where the flamingos feed. |
 | burned_cane | lowmouth | local, lowmouth | A cane field burned off: black stubble and ash, a few charred stalks standing, and the woven stick lattices along the path through it. |
+| camp_yard | saltmirror | local, saltmirror | The camp: trodden gravel round the cabins, tamarisks planted for shade and gone wild, rabbitbrush coming up through the motor pool. |
 | cane_field | lowmouth | local, lowmouth | Sugar cane in blocks taller than a man, dirt rows between. |
 | cane_town | lowmouth | local, lowmouth | Mire, the cane town: mown yards between the cottages, a few live oaks hung with moss, dirt lanes. |
 | canyon_floor | redrock | local, redrock | The Sorrel's floodplain on the canyon floor: cottonwood and willow, tamarisk lower down. |
@@ -911,15 +1111,17 @@ game (local/README.md).
 | cold_coral | underwater | kaldvik, local | Deep fjord walls and the slopes under them: thickets of white Lophelia, red sea fans standing across the tide, cod hanging over it and jellyfish drifting past. |
 | conifer_slopes | glassfall | glassfall, local |  |
 | coral_dunes | redrock | local, redrock | A field of wind-blown coral-pink sand in the south-west: bare crests and slip faces, a few tough plants in the troughs, more toward the edges where the sand thins over the desert. |
+| crash_burn | saltmirror | local, saltmirror | The burn round the wreck, ten years on: black snags of the old bushes standing over fynbos that came back thicker than anywhere else on the range, proteas crowding the scar, pieces of the hull lying in it all the way down the slope. |
 | cypress_swamp | lowmouth | local, lowmouth | The back swamp: bald cypress and tupelo standing in black tea-coloured water, knees round their feet, moss in long beards, hyacinth on the still water, lily pads on the open water between the trunks. |
 | delta_bed | lowmouth | local, lowmouth | The sound round the delta and the floor of every open water: soft grey mud under a metre or so of brown water, with rafts of lily pads drifting on the quieter reaches. |
 | delta_shallows | thornpan | local, thornpan | The channel beds: clean white sand under water a metre or two deep, clear enough to count the fish in it. The sand is why the flood runs clear by the time it is past the first islands. |
 | drowned_parish | lowmouth | local, lowmouth | The bay over the old parish: open brown water a metre or two deep, a church tower and the tops of tombs and roofs standing out of it, lily pads over the drowned lots. |
-| dunes | glassfall | glassfall, local |  |
+| dunes | glassfall | glassfall, hemlow, local |  |
 | edge_hanger | hemlow | hemlow, local | The beech hanger on the face of Hemlow Edge and the combes: bare oolite between beeches clinging to the slope, ferns, vines over the lip. |
-| eelgrass_flats | lowmouth | jadewater, local | Drowned meadow: fields of eelgrass over the sheltered salt shallows inside a reef or a lagoon, growing under the water instead of stopping at the waterline, with turtles grazing it. Fresh water has its own: backwater_flats, which carries the lily pads. |
+| eelgrass_flats | lowmouth | glassfall, jadewater, local | Drowned meadow: fields of eelgrass over the sheltered salt shallows inside a reef or a lagoon, growing under the water instead of stopping at the waterline, with turtles grazing it. Fresh water has its own: backwater_flats, which carries the lily pads. |
+| eye_rim | saltmirror | local, saltmirror | Round the Turquoise and its eyes: wet salt banded orange, olive and white with the mats that live in the brine, glasswort in red patches, avocet-thin waders and the flamingos that come over from the Brine. |
 | fae_commercial | faerie | local | Lots and yards round the bigger buildings, filling with trees. |
-| fae_deck | local | local, porch | The wood that has taken an arena: deep moss underfoot, bigleaf maple and giant fir with ferns and salal between the trunks. It dresses the open ground an arena is sunk into, not the arena itself: nothing a biome scatters on the ground reaches a room under it, so what grows inside comes from the materials painted on the structure. |
+| fae_deck | local | local | The wood that has taken an arena: deep moss underfoot, bigleaf maple and giant fir with ferns and salal between the trunks. It dresses the open ground an arena is sunk into, not the arena itself: nothing a biome scatters on the ground reaches a room under it, so what grows inside comes from the materials painted on the structure. |
 | fae_park | faerie | local | Parks gone to glades: great oaks on moss. |
 | fae_wood | faerie | local | Green belts grown to deep wood. |
 | fae_yard | faerie | local | The enchanted city's yards and verges: woodland coming back between the houses. |
@@ -929,22 +1131,31 @@ game (local/README.md).
 | floodplain | glassfall | glassfall, local |  |
 | fore_reef | underwater | glassfall, jadewater, local | The fore reef: spurs of coral running down to the drop-off, the richest water on the reef: staghorn thickets, tables, plates, brain and boulder coral, sponges and fans. |
 | frost_hollow | windbarrow | local, windbarrow | A hollow in the downs where the grass is rimed white and glittering at any hour of a high-summer afternoon. Nothing is wrong with it but that; the sheep will not go down into it. |
+| fynbos | saltmirror | local, saltmirror | The fynbos on the range: a low grey-green fleece of heath and restio reed with proteas standing out of it, pincushions in the open and rock showing through everywhere. |
+| fynbos_kloof | saltmirror | local, saltmirror | The ravines in the range: deeper soil and the little water there is, silver trees standing in it and the fynbos taller round them. |
 | gallery_forest | thornpan | local, thornpan | Gallery forest: closed high forest along the shaded bank of the upper river, figs rooted into the scarp, vines, ferns, and no view out of it at all. |
 | ghost_forest | lowmouth | local, lowmouth | The ghost forest on the bay's north shore: grey dead cypress standing in the water where the salt came in, cormorants and anhingas on every snag, lily pads between the dead trunks. |
 | glass_reef | underwater | glassfall, local | Glassfall's strange reef, nearest the strewn field: staghorn, tables and fans of pale glass, faintly lit, among the ordinary coral. |
 | glow_cenote | jadewater | jadewater, local | The rims and walls of the flooded sinkholes: moss lit by the film beneath, vine curtains, banyans on the walls, kite rays rising. |
 | golden_savanna | thornpan | local, thornpan | Open savanna: gold tussock grass on rolling sand, flat-topped acacias in loose stands, baobabs standing alone a hundred metres apart, and termite mounds. The country between the water and the pans. |
+| gravel_fan | saltmirror | local, saltmirror | The gravel fans at the foot of the range: grey stones and sand washed out of the ravines, and the cactus forest on them, cardon and saguaro over ocotillo, cholla, prickly pear and agave, with lizards everywhere. |
 | green_kurgan | windbarrow | local, windbarrow | The one mound in the field that is green when the rest are gold, and the ring of ground round it: thick wet-looking turf, and no grazing marks on it. |
 | gulf_beach | lowmouth | local, lowmouth | The Gulf shore of the chenier: oyster shell and pale sand, wrack along the tide line. |
 | hammock | lowmouth | local, lowmouth | A hammock: a tree island in the sawgrass, a little higher and dry, thick with cabbage palm, oak, strangler fig and palmetto. |
 | harlow | redrock | local, redrock | The ground around Harlow, trampled and dug: rabbitbrush and the town's leftovers. |
 | hem_banks | hemlow | hemlow, local | The Hem's banks: willows and alders, reedmace in the slack water, kingfishers, herons and dragonflies. |
+| hemlow_corn | hemlow | hemlow, local | The village's barley, in walled fields on the better ground: pale ears to the knee, nothing else growing in it. |
 | hemlow_green | hemlow | hemlow, local | The village on the top of the Knap: lawns, cottage-garden roses and cherries, the great oak on the green. |
 | hemlow_meadow | hemlow | hemlow, local | The hay meadows and pasture on the Knap and down the valley: flower-thick turf, a few great oaks and elders, dry-stone walls, fireflies at dusk. |
+| hemlow_pasture | hemlow | hemlow, local | Sheep pasture inside the village's dry-stone walls: turf grazed short, a thorn or two left for shade, one old oak to a field. |
 | high_meadow | redrock | local, redrock | Grass parks on the plateau where the soil stays wet in spring: gold grass, aspen and young pines at the edges. |
 | hob_clearing | hemlow | hemlow, local | The clearing round the Hob Stones: short grass where no tree grows, a ring of glassbloom round it, sky rays turning overhead. |
 | hollins | hemlow | hemlow, local | The Hollins: old oak and beech wood with hazel and fern beneath, turning strange near the Hob Stones (gold maples, cherry trees, blossom vines, pale birch, glassbloom). The default of Hemlow. |
-| ice_deck | icezeto | local, transmission | The snowfield a frozen base is dug into: wind-packed snow and nothing else. It dresses the plain over a buried arena, not the arena itself; what is inside comes from the materials the ice style paints on the structure. |
+| hollins_beech | hemlow | hemlow, local | Beechwood on the high ground of the Hollins: tall grey trunks close together, a floor of brown leaves with almost nothing growing on it, fern only where a tree has come down. |
+| hollins_deep | hemlow | hemlow, local | The heart of the Hollins, where the wood is plainly somebody else's: oaks a hundred feet high and as far round as a cottage, gold maples and wisteria grown into trees between them, blossom hanging from everything, glassbloom at their feet, and white deer with one horn among the others. |
+| hollins_dell | hemlow | hemlow, local | The wet hollows of the Hollins: alder, willow and birch over fern to the waist, every trunk green, mist lying in it by evening and lights in the mist. |
+| hollins_glade | hemlow | hemlow, local | A glade in the Hollins: a ring of open grass and flowers the trees stop at, with nothing anyone can point to that keeps them out. |
+| ice_deck | transmission | local, porch, transmission | The snowfield a frozen base is dug into: wind-packed snow and nothing else. It dresses the plain over a buried arena, not the arena itself; what is inside comes from the materials the ice style paints on the structure. |
 | jade_shallows | jadewater | jadewater, local | The lagoon floor: white lime sand under one to four metres of green water, turquoise from above. |
 | jungle_temple | jadewater | jadewater, local | The Order's temple grounds at the foot of the Old Wall: moss over everything, banyans in the walls, stone lanterns and rows of little statues. |
 | kaldvik_fell | kaldvik | kaldvik, local | The high fell above the fjord walls: wind-packed snow over basalt, a few junipers hunched in the lee of boulders. |
@@ -954,20 +1165,22 @@ game (local/README.md).
 | kaldvik_spruce | kaldvik | kaldvik, local | Snow-bound spruce on the lower walls and the valley floors of a northern fjord: dense dark firs, a few bare birches, deep snow between. |
 | karst_jungle | jadewater | jadewater, local | The lowland between the Old Wall and the lagoon: banyans over oak and alder, ferns, vines on everything. |
 | karst_pinnacle | jadewater | jadewater, local | The tops and faces of the towers and the Old Wall: thin turf, wind-twisted pines, vine curtains over every lip, banyans out of the cliffs. |
-| kelp_forest | glassfall | glassfall, local | Giant kelp on rocky reef 3 to 16 m down along the coast: stipes to the surface, a floating canopy, herring and the odd manta among them. |
+| kelp_forest | glassfall | glassfall, hemlow, kaldvik, local | Giant kelp on rocky reef 3 to 16 m down along the coast: stipes to the surface, a floating canopy, herring and the odd manta among them. |
 | kopje_rock | thornpan | local, thornpan | A kopje: bare granite dome and the boulders split off it, lichen in the shade, a rock fig rooted in a crack, and lions asleep on the warm stone. |
 | lagoon | underwater | jadewater, local | An atoll's lagoon: pale sand under clear shallow water, here and there a brain coral. |
 | lake_bed | redrock | local, redrock | Mud under the reservoir. |
 | lake_shore | redrock | local, redrock | The ground the falling lake left: cracked mud and sand, tamarisk taking hold. |
+| lantern_dell | hemlow | hemlow, local | Lantern Dell: the floor and walls of the sinkhole behind Lantern Spout, open to the sky. Moss that glows faintly, fern from every ledge, vines down the walls, pale birches and glassbloom on the floor. |
 | lantern_spout | hemlow | hemlow, local | Round Lantern Spout and its pool: moss lit faintly by the glow-worms, ferns in the spray, vines down the cliff. |
 | levee | lowmouth | local, lowmouth | The levee and the high ground along the Marrow: mown grass, a few great live oaks, cottonwoods and willows down the bank. |
 | lime_beach | jadewater | jadewater, local | White lime-sand beaches at the foot of the jungle and round the towers. |
 | lowmouth_village | lowmouth | local, lowmouth | Lowmouth, the stilt village on the old channel: houses and camps on posts, boardwalks and footbridges over the water, boats tied under them. |
-| mangrove_keys | lowmouth | local, lowmouth | The new mouth: red mangroves on their prop roots in the shallows, black mangroves on the mud keys, channels winding between, the river's silt settling. |
+| mangrove_keys | lowmouth | jadewater, local, lowmouth | The new mouth: red mangroves on their prop roots in the shallows, black mangroves on the mud keys, channels winding between, the river's silt settling. |
+| mirror_salt | saltmirror | local, saltmirror | The Mirror: the salt pan, flat to the horizon, a crust of plates over grey mud with nothing growing on it. Pronghorn cross it in the mornings; the vultures and ravens work it from above. |
 | mixed_forest | glassfall | glassfall, local |  |
 | motu | underwater | jadewater, local | A motu: a low islet of coral sand on an atoll's ring, a few palms and scrub on it. |
 | mound_grounds | lowmouth | local, lowmouth | The mound grounds: short grass kept down by deer on the great bird mound and the low half rings east of it, a few old oaks. |
-| mudflat | lowmouth | local, lowmouth | Mud where the river's silt comes out at the mouth's edge: a few wet bars, drift logs and dead snags, wading birds walking it, mist lying on it at dawn and dusk. |
+| mudflat | lowmouth | glassfall, jadewater, local, lowmouth | Mud where the river's silt comes out at the mouth's edge: a few wet bars, drift logs and dead snags, wading birds walking it, mist lying on it at dawn and dusk. |
 | narrow_banks | windbarrow | local, windbarrow | The green line of the Narrow: willow and alder leaning downwind, reedmace in the slack water, long meadow grass, and everything in the country coming down to drink. |
 | oak_ground | windbarrow | local, windbarrow | The few metres round the great oak below Durn: the same turf as the village keeps, and one tree in it. A small region plus `lone` spacing wider than the region is how a world plants exactly one tree. |
 | painted_badlands | redrock | local, redrock | Banded purple and grey clay hills with petrified logs weathering out; almost nothing grows. |
@@ -983,85 +1196,113 @@ game (local/README.md).
 | reef_flat | underwater | glassfall, jadewater, local | The reef flat behind the crest, a metre or so under: low brain and finger coral on pale rubble, sand between. |
 | reef_groove | underwater | glassfall, jadewater, local | The sand channels between the spurs: white sand rippled by the surge, a brain coral here and there. |
 | reef_wall | underwater | glassfall, jadewater, local | The drop-off: a near-sheer wall of reef limestone falling into the blue, fans and sponges standing out from it, plate coral shelving its face. |
+| rib_beach | ribshore | local, ribshore | The wide flat beach: wet grey-brown sand that holds the sky, as far as you can see each way. |
+| rib_blowout | ribshore | local, ribshore | Bare sand on the dunes' steep lee faces and blown-out crests, where nothing holds. |
+| rib_boneyard | ribshore | local, ribshore | The sea floor round the titan's skull and jaw: silt with bone grit in it, mats of bacteria, white anemones on everything that stands. |
+| rib_dunes | ribshore | local, ribshore | The old dunes, held by grass: tan dunegrass combed by the wind, purple lupine in drifts and thickets of sea buckthorn in the hollows. |
+| rib_headland | ribshore | local, ribshore | The basalt headland: wind-cut turf and heather, shore pines bent flat, the cliffs white with birds. |
+| rib_hollow | ribshore | local, ribshore | Blowouts: bowls the wind has dug down through the dunes to the damp sand, with water standing in the bottom after rain, a snag or two, elk tracks. |
+| rib_kelp | ribshore | local, ribshore | Bull kelp over the rock reefs off the headland: a canopy at the surface, columns of light under it. |
+| rib_mat | ribshore | local, ribshore | Mats of white and orange bacteria on the silt closest to the bone. |
+| rib_oldgrowth | ribshore | local | The old stand inland: Douglas fir and redwood over sword fern and salal, the trunks too wide to reach round, a few fallen giants. |
+| rib_plain | ribshore | local, ribshore | The flat behind the beach and between the dune fields: dunegrass and lupine on old sand, wet in the hollows. |
+| rib_shelf | ribshore | local, ribshore | The open sea floor: sand ribbed by the swell, grey under green water. |
+| rib_shoals | ribshore | local, ribshore | Shallow water over sand off the beach, eelgrass in the hollows. |
+| rib_spruce | ribshore | local, ribshore | The strip of Sitka spruce behind the dunes: dark, wet, mossy, fern underneath. |
+| rib_stumps | ribshore | local, ribshore | A spruce forest the sea drowned: tall silver poles standing in the water and the wet sand, stumps between them. |
+| rib_tidepools | ribshore | local, ribshore | Rock shelves at the waterline under the headland, cut into pools: mussels, sea stars, green anemones, sea palms where the surf hits. |
+| rib_wrack | ribshore | local, ribshore | The wrack line at the dune foot: dry sand, driftwood thrown up by the storms, and the last of the dunegrass. |
+| rock_island | saltmirror | local, saltmirror | The rock islands: low knolls of grey quartzite standing out of the salt, the only dry rock on the pan, crowded with cardon and saguaro and ocotillo, and lizards on every warm face. |
 | salt_bed | windbarrow | local, windbarrow | The bed of Saltmere: grey salt mud under a metre or two of still, milky water. |
-| salt_shore | windbarrow | local, windbarrow | Round Saltmere: a white crust of salt in plates over grey mud, low grey scrub back from it, and nothing else growing. |
+| salt_shore | windbarrow | local, thornpan, windbarrow | Round Saltmere: a white crust of salt in plates over grey mud, low grey scrub back from it, and nothing else growing. |
 | sawgrass | lowmouth | local, lowmouth | The sawgrass flats: a sheet of grass standing in a hand or two of clear water, running to the sky, with hammocks of palm and oak like islands. |
 | scarp_face | windbarrow | local, windbarrow | The face of the Barrow Edge and the walls of its combes: bare white chalk with the flint band running level along it, junipers out of the cracks, lichen. |
 | scree_summit | glassfall | glassfall, local |  |
-| seabed | glassfall | duelbox, glassfall, hemlow, local, porch, slagdeck, transmission, windbarrow | Under the sea. |
+| seabed | glassfall | glassfall, hemlow, local, megalith, windbarrow | Under the sea. |
 | slickrock | redrock | local, redrock | Bare sloping sandstone: fins, domes, canyon benches. A juniper in a crack here and there. |
+| space_void | starfall | local, starfall | The ground under a map that floats in space (`sky space`): it lies below the world's floor and is never built, so nothing grows or lives on it. Every plant or animal a biome put there would hang in the void under the map. |
 | steading | windbarrow | local, windbarrow | The ground of a Windbarrow village: yards trodden to bare chalk between the round houses, barley plots behind hurdles, hearths, racks and pens, cattle and sheep standing about. |
+| steppe_deck | megalith | local, megalith | The chalk steppe an arena is sunk into, after Windbarrow's downs: short turf with the chalk coming through, heather and lichen and nothing taller, starlings flocking over it, crows and an eagle in the sky. It dresses the plain round a buried arena, not the arena itself; what is inside comes from the materials the steppe style paints on the structure. |
 | swale | windbarrow | local, windbarrow | The damp bottoms of the dry valleys, where the soil is deep: feathergrass shoulder-high and greener, big tussocks, a birch or a willow in the wettest heads. |
 | tepe_ground | windbarrow | local, windbarrow | The hilltop round the Tepe: turf grazed and trodden down to the chalk, thyme and thistles at the wall's foot, and the pillars standing in it. The bare rubble is the enclosure's own floor, inside the bench wall. |
+| turquoise_water | saltmirror | local, saltmirror | The Turquoise: brine fed from below in the north-west of the pan, a metre or two deep over pale mud and so clear and so blue-green that it looks lit from underneath, with smaller eyes round it going down further than you can see. |
 | village_green | glassfall | glassfall, local | Old fields and yards around a settlement, gone to meadow. |
-| wisp_moss | hemlow | hemlow, local, lowmouth | The Wisp Moss round Hemmere: sphagnum and peat pools, reedmace, willow scrub, dead alders standing in the wet; marsh lights over it after sunset. |
-| works_yard | slagdeck | duelbox, local, slagdeck | The gravel apron round the arena deck: ash, clinker and nothing growing. Nothing to look at, which is the point; everything worth seeing is inside. |
+| white_dunes | saltmirror | local, saltmirror | The white dunes: gypsum piled against the range by the south-west wind, soaptree yuccas on the crests, rabbitbrush in the hollows and pale lizards that match the sand. |
+| wisp_moss | hemlow | glassfall, hemlow, local, lowmouth | The Wisp Moss round Hemmere: sphagnum and peat pools, reedmace, willow scrub, dead alders standing in the wet; marsh lights over it after sunset. |
+| works_yard | slagdeck | ctfbox, duelbox, local, slagdeck, sluice | The gravel apron round the arena deck: ash, clinker and nothing growing. Nothing to look at, which is the point; everything worth seeing is inside. |
 
 ## Signs
 
 | name | from | used by | notes |
 |---|---|---|---|
 | carved_stone | hemlow | glassfall, hemlow, jadewater, lowmouth, redrock | Letters cut into the dressed face of a waist-high stone: a milestone, a parish bound, a name stone. |
-| highway_board | redrock | redrock | A big board on two steel legs over a highway shoulder, readable from a long way off. |
-| iron_plate | lowmouth | lowmouth | A small rusted plate bolted to a post: a parish number, a gauge, a company's name on a works gate. |
+| highway_board | redrock | redrock, saltmirror | A big board on two steel legs over a highway shoulder, readable from a long way off. |
+| iron_plate | lowmouth | lowmouth, saltmirror | A small rusted plate bolted to a post: a parish number, a gauge, a company's name on a works gate. |
 | painted_board | glassfall | glassfall, hemlow, lowmouth, redrock | A small painted board on one post: a trail sign, a warning, a name at a lane end. |
 | station_board | redrock | redrock | The lettering on the filling station's tall white board: no post of its own, it hangs on the station_sign structure. |
 | street_blade | city | unused | A green enamelled street blade on a galvanised pole, white letters inside a white keyline: the way a city says where you are. |
-| timber_sign | glassfall | glassfall | A sawn board on two posts at the edge of a settlement: a place name, a mill, a landing. Dark letters burnt into weathered oak. |
+| timber_sign | glassfall | glassfall, ribshore | A sawn board on two posts at the edge of a settlement: a place name, a mill, a landing. Dark letters burnt into weathered oak. |
 
 ## Weapons
 
 | name | from | used by | notes |
 |---|---|---|---|
-| bore | slagdeck | duelbox, local, porch, slagdeck, transmission | A rock drill with the feed taken off it, so the whole of what it does goes down the bore. It does not fire rounds: hold the left button and it puts out a turning rope of cutting light that takes a ball out of whatever it is held on, over and over, until the hole is through and the hole is a sightline. The right button runs the drill backwards: it throws what the left button cut out of the walls back out of the gun as half-metre blocks of the map's own rock, lobbed across the room, and where one lands it stays. Wall up a doorway, build a step to a ledge, or drop one on somebody's head, which is the only one of the three that does not leave a block behind. It is the only weapon in the arena that changes the arena, and the reason nobody holds a corner for long. |
-| digger | slagdeck | duelbox, local, porch, slagdeck, transmission | A skeleton-frame caulk gun off a shelf in the works, with the cartridge swapped for something that goes off and a spade welded under the nozzle. No bore, no rounds, nothing to run out of: you squeeze the handle and about three metres in front of you ceases to be a problem. Because it takes none of its own blast you can put the nozzle against the floor and ride the shove onto the gantry, which is the only way up there that costs you no health. The spade bites whatever the nozzle is against while the handle is squeezed, at the rate a shovel works out in the world, so a body down a borer hole can cut its own way out rather than be killed in it. The right button is a shorter, weaker squeeze that throws whoever it catches much further: a shove for getting somebody off a ledge rather than for killing them. |
-| goo_gun | slagdeck | duelbox, local, porch, slagdeck, transmission | A tank of sludge thrown in lobbing globs. A glob that finds a body bursts on it; a glob that finds anything else lands as real voxels of sludge -- it clings where it touches, slumps when nothing holds it up, stacks on the globs already there, and sets them off when it goes. That is what the gun is for: not winning a duel but making a doorway, a ramp or a pad cost whoever uses it next. Holding the right button grows one glob instead of throwing six, up to three times the burst, and keeps it loaded for as long as the button is held. It goes when the button comes up, and leaves the muzzle harder, so a full one carries -- a fat, floating glob, slower than the little ones and lobbed rather than thrown. |
-| minigun | slagdeck | duelbox, local, porch, slagdeck, transmission | Six barrels on a gearbox: it takes half a second to come up to speed, then holds a wall of bullets on a target. Weak per round and it wanders, so it is a weapon for holding a corridor, not for duels across the hall. Belt-fed from the drum, so it never reloads: the spin-up is the wait it has instead. |
-| pulse_gun | slagdeck | duelbox, local, porch, slagdeck, transmission | Two beams off one tank, and the left button is the one people remember: a rope of electric blue with a thread of it turning fast round the outside, held on a man rather than fired at him. It does its damage by the second, so the fight is not about timing a shot but about keeping a line on somebody who is strafing, and it falls off hard past thirty metres. The right button is the same stream let loose: shorter, and once it is on somebody it does not stay there. It jumps to whoever is nearest them within seven metres and in sight, and on from them to the next, four times, losing half of itself at each jump. Held on one of a crowd, it is in all of them, and it is the reason nobody in this arena stands close to a friend. |
-| rocket_launcher | slagdeck | duelbox, local, porch, slagdeck, transmission | A straight tube: the rocket flies level and bursts on whatever it meets. It takes a third of its own blast, which is enough to rocket-jump onto the catwalk and not quite enough to kill you doing it. One in the tube and a second to reload, so a rocket already away is no reason to wait -- three of them can be in the air at once. The right button lobs a bouncing grenade for shooting round corners. |
-| scrap_gun | slagdeck | duelbox, local, porch, slagdeck, transmission | A hopper of scrap fired as a cone of nine shards. They are bodies, not rays: you can watch them go, they ricochet once off anything they clip, and they are gone less than a second out, which is what makes the gun murderous inside ten metres and useless past thirty. The right button lobs the shell whole: it bounces once, bursts, and the burst throws the hopper's own scrap out of it -- ten of the same shards, going nowhere in particular and gone in less than a second, so what the shot leaves behind it is the cone it would have fired, pointing every way at once. |
-| sidearm | slagdeck | duelbox, local, porch, slagdeck, transmission | The gun you are left with: a stubby bullpup with its magazine along the top, accurate enough to be worth aiming and light enough that you go looking for something else. It rewards a head shot by half again. The right button fires short bursts of three at the full cyclic rate with a beat between them, tight enough to land all three on a man at middle range and quick enough to matter up close. |
-| skipjack | slagdeck | duelbox, local, porch, slagdeck, transmission | A bright plastic thing among nine iron ones, and the only weapon in the arena anybody laughs at before it kills them. Razor discs off a drum, flat and level, ricocheting four times and keeping most of its speed through each, so it is for shooting round a corner at somebody who thinks a corner is cover -- aim at the wall beside them and the disc does the rest. The right button lobs the drum itself, which arcs, bursts where it lands and throws ten little discs out of the burst -- they bounce, they scatter, and for the next two seconds the floor of that room is not somewhere anybody wants to be standing. It is called the skipjack for what the discs do off a wall, and nobody now remembers what it was for before somebody put blades in it. |
-| sniper_rifle | slagdeck | duelbox, local, porch, slagdeck, transmission | One shot, four hundred metres, no falloff, and twice the damage in the top of a body: a head shot kills outright and anything else leaves a man who has to go and find a health pack. The right button is the sight rather than a second mode -- it narrows the view to a third and does not fire, so nobody loses a round into the floor reaching for it. Five in the magazine and two and a bit seconds to fill it, which is the whole of its weakness: miss twice in a corridor and whoever you missed is on top of you. |
+| bore | slagdeck | duelbox, local, megalith, porch, slagdeck, starfall, transmission | A rock drill with the feed taken off it, so the whole of what it does goes down the bore. It does not fire rounds: hold the left button and it puts out a turning rope of cutting light that takes a ball out of whatever it is held on, over and over, until the hole is through and the hole is a sightline. The right button runs the drill backwards: it throws what the left button cut out of the walls back out of the gun as half-metre blocks of the map's own rock, lobbed across the room, and where one lands it stays. Wall up a doorway, build a step to a ledge, or drop one on somebody's head, which is the only one of the three that does not leave a block behind. It is the only weapon in the arena that changes the arena, and the reason nobody holds a corner for long. |
+| digger | slagdeck | duelbox, local, megalith, porch, slagdeck, starfall, transmission | A skeleton-frame caulk gun off a shelf in the works, with the cartridge swapped for something that goes off and a spade welded under the nozzle. No bore, no rounds, nothing to run out of: you squeeze the handle and about three metres in front of you ceases to be a problem. Because it takes none of its own blast you can put the nozzle against the floor and ride the shove onto the gantry, which is the only way up there that costs you no health. The spade bites whatever the nozzle is against while the handle is squeezed, at the rate a shovel works out in the world, so a body down a borer hole can cut its own way out rather than be killed in it. The right button is a shorter, weaker squeeze that throws whoever it catches much further: a shove for getting somebody off a ledge rather than for killing them. |
+| goo_gun | slagdeck | ctfbox, duelbox, local, megalith, porch, slagdeck, sluice, starfall, transmission | A tank of sludge thrown in lobbing globs. A glob that finds a body bursts on it; a glob that finds anything else lands as real voxels of sludge -- it clings where it touches, slumps when nothing holds it up, stacks on the globs already there, and sets them off when it goes. That is what the gun is for: not winning a duel but making a doorway, a ramp or a pad cost whoever uses it next. Holding the right button grows one glob instead of throwing six, up to three times the burst, and keeps it loaded for as long as the button is held. It goes when the button comes up, and leaves the muzzle harder, so a full one carries -- a fat, floating glob, slower than the little ones and lobbed rather than thrown. |
+| minigun | slagdeck | ctfbox, duelbox, local, megalith, porch, slagdeck, sluice, starfall, transmission | Six barrels on a gearbox: it takes half a second to come up to speed, then holds a wall of bullets on a target. Weak per round and it wanders, so it is a weapon for holding a corridor, not for duels across the hall. Belt-fed from the drum, so it never reloads: the spin-up is the wait it has instead. The right button fires all six barrels at once: a ring of burning flechettes, six rounds off the drum, at the scrap gun's pace. Each one hits harder than a bullet and bites a voxel out of whatever it strikes; the ring holds together inside ten metres and opens round a target past it. |
+| pulse_gun | slagdeck | ctfbox, duelbox, local, megalith, porch, slagdeck, sluice, starfall, transmission | Two beams off one tank, and the left button is the one people remember: a rope of electric blue with a thread of it turning fast round the outside, held on a man rather than fired at him. It does its damage by the second, so the fight is not about timing a shot but about keeping a line on somebody who is strafing, and it falls off hard past thirty metres. The right button is the same stream let loose: shorter, and once it is on somebody it does not stay there. It jumps to whoever is nearest them within seven metres and in sight, and on from them to the next, four times, losing half of itself at each jump. Held on one of a crowd, it is in all of them, and it is the reason nobody in this arena stands close to a friend. |
+| rocket_launcher | slagdeck | ctfbox, duelbox, local, megalith, porch, slagdeck, sluice, starfall, transmission | A straight tube: the rocket flies level and bursts on whatever it meets. It takes a third of its own blast, which is enough to rocket-jump onto the catwalk and not quite enough to kill you doing it. One in the tube and a second to reload, so a rocket already away is no reason to wait -- three of them can be in the air at once. The right button fires a guided rocket, a little slower and a fifth weaker, that turns after wherever you are pointing -- not at once, it swings round behind your aim -- so you can fly it round a corner or walk it onto a man who dodged. |
+| scrap_gun | slagdeck | ctfbox, duelbox, local, megalith, porch, slagdeck, sluice, starfall, transmission | A hopper of scrap fired as a cone of nine shards. They are bodies, not rays: you can watch them go, they ricochet once off anything they clip, and they are gone less than a second out, which is what makes the gun murderous inside ten metres and useless past thirty. The right button lobs the shell whole: it bounces once, bursts, and the burst throws the hopper's own scrap out of it -- ten of the same shards, going nowhere in particular and gone in less than a second, so what the shot leaves behind it is the cone it would have fired, pointing every way at once. |
+| sidearm | slagdeck | ctfbox, duelbox, local, megalith, porch, slagdeck, sluice, starfall, transmission | The gun you are left with: a stubby bullpup with its magazine along the top, accurate enough to be worth aiming and light enough that you go looking for something else. It rewards a head shot by half again. The right button fires bursts of six in rapid succession with a beat between them; the muzzle climbs through a burst, so the first round goes where you aimed and the last ones wander, which makes it a close-range answer. It takes the same bullets as the minigun, out of one store: rounds fired from either are gone from both, and a pad for either fills both. |
+| skipjack | slagdeck | ctfbox, duelbox, local, megalith, porch, slagdeck, sluice, starfall, transmission | A bright plastic thing among nine iron ones, and the only weapon in the arena anybody laughs at before it kills them. Razor discs off a drum, flat and level, ricocheting four times and keeping most of its speed through each, so it is for shooting round a corner at somebody who thinks a corner is cover -- aim at the wall beside them and the disc does the rest. The right button lobs the drum itself, which arcs, bursts where it lands and throws ten little discs out of the burst -- they bounce, they scatter, and for the next two seconds the floor of that room is not somewhere anybody wants to be standing. It is called the skipjack for what the discs do off a wall, and nobody now remembers what it was for before somebody put blades in it. |
+| sniper_rifle | slagdeck | ctfbox, duelbox, local, megalith, porch, slagdeck, sluice, starfall, transmission | One shot, four hundred metres, no falloff, and twice the damage in the top of a body: a head shot kills outright and anything else leaves a man who has to go and find a health pack. The right button is the sight and a charge at once: hold it and the view narrows to a third while the shot winds up over a second and a bit; the left button fires it, and letting the sight down without firing throws the charge away. A full charge hits half as hard again and goes through up to a metre and a quarter of wall, hollowing a channel as it goes, so a man behind thin cover is not behind cover; a tap is an ordinary shot. Five in the magazine and two and a bit seconds to fill it, which is the whole of its weakness: miss twice in a corridor and whoever you missed is on top of you. |
 
 ## Fx
 
 | name | from | used by | notes |
 |---|---|---|---|
-| big_splash | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | A whale breaching or falling back: water thrown metres up. |
-| big_splash_mist | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | The white mass of a whale's splash, rolling up and drifting off. |
-| bore_sparks | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Sparks out of the bore, in the colour of the round. |
-| breath | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | One breath out, on a cold morning: rises a little, spreads, goes. |
-| bubbles | underwater | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | A diver's breath out, or a kick: a few small silver bubbles that wobble up toward the surface, quicker as they go. |
-| burst_debris | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Dirt and stone thrown by a burst, in the ground's colour. |
-| burst_embers | rocket_blast | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Embers thrown up out of a burst that drift back down glowing after the fire has gone. |
-| burst_fire | rocket_blast | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | The fireball: orange billows thrown out fast and stopped short by the air, rising as they burn out. |
-| burst_fire_deep | rocket_blast | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | The fireball's red edge, which outlasts the orange and goes up with the smoke. |
-| burst_flash | rocket_blast | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | The white-hot heart of a burst, there for a tenth of a second and swelling as it goes. |
-| burst_shock | rocket_blast | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | A few streaks of blue-white off the shock front, the cold colour against the fire. |
-| burst_smoke | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | The smoke of a burst, rising. |
-| burst_sparks | rocket_blast | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Hot fragments flung right out of a burst, arcing down. |
-| chimney_smoke | kaldvik | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Woodsmoke from a stove in frost: grey-white, rising slowly and leaning with the wind. |
-| current_streak | underwater | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Specks of drift carried fast along a current under the sea: thin pale streaks that give the stream away. |
-| diamond_dust | kaldvik | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Diamond dust: ice crystals hanging in clear frozen air, each one a spark where the sun catches it. |
-| fish_splash | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | A fish leaping out or dropping back in: a few droplets. |
-| impact_chips | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Chips off the wall a round hit, in the wall's own colour. |
-| impact_dust | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | A puff of the wall's dust where a round hit. |
-| impact_sparks | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Sparks off a hit on hard stuff. |
-| landing_dust | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | A puff of whatever was landed on, rolling out low from the feet. |
-| landing_grit | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Grit thrown up out of the ground by a hard landing. |
-| leaf_fall | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | A leaf coming off a tree in its autumn colour, swinging as it falls, then lying a while. |
-| muzzle_smoke | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Smoke out of the muzzle after a shot. |
-| paddle_spray | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Water off the blade as it comes out of a stroke. |
-| petal_fall | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | A petal off a tree in blossom: smaller and slower than a leaf. |
-| sea_smoke | kaldvik | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Arctic sea smoke: the open water warmer than the air over it, steaming in low wisps that creep across the surface and lift apart. |
-| seed_drift | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Down and seed on a summer breeze, barely falling. |
-| snow_kick | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Snow kicked up by feet or a wheel; white whatever the ground's texture says. |
-| snowflake | kaldvik | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | A snowflake near the camera: a soft white speck falling about a metre a second, swinging as it comes down and carried by the wind. |
-| splash | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Droplets thrown up where a body broke the water. |
-| splash_mist | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | A low burst of spray over a splash. |
-| steam | kaldvik | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Steam off a hot spring in frost: thick white billows that rise, swell and are taken by the wind, thinning to nothing. |
-| whale_blow | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | A whale's blow: a bushy column of mist out of the blowhole. |
-| wheel_dust | particles | duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, porch, redrock, slagdeck, thornpan, transmission, windbarrow | Dust off the bike's back wheel, behind and up. |
+| big_splash | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | A whale breaching or falling back: water thrown metres up. |
+| big_splash_mist | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | The white mass of a whale's splash, rolling up and drifting off. |
+| blowhole_spout | ribshore | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Surf driven up through the titan's blowhole: a ragged column of spray thrown high, falling back on the wind. |
+| bore_sparks | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Sparks out of the bore, in the colour of the round. |
+| breath | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | One breath out, on a cold morning: rises a little, spreads, goes. |
+| bubbles | underwater | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | A diver's breath out, or a kick: a few small silver bubbles that wobble up toward the surface, quicker as they go. |
+| burst_debris | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Dirt and stone thrown by a burst, in the ground's colour. |
+| burst_embers | rocket_blast | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Embers thrown up out of a burst that drift back down glowing after the fire has gone. |
+| burst_fire | rocket_blast | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | The fireball: orange billows thrown out fast and stopped short by the air, rising as they burn out. |
+| burst_fire_deep | rocket_blast | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | The fireball's red edge, which outlasts the orange and goes up with the smoke. |
+| burst_flash | rocket_blast | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | The white-hot heart of a burst, there for a tenth of a second and swelling as it goes. |
+| burst_shock | rocket_blast | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | A few streaks of blue-white off the shock front, the cold colour against the fire. |
+| burst_smoke | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | The smoke of a burst, rising. |
+| burst_sparks | rocket_blast | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Hot fragments flung right out of a burst, arcing down. |
+| chimney_smoke | kaldvik | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Woodsmoke from a stove in frost: grey-white, rising slowly and leaning with the wind. |
+| current_streak | underwater | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Specks of drift carried fast along a current under the sea: thin pale streaks that give the stream away. |
+| diamond_dust | kaldvik | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Diamond dust: ice crystals hanging in clear frozen air, each one a spark where the sun catches it. |
+| fish_splash | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | A fish leaping out or dropping back in: a few droplets. |
+| goo_burst | goo_burst | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | The burst of a glob of goo: bright green slime thrown out and stopped short, hanging a moment before it sags. |
+| goo_burst_deep | goo_burst | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | The darker green of a goo burst, which outlasts the bright and sinks. |
+| goo_burst_drops | goo_burst | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Droplets of slime flung out of a goo burst, arcing down and glowing. |
+| goo_burst_flash | goo_burst | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | The pale green heart of a goo burst, there for a tenth of a second. |
+| goo_burst_haze | goo_burst | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | A sour green haze where a goo burst went off, rising slowly. |
+| impact_chips | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Chips off the wall a round hit, in the wall's own colour. |
+| impact_dust | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | A puff of the wall's dust where a round hit. |
+| impact_sparks | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Sparks off a hit on hard stuff. |
+| landing_dust | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | A puff of whatever was landed on, rolling out low from the feet. |
+| landing_grit | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Grit thrown up out of the ground by a hard landing. |
+| leaf_fall | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | A leaf coming off a tree in its autumn colour, swinging as it falls, then lying a while. |
+| muzzle_smoke | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Smoke out of the muzzle after a shot. |
+| paddle_spray | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Water off the blade as it comes out of a stroke. |
+| petal_fall | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | A petal off a tree in blossom: smaller and slower than a leaf. |
+| sea_mist | ribshore | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Mist off the surf, drifting inland low over the wet sand. |
+| sea_smoke | kaldvik | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Arctic sea smoke: the open water warmer than the air over it, steaming in low wisps that creep across the surface and lift apart. |
+| seed_drift | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Down and seed on a summer breeze, barely falling. |
+| snow_kick | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Snow kicked up by feet or a wheel; white whatever the ground's texture says. |
+| snowflake | kaldvik | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | A snowflake near the camera: a soft white speck falling about a metre a second, swinging as it comes down and carried by the wind. |
+| splash | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Droplets thrown up where a body broke the water. |
+| splash_mist | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | A low burst of spray over a splash. |
+| steam | kaldvik | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Steam off a hot spring in frost: thick white billows that rise, swell and are taken by the wind, thinning to nothing. |
+| whale_blow | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | A whale's blow: a bushy column of mist out of the blowhole. |
+| wheel_dust | particles | ctfbox, duelbox, glassfall, hemlow, jadewater, kaldvik, local, lowmouth, megalith, porch, redrock, ribshore, saltmirror, slagdeck, sluice, starfall, thornpan, transmission, windbarrow | Dust off the bike's back wheel, behind and up. |
 
 Material ids asked for: 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 60, 61, 62, 63, 64, 65, 66, 67, 69, 70, 71, 72, 73, 74, 75, 76, 77, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253. Materials without one (?) take free ids at load, per world (Library::assign_ids); new materials leave id out.

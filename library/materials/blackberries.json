@@ -1,0 +1,15 @@
+{
+  "name": "blackberries",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Blackberries: glossy black with a red one here and there, late summer and autumn.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [40, 30, 44],
+    "alt": [120, 34, 44],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [46, 36, 50], "alt": [126, 40, 50]}
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "hem_banks",
-  "version": 1,
+  "version": 2,
   "introduced_by": "hemlow",
   "notes": "The Hem's banks: willows and alders, reedmace in the slack water, kingfishers, herons and dragonflies.",
   "priority": 10,
@@ -13,7 +13,8 @@
     {"plant": "alder", "density": 0.003, "placement": {"verb": "riparian", "params": {"width": 9}}},
     {"plant": "reedmace", "density": 0.05, "placement": {"verb": "riparian", "params": {"width": 3}}},
     {"plant": "cottage_rose", "density": 0.0015, "placement": {"verb": "scatter", "params": {}}},
-    {"plant": "rock_moss", "density": 0.08}
+    {"plant": "rock_moss", "density": 0.08},
+    {"plant": "osier", "density": 0.01, "placement": {"verb": "riparian", "params": {"width": 6}}}
   ],
   "creatures": [
     {"creature": "heron", "count": 2},
@@ -25,7 +26,10 @@
     {"creature": "firefly", "count": 40},
     {"creature": "frog", "count": 6},
     {"creature": "otter", "count": 1},
-    {"creature": "garter_snake", "count": 2}
+    {"creature": "garter_snake", "count": 2},
+    {"creature": "great_egret", "count": 2},
+    {"creature": "bullfrog", "count": 3},
+    {"creature": "water_snake", "count": 2}
   ],
   "collectibles": [{"item": "hag_stone", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}]
 }

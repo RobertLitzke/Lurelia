@@ -3,12 +3,18 @@
   "version": 1,
   "introduced_by": "redrock",
   "notes": "Pinyon pine: small, round and bushy, on the benches between the cliffs.",
-  "form": "broad",
+  "form": "branching",
   "height": [4, 7],
   "trunk_radius": [0.18, 0.28],
   "crown_radius": [1.5, 2.2],
   "bark": "juniper_bark",
   "leaf": "pinyon_needles",
-  "squash": 0.75,
-  "max_slope": 1.0
+  "squash": 0.9,
+  "curve": "kinked",
+  "canopy": "cloud",
+  "leader": 0.3,
+  "fill": 0.85,
+  "spread": 0.8,
+  "max_slope": 1.0,
+  "stems": [1, 2]
 }

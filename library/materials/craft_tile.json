@@ -1,0 +1,15 @@
+{
+  "name": "craft_tile",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The hull's underside: close black tiles, each a little scorched, some gone.",
+  "smooth": false,
+  "texture": {
+    "pattern": "coursed",
+    "base": [30, 30, 32],
+    "alt": [50, 46, 44],
+    "scale": 6,
+    "contrast": 0.9,
+    "calm": {"base": [36, 36, 38], "alt": [56, 52, 50]}
+  }
+}

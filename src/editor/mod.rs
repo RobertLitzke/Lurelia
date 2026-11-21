@@ -190,7 +190,7 @@ const PERIODS: [&str; 4] = ["diurnal", "nocturnal", "crepuscular", "any"];
 /// What a creature leaves behind (creatures/age.rs).
 const BONES: [&str; 2] = ["full", "none"];
 /// Wingbeat patterns (anim/flight.rs).
-const FLIGHTS: [&str; 5] = ["flap", "flap_glide", "bound", "soar", "hover"];
+const FLIGHTS: [&str; 6] = ["flap", "flap_glide", "bound", "soar", "sail", "hover"];
 
 /// Creature pages: 1 body, 2 colours, 3 behaviour, 4 group, 5 variety.
 pub const CREATURE_PAGES: [&str; 5] = ["BODY", "COLOURS", "BEHAVIOUR", "GROUP", "VARIETY"];
@@ -1034,6 +1034,18 @@ static PLANT_KNOBS: &[Knob] = &[
         2,
         "Form `canes`: the most a cane leans from upright at its root, in radians. An ocotillo's fan is about 0.54.",
     ),
+    num(
+        2,
+        "CANE BEND",
+        "cane_bend",
+        0.0,
+        0.3,
+        0.01,
+        2,
+        "Canes with tufts: how far a cane arches toward its tip. 0 stands straight; a buckthorn is about 0.07.",
+    ),
+    num(2, "CANE LEAVES", "cane_leaves", 0.0, 1.0, 0.05, 2, "Canes with tufts: the chance of a leaf tuft at each upper joint. Low for near-leafless switches."),
+    num(2, "CANE SPURS", "cane_spurs", 0.0, 1.0, 0.05, 2, "Canes with tufts: the chance of a side spur on each segment. 0 for clean stems."),
     // ---- 3: materials ----
     mat(3, "BARK", "bark", "The material the trunk and limbs are drawn in."),
     mat(3, "LEAF", "leaf", "The material the foliage is drawn in."),
@@ -1097,6 +1109,9 @@ pub struct Editor {
     /// The grey platform is laid in; off, the subject stands on the world's
     /// own ground.
     pub grid: bool,
+    /// Lit by the world's own hour, weather and grade rather than the
+    /// studio's fixed sun (`Game::studio_light`).
+    pub world_light: bool,
     /// What the edits made since the last apply invalidate, if anything.
     /// Edits are collected here and applied once a frame rather than on each
     /// keypress, so holding an arrow down does not build sixty models a
@@ -1152,6 +1167,7 @@ impl Editor {
             stage: crate::creatures::age::Stage::Adult,
             pose: pose::Pose::Rest,
             grid: true,
+            world_light: false,
             pending: None,
             closed: 0,
             top: 0,
@@ -1651,6 +1667,7 @@ pub(crate) fn front_help(c: Choice) -> &'static str {
         Choice::EditAge => "Which age the one in front of you is shown at. Which ages a creature has follows from its height unless its ages block says otherwise.",
         Choice::EditPose => "What the subject is doing. Every pose but LIVE holds it still at the studio spot with no mind of its own, so it cannot walk out of the view; LIVE turns it loose in the world to graze and bolt as it would.",
         Choice::EditGrid => "The grey checked platform, or the world's own ground where you are standing: the same animal in the studio and in its biome.",
+        Choice::EditLight => "The studio's own light, a late-morning sun in a clear sky with no grade, so a colour reads as the colour it is; or the world's hour, weather and grade, to see it where it lives.",
         Choice::EditExport => "Write the entry back to its file in library/, in the form tools/libfmt.py keeps.",
         Choice::EditReload => "Throw the edits away and read the file again.",
         _ => "",
@@ -1923,6 +1940,7 @@ pub fn open(game: &mut Game, name: Option<&str>, aspect: f32) -> Result<(Editor,
     // A match is no place for a studio: the gun goes away, the rules are
     // parked and the player's body is frozen until the page closes.
     game.set_editing(true);
+    game.studio_light = !page.world_light;
     floor(&page, &mut st, game);
     apply(&mut page, &mut st, game, aspect);
     st.reframe(aspect);
@@ -1957,17 +1975,11 @@ fn repaint(page: &mut Editor, st: &mut Studio, game: &mut Game) -> bool {
         return false;
     }
     let Ok(def) = page.creature() else { return false };
-    let paint = subject::paint_of(&def, st.base_colours);
+    let paint = subject::paint_of(&def);
     if paint.slots() != st.paint {
         return false;
     }
-    for (k, c) in paint.colours.iter().enumerate() {
-        let slot = crate::models::LIBRARY_COLOURS.start + st.base_colours + k;
-        if slot < crate::models::LIBRARY_COLOURS.end {
-            game.palette[slot] = *c;
-        }
-    }
-    game.palette_dirty = true;
+    st.paint_block(game, &paint.colours);
     page.msg = None;
     true
 }
@@ -2023,7 +2035,7 @@ pub fn apply(page: &mut Editor, st: &mut Studio, game: &mut Game, aspect: f32) {
                 Ok(def) => {
                     st.drop_subject(game);
                     let want = page.pose_for(&def);
-                    match subject::creature(&def, lib, game.models.len(), game.library_colours, game.ents.species.len()) {
+                    match subject::creature(&def, lib, game.models.len(), st.block(), game.ents.species.len()) {
                         Err(x) => page.msg = Some(x),
                         Ok(built) => {
                             st.size(def.height, built.span, aspect);
@@ -2093,7 +2105,7 @@ pub fn apply(page: &mut Editor, st: &mut Studio, game: &mut Game, aspect: f32) {
             st.clear_plant(game);
             match page.collectible() {
                 Err(x) => page.msg = Some(x),
-                Ok(def) => match subject::collectible(&def, st.base_colours) {
+                Ok(def) => match subject::collectible(&def, st.block()) {
                     Err(x) => page.msg = Some(x),
                     Ok(built) => {
                         st.size(built.tall, built.span, aspect);
@@ -2272,6 +2284,7 @@ mod tests {
             stage: crate::creatures::age::Stage::Adult,
             pose: pose::Pose::Rest,
             grid: true,
+            world_light: false,
             pending: None,
             closed: 0,
             top: 0,
@@ -2317,6 +2330,7 @@ mod tests {
                     stage: crate::creatures::age::Stage::Adult,
                     pose: pose::Pose::Rest,
                     grid: true,
+                    world_light: false,
                     pending: None,
                     closed: 0,
                     top: 0,
@@ -2363,6 +2377,7 @@ mod tests {
             stage: crate::creatures::age::Stage::Adult,
             pose: pose::Pose::Rest,
             grid: true,
+            world_light: false,
             pending: None,
             closed: 0,
             top: 0,

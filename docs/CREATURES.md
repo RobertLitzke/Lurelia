@@ -57,12 +57,14 @@ runs each verb and with what settings. The movers are in `src/creatures/`:
 | `dart` | `insects.rs`: hover 0.5 to 3 s 0.4 to 1.6 m over water or the bank, then a quick straight dart | dragonfly, meadowhawk, glass dragonfly |
 | `undulate` | `circle.rs` with a 7 to 16 m circle, slow; a rig with plan `ray` ripples its wings (`motors::undulate`) | sky ray, kite ray |
 | `flock` | `flock.rs` boids: wander, land, perch, flush | starling |
-| `soar` | `flock.rs`, a flock of one in wide slow circles | eagle, condor |
+| `soar` | `flock.rs`, a flock of one in wide slow circles. Now and then it comes down on the top of the tallest of a few trees 14 m or more that afford `perch` within 160 m (a Sitka spruce, a drowned snag) and sits 45 s to two minutes. With `hunts`, when hungry it stoops at twice its top speed on the nearest thing it eats below it in the open (in the air, on the ground or the sea, or a fish within 1.3 m of the surface), leading it; at the strike it takes a fish half the time, a bird sitting on the water, the ground or a perch 25%, a flying one 30%. A kill hangs in its talons (`carry::Talons`) for a minute, taken to a tree top if there is one, and is then dropped; it does not hunt again for three minutes. `VG_CATCH_M` prints each stoop, perch and kill | eagle (hunts gulls, herring, mallards, puffins, trout and rabbits), condor |
+| `glide` | `flock.rs`, a few big seabirds circling wide (60 m) on held wings like vultures, wandering far; seldom (one time in ten) they come down together on the highest dry ground of ten looks round them (a ridge, a rock, a bone, never a tree crown) and sit there half a minute to a minute and a half | albatross |
 | `flit` | `flit.rs`: sit on a shrub or tree top (about 3 m preferred), hop in a short bounding arc to another top 3-14 m away, sometimes drop to the ground to peck, burst 12-24 m away from the player | sparrow, dusk wren |
-| `school` | `swim.rs`: boids (the starling rules) in three dimensions under the surface, in sea at least 2 m deep or the deeper middle of a river or lake (a school listed by a river biome spawns in the deepest water within 30 m); scatter from a player in or beside the water; leap clear now and then with a splash. A rig with plan `ray` ripples its wings instead of wagging a tail | herring, trout, manta ray |
+| `school` | `swim.rs`: boids (the starling rules) in three dimensions under the surface, in sea at least 2 m deep or the deeper middle of a river or lake (a school listed by a river biome spawns in the deepest water within 30 m); scatter from a player in or beside the water; leap clear now and then with a splash. A swimmer 0.6 m tall or more (a seal or walrus at sea, a shark) keeps three quarters of its height under the surface and tilts at most 0.3 rad up or down; a fish tilts up to 1 rad. A rig with plan `ray` ripples its wings instead of wagging a tail | herring, trout, manta ray |
 | `slither` | `snake.rs`: a snake on the ground. Crawls, lies coiled, or stretches out to bask; the body is posed along a path and let down onto what it crosses ([ANIMATION.md](ANIMATION.md)). With `warns` it coils, lifts its head and buzzes its tail while anything presses on it instead of leaving | rattlesnake (warns), garter snake |
 | `climb` | `snake.rs`: the same snake in trees. Crosses the ground to a trunk, climbs it in a slow spiral, lies along a limb with its front hanging off and swaying, and lets go and falls limp if you stand right under it | gopher snake, green tree snake |
 | `swim` | `snake.rs`: the same snake in water. At the surface with its head out and a long wave down its body, ducking under when startled, and hauling out on a bank to lie in the sun | water snake, anaconda |
+| `creep` | `octopus.rs`: on the sea floor in at least `shallows` of water (default 2 m). Lies with its arms let down over whatever is under it, creeps every half minute or so to the highest of a few spots 3 to 10 m off, pales toward the sand as you come within two and a half times `wary`, and when pressed jets off mantle first at `flee_speed` with its arms streaming behind ([ANIMATION.md](ANIMATION.md), "Octopuses") | giant octopus |
 | `breach` | `swim.rs`: alone offshore in water at least 14 m deep; dives 25 to 50 s, lies at the surface spouting every 6 to 11 s, and some dives end by going deep and driving up out of the water, twisting onto its side and falling back in a big splash | humpback |
 
 Every walker (`graze`, `hop`, `skulk`, `wade` and the shelled and seal verbs) steers the same
@@ -273,8 +275,8 @@ one place in a biome's quota, so this is one animal with one name:
 
 The black bear and the humpback are rare through `spawn_chance` (0.001 and 0.0008 per
 half-second check while a biome round you wants one): on paper a bear every 8 minutes in its
-biome and a whale every 10 near deep water, and either stays until you go 130 m (bear) or 260 m
-(whale) away. In practice a bear is rarer than the paper rate: half an hour of `--tour 1800`
+biome and a whale every 10 near deep water, and either stays until it is 130 m (bear) or 260 m
+(whale) away and out of view. In practice a bear is rarer than the paper rate: half an hour of `--tour 1800`
 walking a loop through Glassfall's interior, forests included, met no bear, while it met 316
 deer and 5 unicorns (1.6%, set to 1%). Rare species of swimmers are rolled per fish or per
 whale; coats are not (see Coats).
@@ -292,11 +294,12 @@ have their own colour name, so a child recolours any of them; it also carries th
 | Parent | Children | What differs |
 |---|---|---|
 | starling | crow | 1.7 times the size, circles alone |
-| starling | eagle | 3.6 times the size, dark body, white head, brown wings, yellow beak and feet, soars |
+| starling | eagle | 3.6 times the size, dark body, white head, brown wings, yellow beak and feet, soars, perches on tall trees, hunts |
 | eagle | condor | 1.45 times the eagle, black with a bare pink-grey head and white bars under the wings, beats at 1.2 a second |
 | starling | sparrow | 0.85 times the size, brown with a pale breast and a darker crown, flits between shrubs |
 | sparrow | dusk wren | smaller, jewel-coloured with a glowing crown |
 | starling | puffin, cormorant | seabirds over the coast (`circle` with `floats`) |
+| starling | albatross | its own model at twice the voxel, wings twice the starling shape's length, four and a half metres across, white with pale grey wings; `glide` with the `sail` wingbeat |
 | starling | goose (adds a neck, `paddle`) -> mallard, swan | water and land |
 | starling | woodpecker (`cling`) -> pileated woodpecker, northern flicker, acorn woodpecker | |
 
@@ -309,7 +312,8 @@ Other families:
 | boar | javelina, capybara (own blunt head, no tail, `wade`) | |
 | horse | donkey (long ears, shoulder cross), zebra (`recolour` stripes), fae horse (glowing mane) | |
 | manta ray (plan `ray`, three-bone wing chains) | sky ray (flies, `undulate`) -> kite ray | |
-| harbor seal (plan sprawler, `haulout`) | sea lion, swimming seal (`school`: the seal at sea) | land and water |
+| harbor seal (plan sprawler, `haulout`) | sea lion, swimming seal (`school`: the seal at sea), walrus (own shape with tusks, three metres, hardly bothers to move) | land and water |
+| reef shark | sixgill shark (three times the size, dark, one dorsal far back, keeps a metre or two over the deep floor) | |
 | glassmoth (no rig) | lantern moth | |
 | bee (no rig, `buzz`) | bumblebee, glow bee | |
 | dragonfly (no rig, `dart`) | meadowhawk, glass dragonfly | |
@@ -371,15 +375,34 @@ still `flees_from: ["player"]`; flightiness grades what happens inside that.
 Inside the flee distance you press on the animal at some rate per second, and it bolts once a
 second's worth has built up. So walking slowly toward a deer makes it turn and watch you
 (ANIMATION.md) and only break when you are close, while the same deer bolts the moment a bike
-comes over the rise. The pressure rises with:
+comes over the rise.
+
+The pressure is the sum of what the animal can sense (`startle::pressure_on`), all scaled by how
+close you are and what you are:
+
+| Sense | What it is |
+|---|---|
+| sight | your movement: nothing while you hold still, about 0.2 walking in, 0.8 running straight at it. A good deal less from behind (0.4 of it), and a quarter as much while its head is down grazing or drinking (`anim/life.rs` `graze_w`). Cover (0.45) where a trunk, boulder, shrub or wall stands between you, looked for only within 6 m, so it costs one short raycast for the few animals at close range (`creature_pathing.cover_rays` counts them) |
+| noise | your footsteps (`Threat::noise`): silent standing, 0.5 at a walk on ordinary ground, more at a run. The ground scales it (`creatures/sign.rs` `Tread`): dry leaf litter 1.8, gravel 1.6, grass 0.8, sand 0.6, moss 0.35; wet litter and grass are quieter, lying snow muffles, and rain masks up to 70% of it. A bike rattles whatever the ground, a glider and a kayak are nearly silent |
+| closeness | someone standing a few metres off is alarming however still they keep: 0.3 times how far inside the flee distance you are |
+| scent | carried downwind of you along `world::WIND` (the way the grass leans), in a cone, out to 2.5 times the flee distance on a steady breeze. Crouching, cover and keeping still do nothing for it. Rain damps it; in the still heat there is no direction and it pools round you over a short reach |
+
+and the whole is multiplied by:
 
 | What | Effect |
 |---|---|
 | proximity | steeply (as the 1.3 power of how far inside the flee distance you are), and doubled within 2 m. Height counts, so a glider 20 m up is 20 m away even right overhead, and so is someone looking down from a cliff |
-| what is coming | the player on foot 1, bike 1.4, climbing 0.55, kayak 0.65, rope 0.8, glider or wingsuit 0.35 -- a bike is loud and fast at eye level, a glider passes overhead in silence; a predator 1.6. Crouching (Ctrl) halves whichever it is |
-| approach speed | 0.3 standing still, rising to about 1.1 running straight at it; it is the closing speed that counts, so walking past is milder than walking in |
-| facing | a fifth less from behind, where it has not seen you |
-| cover | 0.45 where a trunk, boulder, shrub or wall stands between the two of you. Only looked for within 6 m, so it costs one short raycast for the few animals at close range (`creature_pathing.cover_rays` counts them) |
+| what is coming | the player on foot 1, bike 1.4, climbing 0.55, kayak 0.65, rope 0.8, glider or wingsuit 0.35; a predator 1.6. Crouching (Ctrl) halves it and softens your step |
+
+A pressure under 0.3 a second lets the alarm settle rather than build (`startle::QUIET`), faster
+the less is pressing. That is what makes stalking work: move while it grazes, freeze when its head
+comes up, and an animal that has seen you and then sees nothing more goes back to feeding. A
+crocodile walked past at three metres may never go at all.
+
+The alarm spreads. A walker that bolts is itself a threat to every walker within its flee
+distance (`Threat::alarm_of`: menace 0.7, the crash of it loud), and one that runs from a bolting
+neighbour runs the way the neighbour went, so a herd goes together.
+`creature_pathing.alarmed_by_herd` counts the steps where that was the pressure that won.
 
 The same model runs a prey animal's flight from the predators its `flees_from` names, so a wolf
 trotting past at a distance is watched and one coming in at speed is run from. Everything runs
@@ -590,10 +613,11 @@ from a distance. Plant children inherit all of those.
    world actually contains, plus anything those creatures hunt, plus the rare morphs of
    anything collected. Only these are loaded.
 2. `worldload::creatures` runs each one's ops into a 32^3 grid and meshes it into one `Model`
-   (and one part model per bone if it has a rig). Colours go into the palette's 128 library
-   slots (`models::LIBRARY_COLOURS`, shared by every creature and collectible in the world);
-   identical RGB values share a slot, so a variant that reuses its relatives' exact colours
-   costs nothing.
+   (and one part model per bone if it has a rig). Its colours go into a palette block of its
+   own, appended after the fixed block (`models::FIXED_SLOTS`), and the model's `block` says
+   where that starts; its part models and skeleton use the same block, with the two bone
+   colours on the end. A world has no limit on its colours, and one model can use up to 192
+   (`models::PALETTE_SLOTS`).
 3. Each becomes a `Species` (model, behaviour, `flees_from` / `hunts` resolved, its `vary`, its
    `ages` and the tint that greys an old one,
    rare morphs). When the world is set, `creatures::link_families` widens `flees_from` and
@@ -601,8 +625,11 @@ from a distance. Plant children inherit all of those.
 4. A biome lists creatures with a count: `{"creature": "elk", "count": 3}` means "keep three of
    these around the player while near this biome". `src/creatures/spawn.rs` samples the
    biomes around the player every half second, spawns groups 20 to 90 m away inside a biome
-   that lists the species, rolls each member against the species' rare morphs, and despawns
-   anything beyond 130 m. A group never takes the count past the biome's number (a flock of
+   that lists the species (behind and beside the player, never in the 140 degrees ahead),
+   rolls each member against the species' rare morphs, and despawns anything beyond 130 m once
+   it is out of view (more than 75 degrees off where the player faces), or beyond 360 m even in
+   view (whales 260 and 600 m). Thinning for the hour and the weather also takes only what is
+   out of view, so nothing winks out while it is watched. A group never takes the count past the biome's number (a flock of
    starlings is cut to what is missing), and a rare morph joins its parent's family group and
    counts toward the parent's number (`Creature::spawned_for`).
 5. Plants: `flora::place_plants` rolls each tree against its plant's rare morphs

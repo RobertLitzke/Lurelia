@@ -193,6 +193,8 @@ fn retag(ops: &[Op], bone_of: &dyn Fn(&Option<String>) -> usize, colour_ok: &dyn
             | Op::Cylinder { mat, part, .. }
             | Op::Log { mat, part, .. }
             | Op::Disc { mat, part, .. }
+            | Op::Dish { mat, part, .. }
+            | Op::Segment { mat, part, .. }
             | Op::Set { mat, part, .. } => {
                 if mat != "air" {
                     if !colour_ok(mat) {

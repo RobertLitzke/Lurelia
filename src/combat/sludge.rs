@@ -124,6 +124,12 @@ pub struct Sludge {
 }
 
 impl Sludge {
+    /// Where each blob is and how far its burst reaches: what a body could
+    /// see lying in its way (`brain::Threat`).
+    pub fn mines(&self) -> impl Iterator<Item = (Vec3, f32)> + '_ {
+        self.blobs.iter().map(|b| (b.at, b.splash.radius))
+    }
+
     /// Nothing of ours is on the map.
     pub fn idle(&self) -> bool {
         self.blobs.is_empty() && self.owed.is_empty()
@@ -258,16 +264,73 @@ impl Sludge {
         went_off
     }
 
-    /// Take the lot off the map with no burst: a round is over, or the man
-    /// who laid it has died. The voxels go back to air through the queue
-    /// like any other change.
-    pub fn clear(&mut self, edits: &mut Vec<([i32; 3], u8)>) {
+    /// Take the lot off the map without anybody being hurt: a round is
+    /// over. The voxels go back to air through the queue like any other
+    /// change. Returns where each blob was and its splash, so the caller can
+    /// show it popping rather than vanishing.
+    pub fn clear(&mut self, edits: &mut Vec<([i32; 3], u8)>) -> Vec<(Vec3, SplashDef)> {
         self.owed.clear();
-        for b in self.blobs.drain(..) {
-            for v in b.own {
+        self.claimed.clear();
+        self.blobs
+            .drain(..)
+            .map(|b| {
+                for v in b.own {
+                    edits.push((v, AIR));
+                }
+                (b.at, b.splash)
+            })
+            .collect()
+    }
+
+    /// Take one fighter's blobs off the map, quietly: the man who laid them
+    /// has died. Everybody else's stay where they are.
+    pub fn clear_by(&mut self, by: usize, edits: &mut Vec<([i32; 3], u8)>) {
+        let claimed = &mut self.claimed;
+        self.blobs.retain(|b| {
+            if b.by != by {
+                return true;
+            }
+            for &v in &b.own {
+                claimed.remove(&v);
                 edits.push((v, AIR));
             }
-        }
-        self.claimed.clear();
+            false
+        });
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::world::store::Voxels;
+
+    fn open_air() -> Store {
+        let mut s = Store::default();
+        s.chunks.insert((0, 0, 0), Voxels::Uniform(AIR));
+        s
+    }
+
+    fn splash() -> SplashDef {
+        serde_json::from_value(serde_json::json!({ "damage": 50.0, "radius": 2.0 })).unwrap()
+    }
+
+    /// A death takes that fighter's goo off the map and leaves everyone
+    /// else's, and the round's end takes the rest and says where it was.
+    #[test]
+    fn a_death_clears_only_its_own_blobs() {
+        let s = open_air();
+        let mut g = Sludge::default();
+        let mut edits = Vec::new();
+        assert!(g.land(&s, Vec3::new(2.0, 2.0, 2.0), 0.3, 9.0, splash(), 1, &mut edits));
+        assert!(g.land(&s, Vec3::new(5.0, 2.0, 5.0), 0.3, 9.0, splash(), 2, &mut edits));
+        edits.clear();
+        g.clear_by(1, &mut edits);
+        assert_eq!(g.blobs.len(), 1);
+        assert_eq!(g.blobs[0].by, 2);
+        assert!(!edits.is_empty() && edits.iter().all(|e| e.1 == AIR));
+        assert!(edits.iter().all(|e| !g.claimed.contains(&e.0)));
+        let gone = g.clear(&mut edits);
+        assert_eq!(gone.len(), 1);
+        assert!(g.idle());
     }
 }

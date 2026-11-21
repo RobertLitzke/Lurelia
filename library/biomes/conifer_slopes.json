@@ -1,6 +1,6 @@
 {
   "name": "conifer_slopes",
-  "version": 1,
+  "version": 2,
   "introduced_by": "glassfall",
   "priority": 3,
   "rules": {"elev": [30, 64]},
@@ -27,7 +27,12 @@
     {"plant": "stump", "density": 0.0025, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "shelf_fungus", "density": 0.12},
     {"plant": "tree_moss", "density": 0.5},
-    {"plant": "rock_moss", "density": 0.08}
+    {"plant": "rock_moss", "density": 0.08},
+    {
+      "plant": "salal",
+      "density": 0.015,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.4, "max": 0.6}}
+    }
   ],
   "features": [
     {"structure": "boulder", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}},
@@ -46,11 +51,13 @@
     {"creature": "great_horned_owl", "count": 1},
     {"creature": "cougar", "count": 1},
     {"creature": "douglas_squirrel", "count": 4},
-    {"creature": "wolf", "count": 2}
+    {"creature": "wolf", "count": 2},
+    {"creature": "raven", "count": 2}
   ],
   "collectibles": [
     {"item": "pine_cone", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},
     {"item": "mushroom", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}}
   ],
+  "sound": {"leaves": 0.7, "notes": "Needles hiss rather than clatter."},
   "mist": 0.25
 }

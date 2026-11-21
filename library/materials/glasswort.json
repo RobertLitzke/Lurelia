@@ -1,0 +1,15 @@
+{
+  "name": "glasswort",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Glasswort at the brine's edge: jointed succulent stems, green at the root and red where the salt has turned them.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [150, 72, 62],
+    "alt": [112, 120, 70],
+    "scale": 6,
+    "contrast": 0.8,
+    "calm": {"base": [150, 82, 70], "alt": [118, 124, 78]}
+  }
+}

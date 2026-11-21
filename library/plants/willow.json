@@ -10,5 +10,6 @@
   "bark": "bark",
   "leaf": "willow_leaves",
   "max_slope": 0.4,
-  "autumn": "leaves_autumn"
+  "autumn": "leaves_autumn",
+  "thin_limbs": 0.12
 }

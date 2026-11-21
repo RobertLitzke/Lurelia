@@ -10,6 +10,7 @@ Each layer uses the ones below it and never the ones above.
 | Layer | What | Where |
 |---|---|---|
 | App | window, screens (title, launch, settings, loading, playing, pause menu, help), what a run was launched with, key table, CLI, dev tools | `main.rs`, `menu.rs`, `launch.rs`, `input.rs`, `cli.rs`, `tools/` |
+| Sound | the device, the mixer and its three buses, the ambient voices and the one-shot effects, all synthesised; what the ear gets from the world, worked out by `bed.rs` and `watch.rs`, the two files with game knowledge | `sound/`; see GUIDE.md, "Sound" |
 | Editing | the LOOK page (F7) and the EDIT page (F8): a creature or plant in a studio with its library entry beside it, written back to `library/`; both drawn as one form, with one kind of knob | `form.rs`, `lookpage.rs`, `editor/`; see `docs/LOOK.md`, `docs/EDITOR.md` |
 | On-screen type | distance-field text (Cinzel, Cormorant Garamond Italic, OFL) and the Lurelia logo, compiled in; rebake the atlas with `library/fonts/bake_atlas.py` | `render/font.rs`, `render/hud.rs`, `library/fonts/`, `library/logo/` |
 | Modes | walking, bike, glider, climbing, rope; the camera rig every mode hands the renderer; the camera (film, tasks, scrapbook); screenshot mode and the shooter's rules as activities | `modes.rs`, `ride.rs`, `ride/`, `rig.rs`, `camera/`, `screenshot.rs`, `shooter/`, `player.rs` |
@@ -47,6 +48,17 @@ Each layer uses the ones below it and never the ones above.
   boardwalks and bored passages all go through it, so none of them is a
   structure with a fixed length or a quarter-turn bearing. See
   `docs/ROUTES.md`.
+
+- **Generated land.** `world/chronicle/hydro.rs` routes water over a coarse
+  copy of the height field (every cell to the sea, hollows filled to their
+  lips), counts what drains through each cell, cuts where a lot does, and
+  turns the streams into lines. `terrain` makes the land from a sketch,
+  `drainage` cuts it with that water, and `glaciate` puts a `trough` down
+  every stream that collects enough ice. None of them draws a line an author
+  typed, which is why their maps do not look ruled. What they make is named
+  (`EventCtx::seat`), and later events build from those names (`Pos::Rel`,
+  the `seat` event), so a village follows its fjord when the land changes.
+  Worlds made before this (`landmass` and stamped landforms) are unchanged.
 
 - **Seeds.** Everything a world generates is seeded by a key that stays put
   when the world is edited: an event by its kind, its year and which of that
@@ -113,6 +125,22 @@ Each layer uses the ones below it and never the ones above.
   of it. Both stamp `begin_step` first, so the frame is drawn from where the
   body began even when a ride ends mid-step.
 
+- **Sound.** `sound/` sits beside the renderer and has the same shape:
+  `Game` is surveyed into a row of numbers (`Heard`, by `sound/bed.rs`) and
+  the window hands it to the device once a frame with the listener's facing,
+  the way it hands the renderer a `FrameParams`. One-shots go the other way
+  round: anything may post one with `sound::emit(Noise)` -- a kind and a
+  world position, no more -- and the window takes them once a frame and
+  places them against the listener. That queue is the one place sound
+  reaches down the layers, and it is a no-op until a `Sound` (or a
+  `--sound-bake`) is listening, so a headless match or a tournament pays a
+  relaxed atomic load a shot. Combat posts its gunfire because only the
+  trigger knows which fire mode went off; everything a match does besides is
+  heard by `sound/watch.rs` comparing the player's and the bots' state from
+  one frame to the next, so the shooter's rules know nothing about sound.
+  Nothing in the audio callback allocates, locks or blocks: the moment
+  crosses over through a `try_lock` and every number glides.
+
 - **The weather.** `world/weather.rs` holds one global kind of day and turns
   it into a row of numbers (`Sky`): cover, overcast, haze, mist, rain, snow,
   heat, wind, and shifts to the grade. It knows nothing of the renderer or the
@@ -138,6 +166,27 @@ Each layer uses the ones below it and never the ones above.
   `Streamer::set_turn` is what has the loaded columns built again. Summer is
   every multiplier 1 and every addition 0, so a summer world draws exactly as
   it would with no seasons. See GUIDE.md, "Seasons".
+
+- **What the weather leaves.** `world/damp.rs` is the weather's history: a
+  few world-wide numbers (wet, standing water, frost in shade and in sun,
+  fog in the hollows) stepped on the game clock beside the weather and the
+  year. The shaders get them as the `damp` field of the frame's globals and
+  decide where each shows from what they already know about a point (its
+  slope, its hollow below the smoothed ground, its shadow), so there is no
+  map of them; the fog goes in as more mist floor. Dry ground is every
+  value 0. See GUIDE.md, "What the weather leaves".
+
+- **Marks and senses.** `creatures/sign.rs` reads a ground material for how
+  loud a step is and whether it keeps a print (`Tread`, by the material's
+  key), and keeps the prints and trampled patches walkers and the player
+  leave (`Marks`, worn by the weather). Walkers report footfalls through
+  `Entities::steps`; the game lays them. `render/signs.rs` draws the prints
+  as multiplied quads after the land; the trampled patches reach the sprite
+  shader as a small map round the camera (`render/foliage.rs`). The same
+  `Tread` and the weather feed the player's `Threat` (`game.rs`
+  `player_threat`), which `creatures/startle.rs` sums by sense: sight,
+  noise, closeness, scent. See GUIDE.md, "Stalking, prints and trampled
+  grass".
 
 - **Lamps.** `render/lamps.rs`: point lights a world places (`lamp` event),
   the only light anything with a roof over it gets. `Game::prepare_frame`

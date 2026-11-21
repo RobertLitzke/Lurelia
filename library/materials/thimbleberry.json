@@ -5,6 +5,7 @@
   "notes": "Marker voxel at the foot of a thimbleberry bush; the stems and big leaves are sprites (layer thimbleberry).",
   "id": 191,
   "smooth": false,
+  "passable": true,
   "texture": {
     "pattern": "blotch",
     "base": [64, 100, 40],

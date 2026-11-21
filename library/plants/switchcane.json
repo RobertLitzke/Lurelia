@@ -1,0 +1,18 @@
+{
+  "name": "switchcane",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Switchcane: the delta's own bamboo, canebrakes of thin olive culms two to five metres tall under the bottomland trees. You push through it.",
+  "form": "canes",
+  "height": [2.5, 5.0],
+  "trunk_radius": [0.05, 0.06],
+  "crown_radius": [1.0, 1.8],
+  "bark": "switchcane_culm",
+  "leaf": "bamboo_leaves",
+  "canopy": "tufts",
+  "max_slope": 0.8,
+  "stems": [14, 24],
+  "cane_lean": 0.25,
+  "cane_bend": 0.03,
+  "cane_spurs": 0.3
+}

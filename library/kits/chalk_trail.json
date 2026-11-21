@@ -1,0 +1,12 @@
+{
+  "name": "chalk_trail",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "A trail a foot and a half wide trodden through the grass to the bare chalk and kept open by use: white on the downs, seen from a hill a mile off.",
+  "ground": "grade",
+  "width": 1.5,
+  "mat": "chalk_rubble",
+  "shoulder": "chalk_rubble",
+  "margin": 1.5,
+  "tags": ["path"]
+}

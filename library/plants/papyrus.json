@@ -1,0 +1,20 @@
+{
+  "name": "papyrus",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Papyrus: dense stands of bright green stems twice a man's height, each topped with a mop of fine rays arching out and over, along the channels.",
+  "form": "canes",
+  "height": [2.5, 4.5],
+  "trunk_radius": [0.05, 0.06],
+  "crown_radius": [0.4, 0.7],
+  "bark": "papyrus_stem",
+  "leaf": "papyrus_head",
+  "canopy": "tufts",
+  "max_slope": 0.6,
+  "stems": [14, 24],
+  "cane_lean": 0.25,
+  "cane_bend": 0.0,
+  "cane_spurs": 0.0,
+  "cane_leaves": 0.0,
+  "cane_umbel": 0.5
+}

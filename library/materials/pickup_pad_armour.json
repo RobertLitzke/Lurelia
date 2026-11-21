@@ -1,0 +1,17 @@
+{
+  "name": "pickup_pad_armour",
+  "version": 1,
+  "introduced_by": "arena",
+  "notes": "The platform under an armour pickup in the shooter: a half-height blue slab, stamped under the pad by the shooter's rules when the pad finds its floor. Blue shields, as the pickup's own tint says.",
+  "smooth": false,
+  "slab": true,
+  "glow": 0.6,
+  "texture": {
+    "pattern": "noise",
+    "base": [110, 165, 255],
+    "alt": [78, 128, 215],
+    "scale": 4,
+    "contrast": 0.3,
+    "calm": {"base": [110, 165, 255], "alt": [78, 128, 215]}
+  }
+}

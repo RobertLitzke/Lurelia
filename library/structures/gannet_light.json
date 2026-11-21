@@ -1,0 +1,456 @@
+{
+  "name": "gannet_light",
+  "version": 2,
+  "introduced_by": "ribshore",
+  "notes": "The Gannet Head light: a white tower 27 m tall on a stepped basalt and fieldstone plinth, tapering, banded three times in black, stair windows climbing round it in recesses with stone sills and lintels, a gabled porch with a transomed door up a flight of steps between cheek walls with iron rails, a corbelled gallery on twelve brackets with a railing, a glazed lantern, and a domed cap with a vent, a ball and a lightning rod, 35 m to its tip. Built 1894, kept sixty years, empty since; it does not decay, since a 30 m column crumbles metres off its top at any age and takes the lantern with it. Door on local -Z.",
+  "size": [49, 140, 49],
+  "anchor": [24, 0, 24],
+  "foundation": 6,
+  "level": true,
+  "decays": false,
+  "tags": ["ribshore", "lighthouse"],
+  "slots": {
+    "base_stone": "basalt",
+    "plinth_stone": "fieldstone",
+    "tower": "white_siding",
+    "band": "door_black",
+    "iron": "door_black",
+    "door": "door_black",
+    "trim": "trim_white",
+    "roof": "roof_tar",
+    "window": "pane_glass",
+    "lantern": "lamplit_glass"
+  },
+  "ops": [
+    {"op": "cylinder", "base": [24.5, 0, 24.5], "radius": 13.6, "height": 1, "mat": "base_stone", "part": "stone"},
+    {"op": "cylinder", "base": [24.5, 1, 24.5], "radius": 13.2, "height": 1, "mat": "base_stone", "part": "stone"},
+    {"op": "cylinder", "base": [24.5, 2, 24.5], "radius": 12.7, "height": 1, "mat": "base_stone", "part": "stone"},
+    {"op": "cylinder", "base": [24.5, 3, 24.5], "radius": 12.1, "height": 2, "mat": "plinth_stone", "part": "stone"},
+    {"op": "cylinder", "base": [24.5, 5, 24.5], "radius": 11.5, "height": 2, "mat": "plinth_stone", "part": "stone"},
+    {"op": "cylinder", "base": [24.5, 7, 24.5], "radius": 10.9, "height": 1, "mat": "plinth_stone", "part": "stone"},
+    {"op": "cylinder", "base": [24.5, 8, 24.5], "radius": 10.4, "height": 6, "mat": "tower", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 14, 24.5], "radius": 10.0, "height": 6, "mat": "tower", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 20, 24.5], "radius": 9.7, "height": 6, "mat": "tower", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 26, 24.5], "radius": 9.4, "height": 6, "mat": "tower", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 32, 24.5], "radius": 9.2, "height": 4, "mat": "band", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 36, 24.5], "radius": 9.0, "height": 3, "mat": "band", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 39, 24.5], "radius": 8.8, "height": 6, "mat": "tower", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 45, 24.5], "radius": 8.6, "height": 6, "mat": "tower", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 51, 24.5], "radius": 8.4, "height": 7, "mat": "tower", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 58, 24.5], "radius": 8.2, "height": 6, "mat": "tower", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 64, 24.5], "radius": 8.0, "height": 4, "mat": "band", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 68, 24.5], "radius": 7.9, "height": 3, "mat": "band", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 71, 24.5], "radius": 7.75, "height": 6, "mat": "tower", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 77, 24.5], "radius": 7.6, "height": 6, "mat": "tower", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 83, 24.5], "radius": 7.45, "height": 6, "mat": "tower", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 89, 24.5], "radius": 7.3, "height": 5, "mat": "tower", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 94, 24.5], "radius": 7.15, "height": 4, "mat": "band", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 98, 24.5], "radius": 7.05, "height": 3, "mat": "band", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 101, 24.5], "radius": 6.95, "height": 8, "mat": "tower", "part": "wall"},
+    {"op": "cylinder", "base": [24.5, 109, 24.5], "radius": 7.4, "height": 1, "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [23, 24, 14], "to": [26, 28, 16], "mat": "air"},
+    {"op": "box", "from": [23, 24, 16], "to": [26, 28, 17], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [22, 23, 14], "to": [27, 24, 17], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [22, 28, 14], "to": [27, 29, 17], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [32, 44, 23], "to": [34, 48, 26], "mat": "air"},
+    {"op": "box", "from": [31, 44, 23], "to": [32, 48, 26], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [31, 43, 22], "to": [34, 44, 27], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [31, 48, 22], "to": [34, 49, 27], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [23, 55, 32], "to": [26, 59, 34], "mat": "air"},
+    {"op": "box", "from": [23, 55, 31], "to": [26, 59, 32], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [22, 54, 31], "to": [27, 55, 34], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [22, 59, 31], "to": [27, 60, 34], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [16, 75, 23], "to": [18, 79, 26], "mat": "air"},
+    {"op": "box", "from": [18, 75, 23], "to": [19, 79, 26], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [16, 74, 22], "to": [19, 75, 27], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [16, 79, 22], "to": [19, 80, 27], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [23, 85, 16], "to": [26, 89, 18], "mat": "air"},
+    {"op": "box", "from": [23, 85, 18], "to": [26, 89, 19], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [22, 84, 16], "to": [27, 85, 19], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [22, 89, 16], "to": [27, 90, 19], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [23, 103, 17], "to": [26, 106, 19], "mat": "air"},
+    {"op": "box", "from": [23, 103, 19], "to": [26, 106, 20], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [22, 102, 17], "to": [27, 103, 20], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [22, 106, 17], "to": [27, 107, 20], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [23, 103, 30], "to": [26, 106, 32], "mat": "air"},
+    {"op": "box", "from": [23, 103, 29], "to": [26, 106, 30], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [22, 102, 29], "to": [27, 103, 32], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [22, 106, 29], "to": [27, 107, 32], "mat": "plinth_stone", "part": "stone"},
+    {"op": "cylinder", "base": [24.5, 110, 24.5], "radius": 7.7, "height": 1, "mat": "plinth_stone", "part": "stone"},
+    {"op": "cylinder", "base": [24.5, 111, 24.5], "radius": 8.5, "height": 1, "mat": "plinth_stone", "part": "stone"},
+    {"op": "cylinder", "base": [24.5, 112, 24.5], "radius": 9.5, "height": 1, "mat": "plinth_stone", "part": "stone"},
+    {"op": "cylinder", "base": [24.5, 113, 24.5], "radius": 10.5, "height": 1, "mat": "plinth_stone", "part": "stone"},
+    {"op": "cylinder", "base": [24.5, 114, 24.5], "radius": 11.4, "height": 1, "mat": "plinth_stone", "part": "stone"},
+    {"op": "cylinder", "base": [24.5, 115, 24.5], "radius": 11.6, "height": 1, "mat": "iron", "part": "floor"},
+    {
+      "op": "segment",
+      "points": [[31.07, 109.5, 26.26], [35.32, 114.6, 27.4]],
+      "radius": 0.45,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[29.31, 109.5, 29.31], [32.42, 114.6, 32.42]],
+      "radius": 0.45,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[26.26, 109.5, 31.07], [27.4, 114.6, 35.32]],
+      "radius": 0.45,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[22.74, 109.5, 31.07], [21.6, 114.6, 35.32]],
+      "radius": 0.45,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[19.69, 109.5, 29.31], [16.58, 114.6, 32.42]],
+      "radius": 0.45,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[17.93, 109.5, 26.26], [13.68, 114.6, 27.4]],
+      "radius": 0.45,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[17.93, 109.5, 22.74], [13.68, 114.6, 21.6]],
+      "radius": 0.45,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[19.69, 109.5, 19.69], [16.58, 114.6, 16.58]],
+      "radius": 0.45,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[22.74, 109.5, 17.93], [21.6, 114.6, 13.68]],
+      "radius": 0.45,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[26.26, 109.5, 17.93], [27.4, 114.6, 13.68]],
+      "radius": 0.45,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[29.31, 109.5, 19.69], [32.42, 114.6, 16.58]],
+      "radius": 0.45,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[31.07, 109.5, 22.74], [35.32, 114.6, 21.6]],
+      "radius": 0.45,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[35.22, 115.5, 27.37], [35.22, 120.3, 27.37]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[32.35, 115.5, 32.35], [32.35, 120.3, 32.35]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[27.37, 115.5, 35.22], [27.37, 120.3, 35.22]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[21.63, 115.5, 35.22], [21.63, 120.3, 35.22]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[16.65, 115.5, 32.35], [16.65, 120.3, 32.35]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[13.78, 115.5, 27.37], [13.78, 120.3, 27.37]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[13.78, 115.5, 21.63], [13.78, 120.3, 21.63]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[16.65, 115.5, 16.65], [16.65, 120.3, 16.65]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[21.63, 115.5, 13.78], [21.63, 120.3, 13.78]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[27.37, 115.5, 13.78], [27.37, 120.3, 13.78]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[32.35, 115.5, 16.65], [32.35, 120.3, 16.65]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[35.22, 115.5, 21.63], [35.22, 120.3, 21.63]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [35.22, 118.0, 27.37],
+        [32.35, 118.0, 32.35],
+        [27.37, 118.0, 35.22],
+        [21.63, 118.0, 35.22],
+        [16.65, 118.0, 32.35],
+        [13.78, 118.0, 27.37],
+        [13.78, 118.0, 21.63],
+        [16.65, 118.0, 16.65],
+        [21.63, 118.0, 13.78],
+        [27.37, 118.0, 13.78],
+        [32.35, 118.0, 16.65],
+        [35.22, 118.0, 21.63],
+        [35.22, 118.0, 27.37]
+      ],
+      "radius": 0.35,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [35.22, 120.3, 27.37],
+        [32.35, 120.3, 32.35],
+        [27.37, 120.3, 35.22],
+        [21.63, 120.3, 35.22],
+        [16.65, 120.3, 32.35],
+        [13.78, 120.3, 27.37],
+        [13.78, 120.3, 21.63],
+        [16.65, 120.3, 16.65],
+        [21.63, 120.3, 13.78],
+        [27.37, 120.3, 13.78],
+        [32.35, 120.3, 16.65],
+        [35.22, 120.3, 21.63],
+        [35.22, 120.3, 27.37]
+      ],
+      "radius": 0.45,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {"op": "cylinder", "base": [24.5, 116, 24.5], "radius": 6.2, "height": 3, "mat": "iron", "part": "metal"},
+    {"op": "cylinder", "base": [24.5, 119, 24.5], "radius": 6.6, "height": 1, "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [23, 116, 30], "to": [26, 119, 32], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [24, 116, 30], "to": [25, 119, 32], "mat": "door", "part": "timber"},
+    {"op": "cylinder", "base": [24.5, 120, 24.5], "radius": 5.4, "height": 8, "mat": "lantern", "part": "glass"},
+    {
+      "op": "segment",
+      "points": [[29.63, 119.5, 26.62], [29.63, 128.5, 26.62]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[26.62, 119.5, 29.63], [26.62, 128.5, 29.63]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[22.38, 119.5, 29.63], [22.38, 128.5, 29.63]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[19.37, 119.5, 26.62], [19.37, 128.5, 26.62]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[19.37, 119.5, 22.38], [19.37, 128.5, 22.38]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[22.38, 119.5, 19.37], [22.38, 128.5, 19.37]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[26.62, 119.5, 19.37], [26.62, 128.5, 19.37]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[29.63, 119.5, 22.38], [29.63, 128.5, 22.38]],
+      "radius": 0.42,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [29.63, 124.2, 26.62],
+        [26.62, 124.2, 29.63],
+        [22.38, 124.2, 29.63],
+        [19.37, 124.2, 26.62],
+        [19.37, 124.2, 22.38],
+        [22.38, 124.2, 19.37],
+        [26.62, 124.2, 19.37],
+        [29.63, 124.2, 22.38],
+        [29.63, 124.2, 26.62]
+      ],
+      "radius": 0.32,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {"op": "cylinder", "base": [24.5, 128, 24.5], "radius": 6.9, "height": 1, "mat": "iron", "part": "metal"},
+    {"op": "cylinder", "base": [24.5, 129, 24.5], "radius": 6.2, "height": 1, "mat": "iron", "part": "roof"},
+    {"op": "cylinder", "base": [24.5, 130, 24.5], "radius": 5.4, "height": 1, "mat": "iron", "part": "roof"},
+    {"op": "cylinder", "base": [24.5, 131, 24.5], "radius": 4.4, "height": 1, "mat": "iron", "part": "roof"},
+    {"op": "cylinder", "base": [24.5, 132, 24.5], "radius": 3.2, "height": 1, "mat": "iron", "part": "roof"},
+    {"op": "cylinder", "base": [24.5, 133, 24.5], "radius": 1.9, "height": 1, "mat": "iron", "part": "roof"},
+    {"op": "cylinder", "base": [24.5, 134, 24.5], "radius": 0.65, "height": 1, "mat": "iron", "part": "metal"},
+    {"op": "ellipsoid", "centre": [24.5, 136.0, 24.5], "radius": [1.4, 1.2, 1.4], "mat": "iron", "part": "metal"},
+    {
+      "op": "segment",
+      "points": [[24.5, 136.8, 24.5], [24.5, 139.8, 24.5]],
+      "radius": 0.4,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[23.1, 138.5, 24.5], [25.9, 138.5, 24.5]],
+      "radius": 0.35,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {"op": "box", "from": [18, 0, 8], "to": [31, 3, 17], "mat": "base_stone", "part": "stone"},
+    {"op": "box", "from": [19, 3, 8], "to": [30, 6, 17], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [19, 5, 7], "to": [30, 6, 9], "mat": "plinth_stone", "part": "stone"},
+    {
+      "op": "repeat",
+      "count": 6,
+      "step": [0, 1, 1],
+      "ops": [{"op": "box", "from": [21, 0, 2], "to": [28, 1, 8], "mat": "plinth_stone", "part": "stone"}]
+    },
+    {"op": "box", "from": [20, 0, 1], "to": [21, 3, 4], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [20, 0, 4], "to": [21, 5, 6], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [20, 0, 6], "to": [21, 6, 8], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [28, 0, 1], "to": [29, 3, 4], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [28, 0, 4], "to": [29, 5, 6], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [28, 0, 6], "to": [29, 6, 8], "mat": "plinth_stone", "part": "stone"},
+    {
+      "op": "segment",
+      "points": [[20.5, 2.5, 2.0], [20.5, 4.3, 2.0], [20.5, 8.2, 7.8], [20.5, 5.5, 7.8]],
+      "radius": 0.4,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[28.5, 2.5, 2.0], [28.5, 4.3, 2.0], [28.5, 8.2, 7.8], [28.5, 5.5, 7.8]],
+      "radius": 0.4,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {"op": "walls", "from": [19, 6, 8], "to": [30, 15, 17], "thick": 2, "mat": "tower", "part": "wall"},
+    {"op": "box", "from": [19, 6, 8], "to": [20, 15, 9], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [29, 6, 8], "to": [30, 15, 9], "mat": "trim", "part": "timber"},
+    {"op": "walls", "from": [19, 14, 8], "to": [30, 15, 17], "thick": 1, "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [22, 6, 8], "to": [27, 14, 9], "mat": "air"},
+    {"op": "box", "from": [22, 6, 9], "to": [27, 12, 10], "mat": "door", "part": "timber"},
+    {"op": "box", "from": [22, 12, 9], "to": [27, 14, 10], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [24, 12, 9], "to": [25, 14, 10], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [21, 6, 8], "to": [22, 14, 9], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [27, 6, 8], "to": [28, 14, 9], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [21, 14, 7], "to": [28, 15, 9], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [19, 9, 11], "to": [20, 12, 14], "mat": "air"},
+    {"op": "box", "from": [20, 9, 11], "to": [21, 12, 14], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [18, 8, 10], "to": [21, 9, 15], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [18, 12, 10], "to": [21, 13, 15], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [29, 9, 11], "to": [30, 12, 14], "mat": "air"},
+    {"op": "box", "from": [28, 9, 11], "to": [29, 12, 14], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [28, 8, 10], "to": [31, 9, 15], "mat": "plinth_stone", "part": "stone"},
+    {"op": "box", "from": [28, 12, 10], "to": [31, 13, 15], "mat": "trim", "part": "timber"},
+    {"op": "gable", "from": [18, 15, 7], "to": [31, 15, 18], "axis": "z", "rise": 1, "mat": "roof", "part": "roof"},
+    {"op": "box", "from": [20, 15, 7], "to": [29, 16, 8], "mat": "air"},
+    {"op": "box", "from": [21, 16, 7], "to": [28, 17, 8], "mat": "air"},
+    {"op": "box", "from": [22, 17, 7], "to": [27, 18, 8], "mat": "air"},
+    {"op": "box", "from": [23, 18, 7], "to": [26, 19, 8], "mat": "air"},
+    {"op": "box", "from": [24, 19, 7], "to": [25, 20, 8], "mat": "air"},
+    {"op": "box", "from": [20, 15, 8], "to": [29, 16, 9], "mat": "tower", "part": "wall"},
+    {"op": "box", "from": [21, 16, 8], "to": [28, 17, 9], "mat": "tower", "part": "wall"},
+    {"op": "box", "from": [22, 17, 8], "to": [27, 18, 9], "mat": "tower", "part": "wall"},
+    {"op": "box", "from": [23, 18, 8], "to": [26, 19, 9], "mat": "tower", "part": "wall"},
+    {"op": "box", "from": [24, 19, 8], "to": [25, 20, 9], "mat": "tower", "part": "wall"},
+    {"op": "box", "from": [24, 16, 8], "to": [25, 18, 9], "mat": "trim", "part": "timber"}
+  ]
+}

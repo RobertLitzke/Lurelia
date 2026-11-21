@@ -4,7 +4,17 @@
 //! - `flock`: a flying flock (starlings). The birds wheel round a slowly
 //!   wandering point, now and then come down together on open ground or a
 //!   tree, and burst up and away when the player comes within `wary`.
-//! - `soar`: a lone bird (an eagle) circling wide and high, never landing.
+//! - `soar`: a lone bird (an eagle) circling wide and high, that now and
+//!   then comes down on the top of a tall tree that affords `perch` (a
+//!   spruce, a fir, a redwood, a drowned snag) and sits there a while.
+//!   One whose species `hunts` stoops: when it is hungry it picks something
+//!   it eats below it in the open (a gull in the air or on the sea, a duck,
+//!   a fish within a metre or so of the surface), dives on it at twice its
+//!   top speed leading it, and at the strike takes it or misses. A kill is
+//!   carried off in the talons (carry.rs), to a tall tree if there is one.
+//! - `glide`: a few big seabirds (albatrosses) sweeping wide circles on held
+//!   wings, that now and then come down together on the highest ground near
+//!   and sit there a while.
 //! - any walking verb with `group`: a family group (deer in twos and threes)
 //!   that grazes together and bolts together (herd.rs).
 //!
@@ -97,7 +107,23 @@ pub enum Mode {
     Land,
     Perch,
     Soar,
+    /// A hunter diving on its prey.
+    Stoop,
 }
+
+/// How long a stoop may last before the hunter gives it up, seconds.
+const STOOP_S: f32 = 14.0;
+/// How far round and below itself a hunter looks for prey, metres.
+const STOOP_REACH_M: f32 = 110.0;
+/// How close the talons must come, metres.
+const STRIKE_M: f32 = 1.6;
+/// Fish deeper than this under the surface are out of reach, metres.
+const FISH_DEPTH_M: f32 = 1.3;
+/// The chance a strike takes its prey: a fish, a bird sitting on the
+/// water, the ground or a perch, a bird in the air (which jinks).
+const TAKE_FISH: f32 = 0.5;
+const TAKE_SITTING: f32 = 0.25;
+const TAKE_FLYING: f32 = 0.3;
 
 /// One flock, kept as its own entity (no Look, so nothing is drawn for it).
 pub struct Flock {
@@ -108,8 +134,24 @@ pub struct Flock {
     pub home: Vec3,
     pub timer: f32,
     phase: f32,
+    /// Sweeps wide and low and roosts high (`glide`).
+    glide: bool,
+    /// Circles high and alone, and perches only on tall trees (`soar`).
+    soar: bool,
+    /// A hunter's prey while it stoops.
+    prey: Option<hecs::Entity>,
+    /// Seconds until a hunter is hungry again, and until it next looks.
+    full: f32,
+    look_t: f32,
+    /// Seconds it has left carrying a kill.
+    hold: f32,
     rng: Rng,
 }
+
+/// The shortest tree a soaring bird comes down on, metres.
+const PERCH_TREE_M: f32 = 14.0;
+/// How far round a soaring bird looks for one, metres.
+const PERCH_REACH_M: f32 = 160.0;
 
 /// A member of a flock.
 pub struct Flyer {
@@ -126,7 +168,10 @@ impl Flock {
 
 /// Spawn a flock of `n` (or a soaring bird, n = 1) of species `s` above `at`.
 pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, at: Vec3, n: u32, seed: u32) -> u32 {
-    let soar = matches!(sp.verb().mover, super::locomotion::Mover::Flock { soar: true });
+    let (soar, glide) = match sp.verb().mover {
+        super::locomotion::Mover::Flock { soar, glide } => (soar, glide),
+        _ => (false, false),
+    };
     let mut f = Flock {
         species: s,
         mode: if soar { Mode::Soar } else { Mode::Fly },
@@ -134,10 +179,17 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, at: Vec3, n: u32, 
         home: at,
         timer: 0.0,
         phase: 0.0,
+        glide,
+        soar,
+        prey: None,
+        full: 0.0,
+        look_t: 0.0,
+        hold: 0.0,
         rng: Rng::new(seed | 1),
     };
     f.timer = 20.0 + f.rand() * 30.0;
     f.phase = f.rand() * std::f32::consts::TAU;
+    f.full = 20.0 + f.rand() * 60.0;
     let height = sp.beh.fly_height.max(3.0);
     let mut members = Vec::new();
     for _ in 0..n.max(1) {
@@ -157,7 +209,8 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, at: Vec3, n: u32, 
 
 /// Step every flock. Birds keep above `terrain.surface` (trees included, so
 /// they can perch in them) and never come down where `terrain.wet`.
-pub fn update(world: &mut hecs::World, species: &[Species], groups: &[Group], dt: f32, threat: &super::startle::Threat, terrain: &Terrain) {
+/// Returns the kills made this step, (hunter, prey), for carry::take.
+pub fn update(world: &mut hecs::World, species: &[Species], groups: &[Group], flora: &super::plants::Flora, dt: f32, threat: &super::startle::Threat, terrain: &Terrain) -> Vec<(hecs::Entity, hecs::Entity)> {
     let player = threat.pos;
     let ground = |x: f32, z: f32| terrain.surface(x, z);
     let wet = |x: f32, z: f32| terrain.wet(x, z);
@@ -171,7 +224,23 @@ pub fn update(world: &mut hecs::World, species: &[Species], groups: &[Group], dt
     for e in empty {
         let _ = world.despawn(e);
     }
-    // Flock decisions: wander, land, flush.
+    // What the hunters could take: every live animal of a kind some soaring
+    // hunter eats, where it is and how it is moving, if it is in the open.
+    let hunters: Vec<bool> = species.iter().map(|s| !s.hunts.is_empty()).collect();
+    let mut quarry: Vec<(hecs::Entity, Vec3, Vec3, usize, Reach)> = Vec::new();
+    if world.query::<&Flock>().iter().any(|f| f.soar && hunters[f.species]) {
+        let eaten: Vec<bool> = (0..species.len()).map(|k| species.iter().any(|s| s.hunts.contains(&k))).collect();
+        for (e, c, l, age, held) in world.query::<(hecs::Entity, &Creature, &Look, Option<&super::age::Age>, Option<&super::carry::Carried>)>().iter() {
+            if !eaten[c.species] || held.is_some() || age.is_some_and(|a| a.dead()) {
+                continue;
+            }
+            if let Some(r) = reach(l.pos, terrain) {
+                quarry.push((e, l.pos, (l.pos - l.prev_pos) / dt.max(1e-3), c.species, r));
+            }
+        }
+    }
+    let quarry_at = |e: hecs::Entity| quarry.iter().find(|q| q.0 == e);
+    // Flock decisions: wander, land, flush, hunt.
     let mut flushed: Vec<hecs::Entity> = Vec::new();
     for (fe, f) in world.query_mut::<(hecs::Entity, &mut Flock)>() {
         let Some(m) = by_flock.get(&fe) else { continue };
@@ -183,42 +252,141 @@ pub fn update(world: &mut hecs::World, species: &[Species], groups: &[Group], dt
         let nerve = super::startle::Nerve::of(sp, None, super::age::Stage::Adult);
         let near_player = m.iter().any(|x| (x.0 - player).length() < super::startle::reach(&nerve, threat, x.0, 6.0));
         f.timer -= dt;
-        f.phase += dt * if f.mode == Mode::Soar { 0.12 } else { 0.18 };
+        f.phase += dt * if f.mode == Mode::Soar || f.glide { 0.12 } else { 0.18 };
+        f.full -= dt;
+        f.hold = (f.hold - dt).max(0.0);
+        f.look_t -= dt;
         match f.mode {
             Mode::Soar => {
                 // Wide, slow circles round a home that drifts.
                 let r = 45.0;
                 f.goal = f.home + Vec3::new(f.phase.cos() * r, 0.0, f.phase.sin() * r);
-                if f.timer <= 0.0 {
-                    let (dx, dz) = (f.rand() - 0.5, f.rand() - 0.5);
-                    f.home += Vec3::new(dx, 0.0, dz) * 60.0;
-                    f.timer = 40.0 + f.rand() * 40.0;
+                if hunters[f.species] && f.full <= 0.0 && f.hold <= 0.0 && f.look_t <= 0.0 && !near_player {
+                    f.look_t = 3.0 + f.rand() * 3.0;
+                    // The nearest thing it eats in reach and below it.
+                    let mut best: Option<(f32, hecs::Entity)> = None;
+                    for q in &quarry {
+                        let flat = Vec3::new(q.1.x - centre.x, 0.0, q.1.z - centre.z).length();
+                        if !sp.hunts.contains(&q.3) || flat > STOOP_REACH_M || q.1.y > centre.y - 4.0 {
+                            continue;
+                        }
+                        if best.is_none_or(|b| flat < b.0) {
+                            best = Some((flat, q.0));
+                        }
+                    }
+                    if let Some((_, e)) = best {
+                        f.prey = Some(e);
+                        f.mode = Mode::Stoop;
+                        f.timer = STOOP_S;
+                    }
+                }
+                if f.mode == Mode::Soar && f.timer <= 0.0 {
+                    // Now and then down onto the top of the tallest of a few
+                    // tall trees in reach, never with the player close.
+                    // With a kill it always looks for a tree to eat it in.
+                    let mut best: Option<(f32, Vec3)> = None;
+                    if (f.hold > 0.0 || f.rand() < 0.4) && !near_player {
+                        for t in flora.near(centre.x, centre.z, PERCH_REACH_M, Some(super::affordance::Affordance::Perch)) {
+                            if t.height < PERCH_TREE_M {
+                                continue;
+                            }
+                            let score = t.height + f.rng.unit() * 8.0;
+                            if best.is_none_or(|b| score > b.0) {
+                                // The tree's own top as the voxels stand, or
+                                // its grown height where they are not built.
+                                let top = ground(t.pos.x, t.pos.z).filter(|y| *y > t.pos.y + t.height * 0.5).unwrap_or(t.pos.y + t.height);
+                                best = Some((score, Vec3::new(t.pos.x, top, t.pos.z)));
+                            }
+                        }
+                    }
+                    if let Some((_, top)) = best {
+                        if std::env::var_os("VG_CATCH_M").is_some() {
+                            eprintln!("VG_CATCH: to a tree top at {:.0},{:.0},{:.0}{}", top.x, top.y, top.z, if f.hold > 0.0 { " with a kill" } else { "" });
+                        }
+                        f.goal = top;
+                        f.mode = Mode::Land;
+                        f.timer = 50.0;
+                    } else {
+                        let (dx, dz) = (f.rand() - 0.5, f.rand() - 0.5);
+                        f.home += Vec3::new(dx, 0.0, dz) * 60.0;
+                        f.timer = 40.0 + f.rand() * 40.0;
+                    }
+                }
+            }
+            Mode::Stoop => {
+                // Dive at where the prey will be by the time it gets there.
+                match f.prey.and_then(quarry_at) {
+                    Some(q) if f.timer > 0.0 => {
+                        let eta = (q.1 - centre).length() / (sp.beh.flee_speed.max(4.0) * 2.0);
+                        let lead = q.2 * eta.min(2.0);
+                        f.goal = q.1 + Vec3::new(lead.x, lead.y.max(0.0), lead.z);
+                        if q.4 == Reach::Fish {
+                            // It takes a fish at the surface, not under it.
+                            f.goal.y = terrain.sea;
+                        }
+                    }
+                    _ => {
+                        // Gone, out of the open, or taken too long.
+                        f.prey = None;
+                        f.mode = Mode::Soar;
+                        f.full = 10.0 + f.rand() * 20.0;
+                        f.home = centre;
+                        f.timer = 20.0 + f.rand() * 20.0;
+                    }
                 }
             }
             Mode::Fly => {
-                let r = 12.0 + n.sqrt() * 2.0;
+                let r = if f.glide { 60.0 } else { 12.0 + n.sqrt() * 2.0 };
                 f.goal = f.home + Vec3::new(f.phase.cos() * r, 0.0, (f.phase * 1.3).sin() * r * 0.7);
                 if f.timer <= 0.0 {
-                    if f.rand() < 0.5 && !near_player {
-                        // Come down somewhere near.
-                        let a = f.rand() * std::f32::consts::TAU;
-                        let p = centre + Vec3::new(a.cos(), 0.0, a.sin()) * (10.0 + f.rand() * 20.0);
-                        if let (Some(gy), false) = (ground(p.x, p.z), wet(p.x, p.z)) {
-                            f.goal = Vec3::new(p.x, gy, p.z);
+                    // Gliders keep the air like vultures and come down seldom.
+                    let lands = if f.glide { 0.1 } else { 0.5 };
+                    if f.rand() < lands && !near_player {
+                        // Come down somewhere near; gliders on the highest
+                        // dry ground of a few looks round within sight of the
+                        // sea, a ridge, a rock or a bone, but never a tree.
+                        let tries = if f.glide { 10 } else { 1 };
+                        let mut best: Option<Vec3> = None;
+                        for _ in 0..tries {
+                            let a = f.rand() * std::f32::consts::TAU;
+                            let reach = if f.glide { 15.0 + f.rand() * 45.0 } else { 10.0 + f.rand() * 20.0 };
+                            let p = centre + Vec3::new(a.cos(), 0.0, a.sin()) * reach;
+                            let leafy = f.glide && terrain.ground(p.x, p.z, terrain.store.top_m()).is_some_and(|g| crate::mesh::sprites::leafy(g.1));
+                            let inland = f.glide && terrain.coast(p.x, p.z).is_some_and(|d| d > 40.0);
+                            if leafy || inland {
+                                continue;
+                            }
+                            if let (Some(gy), false) = (ground(p.x, p.z), wet(p.x, p.z)) {
+                                if best.is_none_or(|b| gy > b.y) {
+                                    best = Some(Vec3::new(p.x, gy, p.z));
+                                }
+                            }
+                        }
+                        if let Some(goal) = best {
+                            f.goal = goal;
                             f.mode = Mode::Land;
                             f.timer = 20.0;
                         }
                     } else {
                         let (dx, dz) = (f.rand() - 0.5, f.rand() - 0.5);
-                        f.home = centre + Vec3::new(dx, 0.0, dz) * 50.0;
+                        f.home = centre + Vec3::new(dx, 0.0, dz) * if f.glide { 160.0 } else { 50.0 };
                         f.timer = 15.0 + f.rand() * 25.0;
                     }
                 }
             }
             Mode::Land => {
                 if m.iter().all(|x| x.2) {
+                    if f.soar && std::env::var_os("VG_CATCH_M").is_some() {
+                        eprintln!("VG_CATCH: perched at {:.0},{:.0},{:.0}", m[0].0.x, m[0].0.y, m[0].0.z);
+                    }
                     f.mode = Mode::Perch;
-                    f.timer = 12.0 + f.rand() * 30.0;
+                    f.timer = if f.soar {
+                        45.0 + f.rand() * 90.0
+                    } else if f.glide {
+                        30.0 + f.rand() * 70.0
+                    } else {
+                        12.0 + f.rand() * 30.0
+                    };
                 } else if f.timer <= 0.0 || near_player {
                     flushed.push(fe);
                 }
@@ -234,22 +402,25 @@ pub fn update(world: &mut hecs::World, species: &[Species], groups: &[Group], dt
             let away = Vec3::new(centre.x - player.x, 0.0, centre.z - player.z).normalize_or_zero();
             f.home = centre + away * 40.0;
             f.goal = f.home;
-            f.mode = Mode::Fly;
+            f.mode = if f.soar { Mode::Soar } else { Mode::Fly };
             f.timer = 20.0 + f.rand() * 25.0;
         }
     }
-    let flocks: std::collections::HashMap<hecs::Entity, (Mode, Vec3, usize)> = world.query::<(hecs::Entity, &Flock)>().iter().map(|(e, f)| (e, (f.mode, f.goal, f.species))).collect();
+    let flocks: std::collections::HashMap<hecs::Entity, (Mode, Vec3, usize, bool, Option<hecs::Entity>)> =
+        world.query::<(hecs::Entity, &Flock)>().iter().map(|(e, f)| (e, (f.mode, f.goal, f.species, f.soar, f.prey))).collect();
+    // Strikes this step: (flock, hunter, prey, how the prey was).
+    let mut strikes: Vec<(hecs::Entity, hecs::Entity, hecs::Entity, Reach)> = Vec::new();
     // Members.
-    for (fl, look, morph) in world.query_mut::<(&mut Flyer, &mut Look, Option<&crate::variety::Morph>)>() {
+    for (me, fl, look, morph) in world.query_mut::<(hecs::Entity, &mut Flyer, &mut Look, Option<&crate::variety::Morph>)>() {
         look.begin_step();
         let (pace, _) = crate::variety::pace(morph);
-        let Some(&(mode, goal, s)) = flocks.get(&fl.flock) else {
+        let Some(&(mode, goal, s, soarer, prey)) = flocks.get(&fl.flock) else {
             continue;
         };
         let sp = &species[s];
         let g = &groups[s];
         let cruise = sp.beh.walk_speed.max(2.0) * pace;
-        let top = sp.beh.flee_speed.max(cruise * 1.2) * pace;
+        let top = sp.beh.flee_speed.max(cruise * 1.2) * pace * if mode == Mode::Stoop { 2.0 } else { 1.0 };
         let p = look.pos;
         if flushed.contains(&fl.flock) && fl.perched {
             fl.perched = false;
@@ -267,12 +438,44 @@ pub fn update(world: &mut hecs::World, species: &[Species], groups: &[Group], dt
         let mut acc = steer(p, fl.vel, members.iter().map(|x| (x.0, x.1)), g);
         let to_goal = goal - p;
         match mode {
+            Mode::Stoop => {
+                // Straight at it, as fast as it can go, and the talons out at
+                // the end. A fish is lifted from just under the surface.
+                acc += (to_goal.normalize_or_zero() * top - fl.vel) * 3.0;
+                if let Some(q) = prey.and_then(quarry_at) {
+                    let at = if q.4 == Reach::Fish { Vec3::new(q.1.x, q.1.y.max(terrain.sea - 0.2), q.1.z) } else { q.1 };
+                    if (at - p).length() < STRIKE_M {
+                        strikes.push((fl.flock, me, q.0, q.4));
+                    }
+                }
+            }
             Mode::Land => {
                 // Glide down onto the spot, slowing as it nears.
                 let want = to_goal.normalize_or_zero() * (cruise * (to_goal.length() / 12.0).clamp(0.3, 1.0));
                 acc += (want - fl.vel) * 1.5;
+                if soarer {
+                    // A tree top is a small mark. Over the last stretch it
+                    // flies straight in, slowing all the way, and settles on
+                    // the top itself rather than the flank of the crown.
+                    let d = to_goal.length();
+                    if d < 1.0 {
+                        fl.perched = true;
+                        fl.vel = Vec3::ZERO;
+                        look.pos = goal;
+                        continue;
+                    }
+                    if d < 20.0 {
+                        // From above: over the top first, then down onto it.
+                        let flat = Vec3::new(to_goal.x, 0.0, to_goal.z).length();
+                        let aim = if flat > 1.5 { to_goal + Vec3::Y * 3.0 } else { to_goal };
+                        let da = aim.length().max(1e-3);
+                        fl.vel = aim / da * (d * 0.7).clamp(1.2, cruise);
+                        acc = Vec3::ZERO;
+                    }
+                }
+                let reach = if soarer { 0.0 } else { 6.0 + others as f32 * 0.15 };
                 if let Some(gy) = floor {
-                    if p.y - gy < 0.35 && Vec3::new(to_goal.x, 0.0, to_goal.z).length() < 6.0 + others as f32 * 0.15 && !wet(p.x, p.z) {
+                    if p.y - gy < 0.35 && Vec3::new(to_goal.x, 0.0, to_goal.z).length() < reach && (soarer || !wet(p.x, p.z)) {
                         fl.perched = true;
                         fl.vel = Vec3::ZERO;
                         look.pos.y = gy;
@@ -290,7 +493,7 @@ pub fn update(world: &mut hecs::World, species: &[Species], groups: &[Group], dt
             }
         }
         if let Some(gy) = floor {
-            if p.y < gy + 1.5 && mode != Mode::Land {
+            if p.y < gy + 1.5 && mode != Mode::Land && mode != Mode::Stoop {
                 acc.y += 25.0;
             }
         }
@@ -312,6 +515,67 @@ pub fn update(world: &mut hecs::World, species: &[Species], groups: &[Group], dt
             look.yaw = crate::util::turn_toward(look.yaw, want, (dt * 6.0).min(1.0));
         }
     }
+    // Each strike takes its prey or misses; either way the stoop is over.
+    let mut kills = Vec::new();
+    for (fe, hunter, victim, how) in strikes {
+        let Ok(mut f) = world.get::<&mut Flock>(fe) else {
+            continue;
+        };
+        if f.mode != Mode::Stoop {
+            continue;
+        }
+        let chance = match how {
+            Reach::Fish => TAKE_FISH,
+            Reach::Sitting => TAKE_SITTING,
+            Reach::Flying => TAKE_FLYING,
+        };
+        let took = f.rand() < chance;
+        f.prey = None;
+        f.mode = Mode::Soar;
+        f.home = goal_after_strike(&f);
+        if took {
+            kills.push((hunter, victim));
+            f.full = super::carry::FULL_S;
+            f.hold = super::carry::CARRY_S * 2.0;
+            // Off to a tree with it soon.
+            f.timer = 2.0;
+        } else {
+            f.full = 8.0 + f.rand() * 20.0;
+            f.timer = 20.0 + f.rand() * 20.0;
+        }
+        if std::env::var_os("VG_CATCH_M").is_some() {
+            let at = world.get::<&Look>(hunter).map(|l| l.pos).unwrap_or_default();
+            eprintln!("VG_CATCH: stoop on a {how:?} {} at {:.0},{:.0},{:.0}", if took { "took it" } else { "missed" }, at.x, at.y, at.z);
+        }
+    }
+    kills
+}
+
+/// Where a hunter wheels round after a strike: about where it struck.
+fn goal_after_strike(f: &Flock) -> Vec3 {
+    Vec3::new(f.goal.x, f.home.y, f.goal.z)
+}
+
+/// How a hunter would take an animal, or None if it cannot: under trees or a
+/// roof, or a fish too deep.
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub enum Reach {
+    Flying,
+    Sitting,
+    Fish,
+}
+
+fn reach(p: Vec3, t: &Terrain) -> Option<Reach> {
+    // Anything solid over it (leaves, a roof) hides it from above.
+    let over = t.ground(p.x, p.z, t.store.top_m()).map(|g| g.0);
+    if over.is_some_and(|y| y > p.y + 0.8 && y > t.sea + 0.3) {
+        return None;
+    }
+    if p.y < t.sea - 0.15 {
+        return (p.y > t.sea - FISH_DEPTH_M && t.wet(p.x, p.z)).then_some(Reach::Fish);
+    }
+    let under = over.unwrap_or(p.y).max(t.sea);
+    Some(if p.y > under + 1.5 { Reach::Flying } else { Reach::Sitting })
 }
 
 #[cfg(test)]

@@ -8,7 +8,7 @@
 
 use crate::world::fields::World as Land;
 use crate::world::matlib::{self, flag};
-use crate::world::store::Store;
+use crate::world::store::{Cell, Store};
 use glam::Vec3;
 
 pub struct Terrain<'a> {
@@ -26,7 +26,44 @@ pub fn voxel_ground(store: &Store, x: f32, z: f32, from_y: f32) -> Option<(f32, 
     if !store.loaded(vx, start.max(0), vz) {
         return None;
     }
-    store.top_below(vx, vz, start).map(|(vy, m)| ((vy + 1) as f32 / 4.0, m))
+    // A slab's top is the middle of its voxel.
+    store.top_below(vx, vz, start).map(|(vy, m)| ((vy as f32 + if matlib::slab(m) { 0.5 } else { 1.0 }) / 4.0, m))
+}
+
+/// How far above a body's feet `roof_over` looks for a roof, metres.
+pub const ROOF_LOOK_M: f32 = 40.0;
+
+/// The underside of the roof over `at`, metres, if there is one: the first
+/// solid voxel above head height that is not foliage.
+///
+/// A canopy is not a roof, so a wood stays out of doors. What this tells
+/// apart is a room the land has been laid over -- an arena sunk under
+/// the plain, a cave, Hemlow's Lantern Hole -- where a ray dropped from the
+/// top of the world lands on the plain overhead rather than on the floor
+/// the room is standing on.
+pub fn roof_over(store: &Store, at: Vec3) -> Option<f32> {
+    let vx = (at.x * 4.0).floor() as i32;
+    let vz = (at.z * 4.0).floor() as i32;
+    let lo = ((at.y + 2.0) * 4.0).floor() as i32;
+    let hi = (((at.y + ROOF_LOOK_M) * 4.0) as i32).min(store.top_vox() - 1);
+    (lo.max(0)..=hi).find(|&vy| store.cell(vx, vy, vz) == Cell::Solid).map(|vy| vy as f32 / 4.0)
+}
+
+/// The ground at (x, z) in the room `near` stands in: searched from just
+/// under the roof over `near` when it has one, else from the top of the
+/// world. None where the search starts inside solid, which under a roof is
+/// a wall or the rock round the room, not somewhere to stand.
+pub fn ground_near(store: &Store, x: f32, z: f32, near: Vec3) -> Option<(f32, u8)> {
+    match roof_over(store, near) {
+        Some(roof) => {
+            let from = roof - 0.05;
+            if store.cell((x * 4.0).floor() as i32, (from * 4.0).floor() as i32, (z * 4.0).floor() as i32) != Cell::Open {
+                return None;
+            }
+            voxel_ground(store, x, z, from)
+        }
+        None => voxel_ground(store, x, z, store.top_m()),
+    }
 }
 
 /// A voxel of a material flagged as water (`river_water`, which the old
@@ -67,6 +104,11 @@ fn worst_under(store: &Store, foot: Vec3, half_w: f32, of: impl Fn(u8) -> f32) -
 }
 
 impl Terrain<'_> {
+    /// See `roof_over`.
+    pub fn roof(&self, at: Vec3) -> Option<f32> {
+        roof_over(self.store, at)
+    }
+
     /// See `voxel_ground`.
     pub fn ground(&self, x: f32, z: f32, from_y: f32) -> Option<(f32, u8)> {
         voxel_ground(self.store, x, z, from_y)
@@ -125,6 +167,38 @@ impl Terrain<'_> {
         self.land.map_or(self.sea - 10.0, |l| l.f.height(x, z))
     }
 
+    /// The bed under a swimmer at `p`: the height field's, unless `p` is
+    /// under an overhang -- an undercut reef, a sea cave -- where it is the
+    /// solid floor below `p` itself. The height field knows only the top of
+    /// the rock, so a fish in the hollow under it kept to the band over it.
+    pub fn bed_under(&self, p: Vec3) -> f32 {
+        let field = self.bed(p.x, p.z);
+        if p.y >= field {
+            return field;
+        }
+        let (vx, vz) = ((p.x * 4.0).floor() as i32, (p.z * 4.0).floor() as i32);
+        let top = (p.y * 4.0).floor() as i32;
+        // A swimmer's bed is at most this far below it; past that, or where
+        // the voxels are not loaded, the height field answers.
+        let lowest = top - 160;
+        for vy in (lowest.max(0)..=top).rev() {
+            if !self.store.loaded(vx, vy, vz) {
+                return field;
+            }
+            if self.store.cell(vx, vy, vz) == Cell::Solid {
+                return (vy + 1) as f32 / 4.0;
+            }
+        }
+        field
+    }
+
+    /// Is `p` inside loaded rock? Water, air and passable voxels are not,
+    /// and nor is anywhere not loaded, which the height field answers for.
+    pub fn in_rock(&self, p: glam::Vec3) -> bool {
+        let (x, y, z) = ((p.x * 4.0).floor() as i32, (p.y * 4.0).floor() as i32, (p.z * 4.0).floor() as i32);
+        self.store.loaded(x, y, z) && !matches!(self.store.cell(x, y, z), Cell::Open | Cell::Water | Cell::Passable)
+    }
+
     /// Width of the world, metres (unbounded without one).
     pub fn size(&self) -> f32 {
         self.land.map_or(f32::MAX, |l| l.f.size)
@@ -154,6 +228,54 @@ mod tests {
     use crate::world::material::STONE;
     use crate::world::store::Voxels;
 
+    /// A fish under an overhang keeps to the floor under it, not to the
+    /// band over the rock the height field remembers.
+    #[test]
+    fn a_swimmer_under_an_overhang_has_the_floor_under_it() {
+        let mut s = pit(STONE);
+        for x in -8..8 {
+            for z in -8..8 {
+                for y in 40..48 {
+                    s.set(x, y, z, STONE);
+                }
+            }
+        }
+        // No world, so the height field is ten metres under the sea: 10 m.
+        let t = Terrain { store: &s, land: None, sea: 20.0 };
+        assert_eq!(t.bed_under(Vec3::new(0.6, 5.0, 0.6)), 2.0, "under the overhang");
+        assert_eq!(t.bed_under(Vec3::new(0.6, 12.5, 0.6)), 10.0, "over it");
+    }
+
+    /// A room under a roof is searched from under the roof, and a wall is
+    /// not somewhere to stand; out from under it the search is from the sky.
+    #[test]
+    fn a_room_under_a_roof_finds_its_own_floor() {
+        let mut s = pit(STONE);
+        // The loaded chunks are the whole world, so the sky is their top.
+        s.height_vox = 64;
+        // A slab roof 10-12 m up over a 4 m square, and one wall under it.
+        for x in -8..8 {
+            for z in -8..8 {
+                for y in 40..48 {
+                    s.set(x, y, z, STONE);
+                }
+            }
+        }
+        for z in -8..8 {
+            for y in 8..40 {
+                s.set(4, y, z, STONE);
+            }
+        }
+        let inside = Vec3::new(0.1, 2.0, 0.1);
+        assert_eq!(roof_over(&s, inside), Some(10.0));
+        assert_eq!(voxel_ground(&s, 0.6, 0.6, s.top_m()).map(|g| g.0), Some(12.0), "from the sky it lands on the roof");
+        assert_eq!(ground_near(&s, 0.6, 0.6, inside).map(|g| g.0), Some(2.0));
+        assert_eq!(ground_near(&s, 1.1, 0.6, inside), None, "inside the wall");
+        let outside = Vec3::new(5.0, 2.0, 5.0);
+        assert_eq!(roof_over(&s, outside), None);
+        assert_eq!(ground_near(&s, 5.0, 5.0, outside).map(|g| g.0), Some(2.0));
+    }
+
     /// Stone with a four-metre square of `hot` let into it, surface at 2 m.
     fn pit(hot: u8) -> Store {
         let mut s = Store::default();
@@ -179,6 +301,17 @@ mod tests {
     /// costs nothing, and a body with one foot over the rim still burns --
     /// which is the case that matters, because nobody walks into a pit
     /// squarely and a pit you can stand on the edge of is not a hazard.
+    /// Rock is rock only where it is loaded: above it is water to a fish,
+    /// and past the loaded chunks the height field has the say.
+    #[test]
+    fn in_rock_is_loaded_solid_only() {
+        let s = pit(STONE);
+        let t = Terrain { store: &s, land: None, sea: 20.0 };
+        assert!(t.in_rock(Vec3::new(1.0, 1.0, 1.0)));
+        assert!(!t.in_rock(Vec3::new(1.0, 3.0, 1.0)));
+        assert!(!t.in_rock(Vec3::new(500.0, 1.0, 500.0)));
+    }
+
     #[test]
     fn a_foot_in_the_fire_is_enough() {
         let hot = 200u8;

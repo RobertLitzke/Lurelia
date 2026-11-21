@@ -1,5 +1,6 @@
 {
   "name": "glassfall",
+  "blurb": "A volcanic island: forest and prairie under an old cone, black sand, and a reef of glass offshore.",
   "size_m": 1024,
   "height_m": 128,
   "sea_level_m": 24,
@@ -42,6 +43,9 @@
     "reef_groove",
     "reef_wall",
     "reef_apron",
-    "glass_reef"
+    "glass_reef",
+    "eelgrass_flats",
+    "wisp_moss",
+    "mudflat"
   ]
 }

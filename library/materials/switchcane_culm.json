@@ -1,0 +1,16 @@
+{
+  "name": "switchcane_culm",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Switchcane culms: olive green, jointed. Passable: you push through a canebrake.",
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "grain",
+    "base": [118, 132, 70],
+    "alt": [98, 112, 58],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [124, 138, 76], "alt": [104, 118, 64]}
+  }
+}

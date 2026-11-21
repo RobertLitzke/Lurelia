@@ -38,7 +38,11 @@ modes, `fire` (left button) and `alt` (right), each one of:
   gun's buttons, and the bore.
 
 Ammo is per weapon, `ammo_max` and `per_shot`; `ammo_max: 0` is a weapon with
-nothing in it to run out of, which is the Digger. `rpm` sets the
+nothing in it to run out of, which is the Digger. Guns that name the same
+`ammo_type` take one kind of round out of one store: the sidearm and the
+minigun are both `bullets`, so what either fires is gone from both and a pad
+for either fills both, while each keeps its own magazine. Guns of one type must
+agree on `ammo_max` (the validator checks). `rpm` sets the
 cadence, `spin_up` the seconds before a minigun reaches it, `kick` how far the
 view climbs, `mag` and `reload_s` the magazine.
 
@@ -55,10 +59,15 @@ engine behind a number in a file:
 | `bore_r` | the ray cuts a tunnel this many metres wide through the world as it goes, and does not stop on a wall | the bore |
 | `burst`, `burst_gap_s` | fires `burst` rounds at `rpm`, then waits `burst_gap_s`; a burst that has started finishes even if the button comes up | sidearm's alt |
 | `splash.curve` | how the burst's damage falls from centre to rim: (1 - x) to this power, 1 a straight line; above 1 the centre and the reach are the same and the damage dies away sooner between (1.22 is about 10% less in all) | rocket launcher |
-| `splash.crater` | the burst takes a ball of this radius in metres out of the world where it goes off; 0.33 is about four voxels of floor | rocket launcher |
+| `splash.crater` | the burst takes a ball of this radius in metres out of the world where it goes off; 0.33 is about four voxels of floor, and under 0.25 is the one solid voxel nearest the burst | rocket launcher, minigun's alt |
+| `burst_spread_deg` | degrees added to the spread for each round already fired in a burst | sidearm's alt |
+| `ring` | the pellets go out evenly round the rim of the `spread_deg` cone, all at one speed, instead of scattered inside it | minigun's alt |
+| `pierce_m` | metres of solid the round goes through, hollowing the way; on a charging mode, scaled by the charge | sniper rifle's alt |
+| `guide` | radians a second a shell turns toward its owner's crosshair | rocket launcher's alt |
+| `ammo_type` | the store the gun's rounds come out of, shared with every gun naming the same type | sidearm, minigun |
 
-A gun with a `zoom` may not also have an `alt`: the sight is the whole of what
-that button does.
+A gun with a `zoom` may have an `alt` only if the alt charges: holding the
+button scopes and winds the shot up, letting go fires it.
 
 ## The arsenal
 
@@ -68,15 +77,15 @@ range and timing:
 | Slot | Gun | Left | Right |
 |---|---|---|---|
 | 1 | Digger | a three-metre blast that takes none of its own (nozzle to the floor and ride the shove onto the gantry), and a spade that bites the wall while the handle is squeezed | a weaker squeeze that throws them much further |
-| 2 | sidearm | a P90-style bullpup, 60 rounds along the top, half again for a head shot | bursts of three at 900 rpm |
+| 2 | sidearm | a P90-style bullpup, 40 rounds along the top, half again for a head shot; takes the minigun's bullets | bursts of six that open out as the muzzle climbs |
 | 3 | goo gun | lobbed globs that land as real sludge: they cling, stack and go off in a chain | hold to grow one glob, up to three times the burst |
 | 4 | bore | a cutting beam sixty metres that takes a metre of wall with it | the same thing wide and short: a doorway through a partition |
 | 5 | pulse gun | a beam held on a target, damage by the second | the same stream focused: half again the reach, steadier |
 | 6 | skipjack | razor discs that bounce four times, out of a bright plastic toy | one that bursts where it lands |
-| 7 | minigun | a wall of bullets after a spin-up | faster, wider, weaker |
+| 7 | minigun | a wall of bullets after a spin-up | all six barrels at once: a ring of burning flechettes at the scrap gun's pace, each biting a voxel out of what it hits |
 | 8 | scrap gun | nine shards you can watch fly | one shell lobbed whole |
-| 9 | rocket launcher | a rocket that bursts on what it meets and takes a few voxels out of it | a bouncing grenade |
-| 0 | sniper rifle | one shot, no falloff, twice the damage in the head | the sight |
+| 9 | rocket launcher | a rocket that bursts on what it meets and takes a few voxels out of it | a guided rocket that follows the crosshair with a lag, a fifth weaker |
+| 0 | sniper rifle | one shot, no falloff, twice the damage in the head | the sight, and a held charge worth half again that goes through 1.25 m of wall; the left button fires it, and letting the sight down drops it |
 
 ## The bench
 
@@ -229,16 +238,21 @@ vanishing.
 "shooter": {
   "weapons": ["minigun", "rocket_launcher", "scrap_gun"],
   "health": 100, "armour": 0,
-  "respawn_s": 1.6,
+  "respawn_s": 5.0,
   "spawns": [[x, z, bearing], ...],
   "fall_damage": false,
   "give_all": true
 }
 ```
 
-`give_all` hands out every weapon full at spawn. Without it a respawn hands
+`respawn_s` is how long the dead wait: 5 s by default and in every world the
+game lists (duelbox, a bench instrument, keeps 2 s). `give_all` hands out every weapon full at spawn. Without it a respawn hands
 back the lowest gun that takes ammunition and everything that takes none --
 the sidearm and the Digger -- and the rest are on the floor as pads.
+An ammunition pad for a gun you are not carrying still hands its rounds over
+(`ammo_without_gun`, on unless a world's `shooter` block says `false`): they
+are kept for the gun and given with it when you find it, and lost at a death,
+as in the older arena shooters.
 A weapon with no ammunition is never taken away, because there is nothing for
 a pad to give it back and a slot that could never be filled again is worse
 than a weapon everybody has.
@@ -247,6 +261,92 @@ Slagdeck has weapon pads but runs with `give_all` on, so for now its weapon pads
 only top up ammunition. With it off, a bot that ran its guns dry and had nothing
 to swap to stood about unarmed; the floor becomes the whole economy again once
 that case is handled.
+
+## Two sides
+
+The launch screen offers TEAM DEATHMATCH on any arena and CAPTURE THE FLAG on
+a world whose `shooter` block has a `ctf` block (`launch::Mode`). Either one sets
+`ShooterDef::teams`, and `shooter/teams.rs` deals the sides: a bot the world put
+on a side stays there (`BotDef::team`), the rest go to the shorter side, and
+the player joins the side the launch screen named or the shorter one. Side 0 is
+cyan and side 1 magenta, the first and third of `avatar::TEAM_COLOURS`, each
+shaded a little per bot. A world's own bot colour is not used in a team match.
+
+The rest is one rule applied in a few places:
+
+- A teammate's round does `friendly_fire` of its damage (0 unless the world
+  says otherwise) and all of its push, so a rocket still lifts a teammate. A
+  blow from anything that can also hurt its own firer (a burst with
+  `self_damage`, a shell with `self_hit`: rockets, goo, scrap, the skipjack)
+  lands in full whatever `friendly_fire` says. It
+  scores no hit, sets no blame and does not count as a blow on a bot
+  (`Shooter::settle`).
+- A teammate killed by one is nobody's kill (`down`).
+- A body comes back at its own side's spawns (`SpawnPoint::team`), as far as
+  it can from the other side.
+- In team deathmatch a side's kills between them reach the target
+  (`round::Goal::TeamKills`). The scoreboard groups the sides.
+
+## Capture the flag
+
+```json
+"ctf": {
+  "flags": [{"team": 0, "at": [x, z]}, {"team": 1, "at": [x, z]}],
+  "captures": 3,
+  "time_s": 600,
+  "return_s": 25,
+  "need_home": true
+}
+```
+
+`shooter/flag.rs` owns the flags the way `pickup.rs` owns the pads, and
+decides every move a flag makes:
+
+| From | What happens | To |
+|---|---|---|
+| Home | an enemy comes within 1.3 m of the stand | Carried |
+| Carried | the carrier dies | Dropped where they fell, on the floor under it |
+| Dropped | one of its own side comes within reach | Home, a return |
+| Dropped | an enemy comes within reach | Carried |
+| Dropped | `return_s` runs out, or it lies in burning ground or the void | Home |
+| Carried | the carrier reaches their own stand with their own flag home | Home, a capture |
+
+Everything else listens to the `flag::Event`s that come out of a step. The
+scores count grabs, captures and returns, the feed gets a line, the player gets
+an alert across the top of the screen worded for their side (`Shooter::heard_flag`),
+and the team brain re-plans at once (docs/BOTS.md, "The team"). The match ends
+at the capture count or on the clock, a level match on the clock being a draw
+(`round::Goal::Captures`). The command line plays a world's own count and
+clock; the launch screen overrides them.
+
+The HUD in a team match has the sides' scores top middle with the clock
+between them and, under each, where its flag is: HOME, TAKEN and the carrier's
+name, or DOWN and the seconds before it goes home. A player carrying a flag
+gets a pulsing border in its colour. `Activity::marks` puts markers on the
+screen through walls, pinned to the edge when off it (`modes::draw_marks`,
+projected by `Game`, which has the camera). The shooter marks a flag lying
+anywhere, a teammate carrying one, our own flag on an enemy's back while one
+of our bots can see them, and home while the player carries. These are the
+same things a bot's side may know.
+
+A flag is a lit pole and cloth in the side's colour (`avatar::FLAG_M`), on its
+stand, lying where it fell, or across a carrier's back. A stand is a lit ring
+on the floor (`STAND_M`), there whether or not the flag is. A flag away from
+its stand has a tall column of light over it.
+
+`--validate` checks a CTF layout (`teams::check`): a flag for each side within
+3 m of a nav node, two spawns a side, a route from each side's spawns to the
+other flag and from there home, and the two sides' runs within a tenth of
+each other.
+
+The two CTF worlds are written by their scripts, which lay the structure, the
+nav graph, the spawns, the flags and the pads together. `worlds/ctfbox/make_box.py`
+writes the bench room. `worlds/sluice/make_map.py` writes Sluice, which is
+mirrored about its middle by construction (every box is laid twice): two pump
+yards across a drained spillway, joined by a gantry three metres up along the
+north wall, the spillway floor two metres down with three gate pillars in it,
+and a roofed culvert with a dog-leg along the south wall. Neither world issues
+the bore or the Digger, which cut routes the nav graph does not know.
 
 ## How a body moves in an arena
 
@@ -274,6 +374,10 @@ undo every climb and drop the terrain is laid out for. An air jump *sets* the
 climb rather than adding to it, so falling fast and jumping still gets you up
 and rising fast gains nothing by it.
 
+A world may set its own gravity (`"gravity": {"g": 0.3}`, GUIDE.md "Gravity").
+Starfall does: every jump goes about three times as high, and a body in the
+air there is steered by its keys however fast it is going.
+
 A bot is the same body with the same flag, so it boosts and triple-jumps for
 nothing, and it dodges too -- by tapping the keys, not by being handed a move
 the player has not got. `steer::Tapper` is the hand; `Duel::may_dodge` is the
@@ -292,7 +396,7 @@ jump is tuned against, and a corpse should go further than a rocket jump is
 worth. Under `FLUNG` metres a second the body simply drops where it stood.
 
 A bot a burst kills (`Hit::blast`: a burst, or a shell that bursts) comes
-apart instead (`shooter/gibs.rs`): every bone's part and the three chest lamps
+apart instead (`shooter/gibs.rs`): every bone's part and the two chest lamp bars
 fly off from the pose it died in, bounce and settle, and are gone when it
 respawns. Every dead bot's lamps flash white and gutter out over most of a
 second (`lamp_dying`), with sparks off them at the moment of death.
@@ -382,10 +486,12 @@ Three rules do most of the work:
 
 Health comes in a vial (+10), a pack (+25) and a crate (+50). The amount is
 the only thing a world states; `pickup::Size::of` reads the size off it, and
-the size is what decides how big the pad is drawn, how tall its beacon
-stands and how long it takes to come back (12, 20 and 40 seconds). So a map
-asks for a crate by writing `"amount": 50.0`, and a pad with no amount is
-the middle one.
+the size decides how long it takes to come back (12, 20 and 40 seconds). So
+a map asks for a crate by writing `"amount": 50.0`, and a pad with no amount
+is the middle one. How big it is drawn is `Pad::scale`, which is not in
+steps: the amount over the middle one (25 health, 50 armour) to the power
+0.55, held between 0.6 and 2.2. Armour is sized the same way, so a 30-point
+plate is smaller than the 50 and a 100-point one is bigger.
 
 `Pad::good` multiplies the bot's urgency by how much of the gap the pad
 actually closes, or the three sizes would be three looks and one decision: a
@@ -393,11 +499,39 @@ bot at ten health would want a vial exactly as much as the crate across the
 hall and take whichever was nearer. The term starts at 0.4 rather than 0, so
 a vial still beats nothing.
 
-Two marks say what is on the floor from a distance:
+What is on a pad turns over it, see-through (`Instance::glass`, drawn after
+everything solid with no depth written and no shadow cast), so it reads as
+something floating there to be taken rather than a solid in the way:
 
-- **A cross over the pad**, the size of what it gives. Three bars, not a
-  flat cross, because the pad turns on the spot and a flat one spends a
-  quarter of every turn edge-on.
+- **Health** is a cross and **armour** a curved breastplate, both in the
+  lamp's emissive slot and tinted green and blue, the size of what they
+  give. Neither is flat, because the pad turns on the spot and a flat shape
+  spends a quarter of every turn edge-on.
+- **Ammunition** is the rounds themselves, one look per kind
+  (`viewmodel::AMMOS`): a can of bullets, two rockets, a hopper of scrap, a
+  jar of sludge, the bore's lit core, a pulse cell, a stack of razor discs,
+  three sniper rounds. The look follows the gun's `ammo_type` where it has
+  one, else its `view`, so guns that share a store share a look.
+- **A gun** is the gun.
+
+Each pad stands on a **platform**: a square of half-height slab a metre
+across (wider under a pickup drawn bigger), in the kind's colour for health
+and armour and the gun's own colour under a gun and under its ammunition.
+The rules lay it, not the world (`Pickups::platforms`, pushed through the
+activity's voxel edits once a pad has found its floor), so any world with
+pickups gets them and the world file says nothing about them. Only level
+floor round the pad is covered, so a platform at the foot of a wall does not
+climb it. A pad with less than two metres of air over the platform or the
+half metre round it gets none: stepping up onto it lifts the head an eighth
+of a metre, and in a tunnel built to body height that hits the ceiling, so
+the platform would be a wall. The materials are `pickup_pad_health`, `pickup_pad_armour` and
+`weapon_pad_<gun>` (`PickupDef::pad_material`), and `worldload::reach` gives
+them ids in a world whose shooter has pads.
+
+Two more marks say what is on the floor from a distance:
+
+- **The platform**, which stays when the pickup has been taken, so an empty
+  pad still says what comes back there.
 - **A column of light** over every pad that is standing, in the pad's own
   colour (`Shooter::beacons`, drawn into the overlay). Depth-tested, so a
   wall still hides one: it says where a thing is from across a room, not
@@ -411,7 +545,7 @@ pass at the height the world states, and `settle_pads` asks again for the
 ones whose column had not loaded.
 
 `nothing_the_avatar_draws_is_empty` checks every model the avatar hands out,
-pad blobs included, because a hand-built shape that comes out empty draws
+the pad blob, the cross and the plate included, because a hand-built shape that comes out empty draws
 nothing without complaint, which a library one does not.
 
 An arsenal holds every weapon the world issues whether or not you have

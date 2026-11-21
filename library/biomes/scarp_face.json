@@ -1,6 +1,6 @@
 {
   "name": "scarp_face",
-  "version": 1,
+  "version": 2,
   "introduced_by": "windbarrow",
   "notes": "The face of the Barrow Edge and the walls of its combes: bare white chalk with the flint band running level along it, junipers out of the cracks, lichen.",
   "priority": 10,
@@ -25,7 +25,9 @@
     {"creature": "lizard", "count": 6},
     {"creature": "marmot", "count": 5},
     {"creature": "bat", "count": 8},
-    {"creature": "sparrow", "count": 6}
+    {"creature": "sparrow", "count": 6},
+    {"creature": "raven", "count": 2}
   ],
-  "collectibles": [{"item": "flint_blade", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}]
+  "collectibles": [{"item": "flint_blade", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}],
+  "sound": {"ground": "stone"}
 }

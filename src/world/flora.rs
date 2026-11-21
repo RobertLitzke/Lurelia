@@ -8,7 +8,7 @@ use super::fields::{World, CELL};
 use super::gen::{Tree, TreeKind};
 use super::noise::{fbm2, hash2, hash32, unit};
 use super::season::{Leaf, Turn};
-use crate::library::{Library, MorphPick, Placement, PlantDef, Worn};
+use crate::library::{Library, MorphPick, Op, Placement, PlantDef, Worn};
 use glam::{Vec2, Vec3};
 use std::f32::consts::TAU;
 
@@ -203,9 +203,95 @@ pub fn grow(lib: &Library, p: &PlantDef, base: Vec3, seed: u32, worn: Worn) -> T
             // Ocotillo: long whip-like canes fanning up and out from one root
             // crown, curving outward toward their tips, each tipped with a
             // narrow flame of flowers (`flower`).
+            //
+            // With `canopy: "tufts"` it is a thorny shrub instead (sea
+            // buckthorn): stiff canes rising nearly upright and arching out
+            // near the top, set with short spurs, small tufts of leaf on the
+            // upper half and berries (`flower`) crowded along the stems.
             let n = lerp(stems, rnd()).round().max(3.0) as usize;
-            let r = trunk_r.max(0.1);
+            // A shrub's canes may be thinner than a voxel: they are drawn as
+            // tubes along their own lines (mesh/lean.rs).
+            let thin = p.canopy == Some(Canopy::Tufts);
+            let r = trunk_r.max(if thin { 0.05 } else { 0.1 });
             let a0 = rnd() * TAU;
+            if thin {
+                let lean = p.cane_lean.unwrap_or(0.3);
+                // Leaf tufts, spurs and berries are a buckthorn's; a shrub
+                // lower than one shrinks them with it.
+                let sz = (height / 2.2).clamp(0.45, 1.0);
+                let spurs = p.cane_spurs.unwrap_or(0.4);
+                // A tuft smaller than this meshes to nothing.
+                const LEAF_MIN: f32 = 0.22;
+                let leafy = p.cane_leaves.unwrap_or(1.0);
+                for k in 0..n {
+                    let az = a0 + k as f32 * TAU / n as f32 + (rnd() - 0.5) * 0.9;
+                    let horiz = Vec3::new(az.cos(), 0.0, az.sin());
+                    let side = Vec3::new(-horiz.z, 0.0, horiz.x);
+                    let tilt0 = 0.1 + rnd() * lean;
+                    // Arching: the bend grows toward the tip.
+                    let bend = match p.cane_bend {
+                        Some(b) => b * (0.5 + rnd()),
+                        None => 0.04 + rnd() * 0.07,
+                    };
+                    let len = height * (0.65 + 0.35 * rnd());
+                    let segs = 7;
+                    // Feet spread through the clump, so the canes stand apart.
+                    let mut at = base + horiz * crown * (0.15 + 0.45 * rnd()) + Vec3::Y * 0.1;
+                    for s in 0..segs {
+                        let tilt = tilt0 + bend * (s * s) as f32 * 0.25;
+                        let d = (Vec3::Y * tilt.cos() + horiz * tilt.sin()) * (len / segs as f32);
+                        let end = at + d;
+                        let rs = r * (1.0 - 0.45 * s as f32 / segs as f32);
+                        branches.push((at, end, rs));
+                        let up = s as f32 / segs as f32;
+                        if s >= 2 {
+                            // A spur off to one side, angled up.
+                            if rnd() < spurs {
+                                let sg = if rnd() < 0.5 { -1.0 } else { 1.0 };
+                                let from = at.lerp(end, rnd());
+                                let tip = from + (side * sg * 0.8 + horiz * 0.4 + Vec3::Y * 0.9).normalize() * (0.35 + 0.45 * rnd()) * sz;
+                                branches.push((from, tip, rs * 0.7));
+                                if up > 0.4 && rnd() < leafy {
+                                    blobs.push(Blob::ball(tip, ((0.2 + 0.1 * rnd()) * sz).max(LEAF_MIN)));
+                                }
+                            }
+                            // Berries packed round the stem.
+                            if flower.is_some() && !p.flower_tips {
+                                let berries = 2 + (rnd() * 3.0) as usize;
+                                for _ in 0..berries {
+                                    let a = rnd() * TAU;
+                                    let c = at.lerp(end, rnd()) + (side * a.cos() + horiz * a.sin()) * (rs + 0.14 * sz);
+                                    blobs.push(Blob::ball(c, (0.14 + 0.04 * rnd()) * sz.max(0.8)).of(flower.unwrap()));
+                                }
+                            }
+                        }
+                        if up > 0.45 && rnd() < leafy {
+                            blobs.push(Blob::ball(end, ((0.22 + 0.12 * rnd()) * sz).max(LEAF_MIN)));
+                        }
+                        at = end;
+                    }
+                    // An umbel (papyrus): a mop of thin rays out of the tip,
+                    // arching out and over, drawn as sticks.
+                    if let Some(len) = p.cane_umbel {
+                        let rays = 9;
+                        let a1 = rnd() * TAU;
+                        for j in 0..rays {
+                            let az = a1 + j as f32 * TAU / rays as f32;
+                            let o = Vec3::new(az.cos(), 0.0, az.sin());
+                            let up = 0.35 + 0.5 * rnd();
+                            let mid = at + (o * 0.7 + Vec3::Y * up).normalize() * len * 0.55;
+                            let tip = mid + (o - Vec3::Y * 0.35).normalize() * len * 0.5;
+                            branches.push((at, mid, 0.03));
+                            branches.push((mid, tip, 0.03));
+                        }
+                    }
+                    // Flowers in a cluster at the tip.
+                    if let (Some(fl), true) = (flower, p.flower_tips) {
+                        blobs.push(Blob::ball(at, (0.24 + 0.1 * rnd()) * sz.max(0.7)).of(fl));
+                    }
+                }
+                (TreeKind::Broad, 0.3, 0.0)
+            } else {
             for k in 0..n {
                 let az = a0 + k as f32 * TAU / n as f32 + (rnd() - 0.5) * 0.9;
                 // Inner canes nearly upright, outer ones leaning well out;
@@ -237,6 +323,7 @@ pub fn grow(lib: &Library, p: &PlantDef, base: Vec3, seed: u32, worn: Worn) -> T
                 leaf = fl;
             }
             (TreeKind::Broad, 0.3, 0.0)
+            }
         }
         Form::Bamboo => {
             // A bamboo clump: `stems` culms from a patch `crown_radius` m
@@ -377,8 +464,9 @@ pub fn grow(lib: &Library, p: &PlantDef, base: Vec3, seed: u32, worn: Worn) -> T
                     let off = lean * (sway * (t * 2.6 + phase).sin() * t + 0.6 * t);
                     let end = base + Vec3::Y * (0.2 + h * t) + off;
                     branches.push((at, end, 0.14));
-                    // Blades on alternate sides, one per segment.
-                    if t < 0.92 {
+                    // Blades on alternate sides, one per segment; a bull kelp's
+                    // stipe (`flower`, its float) is bare.
+                    if t < 0.92 && flower.is_none() {
                         let side = Vec3::new(-lean.z, 0.0, lean.x) * if s % 2 == 0 { 1.0 } else { -1.0 };
                         blobs.push(Blob::ball(end + side * 0.35 - Vec3::Y * 0.3, 0.32 + 0.12 * rnd()));
                     }
@@ -387,6 +475,9 @@ pub fn grow(lib: &Library, p: &PlantDef, base: Vec3, seed: u32, worn: Worn) -> T
                 // The canopy: blades lying out along the surface, from the
                 // stipe's top out to where the surface is (`height`).
                 let surface = base.y + height;
+                if let Some(fl) = flower {
+                    blobs.push(Blob::ball(at, 0.28 + 0.06 * rnd()).of(fl));
+                }
                 for j in 0..5 {
                     let a = az + (j as f32 - 2.0) * 0.6;
                     let d = 0.5 + j as f32 * 0.6 + rnd() * 0.4;
@@ -559,7 +650,15 @@ pub fn grow(lib: &Library, p: &PlantDef, base: Vec3, seed: u32, worn: Worn) -> T
             for _ in 0..n {
                 let a = rnd() * TAU;
                 let y = height * (0.45 + rnd() * 0.45);
-                blobs.push(Blob::ball(base + Vec3::new(a.cos() * crown * 0.6, y + 0.6, a.sin() * crown * 0.6), 0.0));
+                let tip = base + Vec3::new(a.cos() * crown * 0.6, y + 0.6, a.sin() * crown * 0.6);
+                blobs.push(Blob::ball(tip, 0.0));
+                // A broken limb out of the trunk to it, rising, and a short
+                // dead twig off its upper side.
+                let from = base + Vec3::Y * (y - 0.3);
+                let rs = (trunk_r * 0.35).max(0.06);
+                branches.push((from, tip, rs));
+                let mid = from.lerp(tip, 0.6);
+                branches.push((mid, mid + (tip - from).normalize_or_zero() * 0.3 + Vec3::Y * (0.4 + 0.3 * crown), rs * 0.6));
             }
             leaf = 0;
             (TreeKind::Broad, height, height)
@@ -575,7 +674,32 @@ pub fn grow(lib: &Library, p: &PlantDef, base: Vec3, seed: u32, worn: Worn) -> T
                 let a = rnd() * TAU + k as f32;
                 blobs.push(Blob::ball(base + Vec3::new(a.cos() * crown * 0.7, trunk_h - crown * 0.3, a.sin() * crown * 0.7), crown * 0.6));
             }
-            (TreeKind::Broad, trunk_h, trunk_h - crown * 0.5)
+            // With `stems`, the trunk splits into that many limbs rising out
+            // under the flat crown, each forking once (an acacia); without,
+            // it runs straight up into the cap (a palm, a stone pine).
+            match p.stems {
+                Some(st) => {
+                    let n = lerp(st, rnd()).round().max(2.0) as usize;
+                    let fork = trunk_h * 0.45;
+                    let at = base + Vec3::Y * fork;
+                    let a0 = rnd() * TAU;
+                    for k in 0..n {
+                        let az = a0 + k as f32 * TAU / n as f32 + (rnd() - 0.5) * 0.8;
+                        let out = Vec3::new(az.cos(), 0.0, az.sin());
+                        let elbow = base + out * crown * (0.3 + 0.1 * rnd()) + Vec3::Y * (fork + (trunk_h - fork) * 0.6);
+                        let end = base + out * crown * (0.65 + 0.2 * rnd()) + Vec3::Y * (trunk_h - crown * 0.15);
+                        branches.push((at, elbow, trunk_r * 0.6));
+                        branches.push((elbow, end, trunk_r * 0.4));
+                        for sg in [-1.0f32, 1.0] {
+                            let side = (out + Vec3::new(-out.z, 0.0, out.x) * sg * 0.7).normalize();
+                            let tip = base + side * crown * (0.55 + 0.25 * rnd()) + Vec3::Y * (trunk_h - crown * 0.1);
+                            branches.push((elbow, tip, (trunk_r * 0.22).max(0.06)));
+                        }
+                    }
+                    (TreeKind::Broad, fork + 0.4, trunk_h - crown * 0.5)
+                }
+                None => (TreeKind::Broad, trunk_h, trunk_h - crown * 0.5),
+            }
         }
         Form::Weeping => {
             let trunk_h = height * 0.6;
@@ -583,10 +707,31 @@ pub fn grow(lib: &Library, p: &PlantDef, base: Vec3, seed: u32, worn: Worn) -> T
             blobs.push(Blob::ball(top, crown * 0.8));
             let n = 6;
             let a0 = rnd() * TAU;
+            let trunk_top = base + Vec3::Y * trunk_h;
             for k in 0..n {
                 let a = a0 + k as f32 * TAU / n as f32;
                 let c = top + Vec3::new(a.cos() * crown * 0.85, -crown * (0.6 + rnd() * 0.5), a.sin() * crown * 0.85);
                 blobs.push(Blob::ball(c, crown * 0.5));
+                // A limb arching up and out from the trunk top, then whips
+                // hanging from its end down through the curtain of leaves:
+                // what a willow is in winter.
+                let out = Vec3::new(a.cos(), 0.0, a.sin());
+                let side = Vec3::new(-out.z, 0.0, out.x);
+                let rise = trunk_top + out * crown * 0.3 + Vec3::Y * crown * 0.35;
+                let arch = trunk_top + out * crown * 0.55 + Vec3::Y * crown * 0.25;
+                branches.push((trunk_top, rise, trunk_r * 0.45));
+                branches.push((rise, arch, trunk_r * 0.3));
+                // The whips lean out as they fall, through the curtain and
+                // ending inside it: hung plumb they would be voxel columns,
+                // not tubes, and read as planks.
+                for o in [-1.0f32, 0.0, 1.0] {
+                    let from = arch + side * o * crown * 0.15;
+                    let to = Vec3::new(from.x, c.y - crown * 0.15, from.z) + out * crown * 0.2 + side * o * crown * 0.06;
+                    if o != 0.0 {
+                        branches.push((arch, from, 0.06));
+                    }
+                    branches.push((from, to, 0.05));
+                }
             }
             (TreeKind::Broad, trunk_h, 1.0)
         }
@@ -637,6 +782,7 @@ pub fn grow(lib: &Library, p: &PlantDef, base: Vec3, seed: u32, worn: Worn) -> T
         flare,
         autumn,
         flower: flower.unwrap_or(0),
+        sticks: p.thin_limbs.unwrap_or(0.0),
     }
 }
 
@@ -1243,6 +1389,7 @@ fn stalk_marker(mat: u8, base: Vec3, seed: u32) -> Tree {
         flare: 0.0,
         autumn: 0,
         flower: 0,
+        sticks: 0.0,
     }
 }
 
@@ -1257,13 +1404,17 @@ fn weight(w: &World, pl: &Placement, p: Vec2, biome: u8, seed: u32) -> f32 {
             super::noise::smoothstep(par("min", 0.45), par("max", 0.62), n)
         }
         PlaceVerb::Edge => {
-            // Near where this biome meets another.
+            // Near where this biome meets another; with `field`, only one of
+            // the biomes it names, comma-separated ("rib_dunes,rib_plain":
+            // a beach's edge where the grass starts).
             let width = par("width", 14.0);
+            let only = pl.field.as_deref().map(|names| names.split(',').filter_map(|n| w.lib.biomes.iter().position(|b| b.name == n.trim())).collect::<Vec<_>>());
             let mut near = false;
             for k in 0..8 {
                 let a = k as f32 * TAU / 8.0;
                 let q = p + Vec2::new(a.cos(), a.sin()) * width;
-                if f.biome[f.idx(q.x, q.y)] != biome {
+                let other = f.biome[f.idx(q.x, q.y)];
+                if other != biome && only.as_ref().is_none_or(|o| o.contains(&(other as usize))) {
                     near = true;
                     break;
                 }
@@ -1571,6 +1722,7 @@ fn place_growths(w: &World) -> Vec<super::gen::Tree> {
             flare: 0.0,
             autumn: 0,
             flower: 0,
+            sticks: 0.0,
         });
     }
     out
@@ -1698,6 +1850,7 @@ fn place_vines(w: &World, trees: &mut Vec<super::gen::Tree>, bi: usize, ui: usiz
             flare: 0.0,
             autumn,
             flower: 0,
+            sticks: 0.0,
         })
     };
     let mut add = Vec::new();
@@ -1948,6 +2101,7 @@ fn place_crusts(w: &World, trees: &mut Vec<super::gen::Tree>, bi: usize, ui: usi
             flare: 0.0,
             autumn: 0,
             flower: 0,
+            sticks: 0.0,
         })
     };
     let mut add = Vec::new();
@@ -2285,7 +2439,7 @@ pub fn reseat_features(w: &mut World) {
 pub fn place_features(w: &mut World) {
     let size = w.f.size;
     let sea = w.f.sea;
-    let mut shape_of: std::collections::HashMap<usize, usize> = std::collections::HashMap::new();
+    let mut shape_of: std::collections::HashMap<(usize, u8), (usize, [i32; 3])> = std::collections::HashMap::new();
     let mut adds = Vec::new();
     for (bi, b) in w.lib.biomes.iter().enumerate() {
         for (ui, u) in b.features.iter().enumerate() {
@@ -2330,19 +2484,40 @@ pub fn place_features(w: &mut World) {
                         }
                         lone.push(p);
                     }
-                    adds.push((si, p, unit(hash32(h0 ^ 3)) * 360.0, hash32(h0 ^ 4), seat));
+                    let along = u.placement.params.get("along").copied();
+                    adds.push((si, p, unit(hash32(h0 ^ 3)) * 360.0, hash32(h0 ^ 4), seat, along));
                 }
             }
         }
     }
-    for (si, p, bearing, seed, seat) in adds {
-        let sh = *shape_of.entry(si).or_insert_with(|| {
-            w.shapes.push(super::chronicle::compile_structure(&w.lib, si, &[]));
-            w.shapes.len() - 1
-        });
+    for (si, p, bearing, seed, seat, along) in adds {
         let sd = &w.lib.structures[si];
+        // Logs and bone shards lie at any bearing; anything else turns by
+        // quarters. A log-only feature is compiled once per 15-degree turn
+        // within the quarter.
+        let loose = !sd.level && !sd.decays && sd.base.is_none() && sd.ops.iter().all(|o| matches!(o, Op::Log { .. } | Op::Disc { .. }));
         let mut rot = (((bearing + 45.0) / 90.0) as u8) % 4;
-        if seat.is_some() {
+        let mut turn = 0u8;
+        if loose {
+            let jitter = |spread: f32| (unit(hash32(seed ^ 0x51)) - 0.5) * 2.0 * spread + if seed & 0x100 != 0 { 180.0 } else { 0.0 };
+            let contour = |dx: f32, dz: f32| dz.atan2(dx).to_degrees() + 90.0;
+            let mut theta = bearing;
+            if let Some(spread) = along {
+                // Along the shore, as the tide leaves a log: across the line
+                // to the sea, give or take `along` degrees.
+                let i = |x: f32, z: f32| w.f.coast_dist[w.f.idx(x, z)];
+                theta = contour(i(p.x + 4.0, p.y) - i(p.x - 4.0, p.y), i(p.x, p.y + 4.0) - i(p.x, p.y - 4.0)) + jitter(spread);
+            } else if seat.is_some() {
+                // Across the slope, not up it, so both ends stand at about
+                // the same height.
+                let dx = w.f.height(p.x + 3.0, p.y) - w.f.height(p.x - 3.0, p.y);
+                let dz = w.f.height(p.x, p.y + 3.0) - w.f.height(p.x, p.y - 3.0);
+                theta = contour(dx, dz) + jitter(12.0);
+            }
+            let steps = (theta.rem_euclid(360.0) / 15.0).round() as i32 % 24;
+            rot = (steps / 6) as u8;
+            turn = (steps % 6) as u8;
+        } else if seat.is_some() {
             // Long axis (local X) along the contour, so both ends stand at
             // about the same height: across the slope, not up it.
             let dx = w.f.height(p.x + 3.0, p.y) - w.f.height(p.x - 3.0, p.y);
@@ -2350,8 +2525,21 @@ pub fn place_features(w: &mut World) {
             let along_z = dx.abs() > dz.abs();
             rot = (rot & 2) | along_z as u8;
         }
+        let (sh, anchor) = *shape_of.entry((si, turn)).or_insert_with(|| {
+            let sd = &w.lib.structures[si];
+            let turned = if turn > 0 { super::shape::turn_logs(&sd.ops, sd.size, sd.anchor, turn as f32 * 15.0) } else { None };
+            let (shape, anchor) = match turned {
+                Some((ops, size, anchor)) => {
+                    let resolve = |n: &str| w.lib.material(sd.slots.get(n).map(|s| s.as_str()).unwrap_or(n));
+                    (super::shape::compile(&ops, size, &resolve), anchor)
+                }
+                None => (super::chronicle::compile_structure(&w.lib, si, &[]), sd.anchor),
+            };
+            w.shapes.push(shape);
+            (w.shapes.len() - 1, anchor)
+        });
         let size3 = w.shapes[sh].size;
-        let (ax, az) = super::shape::rotate(sd.anchor[0], sd.anchor[2], size3, rot);
+        let (ax, az) = super::shape::rotate(anchor[0], anchor[2], size3, rot);
         let (fw, fd) = super::shape::rotated_size(size3, rot);
         let vx = (p.x * 4.0).floor() as i32 - ax;
         let vz = (p.y * 4.0).floor() as i32 - az;

@@ -1,6 +1,6 @@
 {
   "name": "kaldvik_spruce",
-  "version": 1,
+  "version": 2,
   "introduced_by": "kaldvik",
   "notes": "Snow-bound spruce on the lower walls and the valley floors of a northern fjord: dense dark firs, a few bare birches, deep snow between.",
   "priority": 3,
@@ -31,8 +31,14 @@
     {"creature": "raven", "count": 3},
     {"creature": "arctic_fox", "count": 3},
     {"creature": "pale_hare", "count": 5},
-    {"creature": "sea_eagle", "count": 1}
+    {"creature": "sea_eagle", "count": 1},
+    {"creature": "ptarmigan", "count": 2},
+    {"creature": "tawny_owl", "count": 1},
+    {"creature": "red_squirrel", "count": 3},
+    {"creature": "wolf", "count": 2},
+    {"creature": "great_horned_owl", "count": 1}
   ],
   "collectibles": [{"item": "pine_cone", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}],
+  "sound": {"leaves": 0.7, "wind": 0.8, "notes": "A close spruce wood: needles, and little wind at the ground."},
   "mist": 0.2
 }

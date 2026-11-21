@@ -1,6 +1,6 @@
 {
   "name": "hollins",
-  "version": 1,
+  "version": 2,
   "introduced_by": "hemlow",
   "notes": "The Hollins: old oak and beech wood with hazel and fern beneath, turning strange near the Hob Stones (gold maples, cherry trees, blossom vines, pale birch, glassbloom). The default of Hemlow.",
   "priority": 1,
@@ -92,7 +92,8 @@
     {"creature": "red_squirrel", "count": 4},
     {"creature": "toad", "count": 3},
     {"creature": "fae_toad", "count": 2},
-    {"creature": "bat", "count": 4}
+    {"creature": "bat", "count": 4},
+    {"creature": "fae_elephant", "count": 1}
   ],
   "collectibles": [{"item": "mushroom", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}]
 }

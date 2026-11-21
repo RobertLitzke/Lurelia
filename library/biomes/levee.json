@@ -12,7 +12,8 @@
     {"plant": "live_oak", "density": 0.0003, "placement": {"verb": "lone", "params": {"spacing": 60}}},
     {"plant": "cottonwood", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 18}}},
     {"plant": "willow", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 10}}},
-    {"plant": "spanish_moss", "density": 0.9, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "spanish_moss", "density": 0.9, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "buttonbush", "density": 0.002, "placement": {"verb": "riparian", "params": {"width": 8}}}
   ],
   "creatures": [
     {"creature": "deer", "count": 3},

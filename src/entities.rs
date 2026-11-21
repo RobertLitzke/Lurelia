@@ -5,7 +5,7 @@
 //! swimmers, pickups, circlers, then bird wing animation.
 
 use crate::creatures::terrain::{voxel_ground, Terrain};
-use crate::creatures::{birds, carry, census, circle, flit, flock, fowl, herd, insects, snake, spawn, swim, walk, woodpecker};
+use crate::creatures::{birds, carry, census, circle, flit, flock, fowl, herd, insects, octopus, snake, spawn, swim, walk, woodpecker};
 use crate::models::{self, Instance, Model};
 use crate::util::{FxHashMap as HashMap, FxHashSet as HashSet};
 use crate::world::fields::World as Land;
@@ -28,6 +28,9 @@ pub struct Entities {
     /// Spray the animals threw up, waiting for `Game` to hand to the
     /// particle pool (src/fx).
     pub cues: Vec<crate::fx::Cue>,
+    /// Footfalls the walkers made this step (creatures/sign.rs), for the
+    /// game to lay as marks.
+    pub steps: Vec<crate::creatures::sign::Step>,
     pub just_collected: u32,
     /// A chronicle-built world: creatures come from its biomes and pickups from
     /// its items.
@@ -70,6 +73,7 @@ impl Entities {
             rng: Rng::new(hash32(seed ^ 0xe7037ed1)),
             gulls_placed: false,
             cues: Vec::new(),
+            steps: Vec::new(),
             just_collected: 0,
             land: None,
             species: Vec::new(),
@@ -89,6 +93,7 @@ impl Entities {
 
     pub fn set_world(&mut self, land: Arc<Land>, species: Vec<Species>, items: Vec<crate::worldload::ItemModel>) {
         self.plants = crate::creatures::plants::Flora::build(&land);
+        crate::items::upgrade_found(&mut self.gems_collected, &land);
         self.land = Some(land);
         self.species = species;
         crate::creatures::link_families(&mut self.species);
@@ -103,7 +108,7 @@ impl Entities {
     pub fn place_one(&mut self, s: usize, (x, z): (f32, f32), store: &Store, models: &[Model], seed: u32) -> bool {
         let Some(land) = self.land.clone() else { return false };
         let mut rng = Rng::new(hash32(seed | 1));
-        if !spawn::place(&mut self.world, &self.species, s, &mut rng, &land, store, models, &self.plants, (x, z), 1, self.clock) {
+        if !spawn::place(&mut self.world, &self.species, s, &mut rng, &land, store, models, &self.plants, (x, z), 1, self.clock, None) {
             return false;
         }
         spawn::dress(&mut self.world, &self.species, s, None, &mut rng);
@@ -156,14 +161,16 @@ impl Entities {
         spawn::roll_morphs(world, species, models, &self.rng);
         walk::attach_life(world, species, models);
         let mut stats = self.pathing;
-        walk::update(world, species, &self.plants, &terrain, dt, threat, slopes, models, self.hour, &self.sky, self.clock, &mut stats, &mut self.cues);
+        walk::update(world, species, &self.plants, &terrain, dt, threat, slopes, models, self.hour, &self.sky, self.clock, &mut stats, &mut self.cues, &mut self.steps);
         herd::update(world, species, dt);
         let groups: Vec<flock::Group> = species.iter().map(|s| s.beh.group.clone().unwrap_or_default()).collect();
-        flock::update(world, species, &groups, dt, threat, &terrain);
+        let kills = flock::update(world, species, &groups, &self.plants, dt, threat, &terrain);
+        carry::take(world, species, models, &kills, self.clock);
         flit::update(world, species, dt, threat, &terrain);
         fowl::update(world, species, models, dt, threat, &terrain);
         woodpecker::update(world, species, &self.plants, dt, threat, &terrain);
         snake::update(world, species, &self.plants, models, dt, threat, &terrain, &mut stats);
+        octopus::update(world, species, models, dt, threat, &terrain);
         insects::update(world, species, &self.plants, dt, threat, &terrain);
         census::count_sitting(world, &terrain, &mut stats);
         let mut swim = swim::Stats {
@@ -252,7 +259,9 @@ impl Entities {
         census::identify(&self.world, &self.species, models, origin, dir, max)
     }
 
-    pub fn instances(&self, alpha: f32, models: &[Model], out: &mut Vec<(usize, Instance)>) {
+    /// `ground` is the height of the surface under (x, z), land or sea, when
+    /// it is known: a creature's shadow fades with its height above it.
+    pub fn instances(&self, alpha: f32, models: &[Model], ground: &dyn Fn(f32, f32) -> Option<f32>, out: &mut Vec<(usize, Instance)>) {
         out.clear();
         let mut fk = Vec::new();
         for (e, look, anim, morph, cr, age) in self
@@ -290,6 +299,8 @@ impl Entities {
             let lift = look.prev_lift + (look.lift - look.prev_lift) * alpha;
             let yaw = look.prev_yaw + crate::util::wrap_angle(look.yaw - look.prev_yaw) * alpha;
             let skeleton = bones.then(|| m.skeleton.as_ref()).flatten();
+            let fade = ground(p.x, p.z).map_or(1.0, |g| shadow_fade(p.y + look.bob + lift - g, m.voxel * scale * 32.0));
+            let first = out.len();
             if let Some(rig) = skeleton.or(m.rig.as_ref()) {
                 // Rigged creatures draw one instance per part (src/anim).
                 let pose = match anim {
@@ -300,6 +311,9 @@ impl Entities {
                 // Bones are their own colours: no coat, no tint.
                 let (tint, shift) = if skeleton.is_some() { ([1.0; 3], [0.0; 3]) } else { (tint, shift) };
                 crate::anim::push_parts(rig, &pose, models, m.voxel, scale, head, m.pivot, at, yaw, [tint[0], tint[1], tint[2], flash], shift, &mut fk, out);
+                if fade < 1.0 {
+                    out[first..].iter_mut().for_each(|(_, i)| i.shift[3] = -fade);
+                }
                 continue;
             }
             out.push((
@@ -309,10 +323,22 @@ impl Entities {
                     info: [m.voxel * scale, m.pivot.x, m.pivot.y, m.pivot.z],
                     tint: [tint[0], tint[1], tint[2], flash],
                     rot: [0.0; 4],
-                    shift: [shift[0], shift[1], shift[2], 0.0],
+                    shift: [shift[0], shift[1], shift[2], if fade < 1.0 { -fade } else { 0.0 }],
                 },
             ));
         }
         out.sort_by_key(|(m, _)| *m);
     }
+}
+
+/// How much of its shadow a creature `height` m above the ground casts, for a
+/// model `span` m across (its 32-voxel grid). The sun is half a degree wide,
+/// so a shadow blurs by about a hundredth of the height it falls; a small
+/// bird's is gone a few times its size up, and a low sun stretches what is
+/// left into a long dark smear far from the bird. Full up to three spans
+/// (and four metres), gone by twelve.
+pub fn shadow_fade(height: f32, span: f32) -> f32 {
+    let near = (span * 3.0).max(4.0);
+    let far = (span * 12.0).max(near + 8.0);
+    (1.0 - (height - near) / (far - near)).clamp(0.0, 1.0)
 }

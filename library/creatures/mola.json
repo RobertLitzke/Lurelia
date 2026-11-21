@@ -1,0 +1,52 @@
+{
+  "name": "mola",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Ocean sunfish: a tall flat grey disc nearly three metres from fin tip to fin tip, with no tail to speak of. Hangs alone just under the surface over deep water, its dorsal fin now and then cutting the swell, and lets you swim right up to it.",
+  "voxel": 0.09,
+  "half_w": 0.5,
+  "height": 2.6,
+  "colors": {"mola": [140, 146, 150], "pale": [190, 194, 194], "fin": [100, 106, 112], "dark": [30, 28, 28]},
+  "behaviour": {
+    "movement": "school",
+    "habit": "hover",
+    "walk_speed": 0.3,
+    "flee_speed": 0.8,
+    "wary": 2,
+    "flightiness": 0.1,
+    "leap": 0,
+    "depth": [2.5, 3.4],
+    "shallows": 12,
+    "spawn_chance": 0.15,
+    "group": {"size": [1, 1]},
+    "active": "any"
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16.5, 15, 14], "radius": [2.6, 8.0, 8.5], "mat": "mola"},
+    {"op": "ellipsoid", "centre": [16.5, 15, 8], "radius": [2.2, 5.6, 3.4], "mat": "mola"},
+    {"op": "box", "from": [16, 22, 17], "to": [17, 26, 22], "mat": "fin"},
+    {"op": "box", "from": [16, 26, 18], "to": [17, 29, 22], "mat": "fin"},
+    {"op": "box", "from": [16, 29, 19], "to": [17, 31, 22], "mat": "fin"},
+    {"op": "box", "from": [16, 4, 17], "to": [17, 8, 22], "mat": "fin"},
+    {"op": "box", "from": [16, 1, 18], "to": [17, 4, 22], "mat": "fin"},
+    {"op": "box", "from": [16, 0, 19], "to": [17, 1, 22], "mat": "fin"},
+    {"op": "recolour", "at": [14, 17, 10], "until": [19, 19, 12], "from": "mola", "to": "pale"},
+    {"op": "recolour", "at": [14, 12, 14], "until": [19, 14, 16], "from": "mola", "to": "pale"},
+    {"op": "recolour", "at": [14, 18, 17], "until": [19, 20, 18], "from": "mola", "to": "pale"},
+    {"op": "recolour", "at": [14, 9, 18], "until": [19, 11, 20], "from": "mola", "to": "pale"},
+    {"op": "recolour", "at": [14, 14, 20], "until": [19, 16, 21], "from": "mola", "to": "pale"},
+    {"op": "recolour_below", "y": 10, "from": "mola", "to": "pale"},
+    {"op": "set", "at": [14, 17, 7], "mat": "dark"},
+    {"op": "set", "at": [19, 17, 7], "mat": "dark"},
+    {"op": "box", "from": [16, 14, 4], "to": [17, 16, 5], "mat": "dark"},
+    {"op": "box", "from": [13, 15, 11], "to": [14, 18, 13], "mat": "fin"},
+    {"op": "box", "from": [19, 15, 11], "to": [20, 18, 13], "mat": "fin"},
+    {"op": "ellipsoid", "centre": [16.5, 15, 23.5], "radius": [1.0, 7.0, 1.6], "mat": "fin", "part": "tail"}
+  ],
+  "vary": {"size": 0.15, "shade": 0.06},
+  "ages": {"juvenile": 0, "bones": "none"},
+  "rig": {
+    "plan": "fish",
+    "bones": [{"name": "body", "role": "root"}, {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 15, 22]}]
+  }
+}

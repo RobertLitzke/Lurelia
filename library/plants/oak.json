@@ -3,12 +3,18 @@
   "version": 1,
   "introduced_by": "glassfall",
   "notes": "Broad canopy hardwood of the lowland woods.",
-  "form": "broad",
+  "form": "branching",
   "height": [9, 13],
   "trunk_radius": [0.28, 0.4],
   "buttress": 0.3,
   "crown_radius": [2.4, 3.3],
   "bark": "bark",
   "leaf": "leaves",
-  "autumn": "leaves_autumn"
+  "curve": "arch",
+  "canopy": "lobes",
+  "leader": 0.25,
+  "fill": 0.7,
+  "spread": 0.7,
+  "autumn": "leaves_autumn",
+  "thin_limbs": 0.12
 }

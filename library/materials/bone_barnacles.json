@@ -1,0 +1,16 @@
+{
+  "name": "bone_barnacles",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Barnacles on the bone between the tides: grey-white cemented plates, pitted, sharp to the hand.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [192, 188, 176],
+    "alt": [166, 160, 148],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [196, 192, 182], "alt": [172, 166, 154]}
+  },
+  "round": true
+}

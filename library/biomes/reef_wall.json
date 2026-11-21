@@ -16,7 +16,12 @@
     {"plant": "tube_sponge", "density": 0.025, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "barrel_sponge", "density": 0.012, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "plate_coral", "density": 0.015, "placement": {"verb": "scatter", "params": {}}},
-    {"plant": "wall_plate_coral", "density": 0.55, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "wall_plate_coral", "density": 0.55, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "sea_whip_violet",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.3, "max": 1.0}}
+    }
   ],
   "creatures": [
     {"creature": "anthias", "count": 140},

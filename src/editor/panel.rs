@@ -15,7 +15,7 @@ pub fn draw(hud: &mut Hud, m: &mut Menu, page: &mut super::Editor, rows: &[Row],
         head: page.head_rows().len(),
         buttons: page.foot_rows().len(),
         side: Side::Right,
-        help_lines: 2,
+        help_lines: 4,
         squeeze: false,
     };
     let (mut top, mut shown) = (page.top, page.shown);

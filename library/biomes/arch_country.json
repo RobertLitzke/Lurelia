@@ -1,6 +1,6 @@
 {
   "name": "arch_country",
-  "version": 1,
+  "version": 2,
   "introduced_by": "redrock",
   "notes": "The slickrock bench east of the canyon where the fins stand: bare sandstone and red sand worn into arches, windows and potholes. Few plants.",
   "priority": 3,
@@ -15,7 +15,8 @@
     {"plant": "ocotillo", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "prickly_pear", "density": 0.002, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "agave", "density": 0.0015, "placement": {"verb": "scatter", "params": {}}},
-    {"plant": "rock_lichen", "density": 0.1}
+    {"plant": "rock_lichen", "density": 0.1},
+    {"plant": "ephedra", "density": 0.003, "placement": {"verb": "scatter", "params": {}}}
   ],
   "features": [
     {"structure": "slickrock_dome", "density": 0.00012, "placement": {"verb": "scatter", "params": {}}},
@@ -26,6 +27,8 @@
     {"creature": "condor", "count": 1},
     {"creature": "desert_tortoise", "count": 2},
     {"creature": "bee", "count": 2},
-    {"creature": "canyon_bat", "count": 4}
-  ]
+    {"creature": "canyon_bat", "count": 4},
+    {"creature": "bighorn", "count": 2}
+  ],
+  "sound": {"ground": "stone"}
 }

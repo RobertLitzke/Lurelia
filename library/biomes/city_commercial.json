@@ -1,6 +1,6 @@
 {
   "name": "city_commercial",
-  "version": 1,
+  "version": 2,
   "introduced_by": "city",
   "notes": "Commercial and industrial land: little planted.",
   "priority": 8,
@@ -15,6 +15,8 @@
       "plant": "salal",
       "density": 0.004,
       "placement": {"verb": "clustered", "params": {"size": 8, "min": 0.0, "max": 1.0}}
-    }
+    },
+    {"plant": "street_maple", "density": 0.0015, "placement": {"verb": "lone", "params": {"spacing": 12}}},
+    {"plant": "street_oak", "density": 0.001, "placement": {"verb": "lone", "params": {"spacing": 14}}}
   ]
 }

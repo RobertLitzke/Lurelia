@@ -1,0 +1,10 @@
+{
+  "name": "sea_whip_violet",
+  "version": 1,
+  "introduced_by": "underwater",
+  "notes": "Violet sea whips, the same rods in a cooler colour, deeper on the wall.",
+  "bark": "whip_violet",
+  "leaf": "whip_violet",
+  "like": "sea_whip",
+  "water_depth": [6, 30]
+}

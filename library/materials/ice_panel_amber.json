@@ -1,0 +1,16 @@
+{
+  "name": "ice_panel_amber",
+  "version": 1,
+  "introduced_by": "transmission",
+  "notes": "Composite wall panelling in a frozen base, painted signal amber: the comms and array rooms, warm against the ice.",
+  "smooth": false,
+  "crisp": true,
+  "texture": {
+    "pattern": "coursed",
+    "base": [152, 120, 76],
+    "alt": [136, 104, 64],
+    "scale": 1,
+    "contrast": 1.0,
+    "calm": {"base": [160, 128, 84], "alt": [144, 112, 72]}
+  }
+}

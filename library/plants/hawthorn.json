@@ -20,5 +20,6 @@
   "stems": [1, 3],
   "flower": "hawthorn_flower",
   "flower_seasons": ["spring"],
-  "affords": ["nectar"]
+  "affords": ["nectar"],
+  "thin_limbs": 0.12
 }

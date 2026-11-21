@@ -1,0 +1,17 @@
+{
+  "name": "dune_grass",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Dunegrass on the stabilised dunes: tan blades with a little green at the root, tall and combed one way by the wind.",
+  "smooth": true,
+  "drift": {"calm": [[112, 130, 88], [156, 150, 104]]},
+  "texture": {
+    "pattern": "noise",
+    "base": [128, 136, 94],
+    "alt": [146, 146, 102],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [126, 136, 94], "alt": [144, 146, 102]}
+  },
+  "grass": {"sparse": 0.18, "dense": 0.75, "short": 2.4}
+}

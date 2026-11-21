@@ -22,5 +22,6 @@
     {"creature": "sky_ray", "count": 3},
     {"creature": "pileated_woodpecker", "count": 1},
     {"creature": "fae_badger", "count": 1}
-  ]
+  ],
+  "sound": {"wind": 0.6}
 }

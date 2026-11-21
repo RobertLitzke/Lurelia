@@ -20,7 +20,7 @@
     "stick_s": 6.0,
     "goo_r": 0.5,
     "kick": 0.5,
-    "splash": {"damage": 40.0, "radius": 3.0, "push": 4.0, "self_damage": 0.5, "self_push": 1.0},
+    "splash": {"damage": 40.0, "radius": 3.0, "push": 4.0, "self_damage": 0.5, "self_push": 1.0, "look": "goo"},
     "tracer": [0.62, 0.9, 0.24],
     "tracer_s": 0.07,
     "look": "goo"
@@ -38,7 +38,7 @@
     "charge_mult": 3.0,
     "per_shot": 4,
     "kick": 0.8,
-    "splash": {"damage": 44.0, "radius": 3.0, "push": 6.0, "self_damage": 0.5, "self_push": 1.0},
+    "splash": {"damage": 44.0, "radius": 3.0, "push": 6.0, "self_damage": 0.5, "self_push": 1.0, "look": "goo"},
     "tracer": [0.68, 0.96, 0.28],
     "tracer_s": 0.09,
     "look": "goo"

@@ -877,6 +877,8 @@
    "bearing": 75,
    "age": 160,
    "poi": "the wreck below the wall"
-  }
+  },
+   {"year": -39, "event": "region", "cause": "wet ground west of the kettle tarn that never drained", "name": "moss", "at": [340, 700], "radius": 55},
+   {"year": -39, "event": "region", "cause": "the river's silt where it meets the sea", "name": "mouth", "at": [792, 704], "radius": 70}
  ]
 }

@@ -13,5 +13,6 @@
   "max_slope": 0.55,
   "crown_base": 0.48,
   "sweep": "droop",
-  "taper": 1.15
+  "taper": 1.15,
+  "affords": ["perch"]
 }

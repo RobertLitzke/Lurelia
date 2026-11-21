@@ -1,0 +1,101 @@
+{
+  "name": "robot_brawny",
+  "version": 1,
+  "introduced_by": "shooter",
+  "notes": "The robot built heavy in the shoulders: a chest two voxels wider and deeper from the ribs up, and arms three voxels thick instead of two, moved a voxel further out so a gap still shows between arm and chest at twenty metres. The arm joints move out with them, which is why this entry gives the whole rig. One of the three builds a deathmatch bot is drawn as (src/brain/avatar.rs); every build keeps the player's collision box and the chest lamp bands at the same height.",
+  "like": "robot",
+  "extra_ops": [
+    {"op": "box", "from": [8, 11, 13], "to": [13, 27, 19], "mat": "air"},
+    {"op": "box", "from": [19, 11, 13], "to": [24, 27, 19], "mat": "air"},
+    {"op": "box", "from": [12, 21, 13], "to": [20, 26, 19], "mat": "body", "part": "chest"},
+    {"op": "box", "from": [12, 22, 13], "to": [20, 23, 19], "mat": "seam", "part": "chest"},
+    {"op": "box", "from": [13, 24, 13], "to": [19, 26, 14], "mat": "dark", "part": "chest"},
+    {"op": "box", "from": [13, 24, 18], "to": [19, 26, 19], "mat": "dark", "part": "chest"},
+    {"op": "box", "from": [11, 24, 15], "to": [12, 26, 17], "mat": "dark", "part": "arm_l"},
+    {"op": "box", "from": [8, 20, 14], "to": [11, 26, 17], "mat": "limb", "part": "arm_l"},
+    {"op": "box", "from": [8, 25, 13], "to": [11, 26, 18], "mat": "body", "part": "arm_l"},
+    {"op": "box", "from": [8, 19, 14], "to": [11, 20, 17], "mat": "dark", "part": "fore_l"},
+    {"op": "box", "from": [8, 14, 14], "to": [11, 19, 17], "mat": "limb", "part": "fore_l"},
+    {"op": "box", "from": [8, 16, 14], "to": [11, 17, 17], "mat": "seam", "part": "fore_l"},
+    {"op": "box", "from": [9, 11, 15], "to": [11, 14, 17], "mat": "dark", "part": "hand_l"},
+    {"op": "box", "from": [20, 24, 15], "to": [21, 26, 17], "mat": "dark", "part": "arm_r"},
+    {"op": "box", "from": [21, 20, 14], "to": [24, 26, 17], "mat": "limb", "part": "arm_r"},
+    {"op": "box", "from": [21, 25, 13], "to": [24, 26, 18], "mat": "body", "part": "arm_r"},
+    {"op": "box", "from": [21, 19, 14], "to": [24, 20, 17], "mat": "dark", "part": "fore_r"},
+    {"op": "box", "from": [21, 14, 14], "to": [24, 19, 17], "mat": "limb", "part": "fore_r"},
+    {"op": "box", "from": [21, 16, 14], "to": [24, 17, 17], "mat": "seam", "part": "fore_r"},
+    {"op": "box", "from": [21, 11, 15], "to": [23, 14, 17], "mat": "dark", "part": "hand_r"},
+    {"op": "recolour", "at": [0, 20, 0], "until": [32, 27, 32], "from": "body", "to": "uniform"}
+  ],
+  "rig": {
+    "plan": "biped",
+    "bones": [
+      {"name": "pelvis", "role": "root", "joint": [16, 16, 16]},
+      {"name": "spine", "role": "spine", "parent": "pelvis", "joint": [16, 17.5, 16], "overlap": 1},
+      {"name": "chest", "role": "spine", "parent": "spine", "joint": [16, 20.5, 16], "overlap": 1},
+      {"name": "neck", "role": "neck", "parent": "chest", "joint": [16, 26.5, 16], "overlap": 1},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16, 27.5, 16], "overlap": 1},
+      {"name": "jaw", "role": "jaw", "parent": "head", "joint": [16, 27.8, 15.5]},
+      {"name": "arm_l", "role": "arm", "parent": "chest", "joint": [10, 25, 16], "side": "l", "overlap": 1},
+      {"name": "fore_l", "role": "arm", "parent": "arm_l", "joint": [10, 19.5, 16], "side": "l", "overlap": 1},
+      {"name": "hand_l", "role": "arm", "parent": "fore_l", "joint": [10, 14, 16], "side": "l", "overlap": 1},
+      {"name": "arm_r", "role": "arm", "parent": "chest", "joint": [22, 25, 16], "side": "r", "overlap": 1},
+      {"name": "fore_r", "role": "arm", "parent": "arm_r", "joint": [22, 19.5, 16], "side": "r", "overlap": 1},
+      {"name": "hand_r", "role": "arm", "parent": "fore_r", "joint": [22, 14, 16], "side": "r", "overlap": 1},
+      {
+        "name": "thigh_l",
+        "role": "leg",
+        "parent": "pelvis",
+        "joint": [14, 15.5, 16],
+        "side": "l",
+        "pair": 0,
+        "overlap": 1
+      },
+      {
+        "name": "shin_l",
+        "role": "leg",
+        "parent": "thigh_l",
+        "joint": [14, 8.5, 16],
+        "side": "l",
+        "pair": 0,
+        "overlap": 1
+      },
+      {
+        "name": "foot_l",
+        "role": "leg",
+        "parent": "shin_l",
+        "joint": [14, 1.5, 16],
+        "side": "l",
+        "pair": 0,
+        "overlap": 1
+      },
+      {
+        "name": "thigh_r",
+        "role": "leg",
+        "parent": "pelvis",
+        "joint": [18, 15.5, 16],
+        "side": "r",
+        "pair": 0,
+        "overlap": 1
+      },
+      {
+        "name": "shin_r",
+        "role": "leg",
+        "parent": "thigh_r",
+        "joint": [18, 8.5, 16],
+        "side": "r",
+        "pair": 0,
+        "overlap": 1
+      },
+      {
+        "name": "foot_r",
+        "role": "leg",
+        "parent": "shin_r",
+        "joint": [18, 1.5, 16],
+        "side": "r",
+        "pair": 0,
+        "overlap": 1
+      }
+    ]
+  }
+}

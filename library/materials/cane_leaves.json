@@ -4,6 +4,7 @@
   "introduced_by": "lowmouth",
   "notes": "Sugar cane: tall jointed stalks and long ribbon leaves, fresh green.",
   "smooth": false,
+  "passable": true,
   "texture": {
     "pattern": "grain",
     "base": [112, 148, 72],

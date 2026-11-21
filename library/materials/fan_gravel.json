@@ -1,0 +1,15 @@
+{
+  "name": "fan_gravel",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Grey quartzite gravel washed out of the ravines and spread over the fans at the foot of the range, with sand between the stones.",
+  "smooth": true,
+  "texture": {
+    "pattern": "gravel",
+    "base": [148, 142, 130],
+    "alt": [118, 114, 106],
+    "scale": 5,
+    "contrast": 0.8,
+    "calm": {"base": [152, 146, 134], "alt": [126, 122, 114]}
+  }
+}

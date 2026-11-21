@@ -29,6 +29,9 @@ pub struct Vale {
     /// Unset: no limit (a river valley that goes over a fall).
     #[serde(default)]
     fall: Option<f32>,
+    /// Bend the path into a smooth curve through its points first (see `canyon`).
+    #[serde(default)]
+    curve: bool,
 }
 
 fn default_meander() -> f32 {
@@ -38,6 +41,7 @@ fn default_meander() -> f32 {
 impl Process for Vale {
     fn apply(&self, cx: &mut EventCtx) -> String {
         let pts: Vec<Vec2> = self.path.iter().map(|p| cx.pos(p)).collect();
+        let pts = if self.curve { crate::world::chronicle::geom::spline(&pts, false, 8.0) } else { pts };
         let line = densify(&pts, self.meander, cx.seed);
         let (seed, cause) = (cx.seed, cx.cause);
         let f = &mut cx.f;

@@ -25,9 +25,10 @@ holds the line; anything that moves a bot by writing its position breaks it.
 | Steering | which keys get me toward that point? | `steer.rs` |
 | Navigation | where are the points? | `nav.rs` |
 | Decision | what do I want? | `duel.rs` |
+| Team | what does my side need? | `team.rs` |
 
-Each layer works without the one above it; only the decision layer is
-per-game. `person.rs` holds the scalars every layer reads, so a difficulty is
+Each layer works without the one above it; only the decision and team
+layers are per-game, and the team layer only runs in capture the flag. `person.rs` holds the scalars every layer reads, so a difficulty is
 a row in a table rather than a branch. `aim.rs` and `desire.rs` serve the
 decision layer.
 
@@ -122,10 +123,27 @@ within 0.5 s after a refused route. A refused node is avoided for `AVOID_S`
 what it wants instead. `a_reachability_flood_is_cheap_enough_to_keep_current`
 asserts a flood stays under a millisecond.
 
-A lift link is the only link that is a wait: near the plate's node the bot
-presses nothing and lets the plate carry it. A wait looks like being stuck, so
-the ride has its own clock: after `RIDE_PATIENCE_S` (12 s) the bot gives up
-and refuses lifts for `NO_LIFTS_S` (25 s).
+A lift link is the only link that is a wait. The bot walks to within 0.6 m of
+the plate's own node (the one the link leaves from, not the landing it
+arrives at, which can be beside the plate), presses nothing until it has
+been carried to the landing's height, then walks off. A wait looks like being
+stuck, so the ride has its own clock: after `RIDE_PATIENCE_S` (12 s) the bot
+gives up and refuses lifts for `NO_LIFTS_S` (25 s).
+
+A route that starts behind the bot (it is already past the first node toward
+the second, on a walk link) starts from the second node.
+
+`Duel::progress` watches the distance to the step being walked. If it has not
+shrunk by 0.4 m in 1.1 s, or the bot has covered under 1.5 m in 2.5 s while
+running (pacing round a knot of close nodes, which resets the step watch at
+every node), the link is routed round for 30 s at a cost of 60 m
+(`Graph::route_with`), and a first node that could not be reached is skipped
+as a start (`nearest_seen_except`); a pad's tail that cannot be reached
+avoids the pad, and the goal is left alone for `AVOID_S`, as it is after a
+jam. This catches a bot running flat out and getting nowhere,
+which the jam watch below cannot see because the body is moving. A bot jumps
+when the next node is more than 0.45 m up and under 2.5 m away, and when the
+floor 0.6 m ahead rises more than the body's 0.5 m step.
 
 ## Steering
 
@@ -136,9 +154,15 @@ keys, which is where flocking would plug in.
 
 `Duel::move_feet` passes each want through, in order:
 
-- `steer::around`, the wall slide. If the line is blocked at step, waist or
-  head height it tries a widening fan along the wall, nearest the wanted
-  heading first, the last pair leaning back so a body can leave a corner. If
+- With nobody to aim at, the keys come from `steer::drive_running`: forward,
+  steering with the head, and a side key only past 45 degrees off the facing.
+- `steer::around_keeping`, the wall slide. If the line is blocked at step,
+  waist or head height it tries a widening fan along the wall, nearest the
+  wanted heading first, the last pair leaning back so a body can leave a
+  corner. The side it slid to is kept for `SLIDE_KEEP_S` (2.5 s), and the ledge
+check's turn along an edge keeps the same side, and every
+  heading on that side is tried before the other, or a body at a doorframe
+  slides back and forth several times a second. If
   every way is blocked it returns the original want, never zero: a zero want
   reads as a bot that chose to stand still, and the jam watch ignores those.
 - `Duel::unjam`. A bot that has asked to move for 0.8 s and covered under
@@ -160,12 +184,22 @@ There is no dodge flag on `MoveInput`, which would hand bots a move no player
 has. The brain sets `Pilot::dodge`, and `step_bodies` takes it and steps a
 `steer::Tapper` once per body step: release, press, release, press.
 
-- The habit, `Duel::may_dodge`, rolls every second against `tactics * 0.6`.
+The same rule catches keys the brain did not mean to tap: a wanted heading
+that wobbles across `drive`'s threshold presses, releases and presses again,
+and the body dodges. Before the tapper guarded against it the league counted
+38 dodges a minute against five asked for. Outside a tap, the `Tapper` will
+not press a key pressed less than 0.3 s ago (`GUARD`), nor a side key within
+0.3 s of the opposite side key going down, which is a sidestep reversed
+before it began.
+
+- The habit, `Duel::may_dodge`, rolls every second against
+  `tactics * DODGE_ODDS` (0.24), about one dodge per ten seconds of fight for
+  an average bot.
   In a fight it dodges the way it was circling, or back if somebody is in its
   face; breaking off, along its way out (`Dodge::toward`, since it is still
   facing its enemy). A novice never dodges.
-- The reaction, `Duel::struck_dodge`, fires on `Me::struck` at the full
-  `tactics`, at most every 0.5 s, across the line from whoever hit it (or
+- The reaction, `Duel::struck_dodge`, fires on `Me::struck` at
+  `tactics * HIT_DODGE_ODDS` (0.4), at most every 0.5 s, across the line from whoever hit it (or
   across its own facing if it does not know who). It beats the habit.
 - Both check floor and burning ground 4 m out, since a dodge covers far more
   ground than a step, and ignore walls: a dodge into one just stops early.
@@ -194,7 +228,12 @@ decisions, `move_feet` asks for a decision at once.
   named node. Distance counts in favour: charging for it keeps a bot in the
   room it started in.
 - Hunt: route to the node nearest where the contact probably is. If that
-  cannot be routed to, roam. Hunts sprint.
+  cannot be routed to, roam. Hunts sprint. Arriving there ends the hunt
+  (`searched`): the bot roams on rather than standing on the spot until
+  `HUNT_S` runs out. With nobody in sight the head turns along the path, at
+  twice the aiming rate, except for `GLANCE_S` (1 s) after losing sight of
+  somebody, when it keeps looking where they went. Under `MEND_FIRST` (55% health) a bot with nobody in sight
+  goes for a pad worth fetching before it hunts or follows a noise.
 - Break: run for a pad that mends it if one is worth the trip, otherwise to
   the reachable node furthest from the enemy, with node `cover` in its favour.
 - Close: beyond `CLOSE_BY_GRAPH_M` (12 m) route through the graph; inside it,
@@ -210,7 +249,18 @@ Slagdeck's sightlines on purpose: the aim cone is a fixed angle, so range
 decides more than anything whether a bot hits.
 
 Fetching: the rules decide what a pad is worth (`Pad::good`) and the brain
-sees only a `Lure`, a point and a number. `Pad::good` must ask what `give`
+sees only a `Lure`, a point, a number and, for a gun, which arsenal slot it
+is. The brain re-weighs a gun by its own rating of it loaded at 14 m against
+the best gun it could have (`0.5 + 0.7 * like`), so a bot goes for the gun it
+fights best with rather than the highest slot. A pack's worth rises as
+`short^1.5`, and a gun or rounds are worth `0.2 + 0.8 * whole` of their value,
+so below about a third of its health a bot wants a pack more than a gun. A
+`Lure` also says whether it heals (`mends`): under `MEND_FIRST` (55%) a pad
+that does not is worth `HURT_ELSE` (0.3) of itself, the walk to a pack costs
+three times as much (nearest first), and a bot with nobody in sight does not
+hunt at all. A bot whose best gun in hand is under `ARMED` (0.99) of its
+favourite fetches before it hunts or follows a noise, with the walk to a gun
+priced the same way. `Pad::good` must ask what `give`
 asks, or bots pace between pads they cannot use
 (`nothing_wants_a_pad_that_would_do_nothing`). The walk costs an eighth of a
 point per ten metres, and a fetch gives up after 5 s plus the walk at 2.5 m/s.
@@ -282,13 +332,24 @@ compiled on demand by `brain::avatar` so it looks the same in every world.
 only: it reads the body and never writes to it, and nothing in `brain/` reads
 one, or a gait could start deciding how fast a bot moves.
 
-Health is three emissive lamps, amber whole to red nearly out, on the collars
-and between the shoulder blades, because the weapon and supporting arm cover
-the chest. Their offsets match recesses in `library/creatures/robot.json`;
-move one and move the other. Plates take a team colour from
-`avatar::TEAM_COLOURS` by bot index unless `BotDef::colour` overrides it. No
-team colour is in the lamp's amber band, and slot zero is cold cyan, so lamps
-can be measured on the first bot without counting plate. A corpse's plates
+Health is two emissive bars, one across the top
+of the chest and one between the shoulder blades, because the weapon and
+supporting arm cover the rest of the chest. They lie in the dark bands at
+y 24-25 in `library/creatures/robot.json`; `avatar::bars` finds the chest's
+front and back on each build's voxels. Every bot is one of three builds
+(`avatar::BUILDS`: brawny, heavy, lean) on the same bones and the same
+collision box as the player. The team colour goes on a uniform, not the whole
+body: the chest and shoulder plates and the kneepads are their own colour
+(`uniform`) and each body part is sliced twice, uniform and the rest, so only
+the uniform half is tinted (`avatar::PAINT`, `Body::paint`). The tint is taken
+most of the way into linear light first (`avatar::plate`); handed over as raw
+bytes it lifted every weak channel and every bot came out pastel. It takes a colour from
+`avatar::TEAM_COLOURS` by bot index unless `BotDef::colour` overrides it, or
+in a team match their side's colour. The lamps are that colour too, brighter
+and more saturated (`avatar::lamp_colour`; in a team match the side's base,
+not the per-bot shade), and run to red as the bot is hurt. Slot zero is cold
+cyan, so a hurt bot's red can be measured on the first bot without counting
+plate. A corpse's plates
 wash to grey; a body killed by a big enough blow is thrown
 (`physics::tumble`) and settles through `anim/ragdoll.rs`.
 
@@ -364,6 +425,80 @@ only in fight behaviour print identical rows, `took` is 0 on a give-all map,
 and `idle` counts passengers waiting on a lift. The fight bracket is a
 small-arena instrument: on a large map bots rarely meet.
 
+Stock is the default errand: health above full is worth up to 0.4 to top up
+to the cap (`OVERHEAL_WORTH`), and a roaming bot fetches anything worth
+`STOCK_FIRST` (0.3) before it follows a noise. A fight or a hunt still comes
+first. A roaming bot fetches any pad worth over `FETCH_IDLE` (0.05), and while roaming
+or hunting with nobody in sight it steps over to any useful pad it can see
+within `PASS_M` (5 m) of where it is (`Duel::in_passing`).
+
+## Shells and goo it can see
+
+`Ctx::threats` is every shell in the air and `Ctx::mines` every goo blob
+lying about. A brain acts only on what is inside its own view cone
+(`peripheral`), within `sight` and in line of sight: nothing behind it.
+
+- `Duel::incoming` flies each shell forward 1.5 s with its gravity. One that
+  will pass within its blast plus 0.9 m of the body, later than the bot can
+  react (0.08 s plus 0.15 of `settle`), is stepped off sideways for 0.45 s,
+  still shooting; under 0.9 s out it is dodged if a `tactics` roll passes and
+  the `dodge` switch is on. `Style::evade` switches it off. Measured in the
+  single-gun league it helps against the lobbed goo and shows nothing
+  against rockets or scrap, which mostly arrive faster than a bot reacts.
+- `Duel::mine_ahead` steers 2 m clear of a visible blob within 5 m of the way
+  it is going (a blob goes off at 1.1 m).
+- `shoot` will not fire a blast that can hurt its owner into a wall within
+  1.2 times its radius, nor a disc that comes back off walls at a wall within
+  4 m. A gun that spins up holds its trigger rather than rolling `cadence`
+  every step, which let the barrels run down.
+
+## The league
+
+`lurelia --world transmission --league N [--tourney-seconds S]`
+(`src/tools/league.rs`) puts five bots of one difficulty (`skilled`) on the
+map at once, free for all, with their own aim, and plays every entrant in
+every slot on each of N seeds, 90 s a match by default. Four seeds is 20
+matches and takes a few seconds on an arena that size. The entrants differ by
+`BotDef::tune`, numbers on `duel::Tuning` (`dodge`, `weave`, `hunt`,
+`greed`, `nerve`), so a code change moves every row and the spread between
+rows says which way a knob wants to go.
+
+It counts what reads as aimless from the other end of a gun:
+
+- objectives: guns picked up a minute and seconds from spawn to the first,
+  health taken while under half, how hurt spells end, and how often a lost
+  enemy is found again inside 6 s;
+- movement: time walking backwards with nobody in sight (`back%`; `fback%`
+  is the same in a fight, where it is fair), two-second stretches with nobody
+  in sight that covered under 1.5 m (`lost%`), time pressing nothing, dodges
+  a minute taken against those asked for (`meant`), sidestep reversals a
+  minute, and time faster than a boosting player;
+- a score a minute alive: 8 a kill, -6 a death, damage over 25, 3 a gun, 4 a
+  pack taken while hurt, 1.5 armour, 2 a lost enemy found, less 0.4 a percent
+  of `back%`, 0.5 of `lost%`, 0.3 of idle, 1 a dodge over six a minute and
+  0.3 a reversal over twelve.
+
+`--league-weapon NAME` (or `all`, each gun in turn) plays the league with one
+gun: everybody spawns holding it and every gun or ammunition pad hands out
+rounds for it. It prints the field's kills, damage, deaths nobody was
+credited with (mostly a bot's own blast), rounds and damage a round, and
+shells evaded, a bot-minute. `LEAGUE_WITHOUT=evade` switches a `Style` part
+off for every entrant, and `LEAGUE_WITHOUT_FOR=house` for one only, which is
+the paired test: in a mirror match a change moves the whole field.
+
+The league also prints coverage, one bot in one match: nav nodes come within
+3 m of, 8 m areas (3 m of height a floor) stood in, pads taken from, pads that
+were of use to it at some moment, pads stood on, and the same by spot (pads
+within 2.5 m are one place). `LEAGUE_STASH=0` turns
+`ShooterDef::ammo_without_gun` (on by default) off for the run.
+
+The score's fight half swings about five points an entrant between runs that
+share their seeds once the code under it has changed, so compare the
+movement and objective columns, and the field's average, more than the
+order of the rows. `LEAGUE_FLIP`, `LEAGUE_LOST`, `LEAGUE_IDLE` and
+`LEAGUE_HURT` print a line per event with `Brain::note`, which says what a
+bot is walking toward and why.
+
 ## The weapon bench
 
 `lurelia --world duelbox --duel N [--duel-seconds S] [--duel-weapon NAME]`
@@ -371,3 +506,139 @@ small-arena instrument: on a large map bots rarely meet.
 aim forced to 0.5, in one empty room with one gun each. The bench gives both
 the same gun; the table plays every gun against every other, both ways round.
 Check any change to `desire.rs` here.
+
+## The team
+
+Capture the flag puts a layer over the decision one: `team.rs`, one
+`TeamBrain` per side, run by the rules before the bots think, once a second
+and at once whenever a flag moves. It hands each bot an `Order` (a `Role`, a
+`Goal`, an urgency, and optionally a lane to go by and a fighter to mark), and
+the bot reads it as `Me::order`. A team deathmatch has no team brain: its bots
+play the duel with their own side left out of `Memory` and out of the line of
+fire (`friend_in_line`).
+
+What a side may know is what the player's HUD shows them. Where a flag lies is
+public. Where the enemy carrying our flag is, only while one of our bots has
+them in sight (`Shooter::side_sees`), and the last place they were seen after
+that. `Brain::sightings` pools each bot's `Memory`, which is what a side on
+voice comms has and no more than any one of them saw.
+
+The plan is a list of needs dealt to the bots nearest first:
+
+| Need | When | How many |
+|---|---|---|
+| Carry | it has their flag | whoever holds it |
+| Return | its flag is lying somewhere | one |
+| Retrieve | they have its flag | half the side, at least one; in a standoff (both flags out) everybody but the carrier |
+| Pick up | their flag is lying somewhere | one |
+| Escort | it has their flag, and its own is home | one, two in a side of five or more |
+| Defend | otherwise | one in a side of two to four, two above; none while chasing its own flag in a small side, or behind with a minute left. With no enemy seen within 30 m of the flag for 10 s (and at the start) it holds midfield, 40% of the way to the enemy stand, and drops back to the home posts when one is (`CTF_OFF=stance` keeps it home). When the side has seen every enemy die in the last 10 s, the defender attacks too (`CTF_OFF=reset`) |
+| Attack | everybody left | each by a different lane, at urgency 0.85, so they do not break off or chase; within 15 m of the flag it stops fighting and runs for it, shooting on the move (`CTF_OFF=commit` turns that off) |
+
+A bot keeps a job for `HOLD_S` (6 s) unless a flag moves, and the deal favours
+the job a bot already has by 25 m of walk. Without the hold, a side's bots swap
+jobs every plan. Lanes are nav nodes about as far from one stand as the other,
+no two within 8 m (`team::lanes`). Posts are nodes 5 to 16 m from the stand,
+nearest the enemy first (`team::posts`).
+
+In `Duel`, an order comes in through two places, not a branch in every act:
+
+- `obey` changes the act. Roaming becomes the job (`Act::Errand`). A carrier is
+  always on the errand: it shoots whoever it sees but never closes, hunts or
+  breaks off toward a pad. Attackers and escorts stop chasing anybody further
+  than `CLOSE_BY_GRAPH_M`. A defender fights inside its leash (22 m) and walks
+  back. A retriever keeps hunting the bot it was told to mark.
+- `errand` picks the destination: through the lane first, then the point, the
+  carrier to follow (3 m to one side, 2.5 m behind), or the post. Inside 4 m of
+  a point it steers straight at it. At a post it moves to a new spot within
+  2.5 m every 3 to 7 s and sweeps its head either side of the way the enemy
+  comes.
+
+A carrier's route charges 40 m for every node within 10 m of somebody it has
+seen in the last 4 s, so it goes the long way round a fight. `MARK_WORTH` (0.6)
+on the marked fighter is enough to pick the enemy carrier out of two in sight.
+
+`Coach` switches a side to one of the bench's controls: `Fixed` (every third
+bot defends, the rest attack, for life), `Rush` (everybody attacks), and `Base`,
+the team brain as it was before the CTF tournament, frozen in `team_v0.rs`.
+The first two still carry a flag home.
+
+There is one more job, `Role::Overwatch`: a bot holds the best vantage on its
+own half (1.5 m or more above its stand, `team::vantages`) with a 6 m leash,
+shoots whatever crosses the middle and picks its gun for 40 m. It lost its
+round in the tournament (a bot on the gantry is a bot not attacking or
+defending), so the plan does not hand it out unless `CTF_ON=overwatch`.
+
+The tournament's changes are each behind a name (`team::trying`). One that is
+kept can be switched off with `CTF_OFF=name,...`; one that lost
+(`team::REJECTED`: overwatch, react, cutoff, lead, hide) can be switched on with
+`CTF_ON`. "What the bench found" below has what each one is and what it scored.
+
+## The CTF bench
+
+`lurelia --world ctfbox --ctf N [--ctf-seconds S] [--ctf-size K]`
+(`src/tools/ctf.rs`) plays the team brain against its frozen former self, the
+fixed control and the rush, K bots a side (default 3), each seed twice with the sides
+swapped, with no window or GPU. It reports matches won and drawn, captures and
+grabs a minute, the share of carries that score, how long a carry lasts, how
+far from home carriers die, returns, kills, and each side's time by job.
+Matches are played to the clock, not to a capture count. With every
+tournament change switched off (`CTF_OFF`), the `plan v base` row is the twin
+check: the two sides are then the same brain, and on a mirrored map its record
+must come out level.
+
+`--ctf-skill NAME` sets the bots' difficulty. `tools/ctf_pair.sh ROUND NAME`
+runs the bench at average and adept on both maps with change NAME on and off
+from one build, side by side, and `tools/ctf_score.py` scores the tables. Pair
+every comparison: the bench repeats exactly from one build, but anything else
+that changes between builds moves its numbers by several matches a row.
+
+`CTF_AB=attack1,carry2` plays a single row instead: the plan with those role
+changes (`brain::TWEAKS`, carried on each order as `Order::tweaks`) against the
+plan without them. Both sides deal jobs the same way, so only how the jobs are
+played differs; `CTF_AB=none` must come out level. `tools/ctf_ab.sh` runs
+several variants at once over the four settings and `tools/ctf_ab.py` scores
+them; `CTF_SEED0` starts the seeds elsewhere for a check on unseen matches.
+"What the bench found" below has the role changes tried and what they scored.
+
+`worlds/ctfbox` is the instrument (a flat roofed room with two pillars a half)
+and `worlds/sluice` the map (three lanes, mirrored). Run both: the standings
+differ between them in the same way the weapons do between duelbox and
+Slagdeck.
+
+### What the bench found
+
+The score is the sum over the bench's rows of (won - lost) / matches, each
+change played on and off from one build, 20 matches a row.
+
+The tournament tried ten changes to the team plan (`team::trying`). Two were
+kept:
+
+- `standoff`: with both flags out, every bot but the carrier retrieves, and
+  nobody escorts until the thief is dealt with.
+- `press`: attackers' urgency is raised to 0.85, over the bar for breaking off
+  and for chasing.
+
+The five that lost and are still in the code behind `CTF_ON` are `overwatch`
+(a bot parked on high ground is one not attacking or defending), `react`
+(defenders leave their posts too soon), `cutoff` (heading the thief off
+arrives where it is not yet), `lead` (an escort in front dies first) and
+`hide` (better on ctfbox, worse on Sluice). Gathering attackers before a push
+and a first post closer to the stand also lost and were taken out. Head to
+head, the final plan beat the one it started from 27-38-15 over
+80 matches.
+
+Of the 24 role changes (`brain::TWEAKS`), one is clearly better: `attack1`
+(within 15 m of the flag an attacker stops trading and runs for it, shooting
+on the move). It is now on by default as `commit`. `carry2` (a carrier dodges
+while it sees an enemy) and `escort2` (an escort prefers enemies near the
+carrier) scored well at first and fell to noise on unseen seeds. The defend,
+retrieve and return changes were level or worse. Of the stance changes,
+`stance` (the defender holds midfield while home is quiet) and `reset` (the
+defender attacks too after a wipe) were level to slightly positive and are on
+by default because they make a more open game against a player. `group` and
+`lane` lost badly: attackers spread over the lanes are also the side's screen
+in the middle.
+
+ctfbox at adept is a stalemate whatever the plan: a skilled side in one open
+room kills every attacker before the flag.

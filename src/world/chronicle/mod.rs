@@ -13,6 +13,7 @@ mod ctx;
 mod events;
 mod gazetteer;
 pub mod geom;
+pub mod hydro;
 
 pub use ctx::{compile_structure, EventCtx, Process};
 pub use gazetteer::gazetteer;
@@ -123,6 +124,23 @@ fn event_keys<'a>(events: impl Iterator<Item = (&'a str, i32, Option<u32>)>, v1:
         .collect()
 }
 
+/// Keys for the items one event left, from the event's own key, each item's
+/// kind and which of that kind it is in the event. Moving a find, or adding
+/// an event anywhere else in the chronicle, leaves every key as it was; only
+/// changing the event that left it (or the order it leaves things of one
+/// kind) moves one.
+fn item_keys_for(event: u32, items: &[super::fields::Item]) -> Vec<u32> {
+    let mut seen: std::collections::HashMap<&str, u32> = std::collections::HashMap::new();
+    items
+        .iter()
+        .map(|it| {
+            let nth = *seen.entry(it.kind.as_str()).and_modify(|n| *n += 1).or_insert(0);
+            // Never 0..=i32::MAX's negative half: the save keeps it as an i32.
+            hash32(event ^ name_key(&it.kind).wrapping_mul(0x9e37_79b9) ^ nth.wrapping_mul(0x85eb_ca6b)) & 0x7fff_ffff
+        })
+        .collect()
+}
+
 pub fn build_world(dir: &Path, lib: Library) -> Result<World, String> {
     let t0 = std::time::Instant::now();
     let mut warnings = Vec::new();
@@ -156,6 +174,7 @@ pub fn build_world(dir: &Path, lib: Library) -> Result<World, String> {
     let mut cx = EventCtx::new(&lib, &chron.places, dir, Fields::new(def.size_m, def.sea_level_m), warnings);
     cx.noise_at = Vec2::from(def.noise_at);
     let keys = event_keys(events.iter().map(|e| (e.kind, e.year, e.seed)), def.seeds_v1());
+    let mut item_keys: Vec<u32> = Vec::new();
     for (k, ev) in events.iter().enumerate() {
         let cause = (k + 1) as u16;
         if ev.cause.trim().is_empty() {
@@ -168,6 +187,7 @@ pub fn build_world(dir: &Path, lib: Library) -> Result<World, String> {
         let before = (cx.placed.len(), cx.items.len());
         let t_ev = std::time::Instant::now();
         let msg = ev.process.apply(&mut cx);
+        item_keys.extend(item_keys_for(keys[k], &cx.items[before.1.min(cx.items.len())..]));
         // What each event cost, so a world that takes a quarter of a minute
         // to build says which event spent it.
         let ms = t_ev.elapsed().as_secs_f32() * 1000.0;
@@ -194,6 +214,8 @@ pub fn build_world(dir: &Path, lib: Library) -> Result<World, String> {
             last = std::time::Instant::now();
         }
     };
+    // A spawn on land the generator shaped is given by name (`spawn_at`).
+    let spawn_at = def.spawn_at.clone().map(|p| (cx.pos(&p), cx.turn(&p)));
     let rivers = cx.state.take::<events::river::Rivers>();
     let lakes = cx.state.take::<events::lake::Lakes>();
     events::river::settle_water(&mut cx.f, &lakes, &rivers);
@@ -204,6 +226,8 @@ pub fn build_world(dir: &Path, lib: Library) -> Result<World, String> {
     stage("fields derive", &mut stages);
     let tubes = cx.state.take::<events::lava_tube::Tubes>().0;
     let towers = cx.state.take::<events::tower::Towers>().0;
+    let mut bones = cx.state.take::<crate::world::bones::Bones>();
+    bones.index(cx.f.size);
     let growths = cx.state.take::<events::tower::Growths>().0;
     let mut cx_when = std::mem::take(&mut cx.when);
     let city = cx.state.take::<super::city::City>();
@@ -298,6 +322,7 @@ pub fn build_world(dir: &Path, lib: Library) -> Result<World, String> {
         trees: Vec::new(),
         tree_grid: HashMap::default(),
         items,
+        item_keys,
         pois,
         areas,
         signs,
@@ -309,6 +334,7 @@ pub fn build_world(dir: &Path, lib: Library) -> Result<World, String> {
         strata_level,
         tubes,
         towers,
+        bones,
         growths,
         when: std::mem::take(&mut cx_when),
         shown: Vec::new(),
@@ -386,10 +412,10 @@ pub fn build_world(dir: &Path, lib: Library) -> Result<World, String> {
     stage("collectibles", &mut stages);
     world.shown = (0..world.placed.len()).map(|_| std::sync::atomic::AtomicBool::new(true)).collect();
     // Spawn: where the world says, else the first settlement or the centre.
-    let sp = world.def.spawn.map(|s| Vec2::new(s[0], s[1])).unwrap_or(Vec2::splat(world.def.size_m * 0.5));
+    let sp = spawn_at.map(|s| s.0).or(world.def.spawn.map(|s| Vec2::new(s[0], s[1]))).unwrap_or(Vec2::splat(world.def.size_m * 0.5));
     world.spawn = Vec3::new(sp.x, world.f.height(sp.x, sp.y) + world.def.spawn_up, sp.y);
     // Yaw 0 looks north and turns toward the west as it grows: yaw = -bearing.
-    world.spawn_yaw = -world.def.spawn_bearing.to_radians();
+    world.spawn_yaw = -(world.def.spawn_bearing + 90.0 * spawn_at.map_or(0, |s| s.1) as f32).to_radians();
     world.index();
     for (name, ms) in stages {
         if ms >= 1.0 {
@@ -455,5 +481,29 @@ mod key_tests {
         let a = keys(&[(RIVER, -3000, None)], false)[0];
         assert_ne!(a, keys(&[("lake", -3000, None)], false)[0]);
         assert_ne!(a, keys(&[(RIVER, -2999, None)], false)[0]);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::world::fields::Item;
+
+    fn item(kind: &str, x: f32) -> Item {
+        Item { kind: kind.into(), pos: Vec3::new(x, 0.0, 0.0), size: 1.0, cause: 1, surface: true }
+    }
+
+    /// A find keeps its key when it moves, and when another kind of thing
+    /// is added to the same event before it.
+    #[test]
+    fn item_keys_survive_moves_and_other_kinds() {
+        let a = item_keys_for(7, &[item("skystone", 1.0), item("skystone", 2.0)]);
+        let moved = item_keys_for(7, &[item("skystone", 40.0), item("skystone", 2.0)]);
+        let more = item_keys_for(7, &[item("cache", 0.0), item("skystone", 1.0), item("skystone", 2.0)]);
+        assert_eq!(a, moved);
+        assert_eq!(a[..], more[1..]);
+        assert_ne!(a[0], a[1]);
+        assert_ne!(a, item_keys_for(8, &[item("skystone", 1.0), item("skystone", 2.0)]));
+        assert!(a.iter().all(|&k| k <= i32::MAX as u32));
     }
 }

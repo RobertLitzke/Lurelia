@@ -1,0 +1,15 @@
+{
+  "name": "silver_leaves",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Silver tree leaves: long and covered in silky hairs, so the whole crown flashes silver when the wind turns them.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [150, 166, 148],
+    "alt": [128, 144, 124],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [154, 170, 152], "alt": [132, 148, 128]}
+  }
+}

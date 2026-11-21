@@ -1,0 +1,15 @@
+{
+  "name": "bramble_leaves",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Bramble leaves: dark green, in threes and fives.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [58, 92, 44],
+    "alt": [48, 78, 38],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [64, 98, 50], "alt": [54, 84, 44]}
+  }
+}

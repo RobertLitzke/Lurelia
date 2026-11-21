@@ -1,0 +1,19 @@
+{
+  "name": "goo_burst",
+  "version": 1,
+  "introduced_by": "goo_burst",
+  "notes": "The burst of a glob of goo: bright green slime thrown out and stopped short, hanging a moment before it sags.",
+  "shape": "puff",
+  "count": [14, 18],
+  "speed": [3.0, 8.0],
+  "cone_deg": 180,
+  "life": [0.3, 0.6],
+  "size": [0.35, 1.1],
+  "size_jitter": 0.35,
+  "gravity": 1.5,
+  "drag": 5.5,
+  "color": [132, 230, 44],
+  "alpha": 0.85,
+  "glow": 2.2,
+  "near_fade": 1.0
+}

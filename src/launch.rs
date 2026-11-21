@@ -24,6 +24,10 @@ use std::sync::Mutex;
 pub enum Mode {
     Explore,
     Fps,
+    /// Team deathmatch: the same arena, two sides.
+    Team,
+    /// Capture the flag, on a world whose shooter rules have a `ctf` block.
+    Ctf,
 }
 
 impl Default for Mode {
@@ -37,7 +41,14 @@ impl Mode {
         match self {
             Mode::Explore => "explore",
             Mode::Fps => "fps",
+            Mode::Team => "team",
+            Mode::Ctf => "ctf",
         }
+    }
+
+    /// A match of some kind: the gun is out and the shooter's rules run.
+    pub fn is_match(self) -> bool {
+        self != Mode::Explore
     }
 
     /// How the launch screen shows it.
@@ -45,6 +56,8 @@ impl Mode {
         match self {
             Mode::Explore => "EXPLORE",
             Mode::Fps => "DEATHMATCH",
+            Mode::Team => "TEAM DEATHMATCH",
+            Mode::Ctf => "CAPTURE THE FLAG",
         }
     }
 
@@ -52,6 +65,8 @@ impl Mode {
         match s {
             "explore" => Some(Mode::Explore),
             "fps" | "deathmatch" => Some(Mode::Fps),
+            "team" | "tdm" => Some(Mode::Team),
+            "ctf" => Some(Mode::Ctf),
             _ => None,
         }
     }
@@ -93,9 +108,19 @@ impl Opt {
 /// them. Walking is not one of them: every other mode starts and ends on foot.
 pub const TRAVEL: [ModeId; 5] = [ModeId::Bike, ModeId::Glide, ModeId::Climb, ModeId::Rope, ModeId::Kayak];
 
-/// Bot counts and target scores the deathmatch options step through.
-const BOTS: [&str; 8] = ["0", "1", "2", "3", "4", "5", "6", "7"];
+/// The most bots the launch screen offers on a world that does not say
+/// (`ShooterDef::max_bots`): about what a small arena holds.
+pub const DEFAULT_MAX_BOTS: usize = 7;
+/// Target scores the deathmatch options step through.
 const TARGETS: [&str; 6] = ["5", "10", "15", "20", "30", "50"];
+/// Captures and match lengths capture the flag steps through.
+const CAPTURES: [&str; 4] = ["1", "3", "5", "7"];
+const MINUTES: [&str; 5] = ["Off", "5", "10", "15", "20"];
+const SIDES: [&str; 3] = ["Either", "Cyan", "Magenta"];
+/// How the first value of the season and hour lines begins: the one that
+/// leaves it to the world. What follows the word says what the world does.
+const TURNING: &str = "Turning";
+const WORLD: &str = "World";
 
 /// "easy" -> "Easy": the menu's voice for a value that is a word.
 fn capitalise(s: &str) -> String {
@@ -118,20 +143,28 @@ fn travel_help(m: ModeId) -> &'static str {
 /// the world's own first, then the mode's.
 pub fn options(world: &str, mode: Mode) -> Vec<Opt> {
     let info = info(world);
-    let mut out = vec![
-        Opt::switch("animals", "ANIMALS", "Whether the world's creatures are in it. Off leaves the plants and the land alone.", true),
-        Opt::switch("day_night", "DAY AND NIGHT", "Off holds the world at the hour it opens on, so the light never changes.", true),
-        Opt::switch(
+    // A line that could change nothing is not offered: animals where no
+    // biome of the world has any, the clock on a map in space (held at the
+    // hour it opens on), the weather where the climate has one kind of day.
+    let mut out = Vec::new();
+    if info.species > 0 {
+        out.push(Opt::switch("animals", "ANIMALS", "Whether the world's creatures are in it. Off leaves the plants and the land alone.", true));
+    }
+    if !info.space {
+        out.push(Opt::switch("day_night", "DAY AND NIGHT", "Off holds the world at the hour it opens on, so the light never changes.", true));
+    }
+    if !info.space && info.weathers != 1 {
+        out.push(Opt::switch(
             "weather",
             "WEATHER",
             "Whether the sky changes: rain, snow, fog, heat and cloud come and go. Off keeps fair weather.",
             true,
-        ),
-    ];
+        ));
+    }
     // The parts of the year this world has, where it has more than one: the
     // year turns on its own unless a season is picked, which holds it there.
     if info.seasons.len() > 1 {
-        let mut values = vec!["Turning".to_string()];
+        let mut values = vec![format!("{TURNING}, from {}", info.start_season.name())];
         values.extend(info.seasons.iter().map(|s| capitalise(s.name())));
         let values: Vec<&str> = values.iter().map(|v| v.as_str()).collect();
         out.push(Opt::pick(
@@ -143,16 +176,19 @@ pub fn options(world: &str, mode: Mode) -> Vec<Opt> {
         ));
     }
     // The hour to open on, which the world's own is the first offer of.
-    let mut hours = vec!["World".to_string()];
+    let own = info.start_hour.unwrap_or(crate::world::clock::START);
+    let mut hours = vec![format!("{WORLD}, {:02}:{:02}", own.floor() as u32, ((own.fract() * 60.0).round() as u32).min(59))];
     hours.extend(crate::world::clock::PRESETS.iter().map(|(_, n)| capitalise(&n.to_lowercase())));
     let hours: Vec<&str> = hours.iter().map(|h| h.as_str()).collect();
-    out.push(Opt::pick("hour", "TIME", "The hour the world opens at. World is the hour it was written to be seen in.", &hours, 0));
+    if !info.space {
+        out.push(Opt::pick("hour", "TIME", "The hour the world opens at. World is the hour it was written to be seen in.", &hours, 0));
+    }
     for m in TRAVEL {
         if info.allowed.has(m) {
             out.push(Opt::switch(&format!("travel.{}", m.name()), &m.name().to_uppercase(), travel_help(m), true));
         }
     }
-    if mode == Mode::Fps {
+    if mode.is_match() {
         // The levels are shown in the menu's own voice (one capital), and
         // lowercased again on the way back to `brain::person::level`.
         let levels: Vec<String> = crate::brain::person::NAMES.iter().map(|n| capitalise(n)).collect();
@@ -167,15 +203,32 @@ pub fn options(world: &str, mode: Mode) -> Vec<Opt> {
             &levels,
             at,
         ));
-        let bots = if info.bots > 0 { info.bots.min(BOTS.len() - 1) } else { 3 };
-        out.push(Opt::pick("bots", "BOTS", "How many of them are in the match.", &BOTS, bots));
-        out.push(Opt::pick(
-            "target",
-            "TARGET SCORE",
-            "Kills that win the match. The scoreboard comes up when someone gets there.",
-            &TARGETS,
-            2,
-        ));
+        // Zero to as many as the world says it holds, and no more than there
+        // are names for.
+        let most = info.max_bots.min(BOT_NAMES.len());
+        let counts: Vec<String> = (0..=most).map(|n| n.to_string()).collect();
+        let counts: Vec<&str> = counts.iter().map(|s| s.as_str()).collect();
+        let bots = if info.bots > 0 { info.bots.min(most) } else { 3.min(most) };
+        out.push(Opt::pick("bots", "BOTS", "How many of them are in the match.", &counts, bots));
+        if mode == Mode::Ctf {
+            out.push(Opt::pick("captures", "CAPTURES", "Flags carried home that win the match.", &CAPTURES, 1));
+            out.push(Opt::pick("minutes", "TIME LIMIT", "Minutes a match lasts; the side ahead when it runs out wins.", &MINUTES, 2));
+        } else {
+            out.push(Opt::pick(
+                "target",
+                "TARGET SCORE",
+                if mode == Mode::Team {
+                    "Kills between a side that win the match."
+                } else {
+                    "Kills that win the match. The scoreboard comes up when someone gets there."
+                },
+                &TARGETS,
+                if mode == Mode::Team { 3 } else { 2 },
+            ));
+        }
+        if mode != Mode::Fps {
+            out.push(Opt::pick("side", "YOUR SIDE", "Which side you play on. Either puts you on the shorter one.", &SIDES, 0));
+        }
     }
     out
 }
@@ -184,8 +237,13 @@ pub fn options(world: &str, mode: Mode) -> Vec<Opt> {
 /// world.json carries a `"shooter"` block can be fought over.
 pub fn modes(world: &str) -> Vec<Mode> {
     let mut out = vec![Mode::Explore];
-    if info(world).shooter {
+    let i = info(world);
+    if i.shooter {
         out.push(Mode::Fps);
+        out.push(Mode::Team);
+    }
+    if i.ctf {
+        out.push(Mode::Ctf);
     }
     out
 }
@@ -202,6 +260,8 @@ pub struct Launch {
     pub mode: Mode,
     /// Choices by `"<world>/<mode>"`, then by option id.
     pub kept: BTreeMap<String, BTreeMap<String, String>>,
+    /// The worlds last opened, newest first: the top of the world list.
+    pub recent: Vec<String>,
 }
 
 impl Default for Launch {
@@ -210,11 +270,67 @@ impl Default for Launch {
             world: crate::worldload::DEFAULT_WORLD.to_string(),
             mode: Mode::Explore,
             kept: BTreeMap::new(),
+            recent: Vec::new(),
         }
     }
 }
 
+/// How many worlds the top of the list remembers.
+const RECENT: usize = 3;
+
+/// One line of the world list: a world, and the heading it is the first
+/// line under, if it is.
+pub struct WorldRow {
+    pub world: String,
+    pub head: Option<&'static str>,
+}
+
 impl Launch {
+    /// A world was opened: it goes to the front of the recent ones.
+    pub fn opened(&mut self, world: &str) {
+        self.recent.retain(|w| w != world);
+        self.recent.insert(0, world.to_string());
+        self.recent.truncate(RECENT);
+    }
+
+    /// The world list as the dropdown shows it: the last few opened, where
+    /// the list is long enough for that to save a search, then every world
+    /// under its kind. A recent world is in the list twice.
+    pub fn world_rows(&self) -> Vec<WorldRow> {
+        let all = crate::worldload::available();
+        let mut out = Vec::new();
+        let recent: Vec<&String> = self.recent.iter().filter(|w| all.contains(w)).collect();
+        if all.len() > 8 && recent.len() > 1 {
+            for (i, w) in recent.iter().enumerate() {
+                out.push(WorldRow {
+                    world: (*w).clone(),
+                    head: (i == 0).then_some("recent"),
+                });
+            }
+        }
+        let mut last = None;
+        for w in all {
+            let kind = info(&w).kind();
+            out.push(WorldRow {
+                head: (last != Some(kind)).then_some(kind.title()),
+                world: w,
+            });
+            last = Some(kind);
+        }
+        out
+    }
+
+    /// Whether an option stands somewhere other than its default.
+    pub fn changed(&self, o: &Opt) -> bool {
+        self.index(o) != o.default
+    }
+
+    /// Forget what this world and mode were last played with.
+    pub fn reset(&mut self) {
+        let key = self.key();
+        self.kept.remove(&key);
+    }
+
     fn key(&self) -> String {
         format!("{}/{}", self.world, self.mode.name())
     }
@@ -270,9 +386,12 @@ impl Launch {
     pub fn resolve(&self) -> Chosen {
         let opts = options(&self.world, self.mode);
         let on = |id: &str| opts.iter().find(|o| o.id == id).is_some_and(|o| self.value(o) == "On");
+        // A line that was not offered has nothing to switch off, except the
+        // clock of a map in space, which is held.
+        let on_or = |id: &str, absent: bool| if opts.iter().any(|o| o.id == id) { on(id) } else { absent };
         let num = |id: &str, fallback: u32| -> u32 { opts.iter().find(|o| o.id == id).and_then(|o| self.value(o).parse().ok()).unwrap_or(fallback) };
         // A pick whose first value means "leave it to the world".
-        let pick = |id: &str| -> Option<String> { opts.iter().find(|o| o.id == id).map(|o| self.value(o)).filter(|v| v != "Turning" && v != "World") };
+        let pick = |id: &str| -> Option<String> { opts.iter().find(|o| o.id == id).map(|o| self.value(o)).filter(|v| !v.starts_with(TURNING) && !v.starts_with(WORLD)) };
         let off = TRAVEL
             .into_iter()
             .filter(|m| opts.iter().any(|o| o.id == format!("travel.{}", m.name())) && !on(&format!("travel.{}", m.name())))
@@ -280,13 +399,16 @@ impl Launch {
         Chosen {
             world: self.world.clone(),
             mode: self.mode,
-            animals: on("animals"),
-            day_night: on("day_night"),
-            weather: on("weather"),
+            animals: on_or("animals", true),
+            day_night: on_or("day_night", false),
+            weather: on_or("weather", true),
             off,
             difficulty: opts.iter().find(|o| o.id == "difficulty").map_or_else(|| "average".to_string(), |o| self.value(o).to_lowercase()),
             bots: num("bots", 3) as usize,
             target: num("target", 15),
+            captures: num("captures", 3),
+            minutes: num("minutes", 0),
+            side: opts.iter().find(|o| o.id == "side").and_then(|o| SIDES.iter().position(|v| *v == self.value(o))).and_then(|k| k.checked_sub(1)).map(|k| k as u8),
             season: pick("season").and_then(|v| crate::world::season::Season::parse(&v.to_lowercase())).map(|s| s.name().to_string()),
             hour: pick("hour").and_then(|v| crate::world::clock::PRESETS.iter().find(|(_, n)| n.eq_ignore_ascii_case(&v)).map(|(h, _)| *h)),
         }
@@ -309,6 +431,12 @@ pub struct Chosen {
     pub difficulty: String,
     pub bots: usize,
     pub target: u32,
+    /// Capture the flag: captures that win, and minutes a match lasts (0
+    /// for no limit).
+    pub captures: u32,
+    pub minutes: u32,
+    /// The player's side in a team match; None for the shorter one.
+    pub side: Option<u8>,
     /// The season to hold the world in (world/season.rs), by name. None lets
     /// the year turn on its own.
     pub season: Option<String>,
@@ -318,8 +446,31 @@ pub struct Chosen {
 
 /// Names and shell colours for the bots a match is asked for, in the order
 /// they are handed out. Foundry words, since the first arena is a smelter.
-pub const BOT_NAMES: [&str; 7] = ["DROSSEL", "KILN", "TUYERE", "SCORIA", "CINDER", "BOSH", "LADLE"];
-const BOT_COLOURS: [[u8; 3]; 7] = [[196, 84, 64], [96, 150, 196], [206, 176, 88], [128, 196, 132], [186, 116, 196], [220, 140, 80], [120, 196, 196]];
+/// As many as the biggest map's `max_bots`.
+pub const BOT_NAMES: [&str; 15] = [
+    "DROSSEL", "KILN", "TUYERE", "SCORIA", "CINDER", "BOSH", "LADLE", "FLUX", "INGOT", "CUPOLA", "SPRUE", "BELLOWS", "TAPHOLE", "GANGUE", "CRUCIBLE",
+];
+const BOT_COLOURS: [[u8; 3]; 15] = [
+    [196, 84, 64],
+    [96, 150, 196],
+    [206, 176, 88],
+    [128, 196, 132],
+    [186, 116, 196],
+    [220, 140, 80],
+    [120, 196, 196],
+    [232, 120, 150],
+    [150, 120, 220],
+    [176, 210, 96],
+    [90, 120, 170],
+    [210, 210, 210],
+    [170, 110, 80],
+    [100, 196, 160],
+    [230, 180, 200],
+];
+/// Each bot's lean toward pressing (`bold`) and holding steady, alternating
+/// so the roster has pressers and holders in it.
+const BOT_BOLD: [f32; 15] = [0.0, 0.5, -0.4, 0.3, -0.2, 0.6, -0.5, 0.2, -0.3, 0.4, -0.1, 0.1, -0.6, 0.45, -0.25];
+const BOT_STEADY: [f32; 15] = [0.0, -0.3, 0.5, 0.2, -0.5, 0.4, 0.3, -0.2, 0.1, -0.4, 0.5, -0.1, 0.2, -0.35, 0.35];
 
 impl Chosen {
     /// The defaults for a world opened without the launch screen (the command
@@ -329,7 +480,15 @@ impl Chosen {
         let info = info(world);
         Chosen {
             world: world.to_string(),
-            mode: if info.shooter { Mode::Fps } else { Mode::Explore },
+            // The match the world is built for: capture the flag on a world
+            // that has flags, a deathmatch on any other arena.
+            mode: if info.ctf {
+                Mode::Ctf
+            } else if info.shooter {
+                Mode::Fps
+            } else {
+                Mode::Explore
+            },
             animals: true,
             day_night: true,
             weather: true,
@@ -339,6 +498,10 @@ impl Chosen {
             difficulty: info.skill.clone().unwrap_or_else(|| "average".to_string()),
             bots: if info.bots > 0 { info.bots } else { 3 },
             target: 15,
+            // Nothing: the world's own capture count and clock.
+            captures: 0,
+            minutes: 0,
+            side: None,
             season: None,
             hour: None,
         }
@@ -368,10 +531,11 @@ impl Chosen {
                 name: BOT_NAMES[i].to_string(),
                 skill: self.difficulty.clone(),
                 colour: Some(BOT_COLOURS[i]),
-                // Alternating, so the roster has pressers and holders in it.
-                bold: [0.0, 0.5, -0.4, 0.3, -0.2, 0.6, -0.5][i],
-                steady: [0.0, -0.3, 0.5, 0.2, -0.5, 0.4, 0.3][i],
+                bold: BOT_BOLD[i],
+                steady: BOT_STEADY[i],
                 without: Vec::new(),
+                tune: Default::default(),
+                team: None,
             })
             .collect()
     }
@@ -383,10 +547,32 @@ impl Chosen {
         for m in &self.off {
             a = a.without(*m);
         }
-        if self.mode != Mode::Fps {
+        if !self.mode.is_match() {
             a = a.without(ModeId::Shooter);
         }
         a
+    }
+}
+
+/// The kinds of world the list sorts them under.
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
+pub enum Kind {
+    /// A place to explore, shipped in `worlds/`.
+    World,
+    /// A map with shooter rules.
+    Arena,
+    /// Everything in `local/worlds/` that is not an arena: tests, imports,
+    /// the random island.
+    Workshop,
+}
+
+impl Kind {
+    pub fn title(self) -> &'static str {
+        match self {
+            Kind::World => "worlds",
+            Kind::Arena => "arenas",
+            Kind::Workshop => "workshop",
+        }
     }
 }
 
@@ -404,6 +590,44 @@ pub struct Info {
     /// the match the world was written for.
     pub bots: usize,
     pub skill: Option<String>,
+    /// The most bots the launch screen offers (`ShooterDef::max_bots`).
+    pub max_bots: usize,
+    /// Whether its shooter rules carry a `ctf` block.
+    pub ctf: bool,
+    /// The name it is shown by (world.json `title`), where the folder's own
+    /// name in capitals is not it.
+    pub title: Option<String>,
+    /// What the screen says about it under the list: a sentence on what the
+    /// place is (world.json `blurb`, else the opening of its story.md), then
+    /// a line of facts. Leaked once per world, so a menu line can hold it.
+    pub foot: &'static str,
+    /// world.json `"listed": false` keeps a world off the list (a bench, a
+    /// test); `--world` still opens it.
+    pub listed: bool,
+    /// Whether it lives in `local/worlds/`.
+    pub local: bool,
+    /// How many species its biomes name between them.
+    pub species: usize,
+    /// How many kinds of day its climate has; 0 where it does not say.
+    pub weathers: usize,
+    /// A map floating in space: the clock is held and the sky never changes.
+    pub space: bool,
+    /// The hour it opens at, where it says.
+    pub start_hour: Option<f32>,
+    /// The season a new game opens in.
+    pub start_season: crate::world::season::Season,
+}
+
+impl Info {
+    pub fn kind(&self) -> Kind {
+        if self.shooter {
+            Kind::Arena
+        } else if self.local {
+            Kind::Workshop
+        } else {
+            Kind::World
+        }
+    }
 }
 
 #[derive(Deserialize)]
@@ -416,12 +640,110 @@ struct Peek {
     seasons: Vec<String>,
     #[serde(default)]
     season: String,
+    #[serde(default)]
+    start_season: Option<String>,
+    #[serde(default)]
+    start_hour: Option<f32>,
+    #[serde(default)]
+    title: Option<String>,
+    #[serde(default)]
+    blurb: Option<String>,
+    #[serde(default)]
+    listed: Option<bool>,
+    #[serde(default)]
+    space: bool,
+    #[serde(default)]
+    size_m: Option<f32>,
+    #[serde(default)]
+    weather: BTreeMap<String, f32>,
+    #[serde(default)]
+    biomes: Vec<String>,
+    #[serde(default)]
+    default_biome: Option<String>,
+    #[serde(default)]
+    seabed_biome: Option<String>,
+}
+
+/// How many biomes a world.json names, and how many species those biomes
+/// name between them, read from the library's biome files.
+fn peek_life(p: &Peek) -> (usize, usize) {
+    #[derive(Deserialize)]
+    struct B {
+        #[serde(default)]
+        creatures: Vec<C>,
+    }
+    #[derive(Deserialize)]
+    struct C {
+        creature: String,
+    }
+    let dir = crate::library::data_root().join("library/biomes");
+    let biomes: std::collections::BTreeSet<&String> = p.biomes.iter().chain(&p.default_biome).chain(&p.seabed_biome).collect();
+    let mut species = std::collections::BTreeSet::new();
+    for b in &biomes {
+        let read: Option<B> = std::fs::read_to_string(dir.join(format!("{b}.json"))).ok().and_then(|t| serde_json::from_str(&t).ok());
+        species.extend(read.into_iter().flat_map(|b| b.creatures).map(|c| c.creature));
+    }
+    (biomes.len(), species.len())
+}
+
+/// The first sentence of a world's story.md, for a world whose world.json
+/// has no `blurb`. Headings are skipped, and so is a story that is a note
+/// about how the map was built.
+fn story_opening(dir: &std::path::Path) -> Option<String> {
+    let text = std::fs::read_to_string(dir.join("story.md")).ok()?;
+    let para: Vec<&str> = text.lines().map(str::trim).skip_while(|l| l.is_empty() || l.starts_with('#')).take_while(|l| !l.is_empty()).collect();
+    let para = para.join(" ");
+    if para.is_empty() || para.contains('`') {
+        return None;
+    }
+    let end = para.find(". ").map_or(para.len(), |i| i + 1);
+    Some(para[..end].to_string())
+}
+
+fn count_word(n: usize) -> String {
+    const WORDS: [&str; 5] = ["no", "one", "two", "three", "four"];
+    WORDS.get(n).map_or_else(|| n.to_string(), |w| w.to_string())
+}
+
+/// "1.5 km across, 17 biomes, 43 species, four seasons".
+fn facts(p: &Peek, biomes: usize, species: usize, seasons: &[crate::world::season::Season], max_bots: usize) -> String {
+    let mut out = Vec::new();
+    if let Some(m) = p.size_m.filter(|m| *m > 0.0) {
+        out.push(if m >= 1000.0 {
+            let km = format!("{:.1}", m / 1000.0);
+            format!("{} km across", km.trim_end_matches(".0"))
+        } else {
+            format!("{m:.0} m across")
+        });
+    }
+    if p.shooter.is_some() {
+        out.push(format!("up to {max_bots} bots"));
+        if species > 0 {
+            out.push(format!("{species} species"));
+        }
+    } else {
+        out.push(format!("{biomes} biome{}", if biomes == 1 { "" } else { "s" }));
+        out.push(format!("{species} species"));
+        out.push(match seasons {
+            [one] => format!("always {}", one.name()),
+            many => format!("{} seasons", count_word(many.len())),
+        });
+    }
+    let mut c = out.join(", ");
+    if let Some(f) = c.get_mut(0..1) {
+        f.make_ascii_uppercase();
+    }
+    c
 }
 
 #[derive(Deserialize)]
 struct PeekShooter {
     #[serde(default)]
     bots: Vec<PeekBot>,
+    #[serde(default)]
+    ctf: Option<serde_json::Value>,
+    #[serde(default)]
+    max_bots: Option<usize>,
 }
 
 #[derive(Deserialize)]
@@ -440,19 +762,48 @@ pub fn info(world: &str) -> Info {
     if let Some(i) = cache.get(world) {
         return i.clone();
     }
-    let path = crate::worldload::world_dir(world).join("world.json");
-    let peek: Option<Peek> = std::fs::read_to_string(path).ok().and_then(|t| serde_json::from_str(&t).ok());
+    let dir = crate::worldload::world_dir(world);
+    let local = dir.strip_prefix(crate::library::data_root()).unwrap_or(&dir).starts_with("local");
+    let peek: Option<Peek> = std::fs::read_to_string(dir.join("world.json")).ok().and_then(|t| serde_json::from_str(&t).ok());
+    let leak = |s: String| -> &'static str { Box::leak(s.into_boxed_str()) };
     let info = match peek {
-        Some(p) => Info {
+        Some(p) => {
+            use crate::world::season::Season;
+            let seasons = peek_seasons(&p);
+            let (biomes, species) = peek_life(&p);
+            let max_bots = p.shooter.as_ref().and_then(|sh| sh.max_bots).unwrap_or(DEFAULT_MAX_BOTS);
+            let blurb = p.blurb.clone().or_else(|| story_opening(&dir)).unwrap_or_default();
+            let facts = facts(&p, biomes, species, &seasons, max_bots);
+            let start_season = p
+                .start_season
+                .as_deref()
+                .and_then(Season::parse)
+                .filter(|s| seasons.contains(s))
+                .or_else(|| seasons.contains(&Season::Summer).then_some(Season::Summer))
+                .or_else(|| seasons.first().copied())
+                .unwrap_or(Season::Summer);
+            Info {
+                title: p.title.clone(),
+                foot: leak(if blurb.is_empty() { facts } else { format!("{blurb}\n{facts}") }),
+                listed: p.listed.unwrap_or(true),
+                local,
+                species,
+                weathers: p.weather.values().filter(|w| **w > 0.0).count(),
+                space: p.space,
+                start_hour: p.start_hour,
+                start_season,
+                max_bots,
             allowed: match &p.modes {
                 Some(names) => Allowed::from_names(names, |_| {}),
                 None => Allowed::all(),
             },
             shooter: p.shooter.is_some(),
-            seasons: peek_seasons(&p),
+            seasons,
             bots: p.shooter.as_ref().map_or(0, |sh| sh.bots.len()),
             skill: p.shooter.as_ref().and_then(|sh| sh.bots.first().and_then(|b| b.skill.clone())),
-        },
+            ctf: p.shooter.as_ref().is_some_and(|sh| sh.ctf.is_some()),
+            }
+        }
         // The random island, and a world whose world.json will not parse: the
         // loader is the one that reports that, so offer the usual game.
         None => Info {
@@ -461,6 +812,18 @@ pub fn info(world: &str) -> Info {
             seasons: vec![crate::world::season::Season::Summer],
             bots: 0,
             skill: None,
+            max_bots: DEFAULT_MAX_BOTS,
+            ctf: false,
+            title: None,
+            foot: if world == "random" { "An island made from a seed: different every time one is asked for." } else { "" },
+            listed: true,
+            local: true,
+            // Not counted, and not none: the island has its own animals.
+            species: 1,
+            weathers: 0,
+            space: false,
+            start_hour: None,
+            start_season: crate::world::season::Season::Summer,
         },
     };
     cache.insert(world.to_string(), info.clone());
@@ -476,6 +839,7 @@ mod tests {
             world: world.to_string(),
             mode,
             kept: BTreeMap::new(),
+            recent: Vec::new(),
         }
     }
 
@@ -539,6 +903,8 @@ mod tests {
                 bold: 0.0,
                 steady: 0.0,
                 without: Vec::new(),
+                tune: Default::default(),
+                team: None,
             })
             .collect();
         assert!(c.world_roster(&world_bots));
@@ -547,6 +913,33 @@ mod tests {
         assert_eq!(c.bots, info.bots + 1);
         assert!(!c.world_roster(&world_bots), "one more bot still counted as the world's roster");
         assert_eq!(c.roster().len(), info.bots + 1);
+    }
+
+    /// A world that says it holds more bots is offered more; one that says
+    /// nothing stops at the default. Every bot offered has a name, a colour
+    /// and a character of its own.
+    #[test]
+    fn a_big_map_offers_more_bots() {
+        let most = |world: &str, mode| options(world, mode).into_iter().find(|o| o.id == "bots").map(|o| o.values.last().unwrap().parse::<usize>().unwrap());
+        assert_eq!(info("starfall").max_bots, 15);
+        assert_eq!(most("starfall", Mode::Ctf), Some(15));
+        assert_eq!(most("slagdeck", Mode::Fps), Some(DEFAULT_MAX_BOTS));
+        let mut c = Chosen::for_world("starfall");
+        c.bots = 15;
+        let roster = c.roster();
+        assert_eq!(roster.len(), 15);
+        let names: std::collections::BTreeSet<&str> = roster.iter().map(|b| b.name.as_str()).collect();
+        assert_eq!(names.len(), 15, "two bots share a name");
+    }
+
+    /// Capture the flag is offered where the world has flags and nowhere
+    /// else, and the command line plays it there by default.
+    #[test]
+    fn capture_the_flag_comes_with_a_world_that_has_flags() {
+        assert!(modes("sluice").contains(&Mode::Ctf), "sluice has a ctf block and no CAPTURE THE FLAG: {:?}", modes("sluice"));
+        assert!(modes("sluice").contains(&Mode::Team));
+        assert!(!modes("porch").contains(&Mode::Ctf), "an arena with no flags offered capture the flag");
+        assert_eq!(Chosen::for_world("sluice").mode, Mode::Ctf);
     }
 }
 

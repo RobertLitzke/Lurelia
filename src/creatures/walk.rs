@@ -62,6 +62,10 @@ pub struct Critter {
     /// Alarm at the player, built up at `startle::pressure` per second and
     /// spent when it bolts (creatures/startle.rs).
     pub alarm: f32,
+    /// Metres walked since its last footfall was reported (creatures/sign.rs),
+    /// and which foot that was.
+    pub walked: f32,
+    pub left: bool,
 }
 
 /// A short flight from one spot to another: up, across, down.
@@ -87,9 +91,15 @@ impl Critter {
             seaward: false,
             fed: 0.0,
             alarm: 0.0,
+            walked: 0.0,
+            left: false,
         }
     }
 }
+
+/// Footfalls are only reported this close to the player: further out nobody
+/// will find them before they wear away, and the walkers out there are few.
+const MARKS_M: f32 = 90.0;
 
 /// Can a body this size walk `dist` metres along `dir` from feet at `pos`:
 /// nothing taller than a step in the way (trunks, walls, cliffs, low
@@ -187,6 +197,7 @@ pub fn update(
     now: f32,
     stats: &mut Pathing,
     cues: &mut Vec<crate::fx::Cue>,
+    steps: &mut Vec<super::sign::Step>,
 ) {
     let player = threat.pos;
     let thirst = thirst(hour);
@@ -197,6 +208,14 @@ pub fn update(
         .query::<(hecs::Entity, &Critter, &Look, &Body, Option<&Creature>)>()
         .iter()
         .map(|(e, _, l, b, c)| (c.map(|c| c.species), l.pos, b.vel, e))
+        .collect();
+    // Who is bolting this step: the alarm spreads from them to anything near
+    // enough to hear the crash of it (creatures/startle.rs `Threat::alarm_of`).
+    let bolting: Vec<(Vec3, Vec3, hecs::Entity)> = world
+        .query::<(hecs::Entity, &Critter, &Look, &Body)>()
+        .iter()
+        .filter(|(_, c, _, _)| c.mood == Mood::Flee && c.air.is_none())
+        .map(|(e, _, l, b)| (l.pos, b.vel, e))
         .collect();
     let mut dived: Vec<(hecs::Entity, Vec3, usize)> = Vec::new();
     // Prey caught this step: (hunter, caught).
@@ -211,6 +230,34 @@ pub fn update(
         Option<&Creature>,
         Option<&super::age::Age>,
     )>() {
+        // A footfall each stride on the ground, for the marks it leaves
+        // (creatures/sign.rs): one print per stride, the hind foot coming
+        // down in the front one's print the way a walking deer's does,
+        // alternating left and right of the line.
+        if body.on_ground && crit.air.is_none() {
+            let d = look.pos - look.prev_pos;
+            let moved = Vec3::new(d.x, 0.0, d.z).length();
+            if moved < 1.0 {
+                crit.walked += moved;
+                let stride = (body.height * 0.75).clamp(0.25, 1.6);
+                if crit.walked >= stride {
+                    crit.walked = 0.0;
+                    if (look.pos - player).length() < MARKS_M {
+                        crit.left = !crit.left;
+                        let fwd = Vec3::new(-look.yaw.sin(), 0.0, -look.yaw.cos());
+                        let across = Vec3::new(-fwd.z, 0.0, fwd.x) * body.half_w * 0.7 * if crit.left { 1.0 } else { -1.0 };
+                        let sp = me.map(|c| &species[c.species]);
+                        let foot = sp.map_or(super::sign::Foot::Paw, |s| super::sign::Foot::of(&s.name, s.beh.fly_height > 0.0));
+                        steps.push(super::sign::Step {
+                            pos: look.pos + across,
+                            yaw: look.yaw,
+                            foot,
+                            height: body.height,
+                        });
+                    }
+                }
+            }
+        }
         look.begin_step();
         look.prev_lift = look.lift;
         look.flash = (look.flash - dt * 3.0).max(0.0);
@@ -325,6 +372,9 @@ pub fn update(
         // cheap, and only against the player: a deer under a tree still hears
         // the wolf.
         let facing = Vec3::new(-look.yaw.sin(), 0.0, -look.yaw.cos());
+        // Head down in the grass or at the water, it sees little of what
+        // moves (anim/life.rs `graze_w`).
+        let head_down = anim.as_deref().and_then(|a| a.life.as_deref()).map_or(0.0, |l| l.graze_w);
         let from_player = if shy && !hiding {
             let cover = || {
                 let from = look.pos + Vec3::Y * (body.height * 0.6).max(0.2);
@@ -334,10 +384,24 @@ pub fn update(
                 len > 0.1 && store.raycast(from, d / len, len).is_some()
             };
             stats.cover_rays += (nerve.minds_people() && dist < super::startle::COVER_M) as u32;
-            super::startle::pressure(&nerve, look.pos, facing, threat, cover)
+            super::startle::pressure_on(&nerve, look.pos, facing, head_down, threat, cover)
         } else {
             0.0
         };
+        // A neighbour bolting: the nearest one in reach, and which way it ran.
+        let mut herd: Option<(f32, Vec3, Vec3)> = None;
+        if crit.mood != Mood::Flee && !hiding {
+            for (bp, bv, be) in &bolting {
+                if *be == ent {
+                    continue;
+                }
+                let d = (*bp - look.pos).length();
+                if d < nerve.dist && herd.is_none_or(|h| d < h.0) {
+                    herd = Some((d, *bp, *bv));
+                }
+            }
+        }
+        let from_herd = herd.map_or(0.0, |(_, bp, bv)| super::startle::pressure_on(&nerve, look.pos, facing, head_down, &super::startle::Threat::alarm_of(bp, bv), || false));
         let from_hunter = match hunter {
             Some((_, hp, hv)) if !hiding => {
                 let t = super::startle::Threat::animal(hp, hv);
@@ -346,13 +410,22 @@ pub fn update(
             _ => 0.0,
         };
         // Whichever is pressing harder is the one it runs from.
-        let away = if from_hunter > from_player {
+        // A herd that bolts runs the way the first one went.
+        let away = if from_herd > from_player.max(from_hunter) {
+            let (_, bp, bv) = herd.unwrap();
+            if bv.length_squared() > 0.25 {
+                Vec3::new(bv.x, 0.0, bv.z)
+            } else {
+                look.pos - bp
+            }
+        } else if from_hunter > from_player {
             let hp = hunter.map_or(player, |h| h.1);
             look.pos - hp
         } else {
             to_player
         };
-        let bolts = super::startle::bolts(&mut crit.alarm, from_player.max(from_hunter), dt);
+        stats.alarmed_by_herd += (from_herd > from_player.max(from_hunter)) as u32;
+        let bolts = super::startle::bolts(&mut crit.alarm, from_player.max(from_hunter).max(from_herd), dt);
         if hiding {
             crit.mood = Mood::Idle;
             crit.timer = crit.timer.max(2.0 + crit.rng.unit() * 3.0);
@@ -765,6 +838,11 @@ fn thirst(hour: f32) -> f32 {
 /// Where a startled flier goes: 25-50 m away, roughly away from the
 /// threat, onto dry open ground (by the water for a wader).
 fn take_wing(terrain: &Terrain, from: Vec3, heading: f32, wades: bool, height: f32, rng: &mut Rng) -> Option<Air> {
+    // Under a roof the flight would arc over the land laid on top of it, so
+    // it goes on foot (#377).
+    if terrain.roof(from).is_some() {
+        return None;
+    }
     let mut best: Option<(f32, Vec3)> = None;
     for _ in 0..12 {
         let a = heading + (rng.unit() - 0.5) * 1.6;
@@ -826,6 +904,7 @@ mod tests {
             height: 1.4,
             rig: None,
             skeleton: None,
+            block: 0,
         }
     }
 
@@ -883,6 +962,7 @@ mod tests {
                 step as f32 * dt,
                 &mut stats,
                 &mut Vec::new(),
+                &mut Vec::new(),
             );
             if world.get::<&Critter>(e).unwrap().mood == Mood::Flee {
                 return Some(step as f32 * dt);
@@ -908,9 +988,12 @@ mod tests {
     #[test]
     fn a_walker_holds_its_ground_against_a_still_player_and_an_indifferent_one_never_moves() {
         let at = Vec3::new(0.0, 1.0, 6.0);
-        let still = until_flight(1.2, at, Vec3::new(0.0, 1.0, 0.0), Vec3::ZERO, Mode::Foot).expect("still");
+        // Standing still at six metres of a ten-metre flee distance presses
+        // so little that the alarm settles (startle.rs `QUIET`): it may watch,
+        // and need never run.
+        let still = until_flight(1.2, at, Vec3::new(0.0, 1.0, 0.0), Vec3::ZERO, Mode::Foot);
         let walk = until_flight(1.2, at, Vec3::new(0.0, 1.0, 0.0), Vec3::new(0.0, 0.0, 1.4), Mode::Foot).expect("walker");
-        assert!(still > walk * 1.5, "standing {still}s, walking {walk}s");
+        assert!(still.is_none_or(|s| s > walk * 1.5), "standing {still:?}s, walking {walk}s");
         assert!(until_flight(0.0, at, Vec3::new(0.0, 1.0, 0.0), Vec3::new(0.0, 0.0, 1.4), Mode::Foot).is_none());
     }
 
@@ -955,6 +1038,7 @@ mod tests {
                     &Default::default(),
                     step as f32 * dt,
                     &mut stats,
+                    &mut Vec::new(),
                     &mut Vec::new(),
                 );
                 if world.get::<&Critter>(e).unwrap().mood == Mood::Flee {

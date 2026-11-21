@@ -1,0 +1,15 @@
+{
+  "name": "red_berries",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Small red berries and thimble fruit, summer.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [200, 52, 42],
+    "alt": [168, 36, 34],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [206, 58, 48], "alt": [174, 42, 40]}
+  }
+}

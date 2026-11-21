@@ -126,7 +126,14 @@ fn choose(f: &mut Flit, at: Vec3, toward: Option<Vec3>, rmin: f32, rmax: f32, t:
         };
         let r = rmin + f.rand() * (rmax - rmin);
         let (x, z) = (at.x + a.sin() * r, at.z + a.cos() * r);
-        let Some(y) = t.perch(x, z, at.y + 30.0) else {
+        // Under a roof, from under the roof: from the sky it would perch
+        // on the land laid over the room (#377).
+        let from = match t.roof(at) {
+            Some(roof) if t.store.cell((x * 4.0).floor() as i32, ((roof - 0.05) * 4.0).floor() as i32, (z * 4.0).floor() as i32) != crate::world::store::Cell::Open => continue,
+            Some(roof) => roof - 0.05,
+            None => at.y + 30.0,
+        };
+        let Some(y) = t.perch(x, z, from) else {
             continue;
         };
         if y < t.sea + 0.5 {
@@ -152,7 +159,10 @@ fn ground_spot(f: &mut Flit, at: Vec3, t: &Terrain) -> Option<Vec3> {
     let r = 1.5 + f.rand() * 4.0;
     let (x, z) = (at.x + a.sin() * r, at.z + a.cos() * r);
     // From just above the bare ground, so a canopy overhead doesn't count.
-    let g = t.height(x, z)?;
+    let g = match t.roof(at) {
+        Some(_) => super::terrain::ground_near(t.store, x, z, at)?.0,
+        None => t.height(x, z)?,
+    };
     let y = t.perch(x, z, g + 1.5).unwrap_or(g);
     (y > t.sea + 0.5 && !t.wet(x, z)).then_some(Vec3::new(x, y, z))
 }

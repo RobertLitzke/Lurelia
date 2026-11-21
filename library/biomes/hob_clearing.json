@@ -1,6 +1,6 @@
 {
   "name": "hob_clearing",
-  "version": 1,
+  "version": 2,
   "introduced_by": "hemlow",
   "notes": "The clearing round the Hob Stones: short grass where no tree grows, a ring of glassbloom round it, sky rays turning overhead.",
   "priority": 12,
@@ -21,7 +21,8 @@
     {"creature": "lantern_moth", "count": 16},
     {"creature": "firefly", "count": 30},
     {"creature": "fae_badger", "count": 1},
-    {"creature": "fae_toad", "count": 2}
+    {"creature": "fae_toad", "count": 2},
+    {"creature": "fae_elephant", "count": 1}
   ],
   "collectibles": [{"item": "hag_stone", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}]
 }
