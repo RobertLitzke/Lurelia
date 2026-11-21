@@ -1,0 +1,23 @@
+{
+  "name": "prefab_bungalow",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "A flat-roofed prefab bungalow for the married staff (1970), clad in painted siding, a door and two windows on the front (local -Z) and an air-conditioner box rusting on the back corner.",
+  "size": [44, 14, 30],
+  "anchor": [22, 0, 14],
+  "foundation": 4,
+  "decays": true,
+  "tags": ["array", "camp", "house"],
+  "slots": {"siding": "siding_teal"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [44, 2, 28], "mat": "concrete", "part": "floor"},
+    {"op": "walls", "from": [2, 2, 4], "to": [42, 11, 26], "mat": "siding", "thick": 1, "part": "wall"},
+    {"op": "box", "from": [0, 11, 2], "to": [44, 12, 28], "mat": "roof_tar", "part": "roof"},
+    {"op": "box", "from": [0, 10, 2], "to": [44, 11, 3], "mat": "trim_white", "part": "roof"},
+    {"op": "box", "from": [8, 5, 4], "to": [18, 9, 5], "mat": "window_glass", "part": "glass"},
+    {"op": "box", "from": [30, 5, 4], "to": [38, 9, 5], "mat": "window_glass", "part": "glass"},
+    {"op": "box", "from": [22, 2, 4], "to": [26, 10, 5], "mat": "air"},
+    {"op": "box", "from": [18, 2, 0], "to": [30, 3, 4], "mat": "concrete", "part": "floor"},
+    {"op": "box", "from": [40, 5, 25], "to": [43, 8, 29], "mat": "panel_grey", "part": "metal"}
+  ]
+}

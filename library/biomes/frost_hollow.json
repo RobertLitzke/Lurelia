@@ -31,5 +31,6 @@
     {"creature": "marmot", "count": 2}
   ],
   "collectibles": [{"item": "flint_blade", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}],
+  "sound": {"wind": 0.6},
   "mist": 0.22
 }

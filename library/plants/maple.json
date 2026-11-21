@@ -14,5 +14,6 @@
   "leader": 0.55,
   "fill": 0.5,
   "max_slope": 0.55,
-  "autumn": "maple_red"
+  "autumn": "maple_red",
+  "thin_limbs": 0.12
 }

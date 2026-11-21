@@ -17,5 +17,6 @@
   "spread": 1.0,
   "dome": 0.4,
   "max_slope": 0.7,
-  "autumn": "leaves_autumn"
+  "autumn": "leaves_autumn",
+  "thin_limbs": 0.12
 }

@@ -56,6 +56,16 @@ pub fn write(w: &World, path: &std::path::Path, px: usize) -> std::io::Result<()
     for t in w.trees.iter().step_by(3) {
         dot(Vec2::new(t.pos.x, t.pos.z), 0, [30, 70, 35]);
     }
+    // Bones in ivory, the tall ones brighter.
+    for b in w.bones.list.iter().filter(|b| !b.carve) {
+        let n = ((b.b - b.a).length() / scale).ceil().max(1.0) as usize;
+        for k in 0..=n {
+            let q = b.a + (b.b - b.a) * (k as f32 / n as f32);
+            let tall = (q.y - f.height(q.x, q.z)).clamp(0.0, 60.0) / 60.0;
+            let c = (200.0 + 55.0 * tall) as u8;
+            dot(Vec2::new(q.x, q.z), ((b.ra.max(b.rb) / scale) as i32).min(3), [c, c, (c as f32 * 0.9) as u8]);
+        }
+    }
     for p in &w.placed {
         let (x0, z0, x1, z1) = p.footprint(&w.shapes);
         let c = Vec2::new((x0 + x1) as f32 * 0.125, (z0 + z1) as f32 * 0.125);

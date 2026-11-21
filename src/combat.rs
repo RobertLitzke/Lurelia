@@ -43,6 +43,39 @@ pub struct Hitbox {
     pub half_w: f32,
     /// A dead body is not shot at again.
     pub alive: bool,
+    /// Its side in a team match, so a bending beam (`FireDef::bend_m`)
+    /// is not pulled onto a teammate.
+    pub team: Option<u8>,
+}
+
+/// The most a beam bends, however near the foe: past this a body at your
+/// elbow would drag the beam round a corner of the screen.
+const BEND_MAX: f32 = 0.42; // radians, about 24 degrees
+
+/// The way to aim a bending beam (`FireDef::bend_m`) from `eye`: at the
+/// chest of the living foe, not on the firer's side, whose chest the line of
+/// `dir` passes nearest, within `bend_m` of it plus the body's own width, in
+/// range and in sight. None when nobody is, or the beam does not bend.
+fn bend_to(scene: &Scene, eye: Vec3, dir: Vec3, f: &FireDef, by: usize) -> Option<Vec3> {
+    if f.bend_m <= 0.0 {
+        return None;
+    }
+    let side = scene.fighters.get(by).and_then(|m| m.team);
+    scene
+        .fighters
+        .iter()
+        .enumerate()
+        .filter(|&(i, m)| i != by && m.alive && (side.is_none() || m.team != side))
+        .filter_map(|(_, m)| {
+            let to = m.chest() - eye;
+            let along = to.dot(dir);
+            let wide = (to - dir * along).length();
+            let way = to.normalize_or(dir);
+            let ok = along > 0.0 && along <= f.range && wide <= f.bend_m + m.half_w && way.dot(dir) >= BEND_MAX.cos() && shot::sees(scene.store, eye, m.chest());
+            ok.then_some((way, wide))
+        })
+        .min_by(|a, b| a.1.total_cmp(&b.1))
+        .map(|(way, _)| way)
 }
 
 impl Hitbox {
@@ -83,6 +116,12 @@ pub struct Hit {
     /// From a burst, or from a shell that bursts: a body this kills comes
     /// apart rather than falling whole (`shooter::gibs`).
     pub blast: bool,
+    /// From something that could as well have hurt whoever fired it: a burst
+    /// with a `self_damage`, or a shell with a `self_hit`. In a team match a
+    /// teammate's blow of this kind lands in full, since the risk is the
+    /// weapon's and the firer's to manage; any other lands at the rules'
+    /// `friendly_fire`.
+    pub risky: bool,
 }
 
 /// Everything in the air: the shells flying, the tracers still fading and the
@@ -91,6 +130,10 @@ pub struct Hit {
 #[derive(Default)]
 pub struct Combat {
     pub shells: Vec<Shell>,
+    /// Where each fighter is looking this step, eye and direction, by
+    /// fighter index: what a guided shell steers by. Set by the rules
+    /// before `step`.
+    pub aims: Vec<(usize, Vec3, Vec3)>,
     tracers: Vec<Tracer>,
     bursts: Vec<Burst>,
     rng: u32,
@@ -172,7 +215,7 @@ pub enum Cue {
     /// A round struck the world at `at`, travelling along `dir`.
     Impact { at: Vec3, dir: Vec3 },
     /// A burst at `at`, `radius` metres across.
-    Burst { at: Vec3, radius: f32 },
+    Burst { at: Vec3, radius: f32, look: crate::library::SplashLook },
     /// Sparks thrown off something breaking, such as a dead bot's chest
     /// lamp.
     Sparks { at: Vec3 },
@@ -240,7 +283,67 @@ fn grown(k: f32, share: f32) -> f32 {
     1.0 + (k - 1.0) * share
 }
 
+/// Across a channel a piercing round hollows, metres.
+const PIERCE_R: f32 = 0.25;
+
+/// How much solid this shot of `f` goes through: the mode's whole depth, or
+/// on a charging mode that share of it the charge reached.
+fn pierce_depth(f: &FireDef, strength: f32) -> f32 {
+    if f.pierce_m <= 0.0 {
+        return 0.0;
+    }
+    if f.charge_s > 0.0 && f.charge_mult > 1.0 {
+        f.pierce_m * ((strength - 1.0) / (f.charge_mult - 1.0)).clamp(0.0, 1.0)
+    } else {
+        f.pierce_m
+    }
+}
+
+/// How far along the ray a round gets that can go through `depth` metres of
+/// solid: where that depth runs out, or `range`.
+fn pierced(store: &crate::world::store::Store, from: Vec3, dir: Vec3, range: f32, depth: f32) -> f32 {
+    let step = 0.1;
+    let mut solid = 0.0f32;
+    let mut t = 0.0f32;
+    while t < range {
+        let p = from + dir * t;
+        let v = [(p.x * 4.0).floor() as i32, (p.y * 4.0).floor() as i32, (p.z * 4.0).floor() as i32];
+        if store.get(v[0], v[1], v[2]).is_some_and(|m| m != AIR) {
+            solid += step;
+            if solid > depth {
+                return t;
+            }
+        }
+        t += step;
+    }
+    range
+}
+
+/// Turn a guided shell toward the point its owner's crosshair is on, no
+/// faster than its `guide` allows: it lags a moving aim and swings round
+/// behind it, which is what makes it a thing to fly rather than a homing
+/// missile. Speed is kept.
+fn steer_shell(s: &mut Shell, store: &crate::world::store::Store, aims: &[(usize, Vec3, Vec3)], dt: f32) {
+    let Some(&(_, eye, dir)) = aims.iter().find(|a| a.0 == s.by) else { return };
+    let far = store.ray(eye, dir, 300.0, |m| m != AIR).map_or(300.0, |h| h.t);
+    let want = (eye + dir * far - s.pos).normalize_or_zero();
+    let speed = s.vel.length();
+    let cur = s.vel.normalize_or_zero();
+    if want == Vec3::ZERO || cur == Vec3::ZERO {
+        return;
+    }
+    let angle = cur.dot(want).clamp(-1.0, 1.0).acos();
+    let turn = s.guide * dt;
+    let k = if angle <= turn { 1.0 } else { turn / angle };
+    s.vel = (cur * (1.0 - k) + want * k).normalize_or(cur) * speed;
+}
+
 impl Combat {
+    /// The goo lying about, as points and blast reaches.
+    pub fn mines(&self) -> impl Iterator<Item = (Vec3, f32)> + '_ {
+        self.sludge.mines()
+    }
+
     pub fn new(seed: u32) -> Self {
         Combat { rng: seed | 1, ..Default::default() }
     }
@@ -261,6 +364,7 @@ impl Combat {
         let strength = strength.max(0.01);
         if f.kind != FireKind::Beam {
             self.cue(Cue::Muzzle { at: muzzle, dir });
+            crate::sound::emit(crate::sound::Noise::fire(muzzle, f));
         }
         match f.kind {
             // A beam is not fired a round at a time; `beam` holds it.
@@ -273,7 +377,31 @@ impl Combat {
                     if f.bore_r > 0.0 {
                         self.bore(scene.store, eye, aim, f.bore_r, f.range);
                     }
+                    // A round that goes through walls: as far as its depth
+                    // of solid allows, hollowing what it went through.
+                    let depth = pierce_depth(f, strength);
+                    if depth > 0.0 {
+                        let reach = pierced(scene.store, eye, aim, f.range, depth);
+                        let hit = shot::where_fighter(scene.fighters, eye, aim, reach, by).map_or(reach, |h| h.0);
+                        self.bore(scene.store, eye, aim, PIERCE_R, hit);
+                        let mut short = f.clone();
+                        // A hair past the body, or the body lies just outside the ray.
+                        short.range = (hit + 0.3).max(0.1);
+                        short.falloff = 1.0 - (1.0 - f.falloff) * short.range / f.range.max(0.01);
+                        let end = self.ray(scene, eye, aim, &short, by, strength, true);
+                        crate::sound::emit(crate::sound::Noise::past(muzzle, end, f));
+                        self.tracers.push(Tracer {
+                            a: muzzle,
+                            b: end,
+                            left: f.tracer_s,
+                            of: f.tracer_s,
+                            tint: f.tracer,
+                            width: 0.03,
+                        });
+                        continue;
+                    }
                     let end = self.ray(scene, eye, aim, f, by, strength, f.bore_r > 0.0);
+                    crate::sound::emit(crate::sound::Noise::past(muzzle, end, f));
                     self.tracers.push(Tracer {
                         a: muzzle,
                         b: end,
@@ -293,15 +421,20 @@ impl Combat {
                 // `pellets` of them, which is how the scrap gun throws a
                 // cone of scrap you can watch fly rather than nine rays that
                 // are over before the frame is drawn.
-                for _ in 0..f.pellets.max(1) {
-                    let jitter = if f.spread_deg > 0.0 {
+                let turn = self.roll();
+                let n = f.pellets.max(1);
+                for k in 0..n {
+                    let jitter = if f.ring && f.spread_deg > 0.0 {
+                        shot::spread(at, f.spread_deg.to_radians(), 1.0, turn + k as f32 / n as f32)
+                    } else if f.spread_deg > 0.0 {
                         let (a, b) = (self.roll(), self.roll());
                         shot::spread(at, f.spread_deg.to_radians(), a, b)
                     } else {
                         at
                     };
-                    // A cone of scrap is not all thrown at one speed.
-                    let speed = f.speed * if f.pellets > 1 { 0.82 + 0.36 * self.roll() } else { 1.0 };
+                    // A cone of scrap is not all thrown at one speed; a ring
+                    // from the barrels is, or it would not stay a ring.
+                    let speed = f.speed * if f.pellets > 1 && !f.ring { 0.82 + 0.36 * self.roll() } else { 1.0 };
                     let spin = self.roll() * std::f32::consts::TAU;
                     self.shells.push(Shell {
                         pos: muzzle,
@@ -323,6 +456,7 @@ impl Combat {
                         look,
                         spin,
                         stick_s: f.stick_s * grown(strength, 0.6),
+                        guide: f.guide,
                         stuck: false,
                         // A charged glob is a bigger glob: more of the tank
                         // went into it.
@@ -356,11 +490,15 @@ impl Combat {
     #[allow(clippy::too_many_arguments)] // eye, muzzle and aim are three separate points, and none follows from the others
     pub fn hold_beam(&mut self, scene: &mut Scene, eye: Vec3, muzzle: Vec3, dir: Vec3, f: &FireDef, by: usize, dt: f32) {
         let dir = dir.normalize_or(Vec3::NEG_Z);
+        crate::sound::emit(crate::sound::Noise::beam(muzzle, f, by));
         if f.bore_r > 0.0 {
             self.gnaw(scene.store, eye, dir, f, dt);
         }
         let before = self.taken.len();
-        let end = self.ray(scene, eye, dir, f, by, dt, false);
+        // A foe near the reticule pulls the beam onto them: the ray goes to
+        // their chest, and the line is drawn bending there from the muzzle.
+        let pulled = bend_to(scene, eye, dir, f, by);
+        let end = self.ray(scene, eye, pulled.unwrap_or(dir), f, by, dt, false);
         // It has to outlive this step: the tracers are faded in the same
         // tick that fires them, so a beam drawn for exactly one step is a
         // beam nobody ever sees.
@@ -373,18 +511,29 @@ impl Combat {
                 self.arc(scene, first, f, by, dir, life);
             }
         }
-        self.tracers.push(Tracer {
-            a: muzzle,
-            b: end,
-            left: life,
-            of: life,
-            tint: f.tracer,
-            // Wider than a tracer and drawn at full brightness for its whole
-            // life: a beam is a rope of light, not a streak left behind one.
-            width: 0.09,
-        });
-        if f.twist > 0.0 {
-            self.twist(muzzle, end, f, life);
+        // Bent, it leaves the muzzle the way the gun points and curves in:
+        // a few straight pieces along a quadratic from muzzle to end.
+        let (pieces, mid) = match pulled {
+            Some(_) => (6, muzzle + dir * (end - muzzle).length() * 0.5),
+            None => (1, (muzzle + end) * 0.5),
+        };
+        let at = |t: f32| muzzle * (1.0 - t) * (1.0 - t) + mid * 2.0 * t * (1.0 - t) + end * t * t;
+        for k in 0..pieces {
+            let (a, b) = (at(k as f32 / pieces as f32), at((k + 1) as f32 / pieces as f32));
+            self.tracers.push(Tracer {
+                a,
+                b,
+                left: life,
+                of: life,
+                tint: f.tracer,
+                // Wider than a tracer and drawn at full brightness for its
+                // whole life: a beam is a rope of light, not a streak left
+                // behind one.
+                width: 0.09,
+            });
+            if f.twist > 0.0 {
+                self.twist(a, b, f, life);
+            }
         }
     }
 
@@ -417,6 +566,7 @@ impl Combat {
                 fling: fling((to - from).normalize_or(dir), damage),
                 head: false,
                 blast: false,
+                risky: false,
             });
             self.tracers.push(Tracer {
                 a: from,
@@ -569,9 +719,33 @@ impl Combat {
     /// burst went off (`SplashDef::crater`). Measured from the burst point
     /// itself, which sits a few centimetres off the face it struck, so a
     /// small radius takes a shallow bite out of a floor or a wall.
+    ///
+    /// A radius under one voxel (0.25 m) is a single bite: the solid voxel
+    /// nearest the burst, whichever way the round came in. A ball that small
+    /// would take none off a voxel's corner and one off its middle.
     fn crater(&mut self, store: &crate::world::store::Store, at: Vec3, r: f32) {
         let c = at * 4.0;
         let rv = r * 4.0;
+        if r < 0.25 {
+            let base = c.floor();
+            let mut best: Option<([i32; 3], f32)> = None;
+            for y in -1..=1 {
+                for z in -1..=1 {
+                    for x in -1..=1 {
+                        let v = [base.x as i32 + x, base.y as i32 + y, base.z as i32 + z];
+                        let mid = Vec3::new(v[0] as f32 + 0.5, v[1] as f32 + 0.5, v[2] as f32 + 0.5);
+                        let d = (mid - c).length();
+                        if store.get(v[0], v[1], v[2]).is_some_and(|m| m != AIR) && best.is_none_or(|b| d < b.1) {
+                            best = Some((v, d));
+                        }
+                    }
+                }
+            }
+            if let Some((v, _)) = best {
+                self.edits.push((v, AIR));
+            }
+            return;
+        }
         let lo = (c - Vec3::splat(rv)).floor();
         let hi = (c + Vec3::splat(rv)).ceil();
         for y in lo.y as i32..=hi.y as i32 {
@@ -670,6 +844,7 @@ impl Combat {
                     fling: fling(dir, damage),
                     head,
                     blast: false,
+                    risky: false,
                 });
                 from + dir * t
             }
@@ -747,17 +922,18 @@ impl Combat {
                 fling: up * sp.push * share * BLAST_FLING,
                 head: false,
                 blast: true,
+                risky: sp.self_damage > 0.0,
             });
         }
         if sp.crater > 0.0 {
             self.crater(scene.store, at, sp.crater);
         }
-        self.cue(Cue::Burst { at, radius: sp.radius });
+        self.cue(Cue::Burst { at, radius: sp.radius, look: sp.look });
         self.bursts.push(Burst {
             at,
             radius: sp.radius,
             left: BURST_S,
-            tint: [1.0, 0.72, 0.36],
+            look: sp.look,
         });
     }
 
@@ -778,7 +954,11 @@ impl Combat {
         // What a cluster shell broke into. Collected rather than pushed,
         // because the shells are out of `self` while they are being flown.
         let mut thrown: Vec<shot::Shell> = Vec::new();
+        let aims = std::mem::take(&mut self.aims);
         shells.retain_mut(|s| match {
+            if s.guide > 0.0 && !s.stuck {
+                steer_shell(s, scene.store, &aims, dt);
+            }
             let flight = s.step(scene, dt);
             // A plain round in flight (a scrap shard, a disc) is a strike
             // like a bullet is, for whatever the rules shoot at that is not
@@ -814,6 +994,7 @@ impl Combat {
                         fling: fling(s.vel, s.damage),
                         head: false,
                         blast: s.splash.is_some(),
+                        risky: s.self_hit > 0.0 || s.splash.is_some_and(|sp| sp.self_damage > 0.0),
                     });
                 }
                 // A glob of sludge that found a wall or the floor, or
@@ -866,6 +1047,7 @@ impl Combat {
                             look: c.look,
                             spin: self.roll() * std::f32::consts::TAU,
                             stick_s: 0.0,
+                            guide: 0.0,
                             stuck: false,
                             goo_r: 0.0,
                             spoil: 0.0,
@@ -912,7 +1094,10 @@ impl Combat {
     pub fn flashes(&self) -> impl Iterator<Item = (Vec3, f32, [f32; 3], f32)> + '_ {
         self.bursts.iter().map(|b| {
             let k = (b.left / BURST_S).clamp(0.0, 1.0);
-            let colour = [1.0, 0.45 + 0.35 * k, 0.12 + 0.3 * k];
+            let colour = match b.look {
+                crate::library::SplashLook::Fire => [1.0, 0.45 + 0.35 * k, 0.12 + 0.3 * k],
+                crate::library::SplashLook::Goo => [0.3 + 0.3 * k, 1.0, 0.1 + 0.25 * k],
+            };
             (b.at, b.radius * (1.6 + 0.8 * k), colour, 3.0 * k * k)
         })
     }
@@ -920,6 +1105,12 @@ impl Combat {
     /// Everything that has landed on a fighter since this was last called.
     pub fn take_hits(&mut self) -> Vec<Hit> {
         std::mem::take(&mut self.taken)
+    }
+
+    /// Land a blow as if a round had, for tests of what the rules do with it.
+    #[cfg(test)]
+    pub fn land(&mut self, h: Hit) {
+        self.taken.push(h);
     }
 
     /// Record a round as if one had been fired, for tests of what the
@@ -962,11 +1153,25 @@ impl Combat {
         self.cues.clear();
         self.strikes.clear();
         self.shells.clear();
-        // The sludge on the map goes too, and goes the only way anything
-        // can: on the queue, for `Game` to apply.
-        self.sludge.clear(&mut self.edits);
         self.tracers.clear();
         self.bursts.clear();
+        // The sludge on the map goes too, and goes the only way anything
+        // can: on the queue, for `Game` to apply. Each blob pops as it goes,
+        // with the look of its burst and none of the harm.
+        for (at, sp) in self.sludge.clear(&mut self.edits) {
+            self.cue(Cue::Burst { at, radius: sp.radius, look: sp.look });
+            self.bursts.push(Burst {
+                at,
+                radius: sp.radius,
+                left: BURST_S,
+                look: sp.look,
+            });
+        }
+    }
+
+    /// A fighter has died: what they laid on the map goes with them.
+    pub fn clear_sludge_of(&mut self, who: usize) {
+        self.sludge.clear_by(who, &mut self.edits);
     }
 
     /// Draw it all as overlay lines: tracers fading, shells as a bright
@@ -1053,10 +1258,15 @@ mod tests {
             spoil_r: 0.0,
             burst: 0,
             burst_gap_s: 0.0,
+            burst_spread_deg: 0.0,
+            pierce_m: 0.0,
+            guide: 0.0,
+            ring: false,
             twist: 0.0,
             arc_jumps: 0,
             arc_m: 0.0,
             arc_keep: 0.5,
+            bend_m: 0.0,
             cluster: None,
             kind: FireKind::Shell,
             rpm: 60.0,
@@ -1080,6 +1290,7 @@ mod tests {
                 self_push: 1.0,
                 crater: 0.0,
                 curve: 1.0,
+                look: Default::default(),
             }),
             per_shot: 1,
             kick: 1.0,
@@ -1099,6 +1310,7 @@ mod tests {
             height: 1.75,
             half_w: 0.3,
             alive: true,
+            team: None,
         }
     }
 
@@ -1411,6 +1623,76 @@ mod tests {
         assert_eq!(hits.len(), 3, "somebody was hit twice: {hits:?}");
     }
 
+    /// The pulse gun's right button bends onto a foe just off the reticule,
+    /// not onto one well off it, and never onto a teammate.
+    #[test]
+    fn the_arc_bends_onto_a_foe_near_the_reticule() {
+        let text = std::fs::read_to_string("library/weapons/pulse_gun.json").unwrap();
+        let w: crate::library::WeaponDef = serde_json::from_str(&text).unwrap();
+        let mut f = w.alt.expect("the pulse gun has a second mode");
+        assert!(f.bend_m > 0.0 && f.bend_m < 1.0, "a bend of {} m is not slight", f.bend_m);
+        f.arc_jumps = 0;
+        let store = room();
+        let shoot = |off_deg: f32, team: Option<u8>| {
+            let mut ents = Entities::new(Default::default(), 1);
+            let mut c = Combat::new(5);
+            let mut foe = me(Vec3::new(4.5, 2.0, 0.0));
+            foe.team = team;
+            let mut mine = me(Vec3::new(-2.0, 2.0, 0.0));
+            mine.team = Some(0);
+            let fighters = [mine, foe];
+            let mut scene = Scene {
+                store: &store,
+                ents: &mut ents,
+                models: &[],
+                fighters: &fighters,
+            };
+            let eye = fighters[0].foot + Vec3::Y * 1.5;
+            let at = (fighters[1].chest() - eye).normalize();
+            // Turned aside about the vertical by `off_deg`.
+            let dir = glam::Quat::from_rotation_y(off_deg.to_radians()) * at;
+            c.hold_beam(&mut scene, eye, eye, dir, &f, 0, 1.0 / 60.0);
+            c.take_hits().iter().filter(|h| h.who == 1).map(|h| h.damage).sum::<f32>()
+        };
+        // The aim line passing the chest at a given width, at about six and
+        // a half metres: past the body's own 30 cm a straight beam misses.
+        let deg = |m: f32| (m / 6.5f32).atan().to_degrees();
+        let off = deg(0.3 + f.bend_m * 0.7);
+        assert!(shoot(off, Some(1)) > 0.0, "{off} degrees off did not bend onto the foe");
+        assert_eq!(shoot(deg(0.3 + f.bend_m * 1.5), Some(1)), 0.0, "it bent from well off the reticule");
+        assert_eq!(shoot(off, Some(0)), 0.0, "it bent onto a teammate");
+        assert!(shoot(off, None) > 0.0, "with no sides it did not bend");
+    }
+
+    /// The goo gun's bursts are goo: the particles are told so, and the
+    /// light they put on the room is green, not the orange of a rocket.
+    #[test]
+    fn a_goo_burst_goes_off_green() {
+        use crate::library::SplashLook;
+        let text = std::fs::read_to_string("library/weapons/goo_gun.json").unwrap();
+        let w: crate::library::WeaponDef = serde_json::from_str(&text).unwrap();
+        let sp = w.fire.splash.expect("goo bursts");
+        assert_eq!(sp.look, SplashLook::Goo);
+        assert_eq!(w.alt.and_then(|f| f.splash).map(|s| s.look), Some(SplashLook::Goo));
+        let store = room();
+        let mut ents = Entities::new(Default::default(), 1);
+        let mut c = Combat::new(5);
+        let fighters = [me(Vec3::new(-4.5, 2.0, -4.5))];
+        let mut scene = Scene {
+            store: &store,
+            ents: &mut ents,
+            models: &[],
+            fighters: &fighters,
+        };
+        c.burst(&mut scene, Vec3::new(0.0, 3.0, 0.0), &sp, 0);
+        assert!(c.take_cues().iter().any(|q| matches!(q, Cue::Burst { look: SplashLook::Goo, .. })), "the burst was not drawn as goo");
+        let (_, _, colour, _) = c.flashes().next().expect("no light");
+        assert!(colour[1] > colour[0] && colour[1] > colour[2], "the light is not green: {colour:?}");
+        // And a rocket is still fire.
+        let rocket = rocket().splash.unwrap();
+        assert_eq!(rocket.look, SplashLook::Fire);
+    }
+
     /// A skipjack disc fired square at a wall comes straight back at whoever
     /// fired it, and cuts them for half what it would cut anybody else. On
     /// its way out it does not touch them.
@@ -1553,6 +1835,7 @@ mod tests {
             self_push: 1.0,
             crater: 0.0,
             curve: 1.0,
+            look: Default::default(),
         });
         {
             let mut scene = Scene {
@@ -1802,6 +2085,54 @@ mod tests {
     /// A burst with a `crater` takes a few voxels out of the floor it went
     /// off on: the rocket's 0.33 m is about four, wherever on a voxel it
     /// lands and whether it came straight down or skimmed in.
+    /// A crater under a voxel across is one voxel, wherever on the face the
+    /// round lands: the minigun's flechettes.
+    #[test]
+    fn a_small_crater_takes_one_voxel() {
+        let store = room();
+        for (x, z) in [(0.0, 0.0), (0.125, 0.125), (0.1, 0.03), (0.2, 0.17)] {
+            for lift in [0.06, 0.01] {
+                let mut c = Combat::new(3);
+                c.crater(&store, Vec3::new(x, 2.0 + lift, z), 0.12);
+                let e = c.take_edits();
+                assert_eq!(e.len(), 1, "a flechette took {} voxels at ({x}, {z}) +{lift}", e.len());
+                assert_eq!(e[0].0[1], 7, "it bit below the top layer");
+            }
+        }
+    }
+
+    /// The minigun's right button: six flechettes on the rim of the cone,
+    /// evenly round it, all at one speed.
+    #[test]
+    fn a_ring_shot_puts_its_pellets_evenly_round_the_rim() {
+        let store = room();
+        let mut ents = Entities::new(Default::default(), 1);
+        let mut c = Combat::new(11);
+        let foot = Vec3::new(0.0, 2.0, 0.0);
+        let fighters = [me(foot)];
+        let mut scene = Scene {
+            store: &store,
+            ents: &mut ents,
+            models: &[],
+            fighters: &fighters,
+        };
+        let mut f = rocket();
+        f.pellets = 6;
+        f.ring = true;
+        f.spread_deg = 3.0;
+        f.splash = None;
+        let eye = foot + Vec3::Y * 1.5;
+        c.fire(&mut scene, eye, eye, Vec3::X, &f, 0, 1.0);
+        assert_eq!(c.shells.len(), 6);
+        let at = c.shells.iter().map(|s| s.vel.normalize()).sum::<Vec3>().normalize();
+        let speed = c.shells[0].vel.length();
+        for s in &c.shells {
+            let off = s.vel.normalize().angle_between(at).to_degrees();
+            assert!((off - 3.0).abs() < 0.15, "a flechette left the rim: {off} degrees out");
+            assert!((s.vel.length() - speed).abs() < 1e-3, "the ring went out at different speeds");
+        }
+    }
+
     #[test]
     fn a_rocket_crater_takes_a_few_voxels_out_of_the_floor() {
         let store = room();
@@ -1826,6 +2157,81 @@ mod tests {
     /// A bore does not stop on a wall: it takes the wall with it, hands the
     /// voxels to the rules, and carries on to its full range. A ray without
     /// a `bore_r` leaves the room exactly as it found it.
+    /// The sniper rifle's charged shot: at a full charge it goes through a
+    /// metre of wall to the man behind it and hollows the way, through two
+    /// metres it does not; and a tap goes through nothing.
+    #[test]
+    fn a_full_charge_goes_through_a_metre_of_wall() {
+        let text = std::fs::read_to_string("library/weapons/sniper_rifle.json").unwrap();
+        let w: crate::library::WeaponDef = serde_json::from_str(&text).unwrap();
+        let f = w.alt.expect("the sniper rifle has a second mode");
+        let full = f.charge_mult;
+        let shoot = |thick: i32, strength: f32| {
+            let mut store = room();
+            // A wall across the room from x = 1 m, `thick` voxels deep.
+            for x in 4..4 + thick {
+                for z in -20..20 {
+                    for y in 8..30 {
+                        store.set(x, y, z, STONE);
+                    }
+                }
+            }
+            let mut ents = Entities::new(Default::default(), 1);
+            let him = Vec3::new(4.5, 2.0, 0.0);
+            let fighters = [me(Vec3::new(-4.0, 2.0, 0.0)), me(him)];
+            let mut c = Combat::new(9);
+            let mut scene = Scene {
+                store: &store,
+                ents: &mut ents,
+                models: &[],
+                fighters: &fighters,
+            };
+            let eye = Vec3::new(-3.0, 3.1, 0.0);
+            c.fire(&mut scene, eye, eye, Vec3::X, &f, 0, strength);
+            (c.take_hits(), c.take_edits())
+        };
+        let (hits, cuts) = shoot(4, full);
+        assert_eq!(hits.len(), 1, "a full charge did not reach him through a metre of wall");
+        assert!((hits[0].damage - f.damage * full).abs() < 0.5, "it did {} not {}", hits[0].damage, f.damage * full);
+        assert!(cuts.len() >= 8 && cuts.iter().all(|(v, m)| *m == AIR && v[0] >= 4 && v[0] < 8), "the wall was not hollowed along the shot: {} cuts", cuts.len());
+        let (hits, cuts) = shoot(8, full);
+        assert!(hits.is_empty(), "it went through two metres of wall");
+        assert!(!cuts.is_empty() && cuts.iter().all(|(v, _)| v[0] < 11), "it did not stop a metre and a quarter in, plus the channel");
+        let (hits, cuts) = shoot(4, 1.0);
+        assert!(hits.is_empty() && cuts.is_empty(), "a tap went through the wall");
+    }
+
+    /// A guided rocket comes round after its owner's aim, and lags it: a
+    /// quarter of a second in it has turned some of the way, not all.
+    #[test]
+    fn a_guided_rocket_follows_the_crosshair_with_a_lag() {
+        let text = std::fs::read_to_string("library/weapons/rocket_launcher.json").unwrap();
+        let w: crate::library::WeaponDef = serde_json::from_str(&text).unwrap();
+        let f = w.alt.expect("the launcher has a second mode");
+        assert!(f.guide > 0.0, "the second mode is not guided");
+        let store = room();
+        let mut ents = Entities::new(Default::default(), 1);
+        let fighters = [me(Vec3::new(-4.0, 2.0, -4.0))];
+        let mut c = Combat::new(4);
+        let mut scene = Scene {
+            store: &store,
+            ents: &mut ents,
+            models: &[],
+            fighters: &fighters,
+        };
+        let eye = Vec3::new(-4.0, 3.5, -4.0);
+        c.fire(&mut scene, eye, eye, Vec3::X, &f, 0, 1.0);
+        // Fired down +x; the owner now looks down +z.
+        for _ in 0..15 {
+            c.aims = vec![(0, eye, Vec3::Z)];
+            c.step(&mut scene, 1.0 / 60.0);
+        }
+        let d = c.shells[0].vel.normalize();
+        assert!(d.z > 0.2, "it did not turn after the aim: {d:?}");
+        assert!(d.x > 0.2, "it turned at once, with no lag: {d:?}");
+        assert!((c.shells[0].vel.length() - f.speed).abs() < 0.5, "it lost speed turning");
+    }
+
     #[test]
     fn a_bore_eats_the_wall_and_keeps_going() {
         let store = room();
@@ -2043,6 +2449,7 @@ mod tests {
             self_push: 1.0,
             crater: 0.0,
             curve: 1.0,
+            look: Default::default(),
         });
         f
     }

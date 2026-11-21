@@ -1,6 +1,6 @@
 {
   "name": "kaldvik_shore",
-  "version": 1,
+  "version": 2,
   "introduced_by": "kaldvik",
   "notes": "A fjord's narrow shore: dark shingle under a rind of snow, kelp wrack and ice at the tideline.",
   "priority": 5,
@@ -14,7 +14,11 @@
     {"creature": "harbor_seal", "count": 3},
     {"creature": "eider", "count": 4},
     {"creature": "arctic_fox", "count": 2},
-    {"creature": "raven", "count": 2}
+    {"creature": "raven", "count": 2},
+    {"creature": "puffin", "count": 6},
+    {"creature": "sea_lion", "count": 2},
+    {"creature": "sea_eagle", "count": 1},
+    {"creature": "otter", "count": 2}
   ],
   "collectibles": []
 }

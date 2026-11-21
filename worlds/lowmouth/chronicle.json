@@ -3673,13 +3673,27 @@
   },
   {
    "year": -25,
+   "event": "seat",
+   "cause": "open water in the Gulf south-east of the river mouth, clear of the mangrove keys",
+   "name": "bon_temps",
+   "near": [
+    1250,
+    1360
+   ],
+   "within": 160,
+   "rule": "sea",
+   "size": 24,
+   "elev": [
+    -30,
+    -2
+   ]
+  },
+  {
+   "year": -25,
    "event": "place",
    "cause": "the Bon Temps well, a small platform out in the Gulf, pumping still",
    "structure": "oil_platform",
-   "at": [
-    938,
-    1356
-   ],
+   "at": "bon_temps",
    "bearing": 0,
    "age": 8,
    "poi": "the Bon Temps well"

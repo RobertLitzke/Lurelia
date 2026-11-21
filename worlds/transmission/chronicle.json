@@ -5,12 +5,12 @@
       "year": -100,
       "event": "heightmap",
       "file": "ground.bin",
-      "cause": "A level plain at 22 m: the ground the map is sunk into, so nothing but the arena shapes the world."
+      "cause": "A level plain at 28 m: the ground the map is sunk into, so nothing but the arena shapes the world."
     },
     {
       "year": -20,
       "event": "place",
-      "cause": "tools/arena/transmission.py, rasterised brush by brush into quarter-metre voxels.",
+      "cause": "tools/arena/maps/transmission.arena, rasterised brush by brush into quarter-metre voxels.",
       "structure": "arena_transmission",
       "at": [
         128.0,
@@ -29,230 +29,149 @@
       ],
       "points": [
         [
-          -20.45,
-          -16.4,
-          -13.75
+          3.75,
+          -15.25,
+          -3.75
         ],
-        [
-          -20.35,
-          -8.2,
-          -13.75
-        ],
-        [
-          -20.25,
-          0.0,
-          -13.75
-        ],
-        [
-          -20.15,
-          8.2,
-          -13.75
-        ],
-        [
-          -20.05,
-          16.4,
-          -13.75
-        ],
-        [
-          -17.0,
-          -20.45,
-          -13.75
-        ],
-        [
-          -10.0,
-          -20.35,
-          -13.75
-        ],
-        [
-          -3.0,
-          -20.25,
-          -13.75
-        ],
-        [
-          4.0,
-          -20.15,
-          -13.75
-        ],
-        [
-          11.0,
-          -20.05,
-          -13.75
-        ],
-        [
-          -12.5,
-          2.75,
-          -13.75
-        ],
-        [
-          -4.25,
-          14.0,
-          -13.75
-        ],
-        [
-          -16.88,
-          19.56,
-          -13.75
-        ],
-        [
-          -9.62,
-          19.69,
-          -13.75
-        ],
-        [
-          -2.38,
-          19.81,
-          -13.75
-        ],
-        [
-          4.88,
-          19.94,
-          -13.75
-        ],
-        [
-          11.0,
-          -4.25,
-          -13.75
-        ],
-        [
-          14.06,
-          -16.0,
-          -13.75
-        ],
-        [
-          14.19,
-          -9.0,
-          -13.75
-        ],
-        [
-          14.31,
-          -2.0,
-          -13.75
-        ],
-        [
-          14.44,
-          5.0,
-          -13.75
-        ],
-        [
-          -14.5,
-          -0.5,
-          -9.75
-        ],
-        [
-          14.0,
-          -0.5,
-          -9.75
-        ],
-        [
-          20.08,
-          -8.5,
-          -9.75
-        ],
-        [
-          20.25,
-          -0.5,
-          -9.75
-        ],
-        [
-          20.42,
-          7.5,
-          -9.75
-        ],
-        [
-          -0.5,
-          -14.5,
-          -5.75
-        ],
-        [
-          -0.5,
-          14.0,
-          -5.75
-        ],
-        [
-          6.25,
-          -20.38,
-          -5.75
-        ],
-        [
-          15.75,
-          -20.12,
-          -5.75
-        ],
-        [
-          5.0,
-          19.75,
-          -5.75
-        ]
-      ],
-      "reach": 9.0,
-      "strength": 0.5,
-      "colour": [
-        238,
-        247,
-        255
-      ]
-    },
-    {
-      "year": -19,
-      "event": "lamp",
-      "cause": "The map's own lights.",
-      "at": [
-        128.0,
-        128.0
-      ],
-      "points": [
-        [
-          -5.5,
-          -5.5,
-          -5.25
-        ],
-        [
-          4.5,
-          -5.5,
-          -5.25
-        ],
-        [
-          -5.5,
-          4.5,
-          -5.25
-        ],
-        [
-          4.5,
-          4.5,
-          -5.25
-        ],
-        [
-          15.5,
-          15.5,
-          -6.25
-        ]
-      ],
-      "reach": 16.0,
-      "strength": 0.75,
-      "colour": [
-        238,
-        247,
-        255
-      ]
-    },
-    {
-      "year": -19,
-      "event": "lamp",
-      "cause": "The map's own lights.",
-      "at": [
-        128.0,
-        128.0
-      ],
-      "points": [
         [
           -17.25,
-          -12.5,
+          -15.25,
           -11.25
         ],
         [
-          20.25,
-          -17.5,
-          -7.25
+          -17.25,
+          -8.25,
+          -15.25
+        ],
+        [
+          -17.25,
+          -1.25,
+          -15.25
+        ],
+        [
+          -17.25,
+          12.75,
+          -14.75
+        ],
+        [
+          -17.25,
+          19.75,
+          -14.25
+        ],
+        [
+          -10.25,
+          -8.25,
+          -11.25
+        ],
+        [
+          -10.25,
+          -1.25,
+          -15.25
+        ],
+        [
+          -10.25,
+          5.75,
+          -14.75
+        ],
+        [
+          -10.25,
+          12.75,
+          -14.25
+        ],
+        [
+          -10.25,
+          19.75,
+          -14.25
+        ],
+        [
+          -3.25,
+          -8.25,
+          -9.75
+        ],
+        [
+          -3.25,
+          12.75,
+          -14.25
+        ],
+        [
+          -3.25,
+          19.75,
+          -15.0
+        ],
+        [
+          3.75,
+          -15.25,
+          -9.75
+        ],
+        [
+          3.75,
+          -8.25,
+          -9.75
+        ],
+        [
+          3.75,
+          -8.25,
+          -5.5
+        ],
+        [
+          3.75,
+          -1.25,
+          -6.75
+        ],
+        [
+          3.75,
+          12.75,
+          -14.25
+        ],
+        [
+          3.75,
+          19.75,
+          -14.25
+        ],
+        [
+          10.75,
+          -8.25,
+          -9.75
+        ],
+        [
+          10.75,
+          -8.25,
+          -5.5
+        ],
+        [
+          10.75,
+          5.75,
+          -18.25
+        ],
+        [
+          10.75,
+          12.75,
+          -14.25
+        ],
+        [
+          10.75,
+          19.75,
+          -14.25
+        ],
+        [
+          17.75,
+          19.75,
+          -14.25
+        ],
+        [
+          24.75,
+          -8.25,
+          -13.75
+        ],
+        [
+          24.75,
+          -1.25,
+          -13.75
+        ],
+        [
+          24.75,
+          19.75,
+          -14.25
         ]
       ],
       "reach": 8.0,
@@ -273,12 +192,22 @@
       ],
       "points": [
         [
-          -12.5,
-          12.5,
-          -10.25
+          -17.25,
+          -8.25,
+          -5.25
+        ],
+        [
+          -17.25,
+          -1.25,
+          -5.25
+        ],
+        [
+          17.75,
+          -15.25,
+          -3.75
         ]
       ],
-      "reach": 10.0,
+      "reach": 14.0,
       "strength": 0.5,
       "colour": [
         238,
@@ -287,76 +216,323 @@
       ]
     },
     {
-      "year": -2,
-      "event": "area",
-      "cause": "What the people who fought here called it: the turbine hall.",
-      "name": "the turbine hall",
-      "kind": "floor",
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
       "at": [
-        127.5,
-        127.5
+        128.0,
+        128.0
       ],
-      "radius": 7
+      "points": [
+        [
+          -24.25,
+          -8.25,
+          -4.75
+        ],
+        [
+          -24.25,
+          -1.25,
+          -4.0
+        ]
+      ],
+      "reach": 22.0,
+      "strength": 0.5,
+      "colour": [
+        238,
+        247,
+        255
+      ]
     },
     {
-      "year": -2,
-      "event": "area",
-      "cause": "What the people who fought here called it: the crossing.",
-      "name": "the crossing",
-      "kind": "bridge",
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
       "at": [
-        127.5,
-        127.5
+        128.0,
+        128.0
       ],
-      "radius": 2
+      "points": [
+        [
+          -3.25,
+          5.75,
+          -6.75
+        ],
+        [
+          3.75,
+          5.75,
+          -6.75
+        ]
+      ],
+      "reach": 21.0,
+      "strength": 0.5,
+      "colour": [
+        238,
+        247,
+        255
+      ]
     },
     {
-      "year": -2,
-      "event": "area",
-      "cause": "What the people who fought here called it: the intake.",
-      "name": "the intake",
-      "kind": "room",
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
       "at": [
-        143.5,
-        143.5
+        128.0,
+        128.0
       ],
-      "radius": 6
+      "points": [
+        [
+          -17.25,
+          5.75,
+          -5.5
+        ],
+        [
+          10.75,
+          -15.25,
+          -3.75
+        ]
+      ],
+      "reach": 20.0,
+      "strength": 0.5,
+      "colour": [
+        238,
+        247,
+        255
+      ]
     },
     {
-      "year": -2,
-      "event": "area",
-      "cause": "What the people who fought here called it: the cold store.",
-      "name": "the cold store",
-      "kind": "room",
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
       "at": [
-        115.5,
-        140.5
+        128.0,
+        128.0
       ],
-      "radius": 4
+      "points": [
+        [
+          17.75,
+          5.75,
+          -13.75
+        ],
+        [
+          17.75,
+          -1.25,
+          -13.75
+        ]
+      ],
+      "reach": 11.0,
+      "strength": 0.5,
+      "colour": [
+        238,
+        247,
+        255
+      ]
     },
     {
-      "year": -2,
-      "event": "area",
-      "cause": "What the people who fought here called it: the spine.",
-      "name": "the spine",
-      "kind": "passage",
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
       "at": [
-        107.8,
-        127.5
+        128.0,
+        128.0
       ],
-      "radius": 3
+      "points": [
+        [
+          -24.25,
+          5.75,
+          -5.5
+        ]
+      ],
+      "reach": 15.0,
+      "strength": 0.5,
+      "colour": [
+        238,
+        247,
+        255
+      ]
     },
     {
-      "year": -2,
-      "event": "area",
-      "cause": "What the people who fought here called it: the north run.",
-      "name": "the north run",
-      "kind": "passage",
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
       "at": [
-        123.5,
-        107.8
+        128.0,
+        128.0
       ],
-      "radius": 3
+      "points": [
+        [
+          17.75,
+          -8.25,
+          -9.25
+        ]
+      ],
+      "reach": 13.0,
+      "strength": 0.5,
+      "colour": [
+        238,
+        247,
+        255
+      ]
+    },
+    {
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
+      "at": [
+        128.0,
+        128.0
+      ],
+      "points": [
+        [
+          3.75,
+          -1.25,
+          -9.75
+        ]
+      ],
+      "reach": 12.0,
+      "strength": 0.5,
+      "colour": [
+        238,
+        247,
+        255
+      ]
+    },
+    {
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
+      "at": [
+        128.0,
+        128.0
+      ],
+      "points": [
+        [
+          17.75,
+          12.75,
+          -13.75
+        ]
+      ],
+      "reach": 9.0,
+      "strength": 0.5,
+      "colour": [
+        238,
+        247,
+        255
+      ]
+    },
+    {
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
+      "at": [
+        128.0,
+        128.0
+      ],
+      "points": [
+        [
+          21.88,
+          -19.62,
+          -7.55
+        ]
+      ],
+      "reach": 7.0,
+      "strength": 1.0,
+      "colour": [
+        182,
+        128,
+        255
+      ]
+    },
+    {
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
+      "at": [
+        128.0,
+        128.0
+      ],
+      "points": [
+        [
+          19.38,
+          5.38,
+          -19.55
+        ]
+      ],
+      "reach": 7.0,
+      "strength": 1.0,
+      "colour": [
+        182,
+        128,
+        255
+      ]
+    },
+    {
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
+      "at": [
+        128.0,
+        128.0
+      ],
+      "points": [
+        [
+          -15.62,
+          1.38,
+          -17.05
+        ]
+      ],
+      "reach": 7.0,
+      "strength": 1.0,
+      "colour": [
+        255,
+        176,
+        72
+      ]
+    },
+    {
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
+      "at": [
+        128.0,
+        128.0
+      ],
+      "points": [
+        [
+          0.88,
+          -9.62,
+          -19.55
+        ]
+      ],
+      "reach": 7.0,
+      "strength": 1.0,
+      "colour": [
+        255,
+        176,
+        72
+      ]
+    },
+    {
+      "year": -19,
+      "event": "lamp",
+      "cause": "The map's own lights.",
+      "at": [
+        128.0,
+        128.0
+      ],
+      "points": [
+        [
+          8.38,
+          10.38,
+          -16.05
+        ]
+      ],
+      "reach": 7.0,
+      "strength": 1.0,
+      "colour": [
+        255,
+        176,
+        72
+      ]
     }
   ]
 }

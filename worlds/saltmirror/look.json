@@ -1,0 +1,19 @@
+{
+  "notes": "White glare off the salt: near ground bleached and neutral, the middle distance faintly warm, the far pan going to the pale blue of the sky it mirrors, and haze lying low so the dishes on the horizon lift off it.",
+  "ramp": [
+    {"at": 0.0, "color": [1.0, 0.99, 0.96]},
+    {"at": 0.45, "color": [0.99, 0.96, 0.92]},
+    {"at": 1.0, "color": [0.76, 0.86, 1.0]}
+  ],
+  "knobs": {
+    "ramp_reach": 1100.0,
+    "ramp_curve": 0.6,
+    "haze_density": 1.1,
+    "haze_height": 140.0,
+    "sun_glow": 0.5,
+    "exposure": 1.02,
+    "saturation": 0.94
+  },
+  "ambient": [0.62, 0.92, 1.08],
+  "sun_tint": [1.04, 1.0, 0.95]
+}

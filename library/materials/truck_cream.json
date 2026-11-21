@@ -1,0 +1,15 @@
+{
+  "name": "truck_cream",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Two-tone cream on a 1970s pickup, gone the colour of old teeth, rust along the sills.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [206, 194, 166],
+    "alt": [146, 98, 66],
+    "scale": 4,
+    "contrast": 0.7,
+    "calm": {"base": [206, 196, 170], "alt": [150, 106, 76]}
+  }
+}

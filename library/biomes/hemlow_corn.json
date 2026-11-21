@@ -1,0 +1,24 @@
+{
+  "name": "hemlow_corn",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "The village's barley, in walled fields on the better ground: pale ears to the knee, nothing else growing in it.",
+  "priority": 10,
+  "rules": {"region": "corn"},
+  "surface": "barley_grass",
+  "subsurface": "dirt",
+  "fringe": 0,
+  "map_color": [214, 196, 120],
+  "plants": [],
+  "features": [],
+  "creatures": [
+    {"creature": "sparrow", "count": 14},
+    {"creature": "starling", "count": 10},
+    {"creature": "crow", "count": 3},
+    {"creature": "rabbit", "count": 3},
+    {"creature": "bumblebee", "count": 4},
+    {"creature": "barn_owl", "count": 1},
+    {"creature": "firefly", "count": 40}
+  ],
+  "collectibles": []
+}

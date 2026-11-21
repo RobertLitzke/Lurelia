@@ -1,0 +1,60 @@
+{
+  "name": "albatross",
+  "version": 2,
+  "introduced_by": "ribshore",
+  "notes": "glide: Laysan albatross: white head and body, long narrow pale grey wings four and a half metres across, a pale pink hooked bill. A few circle wide over the swell and the strand on wings held out flat and beaten once or twice in half a minute, more like vultures than gulls, and only now and then come down together on the highest ground near, a ridge or a bleached rib, to sit out the fog. Its own model at twice the starling's voxel (scaled 3.8x) so the wings, twice the starling shape's length, fit the 32-voxel grid; the body is the same size in metres as before.",
+  "voxel": 0.16,
+  "colors": {
+    "body": [246, 245, 240],
+    "head": [246, 245, 240],
+    "beak": [214, 168, 150],
+    "wing": [168, 162, 154],
+    "tail": [186, 180, 172],
+    "legs": [196, 170, 168],
+    "brow": [150, 146, 142]
+  },
+  "behaviour": {
+    "movement": "glide",
+    "walk_speed": 8,
+    "flee_speed": 11,
+    "wary": 12,
+    "flightiness": 0.5,
+    "fly_height": 16,
+    "flight": "sail",
+    "wingbeat": 0.9,
+    "group": {"size": [2, 5], "spacing": 8, "range": 30, "separation": 1.0, "alignment": 0.6, "cohesion": 0.4},
+    "wind": 1,
+    "rain": 0.8,
+    "active": "any"
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 4, 16], "radius": [1.1, 1.2, 2.6], "mat": "body"},
+    {"op": "ellipsoid", "centre": [16, 4.8, 12], "radius": [1, 1, 1], "mat": "head", "part": "head"},
+    {"op": "set", "at": [15, 5, 12], "mat": "brow", "part": "head"},
+    {"op": "set", "at": [16, 5, 12], "mat": "brow", "part": "head"},
+    {"op": "box", "from": [15, 4, 10], "to": [17, 5, 11], "mat": "beak", "part": "head"},
+    {"op": "box", "from": [2, 4, 15], "to": [9, 5, 17], "mat": "wing", "part": "wing_l_tip"},
+    {"op": "box", "from": [9, 4, 15], "to": [15, 5, 18], "mat": "wing", "part": "wing_l"},
+    {"op": "box", "from": [17, 4, 15], "to": [23, 5, 18], "mat": "wing", "part": "wing_r"},
+    {"op": "box", "from": [23, 4, 15], "to": [30, 5, 17], "mat": "wing", "part": "wing_r_tip"},
+    {"op": "box", "from": [15, 4, 19], "to": [17, 5, 21], "mat": "tail", "part": "tail"},
+    {"op": "box", "from": [15, 2, 16], "to": [16, 3, 17], "mat": "legs", "part": "leg_l"},
+    {"op": "box", "from": [16, 2, 16], "to": [17, 3, 17], "mat": "legs", "part": "leg_r"}
+  ],
+  "like": "starling",
+  "scale": 3.8,
+  "rig": {
+    "plan": "bird",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "head", "role": "head", "parent": "body", "joint": [16, 4.5, 13]},
+      {"name": "wing_l", "role": "wing", "parent": "body", "joint": [15, 4.5, 16.5], "side": "l"},
+      {"name": "wing_l_tip", "role": "wing", "parent": "wing_l", "joint": [9, 4.5, 16], "side": "l"},
+      {"name": "wing_r", "role": "wing", "parent": "body", "joint": [17, 4.5, 16.5], "side": "r"},
+      {"name": "wing_r_tip", "role": "wing", "parent": "wing_r", "joint": [23, 4.5, 16], "side": "r"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 4.5, 19]},
+      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [15.5, 3, 16.5], "side": "l", "pair": 0},
+      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [16.5, 3, 16.5], "side": "r", "pair": 0}
+    ]
+  }
+}

@@ -2,6 +2,7 @@
   "name": "duelbox",
   "version": 1,
   "introduced_by": "duelbox",
+  "_generated_by": "worlds/duelbox/make_box.py",
   "notes": "One empty room, written by worlds/duelbox/make_box.py: fifty-eight metres by thirty-four, a flat floor on a plinth, four walls, a roof and six lamps. Nothing to hide behind, which is the point -- it is a bench for weapons, not a map. Edit the script, not this file.",
   "size": [248, 80, 152],
   "anchor": [124, 0, 76],

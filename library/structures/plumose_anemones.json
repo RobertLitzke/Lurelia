@@ -1,0 +1,25 @@
+{
+  "name": "plumose_anemones",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Plumose anemones on the deep bones and the sea floor: white stalks a metre and a half tall with feathery crowns.",
+  "size": [20, 9, 20],
+  "anchor": [10, 0, 10],
+  "level": false,
+  "decays": false,
+  "base": "bed",
+  "tags": ["natural"],
+  "slots": {"stalk": "plumose_white"},
+  "ops": [
+    {"op": "cylinder", "base": [5, 0, 5], "radius": 1.2, "height": 6, "mat": "stalk"},
+    {"op": "cylinder", "base": [11, 0, 4], "radius": 1.5, "height": 7, "mat": "stalk"},
+    {"op": "cylinder", "base": [15, 0, 9], "radius": 1.1, "height": 5, "mat": "stalk"},
+    {"op": "cylinder", "base": [7, 0, 12], "radius": 1.4, "height": 6, "mat": "stalk"},
+    {"op": "cylinder", "base": [13, 0, 15], "radius": 1.2, "height": 5, "mat": "stalk"},
+    {"op": "ellipsoid", "centre": [5, 6.5, 5], "radius": [2.0, 1.2, 2.0], "mat": "stalk"},
+    {"op": "ellipsoid", "centre": [11, 7.5, 4], "radius": [2.3, 1.2, 2.3], "mat": "stalk"},
+    {"op": "ellipsoid", "centre": [15, 5.5, 9], "radius": [1.9, 1.2, 1.9], "mat": "stalk"},
+    {"op": "ellipsoid", "centre": [7, 6.5, 12], "radius": [2.2, 1.2, 2.2], "mat": "stalk"},
+    {"op": "ellipsoid", "centre": [13, 5.5, 15], "radius": [2.0, 1.2, 2.0], "mat": "stalk"}
+  ]
+}

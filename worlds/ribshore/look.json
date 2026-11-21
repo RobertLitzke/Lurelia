@@ -1,0 +1,57 @@
+{
+  "notes": "A grey-green coast: dark wet sand, green-tan dunegrass, dark bone against a pale grey sky. Contrast kept high so the bones and the dune ridges stand out of the fog in clear layers; colour held low and cool.",
+  "sun_tint": [
+    0.98,
+    0.98,
+    0.96
+  ],
+  "ramp": [
+    {
+      "at": 0.0,
+      "color": [
+        0.64,
+        0.7,
+        0.68
+      ]
+    },
+    {
+      "at": 0.3,
+      "color": [
+        0.58,
+        0.64,
+        0.64
+      ]
+    },
+    {
+      "at": 0.65,
+      "color": [
+        0.52,
+        0.58,
+        0.6
+      ]
+    },
+    {
+      "at": 1.0,
+      "color": [
+        0.47,
+        0.53,
+        0.56
+      ]
+    }
+  ],
+  "knobs": {
+    "ramp_reach": 620.0,
+    "ramp_value": 0.45,
+    "haze_density": 0.5,
+    "haze_height": 110.0,
+    "sky_ramp": 0.6,
+    "sky_reach": 0.5,
+    "shade_ramp": 0.15,
+    "sun_side": 0.1,
+    "sun_glow": 0.35,
+    "saturation": 0.8,
+    "contrast": 0.65,
+    "exposure": 0.95,
+    "time_tint": 0.35
+  }
+}

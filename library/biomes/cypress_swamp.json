@@ -58,6 +58,7 @@
     {"creature": "otter", "count": 1},
     {"creature": "water_snake", "count": 3}
   ],
+  "sound": {"wind": 0.6, "ground": "water", "notes": "Standing water under the trees: rain plinks."},
   "water": {"shallow": [92, 84, 52], "deep": [34, 32, 22]},
   "mist": 0.15
 }

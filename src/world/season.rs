@@ -165,7 +165,7 @@ impl Season {
                 brightness: 0.97,
                 warmth: -0.2,
                 melt: 0.02,
-                weather: bias(&[(Kind::Snow, 4.0), (Kind::Clouds, 1.3), (Kind::Fog, 1.4), (Kind::Sun, 0.8), (Kind::Rain, 0.5), (Kind::Heat, 0.0)]),
+                weather: bias(&[(Kind::Snow, 4.0), (Kind::Clouds, 1.3), (Kind::Fog, 1.4), (Kind::Sun, 0.8), (Kind::Rain, 0.5), (Kind::Heat, 0.0), (Kind::Storm, 0.15)]),
                 abroad: [0.7, 0.5, 0.1, 0.9],
                 declination: -14.0,
             },
@@ -439,6 +439,9 @@ pub struct Year {
     /// False once the season is pinned (the launch screen, `--season`): it
     /// stays where it is put.
     pub drifting: bool,
+    /// False in a world whose climate never snows (Thornpan, Ribshore): its
+    /// winter opens with bare ground. Set by `set_snows`.
+    snows: bool,
     rng: Rng,
 }
 
@@ -467,6 +470,7 @@ impl Year {
             first_fall: 0.0,
             calendar,
             drifting,
+            snows: true,
             rng: Rng::new(seed ^ 0x5ea5_02e4u32),
         };
         y.left = y.draw(SEASON_H * 0.75, hour);
@@ -478,7 +482,7 @@ impl Year {
     /// Snow to match the season it has just been put in: a world that opens
     /// in winter opens in the middle of one, with the snow already down.
     fn settle_snow(&mut self) {
-        let deep = self.season == Season::Winter;
+        let deep = self.snows && self.season == Season::Winter;
         self.lying = if deep { 1.0 } else { 0.0 };
         self.snow_step = if deep { 2 } else { 0 };
         self.fell = deep;
@@ -537,7 +541,7 @@ impl Year {
     }
 
     /// How much snow is lying, 0 to about 1.5, for anything that wants it
-    /// smooth rather than in steps.
+    /// smooth rather than in steps (the hush of a snowy world, sound/bed.rs).
     pub fn lying(&self) -> f32 {
         self.lying
     }
@@ -595,6 +599,13 @@ impl Year {
 
     /// Put the year to a season by hand (the launch screen, `--season`): it
     /// arrives at once, fully dressed, and stays.
+    /// Whether this world's climate has snow in it at all. Without it a
+    /// winter is opened, or put by hand, with no snow lying.
+    pub fn set_snows(&mut self, on: bool) {
+        self.snows = on;
+        self.settle_snow();
+    }
+
     pub fn set(&mut self, s: Season) {
         self.season = s;
         self.from = s;

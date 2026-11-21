@@ -148,13 +148,12 @@ shows the inherited value and, when stepped, writes an override into the
 child.
 
 `src/editor/subject.rs` builds one creature's models, species row and palette
-colours, mirroring the per-creature part of `worldload::creatures`. The
+block, mirroring the per-creature part of `worldload::creatures`. The
 subject is **appended** after everything the world loaded: models, species and
-library colours all go on the end, so no index the world already handed out
+its palette block all go on the end, so no index the world already handed out
 moves, and dropping the subject is a truncate. The two are kept apart on
-purpose — the loader builds a whole world's creatures at once and shares
-colours between them, the editor builds one over and over and must leave the
-world's own alone.
+purpose — the loader builds a whole world's creatures at once, the editor
+builds one over and over and must leave the world's own alone.
 
 `src/editor/splice.rs` is what makes WRITE THE FILE safe on a hand-written
 library. It puts the edited value back into the text the file was read from

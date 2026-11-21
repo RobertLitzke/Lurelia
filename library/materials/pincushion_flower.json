@@ -1,0 +1,15 @@
+{
+  "name": "pincushion_flower",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Pincushion protea: round heads of orange styles, each tipped with a yellow pin.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [222, 122, 52],
+    "alt": [232, 196, 72],
+    "scale": 6,
+    "contrast": 0.8,
+    "calm": {"base": [216, 128, 62], "alt": [228, 194, 82]}
+  }
+}

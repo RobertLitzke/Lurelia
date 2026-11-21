@@ -1,6 +1,6 @@
 {
   "name": "fae_park",
-  "version": 1,
+  "version": 2,
   "introduced_by": "faerie",
   "notes": "Parks gone to glades: great oaks on moss.",
   "priority": 9,
@@ -46,6 +46,7 @@
     {"creature": "glow_bee", "count": 6},
     {"creature": "glass_dragonfly", "count": 3},
     {"creature": "fae_badger", "count": 1},
-    {"creature": "fae_toad", "count": 2}
+    {"creature": "fae_toad", "count": 2},
+    {"creature": "fae_elephant", "count": 2}
   ]
 }

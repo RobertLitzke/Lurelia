@@ -1,0 +1,16 @@
+{
+  "name": "rib_blowout",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Bare sand on the dunes' steep lee faces and blown-out crests, where nothing holds.",
+  "priority": 5,
+  "rules": {"region": "dunes", "slope": [0.42, 9]},
+  "surface": "dune_sand",
+  "subsurface": "dune_sand",
+  "fringe": 6,
+  "map_color": [214, 202, 170],
+  "plants": [],
+  "features": [],
+  "creatures": [{"creature": "raven", "count": 1}],
+  "collectibles": []
+}

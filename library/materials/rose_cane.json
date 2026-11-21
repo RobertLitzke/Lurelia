@@ -1,0 +1,15 @@
+{
+  "name": "rose_cane",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Rose canes: green flushed red, prickly.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [98, 96, 58],
+    "alt": [120, 70, 58],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [104, 102, 64], "alt": [126, 76, 64]}
+  }
+}

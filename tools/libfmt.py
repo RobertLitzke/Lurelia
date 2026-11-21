@@ -3,6 +3,7 @@
     python tools/libfmt.py            reformat every library/*/*.json in place
     python tools/libfmt.py --check    list files that are not in canonical form
     python tools/libfmt.py --catalogue  also rewrite library/CATALOGUE.md
+                                        (--catalog, the binary's spelling, works too)
 
 Canonical form: identity keys first (name, version, introduced_by, notes), then
 the entry's own keys in a fixed order, one key per line; short values (numbers,
@@ -29,16 +30,16 @@ LIB = os.path.join(ROOT, "library")
 KINDS = ["materials", "plants", "structures", "kits", "cities", "creatures", "collectibles", "biomes", "signs", "weapons", "fx"]
 WIDTH = 118
 
-FIRST = ["name", "version", "introduced_by", "notes"]
+FIRST = ["name", "version", "introduced_by", "_generated_by", "notes"]
 ORDER = {
-    "materials": ["id", "smooth", "crisp", "passable", "water", "glow", "glints", "foliage", "tint", "drift", "texture", "top", "bottom"],
+    "materials": ["id", "smooth", "crisp", "passable", "slab", "water", "glow", "glints", "foliage", "tint", "drift", "texture", "top", "bottom"],
     "plants": ["form", "height", "trunk_radius", "buttress", "crown_radius", "bark", "leaf", "leaf_alt", "morphs", "morph_blob_m", "squash", "curve", "canopy", "leader", "fill", "spread", "dome", "limb", "max_slope"],
     "structures": ["size", "anchor", "foundation", "level", "decays", "base", "vines", "tags", "slots", "ops"],
     "kits": ["ground", "width", "mat", "shoulder", "margin", "lift", "sag", "clear", "max_span", "walk", "deck", "rails", "posts", "piers", "span"],
     "cities": ["like", "road", "pavement", "glass", "metal", "deck", "deck_top", "rail", "chimney", "porch_floor", "doors", "plinths", "ivy", "ivy_mat", "tree_boost", "remap"],
     "creatures": ["voxel", "half_w", "height", "colors", "morphs", "behaviour", "in_water", "ops"],
     "collectibles": ["display", "voxel", "spin", "colors", "ops"],
-    "biomes": ["priority", "rules", "surface", "subsurface", "rock", "fringe", "map_color", "plants", "features", "creatures", "collectibles"],
+    "biomes": ["priority", "rules", "surface", "subsurface", "rock", "fringe", "map_color", "plants", "features", "creatures", "collectibles", "sound"],
     "signs": ["post", "board", "centre_m", "offset_m", "thickness", "face", "edge", "ink", "cap_m", "border_m", "letters", "two_sided", "bare"],
     "weapons": ["display", "slot", "ammo_max", "ammo_start", "mag", "reload_s", "zoom", "fire", "alt", "dig", "view", "grip", "tint"],
     "fx": ["shape", "count", "speed", "cone_deg", "life", "size", "size_jitter", "gravity", "drag", "wind", "settle", "flutter", "color",
@@ -393,7 +394,7 @@ def main():
         print("\n".join(rel) if rel else "all canonical")
         sys.exit(1 if rel else 0)
     print("reformatted %d files" % len(rel))
-    if "--catalogue" in sys.argv:
+    if "--catalogue" in sys.argv or "--catalog" in sys.argv:
         with open(os.path.join(LIB, "CATALOGUE.md"), "w", encoding="utf-8", newline="\n") as fh:
             fh.write(catalogue(load_all()))
         print("wrote library/CATALOGUE.md")

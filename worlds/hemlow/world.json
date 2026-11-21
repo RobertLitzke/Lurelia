@@ -1,7 +1,8 @@
 {
   "name": "hemlow",
+  "blurb": "A stone village above a small river on a midsummer evening, with a faerie wood past the last hedge.",
   "size_m": 1024,
-  "height_m": 96,
+  "height_m": 128,
   "sea_level_m": 12,
   "underwater": {"visibility": 9, "light": 0.18},
   "seed": 621,
@@ -34,6 +35,13 @@
   "start_hour": 17.6,
   "biomes": [
     "hollins",
+    "hollins_beech",
+    "hollins_dell",
+    "hollins_deep",
+    "hollins_glade",
+    "hemlow_pasture",
+    "hemlow_corn",
+    "lantern_dell",
     "hemlow_meadow",
     "hemlow_green",
     "hem_banks",
@@ -42,7 +50,9 @@
     "lantern_spout",
     "hob_clearing",
     "beach",
-    "seabed"
+    "seabed",
+    "kelp_forest",
+    "dunes"
   ],
   "strata": [
     [

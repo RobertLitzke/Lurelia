@@ -32,7 +32,10 @@ pub mod duel;
 pub mod nav;
 pub mod person;
 pub mod senses;
+pub mod sheet;
 pub mod steer;
+pub mod team;
+pub mod team_v0;
 
 use crate::anim::figure::Figure;
 use crate::combat::weapon::{Arsenal, Trigger};
@@ -69,9 +72,16 @@ pub struct Foe {
     pub vel: Vec3,
     pub height: f32,
     pub alive: bool,
+    /// Its side in a team match. Plates are painted, so anybody can see it.
+    pub team: Option<u8>,
 }
 
 impl Foe {
+    /// On the same side as `team`: somebody not to shoot.
+    pub fn friend_of(&self, team: Option<u8>) -> bool {
+        team.is_some() && self.team == team
+    }
+
     /// What a shot is aimed at: the middle of the body, not the feet.
     pub fn chest(&self) -> Vec3 {
         self.foot + Vec3::Y * self.height * 0.55
@@ -91,6 +101,24 @@ pub struct Ctx<'a> {
     pub lures: &'a [Lure],
     /// What has been heard lately, newest last.
     pub noises: &'a [Noise],
+    /// Everything in the air that could hurt somebody. A brain may only act
+    /// on what it could see of these (`duel::Duel::incoming` checks the view
+    /// cone and the line of sight).
+    pub threats: &'a [Threat],
+    /// Things lying in wait that go off when a body comes near: goo blobs.
+    /// The same rule applies; only those in view count.
+    pub mines: &'a [Threat],
+}
+
+/// A shell in flight, as a body watching it would know it: where it is,
+/// where it is going, how far its blast reaches, and who fired it.
+#[derive(Clone, Copy, Debug)]
+pub struct Threat {
+    pub at: Vec3,
+    pub vel: Vec3,
+    pub gravity: f32,
+    pub reach: f32,
+    pub by: usize,
 }
 
 /// Something somebody did that could be heard: a shot, mostly.
@@ -126,6 +154,12 @@ pub struct Noise {
 pub struct Lure {
     pub at: Vec3,
     pub good: f32,
+    /// For a gun lying on the floor, which of the fighter's arsenal slots it
+    /// is, so the brain can weigh the gun itself rather than its slot
+    /// number. A player can see what gun it is; so may a bot.
+    pub gun: Option<usize>,
+    /// Whether it heals: a player can see a health pack for what it is.
+    pub mends: bool,
 }
 
 /// What a bot made of what was lying about, as of its last look at the
@@ -159,8 +193,6 @@ pub struct Me<'a> {
     pub foot: Vec3,
     pub eye: Vec3,
     pub vel: Vec3,
-    pub yaw: f32,
-    pub pitch: f32,
     pub on_ground: bool,
     /// The body's own size, which steering needs to ask whether a gap is
     /// one it fits through.
@@ -174,6 +206,128 @@ pub struct Me<'a> {
     pub struck: Option<usize>,
     pub guns: &'a Arsenal,
     pub person: &'a person::Personality,
+    /// Its side in a team match, and what its side has asked of it
+    /// (`team.rs`). Both None in a deathmatch.
+    pub team: Option<u8>,
+    pub order: Option<Order>,
+}
+
+/// A job the team hands one bot (`team::TeamBrain`). The brain is told the
+/// job and a place, never what a flag is, so another objective mode needs a
+/// new team brain and no new decision code.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum Role {
+    /// Go and take the enemy's flag.
+    Attack,
+    /// It has the flag: take it home.
+    Carry,
+    /// Stay with whoever has the flag and keep them alive.
+    Escort,
+    /// Hold ground by its own flag.
+    Defend,
+    /// Go after whoever has its own flag.
+    Retrieve,
+    /// Walk onto its own flag where it was dropped.
+    Return,
+    /// Hold high ground over the middle with a long gun and shoot whoever
+    /// crosses it, without going down to them.
+    Overwatch,
+}
+
+impl Role {
+    pub fn name(self) -> &'static str {
+        match self {
+            Role::Attack => "attack",
+            Role::Carry => "carry",
+            Role::Escort => "escort",
+            Role::Defend => "defend",
+            Role::Retrieve => "retrieve",
+            Role::Return => "return",
+            Role::Overwatch => "overwatch",
+        }
+    }
+}
+
+/// Where a job is.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum Goal {
+    /// Get to this point.
+    Point(Vec3),
+    /// Stay near this fighter.
+    Follow(usize),
+    /// Hold this post: get there, stay round it looking toward `watch`,
+    /// fight what comes within `leash` metres of it and come back.
+    Hold { post: Vec3, leash: f32, watch: Vec3 },
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Order {
+    pub role: Role,
+    pub goal: Goal,
+    /// 0..1: how much the job outbids a fight or a pad. A carrier at 1 runs
+    /// rather than trades; a defender at 0.3 still fights what it sees.
+    pub urgency: f32,
+    /// A place to go through first: the lane an attacker was given, so two
+    /// attackers do not walk the same corridor.
+    pub via: Option<Vec3>,
+    /// The fighter that matters most to the job, when it can see them: the
+    /// enemy carrier, for a bot sent to get its own flag back.
+    pub mark: Option<usize>,
+    /// The range to pick a gun for while nobody is in sight, metres: an
+    /// overwatch wants the long one out before anybody shows.
+    pub reach: Option<f32>,
+    /// Changes to how a role is played that are under test, one bit each
+    /// (`TWEAKS`). The team brain never sets them; the shooter stamps a
+    /// side's set on every order it hands out (`Shooter::tweak`), so the
+    /// CTF bench can play one side's roles against the same roles without
+    /// the change, with the jobs dealt the same way.
+    pub tweaks: u32,
+}
+
+impl Order {
+    pub fn new(role: Role, goal: Goal, urgency: f32) -> Order {
+        Order { role, goal, urgency, via: None, mark: None, reach: None, tweaks: 0 }
+    }
+
+    /// Whether the role change `name` (one of `TWEAKS`) is on for this job.
+    pub fn has(&self, name: &str) -> bool {
+        tweak_bit(name).is_some_and(|b| self.tweaks & b != 0)
+    }
+}
+
+/// The role changes the CTF bench can switch on for one side
+/// (docs/BOTS.md "What the bench found"): four tries at each role, and three ways a team
+/// brain sets its side's stance (`team::TeamBrain::tweaks`).
+pub const TWEAKS: [&str; 28] = [
+    "stance", "reset", "group", "lane", "attack1", "attack2", "attack3", "attack4", "carry1", "carry2", "carry3", "carry4", "escort1", "escort2", "escort3", "escort4", "defend1", "defend2", "defend3", "defend4", "retrieve1", "retrieve2", "retrieve3", "retrieve4", "return1", "return2", "return3", "return4",
+];
+
+pub fn tweak_bit(name: &str) -> Option<u32> {
+    TWEAKS.iter().position(|t| *t == name).map(|i| 1 << i)
+}
+
+/// The bits for a comma-separated list of `TWEAKS` names, and any names
+/// that are not one.
+pub fn tweak_mask(list: &str) -> (u32, Vec<String>) {
+    let mut mask = 0;
+    let mut bad = Vec::new();
+    for n in list.split(',').map(str::trim).filter(|n| !n.is_empty()) {
+        match tweak_bit(n) {
+            Some(b) => mask |= b,
+            None => bad.push(n.to_string()),
+        }
+    }
+    (mask, bad)
+}
+
+/// One fighter a bot remembers, as it would tell a teammate: who, where,
+/// and when it last saw them. Pooled by the team brain, which is what a
+/// side on voice comms has; nothing in here is more than one of them saw.
+#[derive(Clone, Copy, Debug)]
+pub struct Sighting {
+    pub who: usize,
+    pub at: Vec3,
+    pub when: f32,
 }
 
 impl Me<'_> {
@@ -213,6 +367,16 @@ pub trait Brain: Send {
         0
     }
 
+    /// Times it stepped or dodged off the line of a shell it saw coming.
+    fn evades(&self) -> u32 {
+        0
+    }
+
+    /// One line on what it is walking toward and why, for diagnostics.
+    fn note(&self) -> String {
+        String::new()
+    }
+
     /// Dodges taken, for the report. A dodge is four body steps and is over
     /// before anything that samples the match could catch it, so whether a
     /// bot dodges at all is otherwise unanswerable from outside.
@@ -246,6 +410,14 @@ pub trait Brain: Send {
         Scouting::default()
     }
 
+    /// Decisions it has spent on a job its side gave it, for the report.
+    fn errands(&self) -> u32 {
+        0
+    }
+
+    /// Everybody it remembers, for the team brain to pool.
+    fn sightings(&self, _out: &mut Vec<Sighting>) {}
+
     /// Fill in `out`. It need not think every step; `dt` is how long since
     /// it last did.
     fn think(&mut self, me: &Me, cx: &Ctx, out: &mut Pilot, dt: f32);
@@ -270,6 +442,15 @@ pub struct Score {
     /// Damage dealt to other fighters, which is the honest measure when a
     /// round can land nine times.
     pub dealt: f32,
+    /// Damage taken from the floor itself (`hurt` materials: slag, acid),
+    /// and lives the floor ended. What says whether bots keep out of it.
+    pub scalded: f32,
+    pub scald_deaths: u32,
+    /// Capture the flag: flags taken from a stand or off the floor, carried
+    /// home, and own flags walked back onto.
+    pub grabs: u32,
+    pub caps: u32,
+    pub returns: u32,
 }
 
 /// The rules' half of a fighter: what the match knows about a body, whoever
@@ -313,6 +494,8 @@ pub struct Fighter {
     /// rocket is a kill for whoever fired it, not a fighter who managed it
     /// alone. Unlike `struck`, nothing takes this; it runs out.
     pub blame: Option<(usize, f32)>,
+    /// Its side in a team match; None in a deathmatch.
+    pub team: Option<u8>,
 }
 
 /// Seconds after a hit in which a death from the environment is credited to
@@ -337,6 +520,7 @@ impl Fighter {
             picked: 0,
             struck: None,
             blame: None,
+            team: None,
         }
     }
 
@@ -442,7 +626,7 @@ pub struct Bot {
     /// Whose side it is on, as the world or the launch screen set it: the
     /// colour its plates are washed with. Health is not this -- a tint can
     /// only darken, which says nothing once a body has colours of its own --
-    /// it is the lamp in its chest (`avatar::lamp_tint`).
+    /// it is how red the lamps in its chest have gone (`avatar::lamp_colour`).
     pub tint: [f32; 3],
     /// What the brain asked for last step, kept so the body can be stepped
     /// on the fixed tick while the brain thinks on the frame.
@@ -453,6 +637,9 @@ pub struct Bot {
     /// `Player::update` on the same input struct a human fills in, and that
     /// is the whole guarantee that it cannot do what a player could not.
     pub figure: Figure,
+    /// Which of the avatar's builds it is drawn as (`avatar::BUILDS`),
+    /// picked from its seed and kept for the match.
+    pub build: usize,
     /// Times it has found its own box inside solid voxels, and the last
     /// place it happened. A body in that state cannot move at all until
     /// `physics::free_body` shoves it clear, and the thing that puts it
@@ -481,12 +668,18 @@ impl Bot {
             brain,
             tint,
             pilot,
-            figure: av.figure(seed),
+            figure: av.body(Self::build_for(seed, av)).figure(seed),
+            build: Self::build_for(seed, av),
             buried: 0,
             buried_at: Vec3::ZERO,
             was_buried: false,
             tap: steer::Tapper::default(),
         }
+    }
+
+    /// The build a bot with this seed is drawn as: any of them, evenly.
+    fn build_for(seed: u32, av: &avatar::Avatar) -> usize {
+        (seed.wrapping_mul(0x9e37_79b9) >> 16) as usize % av.bodies.len()
     }
 
     /// The body's own numbers. `Bot::body` is a whole `Player`, so these
@@ -516,7 +709,7 @@ impl Bot {
     pub fn muzzle(&self, av: &avatar::Avatar, shape: usize) -> Vec3 {
         let (at, yaw, rot) = self.grip(av, 1.0);
         let (sy, cy) = yaw.sin_cos();
-        let v = rot * ((crate::combat::viewmodel::muzzle(shape) - Vec3::new(16.0, 0.0, 16.0)) * crate::combat::viewmodel::VOXEL);
+        let v = rot * ((crate::combat::viewmodel::muzzle(shape) - Vec3::new(16.0, 0.0, 16.0)) * crate::combat::viewmodel::VOXEL * crate::shooter::BOT_GUN);
         at + Vec3::new(cy, 0.0, -sy) * v.x + Vec3::Y * v.y + Vec3::new(sy, 0.0, cy) * v.z
     }
 
@@ -524,7 +717,8 @@ impl Bot {
     /// is holding it.
     pub fn grip(&self, av: &avatar::Avatar, alpha: f32) -> (Vec3, f32, glam::Quat) {
         let at = self.body.prev_pos.lerp(self.body.pos, alpha);
-        self.figure.grip(&av.rig, av.voxel, 1.0, av.pivot, at, self.body.yaw, self.body.pitch, alpha)
+        let b = av.body(self.build);
+        self.figure.grip(&b.rig, b.voxel, 1.0, b.pivot, at, self.body.yaw, self.body.pitch, alpha)
     }
 
     /// How much of it is left, for the lamp in its chest.
@@ -570,5 +764,20 @@ mod tests {
         assert!(!f.alive() && f.score.deaths == 1);
         f.revive(true);
         assert!(f.alive() && f.health == 100.0 && f.armour == 50.0);
+    }
+}
+
+#[cfg(test)]
+mod tweak_tests {
+    use super::*;
+
+    #[test]
+    fn a_side_s_role_changes_reach_its_orders_by_name() {
+        let (mask, bad) = tweak_mask("attack1, carry2,nonsense");
+        assert_eq!(bad, vec!["nonsense".to_string()]);
+        let o = Order { tweaks: mask, ..Order::new(Role::Attack, Goal::Point(glam::Vec3::ZERO), 0.7) };
+        assert!(o.has("attack1") && o.has("carry2"));
+        assert!(!o.has("attack2") && !o.has("nonsense"));
+        assert!(!Order::new(Role::Carry, Goal::Point(glam::Vec3::ZERO), 1.0).has("carry2"));
     }
 }

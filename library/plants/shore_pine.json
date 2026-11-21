@@ -1,0 +1,16 @@
+{
+  "name": "shore_pine",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Shore pine: a low pine the wind twists, leaning off the sea, its trunk splitting low into crooked limbs that end in flat pads of needles, the whole crown wider than it is tall.",
+  "form": "gnarled",
+  "height": [4.0, 7.5],
+  "trunk_radius": [0.22, 0.34],
+  "crown_radius": [2.4, 3.4],
+  "bark": "bark",
+  "leaf": "shore_pine_needles",
+  "squash": 0.55,
+  "spread": 1.0,
+  "max_slope": 1.0,
+  "lean": 0.35
+}

@@ -88,6 +88,8 @@ picked by roles.
 | cetacean | humpback | posed by `swim.rs`: up-and-down tail |
 | ray | manta ray, sky ray, kite ray | wings are three-bone chains that ripple (`motors::undulate`) |
 | serpent | rattlesnake and its children | no motors at all: the body is posed along a path (below) |
+| crab | bone crab | eight two-bone legs out to the sides and two two-bone claws (`arm`); walks sideways (below) |
+| octopus | giant octopus | a root and eight chains of `arm` bones, each posed along a path of its own (below) |
 | biped | humanoid and its children (robot) | walk, jog and run on two legs: knees that bend only backwards, elbows only forwards, ankles that keep the feet flat and point at toe-off, arms counter-swinging, hips dropping and rolling and turning against the shoulders |
 
 `flutterer` is an accepted name with no motors behind it; `--validate` warns that such a
@@ -197,6 +199,7 @@ from the position change.
   - `flap_glide`: a few beats, then a glide (flock, circle)
   - `bound`: a burst of beats, then wings folded and a dip (flit, cling)
   - `soar`: wings held in a shallow V, a rare beat (soar)
+  - `sail`: wings held out flat, a beat or two in half a minute (albatross)
   - `hover`: fast shallow beats (flutter, undulate)
 - Wingbeat rate is `behaviour.wingbeat`, or comes from the wingspan in the rig
   (`flight::beat_for`, 1.5 to 12 a second), so a starling beats fast and an eagle slowly. A
@@ -251,6 +254,52 @@ mover (creatures/snake.rs)  ->  Spine (a path)  ->  pose_along  ->  one instance
 - `JOINT_RATE` holds every joint to 6 radians a second. A path can ask for
   more than a body can give — a hairpin travelling down the length as a coil
   unwinds — and the lag that costs reads as weight.
+
+### Crabs
+
+A crab's model is drawn turned a quarter: its right side faces -Z, the way every walker is led,
+so `walk.rs` moves it sideways without knowing it is a crab. Its legs reach out along ±Z and its
+claws point along -X. The crab motors in `motors.rs` key on which side of the body a bone is on
+(`crab_lead`: the side it walks toward, or the side it walks away from) rather than on `side`
+and `pair`:
+
+- The scuttle is an alternating tetrapod: each leg is half a cycle out of step with the legs
+  either side of it and with the one opposite, so four feet are down at any time. A leg on the
+  leading side reaches out (the lower leg opens) as it swings and pulls the body after it; a
+  leg on the trailing side comes in as it swings and pushes. Stride length still comes from hip
+  height, so the feet slide little.
+- Resting, the body is let down onto the sand and the legs splay round it; there is no sitting.
+- `motors::claws` raises the claws a little while it walks, picks at the ground and carries
+  each claw to the mouth in turn while it feeds (the graze weight), and holds them up and wide
+  when it is alarmed.
+
+The activity table for the plan has it feeding most of the time. Look does nothing, since a
+crab has no neck or head bone.
+
+### Octopuses
+
+An octopus has the serpent's machinery eight times over, with no motors. Its rig is a root for
+the head and mantle and eight chains of `arm` bones, each pointing out from the body at rest.
+`creatures/octopus.rs` keeps one `Spine` per arm: a path from where the arm leaves the body to
+its tip.
+
+- `spine::pose_limb` lays a chain that hangs off a parent along a path. Unlike `pose_along` it
+  does not assume the chain runs down +Z at rest: each bone is turned from the way it points in
+  the model onto the way the path runs, then into its parent's frame. `a_limb_lands_on_its_path`
+  pins it.
+- Resting or creeping, each arm eases toward a spread path round the body that curls slowly at
+  the tip (and, creeping, reaches and pulls in turn), then `settle` lets it down onto the bed.
+  That is the drape: an octopus on a rock or a rib has its arms running down the sides of it.
+- Jetting, nothing is eased: `lead` pulls each arm after its base, so the arms stream behind
+  the body as it goes off mantle first, pitched over so the mantle leads.
+- Every heading is in the root bone's yaw, and `look.yaw` stays 0, as for snakes. The pose is
+  held to `JOINT_RATE` like a snake's.
+- It pales as anything comes near: the mover writes its own `Morph` tint and shift, blending
+  from the tint it was rolled with toward the sand colour (`PALEST` of the way), quickly going
+  pale and slowly coming back. Nothing else in the drawing changes.
+
+`--anim-sheet NAME:moves` on an octopus shows it spread, curled and at four points of a creep
+below, and draped over a mound and jetting above, through the same path code as the mover.
 
 ## Rendering
 
@@ -364,6 +413,8 @@ for one, so nothing chases a corpse and nothing flees one.
 
 - `--anim-sheet NAME` draws a contact sheet: the rest pose and each bone bent in turn, to catch
   wrong joints and parts.
+- `--anim-sheet NAME:moves` on an octopus: see Octopuses above. Crabs and octopuses are
+  spaced wider on every sheet, since their legs and arms fill the grid.
 - `--anim-sheet NAME:moves` on a serpent draws the crawl at four phases of its wave, a
   turn and a swim below, and stretched out, coiled, coiled with its head up, climbing,
   draped and limp above.
@@ -415,26 +466,41 @@ instead of fore and aft), the backpedal (the same cycle run backwards), the crou
 tuck and the landing the knees take, the lean into a turn, the weapon held still in both
 hands over a moving body, the recoil, and the death, which is `ragdoll.rs`.
 
-`Figure::grip` says where the gun in its hands is, taken from the hand's own forward
-kinematics rather than from a fixed offset on the body, so the weapon follows the arms down
-at a sprint and up into the aim without any of that being said twice, and a bot's shot
-leaves the gun that is drawn.
+The gun is placed first and the arms are solved onto it (`figure::weapon`, `two_bone`): the
+stock in the pocket of the right shoulder, the barrel along the aim (or down at the floor
+ahead at a sprint), the right wrist on top of the grip and the left under the barrel.
+`Figure::grip` hands back that same placement, so the gun drawn, the hands on it and the line
+a bot's shot leaves along all agree. The arms used to be set to fixed angles with the gun
+hung off the hand, which left the gun level whatever the aim and the forearms low.
+
+A trunk lean goes on the spine bones (`figure::lean`), never the root, because the legs hang
+off the root. On a bone that points up a positive x turn tips it backwards, the opposite of a
+hanging limb; every trunk lean once had this the wrong way round and the bots ran leaning
+back. `a_runner_leans_forward` pins it.
+
+To judge any of this without a match: `lurelia --headless --world glassfall --pos 0,90,0
+--look 0,0 --hour 12 --bot-sheet --no-hud --frames 8 --size 2400x1000 --screenshot X` draws
+ten states (idle, walk, run, sprint, backpedal, strafe, aim up, aim down, jump, firing) side
+on above and three-quarters below, through the same `shooter::draw_bot` a match uses.
 
 The deathmatch bots are the only users (`brain/avatar.rs`, which compiles the library
 `robot` into models of its own so a bot looks the same in every world). A `Figure` is display
 only: it reads the body and never writes to it, and nothing that decides anything may read
 it. See `docs/BOTS.md`.
 
-One thing a bot wears is not in its library entry: the lamps that carry its health, on both
-collars and between the shoulder blades. Health is state rather than shape, so `avatar.rs`
-draws them as their own instances and the `robot` entry holds only the recesses they sit in.
+One thing a bot wears is not in its library entry: the lamps that carry its health, a bar across
+the top of the chest and another between the shoulder blades. Health is state rather than shape,
+so `avatar.rs` draws them as their own instances and the `robot` entry holds only the dark bands
+they sit in. A bot is drawn as one of three children of `robot` (`robot_brawny`, `robot_heavy`,
+`robot_lean`, picked from its seed); `avatar.rs` finds each build's chest surface on its voxels,
+so the bars follow a deeper or flatter chest without anyone moving an offset.
 The consequence is worth knowing before you reach for the obvious tool: **`--edit robot`
-cannot show them.** The EDIT page draws the library entry, so it shows three dark hollows and
+cannot show them.** The EDIT page draws the library entry, so it shows two dark bands and
 nothing lit, and the one page that lets you turn a robot round is blind to the one part of it
 that changes. Judging a lamp means a bot in a match, which means the headless recipe in
 `docs/BOTS.md`.
 
-They are on the collars because nothing on a fighter's torso can be read: a weapon held in
+They are high on the chest because nothing on a fighter's torso can be read: a weapon held in
 both hands lies across the middle of the chest and the supporting arm crosses what is left.
 Anything added later that a player is meant to read off a body has the same problem.
 `brain::avatar::tests::the_lamps_sit_on_the_body` pins the placement, since a lamp a few

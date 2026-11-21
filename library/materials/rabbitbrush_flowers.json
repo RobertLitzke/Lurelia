@@ -1,0 +1,15 @@
+{
+  "name": "rabbitbrush_flowers",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Rabbitbrush flower heads: dense mustard yellow, late summer into autumn.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [220, 186, 54],
+    "alt": [196, 160, 40],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [226, 192, 60], "alt": [202, 166, 46]}
+  }
+}

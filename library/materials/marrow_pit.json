@@ -1,0 +1,16 @@
+{
+  "name": "marrow_pit",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The cells of the honeycomb, dark and damp.",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [78, 66, 54],
+    "alt": [64, 54, 46],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [88, 76, 64], "alt": [74, 64, 56]}
+  },
+  "round": true
+}

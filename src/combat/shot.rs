@@ -30,7 +30,8 @@ pub struct Burst {
     pub at: Vec3,
     pub radius: f32,
     pub left: f32,
-    pub tint: [f32; 3],
+    /// Fire or goo: the colour of the light it puts on the room.
+    pub look: crate::library::SplashLook,
 }
 
 /// A body in flight: a rocket, a grenade, a scrap shell.
@@ -81,6 +82,9 @@ pub struct Shell {
     pub cluster: Option<Cluster>,
     /// Which fighter fired it (`super::Scene::fighters`).
     pub by: usize,
+    /// Radians a second it turns toward its owner's crosshair
+    /// (`FireDef::guide`).
+    pub guide: f32,
 }
 
 /// A `library::ClusterDef` with its look resolved, small enough to ride
@@ -177,13 +181,6 @@ pub fn sees(store: &Store, a: Vec3, b: Vec3) -> bool {
         return true;
     }
     store.ray(a, v / d, d - 0.04, |m| m != AIR).is_none()
-}
-
-/// Distance along the ray to the nearest fighter within `max`, and which.
-/// `by` is skipped: nobody shoots themselves in the back of the head, and a
-/// muzzle a hand in front of the eye is inside its own hitbox.
-pub fn nearest_fighter(fighters: &[super::Hitbox], from: Vec3, dir: Vec3, max: f32, by: usize) -> Option<(f32, usize)> {
-    where_fighter_wide(fighters, from, dir, max, by, 0.0).map(|(t, i, _)| (t, i))
 }
 
 /// `nearest_fighter` for something `pad` metres in radius rather than a
@@ -374,7 +371,7 @@ pub fn bank(store: &Store, from: Vec3, dir: Vec3, f: &FireDef, at: Vec3, going: 
         gone += dt;
         // Where they will be when the round gets this far.
         let at = at + going * gone.min(1.2);
-        vel.y -= f.gravity * dt;
+        vel += store.gravity.drop(pos, f.gravity) * dt;
         let delta = vel * dt;
         let d = delta.length();
         if d < 1e-4 {
@@ -428,7 +425,7 @@ impl Shell {
         }
         self.fuse -= dt;
         self.spin += dt * 9.0;
-        self.vel.y -= self.gravity * dt;
+        self.vel += scene.store.gravity.drop(self.pos, self.gravity) * dt;
         let mut left = dt;
         // At most a few bounces inside one step, so a grenade in a corner
         // cannot spin here forever.
@@ -495,6 +492,7 @@ impl Shell {
                     }
                     self.bounces -= 1;
                     self.bounced = true;
+                    crate::sound::emit(crate::sound::Noise::at(crate::sound::Kind::Bounce, self.pos, (self.vel.length() / 40.0).clamp(0.2, 0.9)));
                     let n = h.normal;
                     self.vel = (self.vel - 2.0 * self.vel.dot(n) * n) * self.keep;
                     left -= to_face / self.vel.length().max(0.01);
@@ -571,10 +569,15 @@ mod tests {
             spoil_r: 0.0,
             burst: 0,
             burst_gap_s: 0.0,
+            burst_spread_deg: 0.0,
+            pierce_m: 0.0,
+            guide: 0.0,
+            ring: false,
             twist: 0.0,
             arc_jumps: 0,
             arc_m: 0.0,
             arc_keep: 0.5,
+            bend_m: 0.0,
             cluster: None,
             head_mult: 1.0,
             tracer: [1.0; 3],

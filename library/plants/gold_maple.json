@@ -15,5 +15,6 @@
   "canopy": "lobes",
   "leader": 0.5,
   "fill": 0.55,
-  "max_slope": 0.6
+  "max_slope": 0.6,
+  "thin_limbs": 0.12
 }

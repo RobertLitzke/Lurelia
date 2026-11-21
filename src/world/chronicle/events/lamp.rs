@@ -17,6 +17,10 @@ pub struct LampEvent {
     /// ground there. One event holds a whole building's lighting, because
     /// lamps come in rows and a row should be one line in the chronicle.
     points: Vec<[f32; 3]>,
+    /// Measure `up` from this height above the sea instead of from the
+    /// ground: lamps in a cave, where the ground overhead is not the floor.
+    #[serde(default)]
+    level: Option<f32>,
     /// How far the light reaches, metres.
     #[serde(default = "default_reach")]
     reach: f32,
@@ -47,9 +51,9 @@ fn default_strength() -> f32 {
 
 impl Process for LampEvent {
     fn apply(&self, cx: &mut EventCtx) -> String {
-        let LampEvent { at, points, reach, colour, strength, after_dark } = self;
+        let LampEvent { at, points, reach, colour, strength, after_dark, level } = self;
         let p = cx.pos(at);
-        let ground = cx.f.height(p.x, p.y);
+        let ground = level.map_or(cx.f.height(p.x, p.y), |l| cx.f.sea + l);
         let srgb = |v: f32| {
             let c = (v / 255.0).clamp(0.0, 1.0);
             if c <= 0.04045 {
@@ -60,8 +64,9 @@ impl Process for LampEvent {
         };
         let colour = [srgb(colour[0]), srgb(colour[1]), srgb(colour[2])];
         for d in points {
+            let t = cx.turned(at, [d[0], d[1]]);
             cx.lamps.push(WorldLamp {
-                pos: Vec3::new(p.x + d[0], ground + d[2], p.y + d[1]),
+                pos: Vec3::new(p.x + t[0], ground + d[2], p.y + t[1]),
                 reach: *reach,
                 colour,
                 strength: *strength,

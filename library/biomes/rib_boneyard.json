@@ -1,0 +1,27 @@
+{
+  "name": "rib_boneyard",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The sea floor round the titan's skull and jaw: silt with bone grit in it, mats of bacteria, white anemones on everything that stands.",
+  "priority": 6,
+  "rules": {"underwater": true, "region": "boneyard"},
+  "surface": "bone_silt",
+  "subsurface": "sand",
+  "map_color": [150, 160, 170],
+  "plants": [],
+  "features": [
+    {"structure": "plumose_anemones", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "cloud_sponge", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "bone_shard", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "titan_tooth", "density": 8e-05, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "rockfish", "count": 20},
+    {"creature": "cod", "count": 4},
+    {"creature": "moon_jelly", "count": 4},
+    {"creature": "giant_octopus", "count": 2},
+    {"creature": "sixgill_shark", "count": 1},
+    {"creature": "bone_crab", "count": 2}
+  ],
+  "collectibles": []
+}

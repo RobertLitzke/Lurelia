@@ -29,7 +29,8 @@ impl Process for Vent {
     fn apply(&self, cx: &mut EventCtx) -> String {
         let c = cx.pos(&self.at);
         for d in &self.points {
-            let (x, z) = (c.x + d[0], c.y + d[1]);
+            let t = cx.turned(&self.at, [d[0], d[1]]);
+            let (x, z) = (c.x + t[0], c.y + t[1]);
             let ground = if self.on_sea { cx.f.sea } else { cx.f.height(x, z) };
             cx.vents.push(WorldVent { pos: Vec3::new(x, ground + d[2], z), fx: self.fx.clone(), rate: self.rate, spread: self.spread });
         }

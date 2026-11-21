@@ -13,6 +13,7 @@ const SCENE: &str = include_str!("../shaders/scene.wgsl");
 const SHADOW: &str = include_str!("../shaders/shadow.wgsl");
 const FOLIAGE: &str = include_str!("../shaders/foliage.wgsl");
 const PARTICLES: &str = include_str!("../shaders/particles.wgsl");
+const SIGNS: &str = include_str!("../shaders/signs.wgsl");
 const POST: &str = include_str!("../shaders/post.wgsl");
 const HUD: &str = include_str!("../shaders/hud.wgsl");
 const OCCLUSION: &str = include_str!("../shaders/occlusion.wgsl");
@@ -44,6 +45,10 @@ fn prelude() -> String {
         format!("const FILL_FADE: vec2<f32> = {};", v2(foliage::FILL_FADE)),
         format!("const PATCH_FADE: vec2<f32> = {};", v2(foliage::PATCH_FADE)),
         format!("const WIND: vec2<f32> = {};", v2([w.x, w.y])),
+        // The trampled-grass map round the camera (render/foliage.rs).
+        format!("const TRAMPLE_N: f32 = {:?};", super::foliage::TRAMPLE_N as f32),
+        format!("const TRAMPLE_CELL: f32 = {:?};", super::foliage::TRAMPLE_CELL),
+        format!("const TRAMPLE_STEP: f32 = {:?};", super::foliage::TRAMPLE_STEP),
         // How a card's growing-in is spread over its fade (foliage.wgsl
         // grow). Below 1 it rises fast while the card is far off and eases
         // as you walk up; VOXEL_GROW_CURVE=1 is the old straight ramp.
@@ -83,6 +88,7 @@ fn prelude() -> String {
         format!("const M_FACET: u32 = {}u;", flag::FACET),
         format!("const M_GLOW_SPECKS: u32 = {}u;", flag::GLOW_SPECKS),
         format!("const M_NIGHT_GLOW: u32 = {}u;", flag::NIGHT_GLOW),
+        format!("const M_FLOODS: u32 = {}u;", flag::FLOODS),
         format!("const L_GLOW_THREADS: u32 = {}u;", crate::mesh::sprites::layer::GLOW_THREADS),
         format!("const M_GLOW_SHIFT: u32 = {}u;", flag::GLOW_SHIFT),
         // The packed quad's fields (mesh/quad.rs).
@@ -94,6 +100,7 @@ fn prelude() -> String {
         format!("const Q_ROUND_BIT: u32 = {}u;", quad::ROUND_BIT),
         format!("const Q_NORMAL_BIT: u32 = {}u;", quad::NORMAL_BIT),
         format!("const Q_BLOCK_BIT: u32 = {}u;", quad::BLOCK_BIT),
+        format!("const Q_TUBE_BIT: u32 = {}u;", quad::TUBE_BIT),
         format!("const Q_AO_SHIFT: u32 = {}u;", quad::AO_SHIFT),
         format!("const Q_BLEND_SHIFT: u32 = {}u;", quad::BLEND_SHIFT),
     ]
@@ -145,6 +152,11 @@ pub fn particles() -> String {
     join(&[COMMON, SCENE, PARTICLES])
 }
 
+/// Prints on the ground (creatures/sign.rs): the common prelude alone.
+pub fn signs() -> String {
+    join(&[COMMON, SIGNS])
+}
+
 /// The depth texture type follows the MSAA setting.
 pub fn post(msaa: bool) -> String {
     join(&[&POST.replace("DEPTH_TEXTURE", if msaa { "texture_depth_multisampled_2d" } else { "texture_depth_2d" })])
@@ -176,6 +188,7 @@ mod tests {
             ("shadow", shadow()),
             ("foliage", foliage()),
             ("particles", particles()),
+            ("signs", signs()),
             ("post msaa", post(true)),
             ("post", post(false)),
             ("hud", hud()),

@@ -15,6 +15,7 @@ pub mod lamps;
 pub mod occlusion;
 pub mod overlay;
 pub mod particles;
+pub mod signs;
 pub mod plates;
 pub mod recipes;
 pub mod shaders;
@@ -284,8 +285,18 @@ pub struct Globals {
     /// camera (the sea's when it is not under), y = visibility in metres,
     /// z = sunlight falloff per metre of depth, w = 1 under inland water.
     under: [f32; 4],
-    /// x = snow on upward faces, 0 to 1 (`FrameParams::snow_cover`).
+    /// x = snow on upward faces, 0 to 1 (`FrameParams::snow_cover`);
+    /// y = 1 for a map in space (`FrameParams::space`).
     snow: [f32; 4],
+    /// The EDIT page's platform (`FrameParams::studio`): x, z of its middle,
+    /// half its side with the bank, w = 1 while it is laid.
+    studio: [f32; 4],
+    /// What the weather has left on the ground (`FrameParams::damp`): x =
+    /// wet, y = standing water, z = frost in shade, w = frost in sun.
+    damp: [f32; 4],
+    /// Lightning (`FrameParams::bolt`): where it comes to ground, its seed,
+    /// how bright it is now.
+    bolt: [f32; 4],
 }
 
 /// The visual style: textures, palette, lighting and grade change together.
@@ -375,6 +386,13 @@ pub fn builtin_look(style: Style) -> Look {
 pub use crate::models::Instance;
 
 /// Everything about the camera and scene the renderer needs for one frame.
+/// Screen-space reflections in standing water (post.wgsl `mirror`):
+/// VOXEL_SSR=0 turns them off for a comparison.
+fn reflections_on() -> bool {
+    static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *ON.get_or_init(|| std::env::var("VOXEL_SSR").map(|v| v != "0").unwrap_or(true))
+}
+
 pub struct FrameParams<'a> {
     pub view: Mat4,
     pub proj: Mat4,
@@ -389,6 +407,8 @@ pub struct FrameParams<'a> {
     pub overlay: &'a overlay::Overlay,
     /// Sign boards and lettering near the camera (plates.rs).
     pub plates: &'a plates::Plates,
+    /// Prints and trampled grass (creatures/sign.rs, signs.rs).
+    pub marks: &'a crate::creatures::sign::Marks,
     /// Dust, splashes, chips and falling leaves (src/fx, particles.rs).
     pub fx: &'a crate::fx::Fx,
     /// The point lights near the camera (lamps.rs), for roofed places.
@@ -415,8 +435,30 @@ pub struct FrameParams<'a> {
     /// How much snow lies on whatever faces up (tree tops, ledges, roofs),
     /// 0 to 1: the season's lying snow, or a snowbound world's own floor.
     pub snow_cover: f32,
+    /// What the weather has left on the ground (world/damp.rs `uniform`):
+    /// wet, standing water, frost in shade, frost in sun.
+    pub damp: [f32; 4],
+    /// Mist added everywhere for the fog lying in the hollows after a clear
+    /// night (world/damp.rs `mist`).
+    pub ground_fog: f32,
+    /// Lightning (world/lightning.rs `uniform`): where it comes to ground,
+    /// its seed and how bright it is now; all zero between strikes.
+    pub bolt: [f32; 4],
+    /// The heat mirage, 0 to 1 (post.wgsl `mirage`).
+    pub mirage: f32,
     /// The camera's lens and viewfinder (src/camera), when it is up.
     pub lens: Option<LensFx>,
+    /// A map floating in space (world.json `space`): the sky is black with
+    /// stars all the way round, and has no clouds or mist.
+    pub space: bool,
+    /// Draw with the default grade rather than the style's own: the EDIT
+    /// page's studio, so a world's look cannot tint what is being edited.
+    pub plain_grade: bool,
+    /// The EDIT page's platform while it is laid: the middle and half the
+    /// side, bank included. It is cut down into the land and open to the sky,
+    /// so the sun is not stopped at the land over it (scene.wgsl
+    /// `under_land`).
+    pub studio: Option<(f32, f32, f32)>,
 }
 
 /// The camera's lens for the post pass (post.wgsl `Lens`): the viewfinder in
@@ -804,6 +846,8 @@ pub struct Renderer {
     p_sky: wgpu::RenderPipeline,
     p_terrain: wgpu::RenderPipeline,
     p_entity: wgpu::RenderPipeline,
+    /// Entities drawn see-through (`models::GLASS`): blended, writing no depth.
+    p_entity_glass: wgpu::RenderPipeline,
     p_water: wgpu::RenderPipeline,
     p_river: wgpu::RenderPipeline,
     p_fall: wgpu::RenderPipeline,
@@ -836,6 +880,8 @@ pub struct Renderer {
     p_hud: wgpu::RenderPipeline,
     foliage: foliage::Foliage,
     particles: particles::Particles,
+    /// Prints on the ground (creatures/sign.rs, signs.rs).
+    signs: signs::Signs,
     models: Vec<ModelRange>,
     draws: Vec<Draw>,
     /// Main-pass draws with their distance and their chunk's index in
@@ -859,7 +905,8 @@ pub struct Renderer {
     /// How many times each outer cascade has had to be redrawn whole.
     cascade_redraws: [u64; 2],
     inst_scratch: Vec<Instance>,
-    runs: Vec<(usize, u32, u32)>,
+    /// Entity draws: model, first instance, count, and whether they are glass.
+    runs: Vec<(usize, u32, u32, bool)>,
     /// One per shadow map layer.
     cascades: [CascadeCache; SHADOW_LAYERS as usize],
     frame_no: u64,
@@ -1529,9 +1576,11 @@ impl Renderer {
         });
         let post_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("post"),
-            // Four vec4s: the style and speed, the streaks, the weather, the
-            // camera's heading (post.wgsl `Post`).
-            size: 64,
+            // Six vec4s and two matrices: the style and speed, the streaks,
+            // the weather, the camera's heading, the mirage and reflections,
+            // the camera; then the view-projection and its inverse
+            // (post.wgsl `Post`).
+            size: 96 + 128,
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
@@ -1692,6 +1741,7 @@ impl Renderer {
         let scene_layout = layout(&[&scene_bgl, &shadow_in_bgl]);
         let foliage = foliage::Foliage::new(&device, &queue, &scene_bgl, &shadow_in_bgl, msaa);
         let particles = particles::Particles::new(&device, &scene_bgl, &shadow_in_bgl, msaa);
+        let signs = signs::Signs::new(&device, &scene_bgl, &shadow_in_bgl, msaa);
         let shadow_layout = layout(&[&scene_bgl, &cascade_bgl]);
         let post_layout = layout(&[&post_bgl]);
         let hud_layout = layout(&[&hud_bgl]);
@@ -1723,8 +1773,17 @@ impl Renderer {
         let p_sky = scene("sky", "vs_fullscreen", "fs_sky", None, (false, ge, nobias), None, tri);
         let p_terrain = scene("terrain", "vs_terrain", "fs_terrain", Some(wgpu::Face::Back), (true, ge, nobias), None, tri);
         let p_entity = scene("entity", "vs_entity", "fs_entity", Some(wgpu::Face::Back), (true, ge, nobias), None, tri);
-        let p_water = scene("water", "vs_water", "fs_water", None, (false, ge, nobias), blend, tri);
-        let p_river = scene("river", "vs_river", "fs_water", None, (false, ge, nobias), blend, tri);
+        let p_entity_glass = scene("entity glass", "vs_entity", "fs_entity_glass", Some(wgpu::Face::Back), (false, ge, nobias), blend, tri);
+        // Water blends its colour over the bed as usual, but adds its
+        // coverage to the bed's alpha rather than blending it: alpha over 1
+        // is what marks a mirror for the reflections in post (post.wgsl
+        // `mirror`).
+        let water_blend = Some(wgpu::BlendState {
+            color: wgpu::BlendState::ALPHA_BLENDING.color,
+            alpha: wgpu::BlendComponent { src_factor: wgpu::BlendFactor::One, dst_factor: wgpu::BlendFactor::One, operation: wgpu::BlendOperation::Add },
+        });
+        let p_water = scene("water", "vs_water", "fs_water", None, (false, ge, nobias), water_blend, tri);
+        let p_river = scene("river", "vs_river", "fs_water", None, (false, ge, nobias), water_blend, tri);
         let p_fall = scene("waterfall", "vs_fall", "fs_fall", None, (false, ge, nobias), blend, tri);
         let p_spray = scene("spray", "vs_spray", "fs_spray", None, (false, ge, nobias), blend, tri);
         let p_box = scene("box", "vs_box", "fs_box", None, (false, ge, nobias), blend, wgpu::PrimitiveTopology::LineList);
@@ -1738,7 +1797,7 @@ impl Renderer {
             slope_scale: 1.5,
             clamp: 0.0,
         };
-        let shadow_pipe = |label, vs, cull| {
+        let shadow_pipe = |label, vs, fs, cull| {
             pipeline(
                 &device,
                 PipeDesc {
@@ -1746,7 +1805,7 @@ impl Renderer {
                     layout: &shadow_layout,
                     module: &shadow_mod,
                     vs,
-                    fs: None,
+                    fs,
                     color: None,
                     topology: tri,
                     cull,
@@ -1758,8 +1817,8 @@ impl Renderer {
         // Terrain draws only faces turned away from the sun (see back_dirs), so
         // culling faces that point at the light changes nothing for flat ground
         // and keeps sunlit slopes out of the map.
-        let p_shadow_terrain = shadow_pipe("shadow terrain", "vs_shadow_terrain", Some(wgpu::Face::Front));
-        let p_shadow_entity = shadow_pipe("shadow entity", "vs_shadow_entity", None);
+        let p_shadow_terrain = shadow_pipe("shadow terrain", "vs_shadow_terrain", None, Some(wgpu::Face::Front));
+        let p_shadow_entity = shadow_pipe("shadow entity", "vs_shadow_entity", Some("fs_shadow_entity"), None);
         let p_rays = pipeline(
             &device,
             PipeDesc {
@@ -1876,6 +1935,7 @@ impl Renderer {
             p_sky,
             p_terrain,
             p_entity,
+            p_entity_glass,
             p_water,
             p_river,
             p_fall,
@@ -1905,6 +1965,7 @@ impl Renderer {
             p_hud,
             foliage,
             particles,
+            signs,
             models: Vec::new(),
             draws: Vec::new(),
             quad_index,
@@ -2268,9 +2329,9 @@ impl Renderer {
     /// wet day is darker and greyer, a hot one brighter and bolder, winter
     /// paler, and fair summer weather multiplies by one. Only the copy on the
     /// GPU is touched, so the LOOK page still edits the style's own.
-    fn upload_grade(&mut self, style: Style, sky: &crate::world::weather::Sky, season: &crate::world::season::Phase) {
+    fn upload_grade(&mut self, style: Style, sky: &crate::world::weather::Sky, season: &crate::world::season::Phase, plain: bool) {
         let i = style as usize;
-        let g = self.grades[i].clone();
+        let g = if plain { Grade::default() } else { self.grades[i].clone() };
         let mut u = g.uniform();
         u[10] *= (sky.brightness * season.brightness).max(0.0);
         u[13] *= (sky.saturation * season.saturation).max(0.0);
@@ -2356,6 +2417,15 @@ impl Renderer {
         let layers = crate::world::matlib::layer_count().max(1);
         if layers != self.blocks.depth_or_array_layers() {
             self.blocks = make_blocks(&self.device, layers);
+            self.rebuild_scene_bg();
+        }
+        upload_blocks(&self.queue, &self.blocks, self.style);
+    }
+
+    /// Make the scene bind group again, after one of the resources in it
+    /// was replaced (the block array, the palette).
+    fn rebuild_scene_bg(&mut self) {
+        {
             let blocks = blocks_view(&self.blocks);
             let heights = self.heights_tex.create_view(&Default::default());
             let mist = self.mist_tex.create_view(&Default::default());
@@ -2391,28 +2461,44 @@ impl Renderer {
                 },
             );
         }
-        upload_blocks(&self.queue, &self.blocks, self.style);
     }
 
-    /// Upload the entity palette alone (models::PALETTE_SLOTS colours). The
-    /// EDIT page paints a creature's colours without rebuilding a thing, and
-    /// re-sending every mesh for that would be the one expensive part left.
+    /// Upload the entity palette alone: the fixed block and every model's
+    /// block (models::FIXED_SLOTS). The buffer grows to fit, so a world has
+    /// no limit on its colours. The EDIT page paints a creature's colours
+    /// without rebuilding a thing, and re-sending every mesh for that would
+    /// be the one expensive part left.
     pub fn set_palette(&mut self, palette: &[[f32; 4]]) {
-        self.queue
-            .write_buffer(&self.palette_buf, 0, bytemuck::cast_slice(&palette[..palette.len().min(crate::models::PALETTE_SLOTS)]));
+        let bytes = std::mem::size_of_val(palette) as u64;
+        if bytes > self.palette_buf.size() {
+            // Room to spare, so the EDIT page adding a colour or two does not
+            // make a new buffer each time.
+            self.palette_buf = self.device.create_buffer(&wgpu::BufferDescriptor {
+                label: Some("palette"),
+                size: bytes.next_power_of_two(),
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            });
+            self.rebuild_scene_bg();
+        }
+        self.queue.write_buffer(&self.palette_buf, 0, bytemuck::cast_slice(palette));
     }
 
-    /// Upload the entity models and their palette (models::PALETTE_SLOTS colours).
-    pub fn set_models(&mut self, meshes: &[Mesh], palette: &[[f32; 4]]) {
+    /// Upload the entity models and their palette. Each model's palette
+    /// block goes into the top half of its quads' second word, which an
+    /// entity quad leaves free (mesh/quad.rs) and `vs_entity` adds to the
+    /// voxel's slot.
+    pub fn set_models(&mut self, models: &[crate::models::Model], palette: &[[f32; 4]]) {
         self.set_palette(palette);
         let mut all: Vec<[u32; 4]> = Vec::new();
         self.models.clear();
-        for m in meshes {
+        for m in models {
+            assert!(m.block <= 0xffff, "palette block {} past what a quad holds", m.block);
             self.models.push(ModelRange {
                 offset: all.len() as u32,
-                count: m.quads.len() as u32,
+                count: m.mesh.quads.len() as u32,
             });
-            all.extend_from_slice(&m.quads);
+            all.extend(m.mesh.quads.iter().map(|q| [q[0], (q[1] & 0xffff) | m.block << crate::mesh::quad::SLOT_SHIFT, q[2], q[3]]));
         }
         assert!(all.len() as u32 <= MAX_ENTITY_QUADS);
         self.queue.write_buffer(&self.equad_buf, 0, bytemuck::cast_slice(&all));
@@ -2432,7 +2518,7 @@ impl Renderer {
             upload_blocks(&self.queue, &self.blocks, p.style);
             self.style = p.style;
         }
-        self.upload_grade(self.style, &p.sky, &p.season);
+        self.upload_grade(self.style, &p.sky, &p.season, p.plain_grade);
         // 1 for the saturated style's soft path (shaders still call it calm).
         let calm = if self.style == Style::Saturated { 1.0f32 } else { 0.0 };
         // z: the projection's near distance, to turn reversed depth into metres.
@@ -2445,6 +2531,18 @@ impl Renderer {
         // The weather, over whatever the hour decided (world/weather.rs),
         // and the season's own warm or cool over that (world/season.rs).
         daylight::weather(&mut lk, &mut sun, &mut air, &p.sky);
+        // A lightning flash lights the whole sky, and so the land under it,
+        // a cold blue-white for as long as the stroke lasts.
+        let flash = p.bolt[3].clamp(0.0, 1.0);
+        if flash > 0.0 {
+            for (c, k) in [(&mut lk.zenith, 0.45), (&mut lk.horizon, 0.6), (&mut lk.ambient, 0.4)] {
+                c[0] += 0.7 * k * flash;
+                c[1] += 0.76 * k * flash;
+                c[2] += 1.0 * k * flash;
+            }
+        }
+        // Fog lying in the hollows after a clear, still night (world/damp.rs).
+        air.mist_floor += p.ground_fog;
         air.warmth += p.season.warmth;
         self.sun = sun;
         self.air = air;
@@ -2473,8 +2571,20 @@ impl Renderer {
                 lk.horizon[0],
                 lk.horizon[1],
                 lk.horizon[2],
+                // The mirage and the reflections (post.wgsl `mirage`, `mirror`).
+                p.cam_fwd.y.clamp(-1.0, 1.0).asin(),
+                1.0 / p.proj.y_axis.y.max(1e-4),
+                if p.underwater { 0.0 } else { p.mirage.clamp(0.0, 1.0) },
+                if p.underwater || !reflections_on() { 0.0 } else { 1.0 },
+                p.cam_pos.x,
+                p.cam_pos.y,
+                p.cam_pos.z,
+                self.sea_level,
             ]),
         );
+        let vp = p.proj * p.view;
+        self.queue.write_buffer(&self.post_buf, 96, bytemuck::cast_slice(&vp.to_cols_array()));
+        self.queue.write_buffer(&self.post_buf, 160, bytemuck::cast_slice(&vp.inverse().to_cols_array()));
         let l = p.lens.unwrap_or_default();
         let lens = [l.frame[0], l.frame[1], l.frame[2], l.frame[3], l.focus_m, l.blur_inf, l.blur_max, l.mask];
         self.queue.write_buffer(&self.lens_buf, 0, bytemuck::cast_slice(&lens));
@@ -2718,7 +2828,14 @@ impl Renderer {
                             // Past the leaves: the stalks and the far patches.
                             c.sprites - c.sprite_patch - c.sprite_stalk
                         };
-                        let end = if ranges && dist < foliage::PATCH_NEAR * foliage::PATCH_NEAR {
+                        // The far cover is left off only when the whole chunk
+                        // is nearer than where it grows in. Judged by the
+                        // centre, a coarse chunk (16 to 256 m across) still
+                        // standing in under the camera while the full detail
+                        // loads dropped all its cover, out to its far side:
+                        // bare ground near, cover further off.
+                        let reach = (cam - c.min).abs().max((cam - c.max).abs()).length();
+                        let end = if ranges && reach < foliage::PATCH_FADE[0] {
                             c.sprites - c.sprite_patch
                         } else {
                             c.sprites
@@ -2856,6 +2973,8 @@ impl Renderer {
             self.queue.write_buffer(&self.plate_buf, 0, bytemuck::cast_slice(p.plates.packed()));
         }
         self.particles.upload(&self.queue, p.fx, p.cam_pos);
+        self.signs.upload(&self.queue, p.marks, p.cam_pos);
+        self.foliage.upload_trample(&self.queue, p.marks, p.cam_pos);
         let au = aurora::uniform(p.hour);
         let globals = Globals {
             view_proj: view_proj.to_cols_array(),
@@ -2888,7 +3007,10 @@ impl Renderer {
             season: p.season.uniform(),
             aurora: au,
             under: [p.water_level, self.under[0], self.under[1], if p.water_level > self.sea_level + 0.05 { 1.0 } else { 0.0 }],
-            snow: [p.snow_cover, 0.0, 0.0, 0.0],
+            snow: [p.snow_cover, if p.space { 1.0 } else { 0.0 }, 0.0, 0.0],
+            studio: p.studio.map_or([0.0; 4], |(x, z, half)| [x, z, half, 1.0]),
+            damp: if p.space { [0.0; 4] } else { p.damp },
+            bolt: p.bolt,
         };
         self.queue.write_buffer(&self.globals_buf, 0, bytemuck::bytes_of(&globals));
 
@@ -2901,10 +3023,11 @@ impl Renderer {
         }
         let mut runs = std::mem::take(&mut self.runs);
         runs.clear();
-        for (i, (m, _)) in p.entities[..n_inst].iter().enumerate() {
+        for (i, (m, inst)) in p.entities[..n_inst].iter().enumerate() {
+            let glass = inst.shift[3] > crate::models::GLASS - 0.5;
             match runs.last_mut() {
-                Some(r) if r.0 == *m => r.2 += 1,
-                _ => runs.push((*m, i as u32, 1)),
+                Some(r) if r.0 == *m && r.3 == glass => r.2 += 1,
+                _ => runs.push((*m, i as u32, 1, glass)),
             }
         }
 
@@ -2942,7 +3065,7 @@ impl Renderer {
                 // Creatures cast shadows in cascades 0 and 1 (on the last slice of 1).
                 if !runs.is_empty() && job.creatures {
                     pass.set_pipeline(&self.p_shadow_entity);
-                    for &(m, first, n) in &runs {
+                    for &(m, first, n, _) in &runs {
                         let r = &self.models[m];
                         pass.draw(r.offset * 6..(r.offset + r.count) * 6, first..first + n);
                     }
@@ -2996,7 +3119,7 @@ impl Renderer {
             }
             if !runs.is_empty() {
                 pass.set_pipeline(&self.p_entity);
-                for &(m, first, n) in &runs {
+                for &(m, first, n, _) in runs.iter().filter(|r| !r.3) {
                     let r = &self.models[m];
                     pass.draw(r.offset * 6..(r.offset + r.count) * 6, first..first + n);
                 }
@@ -3012,6 +3135,9 @@ impl Renderer {
             if let Some(pr) = prof {
                 pr.in_pass(&mut pass, 4);
             }
+            // Prints on the ground, multiplied into the land before anything
+            // that stands on it is drawn over them.
+            self.signs.draw(&mut pass);
             // Sign boards and their letters: solid things in the world, so
             // they go in before the sky and the water, writing depth (the
             // letters' clear pixels discard, so they write none).
@@ -3052,6 +3178,15 @@ impl Renderer {
             }
             // Dust, smoke and splashes: blended over the water, far to near.
             self.particles.draw_soft(&mut pass);
+            // See-through entities (a pickup turning over its pad): over
+            // everything solid, writing no depth, in no particular order.
+            if runs.iter().any(|r| r.3) {
+                pass.set_pipeline(&self.p_entity_glass);
+                for &(m, first, n, _) in runs.iter().filter(|r| r.3) {
+                    let r = &self.models[m];
+                    pass.draw(r.offset * 6..(r.offset + r.count) * 6, first..first + n);
+                }
+            }
             if let Some(pr) = prof {
                 pr.in_pass(&mut pass, 7);
             }
@@ -3306,7 +3441,7 @@ fn material_rows() -> Vec<[u32; 4]> {
             f[1],
             f[2],
             crate::world::matlib::flags(m as u8)
-                & (0xff | crate::world::matlib::flag::FOLIAGE | crate::world::matlib::flag::GROWS | crate::world::matlib::flag::GLOW_SPECKS | crate::world::matlib::flag::NIGHT_GLOW | 63 << crate::world::matlib::flag::GLOW_SHIFT),
+                & (0xff | crate::world::matlib::flag::FOLIAGE | crate::world::matlib::flag::GROWS | crate::world::matlib::flag::GLOW_SPECKS | crate::world::matlib::flag::NIGHT_GLOW | crate::world::matlib::flag::FLOODS | 63 << crate::world::matlib::flag::GLOW_SHIFT),
         ]
     });
     let drifts = (0..2usize).flat_map(|style| {

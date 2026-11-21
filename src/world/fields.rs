@@ -58,6 +58,11 @@ pub struct WorldDef {
     /// Where the player starts, metres, and the compass bearing they face.
     #[serde(default)]
     pub spawn: Option<[f32; 2]>,
+    /// The spawn as a place the chronicle found (`Pos`), for a world whose
+    /// land is generated: it wins over `spawn`, and `spawn_bearing` turns
+    /// with it.
+    #[serde(default)]
+    pub spawn_at: Option<Pos>,
     /// Metres above the bare ground the spawn point stands on, for a world
     /// whose spawn is inside a building rather than on the land. The ground
     /// at the spawn is the land under the structure, so a deck raised on a
@@ -91,6 +96,30 @@ pub struct WorldDef {
     /// marks rather than rock beds: they stay put when beds swell or fold.
     #[serde(default)]
     pub strata_level: Vec<String>,
+    /// Materials the mesher draws with bevelled edges in this world only, as
+    /// if their library entry said `"facet": true`: every corner is placed by
+    /// surface nets, so square edges get a chamfer and a one-voxel step (a
+    /// stair, the stepped side of a blast hole) becomes a slanted face. The
+    /// arenas use it on their walls and decks. Applied by
+    /// `worldload::library_for`; B / `--blocky` still turns it off.
+    #[serde(default)]
+    #[allow(dead_code)] // read from the raw JSON by worldload, before a WorldDef exists
+    pub round_edges: Vec<String>,
+    /// How the menus show the world, where the folder's name in capitals is
+    /// not it ("CTF Box" for `ctfbox`).
+    #[serde(default)]
+    #[allow(dead_code)] // read from the raw JSON by launch::info, without loading the world
+    pub title: Option<String>,
+    /// A sentence on what the place is, shown under the launch screen's list
+    /// with the world picked. Left out, the opening of story.md is used.
+    #[serde(default)]
+    #[allow(dead_code)] // launch::info
+    pub blurb: Option<String>,
+    /// `false` keeps the world off the menus' list (a bench, a test);
+    /// `--world` still opens it.
+    #[serde(default)]
+    #[allow(dead_code)] // launch::info
+    pub listed: Option<bool>,
     /// How fast abandoned buildings decay here (1 a wet climate; a desert
     /// keeps its timber, about 0.35). Multiplies their age for decay.
     #[serde(default = "default_one")]
@@ -141,10 +170,20 @@ pub struct WorldDef {
     /// 0 to 1, for a snowbound world; the season's own lying snow adds to it.
     #[serde(default)]
     pub snow_cover: f32,
+    /// How far the grass has gone over to straw whatever the season, 0 to 1,
+    /// for a dry country (a steppe arena); the season's own straw adds to it.
+    #[serde(default)]
+    pub straw: f32,
     /// How strong the northern lights get on the best night (0 = never;
     /// render/aurora.rs). Each night draws its own share of it.
     #[serde(default)]
     pub aurora: f32,
+    /// How strongly the ground mirrors the sky at a grazing angle in the heat
+    /// of the day (0 = never, the default; 1 = a salt pan at noon): the
+    /// far flat goes to sky-coloured water and what stands on it floats over
+    /// its own upside-down image (post.wgsl `mirage`).
+    #[serde(default)]
+    pub mirage: f32,
     /// The sea's colour here; the engine's own jade-teal if left out.
     /// Biomes may give their own (`water`), at most two per world.
     #[serde(default)]
@@ -168,6 +207,17 @@ pub struct WorldDef {
     /// 18.8); mid-afternoon if left out. Hemlow starts in the evening.
     #[serde(default)]
     pub start_hour: Option<f32>,
+    /// A map floating in open space (Starfall): no ground under it, the
+    /// clock held at the hour it opens on, and the sky drawn black with
+    /// stars all the way round, below the horizon too, with no clouds.
+    #[serde(default)]
+    pub space: bool,
+    /// How hard this world pulls and toward what (world/gravity.rs):
+    /// `{"g": 0.3}` is a third of the engine's own, and under 0.6 a body in
+    /// the air can be steered. Leaving it out is the engine's own, straight
+    /// down.
+    #[serde(default)]
+    pub gravity: crate::world::gravity::Gravity,
     /// The rules of the shooter played here (src/shooter.rs). A world with
     /// this block starts in a gun's hands; one without never gets a gun.
     #[serde(default)]
@@ -278,6 +328,11 @@ impl SunDef {
 /// happens when you die. The guns themselves are `library/weapons/`.
 #[derive(Deserialize, Clone, Debug)]
 pub struct ShooterDef {
+    /// The most bots the launch screen offers for a match here; left out,
+    /// `launch::DEFAULT_MAX_BOTS`. A big map says so: Starfall holds 15.
+    /// Worth keeping within the spawn points, or bots share them.
+    #[serde(default)]
+    pub max_bots: Option<usize>,
     /// Library weapon names, in any order; each takes its own digit.
     pub weapons: Vec<String>,
     /// The material a weapon that throws spoil lays down (`FireDef::spoil_r`,
@@ -311,6 +366,12 @@ pub struct ShooterDef {
     /// there are pickups to stand on.
     #[serde(default)]
     pub give_all: bool,
+    /// Ammunition pads hand rounds over for a gun you are not carrying, kept
+    /// until you find the gun (and lost at a death), as older arena
+    /// shooters do. On unless a world says `false`; off, a pad for a gun you have
+    /// not got stays standing.
+    #[serde(default = "default_true")]
+    pub ammo_without_gun: bool,
     /// Kills that end the match; 0 plays on forever (src/shooter/round.rs).
     #[serde(default)]
     pub target_score: u32,
@@ -324,6 +385,63 @@ pub struct ShooterDef {
     /// What is lying about to be picked up (src/shooter/pickup.rs).
     #[serde(default)]
     pub pickups: Vec<PickupDef>,
+    /// A body that falls below this world height (m) dies: the edge of a
+    /// map that floats in space (world.json `space`). None, the default,
+    /// leaves falling to the floor.
+    #[serde(default)]
+    pub void_m: Option<f32>,
+    /// How much of a teammate's damage lands, 0 to 1. Pushes always land, so
+    /// a teammate's rocket still lifts you. Only read when there are teams.
+    #[serde(default)]
+    pub friendly_fire: f32,
+    /// The player's side in a team match, set by the launch screen; None is
+    /// the smaller side (src/shooter/teams.rs).
+    #[serde(default)]
+    pub player_team: Option<u8>,
+    /// Play the bots and spawns as two sides even without a `ctf` block:
+    /// team deathmatch. Set by the launch screen.
+    #[serde(default)]
+    pub teams: bool,
+    /// Capture the flag (src/shooter/flag.rs). Present, the match is two
+    /// teams and the flags decide it.
+    #[serde(default)]
+    pub ctf: Option<CtfDef>,
+}
+
+/// Capture the flag: where each team's flag stands and how a match is won.
+#[derive(Deserialize, Clone, Debug)]
+pub struct CtfDef {
+    /// One per team, team 0 first.
+    pub flags: Vec<FlagDef>,
+    /// Captures that win the match.
+    #[serde(default = "default_captures")]
+    pub captures: u32,
+    /// Seconds a match lasts; 0 plays to the capture count.
+    #[serde(default)]
+    pub time_s: f32,
+    /// Seconds a dropped flag lies before it goes home on its own.
+    #[serde(default = "default_flag_return")]
+    pub return_s: f32,
+    /// A capture needs your own flag at home.
+    #[serde(default = "default_true")]
+    pub need_home: bool,
+}
+
+/// Where a flag stands: its stand, like a pad, with the floor found under `up`.
+#[derive(Deserialize, Clone, Copy, Debug)]
+pub struct FlagDef {
+    pub team: u8,
+    pub at: [f32; 2],
+    #[serde(default)]
+    pub up: Option<f32>,
+}
+
+fn default_captures() -> u32 {
+    3
+}
+
+fn default_flag_return() -> f32 {
+    25.0
 }
 
 /// One thing standing on the floor waiting to be walked over.
@@ -349,6 +467,21 @@ pub struct PickupDef {
     pub respawn_s: Option<f32>,
 }
 
+impl PickupDef {
+    /// The slab the shooter stamps under this pad: the kind's own colour for
+    /// health and armour, the gun's for a weapon and for its ammunition.
+    /// Named here rather than in the rules so `worldload::reach` can give
+    /// every pad's material an id in a world that has them.
+    pub fn pad_material(&self) -> Option<String> {
+        match self.kind.as_str() {
+            "health" => Some("pickup_pad_health".into()),
+            "armour" | "armor" => Some("pickup_pad_armour".into()),
+            "ammo" | "weapon" => self.weapon.as_ref().map(|w| format!("weapon_pad_{w}")),
+            _ => None,
+        }
+    }
+}
+
 /// One bot in the match.
 #[derive(Deserialize, Clone, Debug)]
 pub struct BotDef {
@@ -370,6 +503,15 @@ pub struct BotDef {
     /// run the same bot with and without one thing.
     #[serde(default)]
     pub without: Vec<String>,
+    /// Numbers to set on its decision layer (`brain::duel::Tuning`), by
+    /// name. Empty is the shipping bot; the league uses it to field five
+    /// differently tuned bots at one difficulty.
+    #[serde(default)]
+    pub tune: std::collections::BTreeMap<String, f32>,
+    /// Its side in a team match, 0 or 1. None in a team match is dealt out
+    /// to even the sides.
+    #[serde(default)]
+    pub team: Option<u8>,
 }
 
 /// A bot navigation graph: places, and what it takes to get between them.
@@ -414,10 +556,13 @@ pub struct NavLink {
     pub cost: f32,
     /// The platform this link rides (src/platforms.rs) or the portal it
     /// steps into (src/portals.rs), by name. A link that waits for a lift
-    /// has to know which lift it is waiting for.
+    /// has to know which lift it is waiting for. Nothing reads them yet:
+    /// routing treats every lift and portal link alike.
     #[serde(default)]
+    #[allow(dead_code)]
     pub platform: Option<String>,
     #[serde(default)]
+    #[allow(dead_code)]
     pub portal: Option<String>,
 }
 
@@ -433,6 +578,9 @@ pub struct SpawnPoint {
     /// highest floor in the world at that spot when left out.
     #[serde(default)]
     pub ceiling: Option<f32>,
+    /// The side that comes back here in a team match; None is either side.
+    #[serde(default)]
+    pub team: Option<u8>,
 }
 
 fn default_health() -> f32 {
@@ -440,7 +588,11 @@ fn default_health() -> f32 {
 }
 
 fn default_respawn() -> f32 {
-    1.6
+    5.0
+}
+
+fn default_true() -> bool {
+    true
 }
 
 fn default_skill() -> String {
@@ -455,12 +607,27 @@ fn default_height() -> f32 {
     128.0
 }
 
-/// A place: coordinates in metres, or a name from the chronicle's `places`.
+/// A place: coordinates in metres, a name (from the chronicle's `places`, or
+/// one an event found: see `seat` and `glaciate`), or so far from a name.
+///
+/// The last is how anything built on land the generator shaped is placed:
+/// `{"from": "fjord_head", "by": [30, -12]}` is 30 m east and 12 m north of
+/// wherever the fjord's head came out. A found place may face a way (the
+/// head of a fjord faces up its valley); with `as_if`, the offset is read as
+/// drawn for a place facing that bearing and turned, in quarter turns, to
+/// suit the way this one came out, so a village laid out for a shore to its
+/// west still has the water at its feet.
 #[derive(Deserialize, Clone, Debug)]
 #[serde(untagged)]
 pub enum Pos {
     At([f32; 2]),
     Named(String),
+    Rel {
+        from: String,
+        by: [f32; 2],
+        #[serde(default)]
+        as_if: Option<f32>,
+    },
 }
 
 /// A buried band: material, depth of its top below the surface, thickness,
@@ -516,18 +683,25 @@ pub struct When {
     /// Seen only from within this distance, metres.
     #[serde(default)]
     pub near: Option<f32>,
+    /// true: stands only while the moon is out (the sun more than 5 degrees
+    /// down, where the moonlight is half faded in), so it follows dusk and
+    /// dawn through the year; false: only while it is not.
+    #[serde(default)]
+    pub moon: Option<bool>,
 }
 
 impl When {
-    /// Whether it stands at `hour` with the player `dist` m away, given
-    /// whether it stood a moment ago (`was`): distances switch with 20 m of
-    /// slack so it doesn't flicker at the line.
-    pub fn stands(&self, hour: f32, dist: f32, was: bool) -> bool {
+    /// Whether it stands at `hour` with the player `dist` m away and the
+    /// moon out or not (`moon_out`), given whether it stood a moment ago
+    /// (`was`): distances switch with 20 m of slack so it doesn't flicker at
+    /// the line.
+    pub fn stands(&self, hour: f32, dist: f32, moon_out: bool, was: bool) -> bool {
         let slack = if was { 0.0 } else { 20.0 };
         let hours = self.hours.is_none_or(|[a, b]| if a <= b { hour >= a && hour < b } else { hour >= a || hour < b });
         let far = self.far.is_none_or(|f| dist > f + slack);
         let near = self.near.is_none_or(|n| dist < n - slack);
-        hours && far && near
+        let moon = self.moon.is_none_or(|m| m == moon_out);
+        hours && far && near && moon
     }
 }
 
@@ -541,14 +715,22 @@ mod when_tests {
             hours: Some([23.0, 3.0]),
             far: Some(70.0),
             near: None,
+            moon: None,
         };
-        assert!(w.stands(1.0, 200.0, false) && w.stands(23.5, 200.0, false));
-        assert!(!w.stands(12.0, 200.0, true));
+        assert!(w.stands(1.0, 200.0, true, false) && w.stands(23.5, 200.0, true, false));
+        assert!(!w.stands(12.0, 200.0, false, true));
         // Gone once you come within 70 m; back only past 90 m.
-        assert!(!w.stands(1.0, 60.0, true));
-        assert!(!w.stands(1.0, 80.0, false));
-        assert!(w.stands(1.0, 95.0, false));
-        assert!(w.stands(1.0, 80.0, true));
+        assert!(!w.stands(1.0, 60.0, true, true));
+        assert!(!w.stands(1.0, 80.0, true, false));
+        assert!(w.stands(1.0, 95.0, true, false));
+        assert!(w.stands(1.0, 80.0, true, true));
+    }
+
+    #[test]
+    fn moon_follows_the_moon_not_the_clock() {
+        let w = When { moon: Some(true), ..Default::default() };
+        assert!(w.stands(13.0, 0.0, true, false), "the hour doesn't matter, only the moon");
+        assert!(!w.stands(1.0, 0.0, false, true));
     }
 }
 
@@ -1086,6 +1268,10 @@ pub struct World {
     pub trees: Vec<Tree>,
     pub tree_grid: HashMap<(i32, i32), Vec<u32>>,
     pub items: Vec<Item>,
+    /// One per item: a key that names it whatever else changes in the
+    /// chronicle (`chronicle::item_keys`), which is what the save remembers
+    /// a find by.
+    pub item_keys: Vec<u32>,
     pub pois: Vec<Poi>,
     /// Named stretches of ground, and the signs that say so (world/places.rs).
     pub areas: Vec<super::places::Area>,
@@ -1106,6 +1292,8 @@ pub struct World {
     pub tubes: Vec<Tube>,
     /// Volumetric rock towers (event `tower`).
     pub towers: Vec<Tower>,
+    /// Skeletons drawn as volumes (event `skeleton`).
+    pub bones: super::bones::Bones,
     /// Plants the chronicle placed by hand (ledges).
     pub growths: Vec<Growth>,
     /// Placed structures that stand only some of the time (`place` `when`),

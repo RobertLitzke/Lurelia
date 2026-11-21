@@ -1,0 +1,15 @@
+{
+  "name": "cardon_skin",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Cardon skin: deep-ribbed grey-green, paler down the ribs, greyer than a saguaro's.",
+  "smooth": false,
+  "texture": {
+    "pattern": "columns",
+    "base": [112, 128, 100],
+    "alt": [140, 150, 122],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [118, 134, 106], "alt": [142, 152, 126]}
+  }
+}

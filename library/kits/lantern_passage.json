@@ -1,0 +1,12 @@
+{
+  "name": "lantern_passage",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A cave passage in honey limestone, bored at the height its network names: 4 m across with 4 m of headroom and a pale gravel floor. Lay it with a `network` that has a `height` and it is a cave system; light it with a `lamp` event.",
+  "ground": "bore",
+  "width": 4.0,
+  "mat": "river_gravel",
+  "clear": 4.0,
+  "deck": {"thick": 0.5, "mat": "river_gravel"},
+  "tags": ["cave"]
+}

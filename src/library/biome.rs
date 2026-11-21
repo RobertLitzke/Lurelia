@@ -152,7 +152,39 @@ pub struct BiomeDef {
     /// a peat lake): at most two such biomes per world are drawn.
     #[serde(default)]
     pub water: Option<WaterColour>,
+    /// What the place sounds like, where the defaults (sound/bed.rs) are not
+    /// right for it. Left out, the bed is worked out from the ground.
+    #[serde(default)]
+    pub sound: Option<BiomeSound>,
     #[serde(default)]
     #[allow(dead_code)] // read by tools/libfmt.py and people
+    pub notes: String,
+}
+
+/// A biome's `sound` block. Every field is optional; what is left out comes
+/// from the ground and from the voxels round the listener (sound/bed.rs).
+#[derive(Deserialize, Clone, Debug, Default)]
+#[serde(deny_unknown_fields)]
+pub struct BiomeSound {
+    /// How much of the wind reaches the ground here, as a multiple of what
+    /// open ground gets: under 1 in a closed wood or a hollow, over it on a
+    /// steppe or a down that the wind never leaves.
+    #[serde(default)]
+    pub wind: Option<f32>,
+    /// A multiple on the leaves heard, which otherwise come from the leaf
+    /// voxels actually round the listener's head: under 1 for needles,
+    /// which hiss rather than clatter; over 1 for big loose leaves.
+    #[serde(default)]
+    pub leaves: Option<f32>,
+    /// How much grass rustles about the feet, 0 to 1. Otherwise taken from
+    /// how thickly the surface material grows grass.
+    #[serde(default)]
+    pub grass: Option<f32>,
+    /// What rain lands on: soft, grass, leaves, stone or water. Otherwise
+    /// worked out from the surface material.
+    #[serde(default)]
+    pub ground: Option<crate::sound::Ground>,
+    #[serde(default)]
+    #[allow(dead_code)] // read by people
     pub notes: String,
 }

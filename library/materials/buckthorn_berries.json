@@ -1,0 +1,15 @@
+{
+  "name": "buckthorn_berries",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Sea buckthorn berries: dense clusters of orange along the stems.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [214, 112, 34],
+    "alt": [186, 84, 26],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [210, 118, 48], "alt": [184, 92, 38]}
+  }
+}

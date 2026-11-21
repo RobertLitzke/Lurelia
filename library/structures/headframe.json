@@ -28,15 +28,8 @@
     {"op": "box", "from": [3, 156, 3], "to": [21, 158, 21], "mat": "timber", "part": "timber"},
     {"op": "disc", "centre": [12, 159, 12], "radius": 5.5, "thick": 1.5, "axis": "x", "mat": "iron", "part": "metal"},
     {"op": "disc", "centre": [12, 159, 12], "radius": 3.5, "thick": 1.5, "axis": "x", "mat": "air"},
-    {
-      "op": "repeat",
-      "count": 28,
-      "step": [0, -2, 1],
-      "ops": [
-        {"op": "box", "from": [8, 154, 20], "to": [10, 156, 21], "mat": "timber", "part": "timber"},
-        {"op": "box", "from": [14, 154, 20], "to": [16, 156, 21], "mat": "timber", "part": "timber"}
-      ]
-    },
+    {"op": "segment", "points": [[9, 155, 20.5], [9, 117, 39.5]], "radius": 1.0, "mat": "timber", "part": "timber"},
+    {"op": "segment", "points": [[15, 155, 20.5], [15, 117, 39.5]], "radius": 1.0, "mat": "timber", "part": "timber"},
     {"op": "box", "from": [7, 0, 7], "to": [17, 96, 17], "mat": "timber", "part": "timber"},
     {
       "op": "repeat",

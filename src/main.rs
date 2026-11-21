@@ -31,6 +31,7 @@ mod ride;
 mod rig;
 mod screenshot;
 mod shooter;
+mod sound;
 mod stream;
 mod tools;
 mod util;
@@ -80,6 +81,14 @@ fn main() {
         tools::duel::run(&args);
         return;
     }
+    if args.ctf.is_some() {
+        tools::ctf::run(&args);
+        return;
+    }
+    if args.league.is_some() {
+        tools::league::run(&args);
+        return;
+    }
     if args.tourney.is_some() {
         tools::tourney::run(&args);
         return;
@@ -90,6 +99,10 @@ fn main() {
     }
     if args.catalog.is_some() {
         tools::catalog::run(&args);
+        return;
+    }
+    if args.sound_bake.is_some() {
+        sound::bake::run(&args);
         return;
     }
     if args.headless {
@@ -225,6 +238,12 @@ struct Running {
     /// Whether the window has the keyboard. Out of focus the loop idles.
     focused: bool,
     quit: bool,
+    /// The sound device and the listener's survey of the world (src/sound).
+    sound: sound::Sound,
+    ear: sound::bed::Ear,
+    watch: sound::watch::Watch,
+    /// The sound readout (F9): every number the ambience is made of.
+    hearing: bool,
 }
 
 /// Where a screen goes back to: the title, the pause menu, or straight into
@@ -382,6 +401,7 @@ impl Running {
                 self.surface.configure(&self.gpu.device, &self.config);
             }
             Setting::View | Setting::Msaa => {}
+            Setting::Sound | Setting::Volume | Setting::Ambience | Setting::Effects | Setting::Music => self.sound.set_levels(p.sound),
             Setting::Style | Setting::Shadows | Setting::Slopes | Setting::Stats => {
                 if let Some(g) = &mut self.game {
                     let resmooth = g.settings.slopes != p.settings.slopes;
@@ -408,6 +428,7 @@ impl Running {
         worldload::select(name);
         self.prefs.last.world = name.to_string();
         self.prefs.last.mode = chosen.mode;
+        self.prefs.last.opened(name);
         self.save_prefs(args);
         let mut a = args.clone();
         a.launch = Some(chosen);
@@ -809,9 +830,10 @@ impl Running {
                     self.prefs.last.step_mode(dir);
                 }
             }
+            Choice::LaunchReset => self.prefs.last.reset(),
             Choice::ChooseWorld(i) => {
-                let list = worldload::available();
-                if let Some(name) = list.get(i as usize) {
+                let list = self.prefs.last.world_rows();
+                if let Some(name) = list.get(i as usize).map(|r| &r.world) {
                     self.prefs.last.world = name.clone();
                     if !launch::modes(&self.prefs.last.world).contains(&self.prefs.last.mode) {
                         self.prefs.last.mode = launch::Mode::Explore;
@@ -1077,6 +1099,15 @@ impl Running {
                 }
                 self.edit_floor();
             }
+            Choice::EditLight => {
+                if let Some(e) = self.edit.as_mut() {
+                    e.world_light = !e.world_light;
+                    if let Some(g) = self.game.as_mut() {
+                        g.studio_light = !e.world_light;
+                    }
+                    e.wants(editor::Impact::Row);
+                }
+            }
             Choice::EditKnob(i) => {
                 let Some(mut e) = self.edit.take() else { return };
                 if let Some(lib) = self.game.as_ref().and_then(|g| g.library()) {
@@ -1204,6 +1235,19 @@ impl Running {
                 self.menu.nav(n, true);
                 self.edit_reveal();
             }
+            // The ends of a list, and a screenful at a time: the world list
+            // is long enough to want them.
+            KeyCode::Home | KeyCode::End | KeyCode::PageUp | KeyCode::PageDown if n > 0 => {
+                let page = self.menu.shown.saturating_sub(1).max(4);
+                self.menu.at = match code {
+                    KeyCode::Home => 0,
+                    KeyCode::End => n - 1,
+                    KeyCode::PageUp => at.saturating_sub(page),
+                    _ => (at + page).min(n - 1),
+                };
+                self.menu.reveal(n);
+                self.edit_reveal();
+            }
             KeyCode::KeyA | KeyCode::ArrowLeft | KeyCode::KeyD | KeyCode::ArrowRight => {
                 if let Some(it) = items.get(at) {
                     if matches!(
@@ -1221,6 +1265,7 @@ impl Running {
                             | Choice::EditAge
                             | Choice::EditPose
                             | Choice::EditGrid
+                            | Choice::EditLight
                     ) {
                         let dir = if matches!(code, KeyCode::KeyA | KeyCode::ArrowLeft) { -1 } else { 1 };
                         self.choose(args, it.choice, dir);
@@ -1268,6 +1313,7 @@ impl Running {
                     | Choice::EditAge
                     | Choice::EditPose
                     | Choice::EditGrid
+                    | Choice::EditLight
             );
             if right && !steps {
                 return;
@@ -1290,6 +1336,10 @@ impl Running {
     }
 
     fn key(&mut self, args: &Args, code: KeyCode, down: bool) {
+        if down && code == KeyCode::F9 {
+            self.hearing = !self.hearing;
+            return;
+        }
         if down && code == KeyCode::F11 {
             self.prefs.fullscreen = self.window.fullscreen().is_none();
             self.set_fullscreen(self.prefs.fullscreen);
@@ -1559,7 +1609,14 @@ impl Running {
                 let here = self.game.as_ref().map(|_| worldload::selected());
                 let base_items = menu::launch_items(&self.prefs.last, here.as_deref());
                 let at = if open.is_some() { self.launch_at } else { self.menu.at };
-                let foot = base_items.get(at).map(|i| i.help).filter(|h| !h.is_empty()).unwrap_or("Left and right to change, Enter to go");
+                // The world list open: the line under the highlight says
+                // what that world is, so the list can be read down.
+                let foot = match open {
+                    Some(0) => items.get(self.menu.at).map(|i| i.help),
+                    _ => base_items.get(at).map(|i| i.help),
+                }
+                .filter(|h| !h.is_empty())
+                .unwrap_or("Left and right to change, Enter to go");
                 let mut behind = Menu {
                     at,
                     top: self.launch_top,
@@ -1570,6 +1627,7 @@ impl Running {
                 if let Some(which) = open {
                     let anchor = behind.drops.get(which as usize).copied().unwrap_or([0.0; 4]);
                     let in_force = menu::drop_at(&self.prefs.last, which);
+                    menu::dim(&mut self.hud, w, h);
                     menu::draw_dropdown(&mut self.hud, &mut self.menu, &items, anchor, in_force, w, h);
                 }
             }
@@ -1692,6 +1750,7 @@ impl Running {
         if matches!(self.screen, Screen::Edit { .. }) {
             self.edit_tick(dt);
         }
+        self.hear(dt, w as f32, h as f32);
         self.draw_screen(w as f32, h as f32);
         let frame = match self.surface.get_current_texture() {
             Ok(f) => f,
@@ -1749,6 +1808,55 @@ impl Running {
     }
 }
 
+impl Running {
+    /// This frame's sound: survey the world round the listener and hand the
+    /// moment to the device, with the ambience let through in full while
+    /// playing, turned down behind a menu, and gone with no world or no
+    /// focus. With the readout on (F9), draw what the ambience is made of.
+    fn hear(&mut self, dt: f32, w: f32, h: f32) {
+        let in_world = self.game.is_some() && self.screen.over_world();
+        let duck = if !self.focused || !in_world {
+            0.0
+        } else if self.screen == Screen::Playing || matches!(self.screen, Screen::Edit { .. }) {
+            1.0
+        } else {
+            0.35
+        };
+        let (heard, facing) = match (&self.game, in_world) {
+            (Some(g), true) => {
+                let (eye, fwd) = g.listener();
+                // The match and the feet are only watched while the world
+                // runs; behind a menu nothing moves to be heard.
+                if duck >= 1.0 {
+                    self.watch.look(g, dt, eye);
+                }
+                let noises = sound::take_noises();
+                if duck >= 1.0 {
+                    self.sound.play(&noises, eye, [fwd.x, fwd.z]);
+                }
+                (self.ear.hear(g, dt), [fwd.x, fwd.z])
+            }
+            _ => {
+                self.ear.reset();
+                sound::take_noises();
+                (sound::Heard::default(), [0.0, -1.0])
+            }
+        };
+        self.sound.update(heard, facing, duck);
+        if self.hearing && in_world {
+            let s = (h / 1080.0).max(0.6) * 15.0;
+            let mut y = h * 0.18;
+            let ink = [0.92, 0.95, 1.0, 0.95];
+            let head = if self.sound.playing() { format!("SOUND {} AT {} HZ", self.sound.device.to_uppercase(), self.sound.rate) } else { "SOUND OFF".to_string() };
+            self.hud.rect(w - s * 34.0, y - s * 1.2, s * 33.0, s * 1.5 * 11.0 + s, [0.0, 0.0, 0.0, 0.55]);
+            for line in std::iter::once(head).chain(self.ear.lines(&heard)) {
+                self.hud.text(w - s * 33.0, y, s, ink, &line);
+                y += s * 1.5;
+            }
+        }
+    }
+}
+
 /// Hand the renderer the models again after the EDIT page rebuilt one. A
 /// frame drawn before this would reach past the end of the renderer's model
 /// list for the subject's own model, so it runs before anything is drawn.
@@ -1760,8 +1868,7 @@ pub(crate) fn upload_models(renderer: &mut Renderer, game: &mut Game) {
         return;
     }
     game.models_dirty = false;
-    let meshes: Vec<_> = game.models.iter().map(|m| m.mesh.clone()).collect();
-    renderer.set_models(&meshes, &game.palette);
+    renderer.set_models(&game.models, &game.palette);
 }
 
 /// Hand the renderer everything it needs from the loaded world: heightmap,
@@ -1778,7 +1885,7 @@ pub(crate) fn show_world(renderer: &mut Renderer, game: &Game) {
     } else {
         renderer.set_rivers(&[], &[], &[]);
     }
-    renderer.set_models(&game.models.iter().map(|m| m.mesh.clone()).collect::<Vec<_>>(), &game.palette);
+    renderer.set_models(&game.models, &game.palette);
     let (looks, errors) = library::load_looks(&library::data_root());
     for e in errors {
         eprintln!("looks: {e}");
@@ -1852,6 +1959,7 @@ impl ApplicationHandler for App {
         let _ = worldload::library();
         let renderer = Renderer::new(&gpu, config.format.add_srgb_suffix(), config.width, config.height, self.args.msaa.unwrap_or(prefs.msaa));
         let seed = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(1, |d| d.as_nanos() as u64);
+        let sound = sound::Sound::new(prefs.sound);
         let mut run = Running {
             window,
             surface,
@@ -1895,6 +2003,10 @@ impl ApplicationHandler for App {
             hidden: false,
             focused: true,
             quit: false,
+            sound,
+            ear: sound::bed::Ear::default(),
+            watch: sound::watch::Watch::default(),
+            hearing: false,
         };
         // `--world` (or `--bench`) goes straight into a world; otherwise the title screen.
         if self.args.world.is_some() || self.args.bench {

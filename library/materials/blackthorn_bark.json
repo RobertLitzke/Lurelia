@@ -1,0 +1,15 @@
+{
+  "name": "blackthorn_bark",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Blackthorn stems: near black, dense with thorny spurs.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [52, 46, 48],
+    "alt": [70, 62, 62],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [58, 52, 54], "alt": [76, 68, 68]}
+  }
+}

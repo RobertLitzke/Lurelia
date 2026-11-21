@@ -1,0 +1,16 @@
+{
+  "name": "thimbleberry_cane",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Thimbleberry canes: pale brown with shreddy bark. Passable.",
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "grain",
+    "base": [136, 110, 82],
+    "alt": [112, 90, 66],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [142, 116, 88], "alt": [118, 96, 72]}
+  }
+}

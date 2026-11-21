@@ -9,7 +9,7 @@ Lurelia is an engine that allows you to play different games in different worlds
 
 - A peaceful open-world exploration game where you hike, mountain bike,
   wingsuit, kayak, free-climb and scuba dive across landscapes shaped by
-  simulated geological history. You'll share terrain as varied as paleolithic grasslands, tropical karst towers, nordic fjords, faerie forests with 165 species of wildlife, 109 species of plants, and dozens of procedural structures, artifacts, towns, trails and roads.
+  simulated geological history. You'll share terrain as varied as paleolithic grasslands, tropical karst towers, nordic fjords, faerie forests with 179 species of wildlife, 137 species of plants, and dozens of procedural structures, artifacts, towns, trails and roads.
 - A fast retro arena deathmatch where triple jumps, double dodges,   terrain-carving, trap-laying, enemy-decimating weapons that change each map, each time you play it. No multiplayer, but supports smart local bots.
 
 ## Part I: the open world
@@ -56,11 +56,11 @@ flow into one another:
   fish, ride deep currents, or hold on to a passing humpback, manta ray or sea
   turtle for a tow.
 
-### 165 creatures and 109 plants
+### 179 creatures and 137 plants
 
-All of the life is procedural. The library holds 109 plant species across
+All of the life is procedural. The library holds 137 plant species across
 twenty-nine growth forms, from tall conifers, weeping willows and hollow
-walk-in baobabs to kelp beds and antler coral, and 165 animal species animated
+walk-in baobabs to kelp beds and antler coral, and 179 animal species animated
 in real time by bone motors rather than recorded clips.
 
 Wildlife fills the air, land and water with behaviour of its own:
@@ -118,10 +118,15 @@ made of live, destructible voxels.
   fill in the same movement input struct your keyboard does, so they dodge,
   air-jump, use jump pads and lead their targets across seven difficulty
   levels without bending physics or seeing through walls.
+- Teams and capture the flag. TEAM DEATHMATCH plays any arena as two sides.
+  CAPTURE THE FLAG adds a flag at each base: take theirs off its stand and
+  carry it home with your own still there. A team brain over each side hands
+  its bots jobs (attack by a lane, carry, escort, defend a post, chase the
+  thief, return a dropped flag) and knows no more than the side could see.
 
 ## The worlds
 
-Lurelia ships with eight open-world landscapes and four deathmatch arenas, and
+Lurelia ships with ten open-world landscapes and eight arenas, and
 can also load random islands and worlds you keep locally:
 
 - Glassfall: a volcanic island with a meteor crater, a strewn field of black
@@ -141,9 +146,18 @@ can also load random islands and worlds you keep locally:
   temple, cave bears, and sky rays undulating on the wind.
 - Thornpan: an inland delta fanning out over white salt pans, with hollow
   walk-in baobabs, granite kopjes and shipwrecks far from any sea.
-- Porch, Transmission, Slagdeck and Duelbox: the arenas. A fae timber hall over
-  a burning mire, a three-storey relay station inside a glacier, an offshore
-  smelter over molten slag, and a plain box for testing weapons.
+- Ribshore: a grey northern coast of wet sand and grassy dunes, with the
+  skeleton of a giant sea hunter lying along the beach.
+- Saltmirror: a salt pan flat enough to mirror the sky, eleven abandoned radio
+  dishes still facing the zenith, and something burned up in the range behind
+  them.
+- Porch, Transmission, Slagdeck and Duelbox: the arenas. A frozen outpost of
+  rooms and a long porch, a three-storey relay station inside a glacier, an
+  offshore smelter over molten slag, and a plain box for testing weapons.
+- Sluice, Megalith, Starfall and Ctfbox: capture the flag. Two pump yards
+  across a drained spillway with three ways between them, a chalk canyon and
+  caves under open steppe, two towers on a rock in open space with low gravity
+  between them, and a plain room for testing the team brain.
 
 ![A bird under the canopy in Jadewater](worlds/jadewater/pictures/jadewater2.png)
 
@@ -153,13 +167,13 @@ On an RTX 3060 at 1440p with 4x MSAA a frame takes 2.3 to 5 ms, thanks to GPU
 depth-pyramid occlusion culling, leaf crowns meshed in larger blocks, draw
 lists bucketed near to far, and shadow cascades updated in slices.
 
-Content is data: 318 materials, 217 structures, 165 creatures, 113 biomes and
-109 plants, each a short JSON file in `library/`. Two studios built into the
+Content is data: 434 materials, 244 structures, 179 creatures, 151 biomes and
+137 plants, each a short JSON file in `library/`. Two studios built into the
 game let you change it while it runs: one grades the sky, fog and colour ramps
 live, and a turntable studio edits creatures, plants, materials and weapons and
 writes the change straight back to disk. The engine also runs headless from
 the command line to take screenshots, draw top-down world maps, run bot
-tournaments and run its 472 unit and shader tests.
+tournaments and run its 589 unit and shader tests.
 
 ## Installation
 

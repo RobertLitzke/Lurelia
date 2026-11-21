@@ -3,6 +3,22 @@
 
 @group(2) @binding(0) var sprite_tex: texture_2d_array<f32>;
 @group(2) @binding(1) var sprite_samp: sampler;
+// Grass pressed flat round the camera (render/foliage.rs trample_texels): r
+// how flat, g and b the way it was laid.
+@group(2) @binding(2) var trample_tex: texture_2d<f32>;
+
+// How trampled the ground at `p` is: x how flat (0 to 1), yz the way it was
+// laid. Nothing outside the map round the camera.
+fn trampled(p: vec3<f32>) -> vec3<f32> {
+    let span = TRAMPLE_N * TRAMPLE_CELL;
+    let origin = floor(g.cam_pos.xz / TRAMPLE_STEP) * TRAMPLE_STEP - vec2<f32>(span * 0.5);
+    let uv = (p.xz - origin) / span;
+    if (any(uv < vec2<f32>(0.0)) || any(uv > vec2<f32>(1.0))) {
+        return vec3<f32>(0.0);
+    }
+    let t = textureSampleLevel(trample_tex, sprite_samp, uv, 0.0);
+    return vec3<f32>(t.r, t.g * 2.0 - 1.0, t.b * 2.0 - 1.0);
+}
 
 // Sprites are lit and fogged per vertex: a card is small, and the fragment
 // shader only reads the texture. Lit per pixel they cost 1.4 to 2.3 ms at
@@ -21,6 +37,9 @@ struct SpriteOut {
     @location(5) sheen: f32,
     // 1 for grass cards, whose bases shade toward the understory colour.
     @location(6) @interpolate(flat) grass: f32,
+    // What the weather has left on it (world/damp.rs): x = frost here, held
+    // on in the shade; y = how wet it is.
+    @location(7) @interpolate(flat) damp: vec2<f32>,
 };
 
 // Thinning with distance: past about 15 m (25 m for leaves) half the grass
@@ -282,6 +301,14 @@ fn vs_sprite(@builtin(vertex_index) vi: u32) -> SpriteOut {
             normal = normalize(dir_normal(dir) + vec3<f32>(0.0, 0.6, 0.0));
         }
     }
+    // Trampled (creatures/sign.rs): grass and low plants pressed down and
+    // laid over the way whatever went through was going. A leaf cluster up
+    // in a tree is out of reach of any foot.
+    let tr = trampled(root);
+    if (tr.x > 0.004 && root.y - ground_height(root.xz) < 1.2) {
+        let up = max(world.y - root.y, 0.0);
+        world = vec3<f32>(world.x, root.y + up * (1.0 - 0.85 * tr.x), world.z) + vec3<f32>(tr.y, 0.0, tr.z) * up * 0.45 * tr.x;
+    }
     var out: SpriteOut;
     out.clip = g.view_proj * vec4<f32>(world, 1.0);
     out.uv = vec2<f32>(u, 1.0 - v);
@@ -307,8 +334,20 @@ fn vs_sprite(@builtin(vertex_index) vi: u32) -> SpriteOut {
         out.light = max(out.light, vec3<f32>(0.9) * fog.a);
     }
     out.fog_add = fog.rgb;
-    out.sheen = gs * v * 0.6;
+    // Bent over, a blade shows its paler side.
+    out.sheen = gs * v * 0.6 + tr.x * 0.9;
     out.grass = select(0.0, 1.0, UNDER_ON && kind == 0u && tint != 0u && (mats[tint].w & M_UNDERSTORY) != 0u && ((q.w >> 18u) & 3u) != 2u);
+    // Frost lasts where the sun has not reached (scene.wgsl damp_ground):
+    // one shadow tap at the root picks the shade's amount or the sun's.
+    var rime = 0.0;
+    if (g.damp.z > 0.01 && !leaf_card) {
+        var lit = 0.0;
+        if (g.air_sun.w < 0.5) {
+            lit = shadow_tap(root + vec3<f32>(0.0, 0.1, 0.0));
+        }
+        rime = mix(g.damp.z, g.damp.w, lit);
+    }
+    out.damp = vec2<f32>(rime, g.damp.x);
     return out;
 }
 
@@ -322,6 +361,12 @@ fn sprite_shade(in: SpriteOut, tx: vec4<f32>) -> vec3<f32> {
     var c = tx.rgb * in.tint;
     if (in.layer != L_GLOW_THREADS) {
         c = select(seasoned(c), strawed(c), in.grass > 0.5);
+        // Wet blades and leaves go a little darker and deeper; frost greys
+        // a blade from its tip down (uv.y is 0 at the tip).
+        let w = in.damp.y;
+        c = pow(max(c, vec3<f32>(0.0)), vec3<f32>(1.0 + 0.3 * w)) * (1.0 - 0.12 * w);
+        let tip = 1.0 - in.uv.y;
+        c = mix(c, vec3<f32>(0.84, 0.88, 0.95), smoothstep(0.0, 1.0, in.damp.x) * mix(0.35, 0.95, tip) * mix(0.5, 1.0, in.grass));
     }
     return c * base * (1.0 + in.sheen * 0.28) * in.light + in.fog_add;
 }

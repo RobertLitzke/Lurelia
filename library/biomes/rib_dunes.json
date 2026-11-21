@@ -1,0 +1,46 @@
+{
+  "name": "rib_dunes",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The old dunes, held by grass: tan dunegrass combed by the wind, purple lupine in drifts and thickets of sea buckthorn in the hollows.",
+  "priority": 4,
+  "rules": {"region": "dunes", "slope": [0, 0.42]},
+  "surface": "dune_grass",
+  "subsurface": "dune_sand",
+  "map_color": [176, 166, 120],
+  "plants": [
+    {
+      "plant": "lupine",
+      "density": 0.05,
+      "placement": {"verb": "clustered", "params": {"size": 26, "min": 0.55, "max": 0.7}}
+    },
+    {
+      "plant": "sea_buckthorn",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.6, "max": 0.7}}
+    },
+    {"plant": "shore_pine", "density": 0.0007, "placement": {"verb": "lone", "params": {"spacing": 40}}},
+    {
+      "plant": "beach_pea",
+      "density": 0.01,
+      "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.5, "max": 0.65}}
+    }
+  ],
+  "features": [
+    {
+      "structure": "drift_log",
+      "density": 0.0012,
+      "placement": {"verb": "edge", "params": {"width": 5, "inner": 0.0, "along": 30}, "field": "rib_wrack,rib_beach"}
+    }
+  ],
+  "creatures": [
+    {"creature": "elk", "count": 9},
+    {"creature": "coyote", "count": 1},
+    {"creature": "raven", "count": 2},
+    {"creature": "gull", "count": 2},
+    {"creature": "jackrabbit", "count": 4},
+    {"creature": "bumblebee", "count": 3},
+    {"creature": "sparrow", "count": 4}
+  ],
+  "collectibles": [{"item": "seashell", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}]
+}

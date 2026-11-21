@@ -38,7 +38,13 @@
       "placement": {"verb": "clustered", "params": {"size": 22, "min": 0.7, "max": 0.715}}
     },
     {"plant": "shelf_fungus", "density": 0.16},
-    {"plant": "tree_moss", "density": 0.4}
+    {"plant": "tree_moss", "density": 0.4},
+    {
+      "plant": "switchcane",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.5, "max": 0.7}}
+    },
+    {"plant": "buttonbush", "density": 0.003, "placement": {"verb": "riparian", "params": {"width": 12}}}
   ],
   "creatures": [
     {"creature": "deer", "count": 6},

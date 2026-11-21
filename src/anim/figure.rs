@@ -23,7 +23,7 @@ use crate::anim::{Plan, Role};
 use super::motors::{self, Gait};
 use super::{ragdoll::Ragdoll, Pose, Rig};
 use glam::{Quat, Vec2, Vec3};
-use std::f32::consts::{FRAC_PI_2, TAU};
+use std::f32::consts::TAU;
 
 /// Below this, the body counts as standing still.
 const STILL: f32 = 0.35;
@@ -109,6 +109,11 @@ pub struct Figure {
     /// be shaken by what the body itself is doing: the lurch of the blast
     /// that threw it and the stop when it meets a wall.
     last_vel: Vec3,
+    /// The gun, body-local: its grip foot (metres, from a pivot at the
+    /// origin, as `anim::forward` gives with `Vec3::ZERO`) and how it is
+    /// turned. This step's and the last, for drawing between them.
+    gun: (Vec3, Quat),
+    gun_prev: (Vec3, Quat),
 }
 
 impl Figure {
@@ -139,6 +144,8 @@ impl Figure {
             seed: s * 10.0,
             ragdoll: None,
             last_vel: Vec3::ZERO,
+            gun: (Vec3::new(0.15, 1.1, -0.3), Quat::IDENTITY),
+            gun_prev: (Vec3::new(0.15, 1.1, -0.3), Quat::IDENTITY),
         }
     }
 
@@ -262,13 +269,16 @@ impl Figure {
         self.kick_v = kv;
 
         self.prev = std::mem::take(&mut self.pose);
-        self.pose = self.compose(rig, leg_m, d);
+        let (pose, gun) = self.compose(rig, voxel, leg_m, d);
+        self.pose = pose;
+        self.gun_prev = self.gun;
+        self.gun = gun.unwrap_or(self.gun);
         if self.prev.bones.len() != self.pose.bones.len() {
             self.prev = self.pose.clone();
         }
     }
 
-    fn compose(&self, rig: &Rig, leg_m: f32, d: &Drive) -> Pose {
+    fn compose(&self, rig: &Rig, voxel: f32, leg_m: f32, d: &Drive) -> (Pose, Option<(Vec3, Quat)>) {
         let mut p = motors::posture(rig, 0.0, false, leg_m);
         // How the movement is shared between walking and side-stepping. The
         // fore-and-aft cycle runs backwards when the body is backing up.
@@ -283,7 +293,7 @@ impl Figure {
         // steps are shorter, which is most of what tells a backpedal apart
         // from a walk seen from behind.
         if fwd < 0.0 {
-            p.bones[0].x -= 0.12 * w * fwd.abs();
+            lean(rig, &mut p, 0.14 * w * fwd.abs());
         }
 
         crouch(rig, &mut p, self.crouch, leg_m);
@@ -303,7 +313,6 @@ impl Figure {
             }
         }
 
-        weapon(rig, &mut p, self.hold, self.pitch, self.kick);
         motors::breathe(&mut p, self.t, 2.2, leg_m);
         // Standing still, the weight shifts from one foot to the other: a
         // figure that holds perfectly still reads as a prop.
@@ -314,7 +323,10 @@ impl Figure {
             p.bones[0].y += 0.05 * (self.t * 0.37 + self.seed).sin() * idle;
             p.root.y -= 0.01 * leg_m * (1.0 + s) * idle;
         }
-        p
+        // The gun last, once the trunk is wherever everything else put it:
+        // the arms are solved onto it rather than swinging.
+        let gun = d.holding.then(|| weapon(rig, &mut p, voxel, self.hold, self.pitch, self.kick));
+        (p, gun)
     }
 
     /// Where a held weapon sits, in the world: its grip point, the yaw to
@@ -326,24 +338,36 @@ impl Figure {
     /// twice. Only the direction is the aim's, because a shot has to leave
     /// along the line the bot is actually shooting.
     #[allow(clippy::too_many_arguments)]
-    pub fn grip(&self, rig: &Rig, voxel: f32, scale: f32, pivot: Vec3, at: Vec3, yaw: f32, pitch: f32, alpha: f32) -> (Vec3, f32, Quat) {
-        let pose = self.at(alpha);
-        let mut fk = Vec::new();
-        super::forward(rig, &pose, voxel * scale, pivot, &mut fk);
-        let p = match hand_bone(rig) {
-            Some(i) => at + Quat::from_rotation_y(yaw) * fk[i].0,
-            None => at + Vec3::Y * 1.1,
-        };
-        (p, yaw, Quat::from_rotation_x(pitch))
+    pub fn grip(&self, _rig: &Rig, voxel: f32, scale: f32, pivot: Vec3, at: Vec3, yaw: f32, _pitch: f32, alpha: f32) -> (Vec3, f32, Quat) {
+        let pos = self.gun_prev.0.lerp(self.gun.0, alpha) * scale - pivot * voxel * scale;
+        let rot = self.gun_prev.1.slerp(self.gun.1, alpha);
+        (at + Quat::from_rotation_y(yaw) * pos, yaw, rot)
     }
 }
 
 /// The bone a weapon is held in: the end of the right arm, or the deepest
 /// arm bone there is on that side.
+#[cfg(test)]
 pub fn hand_bone(rig: &Rig) -> Option<usize> {
     (0..rig.bones.len())
         .filter(|&i| rig.bones[i].role == Role::Arm && rig.bones[i].side > 0.0)
         .max_by_key(|&i| motors::depth(rig, i))
+}
+
+/// Tip the trunk forward by `a` radians in all (backward if negative),
+/// shared over the spine bones so the legs, which hang off the root, stay
+/// where the gait put them. On a bone that points up, a positive x turn tips
+/// it backwards; this is the one place that has to remember that.
+fn lean(rig: &Rig, p: &mut Pose, a: f32) {
+    let n = rig.bones.iter().filter(|b| b.role == Role::Spine).count();
+    if n == 0 {
+        return;
+    }
+    for i in 0..rig.bones.len() {
+        if rig.bones[i].role == Role::Spine {
+            p.bones[i].x -= a / n as f32;
+        }
+    }
 }
 
 /// Crouching: the knees fold, the hips drop and the back comes forward over
@@ -363,7 +387,7 @@ fn crouch(rig: &Rig, p: &mut Pose, w: f32, leg_m: f32) {
             _ => p.bones[i].x += 0.85 * w,
         }
     }
-    p.bones[0].x += 0.3 * w;
+    lean(rig, p, 0.35 * w);
     p.root.y -= 0.6 * leg_m * w;
 }
 
@@ -398,7 +422,7 @@ fn airborne(rig: &Rig, p: &mut Pose, air: f32, jump: f32, vy: f32, leg_m: f32) {
             _ => {}
         }
     }
-    p.bones[0].x += 0.18 * tuck - 0.12 * reach;
+    lean(rig, p, 0.18 * tuck - 0.05 * reach);
     p.root.y += 0.08 * leg_m * jump;
 }
 
@@ -419,7 +443,7 @@ fn absorb(rig: &Rig, p: &mut Pose, land: f32, leg_m: f32) {
             _ => p.bones[i].x += 0.6 * w,
         }
     }
-    p.bones[0].x += 0.3 * w;
+    lean(rig, p, 0.3 * w);
     p.root.y -= 0.45 * leg_m * w;
 }
 
@@ -499,52 +523,91 @@ fn side_step(rig: &Rig, p: &mut Pose, phase: f32, w: f32, dir: f32, leg_m: f32) 
     p.bones[0].z += dir * 0.06 * w;
 }
 
-/// A weapon in both hands. `w` is 0 down at the hip, 1 up and ready; `pitch`
-/// is the aim and `kick` what the last shot did.
+/// A weapon in both hands. `w` is 0 lowered (a sprint), 1 up and ready;
+/// `pitch` is the aim and `kick` what the last shot did. Returns where the
+/// gun is, body-local (see `Figure::gun`).
 ///
-/// The angles are absolute and blended over whatever the stride left in the
-/// arms, because a gun is held still against a moving body: an arm that went
-/// on swinging with a rifle in it would saw it back and forth across the
-/// screen.
-fn weapon(rig: &Rig, p: &mut Pose, w: f32, pitch: f32, kick: f32) {
-    if w <= 0.0 {
-        return;
-    }
-    for i in 0..rig.bones.len() {
-        let b = &rig.bones[i];
-        if b.role != Role::Arm {
-            continue;
-        }
-        let right = b.side > 0.0;
-        // Up to the line of the aim: a straight-down arm is 0, level is a
-        // quarter turn, and the aim carries it on from there.
-        let a = FRAC_PI_2 * 0.62 + pitch * 0.55 - kick * 0.6;
-        // Sideways is yaw here and not roll, which is the one thing about
-        // these angles that is not a matter of taste. A bone's rotations are
-        // read roll, then pitch, then yaw: an arm rolled out to the side
-        // first is pointing along the axis the pitch turns about, so the
-        // pitch then does nothing to it and the arm stays out at the side.
-        // Pitched forward first and yawed in afterwards, the hands come
-        // together in front of the chest, which is where a gun is.
-        let want = match (motors::depth(rig, i), right) {
-            // Firing hand: forward and in to the middle, wrist on the grip.
-            (0, true) => Vec3::new(a, 0.22, 0.0),
-            (1, true) => Vec3::new(0.52 - pitch * 0.12 + kick * 0.5, 0.1, 0.0),
-            (2, true) => Vec3::new(-0.12, 0.0, 0.0),
-            // Supporting hand: further across, under the barrel.
-            (0, false) => Vec3::new(a + 0.06, -0.42, 0.0),
-            (1, false) => Vec3::new(0.86 - pitch * 0.12 + kick * 0.25, -0.12, 0.0),
-            _ => Vec3::new(-0.12, 0.0, 0.0),
-        };
-        p.bones[i] = p.bones[i].lerp(want, w);
+/// The gun is placed first and the arms are solved onto it, the way a
+/// person holds one: the stock in the pocket of the right shoulder, the
+/// barrel along the aim, the right hand round the grip and the left under
+/// the barrel. Setting the arms' angles and hanging the gun off the hand,
+/// which is what this did before, left the gun level whatever the arms
+/// were doing and the forearms low, and any change to the body moved the
+/// gun off the line it shoots along.
+fn weapon(rig: &Rig, p: &mut Pose, voxel: f32, w: f32, pitch: f32, kick: f32) -> (Vec3, Quat) {
+    let mut fk = Vec::new();
+    super::forward(rig, p, voxel, Vec3::ZERO, &mut fk);
+    // The arm bones by side and depth: 0 the upper arm, 2 the hand.
+    let arm = |right: bool, d: u32| (0..rig.bones.len()).find(|&i| rig.bones[i].role == Role::Arm && (rig.bones[i].side > 0.0) == right && motors::depth(rig, i) == d);
+    let chest = (0..rig.bones.len()).filter(|&i| rig.bones[i].role == Role::Spine).next_back();
+    let (Some(sr), Some(chest)) = (arm(true, 0), chest) else {
+        return (Vec3::new(0.15, 1.1, -0.3), Quat::IDENTITY);
+    };
+    let cq = fk[chest].1;
+    // The shoulder pocket, in from the right shoulder joint and in front of
+    // the chest. Lowered when the gun is down.
+    let low = 1.0 - w;
+    let pocket = fk[sr].0 + cq * Vec3::new(-GUN_IN, -0.03 - 0.10 * low, -0.13);
+    // Along the aim, or pointed at the floor ahead at a sprint, and kicked
+    // up and back by a shot.
+    let aim = pitch * w + LOW_READY * low + kick * 0.5;
+    let g = Quat::from_rotation_x(aim);
+    let grip = pocket + g * Vec3::new(0.0, -GUN_BORE, -GUN_REACH + kick * 0.25);
+    // The wrists: the right one at the top of the grip so the hand hangs
+    // down it, the left under the barrel with the hand pointing along it.
+    let right = (grip + g * Vec3::new(0.0, WRIST_UP, 0.0), g);
+    let left = (grip + g * Vec3::new(-0.02, GUN_BORE - 0.06, -0.15), g * Quat::from_rotation_x(1.1));
+    for (side, (target, hand)) in [(true, right), (false, left)] {
+        let (Some(a0), Some(a1), Some(a2)) = (arm(side, 0), arm(side, 1), arm(side, 2)) else { continue };
+        let pole = if side { Vec3::new(0.8, -1.0, 0.25) } else { Vec3::new(-0.6, -1.0, 0.15) };
+        let parent = rig.bones[a0].parent.map_or(Quat::IDENTITY, |k| fk[k].1);
+        two_bone(rig, p, voxel, [a0, a1, a2], fk[a0].0, parent, target, hand, pole);
     }
     // The shoulders take the shot too.
-    for i in 0..rig.bones.len() {
-        if rig.bones[i].role == Role::Spine {
-            p.bones[i].x -= kick * 0.12 * w;
-        }
-    }
-    p.bones[0].x -= kick * 0.1 * w;
+    lean(rig, p, -kick * 0.2 * w);
+    (grip, g)
+}
+
+/// Where the gun's grip foot sits below its bore, and how far ahead of the
+/// shoulder pocket, metres; and how far the pocket is in from the shoulder
+/// joint. The guns' models have the bore about 13 of their voxels above the
+/// grip's foot (`combat::viewmodel`).
+const GUN_BORE: f32 = 0.2;
+const GUN_REACH: f32 = 0.24;
+const GUN_IN: f32 = 0.1;
+/// The wrist above the grip's foot: a hand's length, so the hand covers the
+/// grip.
+const WRIST_UP: f32 = 0.17;
+/// The gun's pitch at a sprint: down at the ground ahead.
+const LOW_READY: f32 = -0.85;
+
+/// Point a three-bone arm (upper, fore, hand) at `target` with the wrist,
+/// the elbow bending toward `pole`, and the hand turned to `hand`. Positions
+/// and turns are in the frame `anim::forward` works in; `parent` is the turn
+/// of the bone the arm hangs off, `shoulder` where the arm's joint is. The
+/// rest pose of every arm bone hangs straight down.
+#[allow(clippy::too_many_arguments)]
+fn two_bone(rig: &Rig, p: &mut Pose, voxel: f32, b: [usize; 3], shoulder: Vec3, parent: Quat, target: Vec3, hand: Quat, pole: Vec3) {
+    let l1 = (rig.bones[b[1]].joint - rig.bones[b[0]].joint).length() * voxel;
+    let l2 = (rig.bones[b[2]].joint - rig.bones[b[1]].joint).length() * voxel;
+    let to = target - shoulder;
+    let d = to.length().clamp((l1 - l2).abs() + 1e-3, (l1 + l2) * 0.999);
+    let n = to.normalize_or(Vec3::NEG_Y);
+    // The angle at the shoulder between the reach and the upper arm.
+    let cos_a = ((l1 * l1 + d * d - l2 * l2) / (2.0 * l1 * d)).clamp(-1.0, 1.0);
+    let side = (pole - n * pole.dot(n)).normalize_or(Vec3::NEG_Y);
+    let up_dir = n * cos_a + side * (1.0 - cos_a * cos_a).sqrt();
+    let elbow = shoulder + up_dir * l1;
+    let wrist = shoulder + n * d;
+    let qu = Quat::from_rotation_arc(Vec3::NEG_Y, up_dir);
+    let qf = Quat::from_rotation_arc(Vec3::NEG_Y, (wrist - elbow).normalize_or(up_dir));
+    let local = |q: Quat| {
+        let (y, x, z) = q.normalize().to_euler(glam::EulerRot::YXZ);
+        Vec3::new(x, y, z)
+    };
+    p.bones[b[0]] = local(parent.inverse() * qu);
+    p.bones[b[1]] = local(qu.inverse() * qf);
+    p.bones[b[2]] = local(qf.inverse() * hand);
 }
 
 #[cfg(test)]
@@ -865,5 +928,52 @@ mod tests {
         run(&mut f, &rig, voxel, Drive::default(), 60);
         assert!(!f.dead());
         assert!((f.pose.root.y - standing.root.y).abs() < 0.1, "it did not get back up");
+    }
+
+    /// A runner leans into the run: the head ends up ahead of the hips, not
+    /// behind them. On a bone that points up a positive x turn tips it
+    /// backwards, and every trunk lean in this file once had it the wrong
+    /// way round, so bots ran leaning back like a man pulled by a rope.
+    #[test]
+    fn a_runner_leans_forward() {
+        let (rig, voxel) = robot();
+        let head = rig.bones.iter().position(|b| b.role == Role::Head).expect("a head");
+        let pivot = Vec3::new(16.0, 0.0, 16.0);
+        for (what, d) in [
+            ("running", Drive { vel: Vec3::new(0.0, 0.0, -6.0), ..Default::default() }),
+            ("crouching", Drive { crouch: 1.0, ..Default::default() }),
+        ] {
+            let mut f = Figure::new(&rig, 1);
+            run(&mut f, &rig, voxel, d, 60);
+            let mut fk = Vec::new();
+            crate::anim::forward(&rig, &f.at(1.0), voxel, pivot, &mut fk);
+            // The model faces -z.
+            assert!(fk[head].0.z < fk[0].0.z - 0.03, "{what}: the head is not ahead of the hips: {:?} vs {:?}", fk[head].0, fk[0].0);
+        }
+    }
+
+    /// The gun is held, not hung: the right wrist ends up on the top of the
+    /// grip, the left one near the barrel, and the gun points along the aim.
+    #[test]
+    fn both_hands_are_on_the_gun() {
+        let (rig, voxel) = robot();
+        let pivot = Vec3::new(16.0, 0.0, 16.0);
+        let arm = |right: bool| {
+            (0..rig.bones.len()).filter(|&i| rig.bones[i].role == Role::Arm && (rig.bones[i].side > 0.0) == right).max_by_key(|&i| motors::depth(&rig, i)).expect("a hand")
+        };
+        for pitch in [-0.5f32, 0.0, 0.6] {
+            let mut f = Figure::new(&rig, 3);
+            run(&mut f, &rig, voxel, Drive { pitch, ..Default::default() }, 90);
+            let (grip, _, rot) = f.grip(&rig, voxel, 1.0, pivot, Vec3::ZERO, 0.0, pitch, 1.0);
+            let mut fk = Vec::new();
+            crate::anim::forward(&rig, &f.at(1.0), voxel, pivot, &mut fk);
+            let wrist = fk[arm(true)].0;
+            let want = grip + rot * Vec3::new(0.0, WRIST_UP, 0.0);
+            assert!(wrist.distance(want) < 0.03, "pitch {pitch}: the right wrist is {} m off the grip", wrist.distance(want));
+            let left = fk[arm(false)].0;
+            assert!(left.distance(grip) < 0.45 && (left - grip).dot(rot * Vec3::NEG_Z) > 0.08, "pitch {pitch}: the left hand is not out along the barrel: {left:?} vs grip {grip:?}");
+            let muzzle = rot * Vec3::NEG_Z;
+            assert!((muzzle.y.asin() - pitch).abs() < 0.05, "pitch {pitch}: the gun points at {}", muzzle.y.asin());
+        }
     }
 }

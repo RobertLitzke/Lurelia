@@ -3,12 +3,18 @@
   "version": 1,
   "introduced_by": "glassfall",
   "notes": "Wet ground, nitrogen fixer.",
-  "form": "broad",
+  "form": "branching",
   "height": [6, 9],
   "trunk_radius": [0.18, 0.26],
   "crown_radius": [1.6, 2.2],
   "bark": "bark",
   "leaf": "leaves",
+  "curve": "sweep",
+  "canopy": "cloud",
+  "leader": 0.85,
+  "fill": 0.6,
+  "spread": 0.3,
   "max_slope": 0.5,
-  "autumn": "leaves_autumn"
+  "autumn": "leaves_autumn",
+  "thin_limbs": 0.12
 }

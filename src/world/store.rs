@@ -100,6 +100,9 @@ pub struct Store {
     /// without them. The mesher reads the chunks directly and never sees
     /// these: a platform is drawn as a model, not as terrain.
     pub platforms: Vec<Slab>,
+    /// How hard this world pulls and which way (world/gravity.rs). It is
+    /// here because everything that falls is already handed the store.
+    pub gravity: crate::world::gravity::Gravity,
 }
 
 /// A moving platform's box, in voxel coordinates (`hi` is past the end), and
@@ -217,6 +220,13 @@ impl Store {
     #[inline]
     pub fn solid(&self, x: i32, y: i32, z: i32) -> bool {
         matches!(self.cell(x, y, z), Cell::Solid | Cell::Foliage | Cell::Water)
+    }
+
+    /// Is voxel (x, y, z) a slab, solid in its lower half only
+    /// (`matlib::slab`)? Physics stands a body on its middle.
+    #[inline]
+    pub fn slab(&self, x: i32, y: i32, z: i32) -> bool {
+        self.get(x, y, z).is_some_and(super::matlib::slab)
     }
 
     pub fn loaded(&self, x: i32, y: i32, z: i32) -> bool {

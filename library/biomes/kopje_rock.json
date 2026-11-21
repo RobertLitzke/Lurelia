@@ -22,5 +22,6 @@
     {"creature": "vulture", "count": 3},
     {"creature": "bat", "count": 10},
     {"creature": "lizard", "count": 10}
-  ]
+  ],
+  "sound": {"ground": "stone", "wind": 1.15}
 }

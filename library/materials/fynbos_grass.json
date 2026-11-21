@@ -1,0 +1,16 @@
+{
+  "name": "fynbos_grass",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Fynbos ground: grey sandy soil under a low fleece of restio reeds and heath, greyer and finer than grass.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [124, 122, 104],
+    "alt": [104, 104, 90],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [128, 126, 108], "alt": [110, 110, 96]}
+  },
+  "grass": {"sparse": 0.08, "dense": 0.35, "short": 0.8}
+}

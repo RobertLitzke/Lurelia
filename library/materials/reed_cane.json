@@ -1,0 +1,16 @@
+{
+  "name": "reed_cane",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Common reed canes: straw green, jointed. Passable.",
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "grain",
+    "base": [150, 156, 96],
+    "alt": [128, 134, 80],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [156, 162, 102], "alt": [134, 140, 86]}
+  }
+}

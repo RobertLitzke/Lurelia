@@ -1,0 +1,42 @@
+{
+  "name": "rib_wrack",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The wrack line at the dune foot: dry sand, driftwood thrown up by the storms, and the last of the dunegrass.",
+  "priority": 5,
+  "rules": {"coast": [90, 190], "elev": [1.4, 7]},
+  "surface": "dune_sand",
+  "subsurface": "dune_sand",
+  "map_color": [208, 196, 160],
+  "plants": [
+    {
+      "plant": "lupine",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.6, "max": 0.7}}
+    }
+  ],
+  "features": [
+    {
+      "structure": "drift_log",
+      "density": 0.003,
+      "placement": {"verb": "edge", "params": {"width": 8, "inner": 0.06, "along": 30}, "field": "rib_dunes,rib_plain,rib_spruce"}
+    },
+    {
+      "structure": "drift_pile",
+      "density": 0.0005,
+      "placement": {"verb": "edge", "params": {"width": 8, "inner": 0.0, "along": 25}, "field": "rib_dunes,rib_plain,rib_spruce"}
+    },
+    {"structure": "drift_shelter", "density": 3e-05, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "bone_shard", "density": 0.00015, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "gull", "count": 4},
+    {"creature": "raven", "count": 2},
+    {"creature": "crow", "count": 2},
+    {"creature": "walrus", "count": 6},
+    {"creature": "bone_crab", "count": 2},
+    {"creature": "black_oystercatcher", "count": 3},
+    {"creature": "eagle", "count": 1}
+  ],
+  "collectibles": [{"item": "seashell", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}]
+}

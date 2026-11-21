@@ -1,0 +1,15 @@
+{
+  "name": "broom_leaves",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Broom's few small leaves among the switches.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [96, 132, 58],
+    "alt": [78, 114, 48],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [102, 138, 64], "alt": [84, 120, 54]}
+  }
+}

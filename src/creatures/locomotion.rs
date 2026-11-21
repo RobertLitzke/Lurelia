@@ -47,8 +47,9 @@ pub enum Mover {
     /// each a low value plus a random share of a spread.
     Circle { radius: (f32, f32), speed: (f32, f32) },
     /// A flock of birds (flock.rs). `soar`: one bird alone, circling wide
-    /// and high, never landing.
-    Flock { soar: bool },
+    /// and high, never landing. `glide`: a few big seabirds sweeping wide
+    /// and low, that come down together on the highest ground near.
+    Flock { soar: bool, glide: bool },
     /// Small birds hopping between shrub tops (flit.rs).
     Flit,
     /// A school of fish (swim.rs).
@@ -63,6 +64,9 @@ pub enum Mover {
     Buzz { water: bool },
     /// A snake, posed along a path rather than walked (snake.rs).
     Slither { habit: Habit },
+    /// An octopus on the sea floor, its arms let down over what is under
+    /// them (octopus.rs).
+    Creep,
 }
 
 pub struct Verb {
@@ -99,7 +103,7 @@ const fn other(name: &'static str, mover: Mover, flight: Pattern) -> Verb {
 }
 
 /// Every verb. The first is what an unknown name falls back to.
-pub const VERBS: [Verb; 25] = [
+pub const VERBS: [Verb; 27] = [
     walk("graze", Routine::Graze, false, false, false),
     walk("hop", Routine::Hop, true, false, false),
     // Hops, and keeps to the water edge: frogs and toads.
@@ -133,8 +137,10 @@ pub const VERBS: [Verb; 25] = [
         Pattern::Hover,
     ),
     walk("still", Routine::Still, false, true, false),
-    other("flock", Mover::Flock { soar: false }, Pattern::FlapGlide),
-    other("soar", Mover::Flock { soar: true }, Pattern::Soar),
+    other("flock", Mover::Flock { soar: false, glide: false }, Pattern::FlapGlide),
+    other("soar", Mover::Flock { soar: true, glide: false }, Pattern::Soar),
+    // Albatrosses: wide low sweeps over the sea, roosting on high ground.
+    other("glide", Mover::Flock { soar: false, glide: true }, Pattern::Soar),
     other("flit", Mover::Flit, Pattern::Bound),
     other("school", Mover::School, Pattern::Flap),
     other("breach", Mover::Breach, Pattern::Flap),
@@ -197,6 +203,7 @@ pub const VERBS: [Verb; 25] = [
     other("slither", Mover::Slither { habit: Habit::Ground }, Pattern::Flap),
     other("climb", Mover::Slither { habit: Habit::Tree }, Pattern::Flap),
     other("swim", Mover::Slither { habit: Habit::Water }, Pattern::Flap),
+    other("creep", Mover::Creep, Pattern::Flap),
 ];
 
 /// The verb names, for validation.

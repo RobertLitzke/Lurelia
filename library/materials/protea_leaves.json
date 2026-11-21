@@ -1,0 +1,15 @@
+{
+  "name": "protea_leaves",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Protea leaves: stiff, leathery and grey-green, edged red on the young ones.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [104, 118, 92],
+    "alt": [124, 110, 92],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [110, 124, 98], "alt": [128, 116, 98]}
+  }
+}

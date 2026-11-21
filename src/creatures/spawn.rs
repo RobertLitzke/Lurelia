@@ -209,18 +209,41 @@ pub fn legacy_gulls(world: &mut hecs::World, rng: &mut Rng, gen: &Generator, pla
     }
 }
 
-/// Drop creatures that wandered far from the player.
-pub fn drop_far(world: &mut hecs::World, species: &[Species], player: Vec3) {
+/// Past this an animal is dropped once it is out of view, metres.
+const DROP_M: f32 = 130.0;
+/// Past this it is dropped even in view: further than the fog lets anything
+/// be made out on most days, metres.
+const DROP_SEEN_M: f32 = 360.0;
+/// Whales are watched from far off, so they go further first.
+const DROP_WHALE_M: f32 = 260.0;
+const DROP_WHALE_SEEN_M: f32 = 600.0;
+
+/// Whether the player may be looking at `p`: within 75 degrees either side
+/// of where they face (a wide screen shows about 50), across the ground.
+/// With no facing known everything counts as in view.
+pub fn in_view(p: Vec3, player: Vec3, facing: Vec3) -> bool {
+    let f = Vec3::new(facing.x, 0.0, facing.z);
+    let d = Vec3::new(p.x - player.x, 0.0, p.z - player.z);
+    if f.length_squared() < 1e-4 {
+        return true;
+    }
+    d.length_squared() < 1.0 || d.normalize().dot(f.normalize()) > 0.26
+}
+
+/// Drop creatures that wandered far from the player, once they are out of
+/// view: a bird or an elephant does not wink out on the skyline while it is
+/// watched, only behind the player's back (or very far off).
+pub fn drop_far(world: &mut hecs::World, species: &[Species], player: Vec3, facing: Vec3) {
     let far: Vec<hecs::Entity> = world
         .query::<(hecs::Entity, &Look, &Creature)>()
         .iter()
         .filter(|(_, l, c)| {
-            // Whales are watched from far off, so they go further first.
-            if species[c.species].verb().mover == Mover::Breach {
-                Vec3::new(l.pos.x - player.x, 0.0, l.pos.z - player.z).length() > 260.0
-            } else {
-                (l.pos - player).length() > 130.0 || l.pos.y < 0.0
+            if l.pos.y < 0.0 {
+                return true;
             }
+            let (near, seen) = if species[c.species].verb().mover == Mover::Breach { (DROP_WHALE_M, DROP_WHALE_SEEN_M) } else { (DROP_M, DROP_SEEN_M) };
+            let d = Vec3::new(l.pos.x - player.x, 0.0, l.pos.z - player.z).length();
+            d > seen || d > near && !in_view(l.pos, player, facing)
         })
         .map(|(e, _, _)| e)
         .collect();
@@ -247,7 +270,11 @@ pub fn world_creatures(
     phase: &crate::world::season::Phase,
 ) {
     let f = &land.f;
-    drop_far(world, species, player);
+    drop_far(world, species, player, facing);
+    // Under a roof the player is in a room the land was laid over -- a
+    // buried arena, a cave -- and newcomers are looked for on its floor,
+    // not on the land overhead (#377).
+    let indoors = super::terrain::roof_over(store, player).map(|_| player);
     // What the biomes around the player want.
     let mut want: HashMap<usize, u32> = HashMap::default();
     for k in 0..9 {
@@ -294,7 +321,7 @@ pub fn world_creatures(
                     if !land_ok {
                         continue;
                     }
-                    if place(world, species, s, rng, land, store, models, plants, (x, z), size, now) {
+                    if place(world, species, s, rng, land, store, models, plants, (x, z), size, now, indoors) {
                         dress(world, species, s, biome_pick(land, x, z, &species[s].name), rng);
                         let at: Vec<String> = world
                             .query::<(&Look, &Creature)>()
@@ -315,7 +342,7 @@ pub fn world_creatures(
     // down, and the rest -- birds, insects, fish -- are simply not out.
     let mut order: Vec<(usize, u32)> = want.into_iter().map(|(s, n)| (s, super::diel::quota(n, abroad(&species[s], hour, sky, phase)))).collect();
     order.sort();
-    cull_off_hours(world, species, player, &order, hour, sky, phase);
+    cull_off_hours(world, species, player, facing, &order, hour, sky, phase);
     let have = census::quota(world);
     for (s, n) in order {
         if have.get(&s).copied().unwrap_or(0) >= n {
@@ -358,7 +385,7 @@ pub fn world_creatures(
             }
             let group = sp.beh.group.clone().unwrap_or_default();
             let size = (group.size[0] + (rng.unit() * (group.size[1].saturating_sub(group.size[0]) + 1) as f32) as u32).min(room);
-            let placed = place(world, species, s, rng, land, store, models, plants, (x, z), size, now);
+            let placed = place(world, species, s, rng, land, store, models, plants, (x, z), size, now, indoors);
             if placed {
                 dress(world, species, s, biome_pick(land, x, z, &sp.name), rng);
                 break;
@@ -414,7 +441,7 @@ fn build(sp: &Species) -> crate::world::weather::Build {
     match sp.verb().mover {
         Mover::Walk { .. } | Mover::Slither { .. } => Build::Ground,
         Mover::Buzz { .. } => Build::Insect,
-        Mover::School | Mover::Breach => Build::Swimmer,
+        Mover::School | Mover::Breach | Mover::Creep => Build::Swimmer,
         Mover::Circle { .. } | Mover::Flock { .. } | Mover::Flit | Mover::Paddle | Mover::Cling => Build::Flier,
     }
 }
@@ -424,7 +451,16 @@ fn build(sp: &Species) -> crate::world::weather::Build {
 /// the fireflies go out over the next field rather than in your face. Only
 /// species a biome round the player still lists are thinned, so an animal
 /// left behind by walking out of its biome wanders off as it always has.
-fn cull_off_hours(world: &mut hecs::World, species: &[Species], player: Vec3, want: &[(usize, u32)], hour: f32, sky: &crate::world::weather::Sky, phase: &crate::world::season::Phase) {
+fn cull_off_hours(
+    world: &mut hecs::World,
+    species: &[Species],
+    player: Vec3,
+    facing: Vec3,
+    want: &[(usize, u32)],
+    hour: f32,
+    sky: &crate::world::weather::Sky,
+    phase: &crate::world::season::Phase,
+) {
     /// Nothing is taken away nearer than this.
     const KEEP_M: f32 = 45.0;
     let have = census::quota(world);
@@ -436,6 +472,7 @@ fn cull_off_hours(world: &mut hecs::World, species: &[Species], player: Vec3, wa
             .query::<(hecs::Entity, &Look, &Creature)>()
             .iter()
             .filter(|(_, _, c)| c.spawned_for == s)
+            .filter(|(_, l, _)| !in_view(l.pos, player, facing))
             .map(|(e, l, _)| ((l.pos - player).length(), e))
             .filter(|(d, _)| *d > KEEP_M)
             .collect();
@@ -518,6 +555,7 @@ pub(crate) fn place(
     (x, z): (f32, f32),
     size: u32,
     now: f32,
+    room: Option<Vec3>,
 ) -> bool {
     let f = &land.f;
     let sea = f.sea;
@@ -543,8 +581,28 @@ pub(crate) fn place(
     let mover = sp.verb().mover;
     let whale = mover == Mover::Breach;
     let i = f.idx(x, z);
+    // In a room under the land only what keeps to the floor it was put on
+    // will do: a walker, and a small bird that hops and perches (`flit`).
+    // The rest steer by the land's height map or by plants growing on it,
+    // and would be up through the roof at once.
+    if let Some(near) = room {
+        return match mover {
+            Mover::Walk { wades: false, .. } => walkers(world, species, s, rng, land, store, models, (x, z), size, false, now, Some(near)),
+            Mover::Flit => {
+                let Some((gy, m)) = super::terrain::ground_near(store, x, z, near) else {
+                    return false;
+                };
+                if water_voxel(m) {
+                    return false;
+                }
+                flit::spawn(world, s, sp, Vec3::new(x, gy, z), size.max(1), hash32(rng.state ^ s as u32 ^ 0xf117));
+                true
+            }
+            _ => false,
+        };
+    }
     match mover {
-        Mover::Flock { soar } => {
+        Mover::Flock { soar, .. } => {
             let gy = f.height(x, z).max(sea);
             let seed = hash32(rng.state ^ s as u32 ^ 0x51ed);
             let n = if soar { 1 } else { size.max(1) };
@@ -593,7 +651,7 @@ pub(crate) fn place(
             world.spawn((Gull::new(centre, radius, angle, speed), Creature::of(s), Look::new(sp.model, Vec3::ZERO, 0.0)));
             true
         }
-        Mover::Walk { wades, .. } => walkers(world, species, s, rng, land, store, models, (x, z), size, wades, now),
+        Mover::Walk { wades, .. } => walkers(world, species, s, rng, land, store, models, (x, z), size, wades, now, None),
         Mover::Paddle => {
             let ter = super::terrain::Terrain { store, land: Some(land), sea };
             let at = Vec3::new(x, sea, z);
@@ -613,6 +671,10 @@ pub(crate) fn place(
             let ter = super::terrain::Terrain { store, land: Some(land), sea };
             let gy = voxel_ground(store, x, z, store.top_m()).map_or(f.height(x, z), |g| g.0);
             super::snake::spawn(world, s, sp, habit, models, &ter, plants, Vec3::new(x, gy, z), size.max(1), hash32(rng.state ^ s as u32 ^ 0x5bad))
+        }
+        Mover::Creep => {
+            let ter = super::terrain::Terrain { store, land: Some(land), sea };
+            super::octopus::spawn(world, s, sp, models, &ter, (x, z), size.max(1), hash32(rng.state ^ s as u32 ^ 0x0c70))
         }
     }
 }
@@ -646,16 +708,23 @@ const FAMILY_JUVENILE: f32 = 0.3;
 /// A walker, or a family group standing together a few spacings apart, at
 /// (x, z). False when the spot won't do.
 #[allow(clippy::too_many_arguments)]
-fn walkers(world: &mut hecs::World, species: &[Species], s: usize, rng: &mut Rng, land: &Land, store: &Store, models: &[Model], (x, z): (f32, f32), size: u32, wades: bool, now: f32) -> bool {
+fn walkers(world: &mut hecs::World, species: &[Species], s: usize, rng: &mut Rng, land: &Land, store: &Store, models: &[Model], (x, z): (f32, f32), size: u32, wades: bool, now: f32, room: Option<Vec3>) -> bool {
     let f = &land.f;
     let sea = f.sea;
     let sp = &species[s];
     let group = sp.beh.group.clone().unwrap_or_default();
     let yaw = rng.unit() * std::f32::consts::TAU;
-    let Some((gy, _)) = voxel_ground(store, x, z, store.top_m()) else {
+    // In a room under the land, its own floor: the sea level and the height
+    // map both describe the land on top, and a buried room's floor can lie
+    // below either.
+    let ground = |x: f32, z: f32| match room {
+        Some(near) => super::terrain::ground_near(store, x, z, near),
+        None => voxel_ground(store, x, z, store.top_m()),
+    };
+    let Some((gy, _)) = ground(x, z) else {
         return false;
     };
-    if gy < sea + 0.4 {
+    if room.is_none() && gy < sea + 0.4 {
         return false;
     }
     // Waders only turn up by a river or the shore.
@@ -672,14 +741,15 @@ fn walkers(world: &mut hecs::World, species: &[Species], s: usize, rng: &mut Rng
             let r = group.spacing * (1.0 + rng.unit());
             (x + a.cos() * r, z + a.sin() * r)
         };
-        let Some((my, mm)) = voxel_ground(store, mx, mz, store.top_m()) else {
+        let Some((my, mm)) = ground(mx, mz) else {
             continue;
         };
         // Never set down in a river: a wader in the shallows at most.
         // (VG_SPAWN_WET=1 lets the dev hook put walkers in the water to test
         // swimming.)
         let river = (water_voxel(mm) || f.river_depth(mx, mz) > if wades { 0.5 } else { 0.1 }) && std::env::var_os("VG_SPAWN_WET").is_none();
-        if my < sea + 0.4 || (my - f.height(mx, mz)).abs() > 1.0 || crate::mesh::sprites::leafy(mm) || river {
+        let off_land = room.is_none() && (my < sea + 0.4 || (my - f.height(mx, mz)).abs() > 1.0);
+        if off_land || crate::mesh::sprites::leafy(mm) || river {
             continue;
         }
         let pos = Vec3::new(mx, my + 0.01, mz);
@@ -746,6 +816,15 @@ mod tests {
     use super::*;
     use crate::library::{Coat as LibCoat, MorphPick, Paint};
     use crate::variety::Morph;
+
+    #[test]
+    fn far_animals_stay_while_watched() {
+        let (player, east) = (Vec3::ZERO, Vec3::X);
+        assert!(in_view(Vec3::new(200.0, 30.0, 40.0), player, east));
+        assert!(!in_view(Vec3::new(-200.0, 0.0, 0.0), player, east));
+        assert!(!in_view(Vec3::new(10.0, 0.0, 200.0), player, east), "square to one side is out of view");
+        assert!(in_view(Vec3::new(-50.0, 0.0, 0.0), player, Vec3::ZERO), "no facing yet: everything counts as seen");
+    }
 
     /// A fox with a red coat and a rare silver one, built the way worldload
     /// does it: library coats fitted against the entry's own colours.

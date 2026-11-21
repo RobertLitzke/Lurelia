@@ -1,0 +1,16 @@
+{
+  "name": "dwarf_birch_bark",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "Dwarf birch stems: dark red-brown. Passable.",
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "grain",
+    "base": [96, 56, 46],
+    "alt": [78, 46, 40],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [102, 62, 52], "alt": [84, 52, 46]}
+  }
+}

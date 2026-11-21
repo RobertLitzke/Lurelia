@@ -629,6 +629,12 @@ impl Platforms {
         Vec3::ZERO
     }
 
+    /// Is a body at `p` being carried right now: on a platform that moved
+    /// this step? A passenger presses no keys and is still going somewhere.
+    pub fn riding(&self, p: Vec3, hw: f32) -> bool {
+        self.list.iter().any(|plat| plat.moved != Vec3::ZERO && plat.home.is_some() && plat.carries(p, hw))
+    }
+
     /// Where a rider being carried up by `up` metres should actually end up.
     ///
     /// A plate must not post its rider into a ceiling. A body inside solid
@@ -745,9 +751,10 @@ pub struct Built {
 }
 
 /// Compile a world's platforms: a model each, the palette colours they need
-/// (appended to `colours`, which is the library's list of model colours), and
-/// the material each is solid as. One model per platform, since each has its
-/// own size; identical colours share a palette slot.
+/// (a block per model, appended to `colours`, which is the library models'
+/// list of blocks and goes in the palette after models::FIXED_SLOTS), and the
+/// material each is solid as. One model per platform, since each has its own
+/// size.
 pub fn build(defs: &[PlatformDef], lib: &Library, colours: &mut Vec<[f32; 4]>, problems: &mut Vec<String>) -> (Vec<Built>, Vec<Model>) {
     let mut built = Vec::new();
     let mut out = Vec::new();
@@ -786,15 +793,12 @@ pub fn build(defs: &[PlatformDef], lib: &Library, colours: &mut Vec<[f32; 4]>, p
             continue;
         }
         // A plate reads as a plate because its tread is lighter than its
-        // sides and its rim is darker: three slots, shared with any other
-        // platform of the same colour.
+        // sides and its rim is darker: three colours, in a palette block of
+        // the model's own.
+        let start = colours.len();
         let slot = |colours: &mut Vec<[f32; 4]>, f: f32| -> u8 {
             let lin = models::linear_colour(&[rgb[0] * f, rgb[1] * f, rgb[2] * f, d.glow]);
-            let k = colours.iter().position(|c| c == &lin).unwrap_or_else(|| {
-                colours.push(lin);
-                colours.len() - 1
-            });
-            (models::LIBRARY_COLOURS.start + k).min(models::LIBRARY_COLOURS.end - 1) as u8 + 1
+            models::block_slot(colours, start, lin)
         };
         let (body, tread, rim) = (slot(colours, 1.0), slot(colours, 1.14), slot(colours, 0.72));
         // A plate you stand on and a leaf you walk through want different
@@ -838,7 +842,9 @@ pub fn build(defs: &[PlatformDef], lib: &Library, colours: &mut Vec<[f32; 4]>, p
         let half_w = dims[0].max(dims[2]) as f32 * 0.5 * VOXEL_M;
         made.push((dims, mat, rgb, d.glow, out.len()));
         built.push(Built { dims, model: out.len(), mat });
-        out.push(models::from_cells(&cells, VOXEL_M, half_w, dims[1] as f32 * VOXEL_M));
+        let mut model = models::from_cells(&cells, VOXEL_M, half_w, dims[1] as f32 * VOXEL_M);
+        model.block = (models::FIXED_SLOTS + start) as u32;
+        out.push(model);
     }
     (built, out)
 }
@@ -973,6 +979,7 @@ mod tests {
             top: 4,
             roof: vec![0; 36],
             col_top: vec![4; 36],
+            threads: Vec::new(),
         };
         for y in 0..3 {
             for x in 2..4 {
@@ -1244,6 +1251,51 @@ mod tests {
         }
         assert_eq!(ps.list[0].top_m(), home);
         assert_eq!(store.platforms.len(), 1);
+    }
+
+    /// Fifty plates of fifty colours want 150 palette colours, more than
+    /// the 128 a whole world used to get. Each plate's model has a block of
+    /// its own, so the first and the last both read back their own paint,
+    /// looked up the way `vs_entity` does it.
+    #[test]
+    fn every_plate_reads_its_own_colours_past_128() {
+        let defs: Vec<PlatformDef> = (0..50)
+            .map(|k| PlatformDef {
+                name: format!("plate{k}"),
+                at: [4.0, 4.0],
+                up: 0.0,
+                size: [1.0, 0.5, 1.0],
+                path: vec![],
+                speed: 4.0,
+                wait: 1.0,
+                trigger: "stand".into(),
+                near_m: 3.0,
+                material: None,
+                colour: Some([40.0 + k as f32 * 4.0, 90.0, 200.0 - k as f32 * 3.0]),
+                glow: 0.0,
+                absolute: false,
+            })
+            .collect();
+        let mut colours = Vec::new();
+        let mut problems = Vec::new();
+        let (_, out) = build(&defs, &Library::default(), &mut colours, &mut problems);
+        assert!(problems.is_empty(), "{problems:?}");
+        assert_eq!(out.len(), 50);
+        assert!(colours.len() > 128, "only {} colours", colours.len());
+        // The palette as the game lays it out: the fixed block, then these.
+        let mut palette = models::palette();
+        palette.extend_from_slice(&colours);
+        for (k, d) in defs.iter().enumerate() {
+            let rgb = d.colour.unwrap();
+            let want: Vec<[f32; 4]> = [1.0, 1.14, 0.72].iter().map(|f| models::linear_colour(&[rgb[0] * f, rgb[1] * f, rgb[2] * f, 0.0])).collect();
+            let m = &out[k];
+            assert!(!m.mesh.quads.is_empty());
+            for q in &m.mesh.quads {
+                let (mat, base) = (q[1] & 255, crate::world::material::PALETTE_BASE as u32);
+                let row = m.block as usize + (mat.max(base) - base) as usize;
+                assert!(want.contains(&palette[row]), "plate {k} reads {:?}", palette[row]);
+            }
+        }
     }
 }
 

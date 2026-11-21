@@ -86,6 +86,7 @@ struct = {
     "name": "duelbox",
     "version": 1,
     "introduced_by": "duelbox",
+    "_generated_by": "worlds/duelbox/make_box.py",
     "notes": (
         "One empty room, written by worlds/duelbox/make_box.py: fifty-eight metres "
         "by thirty-four, a flat floor on a plinth, four walls, a roof and six lamps. "

@@ -1,0 +1,798 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StructureDef",
+  "description": "A structure: a fixed block of 0.25 m voxels drawn by a shape program and\nplaced on a quarter turn by chronicle events (`place`, `settlement`,\n`spires`, ...) or as a biome feature. One file per entry in\n`library/structures/`, named `<name>.json`.\n\nKeys starting with `_` are ignored, as notes to whoever edits the file.\n`_generated_by` names the script that writes the file, for an entry\ncomputed by code (an arena, an imported map): edit the script, not the\nfile. Without it the file is the source.",
+  "type": "object",
+  "properties": {
+    "anchor": {
+      "description": "The local voxel that sits on the placement point.",
+      "type": "array",
+      "default": [
+        0,
+        0,
+        0
+      ],
+      "items": {
+        "type": "integer",
+        "format": "int32"
+      },
+      "maxItems": 3,
+      "minItems": 3
+    },
+    "base": {
+      "description": "Where it stands, if not on the ground; see `Base`.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Base"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "decays": {
+      "description": "Whether it weathers with the age it is placed at (parts decay, loose\npieces fall, moss grows). False for natural features: rock, logs.",
+      "type": "boolean",
+      "default": true
+    },
+    "foundation": {
+      "description": "Up to this many voxels under y = 0 are filled, where the ground has\nfallen away, with the material of the bottom row above them, so the\nstructure stands on footings on uneven ground.",
+      "type": "integer",
+      "format": "int32",
+      "default": 0
+    },
+    "introduced_by": {
+      "description": "The world that added it.",
+      "type": "string",
+      "default": ""
+    },
+    "level": {
+      "description": "True: the ground under it is levelled, feathered out over 3 m round\nthe footprint. False: it settles a quarter metre into the lowest\nground under it and nothing grows through it (boulders, logs).",
+      "type": "boolean",
+      "default": true
+    },
+    "name": {
+      "description": "What chronicle events and biomes call it.",
+      "type": "string"
+    },
+    "notes": {
+      "description": "One sentence on what it is and how to place it: which way it faces,\nwhat it carves.",
+      "type": "string",
+      "default": ""
+    },
+    "ops": {
+      "description": "The shape program, run in order: later ops overwrite earlier voxels.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Op"
+      }
+    },
+    "size": {
+      "description": "Bounding size in voxels (x, y, z); y = 0 is ground level. Ops outside\nit are clipped. The front faces local -z.",
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "int32"
+      },
+      "maxItems": 3,
+      "minItems": 3
+    },
+    "slots": {
+      "description": "Slot name -> material name. Ops name a slot or a material; a world's\n`place` event can swap a slot's material.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
+    "tags": {
+      "description": "Free labels for people and tools (`settler`, `house`). The engine reads\ntwo: `ruin` lets vines cover it fully, and `anomaly` lists it in the\ngazetteer though it does not decay.",
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
+    "version": {
+      "description": "1 for a new entry. An entry another world uses is never changed; a\nchanged copy gets a new name (`name_v2`).",
+      "type": "integer",
+      "format": "uint32",
+      "default": 1,
+      "minimum": 0
+    },
+    "vines": {
+      "description": "How readily a biome's vines (hosts \"wall\") hang on its outer walls, 0\nto 1, times the biome entry's density. Unset: 0 for anything that\ndoesn't decay (rock, glass, bridges) unless tagged \"ruin\", 1 for a\n\"ruin\", otherwise 0.25 for a kept-up building rising toward 1 as it\ndecays (flora::wall_vine_share).",
+      "type": [
+        "number",
+        "null"
+      ],
+      "format": "float",
+      "default": null,
+      "maximum": 1.0,
+      "minimum": 0.0
+    }
+  },
+  "additionalProperties": false,
+  "patternProperties": {
+    "^_": {}
+  },
+  "required": [
+    "name",
+    "size",
+    "ops"
+  ],
+  "$defs": {
+    "Axis": {
+      "description": "A horizontal axis.",
+      "type": "string",
+      "enum": [
+        "x",
+        "z"
+      ]
+    },
+    "Base": {
+      "description": "Where y = 0 goes when the structure is placed, if not on the ground.",
+      "oneOf": [
+        {
+          "description": "One metre under sea level: piers, landings, sea stacks. `spires`\nstands these only in water 1.5 to 16 m deep.",
+          "type": "string",
+          "const": "sea"
+        },
+        {
+          "description": "The anchor voxel sits at the highest ground under the footprint and\nnothing is levelled: bridges spanning a gap, things hung on a cliff.",
+          "type": "string",
+          "const": "rim"
+        },
+        {
+          "description": "Sunk half a metre into the lowest sea bed under the footprint: wrecks.",
+          "type": "string",
+          "const": "bed"
+        }
+      ]
+    },
+    "MatRef": {
+      "description": "What an op draws with: a slot named in the entry's `slots`, a library\nmaterial by name, `\"air\"` (empties the structure's own voxels and leaves\nthe terrain there) or `\"carve\"` (removes the terrain too: alcoves, adits,\narches worn through rock). In a creature or collectible model, a colour\nnamed in its palette.",
+      "type": "string"
+    },
+    "Op": {
+      "description": "One step of a shape program, in voxel units with y up. Later steps override\nearlier ones; `mat: \"air\"` carves.\n\nAn op is internally tagged, which `parse_known` cannot see inside, so a key\nan op does not have is refused here instead: the entry fails to load,\nnaming the key, rather than drawing without it.\n\nThese doc comments are also the descriptions in\n`library/schema/structure.schema.json`; see `structure_schema_is_current`.",
+      "oneOf": [
+        {
+          "description": "Solid box, `from` inclusive, `to` exclusive.",
+          "type": "object",
+          "properties": {
+            "from": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "type": "string",
+              "const": "box"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "to": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "from",
+            "to",
+            "mat"
+          ]
+        },
+        {
+          "description": "Four walls of a box (no floor or ceiling), `thick` voxels.",
+          "type": "object",
+          "properties": {
+            "from": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "type": "string",
+              "const": "walls"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "thick": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            },
+            "to": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "from",
+            "to",
+            "mat"
+          ]
+        },
+        {
+          "description": "Pitched roof over the rectangle `from`..`to` (y of `from` is the eaves),\nridge along `axis` (\"x\" or \"z\"), stepping in one voxel per `rise` layers.",
+          "type": "object",
+          "properties": {
+            "axis": {
+              "$ref": "#/$defs/Axis"
+            },
+            "from": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "type": "string",
+              "const": "gable"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "rise": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            },
+            "to": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "from",
+            "to",
+            "axis",
+            "mat"
+          ]
+        },
+        {
+          "description": "Solid ellipsoid: every voxel whose centre (+0.5) lies within the\nsemi-axes `radius` (x, y, z) of `centre`. Boulders, mounds, cairn stones.",
+          "type": "object",
+          "properties": {
+            "centre": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "float"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "type": "string",
+              "const": "ellipsoid"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "radius": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "float"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "centre",
+            "radius",
+            "mat"
+          ]
+        },
+        {
+          "description": "Upright cylinder: `base` is the centre of its bottom face, `height`\nvoxels tall. One thinner than 0.75 always fills the voxel its axis runs\nthrough, so thin posts never vanish.",
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "float"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "height": {
+              "type": "number",
+              "format": "float"
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "type": "string",
+              "const": "cylinder"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "radius": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "base",
+            "radius",
+            "height",
+            "mat"
+          ]
+        },
+        {
+          "description": "Horizontal cylinder along \"x\" or \"z\" (logs, wheels' axles), turned\n`yaw` degrees about its `base` (from +x toward +z), so a log can lie\nat any bearing. `base` is the centre of one end; the log runs `length`\nvoxels from it along `axis`.",
+          "type": "object",
+          "properties": {
+            "axis": {
+              "$ref": "#/$defs/Axis"
+            },
+            "base": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "float"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "length": {
+              "type": "number",
+              "format": "float"
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "type": "string",
+              "const": "log"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "radius": {
+              "type": "number",
+              "format": "float"
+            },
+            "yaw": {
+              "type": "number",
+              "format": "float",
+              "default": 0.0
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "base",
+            "radius",
+            "length",
+            "axis",
+            "mat"
+          ]
+        },
+        {
+          "description": "Disc standing upright, its axis along \"x\" or \"z\" (wheels), turned\n`yaw` degrees about its centre like a log.",
+          "type": "object",
+          "properties": {
+            "axis": {
+              "$ref": "#/$defs/Axis"
+            },
+            "centre": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "float"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "type": "string",
+              "const": "disc"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "radius": {
+              "type": "number",
+              "format": "float"
+            },
+            "thick": {
+              "type": "number",
+              "format": "float"
+            },
+            "yaw": {
+              "type": "number",
+              "format": "float",
+              "default": 0.0
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "centre",
+            "radius",
+            "thick",
+            "axis",
+            "mat"
+          ]
+        },
+        {
+          "description": "One voxel.",
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "type": "string",
+              "const": "set"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "at",
+            "mat"
+          ]
+        },
+        {
+          "description": "A rod, rope or spar through `points` (two or more, voxel units, the\ncentre of a voxel is +0.5), `radius` voxels thick: rigging, stays,\nspokes, diagonal legs and braces. Drawn as one thin line of voxels,\nand where it leans the mesher draws it as a smooth tube along its own\nline (a thread, mesh/lean.rs) instead of a staircase. A radius under\nabout 0.6 is still one voxel of line, drawn as a tube that thin.",
+          "type": "object",
+          "properties": {
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "type": "string",
+              "const": "segment"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "points": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "format": "float"
+                },
+                "maxItems": 3,
+                "minItems": 3
+              }
+            },
+            "radius": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "points",
+            "radius",
+            "mat"
+          ]
+        },
+        {
+          "description": "A paraboloid shell: a radio dish or a reflector. `vertex` is the\nbottom of the bowl, `radius` the rim's radius and `depth` how far the\nrim stands above the vertex along the dish's axis, `thick` the\nshell's thickness (voxels). The axis points straight up, then leans\n`tilt` degrees toward `yaw` (degrees from +x toward +z), so a dish\ncan face the zenith, the horizon or the ground.",
+          "type": "object",
+          "properties": {
+            "depth": {
+              "type": "number",
+              "format": "float"
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "type": "string",
+              "const": "dish"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "radius": {
+              "type": "number",
+              "format": "float"
+            },
+            "thick": {
+              "type": "number",
+              "format": "float",
+              "default": 1.5
+            },
+            "tilt": {
+              "type": "number",
+              "format": "float",
+              "default": 0.0
+            },
+            "vertex": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "float"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "yaw": {
+              "type": "number",
+              "format": "float",
+              "default": 0.0
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "vertex",
+            "radius",
+            "depth",
+            "mat"
+          ]
+        },
+        {
+          "description": "Recolour solid voxels below a height (creature bellies, socks).",
+          "type": "object",
+          "properties": {
+            "from": {
+              "type": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "recolour_below"
+            },
+            "to": {
+              "type": "string"
+            },
+            "y": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "y",
+            "from",
+            "to"
+          ]
+        },
+        {
+          "description": "Recolour solid voxels of colour `from` inside a box (`at` inclusive,\n`until` exclusive): stripes, patches and bands that follow the body.",
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "from": {
+              "type": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "recolour"
+            },
+            "to": {
+              "type": "string"
+            },
+            "until": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "at",
+            "until",
+            "from",
+            "to"
+          ]
+        },
+        {
+          "description": "Runs `ops` `count` times, run k (from 0) shifted by k * `step`\nvoxels: rows of windows, fence posts, stair treads.",
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "op": {
+              "type": "string",
+              "const": "repeat"
+            },
+            "ops": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Op"
+              }
+            },
+            "step": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "maxItems": 3,
+              "minItems": 3
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "count",
+            "step",
+            "ops"
+          ]
+        }
+      ]
+    },
+    "PartRef": {
+      "description": "What the voxels are for. In a structure, how they decay with age: `roof`,\n`cloth` and `glass` fail in whole sections; `timber`, `frame`, `wall`,\n`stone` and `metal` crumble from the top of each column; `floor` mostly\nstays. Any other name, or none, never decays. `stone` and `wall` grow moss.\nIn a creature, the body part the voxels move with (`head`, `tail`, ...).",
+      "type": "string"
+    }
+  }
+}

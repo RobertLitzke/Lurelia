@@ -1,6 +1,6 @@
 {
   "name": "karst_jungle",
-  "version": 2,
+  "version": 3,
   "introduced_by": "jadewater",
   "notes": "The lowland between the Old Wall and the lagoon: banyans over oak and alder, ferns, vines on everything.",
   "priority": 1,
@@ -60,7 +60,10 @@
     {"creature": "otter", "count": 1},
     {"creature": "elephant", "count": 2},
     {"creature": "fruit_bat", "count": 5},
-    {"creature": "green_tree_snake", "count": 4}
+    {"creature": "green_tree_snake", "count": 4},
+    {"creature": "jewel_kingfisher", "count": 2},
+    {"creature": "tiger", "count": 1}
   ],
+  "sound": {"wind": 0.55, "leaves": 1.2, "notes": "Big loose leaves under a closed canopy."},
   "mist": 0.25
 }

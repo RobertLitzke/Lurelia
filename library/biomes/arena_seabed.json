@@ -1,0 +1,15 @@
+{
+  "name": "arena_seabed",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "The sea floor round an arena: sand and nothing living on it, so no whale or shoal turns up under a deck. The open-world seabed with its animals taken out.",
+  "priority": 0,
+  "rules": {"underwater": true},
+  "surface": "sand",
+  "subsurface": "sand",
+  "fringe": 0,
+  "map_color": [60, 110, 160],
+  "plants": [],
+  "creatures": [],
+  "collectibles": []
+}

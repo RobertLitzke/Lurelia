@@ -3,7 +3,11 @@
 Every world builds from this one library, and each new world adds to it. An
 entry is a noun (data); what it can do is limited to the verbs written in Rust.
 The formats and the verb names are in `.claude/skills/worldgen/reference.md`;
-this file is how to work in the folder.
+this file is how to work in the folder. `schema/` holds JSON Schemas generated
+from the loader's types (structures so far); `cargo test` fails when one falls
+behind the code, and `WRITE_SCHEMA=1 cargo test structure_schema` rewrites it.
+`schema/structure.md` is the short form of it plus a review checklist, for an
+agent asked to review a structure file.
 
 ```
 materials/     one block material each: id, texture recipe, smooth or not
@@ -41,11 +45,20 @@ entries, and never edit it by hand.
 - Everything else is reached by name: plants, features, creatures and
   collectibles through the world's biomes; structures, materials, sign styles
   and items through chronicle events, structure slots and `strata`.
-- Creature and collectible colours share 128 palette slots, counted per
-  world: only the entries a world reaches get slots. Reusing exact RGB values
-  from existing entries (dark `[36, 28, 24]`, white `[240, 236, 228]`, coat
-  `[150, 98, 60]`) still saves slots. `--validate` reports when a world needs
-  more.
+- Each creature and collectible model gets a palette block of its own, so a
+  world has no limit on how many colours its entries use, and there is no need
+  to reuse exact RGB values from other entries. One model can use up to 192
+  colours (a creature with a skeleton spends two of them on bone);
+  `--validate` reports an entry that wants more.
+- A biome may say what it sounds like with a `sound` block, where the
+  defaults are wrong for it (GUIDE.md, "Sound"). Every field is optional:
+  `wind`, a multiple on how much wind reaches the ground (0.6 a hollow or a
+  closed wood, 1.3 a down the wind never leaves); `leaves`, a multiple on the
+  rustle of the leaf voxels near the listener (0.7 for needles, which hiss,
+  1.3 for bamboo or big loose leaves); `grass`, 0 to 1, how much grass there
+  is to stir (otherwise from the surface material); and `ground`, what rain
+  lands on (`soft`, `grass`, `leaves`, `stone` or `water`; otherwise from the
+  surface material's name). Most biomes need none.
 - A world can limit how it is played with `"modes"` in `world.json` (walk,
   bike, glide, climb, rope, screenshot, camera; see `src/modes.rs`). Leaving it
   out allows them all.
@@ -74,9 +87,18 @@ entries, and never edit it by hand.
   structures, how to place it (which way it faces, what it carves).
 - Keep files in canonical form: `python tools/libfmt.py` reformats everything
   (one key per line, short arrays inline, one op per line, floats to three
-  decimals) and `--check` lists files that aren't. Generating entries from a
-  script is fine (see `worlds/redrock/make_chronicle.py` for the pattern),
-  but write them through `libfmt.render` so they come out canonical.
+  decimals) and `--check` lists files that aren't.
+- The JSON file is the source of an entry: write and edit it directly. A
+  script that writes entries rewrites them every time it runs, so any edit
+  made to the JSON since is lost without a word. Keep a script only for an
+  entry that is computed rather than designed (a whole arena or imported map,
+  geometry that is mostly arithmetic and will be regenerated with new
+  numbers). Such an entry names its script in `"_generated_by"`, which the
+  loader ignores; edit the script, never the file. The script writes through
+  `libfmt.render` so its output is canonical. The worlds' old
+  `make_library.py` scripts were retired for this reason: their entries had
+  been edited as JSON since, and running them would have undone about
+  seventy of those edits.
 
 ## When a kit, not a structure
 

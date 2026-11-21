@@ -1,0 +1,14 @@
+{
+  "name": "titan_eye",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "A faint amber light filling the titan's eye socket, as if a lamp burned in the skull. It is there only at night: at sunrise the socket is empty bone again.",
+  "size": [40, 36, 40],
+  "anchor": [20, 18, 20],
+  "level": false,
+  "decays": false,
+  "base": "rim",
+  "tags": ["ribshore", "titan"],
+  "slots": {"glow": "titan_eye"},
+  "ops": [{"op": "ellipsoid", "centre": [20, 18, 20], "radius": [17, 15, 17], "mat": "glow"}]
+}

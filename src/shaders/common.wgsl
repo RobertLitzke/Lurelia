@@ -41,8 +41,19 @@ struct Globals {
     // camera (the sea's when it is dry), y = visibility in metres, z = how
     // fast sunlight fades per metre of depth, w = 1 under inland water.
     under: vec4<f32>,
-    // x = snow lying on whatever faces up (tree tops, ledges, roofs), 0 to 1.
+    // x = snow lying on whatever faces up (tree tops, ledges, roofs), 0 to 1;
+    // y = 1 for a map floating in space (world.json `space`).
     snow: vec4<f32>,
+    // The EDIT page's platform: x, z of its middle, half its side with the
+    // bank, w = 1 while it is laid (FrameParams::studio).
+    studio: vec4<f32>,
+    // What the weather has left on the ground (world/damp.rs): x = wet,
+    // y = standing water, z = frost in shade, w = frost where the sun has
+    // been. All zero on dry ground, which is what the looks were tuned on.
+    damp: vec4<f32>,
+    // Lightning (world/lightning.rs): x, z where it comes to ground, its
+    // seed, and how bright it is now. w = 0 between strikes.
+    bolt: vec4<f32>,
 };
 
 // What the season does to the colour of a leaf: its own green multiply,
@@ -357,6 +368,73 @@ fn hash3u(p: vec3<i32>) -> u32 {
     return h;
 }
 
+// A hash of a strike's seed and a step down its channel, -0.5 to 0.5.
+fn bolt_jag(seed: f32, k: f32) -> f32 {
+    return fract(sin(seed * 12.9898 + k * 78.233) * 43758.5453) - 0.5;
+}
+
+// Where the channel is `k` steps of 14 down from the cloud base: a lean from
+// the top that straightens toward the ground, and a jag at every step.
+fn bolt_point(k: f32) -> vec3<f32> {
+    let seed = g.bolt.z;
+    let ground = g.fog.y;
+    let base = ground + 560.0;
+    let t = k / 14.0;
+    let lean = vec2<f32>(bolt_jag(seed, 91.0), bolt_jag(seed, 37.0)) * 260.0 * (1.0 - t);
+    let jag = vec2<f32>(bolt_jag(seed, k), bolt_jag(seed, k + 50.0)) * 44.0 * select(1.0, 0.0, k >= 14.0);
+    return vec3<f32>(g.bolt.x + lean.x + jag.x, mix(base, ground, t), g.bolt.y + lean.y + jag.y);
+}
+
+// How far the ray from the camera along `dir` passes from segment a-b, as an
+// angle, and how far along the ray the nearest point is.
+fn ray_seg(o: vec3<f32>, dir: vec3<f32>, a: vec3<f32>, b: vec3<f32>) -> vec2<f32> {
+    let ab = b - a;
+    let ao = a - o;
+    let dd = dot(dir, dir);
+    let de = dot(dir, ab);
+    let ee = dot(ab, ab);
+    let den = max(dd * ee - de * de, 1e-4);
+    let u = clamp((dot(ao, dir) * de - dot(ao, ab) * dd) / den, 0.0, 1.0);
+    let q = a + ab * u;
+    let s = max(dot(q - o, dir), 1.0);
+    return vec2<f32>(length(q - o - dir * s) / s, s);
+}
+
+// The light of a lightning channel seen along `dir` from the camera: a white
+// core about a metre across, a violet halo round it, and the cloud base lit
+// over the strike. Part of the sky colour, so every reflection of the sky
+// shows it too.
+fn bolt_light(dir: vec3<f32>) -> vec3<f32> {
+    let f = g.bolt.w;
+    if (f < 0.002) {
+        return vec3<f32>(0.0);
+    }
+    let o = g.cam_pos.xyz;
+    var near = 10.0;
+    var a = bolt_point(0.0);
+    for (var k = 1; k <= 14; k++) {
+        let b = bolt_point(f32(k));
+        let r = ray_seg(o, dir, a, b);
+        near = min(near, r.x / (0.0009 + 1.1 / r.y));
+        a = b;
+    }
+    // One branch, off the fourth step, going its own way for a while.
+    var c = bolt_point(4.0);
+    let side = vec3<f32>(bolt_jag(g.bolt.z, 7.0), -0.8, bolt_jag(g.bolt.z, 8.0)) * vec3<f32>(90.0, 60.0, 90.0);
+    for (var k = 1; k <= 4; k++) {
+        let b = c + side + vec3<f32>(bolt_jag(g.bolt.z, f32(k) + 20.0), 0.0, bolt_jag(g.bolt.z, f32(k) + 30.0)) * 30.0;
+        let r = ray_seg(o, dir, c, b);
+        near = min(near, r.x / (0.0007 + 0.6 / r.y));
+        c = b;
+    }
+    let core = exp(-near * near);
+    let halo = exp(-near * 0.08) * 0.18;
+    // The deck over the strike lights up with it.
+    let top = normalize(bolt_point(0.0) - o);
+    let cloud = pow(max(dot(dir, top), 0.0), 18.0) * smoothstep(-0.02, 0.1, dir.y) * 0.8;
+    return vec3<f32>(0.78, 0.82, 1.0) * f * (core * 9.0 + halo + cloud);
+}
+
 fn sky_color(dir: vec3<f32>) -> vec3<f32> {
     let sun = g.sun_dir.xyz;
     let up = max(dir.y, 0.0);
@@ -400,7 +478,7 @@ fn sky_color(dir: vec3<f32>) -> vec3<f32> {
             c *= mix(vec3<f32>(1.0), flat_sunside(dir), 1.0 - smoothstep(0.0, 0.35, dir.y));
         }
     }
-    return c;
+    return c + bolt_light(dir);
 }
 
 // Mist at p, before the fall-off with height: x = density at the ground
@@ -705,6 +783,10 @@ fn fog_mist(world: vec3<f32>) -> f32 {
 
 // Haze, then `mist` of mist, over `col`.
 fn apply_fog_m(col: vec3<f32>, world: vec3<f32>, mist: f32) -> vec3<f32> {
+    // In space there is no air to see through.
+    if (g.snow.y > 0.5) {
+        return col;
+    }
     let h = haze(world);
     let out = mix(col, h.rgb, h.a);
     if (mist <= 0.0) {
@@ -719,6 +801,9 @@ fn apply_fog(col: vec3<f32>, world: vec3<f32>) -> vec3<f32> {
 
 // All of the fog as col * a + rgb, for working it out per vertex.
 fn fog_terms(world: vec3<f32>) -> vec4<f32> {
+    if (g.snow.y > 0.5) {
+        return vec4<f32>(0.0, 0.0, 0.0, 1.0);
+    }
     let h = haze(world);
     let m = fog_mist(world);
     let mc = mist_color(normalize(world - g.cam_pos.xyz));

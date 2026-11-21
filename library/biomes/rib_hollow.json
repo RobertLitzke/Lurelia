@@ -1,0 +1,28 @@
+{
+  "name": "rib_hollow",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Blowouts: bowls the wind has dug down through the dunes to the damp sand, with water standing in the bottom after rain, a snag or two, elk tracks.",
+  "priority": 6,
+  "rules": {"region": "hollow"},
+  "surface": "dune_sand",
+  "subsurface": "wet_sand",
+  "fringe": 5,
+  "map_color": [196, 186, 150],
+  "plants": [
+    {"plant": "snag", "density": 0.0006, "placement": {"verb": "lone", "params": {"spacing": 30}}},
+    {
+      "plant": "lupine",
+      "density": 0.01,
+      "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.6, "max": 0.7}}
+    },
+    {
+      "plant": "red_osier",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.5, "max": 0.7}}
+    }
+  ],
+  "features": [{"structure": "bone_shard", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [{"creature": "elk", "count": 3}, {"creature": "raven", "count": 1}],
+  "collectibles": []
+}

@@ -85,6 +85,11 @@ Two flags decide how built geometry reads:
   still reads as steps. Lay ramps out from their rise at a supported grade.
 - `"crisp": true` stops a ground material's border being blended with noise —
   what you want for paving and a works floor, not for grass.
+- `"slab": true` makes every voxel of the material a half-height block, like a
+  slab: the mesher draws it half a voxel high (`matlib::slab`), physics stands
+  a body on its middle and steps onto it by half voxels, and
+  `creatures::terrain::voxel_ground` reports its top. Ray casts still treat it
+  as a whole voxel. The shooter's pickup platforms are made of it.
 
 `"pattern": "flat"` is a single colour with no texture at all, which is how
 you get a clean painted wall. The full list of patterns is in
@@ -108,7 +113,9 @@ cap is `MAX_LINES` (4096) a frame; the rest are dropped.
 For solid things, push `(model_index, models::Instance)` onto the list
 `Game::prepare_frame` builds. Models are built once
 (`models::build_all`, then `Game::add_ride_models` appends more and records
-the base index); a model's colours come from the shared 128-slot palette.
+the base index). A model's colours come from the palette, starting at its
+`block`: 0 for the fixed block the built-in models, ride, guns and bots share
+(`models::FIXED_SLOTS`), or a block of its own for a library model.
 
 ## Light
 
@@ -254,7 +261,9 @@ For built geometry there are two routes, and the choice matters:
 - **A `ribbon`/`route` with a kit** for anything that *runs*: roads, fences,
   walkways, bridges. Takes any angle and any length.
 - **A structure** (a shape program in voxels) for anything with a fixed shape.
-  Ops are `box`, `walls`, `gable`, `ellipsoid`, `cylinder`, `log`, `disc`,
+  Ops are `box`, `walls`, `gable`, `ellipsoid`, `cylinder`, `log`, `disc`
+  (both with an optional `yaw`),
+  `segment` (a rod or rope through points, any angle, drawn as a smooth tube),
   `set`, `repeat`, `recolour`. `"air"` empties the structure's own voxels;
   `"carve"` takes the terrain with it. Later ops override earlier ones.
 
@@ -274,7 +283,7 @@ carving terrain entirely.
 ## Running it without a window
 
 ```bash
-cargo build --release --target-dir target/alt      # a second session uses its own dir
+cargo build --release --target-dir target/alt      # a second session uses its own dir; rm -rf it when done
 B=./target/release/lurelia.exe
 S="--world NAME --save $TEMP/vg_NAME --fresh --frames 8 --no-hud"
 $B --world NAME --validate          # must say "no problems"

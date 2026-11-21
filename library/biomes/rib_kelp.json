@@ -1,0 +1,29 @@
+{
+  "name": "rib_kelp",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Bull kelp over the rock reefs off the headland: a canopy at the surface, columns of light under it.",
+  "priority": 4,
+  "rules": {"underwater": true, "region": "kelp", "elev": [-22, -4]},
+  "surface": "reef_rock",
+  "subsurface": "stone_dark",
+  "map_color": [70, 100, 76],
+  "plants": [
+    {
+      "plant": "bull_kelp",
+      "density": 0.06,
+      "placement": {"verb": "clustered", "params": {"size": 24, "min": 0.3, "max": 0.48}}
+    }
+  ],
+  "features": [{"structure": "plumose_anemones", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "rockfish", "count": 24},
+    {"creature": "kelp_perch", "count": 30},
+    {"creature": "sea_otter", "count": 3},
+    {"creature": "harbor_seal", "count": 2},
+    {"creature": "sea_lion", "count": 2},
+    {"creature": "herring_shoal", "count": 60},
+    {"creature": "giant_octopus", "count": 2}
+  ],
+  "collectibles": []
+}

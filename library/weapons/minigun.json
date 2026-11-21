@@ -2,7 +2,7 @@
   "name": "minigun",
   "version": 1,
   "introduced_by": "slagdeck",
-  "notes": "Six barrels on a gearbox: it takes half a second to come up to speed, then holds a wall of bullets on a target. Weak per round and it wanders, so it is a weapon for holding a corridor, not for duels across the hall. Belt-fed from the drum, so it never reloads: the spin-up is the wait it has instead.",
+  "notes": "Six barrels on a gearbox: it takes half a second to come up to speed, then holds a wall of bullets on a target. Weak per round and it wanders, so it is a weapon for holding a corridor, not for duels across the hall. Belt-fed from the drum, so it never reloads: the spin-up is the wait it has instead. The right button fires all six barrels at once: a ring of burning flechettes, six rounds off the drum, at the scrap gun's pace. Each one hits harder than a bullet and bites a voxel out of whatever it strikes; the ring holds together inside ten metres and opens round a target past it.",
   "display": "MINIGUN",
   "slot": 7,
   "ammo_max": 400,
@@ -20,16 +20,21 @@
     "tracer_s": 0.05
   },
   "alt": {
-    "kind": "hitscan",
-    "rpm": 1800,
-    "damage": 2.75,
-    "spread_deg": 2.9,
-    "range": 160.0,
-    "falloff": 0.5,
-    "spin_up": 0.7,
-    "kick": 0.16,
-    "tracer": [1.0, 0.8, 0.42],
-    "tracer_s": 0.05
+    "kind": "shell",
+    "rpm": 105.0,
+    "damage": 9.0,
+    "pellets": 6,
+    "ring": true,
+    "spread_deg": 2.2,
+    "per_shot": 6,
+    "speed": 110.0,
+    "gravity": 2.0,
+    "fuse_s": 0.5,
+    "kick": 0.9,
+    "splash": {"damage": 3.0, "radius": 0.5, "push": 0.5, "self_damage": 0.0, "self_push": 0.0, "crater": 0.12},
+    "tracer": [1.0, 0.5, 0.16],
+    "tracer_s": 0.06,
+    "look": "shard"
   },
   "view": "minigun",
   "grip": [
@@ -39,5 +44,6 @@
     [0.66, 0.02, 0.12, 0.3],
     [0.8, 0.14, 0.18, 0.22]
   ],
-  "tint": [0.42, 0.44, 0.46]
+  "tint": [0.42, 0.44, 0.46],
+  "ammo_type": "bullets"
 }

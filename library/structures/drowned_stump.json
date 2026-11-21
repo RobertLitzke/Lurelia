@@ -1,0 +1,29 @@
+{
+  "name": "drowned_stump",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The stump of a spruce the sea drowned three hundred years ago: silver, round, flared at the root, snapped off jagged at chest height.",
+  "size": [24, 14, 24],
+  "anchor": [12, 0, 12],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"wood": "silver_deadwood"},
+  "ops": [
+    {"op": "cylinder", "base": [12, 0, 12], "radius": 5.12, "height": 1, "mat": "wood"},
+    {"op": "cylinder", "base": [12, 1, 12], "radius": 4.39431, "height": 1, "mat": "wood"},
+    {"op": "cylinder", "base": [12, 2, 12], "radius": 4.09372, "height": 1, "mat": "wood"},
+    {"op": "cylinder", "base": [12, 3, 12], "radius": 2.99429, "height": 1, "mat": "wood"},
+    {"op": "cylinder", "base": [12, 4, 12], "radius": 2.92571, "height": 1, "mat": "wood"},
+    {"op": "cylinder", "base": [12, 5, 12], "radius": 2.85714, "height": 1, "mat": "wood"},
+    {"op": "cylinder", "base": [12, 6, 12], "radius": 2.78857, "height": 1, "mat": "wood"},
+    {"op": "cylinder", "base": [12, 7, 12], "radius": 2.72, "height": 1, "mat": "wood"},
+    {"op": "ellipsoid", "centre": [19, 0.5, 12], "radius": [2.5, 1, 2.5], "mat": "wood"},
+    {"op": "ellipsoid", "centre": [5, 0.5, 13], "radius": [2.5, 1, 2.5], "mat": "wood"},
+    {"op": "ellipsoid", "centre": [13, 0.5, 19], "radius": [2.5, 1, 2.5], "mat": "wood"},
+    {"op": "ellipsoid", "centre": [12, 0.5, 5], "radius": [2.5, 1, 2.5], "mat": "wood"},
+    {"op": "box", "from": [10, 8, 13], "to": [11, 12, 14], "mat": "wood"},
+    {"op": "box", "from": [14, 8, 11], "to": [15, 10, 12], "mat": "wood"},
+    {"op": "box", "from": [12, 8, 14], "to": [13, 11, 15], "mat": "wood"}
+  ]
+}

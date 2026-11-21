@@ -1,0 +1,15 @@
+{
+  "name": "mussel_black",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Mussels packed in beds, blue-black, with gooseneck barnacles among them.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [38, 40, 48],
+    "alt": [96, 92, 84],
+    "scale": 7,
+    "contrast": 1.0,
+    "calm": {"base": [48, 50, 58], "alt": [98, 94, 88]}
+  }
+}

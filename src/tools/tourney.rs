@@ -211,6 +211,8 @@ impl Entrant {
             bold: self.bold,
             steady: self.steady,
             without: self.without.iter().map(|s| s.to_string()).collect(),
+            tune: Default::default(),
+            team: None,
         }
     }
 }
@@ -383,9 +385,13 @@ pub fn open(args: &Args) -> Result<Field, String> {
     let gen = crate::world::gen::Generator::with_world(world.clone());
     let (spawn, yaw) = gen.spawn_point();
     let height_vox = gen.height_vox;
-    let mut store = Store { height_vox, ..Store::default() };
+    let mut store = Store { height_vox, gravity: world.def.gravity, ..Store::default() };
     let mut streamer = crate::stream::Streamer::new(gen, Default::default(), args.view.max(128.0), 4);
     streamer.set_smooth(false, Vec3::ZERO);
+    // The whole arena, as `Game` streams it: from the spawn alone the far
+    // base of a wide map (Face, Starfall) never loads and its nav nodes
+    // settle on nothing.
+    streamer.full_box = crate::stream::arena_box(&rules.nav);
     let mut sink = NoSink;
     let began = std::time::Instant::now();
     // The arena has to be all the way in before a bot walks it, or the nav
@@ -468,6 +474,11 @@ fn play(f: &Field, store: &mut Store, bots: Vec<BotDef>, watch: usize, seconds: 
     let (mut lo, mut hi) = (Vec3::splat(f32::MAX), Vec3::splat(f32::MIN));
     let (mut lost, mut ticks, mut idle) = (0.0f32, 0.0f32, 0.0f32);
     let mut acts = [0.0f32; 6];
+    let mut edits = Vec::new();
+    // What the voxels were before, so the next round starts on the same
+    // ground: the store is shared, and a round that found the platforms
+    // already down would be a different round from the first.
+    let mut was: Vec<([i32; 3], u8)> = Vec::new();
     for _ in 0..steps {
         // The player is benched, so only the bots ride.
         parts.step(step, store, None, Some(&mut sh));
@@ -480,10 +491,16 @@ fn play(f: &Field, store: &mut Store, bots: Vec<BotDef>, watch: usize, seconds: 
             land: Some(&f.land),
             slopes: false,
             screenshot_request: &mut shot,
-            edits: &mut Vec::new(),
+            edits: &mut edits,
         };
         crate::modes::Activity::frame(&mut sh, &mut cx, &input, &mut actions, step);
         crate::modes::Activity::step(&mut sh, cx, &input);
+        // What the round changed in the voxels (the pickup platforms),
+        // which `Game` hands to the streamer and this has to lay itself.
+        for ([x, y, z], m) in edits.drain(..) {
+            was.push(([x, y, z], store.get(x, y, z).unwrap_or(crate::world::material::AIR)));
+            store.set(x, y, z, m);
+        }
         let Some(b) = sh.bots.get(watch) else { break };
         let at = b.pos();
         lo = lo.min(at);
@@ -495,7 +512,9 @@ fn play(f: &Field, store: &mut Store, bots: Vec<BotDef>, watch: usize, seconds: 
         // having a destination: a bot standing still on purpose is not
         // stalled, and a bot leaning on a wall is, whatever it believes.
         let keys = b.pilot.mv.forward || b.pilot.mv.back || b.pilot.mv.left || b.pilot.mv.right;
-        if !keys {
+        // A passenger on a lift presses nothing and is not idle: the lift
+        // is the move it chose.
+        if !keys && !parts.platforms.riding(at, b.body.body.half_w) {
             idle += 1.0;
         }
         if keys {
@@ -536,6 +555,9 @@ fn play(f: &Field, store: &mut Store, bots: Vec<BotDef>, watch: usize, seconds: 
                 nose += 1.0;
             }
         }
+    }
+    for ([x, y, z], m) in was.into_iter().rev() {
+        store.set(x, y, z, m);
     }
     let score = sh.scores();
     let mine = score.get(watch + 1).map(|(_, s)| *s).unwrap_or_default();
@@ -891,8 +913,9 @@ fn fight(field: &Field, store: &mut Store, seconds: f32, rounds: u32) {
     }
     println!(
         "
-idle is the share of the match pressing no direction at all, and stuck the
-share of the pressed ticks that went nowhere: between them they are what
+idle is the share of the match pressing no direction at all (riding a lift
+does not count), and stuck the share of the pressed ticks that went nowhere:
+between them they are what
 \"the bots sometimes just stand there\" looks like from inside. The act shares
 are where the time went -- a duel in which neither bot spends most of it in
 fight or close is a duel they are not really having."

@@ -16,5 +16,6 @@
   "fill": 0.8,
   "limb": 0.75,
   "max_slope": 0.5,
-  "autumn": "leaves_autumn"
+  "autumn": "leaves_autumn",
+  "thin_limbs": 0.12
 }

@@ -1,5 +1,5 @@
 use crate::util::FxHashMap as HashMap;
-use crate::world::chronicle::geom::{densify, each_near};
+use crate::world::chronicle::geom::{densify, each_near, spline};
 use crate::world::chronicle::{EventCtx, Process};
 use crate::world::fields::{Fields, Poi, Pos};
 use crate::world::noise::{perlin2, smoothstep};
@@ -34,6 +34,16 @@ pub struct Canyon {
     /// the walls, and benches follow beds that a `reef` lifted.
     #[serde(default)]
     irregular: f32,
+    /// Bend the path into a smooth curve through its points before anything
+    /// else. A path of found points (a `drainage` river's) is otherwise a row
+    /// of straight stretches with a corner at each one.
+    #[serde(default)]
+    curve: bool,
+    /// Cut the floor to this height above the sea all along, whatever the
+    /// ground and in place of `depth`: a pit that must meet a cave network's
+    /// level. On a short path with a wide floor it is a sinkhole.
+    #[serde(default)]
+    level: Option<f32>,
 }
 
 fn default_wall() -> f32 {
@@ -49,7 +59,8 @@ fn default_meander() -> f32 {
 impl Process for Canyon {
     fn apply(&self, cx: &mut EventCtx) -> String {
         let pts: Vec<Vec2> = self.path.iter().map(|p| cx.pos(p)).collect();
-        let line = densify(&pts, self.meander, cx.seed);
+        let bent = if self.curve { spline(&pts, false, 8.0) } else { pts.clone() };
+        let line = densify(&bent, self.meander, cx.seed);
         let floor_m = self.floor.as_ref().map(|m| cx.mat(m));
         let msg = self.cut(cx, &line, floor_m);
         if let (Some(name), Some(&head)) = (&self.poi, pts.first()) {
@@ -79,7 +90,10 @@ impl Canyon {
             }
             let g = f.height(p.x, p.y);
             let dk = depth + (depth_end - depth) * (along / total);
-            let want = (g - dk * smoothstep(0.0, 30.0, along).max(0.25)).max(f.sea - 3.0);
+            let want = match self.level {
+                Some(l) => (f.sea + l).min(g),
+                None => (g - dk * smoothstep(0.0, 30.0, along).max(0.25)).max(f.sea - 3.0),
+            };
             bed.push(if k == 0 { want } else { want.min(bed[k - 1] - 0.01) });
         }
         // No steeper than 1 in 7 going downstream: where the ground drops (a

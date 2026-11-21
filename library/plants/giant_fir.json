@@ -9,5 +9,6 @@
   "crown_radius": [3.0, 3.8],
   "max_slope": 0.6,
   "like": "fir",
-  "sweep": "ragged"
+  "sweep": "ragged",
+  "affords": ["perch"]
 }

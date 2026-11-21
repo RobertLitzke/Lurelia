@@ -1,0 +1,14 @@
+{
+  "name": "glasswort",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Glasswort: a low mat of jointed red succulent stems round the brine, the only thing that grows where the salt is wet.",
+  "form": "shrub",
+  "height": [0.15, 0.35],
+  "trunk_radius": [0.03, 0.04],
+  "crown_radius": [0.35, 0.6],
+  "bark": "dead_wood",
+  "leaf": "glasswort",
+  "squash": 0.5,
+  "max_slope": 0.4
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rock_hyrax",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Rock hyrax: a stout grey-brown animal the size of a rabbit with no tail to speak of, in colonies on the quartzite crags, basking in a row on the warm rock in the morning. The eagles hunt them.",
+  "colors": {"marmot": [112, 98, 80], "belly": [176, 162, 138], "dark": [34, 28, 24]},
+  "behaviour": {
+    "movement": "skulk",
+    "walk_speed": 0.6,
+    "flee_speed": 5,
+    "wary": 12,
+    "flightiness": 1.4,
+    "flees_from": ["player", "eagle", "coyote"]
+  },
+  "like": "marmot",
+  "scale": 0.8
+}

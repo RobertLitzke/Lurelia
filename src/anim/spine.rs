@@ -208,6 +208,46 @@ pub fn pose_along(rig: &Rig, ch: &Chain, vox: f32, pivot: Vec3, at: Vec3, yaw: f
     pose
 }
 
+/// Lay one limb of a rig along `pts`, writing its bones into `pose`. The
+/// chain `ch` hangs off a parent turned by `parent_rot` in the creature's
+/// frame, and `pts` holds one point per bone and one more for the tip, in the
+/// creature's frame, the first on the limb's own joint. Unlike `pose_along`
+/// the limb need not run down +Z at rest: each bone is turned from the way it
+/// points in the model onto the way the path runs. An octopus's arms are
+/// limbs like this, one per arm.
+pub fn pose_limb(rig: &Rig, ch: &Chain, parent_rot: Quat, pts: &[Vec3], pose: &mut Pose) {
+    let n = ch.n();
+    if n == 0 || pts.len() < n + 1 {
+        return;
+    }
+    // Which way each bone points at rest; the last one carries on as the
+    // bone before it, having no joint beyond it to point at.
+    let joint = |k: usize| rig.bones[ch.bones[k]].joint;
+    let rest: Vec<Vec3> = (0..n)
+        .map(|k| {
+            let d = if k + 1 < n {
+                joint(k + 1) - joint(k)
+            } else if n > 1 {
+                joint(k) - joint(k - 1)
+            } else {
+                Vec3::Z
+            };
+            d.normalize_or(Vec3::Z)
+        })
+        .collect();
+    let mut parent = parent_rot;
+    for k in 0..n {
+        let d = pts[k + 1] - pts[k];
+        let u = if d.length_squared() < 1e-8 { parent * rest[k] } else { d.normalize() };
+        let global = Quat::from_rotation_arc(rest[k], u);
+        let (y, x, z) = (parent.inverse() * global).to_euler(EulerRot::YXZ);
+        if let Some(e) = pose.bones.get_mut(ch.bones[k]) {
+            *e = Vec3::new(x, y, z);
+        }
+        parent = global;
+    }
+}
+
 /// Take the turn out of a new pose: every angle is moved by whole turns until
 /// it is within half a turn of the pose before it. Euler angles come back from
 /// a rotation wrapped to +-PI, so a snake whose heading crosses south would
@@ -386,6 +426,47 @@ mod tests {
             let drawn = joints(&rig, &pose, vox, Vec3::new(16.0, 0.0, 16.0), at, yaw);
             for (i, (a, b)) in drawn.iter().zip(&pts).enumerate() {
                 assert!((*a - *b).length() < 1e-3, "bone {i} drawn at {a} for path point {b} (yaw {yaw})");
+            }
+        }
+    }
+
+    /// A limb that leaves its parent sideways is drawn on its path too, and
+    /// whatever the parent's own turn: the octopus's arms.
+    #[test]
+    fn a_limb_lands_on_its_path() {
+        let b = |name: &str, parent: Option<usize>, joint: [f32; 3]| Bone {
+            name: name.into(),
+            role: if parent.is_none() { Role::Root } else { Role::Arm },
+            parent,
+            joint: Vec3::from(joint),
+            model: 0,
+            side: 0.0,
+            pair: 0,
+        };
+        let rig = Rig {
+            plan: Some(Plan::Octopus),
+            activities: HashMap::new(),
+            floor: 0.0,
+            bones: vec![b("body", None, [16.0, 2.0, 16.0]), b("a0", Some(0), [18.0, 1.0, 16.0]), b("a1", Some(1), [21.0, 1.0, 16.0]), b("a2", Some(2), [24.0, 1.0, 16.0])],
+        };
+        let ch = Chain { bones: vec![1, 2, 3], d: vec![3.0, 3.0, 3.0] };
+        let (vox, pivot) = (0.1, Vec3::new(16.0, 0.0, 16.0));
+        for &(pitch, yaw) in &[(0.0, 0.0), (0.4, 1.3), (-0.3, -2.6)] {
+            let mut pose = Pose::rest(4);
+            pose.bones[0] = Vec3::new(pitch, yaw, 0.0);
+            let rq = crate::anim::bone_rot(pose.bones[0]);
+            let root = (rig.bones[0].joint - pivot) * vox;
+            // The path starts on the limb's joint wherever the body has
+            // turned it, then curls down and round.
+            let mut pts = vec![root + rq * (rig.bones[1].joint - rig.bones[0].joint) * vox];
+            for i in 0..3 {
+                let a = 0.6 * i as f32;
+                pts.push(pts[i] + Vec3::new(a.cos(), -0.3, a.sin()).normalize() * 0.3);
+            }
+            pose_limb(&rig, &ch, rq, &pts, &mut pose);
+            let drawn = joints(&rig, &pose, vox, pivot, Vec3::ZERO, 0.0);
+            for k in 0..3 {
+                assert!((drawn[k + 1] - pts[k]).length() < 1e-3, "joint {k} drawn at {} for {} (pitch {pitch}, yaw {yaw})", drawn[k + 1], pts[k]);
             }
         }
     }

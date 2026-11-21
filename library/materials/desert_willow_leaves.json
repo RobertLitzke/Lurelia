@@ -1,0 +1,15 @@
+{
+  "name": "desert_willow_leaves",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Desert willow leaves: long, narrow, light green.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [118, 140, 80],
+    "alt": [100, 122, 66],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [124, 146, 86], "alt": [106, 128, 72]}
+  }
+}

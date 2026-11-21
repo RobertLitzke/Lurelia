@@ -1,0 +1,15 @@
+{
+  "name": "craft_debris",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "A piece of the hull: two bent plates of skin and tile standing on edge where they fell, half in the ash.",
+  "size": [20, 12, 20],
+  "anchor": [10, 0, 10],
+  "level": false,
+  "decays": false,
+  "tags": ["wreck"],
+  "ops": [
+    {"op": "disc", "centre": [10, 5, 10], "radius": 6, "thick": 1, "axis": "x", "mat": "craft_skin", "yaw": 35},
+    {"op": "disc", "centre": [10, 4, 10], "radius": 4.5, "thick": 1, "axis": "z", "mat": "craft_tile", "yaw": 20}
+  ]
+}

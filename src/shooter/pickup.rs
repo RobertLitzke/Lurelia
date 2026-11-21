@@ -110,16 +110,6 @@ impl Size {
         }
     }
 
-    /// How much bigger than a pad of any other kind this one is drawn, and
-    /// how much taller its beacon stands.
-    pub fn scale(self) -> f32 {
-        match self {
-            Size::Vial => 0.72,
-            Size::Pack => 1.0,
-            Size::Crate => 1.5,
-        }
-    }
-
     /// The big one is worth holding ground for, so it is the slow one.
     fn respawn(self) -> f32 {
         match self {
@@ -138,6 +128,12 @@ fn armed(f: &Fighter) -> bool {
 }
 
 /// One pad on the floor.
+/// What rounds for a gun not carried are worth, when they are taken at all.
+const STASH_WORTH: f32 = 0.12;
+
+/// What topping health up from full to the cap is worth, all of it.
+const OVERHEAL_WORTH: f32 = 0.4;
+
 pub struct Pad {
     pub kind: Kind,
     /// Where it stands, feet on the floor.
@@ -155,6 +151,13 @@ pub struct Pad {
     /// Whether `at` is the real floor, or the height the world stated
     /// because the column was not loaded yet (`settle`).
     pub placed: bool,
+    /// Ammunition for a gun not carried is taken and kept
+    /// (`ShooterDef::ammo_without_gun`).
+    pub stash: bool,
+    /// The slab material of the platform under it (`PickupDef::pad_material`).
+    platform: Option<String>,
+    /// Whether the platform has been laid, or there is none to lay.
+    stamped: bool,
 }
 
 impl Pad {
@@ -162,7 +165,23 @@ impl Pad {
         self.gone <= 0.0
     }
 
+    /// How big the thing over this pad is drawn, and how much taller its
+    /// beacon stands, by how much it gives: 1 for the middle health pack
+    /// and the default armour, and for every pad of rounds or a gun. Not
+    /// in steps, so a world that gives 40 armour shows a plate between the
+    /// 30 and the 50; and under the square root, so a hundred-point pad is
+    /// big enough to cross the map for without filling the room.
+    pub fn scale(&self) -> f32 {
+        let norm = match self.kind {
+            Kind::Health => Size::AMOUNTS[1],
+            Kind::Armour => Kind::Armour.default_amount(),
+            _ => return 1.0,
+        };
+        (self.amount / norm).max(0.0).powf(0.55).clamp(0.6, 2.2)
+    }
+
     /// Which of the three sizes this is, `None` on any kind but health.
+    #[cfg(test)]
     pub fn size(&self) -> Option<Size> {
         (self.kind == Kind::Health).then(|| Size::of(self.amount))
     }
@@ -196,12 +215,22 @@ impl Pad {
                 // to take one in passing and never enough to cross the map.
                 if f.health >= f.full_health {
                     let room = (f.max_health - f.health) / (f.max_health - f.full_health).max(1.0);
-                    return 0.15 * room.clamp(0.0, 1.0);
+                    // Enough to go for, not only to take in passing: a bot
+                    // with nothing to do builds its stock, as a player does.
+                    return OVERHEAL_WORTH * room.clamp(0.0, 1.0);
                 }
+                //
+                // To the power one and a half and scaled so that a bot at a
+                // third of its health wants a pack about as much as a gun it
+                // has not got. Squared and scaled to 1.4 it never did: a new
+                // gun is worth 1.0 and up, and the league measured the cost
+                // -- of forty-odd times a bot fell under half health in a
+                // match, two or three ended at a health pad. The rest walked
+                // past the packs to the guns and died with them.
                 let short = 1.0 - (f.health / f.full_health.max(1.0)).clamp(0.0, 1.0);
                 let gap = f.full_health - f.health;
                 let closes = (self.amount / gap.max(1.0)).clamp(0.0, 1.0);
-                short * short * 1.4 * (0.4 + 0.6 * closes)
+                short.powf(1.5) * 2.6 * (0.4 + 0.6 * closes)
             }
             Kind::Armour => {
                 // The same test `give` makes, and it has to be the same
@@ -221,6 +250,23 @@ impl Pad {
                 let missing = 1.0 - (f.armour / f.full_armour.max(1.0)).clamp(0.0, 1.0);
                 missing * 0.8
             }
+            Kind::Ammo => self.arms_worth(f) * self.alive_to_use(f),
+            Kind::Weapon => self.arms_worth(f) * self.alive_to_use(f),
+        }
+    }
+
+    /// What a gun or rounds are worth to somebody this hurt: less the nearer
+    /// dead they are, down to a fifth at the brink. A player at ten health
+    /// goes for the pack, not the rocket launcher, and a bot did the
+    /// opposite -- the league caught one at 7 health crossing the map four times
+    /// in a minute for guns, walking past the packs on the way.
+    fn alive_to_use(&self, f: &Fighter) -> f32 {
+        let whole = (f.health / f.full_health.max(1.0)).clamp(0.0, 1.0);
+        0.2 + 0.8 * whole
+    }
+
+    fn arms_worth(&self, f: &Fighter) -> f32 {
+        match self.kind {
             Kind::Ammo => match self.weapon.as_deref().and_then(|n| f.arsenal.guns.iter().find(|g| g.def.name == n)) {
                 Some(g) if g.wants_ammo() => {
                     let share = g.ammo as f32 / g.def.ammo_max.max(1) as f32;
@@ -236,6 +282,8 @@ impl Pad {
                     let last = if armed(f) { 0.0 } else { 0.8 };
                     0.2 + 0.4 * (1.0 - share) + dry + last
                 }
+                // Rounds put by for a gun it may find: worth a little.
+                Some(g) if self.stash && !g.have && g.ammo < g.def.ammo_max => STASH_WORTH,
                 _ => 0.0,
             },
             Kind::Weapon => match self.weapon.as_deref().and_then(|n| f.arsenal.guns.iter().find(|g| g.def.name == n)) {
@@ -246,6 +294,7 @@ impl Pad {
                 Some(g) if g.wants_ammo() => 0.35,
                 _ => 0.0,
             },
+            _ => 0.0,
         }
     }
 
@@ -276,6 +325,14 @@ impl Pad {
             Kind::Ammo => {
                 let name = self.weapon.clone()?;
                 let g = f.arsenal.named_mut(&name)?;
+                if self.stash && !g.have {
+                    if g.ammo >= g.def.ammo_max {
+                        return None;
+                    }
+                    let rounds = if self.amount > 0.0 { self.amount as u32 } else { g.def.ammo_max / 2 };
+                    g.ammo = (g.ammo + rounds).min(g.def.ammo_max);
+                    return Some(format!("{} ROUNDS +{rounds}", g.def.display));
+                }
                 if !g.wants_ammo() {
                     return None;
                 }
@@ -309,6 +366,25 @@ impl Pad {
 pub struct Pickups {
     pub pads: Vec<Pad>,
 }
+
+/// How far each way from the middle the platform under a pad reaches, in
+/// voxels: a square a metre across, wider under a pickup drawn bigger than
+/// the middle size (`Pad::scale`). Square, because a disc this few voxels
+/// across comes out as a plus, which on every pad reads as a health cross.
+const PLATFORM_R: f32 = 2.0;
+/// How high the platform stands: a slab is half a voxel.
+pub const PLATFORM_M: f32 = 0.125;
+/// How far above the floor `floor_at` stands a pad, metres.
+const PAD_LIFT: f32 = 0.1;
+/// Voxels of air a platform needs over it: a standing body (1.75 m, seven
+/// voxels) on top of the half voxel the platform raises it by. Less, and
+/// the step onto it puts the head in the ceiling, so in a tunnel built to
+/// body height the platform is a wall.
+const PLATFORM_HEADROOM: i32 = 8;
+/// How far round the platform, in voxels, the same headroom is wanted: a
+/// body steps up while still standing beside it, so the ceiling over the
+/// approach counts as much as the ceiling over the platform.
+const PLATFORM_APPROACH: i32 = 2;
 
 /// How close you have to be to take one, metres from the middle of the pad.
 /// Generous on purpose: a pad you have to stand exactly on is a pad you walk
@@ -347,6 +423,9 @@ impl Pickups {
                 gone: 0.0,
                 up: d.up,
                 placed,
+                stash: false,
+                platform: d.pad_material(),
+                stamped: false,
             });
         }
         Pickups { pads }
@@ -354,13 +433,6 @@ impl Pickups {
 
     pub fn is_empty(&self) -> bool {
         self.pads.is_empty()
-    }
-
-    /// Everything comes back: what the start of a match does.
-    pub fn reset(&mut self) {
-        for p in &mut self.pads {
-            p.gone = 0.0;
-        }
     }
 
     /// How many pads are still standing at the height the world stated
@@ -383,6 +455,65 @@ impl Pickups {
             let (at, placed) = floor(p.at.x, p.at.z, p.up);
             p.at = at;
             p.placed = placed;
+        }
+    }
+
+    /// The voxels of the platforms still to be laid: a square of slab under
+    /// every pad that has found its floor. A platform goes down only where
+    /// the floor is level with the pad's, so one at the foot of a wall or
+    /// on the lip of a stair does not climb it. The pad stands on its
+    /// platform from then on.
+    ///
+    /// It is laid by the rules rather than built into the world, so every
+    /// world with pickups gets them whatever made its floor, and a world
+    /// file says nothing more than where a pad is and what it gives.
+    pub fn platforms(&mut self, store: &crate::world::store::Store, out: &mut Vec<([i32; 3], u8)>) {
+        for p in &mut self.pads {
+            if p.stamped || !p.placed {
+                continue;
+            }
+            p.stamped = true;
+            let Some(mat) = p.platform.as_deref().and_then(crate::world::matlib::id_of) else {
+                continue;
+            };
+            let foot = (p.at.y - PAD_LIFT) * 4.0;
+            // Standing on one already: a match started again on the same
+            // ground, which kept the last one's.
+            if (foot - foot.floor() - 0.5).abs() < 0.1 {
+                continue;
+            }
+            let row = foot.round() as i32;
+            let (cx, cz) = (p.at.x * 4.0, p.at.z * 4.0);
+            let reach = PLATFORM_R * p.scale().max(1.0);
+            let r = reach.ceil() as i32;
+            // Under a low ceiling, or with one over the way in: no
+            // platform, rather than one nobody can get onto. A column that
+            // is wall at the floor, or has no floor, is not a ceiling.
+            let (fx, fz) = (cx.floor() as i32, cz.floor() as i32);
+            let a = r + PLATFORM_APPROACH;
+            let low = (fz - a..=fz + a).any(|z| {
+                (fx - a..=fx + a).any(|x| store.get(x, row, z) == Some(crate::world::material::AIR) && store.solid(x, row - 1, z) && (1..PLATFORM_HEADROOM).any(|k| store.solid(x, row + k, z)))
+            });
+            if low {
+                continue;
+            }
+            let mut under = false;
+            for z in cz.floor() as i32 - r..=cz.floor() as i32 + r {
+                for x in cx.floor() as i32 - r..=cx.floor() as i32 + r {
+                    let (dx, dz) = (x as f32 + 0.5 - cx, z as f32 + 0.5 - cz);
+                    if dx.abs() > reach || dz.abs() > reach {
+                        continue;
+                    }
+                    let level = store.get(x, row, z) == Some(crate::world::material::AIR) && store.solid(x, row - 1, z) && !store.slab(x, row - 1, z);
+                    if level {
+                        out.push(([x, row, z], mat));
+                        under |= x == cx.floor() as i32 && z == cz.floor() as i32;
+                    }
+                }
+            }
+            if under {
+                p.at.y += PLATFORM_M;
+            }
         }
     }
 
@@ -422,7 +553,11 @@ impl Pickups {
         for p in &self.pads {
             let good = p.good(f);
             if good > 0.0 {
-                out.push(Lure { at: p.at, good });
+                let gun = match p.kind {
+                    Kind::Weapon => p.weapon.as_deref().and_then(|n| f.arsenal.guns.iter().position(|g| g.def.name == n && !g.have)),
+                    _ => None,
+                };
+                out.push(Lure { at: p.at, good, gun, mends: p.kind == Kind::Health });
             }
         }
     }
@@ -443,6 +578,18 @@ mod tests {
         f
     }
 
+    /// A health pad's definition, as a world states it.
+    fn p0() -> PickupDef {
+        PickupDef {
+            kind: "health".into(),
+            at: [0.0, 0.0],
+            up: None,
+            amount: None,
+            weapon: None,
+            respawn_s: None,
+        }
+    }
+
     fn pads(defs: &[(&str, Option<&str>)]) -> Pickups {
         let defs: Vec<PickupDef> = defs
             .iter()
@@ -456,6 +603,58 @@ mod tests {
             })
             .collect();
         Pickups::new(&defs, |x, z, _| (Vec3::new(x, 0.0, z), true), |w| panic!("{w}"))
+    }
+
+    /// A pad that has found its floor gets a platform under it: a square of
+    /// slab on the level floor round it and nowhere else, laid once, with
+    /// the pad lifted onto it.
+    #[test]
+    fn a_placed_pad_gets_a_platform() {
+        use crate::world::material::{AIR, STONE};
+        use crate::world::store::{Store, Voxels};
+        let (_, _table) = crate::physics::tests::slab_material();
+        // By the name the pad asks for, which `worldload::reach` hands
+        // every world with pads rather than every world there is.
+        let name = p0().pad_material().unwrap();
+        let mat = crate::world::matlib::id_of(&name).expect("the health platform has an id");
+        let mut store = Store::default();
+        for cz in -1..=1 {
+            for cx in -1..=1 {
+                store.chunks.insert((cx, 0, cz), Voxels::Uniform(STONE));
+                store.chunks.insert((cx, 1, cz), Voxels::Uniform(AIR));
+            }
+        }
+        // A wall a metre to the east: the disc must not climb it.
+        for z in -8..8 {
+            for y in 32..40 {
+                store.set(6, y, z, STONE);
+            }
+        }
+        let mut p = pads(&[("health", None)]);
+        p.pads[0].at = Vec3::new(1.0, 8.1, 0.0);
+        let mut out = Vec::new();
+        p.platforms(&store, &mut out);
+        assert!(out.len() >= 12, "only {} voxels of platform", out.len());
+        assert!(out.iter().all(|&([x, y, _], m)| y == 32 && m == mat && x < 6), "{out:?}");
+        assert!(out.iter().any(|&(at, _)| at == [4, 32, 0]), "nothing under the pad's middle");
+        assert!((p.pads[0].at.y - 8.225).abs() < 1e-4, "the pad was not lifted onto it: {}", p.pads[0].at.y);
+        out.clear();
+        p.platforms(&store, &mut out);
+        assert!(out.is_empty(), "laid twice");
+
+        // In a tunnel a body only just fits, there is no room to step up
+        // onto one: none is laid and the pad stays on the floor.
+        for z in -8..8 {
+            for x in -4..6 {
+                store.set(x, 32, z, AIR);
+                store.set(x, 39, z, STONE);
+            }
+        }
+        let mut p = pads(&[("health", None)]);
+        p.pads[0].at = Vec3::new(1.0, 8.1, 0.0);
+        p.platforms(&store, &mut out);
+        assert!(out.is_empty(), "a platform in a 1.75 m tunnel: {out:?}");
+        assert!((p.pads[0].at.y - 8.1).abs() < 1e-4, "the pad moved: {}", p.pads[0].at.y);
     }
 
     /// A pad over somebody who has no use for it is left standing, and one
@@ -524,7 +723,7 @@ mod tests {
         // Bigger means drawn bigger and back slower, in that order.
         for w in p.pads.windows(2) {
             let (a, b) = (&w[0], &w[1]);
-            assert!(b.size().unwrap().scale() > a.size().unwrap().scale(), "the bigger pad is not drawn bigger");
+            assert!(b.scale() > a.scale(), "the bigger pad is not drawn bigger");
             assert!(b.respawn_s > a.respawn_s, "the bigger pad comes back as fast: {} vs {}", a.respawn_s, b.respawn_s);
         }
         // Nothing else has a size, and a pad with no stated amount is the

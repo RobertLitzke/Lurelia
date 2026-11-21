@@ -80,7 +80,9 @@ pub fn spawn(ents: &mut Entities, models: &[Model], what: &str, eye: Vec3, yaw: 
     // Spacing from the largest creature on the sheet.
     let big = rows.iter().flatten().map(|c| models[c.model].voxel * c.morph.as_ref().map_or(1.0, |x| x.scale)).fold(m.voxel, f32::max);
     // Side-on: the body's length (model z) runs along the camera's right.
-    let length = 26.0 * big;
+    // A crab's legs and an octopus's arms fill the whole grid that way.
+    let sprawls = m.rig.as_ref().is_some_and(|r| matches!(r.plan, Some(Plan::Crab | Plan::Octopus)));
+    let length = if sprawls { 33.0 } else { 26.0 } * big;
     let tall = 32.0 * big;
     let spacing = length * 1.1;
     let cols = rows[0].len().max(rows[1].len());
@@ -296,6 +298,9 @@ fn moves(rig: &Rig, voxel: f32, verb: &Verb, beh: &crate::library::Behaviour) ->
     }
     if rig.plan == Some(Plan::Serpent) || verb.slithers() {
         return serpent_moves(rig, voxel);
+    }
+    if rig.plan == Some(Plan::Octopus) {
+        return crate::creatures::octopus::sheet(rig, voxel, Vec3::new(16.0, 0.0, 16.0));
     }
     if rig.plan == Some(Plan::Bird) && verb.flies() {
         return bird_moves(rig, voxel, verb, beh);

@@ -1,7 +1,7 @@
 {
   "name": "ice_wall",
   "version": 1,
-  "introduced_by": "icezeto",
+  "introduced_by": "transmission",
   "notes": "The glacier a frozen base is cut into, where it is left as wall: blue-grey ice with darker blue in the blotches. Darker than glacier_ice, which is written for a fjord under open sky; indoors that one glares and every corner disappears.",
   "smooth": false,
   "glints": true,

@@ -101,7 +101,10 @@ pub mod layer {
     pub const LILY_PAD: u32 = 32;
     /// The lily's own bloom, a small flat star of petals in its own colours.
     pub const LILY_FLOWER: u32 = 33;
-    pub const COUNT: u32 = 34;
+    /// Lupine: a clump of dense violet flower spikes over fans of leaves
+    /// (Ribshore's dunes), in its own colours like fireweed.
+    pub const LUPINE: u32 = 34;
+    pub const COUNT: u32 = 35;
 
     /// Layers numbered after FROND that are still drawn small (sprite_tex.rs).
     pub fn small(l: u32) -> bool {
@@ -308,6 +311,8 @@ fn library_rule(m: u8) -> Option<Rule> {
     }
     if name == "FERN" || name.contains("FERN ") {
         Some(Rule::Herb(Herb::Fern))
+    } else if name.contains("LUPINE") {
+        clumps(layer::LUPINE, (3, 4), 1.4, (2.6, 4.2), 0.75)
     } else if name.contains("FIREWEED") {
         clumps(layer::FIREWEED, (2, 3), 1.2, (4.0, 6.6), 0.6)
     } else if name == "HEATHER" {
@@ -379,6 +384,12 @@ fn library_rule(m: u8) -> Option<Rule> {
         })
     } else if wild {
         ground(0.3, 0.9, true, 0.0)
+    } else if name == "STEPPE GRASS" {
+        // Grazed turf in an open arena: low tufts everywhere and no meadow
+        // stands of long grass, which in a fight are a wall. `tall` 0.4 picks
+        // the tall and seeding cards, whose colour the straw turns gold, over
+        // the short card's dark green, and still stands only knee-high.
+        ground(0.3, 0.3, false, 0.4)
     } else if name.contains("SHORE GRASS") {
         ground(0.04, 0.35, true, 0.0)
     } else if name.contains("GRASS") {
@@ -612,7 +623,7 @@ fn pack_ext(p: [f32; 3], tint: u8, kind: u32, angle: u32, w: f32, h: f32, seed: 
 /// away: fill tufts (drawn only near the camera, foliage::NEAR), then the
 /// other grass and flowers (out to foliage::GRASS_FAR), then everything else
 /// (leaves, sprays, herbs; out to foliage::FAR), then the far grass patches
-/// (from foliage::PATCH_NEAR to foliage::PATCH_FAR), with the flower stalks
+/// (from foliage::PATCH_FADE out to foliage::PATCH_FAR), with the flower stalks
 /// (out to foliage::STALK_FAR) just before the patches. Returns the lengths of
 /// the fill, grass, patch and stalk runs.
 #[allow(clippy::too_many_arguments)]

@@ -1,0 +1,20 @@
+{
+  "name": "camp_yard",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The camp: trodden gravel round the cabins, tamarisks planted for shade and gone wild, rabbitbrush coming up through the motor pool.",
+  "priority": 13,
+  "rules": {"region": "camp"},
+  "surface": "fan_gravel",
+  "subsurface": "fan_gravel",
+  "map_color": [170, 150, 120],
+  "plants": [
+    {
+      "plant": "tamarisk",
+      "density": 0.002,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.3, "max": 1.0}}
+    },
+    {"plant": "rabbitbrush", "density": 0.004, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [{"creature": "barn_owl", "count": 1}, {"creature": "jackrabbit", "count": 2}, {"creature": "lizard", "count": 4}]
+}

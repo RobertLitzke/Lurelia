@@ -1,0 +1,22 @@
+{
+  "name": "broom",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Broom: a fountain of green whip-like switches, nearly leafless, crowded along their length with yellow pea flowers in late spring and early summer. On the chalk and the poor ground.",
+  "form": "canes",
+  "height": [1.2, 2.2],
+  "trunk_radius": [0.05, 0.06],
+  "crown_radius": [0.7, 1.1],
+  "bark": "broom_switch",
+  "leaf": "broom_leaves",
+  "canopy": "tufts",
+  "max_slope": 0.9,
+  "stems": [14, 24],
+  "cane_lean": 0.3,
+  "cane_bend": 0.02,
+  "cane_spurs": 0.5,
+  "flower": "broom_flowers",
+  "flower_seasons": ["spring", "summer"],
+  "affords": ["nectar"],
+  "cane_leaves": 0.15
+}

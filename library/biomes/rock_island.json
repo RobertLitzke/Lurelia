@@ -1,0 +1,39 @@
+{
+  "name": "rock_island",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The rock islands: low knolls of grey quartzite standing out of the salt, the only dry rock on the pan, crowded with cardon and saguaro and ocotillo, and lizards on every warm face.",
+  "priority": 12,
+  "rules": {"region": "islands", "elev": [0.8, 60]},
+  "surface": "fan_gravel",
+  "subsurface": "fan_gravel",
+  "rock": "quartzite",
+  "map_color": [150, 150, 128],
+  "plants": [
+    {
+      "plant": "cardon",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.1, "max": 1.0}}
+    },
+    {
+      "plant": "saguaro",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.2, "max": 1.0}}
+    },
+    {
+      "plant": "ocotillo",
+      "density": 0.008,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.1, "max": 1.0}}
+    },
+    {"plant": "cholla", "density": 0.006, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "agave", "density": 0.004, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "rock_lichen", "density": 0.3, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "lizard", "count": 14},
+    {"creature": "salt_tortoise", "count": 2},
+    {"creature": "rattlesnake", "count": 1},
+    {"creature": "raven", "count": 2},
+    {"creature": "vulture", "count": 2}
+  ]
+}

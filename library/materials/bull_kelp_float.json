@@ -1,0 +1,15 @@
+{
+  "name": "bull_kelp_float",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Bull kelp float: a round olive-brown bulb at the surface.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [104, 92, 46],
+    "alt": [86, 76, 38],
+    "scale": 6,
+    "contrast": 0.8,
+    "calm": {"base": [110, 98, 52], "alt": [92, 82, 44]}
+  }
+}

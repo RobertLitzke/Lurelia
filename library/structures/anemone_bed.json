@@ -1,0 +1,26 @@
+{
+  "name": "anemone_bed",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Giant green anemones packed in a pool, jade columns with pale tentacles.",
+  "size": [20, 5, 20],
+  "anchor": [10, 0, 10],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"anem": "anemone_green", "tent": "plumose_white"},
+  "ops": [
+    {"op": "cylinder", "base": [4, 0, 4], "radius": 2, "height": 3, "mat": "anem"},
+    {"op": "cylinder", "base": [9, 0, 6], "radius": 2.5, "height": 4, "mat": "anem"},
+    {"op": "cylinder", "base": [14, 0, 4], "radius": 1.8, "height": 3, "mat": "anem"},
+    {"op": "cylinder", "base": [6, 0, 12], "radius": 2.2, "height": 3, "mat": "anem"},
+    {"op": "cylinder", "base": [12, 0, 13], "radius": 2.6, "height": 4, "mat": "anem"},
+    {"op": "cylinder", "base": [16, 0, 10], "radius": 1.8, "height": 3, "mat": "anem"},
+    {"op": "ellipsoid", "centre": [4, 3, 4], "radius": [2.4, 0.7, 2.4], "mat": "tent"},
+    {"op": "ellipsoid", "centre": [9, 4, 6], "radius": [2.9, 0.7, 2.9], "mat": "tent"},
+    {"op": "ellipsoid", "centre": [14, 3, 4], "radius": [2.2, 0.7, 2.2], "mat": "tent"},
+    {"op": "ellipsoid", "centre": [6, 3, 12], "radius": [2.6, 0.7, 2.6], "mat": "tent"},
+    {"op": "ellipsoid", "centre": [12, 4, 13], "radius": [3.0, 0.7, 3.0], "mat": "tent"},
+    {"op": "ellipsoid", "centre": [16, 3, 10], "radius": [2.2, 0.7, 2.2], "mat": "tent"}
+  ]
+}

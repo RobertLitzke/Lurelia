@@ -3,7 +3,7 @@
 //! positions live here and reach the WGSL through the generated prelude
 //! (render/shaders.rs), so Rust and the shaders read the same layout.
 //!
-//! word0: x:5 y:5 z:5 (w-1):5 (h-1):5 dir:3 rounded:1 normal:1 block:1
+//! word0: x:5 y:5 z:5 (w-1):5 (h-1):5 dir:3 rounded:1 normal:1 block:1 tube:1
 //! word1: material:8 ao:8 (four 2-bit corner values) slot:16 (filled in at upload)
 //! word2: corner height offsets:16 (four signed 4-bit quarters of a voxel)
 //!        blend material:8 blend weights:8 (four 2-bit quarters)
@@ -30,6 +30,9 @@ pub const DIR_SHIFT: u32 = 25;
 pub const ROUND_BIT: u32 = 28;
 pub const NORMAL_BIT: u32 = 29;
 pub const BLOCK_BIT: u32 = 30;
+/// A rounded quad that is a face of a tube (mesh/lean.rs): it casts its
+/// shadow from its real corners, not from the square face it hangs from.
+pub const TUBE_BIT: u32 = 31;
 pub const AO_SHIFT: u32 = 8;
 pub const SLOT_SHIFT: u32 = 16;
 pub const BLEND_SHIFT: u32 = 16;

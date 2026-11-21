@@ -95,8 +95,10 @@ impl Memory {
             return false;
         }
         self.due = LOOK_EVERY;
+        // A teammate is somebody it sees and does not fight: not a contact.
+        let mine = fighters.iter().find(|f| f.who == who).and_then(|f| f.team);
         for f in fighters {
-            if f.who == who {
+            if f.who == who || f.friend_of(mine) {
                 continue;
             }
             let seen = f.alive && can_see(store, from, facing, p, f.chest());
@@ -130,10 +132,6 @@ impl Memory {
         true
     }
 
-    /// Everything it has forgotten about: a respawn starts clean.
-    pub fn clear(&mut self) {
-        self.of.clear();
-    }
 }
 
 #[cfg(test)]
@@ -195,6 +193,7 @@ mod tests {
             vel: Vec3::ZERO,
             height: 1.75,
             alive: true,
+            team: None,
         };
         assert!(m.look(&store, me, Vec3::NEG_Z, &p, 0, &[there(0.0)], 1.0, 1.0));
         assert_eq!(m.get(1).map(|c| c.acquired), Some(1.0));

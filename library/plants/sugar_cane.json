@@ -2,13 +2,19 @@
   "name": "sugar_cane",
   "version": 1,
   "introduced_by": "lowmouth",
-  "notes": "Sugar cane: dense clumps of straight jointed stalks taller than a man, ribbon leaves arching over; drawn as sprites.",
-  "form": "herb",
+  "notes": "Sugar cane: dense clumps of straight jointed stalks taller than a man, banded yellow-green and purple, ribbon leaves at their tops. You push through it.",
+  "form": "canes",
   "height": [2.8, 3.8],
+  "trunk_radius": [0.05, 0.06],
   "crown_radius": [0.4, 0.6],
-  "bark": "dead_wood",
+  "bark": "cane_stalk",
   "leaf": "cane_leaves",
+  "canopy": "tufts",
   "max_slope": 0.4,
   "standing_water": [-5, -0.1],
-  "affords": ["cover"]
+  "affords": ["cover"],
+  "stems": [6, 10],
+  "cane_lean": 0.12,
+  "cane_bend": 0.0,
+  "cane_spurs": 0.0
 }

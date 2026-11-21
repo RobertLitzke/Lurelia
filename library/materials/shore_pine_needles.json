@@ -1,0 +1,15 @@
+{
+  "name": "shore_pine_needles",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Shore pine: short yellow-green needles in tufts at the branch ends.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [70, 88, 54],
+    "alt": [88, 104, 62],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [76, 92, 60], "alt": [92, 106, 68]}
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "common_reed",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Common reed (phragmites): tall straight canes in beds along the water, grey-green blades in tufts up their top half.",
+  "form": "canes",
+  "height": [2.5, 4.0],
+  "trunk_radius": [0.05, 0.05],
+  "crown_radius": [0.4, 0.8],
+  "bark": "reed_cane",
+  "leaf": "reed_leaves",
+  "canopy": "tufts",
+  "max_slope": 0.6,
+  "stems": [14, 24],
+  "cane_lean": 0.15,
+  "cane_bend": 0.01,
+  "cane_spurs": 0.0,
+  "cane_leaves": 0.3
+}

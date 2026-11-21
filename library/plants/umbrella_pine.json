@@ -9,5 +9,7 @@
   "crown_radius": [2.8, 3.6],
   "bark": "bark",
   "leaf": "pine",
-  "squash": 0.55
+  "squash": 0.55,
+  "stems": [3, 4],
+  "thin_limbs": 0.12
 }

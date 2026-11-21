@@ -1,0 +1,15 @@
+{
+  "name": "eye_bed",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The bed of the turquoise water: pale gypsum mud under a skin of green-blue algae, white where it shelves up.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [86, 168, 160],
+    "alt": [128, 190, 176],
+    "scale": 4,
+    "contrast": 0.6,
+    "calm": {"base": [92, 170, 162], "alt": [132, 192, 178]}
+  }
+}

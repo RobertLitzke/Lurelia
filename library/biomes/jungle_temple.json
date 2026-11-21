@@ -1,6 +1,6 @@
 {
   "name": "jungle_temple",
-  "version": 1,
+  "version": 2,
   "introduced_by": "jadewater",
   "notes": "The Order's temple grounds at the foot of the Old Wall: moss over everything, banyans in the walls, stone lanterns and rows of little statues.",
   "priority": 10,
@@ -28,8 +28,10 @@
     {"creature": "macaque", "count": 8},
     {"creature": "langur", "count": 5},
     {"creature": "fruit_bat", "count": 5},
-    {"creature": "green_tree_snake", "count": 2}
+    {"creature": "green_tree_snake", "count": 2},
+    {"creature": "tiger", "count": 1}
   ],
   "collectibles": [{"item": "bell_charm", "density": 0.0015, "placement": {"verb": "scatter", "params": {}}}],
+  "sound": {"wind": 0.55, "ground": "stone"},
   "mist": 0.35
 }

@@ -188,6 +188,9 @@ fn key(rig: &Rig, level: u8, leg_m: f32) -> Pose {
     if rig.plan == Some(Plan::Biped) {
         return biped_key(rig, level, leg_m);
     }
+    if rig.plan == Some(Plan::Crab) {
+        return crab_key(rig, level, leg_m);
+    }
     if level == 0 {
         return p;
     }
@@ -272,6 +275,91 @@ fn biped_key(rig: &Rig, level: u8, leg_m: f32) -> Pose {
         }
     }
     p
+}
+
+/// Which side of a crab a bone is on: 1 on the side it walks toward (model
+/// -Z), -1 on the side it walks away from. A crab is drawn with its right side
+/// at -Z, so the walker that leads it along its heading walks it sideways.
+fn crab_lead(rig: &Rig, i: usize) -> f32 {
+    if rig.bones[i].joint.z < rig.bones[0].joint.z {
+        1.0
+    } else {
+        -1.0
+    }
+}
+
+/// A crab's key postures. Resting, it lets its body down onto the sand and
+/// its legs splay out round it; there is no sitting.
+fn crab_key(rig: &Rig, level: u8, leg_m: f32) -> Pose {
+    let mut p = Pose::rest(rig.bones.len());
+    if level == 0 {
+        return p;
+    }
+    for i in 0..rig.bones.len() {
+        let lead = crab_lead(rig, i);
+        // On a leg pointing out along -Z a positive pitch raises it, so
+        // `lead` turns "up" and "out" into the same sign on both sides.
+        if upper_leg(rig, i) {
+            p.bones[i].x += lead * 0.4;
+        } else if lower_leg(rig, i) {
+            p.bones[i].x += lead * 0.3;
+        }
+    }
+    p.root.y = -0.42 * leg_m;
+    p
+}
+
+/// A crab's sideways scuttle. The legs go in an alternating tetrapod: each is
+/// out of step with the legs either side of it and with the one opposite, so
+/// four feet are always down. A leg on the leading side reaches out as it
+/// swings and pulls the body after it; one on the trailing side comes in as
+/// it swings and pushes. "Out" is the lower leg opening, with the upper leg
+/// dropping a little to keep the foot down.
+fn crab(rig: &Rig, pose: &mut Pose, phase: f32, w: f32, leg_m: f32) {
+    for i in 0..rig.bones.len() {
+        if !upper_leg(rig, i) {
+            continue;
+        }
+        let b = &rig.bones[i];
+        let lead = crab_lead(rig, i);
+        let off = ((b.pair + (lead > 0.0) as u32) % 2) as f32 * 0.5 + b.pair as f32 * 0.04;
+        let t = TAU * (phase + off);
+        let (s, c) = t.sin_cos();
+        let reach = s * lead;
+        let up = 0.5 * c.max(0.0) - 0.15 * reach;
+        pose.bones[i].x += lead * up * w;
+        if let Some(j) = rig.bones.iter().position(|k| k.parent == Some(i) && k.role == Role::Leg) {
+            pose.bones[j].x += lead * 0.45 * reach * w;
+        }
+    }
+    pose.root.y -= 0.04 * leg_m * (2.0 * TAU * phase).sin().abs() * w;
+}
+
+/// A crab's claws (`arm` bones, the claw itself the second of each pair):
+/// raised a little as it walks, picking at the ground and carried to the
+/// mouth in turn as it feeds (`feed`, the graze weight), and held up and wide
+/// when it is alarmed. The claws point forward along -X, where a negative
+/// roll lifts them and a yaw of `crab_lead` turns them in toward the mouth.
+pub fn claws(rig: &Rig, pose: &mut Pose, t: f32, walk: f32, feed: f32, alarm: f32) {
+    if rig.plan != Some(Plan::Crab) {
+        return;
+    }
+    for i in 0..rig.bones.len() {
+        if rig.bones[i].role != Role::Arm {
+            continue;
+        }
+        let lead = crab_lead(rig, i);
+        // The two claws pick in turn.
+        let pick = 0.5 + 0.5 * (t * 3.5 + if lead > 0.0 { 0.0 } else { std::f32::consts::PI }).sin();
+        let e = &mut pose.bones[i];
+        if depth(rig, i) == 0 {
+            e.z -= 0.15 * walk + 0.7 * alarm + 0.25 * feed * pick;
+            e.y += lead * (0.35 * feed * pick - 0.45 * alarm);
+        } else {
+            e.z -= 0.3 * alarm + 0.35 * feed * pick;
+            e.y += lead * 0.6 * feed * pick;
+        }
+    }
 }
 
 /// The posture pose at a level between 0 and 2. Without a sitting posture the
@@ -371,12 +459,15 @@ fn biped(rig: &Rig, pose: &mut Pose, g: Gait, phase: f32, w: f32, leg_m: f32) {
     pose.root.y -= (0.5 - 0.5 * (2.0 * t).cos()) * (0.035 + 0.05 * lean) * leg_m * w;
     pose.bones[0].z += 0.07 * s * w;
     pose.bones[0].y += (0.10 + 0.25 * lean) * s * w;
-    pose.bones[0].x += lean * w;
+    // The lean into the stride is the trunk's, not the hips': a turn on the
+    // root swings the legs with it. On a bone that points up, a positive x
+    // turn tips it backwards, so forward is negative here (the opposite of
+    // a hanging limb, where positive x swings it forward).
     for i in 0..rig.bones.len() {
         if rig.bones[i].role == Role::Spine {
             let share = (depth(rig, i) + 1) as f32 * 0.5;
             pose.bones[i].y -= (0.10 + 0.25 * lean) * s * share * w;
-            pose.bones[i].x += lean * 0.4 * w;
+            pose.bones[i].x -= lean * 0.7 * w;
         }
     }
     // Running leaves the ground: one rise and fall a step, not a cycle.
@@ -392,6 +483,9 @@ pub fn gait(rig: &Rig, pose: &mut Pose, g: Gait, phase: f32, w: f32, leg_m: f32)
     }
     if rig.plan == Some(Plan::Biped) {
         return biped(rig, pose, g, phase, w, leg_m);
+    }
+    if rig.plan == Some(Plan::Crab) {
+        return crab(rig, pose, phase, w, leg_m);
     }
     let (a, k) = g.swing();
     for i in 0..rig.bones.len() {

@@ -55,5 +55,6 @@
     {"creature": "bee", "count": 4},
     {"creature": "crow", "count": 3}
   ],
-  "collectibles": [{"item": "flint_blade", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}]
+  "collectibles": [{"item": "flint_blade", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}],
+  "sound": {"wind": 1.3, "grass": 0.9, "notes": "Steppe: tall grass the wind runs through."}
 }

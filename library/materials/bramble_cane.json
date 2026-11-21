@@ -1,0 +1,15 @@
+{
+  "name": "bramble_cane",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Bramble canes: purple-red, prickly, arching over and rooting at the tips.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [104, 58, 66],
+    "alt": [84, 48, 56],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [110, 64, 72], "alt": [90, 54, 62]}
+  }
+}

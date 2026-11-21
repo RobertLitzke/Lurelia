@@ -108,6 +108,16 @@ fn rows(r: &[Row]) -> Vec<Entry> {
 pub fn table(plan: Option<super::Plan>, overrides: &HashMap<String, ActDef>, routine: Routine) -> Table {
     use Act::*;
     let mut e: Vec<Entry> = match (plan, routine) {
+        // Crabs pick over the ground most of the time and rest flat.
+        (Some(super::Plan::Crab), _) => rows(&[
+            (Stand, [2.0, 6.0], &[(Walk, 4.0), (Graze, 5.0), (Look, 1.0), (Lie, 0.6)]),
+            (Walk, [2.0, 6.0], &[(Stand, 2.0), (Graze, 3.0)]),
+            (Graze, [4.0, 14.0], &[(Stand, 2.0), (Walk, 3.0)]),
+            (Look, [1.5, 4.0], &[(Stand, 2.0), (Walk, 1.0)]),
+            (Sit, [5.0, 15.0], &[(Stand, 1.0)]),
+            (Lie, [15.0, 50.0], &[(Stand, 1.0)]),
+            (Drink, [3.0, 6.0], &[(Stand, 1.0), (Graze, 1.0)]),
+        ]),
         (Some(super::Plan::Sprawler), _) => rows(&[
             (Stand, [2.0, 6.0], &[(Walk, 3.0), (Lie, 3.0), (Look, 2.0)]),
             (Walk, [1.0, 4.0], &[(Stand, 3.0), (Lie, 1.0)]),
@@ -438,6 +448,7 @@ impl Life {
         motors::gait(rig, &mut p, self.gait, self.phase, w * self.gait_mix, leg_m);
         motors::gait(rig, &mut p, self.from_gait, self.phase, w * (1.0 - self.gait_mix), leg_m);
         motors::graze(rig, &mut p, self.graze_w, self.t);
+        motors::claws(rig, &mut p, self.t, self.gait_w * up, self.graze_w, self.alarm);
         let free = 1.0 - self.graze_w;
         motors::look(rig, &mut p, self.look.0 * free, self.look.1 * free + 0.2 * self.alert * free);
         motors::tail(rig, &mut p, self.t, self.seed, self.phase, self.gait_w, self.alarm);

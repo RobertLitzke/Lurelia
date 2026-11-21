@@ -1,0 +1,19 @@
+{
+  "name": "sea_buckthorn",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Sea buckthorn in thickets on the dunes: stiff thorny canes rising upright and arching over, sparse silver leaves, the stems crowded with orange berries from midsummer through autumn, bare grey in winter.",
+  "form": "canes",
+  "height": [2.2, 3.8],
+  "trunk_radius": [0.06, 0.09],
+  "crown_radius": [0.9, 1.4],
+  "bark": "buckthorn_wood",
+  "leaf": "buckthorn_leaves",
+  "canopy": "tufts",
+  "max_slope": 0.9,
+  "cane_lean": 0.3,
+  "flower": "buckthorn_berries",
+  "flower_seasons": ["summer", "autumn"],
+  "autumn": "leaves_autumn",
+  "stems": [4, 7]
+}

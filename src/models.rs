@@ -32,11 +32,12 @@ pub fn srgb(r: u8, g: u8, b: u8, e: f32) -> [f32; 4] {
     [f(r), f(g), f(b), e]
 }
 
-/// The model palette with the built-in models' colours filled in (linear RGB
-/// and emissive strength). The ride's colours (ride::palette) and the world's
-/// library colours (LIBRARY_COLOURS) are added by the game.
+/// The fixed block of the model palette (FIXED_SLOTS colours) with the
+/// built-in models' colours filled in (linear RGB and emissive strength). The
+/// ride's colours (ride::palette) are added by the game, and the world's
+/// library models' blocks are appended after it.
 pub fn palette() -> Vec<[f32; 4]> {
-    let mut p = vec![[1.0, 0.0, 1.0, 0.0]; PALETTE_SLOTS];
+    let mut p = vec![[1.0, 0.0, 1.0, 0.0]; FIXED_SLOTS];
     p[DEER as usize] = srgb(150, 98, 60, 0.0);
     p[DEER_BELLY as usize] = srgb(210, 180, 140, 0.0);
     p[DARK as usize] = srgb(36, 28, 24, 0.0);
@@ -71,17 +72,51 @@ pub struct Model {
     /// The same rig, with each bone's part replaced by the bones inside it
     /// (anim/bones.rs): what a deceased one is drawn with.
     pub skeleton: Option<crate::anim::Rig>,
+    /// Where this model's colours start in the palette: a voxel's colour is
+    /// `palette[block + material - PALETTE_BASE]`. 0 for the built-in models,
+    /// the ride, the guns and the bots, which use the fixed block; a library
+    /// model has a block of its own (see FIXED_SLOTS).
+    pub block: u32,
 }
 
 pub(crate) struct Grid {
     v: Box<[u8; PAD3]>,
+    /// Rods drawn as round tubes along their lines (`rod`).
+    threads: Vec<crate::mesh::Thread>,
 }
 
 impl Grid {
     pub(crate) fn new() -> Self {
         Self {
             v: vec![0u8; PAD3].into_boxed_slice().try_into().unwrap(),
+            threads: Vec::new(),
         }
+    }
+    /// A rod from a to b (grid voxel coordinates, a voxel's centre at +0.5),
+    /// `r` voxels thick: its voxels, as `ride::seg` fills them, and a thread
+    /// along it, so it is meshed as a smooth round tube (mesh/lean.rs) at any
+    /// angle, along an axis too.
+    pub(crate) fn rod(&mut self, a: [f32; 3], b: [f32; 3], r: f32, c: u8) {
+        let (va, vb) = (Vec3::from(a), Vec3::from(b));
+        let ab = vb - va;
+        let hull = r.max(0.5);
+        let lo = va.min(vb) - Vec3::splat(hull + 1.0);
+        let hi = va.max(vb) + Vec3::splat(hull + 1.0);
+        for y in lo.y.floor() as i32..=hi.y.ceil() as i32 {
+            for z in lo.z.floor() as i32..=hi.z.ceil() as i32 {
+                for x in lo.x.floor() as i32..=hi.x.ceil() as i32 {
+                    let pt = Vec3::new(x as f32 + 0.5, y as f32 + 0.5, z as f32 + 0.5);
+                    // Flat ends at a and b, as the tube is drawn: no
+                    // rounded cap reaching half a voxel past them.
+                    let t = (pt - va).dot(ab) / ab.length_squared().max(1e-6);
+                    if (0.0..=1.0).contains(&t) && (va + ab * t - pt).length() <= hull {
+                        self.set(x, y, z, c);
+                    }
+                }
+            }
+        }
+        let off = Vec3::new(M as f32, MY as f32, M as f32);
+        self.threads.push(crate::mesh::Thread { a: va + off, b: vb + off, r, hull, mat: PALETTE_BASE + c, lone: false });
     }
     pub(crate) fn set(&mut self, x: i32, y: i32, z: i32, c: u8) {
         if (0..32).contains(&x) && (0..32).contains(&y) && (0..32).contains(&z) {
@@ -126,6 +161,7 @@ impl Grid {
     /// `None` for an empty grid. What a shape is as opposed to what it was
     /// drawn inside, which is the only way to ask whether two models have
     /// the same silhouette.
+    #[cfg(test)]
     pub(crate) fn bounds(&self) -> Option<([i32; 3], [i32; 3])> {
         let (mut lo, mut hi) = ([i32::MAX; 3], [i32::MIN; 3]);
         for z in 0..32 {
@@ -145,7 +181,7 @@ impl Grid {
 
     pub(crate) fn build(self, voxel: f32, half_w: f32, height: f32) -> Model {
         let mut mesh = Mesh::default();
-        crate::mesh::mesh_model(&self.v, &mut mesh);
+        crate::mesh::mesh_model_t(&self.v, &self.threads, &mut mesh);
         Model {
             mesh,
             voxel,
@@ -154,6 +190,7 @@ impl Grid {
             height,
             rig: None,
             skeleton: None,
+            block: 0,
         }
     }
 }
@@ -164,12 +201,35 @@ pub const FOX_M: usize = 2;
 pub const GEM_M: usize = 3;
 pub const GULL_M: usize = 4;
 
-/// Model palette slots. A model voxel's material is PALETTE_BASE + slot, so
-/// 192 fit in a u8. Slots 0..17 are the built-in models' colours, 17..48 are
-/// free, 48..64 belong to the ride models (ride.rs), and the rest hold the
-/// loaded world's library creature and collectible colours, first seen first.
+/// How many colours one model can use. A model voxel's material is
+/// PALETTE_BASE + slot, so 192 slots fit in a u8; the slot counts from the
+/// model's own `block` in the palette.
 pub const PALETTE_SLOTS: usize = 192;
-pub const LIBRARY_COLOURS: std::ops::Range<usize> = 64..PALETTE_SLOTS;
+
+/// The palette's first block, shared by every model whose `block` is 0:
+/// 0..17 are the built-in models' colours, 18..38 the guns
+/// (combat/viewmodel.rs), 38..48 the bots (brain/avatar.rs) and 48..64 the
+/// ride (ride.rs). Each library creature, collectible and platform model
+/// gets a block of its own after this one, so a world has no limit on its
+/// colours, only each model (PALETTE_SLOTS).
+pub const FIXED_SLOTS: usize = 64;
+
+/// The slot (plus 1, as `from_cells` wants it) of colour `lin` in the block
+/// that starts at `colours[start]`, appending it if the block lacks it. A
+/// slot past PALETTE_SLOTS is clamped to the last one; `block_problem` says
+/// when that happened.
+pub fn block_slot(colours: &mut Vec<[f32; 4]>, start: usize, lin: [f32; 4]) -> u8 {
+    let k = colours[start..].iter().position(|x| x == &lin).unwrap_or_else(|| {
+        colours.push(lin);
+        colours.len() - 1 - start
+    });
+    k.min(PALETTE_SLOTS - 1) as u8 + 1
+}
+
+/// The complaint for a block of `n` colours, if one model cannot hold them.
+pub fn block_problem(name: &str, n: usize) -> Option<String> {
+    (n > PALETTE_SLOTS).then(|| format!("{name}: {n} colours, and one model can use {PALETTE_SLOTS} at most"))
+}
 
 /// sRGB bytes (and optional emissive strength) to the palette's linear form.
 pub fn linear_colour(c: &[f32]) -> [f32; 4] {
@@ -326,5 +386,22 @@ pub struct Instance {
     /// and not only darken (variety::Repaint). Zero leaves the model alone.
     /// The fourth value flags the shadow: 1 casts a shadow but is never
     /// drawn, 2 is drawn but casts none (ride.rs `SHADOW_ONLY`/`NO_SHADOW`).
+    /// `GLASS` and up is drawn see-through and casts none (`glass`).
+    /// Below 0 the shadow is cast thinned, -w of it (a bird high over the
+    /// ground, entities.rs `shadow_fade`).
     pub shift: [f32; 4],
+}
+
+/// `Instance::shift[3]` at and above this draws the instance see-through:
+/// blended over what is behind it, writing no depth and casting no shadow.
+/// What is over `GLASS` is its opacity, 0 to 1.
+pub const GLASS: f32 = 3.0;
+
+impl Instance {
+    /// Draw this see-through, `alpha` of it opaque (more at grazing angles,
+    /// where the edges hold the shape: scene.wgsl `fs_entity_glass`).
+    pub fn glass(mut self, alpha: f32) -> Instance {
+        self.shift[3] = GLASS + alpha.clamp(0.0, 1.0);
+        self
+    }
 }

@@ -1,6 +1,6 @@
 {
   "name": "kelp_forest",
-  "version": 2,
+  "version": 3,
   "introduced_by": "glassfall",
   "notes": "Giant kelp on rocky reef 3 to 16 m down along the coast: stipes to the surface, a floating canopy, herring and the odd manta among them.",
   "priority": 2,
@@ -27,6 +27,8 @@
     {"creature": "rockfish", "count": 24},
     {"creature": "kelp_perch", "count": 30},
     {"creature": "sea_otter", "count": 3},
-    {"creature": "cormorant", "count": 3}
+    {"creature": "cormorant", "count": 3},
+    {"creature": "orca", "count": 1},
+    {"creature": "herring_shoal", "count": 80}
   ]
 }

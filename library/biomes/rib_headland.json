@@ -1,0 +1,28 @@
+{
+  "name": "rib_headland",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The basalt headland: wind-cut turf and heather, shore pines bent flat, the cliffs white with birds.",
+  "priority": 6,
+  "rules": {"region": "headland", "elev": [1.5, 200]},
+  "surface": "shore_grass",
+  "subsurface": "dirt",
+  "rock": "basalt",
+  "map_color": [110, 120, 84],
+  "plants": [
+    {"plant": "shore_pine", "density": 0.0012, "placement": {"verb": "clustered", "params": {"size": 24}}},
+    {"plant": "heather", "density": 0.03, "placement": {"verb": "clustered", "params": {"size": 18}}},
+    {"plant": "salal", "density": 0.02, "placement": {"verb": "clustered", "params": {"size": 14}}},
+    {"plant": "rock_lichen", "density": 0.08, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [{"structure": "basalt_boulder", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "puffin", "count": 8},
+    {"creature": "cormorant", "count": 4},
+    {"creature": "gull", "count": 5},
+    {"creature": "raven", "count": 1},
+    {"creature": "eagle", "count": 1},
+    {"creature": "albatross", "count": 4}
+  ],
+  "collectibles": []
+}

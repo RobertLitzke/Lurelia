@@ -18,10 +18,11 @@ on the face of every scarp high enough to reach them. The flint is why people
 came.
 
 The one break in the rolling country is the Barrow Edge, a scarp some
-twenty-two metres high running north-north-east down the east of the land where
-the chalk snapped along a line. Short dry combes are cut back into it at
-intervals, so it is not one wall but a sequence of bays and noses. The high
-ground east of it is the Flint Down, the bleakest part of the country: thin turf
+twenty-six metres high where the chalk snapped along a curving line. It comes in
+from the north, swings south-east across the middle of the land in bays and
+noses, and leaves by the east, so that the whole north-east stands behind it.
+Dry combes are cut back into its face wherever water once came over. The high
+ground behind it is the Flint Down, the bleakest part of the country: thin turf
 over rubble, more flint than soil.
 
 The great herds are gone from the country but not from living memory. Two herds
@@ -31,8 +32,10 @@ downs, perhaps once in a season, something the size of a cart sails past on the
 wind, pale as the grass and shaped like the skates but ten times the size.
 
 Water is scarce. One river, the Narrow, rises in springs at the foot of the
-northern downs, runs south-west across the whole land in a shallow green valley,
-and ends in Saltmere, a lake with no outlet in the south-west hollow. The lake
+Edge, winds west across the middle of the land below the barrow ridge in a
+shallow green valley, turns south at Durn, and ends in Saltmere, a long lake
+with no outlet in the south-west hollow. Every other valley in the country is
+dry: they were cut in wetter ages and run down to the Narrow from all sides. The lake
 is a quarter salt; a white crust rings it in summer and the ground round it
 grows nothing but low grey scrub. The valley of the Narrow is the only green
 line in the country and everything lives along it.
@@ -198,7 +201,23 @@ at the height of a man's head.
 The strangeness is in those three things and nowhere else. The further you walk
 from the barrow ridge, the Tepe and the Gape, the more ordinary the country is.
 
+## The White Horse and the dew pond
+
+South of the Narrow, on the flank of the hill that faces the villages across
+the valley, a horse is cut through the turf to the chalk: a hundred paces from
+nose to tail, at full stretch, its feet downhill so that it is read from below.
+The first people of Durn cut it, and it is scoured clean every seventh summer.
+Nothing about it is unexplained; it is the one mark on the land the villages
+will tell you they made.
+
+Far out in the dry south-east, a morning from the river, a saucer was dug on a
+hilltop and puddled with clay and straw. It fills from the rain and the mist
+and has never been known to dry, which is what keeps the herds on the far downs
+through the summer.
+
 ## Points of interest
+
+- The White Horse on its hillside south of the Narrow, and the dew pond beyond.
 
 - The Tepe: the carved pillar enclosure on its hill, seen from the barrow ridge.
 - The Mare's Barrow and the three knots of barrows along the ridge.

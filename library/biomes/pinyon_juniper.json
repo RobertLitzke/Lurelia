@@ -48,5 +48,6 @@
   "collectibles": [
     {"item": "arrowhead", "density": 6e-05, "placement": {"verb": "scatter", "params": {}}},
     {"item": "pottery_shard", "density": 4e-05, "placement": {"verb": "scatter", "params": {}}}
-  ]
+  ],
+  "sound": {"leaves": 0.6, "wind": 1.1, "notes": "Scrubby needles and scale-leaves in dry wind."}
 }

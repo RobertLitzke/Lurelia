@@ -22,7 +22,9 @@ const CROUCH_H: f32 = 1.05;
 const CROUCH_DROP: f32 = 0.62;
 /// Seconds to go all the way down, and back up.
 const CROUCH_RATE: f32 = 6.0;
-const GRAVITY: f32 = 24.0;
+/// How hard the keys push a body in the air, m/s squared, against 60 on the
+/// ground.
+const AIR_ACCEL: f32 = 16.0;
 const JUMP_V: f32 = 7.6;
 /// How hard a jump taken in mid-air pushes, as a share of one off the
 /// ground. Under 1, so the second one reads as a kick and not a second
@@ -333,10 +335,24 @@ impl Player {
         } else if self.swimming {
             14.0
         } else {
-            16.0
+            AIR_ACCEL
         };
         let v = Vec3::new(self.body.vel.x, 0.0, self.body.vel.z);
-        if !self.body.on_ground && !self.swimming && v.length() > SPRINT + 0.5 {
+        let gravity = store.gravity;
+        if gravity.low() && !self.body.on_ground && !self.swimming {
+            // Afloat in low gravity: a jump hangs for seconds, so the air is
+            // somewhere you steer. The keys turn the body toward where they
+            // point however fast it is going, without taking off any speed
+            // it already has that way; with no key held it drifts on as it
+            // was thrown rather than stopping dead over a drop.
+            if wish != Vec3::ZERO {
+                let dv = wish * speed.max(v.dot(wish)) - v;
+                let max = accel * dt;
+                let dv = if dv.length() > max { dv.normalize() * max } else { dv };
+                self.body.vel.x += dv.x;
+                self.body.vel.z += dv.z;
+            }
+        } else if !self.body.on_ground && !self.swimming && v.length() > SPRINT + 0.5 {
             // Flying along with momentum (off the rope, a wall, the bike): keep
             // it. Keys only add speed toward where they point.
             let add = (speed - v.dot(wish)).clamp(0.0, accel * dt);
@@ -354,7 +370,8 @@ impl Player {
         if self.swimming && self.haul > 0.0 {
             // Hauling out: the water has let go of the body.
             self.haul -= dt;
-            self.body.vel.y = (self.body.vel.y - GRAVITY * dt).max(-50.0);
+            self.body.vel += gravity.pull(self.pos) * dt;
+            self.body.vel.y = self.body.vel.y.max(-50.0);
         } else if self.swimming {
             self.haul = 0.0;
             if input.down {
@@ -371,7 +388,8 @@ impl Player {
             }
         } else {
             self.haul = 0.0;
-            self.body.vel.y = (self.body.vel.y - GRAVITY * dt).max(-50.0);
+            self.body.vel += gravity.pull(self.pos) * dt;
+            self.body.vel.y = self.body.vel.y.max(-50.0);
         }
 
         // The dodge: a double-tapped direction key throws the body that way,
@@ -562,7 +580,7 @@ impl Player {
                 continue;
             }
             let rise = (y - self.pos.y).max(0.0) + 0.3;
-            self.body.vel.y = (2.0 * GRAVITY * rise).sqrt();
+            self.body.vel.y = (2.0 * store.gravity.pull(self.pos).length() * rise).sqrt();
             self.haul = 0.8;
             return;
         }
@@ -745,6 +763,57 @@ mod tests {
         assert!(three > two * 1.2, "three taps reached {three} m, two reached {two} m");
         let four = apex(true, 4);
         assert!((four - three).abs() < 0.05, "a fourth jump added {} m", four - three);
+    }
+
+    /// A world that says `"gravity": {"g": 0.3}` is one where a jump goes
+    /// about three times as high, and where the keys turn a body round in
+    /// the air that the engine's own gravity would leave flying on.
+    #[test]
+    fn low_gravity_jumps_higher_and_steers_in_the_air() {
+        let jump = |g: f32| {
+            let mut s = rink();
+            s.gravity.g = g;
+            let mut ride = walking_ride();
+            let mut p = Player::new(Vec3::new(0.0, 8.1, 0.0), 0.0);
+            run(&mut p, &mut ride, &s, &MoveInput::default(), 0.3);
+            let foot = p.pos.y;
+            let mut high: f32 = 0.0;
+            for i in 0..600 {
+                let input = MoveInput { jump: i == 0, ..Default::default() };
+                p.update(&mut ride, &input, &s, -100.0, (-100.0, glam::Vec2::ZERO), false, 1.0 / 60.0);
+                high = high.max(p.pos.y - foot);
+            }
+            assert!(p.body.on_ground, "it never came back down at g = {g}");
+            high
+        };
+        let (heavy, light) = (jump(1.0), jump(0.3));
+        assert!(light > heavy * 2.8 && light < heavy * 3.8, "a jump reached {light} m at 0.3 g against {heavy} m");
+
+        // Thrown north at dodge speed, well clear of the floor, with the
+        // right key held for a second. The engine's own gravity adds the
+        // sidestep and leaves the throw alone; low gravity turns the body.
+        let thrown = |g: f32| {
+            let mut s = rink();
+            s.gravity.g = g;
+            let mut ride = walking_ride();
+            let mut p = Player::new(Vec3::new(0.0, 28.0, 0.0), 0.0);
+            p.body.vel = Vec3::new(0.0, 0.0, -DODGE_V);
+            let right = MoveInput { right: true, ..Default::default() };
+            run(&mut p, &mut ride, &s, &right, 1.0);
+            assert!(!p.body.on_ground);
+            p.body.vel.z
+        };
+        assert!(thrown(1.0) < -SPRINT, "the engine's own gravity should keep the throw: {} m/s", thrown(1.0));
+        assert!(thrown(0.3) > -1.0, "low gravity should have turned it: still {} m/s north", thrown(0.3));
+
+        // With no key held, a floating body drifts on instead of stopping.
+        let mut s = rink();
+        s.gravity.g = 0.3;
+        let mut ride = walking_ride();
+        let mut p = Player::new(Vec3::new(0.0, 28.0, 0.0), 0.0);
+        p.body.vel = Vec3::new(0.0, 0.0, -WALK);
+        run(&mut p, &mut ride, &s, &MoveInput::default(), 1.0);
+        assert!(p.body.vel.z < -WALK * 0.95, "it lost its drift: {} m/s", p.body.vel.z);
     }
 
     /// A hundred metres of solid floor with its top at y = 8, made of whole

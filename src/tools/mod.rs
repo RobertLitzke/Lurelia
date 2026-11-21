@@ -4,7 +4,9 @@
 
 pub mod bench;
 pub mod catalog;
+pub mod ctf;
 pub mod duel;
 pub mod headless;
 pub mod inspect;
+pub mod league;
 pub mod tourney;

@@ -1,0 +1,15 @@
+{
+  "name": "turquoise_water",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The Turquoise: brine fed from below in the north-west of the pan, a metre or two deep over pale mud and so clear and so blue-green that it looks lit from underneath, with smaller eyes round it going down further than you can see.",
+  "priority": 9,
+  "rules": {"underwater": true, "region": "eyes"},
+  "surface": "eye_bed",
+  "subsurface": "salt_mud",
+  "fringe": 0,
+  "map_color": [70, 190, 190],
+  "plants": [],
+  "creatures": [],
+  "water": {"shallow": [96, 206, 200], "deep": [18, 118, 140]}
+}

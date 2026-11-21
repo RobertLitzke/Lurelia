@@ -1,6 +1,6 @@
 {
   "name": "palm_island",
-  "version": 1,
+  "version": 2,
   "introduced_by": "thornpan",
   "notes": "A palm island in the delta: a sand knoll a metre and a half up, ringed with fan palms grown from nuts that went through an elephant, with grass on its crown and usually one baobab.",
   "priority": 14,
@@ -19,7 +19,10 @@
     {"creature": "warthog", "count": 6},
     {"creature": "macaque", "count": 4},
     {"creature": "glossy_starling", "count": 8},
-    {"creature": "firefly", "count": 20}
+    {"creature": "firefly", "count": 20},
+    {"creature": "zebra", "count": 4},
+    {"creature": "giraffe", "count": 2},
+    {"creature": "lechwe", "count": 6}
   ],
   "collectibles": [{"item": "seashell", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}]
 }

@@ -107,6 +107,13 @@ pub struct MaterialDef {
     /// is softened toward the face as on hillsides. Implies `round`.
     #[serde(default)]
     pub facet: bool,
+    /// Faceted only where the surface is stepped: a corner where every face
+    /// that meets it runs flat for two voxels (the edge of a box, a wall
+    /// corner, the foot of a wall) stays square, and a staggered edge of
+    /// one-voxel pieces is bevelled. For built things; implies `facet`. The
+    /// arenas set it per world (`round_edges` in world.json).
+    #[serde(default)]
+    pub bevel_steps: bool,
     /// Only the bright, blue-green specks of its texture give light, not the
     /// rock between them (glow-worm ceilings, the lantern film).
     #[serde(default)]
@@ -130,6 +137,12 @@ pub struct MaterialDef {
     /// voxel, but physics never collides with it.
     #[serde(default)]
     pub passable: bool,
+    /// A half-height block, like a slab: it fills the lower half of its
+    /// voxel and leaves the upper half open, so a body standing on it
+    /// stands an eighth of a metre up. The mesher draws it half height and
+    /// physics stands on its top. Ray casts still treat it as a whole voxel.
+    #[serde(default)]
+    pub slab: bool,
     /// Flashes in the sun texel by texel. Default: the name contains "glass".
     #[serde(default)]
     pub glints: Option<bool>,
@@ -160,6 +173,11 @@ pub struct MaterialDef {
     /// Water drawn as solid voxels (rivers): walking creatures keep out.
     #[serde(default)]
     pub water: bool,
+    /// Flat ground that a shower floods from edge to edge instead of in
+    /// puddles: a salt pan or a playa, where an inch of water turns the
+    /// whole flat into a mirror of the sky (scene.wgsl `damp_ground`).
+    #[serde(default)]
+    pub floods: bool,
     /// Its detail sprites grow under the sea as well as over it: eelgrass and
     /// the other drowned meadows, which are otherwise hidden at the
     /// waterline like land grass.

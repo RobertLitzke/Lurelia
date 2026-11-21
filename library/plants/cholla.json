@@ -9,9 +9,11 @@
   "crown_radius": [0.35, 0.5],
   "bark": "cholla",
   "leaf": "cholla",
+  "curve": "kinked",
   "spread": 0.5,
   "dome": 0,
   "limb": 1.0,
   "max_slope": 0.9,
-  "affords": ["nectar", "nest"]
+  "affords": ["nectar", "nest"],
+  "thin_limbs": 0.2
 }

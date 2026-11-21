@@ -1,8 +1,10 @@
 # Redrock
 
 A high desert where a plateau of pine forest breaks off in red cliffs, and the
-country below runs south in benches of sandstone and sand to a reservoir that is
-slowly going dry.
+country below falls away south-west in benches of sandstone and sand to a
+reservoir that is slowly going dry. The land runs on past every horizon; the
+reservoir is a drowned river canyon across the south and up the west, with the
+same desert standing on its far side.
 
 ## The rock
 
@@ -14,29 +16,35 @@ on the bare clay. Above it is a dark red sandstone that breaks in sheer walls,
 then a thinner band of purple-red ledges, then a thick pale sandstone that was
 once a desert of dunes: cream at the top, salmon lower down, its old dune faces
 showing as long sloping lines in the cliffs. Over all of it, on the high
-plateau in the north, lies a cap of black basalt.
+plateau in the north-east, lies a cap of black basalt.
 
 Nobody can say what happened next in a sentence, but the land rose and the
 water cut it. The edge of the plateau stepped back into two lines of cliffs:
-the White Cliffs below the forest, and lower down the Red Cliffs, more than a
-hundred feet of red wall running the whole width of the country, cut back here
-and there by short side canyons. South of the Red
-Cliffs the land is a broad sandy bench with mesas and buttes standing on it,
+the White Cliffs below the forest, which bound the high country in the
+north-east, and lower down the Red Cliffs, more than a hundred feet of red wall
+crossing the whole country on a long double bend from the east to the
+north-west, cut back here and there by short side canyons. South and west of
+the Red Cliffs the land is a broad sandy bench with mesas and buttes standing on it,
 the pieces of cliff the water hasn't finished taking. A few are so worn that
-only a spire is left. The beds are not quite level everywhere: they thicken
+only a spire is left. Castle Mesa in the north-west is an island of the Red
+Cliffs themselves, and the Sisters are three buttes standing together south of
+the highway. The beds are not quite level everywhere: they thicken
 and thin from place to place, and in two places they bend up along a fold.
 Erosion has stripped the high side of each fold, leaving a tilted ridge, a
 reef: a long slope of bare rock climbing with the beds and a ledgy cliff on
 the other side. The bigger one, the Comb, is in the south-east, and a smaller
 one stands west of the Gathering. A few cracks have worn down through each
-crest, and they are the ways up. In the south-west the wind has heaped sand
-off the old lake beaches into a field of coral-pink dunes.
+crest, and they are the ways up. Above the west shore the wind has heaped sand
+off the old river beaches into a field of coral-pink dunes.
 
-The Sorrel River rises in springs on the plateau, falls off it through a gap in
-the cliffs and has cut a canyon south across the whole bench, about a hundred
-feet deep at the highway and deeper where it slots through the Red Cliffs,
+The Sorrel River rises in springs on the plateau, where water that sank
+through the cinders comes out again at the edge of the basalt. It runs as a
+creek through the pines, falls off the plateau through a gap in the White
+Cliffs and has cut a canyon that winds south-west and then south across the
+whole bench, about a hundred feet deep at the highway and deeper where it slots
+through the Red Cliffs,
 flat-floored, its walls climbing in ledges of red sandstone over banded clay.
-East of the canyon the pale sandstone stands up in fins, thin walls of rock
+South-east of the canyon the pale sandstone stands up in fins, thin walls of rock
 left between joints that weathered out, and the weather has worn windows
 through several of them. Out on the slickrock bench the Lone Arch is the
 thinnest of them, its span worn through a fin that is almost gone.
@@ -95,7 +103,7 @@ stone chapel, dug ditches and planted orchards.
 
 In 1929 the state built a steel arch bridge across Sorrel Canyon, and the next
 year a highway along the foot of the Red Cliffs, where the ground is flattest,
-from the river crossing in the west to the ferry in the east. In 1954 the
+from the river crossing in the west to the ferry in the south-east. In 1954 the
 Pruitt family built a filling station beside it, about a third of the way down
 from the plateau: two pumps under a canopy, a store, a water tank, a sign on a
 tall pole.
@@ -108,8 +116,8 @@ were paid and moved out. The water covered their fields and the river crossing a
 the west end of the highway, where the road ran down a shallow wash to the
 lake. In 1983 a flash flood cut that wash back two hundred metres in a night
 and took the road with it; the highway now ends at a barricade on the lip of
-a canyon that wasn't there when it was built. At the east end it goes down another wash to a ferry
-landing. Below the Sorrel's mouth the canyon is drowned, so
+a canyon that wasn't there when it was built. At its other end it leaves the cliffs and goes down a
+long wash to a ferry landing on the south shore. Below the Sorrel's mouth the canyon is drowned, so
 the red walls go straight down into green water.
 
 For a while the lake brought people. In 1992 the Pruitts' son bulldozed a dirt
@@ -120,7 +128,8 @@ a double jump and a tabletop, and riders came out on weekends.
 
 For twenty years the lake has been falling. It has left a white ring of
 mineral crust on the cliffs above the water, the bathtub ring. The stone
-chapel of Bitterwater stands up out of the shallows again. The ferry stopped
+chapel of Bitterwater stands at the water's edge again, on cracked mud where
+the Sorrel's drowned mouth has drawn back. The ferry stopped
 four years ago because the ramp no longer reached the water. The station closed
 two years ago. The pumps are still there.
 

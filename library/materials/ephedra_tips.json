@@ -1,0 +1,16 @@
+{
+  "name": "ephedra_tips",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Mormon tea: the bushy upper joints, yellow-green. Passable.",
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [150, 160, 92],
+    "alt": [128, 138, 76],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [156, 166, 98], "alt": [134, 144, 82]}
+  }
+}

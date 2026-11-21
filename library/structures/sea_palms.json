@@ -1,0 +1,26 @@
+{
+  "name": "sea_palms",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Sea palms on the surf-beaten rock: rubbery stalks a little under a metre tall, each with a mop of blades.",
+  "size": [16, 8, 16],
+  "anchor": [8, 0, 8],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"palm": "sea_palm"},
+  "ops": [
+    {"op": "cylinder", "base": [4, 0, 4], "radius": 0.5, "height": 4, "mat": "palm"},
+    {"op": "cylinder", "base": [8, 0, 3], "radius": 0.5, "height": 5, "mat": "palm"},
+    {"op": "cylinder", "base": [11, 0, 6], "radius": 0.5, "height": 5, "mat": "palm"},
+    {"op": "cylinder", "base": [5, 0, 9], "radius": 0.5, "height": 4, "mat": "palm"},
+    {"op": "cylinder", "base": [10, 0, 11], "radius": 0.5, "height": 5, "mat": "palm"},
+    {"op": "cylinder", "base": [7, 0, 13], "radius": 0.5, "height": 4, "mat": "palm"},
+    {"op": "ellipsoid", "centre": [4, 4.5, 4], "radius": [1.4, 0.9, 1.4], "mat": "palm"},
+    {"op": "ellipsoid", "centre": [8, 5.5, 3], "radius": [1.4, 0.9, 1.4], "mat": "palm"},
+    {"op": "ellipsoid", "centre": [11, 5.5, 6], "radius": [1.4, 0.9, 1.4], "mat": "palm"},
+    {"op": "ellipsoid", "centre": [5, 4.5, 9], "radius": [1.4, 0.9, 1.4], "mat": "palm"},
+    {"op": "ellipsoid", "centre": [10, 5.5, 11], "radius": [1.4, 0.9, 1.4], "mat": "palm"},
+    {"op": "ellipsoid", "centre": [7, 4.5, 13], "radius": [1.4, 0.9, 1.4], "mat": "palm"}
+  ]
+}

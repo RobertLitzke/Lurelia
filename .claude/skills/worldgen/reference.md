@@ -20,6 +20,23 @@ bearings in degrees, 0 = north (-Z), 90 = east (+X). World x runs east, z south.
 }
 ```
 
+On generated land give the spawn as a found place, `"spawn_at": {"from":
+"fjord_head", "by": [12, 0], "as_if": 90}`, which wins over `spawn`;
+`spawn_bearing` turns with it.
+
+## Positions
+
+Wherever an event takes a position it may be `[x, z]`, a name, or an offset
+from a name: `{"from": "fjord_head", "by": [30, -12]}` is 30 m east and 12 m
+north of that place. Names come from the chronicle's `places` table, from a
+`seat` event, or from `glaciate`, which names what it made. A found place may
+face a way (a fjord's head faces up its valley, a shore inland, a cove out to
+open water). With `"as_if": B` the offset is read as drawn for a place facing
+bearing B and turned in quarter turns to suit the way it came out; a `place`
+turns its structure, and `vent` and `lamp` their points, the same amount. Lay
+a village out once, for the shore on whichever side you like, and it keeps the
+water at its feet however the land regenerates.
+
 Keep land between sea level and `height_m` (the voxel volume's top).
 
 Optional fields:
@@ -44,6 +61,11 @@ Optional fields:
   `water` too (at most two biomes per world): open water over it, and any
   inland water (a cenote, a lake not joined to the sea) whose shore is mostly
   that biome, takes it.
+- `blurb`: one sentence on what the place is, shown under the launch
+  screen's list with the world picked. Write one for every world; without it
+  the first sentence of story.md is used. `title` is the name the menus show
+  where the folder name in capitals is wrong ("Deck 16"), and
+  `"listed": false` keeps a bench or a test off the list.
 - `start_hour` (15): the hour a new game starts at, 5.2 to 18.8 (Hemlow
   opens at 17.6, golden hour). A world with a short or long day should pick
   the hour on its own sun path: at latitude 64 in winter the sun is up from
@@ -73,7 +95,7 @@ Optional fields:
   (`render/aurora.rs`). Each night draws its own share and a fifth are
   quiet. 1 is a full display; leave it 0 anywhere south of the Arctic.
 - `weather` ({}): the climate, as kind name to weight -- `sun`, `heat`,
-  `clouds`, `rain`, `snow`, `fog` (`src/world/weather.rs`; GUIDE.md,
+  `clouds`, `rain`, `snow`, `fog`, `storm` (`src/world/weather.rs`; GUIDE.md,
   "Weather"). A kind left out of a block that has anything in it never
   happens there, so a desert gives `{"sun": 1.5, "heat": 1.0, "clouds": 0.5,
   "fog": 0.1}` and never sees snow or rain; a rainforest leans on rain and
@@ -112,6 +134,9 @@ Optional fields:
   read their noise. A world trimmed after it was made (Lowmouth lost 152 m
   off the west: every x moved by -152, `noise_at` [152, 0]) keeps the same
   coast and islands under its moved features.
+- `mirage` (0): how strongly far flat ground mirrors the sky in the heat of
+  the day, 0 to 1 (GUIDE.md, "Sheet floods, reflections and the mirage").
+  Saltmirror's salt pan is 1.
 - `snow_line_m` (72): ground above this height turns to snow. A warm world
   with tall towers sets it out of reach (Jadewater: 1000).
 
@@ -143,7 +168,14 @@ the land that is already there.
 
 | event | params | does |
 |---|---|---|
-| `landmass` | centre, radius, roughness (0.5), hills (m), ridges (m), shelf (14), edge_fall (140) | the island: warped coast, rolling hills; sets base moisture. `shelf` is the sea floor's depth off the coast: 3 makes a shallow lagoon you can see the sand through (it still falls to 14 m over the last `edge_fall` m before the world's edge; Lowmouth's 1.4 m sound uses 60) |
+| `terrain` | base (m), hills, ridges, rough (m), vary (0.6), warp (60 m), scale (1), relief [{at, radius, height, stretch [bearing, factor]}], courses [{path, width, depth, depth_end, walls}], sea [{edge, reach, bays, rise (60), skerries}], shelf (14) | the land from a loose sketch, in place of `landmass`: rises and basins (`relief`, height above or below `base`), broad sags for water to find (`courses`; `walls` toward 1 makes one a block let down between two faults, with a level floor and a scarp each side), and sea along whichever edges are named (none: land to every horizon). A course's `width` is its half-width. A deep walled course that leaves the map at both ends and goes under the sea is a drowned river canyon with land on its far side (Redrock's Lake Corwin: width 64, depth 42 from a base of 46 over a sea at 10, walls 0.75), which reads far better than sea along an edge. Everything is read through a warp, so nothing comes out as drawn, and `vary` makes hills, ridges and knobbly ground strong in some quarters and faint in others. Follow it with `drainage`. Keep the highest ground it reports under `height_m` |
+| `drainage` | name, points (9), sinks [pos], iters (24), strength (0.25), exponent (0.45), diffuse (0.12), wander (1.6 m), source (2500 m2), inflow [{at, area}], edges (false), step (2) | running water over the land as it stands: every stream cuts toward the sea, big ones fastest, so valleys branch and wind where the water went. It cuts back from the sea: few `iters` leave gorges near the coast and plateau behind. `inflow` is a river arriving from beyond the map (`area` its catchment, 1e6 = a square kilometre), put on the edge where a `course` begins. `edges` lets water leave over the world's edge, for a country with no coast. A hollow below sea level that does not reach the edge is a lake, not sea; with no sea at the edge at all the water ends in whatever lies below sea level (an inland delta: Thornpan). `name` names the biggest river: `<name>_source`, `_1`..`_9`, `_mouth` (faces the way it arrives); give those to a `watercourse` as `via` (or to a `river` as its `path`) and it runs down the valley this cut; ask for more `points` on a long winding river or the line cuts its corners. `sinks` are places water ends above the sea, a lake with no outlet: the river that reaches one stops there (Windbarrow's Saltmere, with `edges` on for everything else). An `inflow` need not be on the edge: a spring is one |
+| `glaciate` | name ("fjord"), inflow, min_area (40000), width, depth, side (each [least, most]), rim, shape (2), ledge, floor_mat, floor_min (1), sill {top, length, inset}, cirque_above, valleys [{name, near, poi, cirque {radius, ice, ice_m, poi}}], poi | an ice age: a glacier down every valley that collects `min_area`, each cutting a `trough` sized by its ice, so the trunk goes far deeper than what joins it, tributaries hang, and where the trunk's floor is under the sea there is a fjord. Where the head of the fjord falls depends on the land before it: raise the upper `course` (less `depth`) to bring it west. A second big `inflow` gives a second arm. Names `<name>_head` (faces up the valley), `_valley`, `_mouth`, `_sill`, `_1`..`_9` down the water; and per valley `<v>_head`, `_1`..`_3`, `_above`, `_lip`, `_out` (an `icefall` runs from `_above` toward `_out`) |
+| (escarpment trap) | | an `escarpment` does not lift ground that is more than a metre under the sea, so a hollow or a deep `course` in low base land stays behind as a pit in the plateau, and a lake put there fills at sea level (Hemlow's first try). Keep base land above the sea wherever a scarp will lift it |
+| `strandline` | levels [m, ...], band (4), strength (0.8) | the shore of water that stood at a height for a long time and is gone: a bench cut into every slope at each level with a low cliff behind it, following the contour round every hill, broad in places and faint in others. Thornpan's old lake. Put it before `drainage` so the streams cut through it |
+| (rivers) | `river` and `watercourse` both take rise (0 m), from_edge (false); `river` also curve (false, see `canyon`) | **A river must come from somewhere.** With neither, it starts full-grown at its first point, which reads as a river from nowhere. `rise` grows it from a trickle to full width and depth over that many metres (150 to 300 for one that rises at a spring; mark the spring with rocks, wet ground and a name, as Windbarrow does). `from_edge` carries a river that arrives from beyond the map back to the edge. A river that runs out of a lake needs neither |
+| `seat` | name, near, within, rule, elev [lo, hi], size (12) | finds a place within `within` m of `near` and names it: `flat`, `high`, `low`, `shore` (faces inland), `cove` (sea with land round it; faces open water), `sea` (open water). `elev` is metres above the sea. Use it for anything that must sit on a kind of ground: a hot pool on a shelf, a wreck in a cove, stacks off a headland |
+| `landmass` | centre, radius, roughness (0.5), hills (m), ridges (m), shelf (14), edge_fall (140) | a round island (for anything else use `terrain`): warped coast, rolling hills; sets base moisture. `shelf` is the sea floor's depth off the coast: 3 makes a shallow lagoon you can see the sand through (it still falls to 14 m over the last `edge_fall` m before the world's edge; Lowmouth's 1.4 m sound uses 60) |
 | `volcano` | at, radius, height, crater_radius, crater_depth, flows | cone with radial gullies, summit crater, lava tongues ending in sea cliffs |
 | `ashfall` | from, thickness, reach, depth, mat | buried band `depth` m down, thinning with distance |
 | `impact` | at, radius, depth, rim, from_bearing, strewn_length, strewn_width, fragments, floor (mat), item (kind), tell (mat, optional), strangeness | crater with glassy floor, rim thrown downrange, strewn field of buried items (biggest furthest), a `<item>_mother` at the far end, strangeness field |
@@ -156,14 +188,14 @@ the land that is already there.
 | `earthwork` | parts [{from, to, width, top}], arcs [{centre, radius, from, to, width, top}], slope (1.8), relative, poi | earth heaped up by people: ridges along segments and arcs (bearings `from` to `to`, clockwise) with flat crests `width` m across standing `top` m over the sea (over the ground with `relative`), sides at `slope` run per rise; overlapping pieces join, the higher wins. Lowmouth's bird effigy mound (body, head, wings, tail as parts) and the Poverty Point half rings (arcs) |
 | `deposit` | at, radius, thickness, mat, shape, depth (1) | raises the ground with a layer, burying what was there (walls too). `shape: "dome"` eases it out to nothing at the rim with no step: a knoll, a low hill, an islet in a lake (run after the lake). `depth` is the deepest water it may build up out of, so a bank can stand out of a lagoon floor three metres down (Jadewater's bay hills) instead of stopping at the shore |
 | `settlement` | name, at, radius, houses, buildings [structure...], extras [{structure, count, near: centre/river/edge}], slots {slot: material}, path (mat) | picks flat dry sites, levels pads, faces buildings to the centre, paths to the centre; paints region `name` |
-| `place` | structure, at, bearing or face (pos), slots, age, poi, height, when | one structure (landing, shrine, anomaly). `height` hangs it with its anchor voxel at that height above sea, whatever the ground: a rope bridge strung between two rock walls at mid-height, its ends buried in the rock (run a `passage` along the same line for the tunnels it lands in). `when` makes it stand only some of the time, the rest of the time its plot empty: `{"hours": [from, to]}` (wrapping past midnight, [23, 3]), `"far": m` (seen only from further than that: gone when you get there), `"near": m` (only within that); all given must hold. The game flips it and redraws the ground under it (Lowmouth's juke joint, the man at the crossroads, the ghost steamer) |
+| `place` | structure, at, bearing or face (pos), slots, age, poi, height, when (hours, far, near, moon) | one structure (landing, shrine, anomaly). `height` hangs it with its anchor voxel at that height above sea, whatever the ground: a rope bridge strung between two rock walls at mid-height, its ends buried in the rock (run a `passage` along the same line for the tunnels it lands in). On a passage floor, use the floor's height, not the passage's (see `passage`). `when` makes it stand only some of the time, the rest of the time its plot empty: `{"hours": [from, to]}` (wrapping past midnight, [23, 3]), `"far": m` (seen only from further than that: gone when you get there), `"near": m` (only within that), `"moon": true` (only while the moon is out, the sun more than 5 degrees down, so it follows dusk and dawn through the year; false: only while it is not); all given must hold. The game flips it and redraws the ground under it (Lowmouth's juke joint, the man at the crossroads, the ghost steamer, the light in Ribshore's titan's eye). Give a hung structure `base: "rim"` too, or it is dropped onto the ground with the logs and boulders |
 | `spires` | structures (list), at, radius, count, spacing (8), poi | tall landmarks picked at random from the list, turned at random, at least `spacing` m apart; base "sea" ones stand in water 1.5 to 16 m deep, the rest on dry free ground. Usually one to a few (a sea stack or two, a spire, a tower); a field of dozens (hoodoos) should be very rare, at most one per world. Library: `sea_stack`, `sea_stack_low`, `glass_spire`, `ruined_tower`, `hoodoo`, `hoodoo_tall`, `hoodoo_squat` |
 | `abandon` | settlement | sets that settlement's age from the event's year: decay |
 | `fire` | at, radius, wind_bearing, stretch, char (mat) | burn mask stretched downwind; sets burn year (biomes use burn age) |
-| `region` | name, at, radius | paints a named region for biome rules |
-| `escarpment` | from, to, height, width (10), reach | a long rock face: ground right of the line (facing from -> to) stands `height` m higher, cliff with overhangs between, fading past the ends. Without `reach` only a circle round the line's middle (half its length + 4 widths + 40 m) rises, so the raised side ends in a circular step; for cliff lines that cross a world give `reach` (metres the raised side extends; 2000 = all of it) |
+| `region` | name, at + radius, or poly [...] | paints a named region for biome rules: a ragged disc, or with `poly` exactly the inside of that outline (a walled field: give the same points to a `ribbon` with a wall kit, as Hemlow does) |
+| `escarpment` | from, to (or path [...], region), height, width (10), reach | a long rock face: ground right of the line (facing from -> to) stands `height` m higher, cliff with overhangs between, fading past the ends. Without `reach` only a circle round the line's middle (half its length + 4 widths + 40 m) rises, so the raised side ends in a circular step; for cliff lines that cross a world give `reach` (metres the raised side extends; 2000 = all of it). **Prefer `path`**: five or more points not in a row, started and ended off the map, and the face follows a curve through them with noses and bays of its own and a height that varies; the ground on its right, facing along the path, is the high side. `region` names that high side so a biome covers exactly the plateau (Windbarrow's Flint Down), which a `region` disc never does. Put `drainage` after it and streams cut combes into the face |
 | `vale` | path [...] (head first), width (floor), depth, depth_end, side (m), meander (6), fall | a soft river valley: a floor `depth` m under the ground round it, falling gently downstream, and grassy sides easing up to the old ground over `side` m, no rim and no bare rock (the lowland `canyon`). `fall` caps the floor's steepness (run per metre of drop) so where it meets a scarp the floor is cut back and the combe opens out at the foot; leave it out for a river valley that goes over a fall. Run a `river` along the same path afterwards |
-| `canyon` | path [...] (head first), width (floor), depth, depth_end, wall (0.6 m run per m), bench (8 m), meander (6), floor (mat), poi | a gorge: flat floor falling downstream, never steeper than 1 in 7 (where the ground drops at a cliff line the floor upstream is cut deeper, making a slot), walls climbing in benches at fixed heights (they line up with `strata` and between canyons). `depth_end` tapers the depth along the path. Short canyons into a cliff line break it up; a deep wide short one is an amphitheatre. Floors below sea level drown, never deeper than 3 m under the sea: a very large `depth` (300) on a short path makes a round flooded sinkhole, a cenote. Run a `river` along the same path afterwards for water |
+| `canyon` | path [...] (head first), width (floor), depth, depth_end, wall (0.6 m run per m), bench (8 m), meander (6), floor (mat), curve (false), poi | a gorge: flat floor falling downstream, never steeper than 1 in 7 (where the ground drops at a cliff line the floor upstream is cut deeper, making a slot), walls climbing in benches at fixed heights (they line up with `strata` and between canyons). `depth_end` tapers the depth along the path. Short canyons into a cliff line break it up; a deep wide short one is an amphitheatre. Floors below sea level drown, never deeper than 3 m under the sea: a very large `depth` (300) on a short path makes a round flooded sinkhole, a cenote. Run a `river` along the same path afterwards for water. `level` cuts the floor to that height above the sea all along in place of `depth` (a pit that must meet a cave network; a canyon shorter than 30 m never reaches its `depth` otherwise). `curve` bends the path into a smooth curve through its points first: use it, on the canyon and its river both, whenever the path is a `drainage` river's named points, which otherwise give a row of straight stretches with a corner at each (Redrock's Sorrel: canyon `meander` 0 so the two keep to one line, river `meander` 2). `depth` is below the ground as it stands, so after `drainage` has cut a valley ask for less |
 | `trough` | path [...] (head first), width, width_end, floor, floor_end (absolute m), rim (absolute m), side (m), shape (2.5), ledge (0 m), meander (4), floor_mat, sill {at, top, length (40)}, poi | a glacial U valley: a flat floor at an absolute height (under the sea for a fjord) and walls that steepen as they climb toward `rim` over `side` m, with avalanche chutes notched in and snow-holding couloirs. `ledge` steps the walls in lava-flow shelves that hold snow (Kaldvik 7-9). It only lowers, so cut a tributary with a higher floor first and the main trough after: the tributary is left hanging at a lip high on the main wall (a hanging valley, where its waterfall goes). `sill` is the moraine ridge across a fjord's floor near the mouth. Lower `shape` (1.7) gives a steeper foot, as a fjord's walls go straight into deep water |
 | `cirque` | at, radius, floor, rim (absolute m), opens (bearing the bowl opens toward), ice (mat), ice_m (6), poi | an armchair bowl with a near-sheer headwall round three sides, drawn out toward `opens`; with `ice` a domed glacier in it with crevasses where it bends toward the mouth. Put its floor above the head of the trough it feeds, or the trough has already cut below it and the bowl carves nothing |
 | `dip` | at, radius, bearing, grade (drop per m), warp (m) | tilted beds: the strata over a region slant down toward `bearing` (0.04 is about 2 degrees), fading to level over the last third of `radius`. Only the beds move (`Fields::lift`), not the ground; `canyon` benches with `irregular` and `trough` ledges cut afterwards follow them, so put it early. Use it so not every cliff in a world is ruled level (Redrock's west and east, Kaldvik's outer fjord) |
@@ -176,20 +208,21 @@ the land that is already there.
 | `road` | path [...], width, mat, shoulder (mat), smooth (80 m) | a graded road on a smooth curve through the points: ground cut and filled to heights averaged over `smooth` m, shoulders, cut feathered back. Where the ground is more than 3 m under the grade (a canyon) it is left alone and the gazetteer lists a "road gap to bridge" with the deck height: place a `base: "rim"` structure there (`arch_bridge`). Use a smaller `smooth` (40) where the road climbs a wash |
 | `ribbon` | path [...], kit, closed, curve (true), meander (0), smooth (40), height, poi | one line built to a kit (`library/kits/`): a fence, a wall, a boardwalk, a skywalk, an adit. The kit holds the whole cross-section; this says only where the line goes. `closed` joins the last point back to the first (a pasture, a ring road), `height` holds it at a fixed height above sea level whatever the ground (a bored passage, a walkway strung between two towers). Drawn per voxel column, so it takes any angle and any length: use a kit, never a `thing_20`/`thing_40`/`thing_60` family of structures |
 | `route` | from, to, kit, terms {grade, water, wade, taken, step}, smooth (60), poi | a line that finds its own way: an A* search over the land where climbing past `grade`, open water, cliffs and ground an earlier event took all cost it distance. `wade` is the deepest water it will simply walk through: shallower than that a crossing is a ford, the track going into the water and out the far side, which across a delta in flood is what a track does. Both ends are always standable, so a route may begin or end on a landing. Where the land falls more than 3 m below the grade it builds the kit's `span` across the hole and puts piers under it, so a road over a gorge comes out as a bridge and not as a note in the gazetteer. Report lines give each gap's position, length and deck height |
-| `network` | nodes {name: pos}, links [{from, to, kit, terms}], terms, smooth (60) | several routes laid together, widest first. Each line laid makes its own ground dearer, so the next joins it at a junction rather than running beside it; where two or more meet, both are trimmed back and the crossing is aproned. A link's `from`/`to` names a node or a chronicle place |
+| `network` | nodes {name: pos}, links [{from, to, kit, terms}], terms, smooth (60), height, wander (6) | several routes laid together, widest first. Each line laid makes its own ground dearer, so the next joins it at a junction rather than running beside it; where two or more meet, both are trimmed back and the crossing is aproned. A link's `from`/`to` names a node or a chronicle place. **Every cave is a `network` with a `height`**: all links are laid level at that height above the sea, and with a `bore` kit (`cave_passage`, or Hemlow's paler `lantern_passage`) that is a cave system, open wherever a link leaves the rock (a mouth in a cliff, a pit). Underground the links are not searched for; each runs node to node swinging up to `wander` m, so the nodes give it its shape: join them in loops, leave a dead end or two, and put a node outside the cliff for each mouth. Chambers are a short fat `passage` at a node (`height` = the network's + 0.55 x radius, a `lining`, a `shaft` for daylight); a pit open to the sky is a `canyon` with `level`. A cave is black without a `lamp` event (use its `level`): one lamp per node and one per link's middle is enough to walk by. Keep at least 6 m of rock over the roof: a river bed or a valley floor closer than that breaks in. Hemlow's Lantern Hole is the example |
 | `village` | name, at, radius, layout, street (kit), lane (kit), houses, buildings [...], bearing, block (46), spacing (16), setback (3), plot (5), walk (mat), edge (kit), extras, slots | a settlement laid out on its own streets. `layout` is `grid`, `radial`, `organic` or `linear`, turned by `bearing` (a quarter turn suits a grid or a linear plan: the buildings then sit square to their street). Plots come off each street edge every `spacing` m, alternating sides, `setback` m back on a square of ground `plot` m either side (small on a sand island where a round house is all that fits, large for a farmstead); each building faces the street it is on and gets a `walk` path from its door to the kerb. `edge` rings the whole thing in a kit (a wall, a hedge). Prefer this to `settlement`, which scatters houses in a disc all facing the middle |
 | `watercourse` | name, from, to, via [...], width, depth, bed (mat), bank (mat), meander (14), floor, branches [{name, to, at, width, depth, meander}], terms {downhill, max_climb, step, taken} | a channel that finds its own way down: only the rise of a step is paid for, falling is free, and a step climbing more than `max_climb` (0.4 m) is refused, so the line is one water could take. `via` points keep the geography a world is built round (the bend a village stands on) while the line between them is found. Each branch leaves the trunk `at` a fraction along it and goes to its own mouth, paying three times over for the trunk's own ground so it diverges: that is a delta in one event. A channel stops where the water is already deeper than itself, and its last quarter is cut shallower and narrower so it runs out instead of ending in a blunt trench. What it cuts is registered as a river under `name`, so `settle_water` fills it and an `avulsion` can break it out later. Prefer this to `river` for anything that branches or crosses country |
 | `track` | path [...] (a closed loop), width, mat, scale (1), poi | a dirt-bike course: graded, berms banked on the outside of every turn tighter than about 28 m radius, and jumps by straight length: 46 m+ a tabletop, 30 m+ a double (kicker, gap, landing), 16 m+ rollers. Give 10-12 points, with tight corners between straights |
 | `lava_tube` | path [...], radius, depth, skylights | a walkable tunnel `depth` m down along `path`, opening at both ends, with collapsed holes in its roof |
-| `passage` | path [...], height, radius, lining (mat), wall (mat), shafts, wander (0), poi | a level cave passage `height` m above sea along `path`, open wherever it leaves the rock: through towers, ridges, round a cenote at the waterline (an undercut overhang). `lining` turns the rock over its roof to a material (a glowing ceiling), only where there is rock above and to both sides; `wall` turns all the rock round it, floor included, to another (dark wet stone), and with a wall the lining grows in patches on the top of the roof; `shafts` chimneys up to the surface. A very short path deep under the sea floor with one shaft is a blue hole |
+| `passage` | path [...], height, radius, lining (mat), wall (mat), shafts, wander (0), poi | a level cave passage `height` m above sea along `path`, open wherever it leaves the rock: through towers, ridges, round a cenote at the waterline (an undercut overhang). `lining` turns the rock over its roof to a material (a glowing ceiling), only where there is rock above and to both sides; `wall` turns all the rock round it, floor included, to another (dark wet stone), and with a wall the lining grows in patches on the top of the roof; `shafts` chimneys up to the surface. A very short path deep under the sea floor with one shaft is a blue hole. `height` is the tunnel's centre line; its floor is flat at `height - 0.55 * radius`, which is the `height` to give anything placed on it (a den, a find, a bone bed): at the passage's own height it floats, and at `height - radius` it is buried under the floor |
 | `tower` | at, radius, height or top, bulge (0.5), flute (0.1), taper (random 0.25-0.55), lean, crown, stretch, rock (mat), mantle (mat), mantle_share (0.8), apron (mat), rubble [...], rubble_count, ledge_plants [...], ledge_vine, ledges (2 per 100 m), poi | a free-standing rock tower drawn as a volume, not a height: it narrows, bulges and overhangs like a giant hoodoo or a karst tower. `crown` is "dome", "knobs", "slope", "point", "flat" or "any" (default, one of the first four); "flat" with `top` gives towers that can carry a `base: "rim"` bridge. Ledges where a bulge sticks out under a waist grow `ledge_plants` and hang `ledge_vine` curtains. `rock` gives a tower its own stone instead of the strata (a dark or pale one among the rest); `mantle` covers `mantle_share` of its skin in another material (a tower wrapped in vines). Standing in shallow water, `apron` builds a sand fan round the foot, a beach on some sides and a bar on others; `rubble` structures (fallen blocks, slot "stone" takes the tower's rock) are scattered round the foot. Towers that overlap merge. Costs build time: each tower's columns are filled voxel by voxel |
+| `skeleton` | name, path [...] (head first), kind ("toothed" or "baleen"), skull (0.2 of the length), vertebrae (50), ribs (14), rib_height (0.12 of the length), rib_span (0.04), broken (0.35), sink (0.6), skull_sink (m), belly ("right": the side the flipper falls to), flipper_at, scapula_at, sand (mat), bone, marrow, pits, lichen, lichen_share (0.3), wet, wet_depth (5), deep, teeth (mat), poi | the bones of a giant lying on its belly along `path`, drawn as volumes (`world/bones.rs`), not as a structure, so it may be any length and lie at any angle. The body is as long as the path. Vertebrae lie half sunk and worn flat on top, with `sand` drifted level into the gaps so the spine can be walked end to end (open water in a river is left alone); ribs stand up from both sides like tusks, each its own height, reach, lean and wobble, `broken` of them snapped off with the piece lying beside; a hollow skull upright at the head with eye sockets, a blowhole and a way in at the back; open jaws with teeth (or baleen plates on an upturned snout); a fallen flipper and a dish-shaped shoulder blade. Broken ends show `marrow` with `pits`; bone open to the sky grows `lichen`; bone near the waterline is `wet`, deeper bone `deep`. Names `<name>_skull`, `_blowhole`, `_jaw`, `_ribs`, `_flipper`, `_scapula`, `_hips`, `_tail`, `_spine_1`..`_9`. Run it after the land is shaped: the spine follows the ground under it. Ribshore |
 | `erode_rims` | depth (3), reach (10), gullies (0.4), min_drop (4) | weathers the top of every cliff in the world as it stands: rounds the lip into a shoulder up to `depth` m deep easing back `reach` m, cuts gullies back into the tops, varies along the edge. Run after the landforms and before anything built (Redrock, Jadewater's Well block). Don't run it after `tower`s: it would lower their heights but not their rock |
 | `path` | from, to, width, mat | a track (surface material, no plants) |
 | `moisture` | at, radius, amount | wetter or drier ground |
 | `heightmap` | file | the ground from a height grid in the world folder (f32 little-endian, one value per 1 m cell, rows north to south, world metres), instead of `landmass` |
 | `area` | name, kind, at + radius (wobble 0.12) or poly [...], inside | names a stretch of ground: the HUD names it in the corner once you are `inside` m past its edge (a tenth of the way across by default), and holds the name that far back out again. Areas may nest; the smallest one you are properly inside wins, so a green inside a village inside a valley names the green. Name the parts worth referring to, not the whole map |
 | `sign` | at, text [lines], style, bearing or face (pos), slots, age, centre_m | a board with a line or two on it. `style` is a `library/signs/` entry: `timber_sign` and `painted_board` on posts, `carved_stone` cut into a waist-high stone, `street_blade` on a pole, `highway_board` on two legs, `iron_plate` on a post. `bearing` is the way the front looks, which is the direction a reader stands in. The board and its letters are drawn in world space, not as voxels, so small signs read; only the post is voxels. Two or three short lines beat one long one, and `--validate` says when the words come out too small. A people who don't write get `area`s and no signs |
-| `lamp` | at, points [[east, south, up], ...], reach (14), colour ([255,236,198]), strength (1.8), after_dark | point lights, measured from `at`, `up` being metres above the ground there. Every other light in the engine comes from the sky, so a room with a roof on it is black until lamps are hung in it (`render/lamps.rs`); outdoors they do nothing worth having. `reach` is where the light falls to nothing and `strength` is how bright it is at the lamp (1 is about open daylight on a grey day, 2 a working light in a shed). One event holds a whole building's lighting. The lamp is light only: build the fitting it hangs from into the structure, and give the fitting's voxels a material with `glow` so it looks lit. At most 64 lamps light any one frame, the nearest first. `after_dark` lights them only from dusk to dawn (street lanterns, a market's lights); pair them with `night_glow` materials on the fittings |
+| `lamp` | at, points [[east, south, up], ...], level, reach (14), colour ([255,236,198]), strength (1.8), after_dark | point lights, measured from `at`, `up` being metres above the ground there. Every other light in the engine comes from the sky, so a room with a roof on it is black until lamps are hung in it (`render/lamps.rs`); outdoors they do nothing worth having. `reach` is where the light falls to nothing and `strength` is how bright it is at the lamp (1 is about open daylight on a grey day, 2 a working light in a shed). One event holds a whole building's lighting. The lamp is light only: build the fitting it hangs from into the structure, and give the fitting's voxels a material with `glow` so it looks lit. At most 64 lamps light any one frame, the nearest first. `level` measures `up` from that height above the sea instead of from the ground, for lamps in a cave. `after_dark` lights them only from dusk to dawn (street lanterns, a market's lights); pair them with `night_glow` materials on the fittings |
 | `city` | file, kit | a city from map data (`city.json` in the world folder; no importer ships with the game): streets, pavements and planting strips, parks/woods/commercial land as regions `city_park`/`city_wood`/`city_commercial`, buildings levelled and drawn from their footprints, bridge decks and piers, street trees, street name blades and named places. `kit` names a city kit in `library/cities/` (material roles, name swaps, ivy, more street trees); without one the city is as the importer meant it (`modern`) |
 
 After all events lakes, then rivers, get their final shape and their water
@@ -268,6 +301,10 @@ palm trunks) it leaves stair-steps that rounding hides, so leave those rounded.
 
 `crisp: true` on a ground material keeps its border with other ground sharp
 instead of blended with noise (road surfaces, paving).
+
+`floods: true` makes flat ground of this material flood from edge to edge
+after rain, an inch of water over the whole of it, instead of gathering
+puddles: a salt pan, a playa (Saltmirror's `salt_plates`).
 
 `underwater: true` lets a ground material's grass sprites grow under the sea as
 well as over it. Land grass stops at the waterline; a drowned meadow
@@ -373,7 +410,25 @@ trunk has left where the first limbs leave it, as a share of its radius at the
 ground, default 0.88 — below that the limbs are sized by area conservation),
 canes (ocotillo: `stems` [lo, hi] whip-like canes from one root crown,
 `cane_lean` the most a cane leans at its root in radians, about 0.54 unless set,
-`trunk_radius` their thickness, `flower` a material for the tips), cactus
+`trunk_radius` their thickness, `flower` a material for the tips; with
+`canopy: "tufts"` a shrub of thin stems drawn as smooth tubes instead: sea
+buckthorn, hazel, bramble, broom, rabbitbrush. Then `cane_bend` how far a cane
+arches over toward its tip (default ~0.07, 0 straight), `cane_spurs` the
+chance of a side spur per segment (0.4), `cane_leaves` the chance of a leaf
+tuft per upper joint (1; low for near-leafless switches), `flower` berries
+along the stems or, with `flower_tips: true`, clusters at the tips. Every
+leaning stem is a thread, about 15-20 quads a metre: a sugar-cane field at
+0.1 x 6-10 stems is about 1.2M quads in view, so keep stems x density modest.
+Give the stems their own bark material, set `passable` on knee-high ones),
+`thin_limbs` (any woody form, metres): limbs thinner than this are sticks,
+one thin line of voxels meshed as a smooth tube, whatever the bark. Twiggy and
+gnarled trees, mangrove prop roots and deciduous crowns use 0.12-0.2; a
+deciduous tree in leaf skips the tubes (its twigs are hidden), so the cost
+falls in winter. `cane_umbel` (canes with tufts): a mop of thin rays this long
+at each tip (papyrus). Canes may take `water_depth` (sea whips). An umbrella
+with `stems` splits its trunk into that many forked limbs under the crown
+(acacia); a kelp with a `flower` is a bull kelp (bare stipe, that float),
+cactus
 (saguaro: a ribbed column with arms that turn up, more with height; optional
 `flower`), kelp (a water plant: give `water_depth` [lo, hi] metres of sea it
 grows under; `height` is then a share of the depth, ~1 so the canopy floats at
@@ -409,6 +464,12 @@ Conifers and columnar trees can be very tall
 
 ### structures (shape programs)
 
+The complete format (every key and op, types, defaults, the allowed `base`
+and `axis` values) is the JSON Schema `library/schema/structure.schema.json`.
+It is generated from the loader's own types in `src/library/shape.rs`, and a
+test fails when it falls behind them, so trust it over this summary.
+`library/schema/structure.md` is a checklist for reviewing a structure file.
+
 ```json
 { "name": "settler_house", "size": [24,27,28], "anchor": [12,0,0], "foundation": 6,
   "slots": { "wall": "fieldstone", "roof": "thatch" }, "tags": ["settler","house"],
@@ -420,7 +481,8 @@ Voxel units, y = 0 is ground level, the front faces local -Z (placement turns th
 front toward `bearing`/`face`). `anchor` is the voxel on the placement point.
 `foundation` fills down under solid footings. `level: false` and
 `decays: false` for natural features (boulders, logs). `base: "sea"` puts y = 0
-one metre under sea level (piers, landings); `base: "rim"` see above. `mat`
+one metre under sea level (piers, landings); `base: "bed"` sinks it half a
+metre into the lowest sea bed under it (wrecks); `base: "rim"` see above. `mat`
 names a slot or a material; `"air"` empties the structure's own voxels but
 leaves the terrain, `"carve"` removes the terrain too (alcoves, adits, arches
 worn through a fin: `great_window`, `mine_portal`, `cliff_granaries`). Later
@@ -429,7 +491,15 @@ ops override earlier ones, so carve after anything that must not fill the hole.
 Ops: `box` (from, to exclusive), `walls` (thick), `gable` (from, to with the
 same y as eaves, axis x/z = ridge direction, rise 1 = 45 degrees, 2 = steeper),
 `ellipsoid` (centre, radius[3]), `cylinder` (base, radius, height), `log`
-(base, radius, length, axis), `disc` (centre, radius, thick, axis), `set` (at),
+(base, radius, length, axis, yaw), `disc` (centre, radius, thick, axis, yaw;
+`yaw` turns either that many degrees from +x toward +z), `set` (at),
+`segment` (points [[x,y,z], ...], radius: a rod, rope or spar at any angle,
+drawn as a smooth tube where it leans; use it for rigging, stays, spokes,
+braces and leaning masts instead of stepped boxes or cylinder stacks),
+`dish` (vertex, radius, depth, thick (1.5), tilt, yaw: a paraboloid shell,
+the bowl's bottom at `vertex`, its rim `radius` across and `depth` up the
+axis, the axis leaning `tilt` degrees from straight up toward `yaw`; radio
+dishes and reflectors at any angle: Saltmirror's array),
 `repeat` (count, step, ops), `recolour_below` (y, from, to; creatures),
 `recolour` (at, until, from, to: swap one colour for another inside a box;
 stripes, collars).
@@ -498,12 +568,15 @@ colour value is emissive strength. Movement: graze, hop, splash (hops and keeps
 to the water's edge: frogs and toads), skulk, wade (keeps near
 water), circle (flies circles: gulls, crows), flutter (small low circles: moths),
 flock (a flying flock that wheels, lands together and flushes: starlings), soar
-(a lone bird circling wide and high: an eagle), still, plod (slow; hides in
+(a lone bird circling wide and high: an eagle), glide (a few big seabirds
+sweeping wide and low, roosting together on the highest dry ground near:
+albatrosses), still, plod (slow; hides in
 its shell instead of running: tortoises), bask (plod on a beach, and now and
 then crawls back to the sea to swim as its `school` child: sea turtles), undulate (slow wide circles a few
 metres up, wings rippling: flying rays, rig plan `ray`), school, breach,
 haulout (seals: lie by the sea, dive when startled), paddle (waterfowl on the
-sea near shore or on rivers, ashore to graze, off in a V when startled), cling (woodpeckers on trunks), buzz (bees
+sea near shore or on rivers, ashore to graze, off in a V when startled), cling (woodpeckers on trunks), creep (an octopus on the sea floor, its arms
+draped over what is under it; rig plan `octopus`), buzz (bees
 at plants that afford `nectar`), dart (dragonflies over water). A
 `wade` creature with a winged rig and `fly_height` takes off and flies a short
 way when startled (herons, cranes). `flees_from` takes
@@ -606,7 +679,7 @@ size [25, 70], spacing 0.9); with any walking movement it spawns family groups
 that keep together and bolt together (deer: size [1, 4], spacing 2.5). Most
 species should not group: a biome's `count` is individuals, so a flock of 40
 wants a count near 40.
-Colour slots are counted per world (128 library slots, `models::LIBRARY_COLOURS`): reuse existing RGB values where they fit.
+Colours are counted per model, not per world: each model gets its own palette block of up to 192 colours (`models::PALETTE_SLOTS`), so there is no need to reuse RGB values from other entries.
 
 ### collectibles
 
@@ -651,13 +724,19 @@ field, a burn scar, a paved square, a salt pan; a biome with 0 is never mixed
 into its neighbours either. Shores and river banks never feather.
 
 Placement verbs: scatter; clustered (size, min, max: patchy groves); edge
-(width, inner: near other biomes); riparian (width: near rivers); gradient
+(width, inner: near other biomes; `field` "a,b" only near those biomes, as a
+beach's driftwood keeps to where the dune grass starts); riparian (width: near rivers); gradient
 (`field`: strange/moist/elev/slope/coast, min, max); ring (x, z, radius, width);
 lone (spacing). Any verb also takes `spacing`. Features (structures) also take
 `seat` (metres): the structure's long axis (local X) is turned along the
 contour, and spots where the ground rises more than `seat` across the
 footprint are skipped, so arches stand level instead of half-buried in a slope
 (Redrock's arches use 2.5).
+
+A natural feature made only of `log` and `disc` ops (driftwood, fallen trunks,
+bone shards) lies at any bearing in 15-degree steps, not just the four quarter
+turns. With `along` (degrees) it lies along the shore, across the line to the
+sea, give or take that many degrees, as the tide leaves a log.
 
 ### signs
 

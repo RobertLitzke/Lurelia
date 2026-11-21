@@ -1,0 +1,23 @@
+{
+  "name": "steppe_deck",
+  "version": 1,
+  "introduced_by": "megalith",
+  "notes": "The chalk steppe an arena is sunk into, after Windbarrow's downs: short turf with the chalk coming through, heather and lichen and nothing taller, starlings flocking over it, crows and an eagle in the sky. It dresses the plain round a buried arena, not the arena itself; what is inside comes from the materials the steppe style paints on the structure.",
+  "priority": 12,
+  "rules": {"elev": [-2, 200]},
+  "surface": "downland_grass",
+  "subsurface": "chalk_white",
+  "fringe": 0,
+  "map_color": [176, 168, 112],
+  "plants": [
+    {
+      "plant": "heather",
+      "density": 0.008,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.0, "max": 1.0}}
+    },
+    {"plant": "rock_lichen", "density": 0.2, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [{"creature": "starling", "count": 24}, {"creature": "crow", "count": 3}, {"creature": "eagle", "count": 2}],
+  "collectibles": [],
+  "sound": {"wind": 1.3, "notes": "Open downland round the arena: the wind never stops."}
+}

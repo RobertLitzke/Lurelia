@@ -1,6 +1,6 @@
 {
   "name": "kaldvik_fell",
-  "version": 1,
+  "version": 2,
   "introduced_by": "kaldvik",
   "notes": "The high fell above the fjord walls: wind-packed snow over basalt, a few junipers hunched in the lee of boulders.",
   "priority": 4,
@@ -12,7 +12,12 @@
   "plants": [
     {"plant": "juniper", "density": 0.0012, "placement": {"verb": "clustered", "params": {"size": 8}}},
     {"plant": "heather", "density": 0.006, "placement": {"verb": "clustered", "params": {"size": 10}}},
-    {"plant": "rock_lichen", "density": 0.12}
+    {"plant": "rock_lichen", "density": 0.12},
+    {
+      "plant": "dwarf_birch",
+      "density": 0.01,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.4, "max": 1.0}}
+    }
   ],
   "features": [
     {"structure": "basalt_boulder", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}},
@@ -24,7 +29,9 @@
     {"creature": "arctic_fox", "count": 3},
     {"creature": "pale_hare", "count": 4},
     {"creature": "raven", "count": 2},
-    {"creature": "elk", "count": 1}
+    {"creature": "elk", "count": 1},
+    {"creature": "wolf", "count": 1}
   ],
-  "collectibles": []
+  "collectibles": [],
+  "sound": {"wind": 1.35, "notes": "Bare upland: exposed, and the wind says so."}
 }

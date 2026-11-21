@@ -150,8 +150,10 @@ impl Player {
         d.breath = (d.breath - dt).max(0.0);
         if d.hitch.is_some() {
             // The game carries the body; letting go of E or kicking off
-            // leaves it swimming where it is, with the animal's speed.
-            if !input.focus_far || kick {
+            // leaves it swimming where it is, with the animal's speed. Out
+            // of breath, the hands let go by themselves and the rise below
+            // takes over.
+            if !input.focus_far || kick || d.breath <= 0.0 {
                 d.hitch = None;
             } else {
                 return true;
@@ -284,6 +286,27 @@ mod tests {
         step(&mut p, &mut r, s, level, &MoveInput::default(), 2.0);
         assert!(p.swimming && !p.dive.under, "not floating: {:?}", p.pos);
         (p, r)
+    }
+
+    /// Holding on to an animal does not hold the breath: at zero the hands
+    /// let go and the diver rises, E or no E.
+    #[test]
+    fn out_of_breath_lets_go_and_rises() {
+        let (s, level) = sea();
+        let (mut p, mut r) = floating(&s, level);
+        step(&mut p, &mut r, &s, level, &MoveInput { down: true, ..Default::default() }, 0.1);
+        p.pitch = -1.2;
+        step(&mut p, &mut r, &s, level, &MoveInput { forward: true, ..Default::default() }, 2.0);
+        let deep = p.pos.y;
+        let mut world = hecs::World::new();
+        let who = world.spawn(());
+        p.dive.hitch = Some(Hitch { who, off: Vec3::ZERO });
+        p.dive.breath = 0.05;
+        let hold = MoveInput { focus_far: true, ..Default::default() };
+        step(&mut p, &mut r, &s, level, &hold, 0.1);
+        assert!(p.dive.hitch.is_none(), "still holding on with no breath");
+        step(&mut p, &mut r, &s, level, &hold, 3.0);
+        assert!(p.pos.y > deep + 0.5, "did not rise: {} from {deep}", p.pos.y);
     }
 
     #[test]

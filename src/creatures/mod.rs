@@ -32,7 +32,9 @@ pub mod fowl;
 pub mod herd;
 pub mod insects;
 pub mod locomotion;
+pub mod octopus;
 pub mod plants;
+pub mod sign;
 pub mod snake;
 pub mod spawn;
 pub mod startle;
@@ -230,6 +232,9 @@ pub struct Pathing {
     pub cover_rays: u32,
     /// Walker-steps spent bolting from the player.
     pub startled: u32,
+    /// Walker-steps where a neighbour bolting pressed hardest (startle.rs
+    /// `Threat::alarm_of`): the alarm spreading through a herd.
+    pub alarmed_by_herd: u32,
     /// Snake-steps (creatures/snake.rs), and those up a tree.
     pub snake_steps: u32,
     pub snakes_in_trees: u32,

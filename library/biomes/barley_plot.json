@@ -1,6 +1,6 @@
 {
   "name": "barley_plot",
-  "version": 1,
+  "version": 2,
   "introduced_by": "windbarrow",
   "notes": "A barley plot behind its hurdles: thin ranks of pale ears on worked chalk soil, a few thistles at the fence line.",
   "priority": 24,
@@ -17,7 +17,8 @@
     {"creature": "starling", "count": 10},
     {"creature": "crow", "count": 3},
     {"creature": "rabbit", "count": 2},
-    {"creature": "bumblebee", "count": 4}
+    {"creature": "bumblebee", "count": 4},
+    {"creature": "barn_owl", "count": 1}
   ],
   "collectibles": [{"item": "flint_blade", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}]
 }

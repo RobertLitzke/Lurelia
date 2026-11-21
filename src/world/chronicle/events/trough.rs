@@ -1,4 +1,3 @@
-use crate::util::FxHashMap as HashMap;
 use crate::world::chronicle::geom::{densify, each_near};
 use crate::world::chronicle::{EventCtx, Process};
 use crate::world::fields::{Fields, Poi, Pos};
@@ -106,82 +105,108 @@ impl Process for Trough {
             bed.push(b);
             halves.push(0.5 * (self.width + (width_end - self.width) * t));
         }
-        let reach = halves.iter().cloned().fold(0.0, f32::max) + self.side + 16.0;
-        let mut best: HashMap<usize, (f32, usize)> = HashMap::default();
-        for (k, p) in line.iter().enumerate() {
-            each_near(f, *p, reach, |_f: &mut Fields, i, d, _| {
-                let e = best.entry(i).or_insert((f32::MAX, 0));
-                if d < e.0 {
-                    *e = (d, k);
-                }
-            });
-        }
-        let p_exp = self.shape.max(1.0);
-        let mut cells = 0;
-        let mut deepest = f32::MAX;
-        for (i, (d, k)) in best {
-            let p = f.centre(i);
-            let (b, half) = (bed[k], halves[k]);
-            // The walls wander in and out, in long bays and short spurs, and
-            // the run of each stretch of wall varies, so neither the floor's
-            // edge nor the skyline is a ruled line.
-            let wob = perlin2(p.x * 0.012, p.y * 0.012, seed) * half * 0.25 + perlin2(p.x * 0.05, p.y * 0.05, seed + 1) * 4.0;
-            let run = self.side * (1.0 + 0.3 * perlin2(p.x * 0.008, p.y * 0.008, seed + 2));
-            let x = (d - half + wob).max(0.0);
-            let t = (x / run.max(1.0)).min(1.0);
-            // Gullies: avalanche chutes notched into the upper wall.
-            let chute = (1.0 - (perlin2(p.x * 0.045, p.y * 0.045, seed + 3) * 3.0).abs()).max(0.0).powi(3) * t * 10.0;
-            let smooth_wall = b + (self.rim - b) * t.powf(p_exp) - chute;
-            // Lava-flow ledges: the wall steps up in risers about `ledge` m
-            // high, each with a narrow shelf on top that holds snow. The
-            // shelves sit on fixed heights, so they run level along the wall
-            // and line up across the fjord.
-            let (target, shelf) = if self.ledge > 0.0 && t > 0.08 {
-                // Each flow is thicker in some places than others, and a
-                // shelf widens, narrows and in places pinches out.
-                let lh = self.ledge * (1.0 + 0.22 * perlin2(p.x * 0.006, p.y * 0.006, seed + 6));
-                // Measured against the beds, which a `dip` may have tilted.
-                let q = (smooth_wall - b + 3.0 * perlin2(p.x * 0.01, p.y * 0.01, seed + 7) - f.lift_at(i)) / lh;
-                let fr = q.fract();
-                let width = 0.3 + 0.16 * perlin2(p.x * 0.03 + q.floor() * 7.1, p.y * 0.03, seed + 8);
-                let stepped = (q.floor() + smoothstep(width, 1.0, fr)) * lh + b;
-                // Never stepped below the floor (a tilted bed can put the
-                // first step under it).
-                ((smooth_wall + (stepped - smooth_wall) * 0.85).max(b), fr < width - 0.02)
-            } else {
-                (smooth_wall, false)
-            };
-            if target < f.h[i] - 0.05 {
-                f.h[i] = target;
-                f.cause[i] = cause;
-                cells += 1;
-                deepest = deepest.min(target);
-                // Steep wall is bare cliff, in bands and buttresses: where the
-                // threshold dips the rock shows, where it rises snow holds on
-                // the ledges between.
-                let grad = (self.rim - b) * p_exp * t.powf(p_exp - 1.0) / run.max(1.0);
-                let holds = 1.3 + 0.9 * perlin2(p.x * 0.035, p.y * 0.035, seed + 4) + 0.5 * perlin2(p.x * 0.11, p.y * 0.11, seed + 5);
-                // The chutes hold snow all the way down: white couloirs
-                // between the buttresses.
-                if grad > holds && chute < 2.0 && !shelf {
-                    f.cliff[i] = 1.0;
-                } else {
-                    f.cliff[i] = 0.0;
-                }
-                if f.water[i] == 3 {
-                    f.water[i] = 0;
-                }
-                f.surface[i] = 0;
-                if x <= 2.0 && target > f.sea {
-                    if let Some(m) = floor_m {
-                        f.surface[i] = m;
-                    }
-                }
-            }
-        }
+        let wall = Wall { rim: self.rim, side: self.side, shape: self.shape, ledge: self.ledge, floor_mat: floor_m };
+        let (cells, deepest) = carve(f, &line, &bed, &halves, &wall, seed, cause);
         if let (Some(name), Some(&head)) = (&self.poi, pts.first()) {
             cx.pois.push(Poi { name: name.clone(), pos: head, cause });
         }
         format!("trough {total:.0} m long, floor {:.0} -> {:.0} m, deepest {deepest:.0} m, {cells} m2 cut", bed[0], bed[bed.len() - 1])
     }
+}
+
+/// How a trough's walls stand, for `carve`.
+pub struct Wall {
+    pub rim: f32,
+    pub side: f32,
+    pub shape: f32,
+    pub ledge: f32,
+    pub floor_mat: Option<u8>,
+}
+
+/// Cut a trough along `line`, whose floor at each point is `bed` (absolute,
+/// m) and `halves` wide either side. Only lowers the ground. Returns the
+/// square metres cut and the lowest point reached.
+pub fn carve(f: &mut Fields, line: &[Vec2], bed: &[f32], halves: &[f32], w: &Wall, seed: u32, cause: u16) -> (usize, f32) {
+    let reach = halves.iter().cloned().fold(0.0, f32::max) + w.side + 16.0;
+    // Each cell's nearest point on the line. A dense table, not a map: a
+    // long trough reaches half the world.
+    let mut near: Vec<(f32, u32)> = vec![(f32::MAX, 0); f.n * f.n];
+    let mut best: Vec<usize> = Vec::new();
+    for (k, p) in line.iter().enumerate() {
+        each_near(f, *p, reach, |_f: &mut Fields, i, d, _| {
+            let e = &mut near[i];
+            if e.0 == f32::MAX {
+                best.push(i);
+            }
+            if d < e.0 {
+                *e = (d, k as u32);
+            }
+        });
+    }
+    let best: Vec<(usize, (f32, usize))> = best.into_iter().map(|i| (i, (near[i].0, near[i].1 as usize))).collect();
+    drop(near);
+    let p_exp = w.shape.max(1.0);
+    let mut cells = 0;
+    let mut deepest = f32::MAX;
+    for (i, (d, k)) in best {
+        let p = f.centre(i);
+        let (b, half) = (bed[k], halves[k]);
+        // The walls wander in and out, in long bays and short spurs, and
+        // the run of each stretch of wall varies, so neither the floor's
+        // edge nor the skyline is a ruled line.
+        let wob = perlin2(p.x * 0.012, p.y * 0.012, seed) * half * 0.25 + perlin2(p.x * 0.05, p.y * 0.05, seed + 1) * 4.0;
+        let run = w.side * (1.0 + 0.3 * perlin2(p.x * 0.008, p.y * 0.008, seed + 2));
+        let x = (d - half + wob).max(0.0);
+        let t = (x / run.max(1.0)).min(1.0);
+        // Gullies: avalanche chutes notched into the upper wall.
+        let chute = (1.0 - (perlin2(p.x * 0.045, p.y * 0.045, seed + 3) * 3.0).abs()).max(0.0).powi(3) * t * 10.0;
+        let smooth_wall = b + (w.rim - b) * t.powf(p_exp) - chute;
+        // Lava-flow ledges: the wall steps up in risers about `ledge` m
+        // high, each with a narrow shelf on top that holds snow. The
+        // shelves sit on fixed heights, so they run level along the wall
+        // and line up across the fjord.
+        let (target, shelf) = if w.ledge > 0.0 && t > 0.08 {
+            // Each flow is thicker in some places than others, and a
+            // shelf widens, narrows and in places pinches out.
+            let lh = w.ledge * (1.0 + 0.22 * perlin2(p.x * 0.006, p.y * 0.006, seed + 6));
+            // Measured against the beds, which a `dip` may have tilted.
+            let q = (smooth_wall - b + 3.0 * perlin2(p.x * 0.01, p.y * 0.01, seed + 7) - f.lift_at(i)) / lh;
+            let fr = q.fract();
+            let width = 0.3 + 0.16 * perlin2(p.x * 0.03 + q.floor() * 7.1, p.y * 0.03, seed + 8);
+            let stepped = (q.floor() + smoothstep(width, 1.0, fr)) * lh + b;
+            // Never stepped below the floor (a tilted bed can put the
+            // first step under it).
+            ((smooth_wall + (stepped - smooth_wall) * 0.85).max(b), fr < width - 0.02)
+        } else {
+            (smooth_wall, false)
+        };
+        if target < f.h[i] - 0.05 {
+            f.h[i] = target;
+            f.cause[i] = cause;
+            cells += 1;
+            deepest = deepest.min(target);
+            // Steep wall is bare cliff, in bands and buttresses: where the
+            // threshold dips the rock shows, where it rises snow holds on
+            // the ledges between.
+            let grad = (w.rim - b) * p_exp * t.powf(p_exp - 1.0) / run.max(1.0);
+            let holds = 1.3 + 0.9 * perlin2(p.x * 0.035, p.y * 0.035, seed + 4) + 0.5 * perlin2(p.x * 0.11, p.y * 0.11, seed + 5);
+            // The chutes hold snow all the way down: white couloirs
+            // between the buttresses.
+            if grad > holds && chute < 2.0 && !shelf {
+                f.cliff[i] = 1.0;
+            } else {
+                f.cliff[i] = 0.0;
+            }
+            if f.water[i] == 3 {
+                f.water[i] = 0;
+            }
+            f.surface[i] = 0;
+            if x <= 2.0 && target > f.sea {
+                if let Some(m) = w.floor_mat {
+                    f.surface[i] = m;
+                }
+            }
+        }
+    }
+    (cells, deepest)
 }

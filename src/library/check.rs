@@ -109,8 +109,9 @@ impl Library {
             if water_form && p.water_depth.is_none() {
                 out.push(format!("plant {}: a {} needs water_depth", p.name, p.form));
             }
-            if p.water_depth.is_some() && !water_form && p.form != Form::Crust {
-                out.push(format!("plant {}: water_depth goes with kelp, coral and crust forms (water plants)", p.name));
+            // Canes may grow under water too: sea whips.
+            if p.water_depth.is_some() && !water_form && p.form != Form::Crust && p.form != Form::Canes {
+                out.push(format!("plant {}: water_depth goes with kelp, coral, crust and canes forms (water plants)", p.name));
             }
             if !(0.0..=1.0).contains(&p.rarity) || (p.rarity > 0.0 && p.like.is_none()) {
                 out.push(format!("plant {}: rarity must be 0..1 and needs a parent (like)", p.name));
@@ -140,6 +141,8 @@ impl Library {
                         | Op::Cylinder { mat, .. }
                         | Op::Log { mat, .. }
                         | Op::Disc { mat, .. }
+                        | Op::Dish { mat, .. }
+                        | Op::Segment { mat, .. }
                         | Op::Set { mat, .. } => f(mat),
                         Op::RecolourBelow { .. } | Op::Recolour { .. } => {}
                         Op::Repeat { ops, .. } => walk(ops, f),
@@ -356,8 +359,19 @@ impl Library {
             if w.zoom != 0.0 && !(0.05..=0.9).contains(&w.zoom) {
                 out.push(format!("{what}: a zoom of {} is not between 0.05 and 0.9", w.zoom));
             }
-            if w.zoom > 0.0 && w.alt.is_some() {
-                out.push(format!("{what}: the right button cannot be both a sight and a fire mode"));
+            // A sight and a second mode share the right button only when the
+            // mode charges: holding it scopes and winds up, letting go fires.
+            // A mode that fires on the press would loose a round every time
+            // somebody reached for the sight.
+            if w.zoom > 0.0 && w.alt.as_ref().is_some_and(|a| a.charge_s <= 0.0) {
+                out.push(format!("{what}: the right button cannot be both a sight and a mode that fires on the press (give it a charge_s)"));
+            }
+            if let Some(kind) = &w.ammo_type {
+                for o in &self.weapons {
+                    if o.name != w.name && o.ammo_type.as_ref() == Some(kind) && o.ammo_max != w.ammo_max {
+                        out.push(format!("{what}: shares {kind} with {} but holds {} of it to its {}", o.name, w.ammo_max, o.ammo_max));
+                    }
+                }
             }
             if w.mag == 0 && w.reload_s > 0.0 {
                 out.push(format!("{what}: reload_s means nothing without a mag"));

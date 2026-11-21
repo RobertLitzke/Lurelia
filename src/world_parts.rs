@@ -84,12 +84,15 @@ impl WorldParts {
             let st = &*store;
             let ground = |x: f32, z: f32, from: f32| crate::creatures::terrain::voxel_ground(st, x, z, from).map(|(y, _)| y);
             self.placed |= self.platforms.settle(base, ground);
-            self.portals.settle(base, ground);
+            let open = |from: Vec3, dir: Vec3, far: f32| match st.raycast(from, dir, far) {
+                Some((v, _)) => ((Vec3::new(v[0] as f32, v[1] as f32, v[2] as f32) + 0.5) * 0.25 - from).length().min(far),
+                None => far,
+            };
+            self.portals.settle(base, ground, open);
         }
 
         // Portals: send or throw whoever has stepped into one.
         if !self.portals.is_empty() {
-            self.portals.step(dt);
             if let Some(p) = player.as_deref_mut() {
                 self.portals.carry(p);
             }

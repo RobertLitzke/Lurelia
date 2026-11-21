@@ -13,6 +13,7 @@ use crate::brain::Score;
 use crate::combat::viewmodel;
 use crate::render::hud::Hud;
 use crate::render::ui::{Corner, Side, Tint};
+use super::round::TEAM_INK;
 
 /// Health, and the share of it under which the bar turns red.
 const HEALTH: Tint = Tint {
@@ -48,8 +49,11 @@ pub fn draw(sh: &Shooter, hud: &mut Hud, w: f32, h: f32, s: f32) {
         let a = (sh.me.hurt / crate::brain::HURT_S) * 0.32;
         hud.rect(0.0, 0.0, w, h, [0.7, 0.05, 0.04, a]);
     }
+    carrying(sh, hud, w, h, s);
     crosshair(sh, hud, w, h, s);
     banner(sh, hud, w, h, s);
+    standing(sh, hud, w, h, s);
+    alert(sh, hud, w, h, s);
     score(sh, hud, w, h, s);
 
     if !sh.alive() {
@@ -246,17 +250,97 @@ fn weapon(sh: &Shooter, hud: &mut Hud, w: f32, h: f32, s: f32) {
 /// bot was added.
 fn score(sh: &Shooter, hud: &mut Hud, w: f32, h: f32, s: f32) {
     let mut c = Corner::new(Side::TopRight, w, h, s);
-    let mut rows: Vec<(String, Score)> = vec![("YOU".into(), sh.me.score)];
+    let mut rows: Vec<(String, Score, Option<u8>)> = vec![("YOU".into(), sh.me.score, sh.me.team)];
     for b in &sh.bots {
-        rows.push((b.name.to_uppercase(), b.fighter.score));
+        rows.push((b.name.to_uppercase(), b.fighter.score, b.fighter.team));
     }
-    rows.sort_by_key(|(_, sc)| std::cmp::Reverse(sc.kills));
-    for (name, sc) in &rows {
-        c.text(hud, 1.0, [1.0, 0.96, 0.92, 0.6], &format!("{name}  {}-{}", sc.kills, sc.deaths));
+    // In a team match the player's side first, each side best first.
+    let mine = sh.me.team;
+    rows.sort_by_key(|(_, sc, t)| (mine.is_some() && *t != mine, std::cmp::Reverse(sc.caps), std::cmp::Reverse(sc.kills)));
+    for (name, sc, team) in &rows {
+        let ink = match team {
+            Some(t) => {
+                let k = TEAM_INK[(*t as usize).min(1)];
+                [k[0], k[1], k[2], 0.75]
+            }
+            None => [1.0, 0.96, 0.92, 0.6],
+        };
+        c.text(hud, 1.0, ink, &format!("{name}  {}-{}", sc.kills, sc.deaths));
     }
     c.gap(0.6);
     for (msg, left) in &sh.feed {
         let a = (left / 0.8).min(1.0) * 0.85;
         c.text(hud, 1.0, [1.0, 0.9, 0.82, a], msg);
     }
+}
+
+/// How long an alert is up, seconds.
+pub(crate) const ALERT_S: f32 = 2.6;
+
+/// The newest flag alert, across the top of the screen in the colour of the
+/// side it is about: YOUR FLAG HAS BEEN TAKEN and the rest (`Shooter::heard_flag`).
+fn alert(sh: &Shooter, hud: &mut Hud, w: f32, h: f32, s: f32) {
+    let Some((msg, ink, age)) = sh.alerts.last() else { return };
+    if *age > ALERT_S {
+        return;
+    }
+    let fade = ((ALERT_S - age) / 0.5).clamp(0.0, 1.0);
+    let pop = 1.0 + 0.3 * (1.0 - age / 0.15).max(0.0);
+    let k = s * 2.0 * pop;
+    let wm = Hud::text_width(msg, k);
+    let (cx, y) = ((w * 0.5).floor(), (h * 0.17).floor());
+    hud.label(cx - wm * 0.5 + s, y + s, k, [0.0, 0.0, 0.0, 0.55 * fade], msg);
+    hud.label(cx - wm * 0.5, y, k, [ink[0], ink[1], ink[2], fade], msg);
+}
+
+/// Top middle, always up in a team match: each side's score and, in capture
+/// the flag, where each flag is, with the clock between them.
+fn standing(sh: &Shooter, hud: &mut Hud, w: f32, _h: f32, s: f32) {
+    let Some(_) = sh.me.team else { return };
+    let ctf = !sh.flags.is_empty();
+    let totals = if ctf { sh.flags.caps } else { super::round::team_kills(&sh.scores(), &sh.sides()) };
+    let y = (8.0 * s).floor();
+    let cx = (w * 0.5).floor();
+    let big = s * 1.8;
+    let middle = match sh.round.left() {
+        Some(t) => format!("{}:{:02}", (t / 60.0) as u32, (t % 60.0) as u32),
+        None => "-".to_string(),
+    };
+    let wm = Hud::text_width(&middle, s * 1.2);
+    hud.label(cx - wm * 0.5, y + 3.0 * s, s * 1.2, [1.0, 0.97, 0.94, 0.8], &middle);
+    let gap = wm * 0.5 + 10.0 * s;
+    for t in 0..2usize {
+        let n = totals[t].to_string();
+        let wn = Hud::text_width(&n, big);
+        let x = if t == 0 { cx - gap - wn } else { cx + gap };
+        let ink = TEAM_INK[t];
+        hud.label(x + s, y + s, big, [0.0, 0.0, 0.0, 0.5], &n);
+        hud.label(x, y, big, ink, &n);
+        // Under each side's number, where its flag is.
+        let Some(f) = sh.flags.of(t as u8) else { continue };
+        let line = match f.state {
+            super::flag::State::Home => "HOME".to_string(),
+            super::flag::State::Carried(who) => format!("TAKEN, {}", sh.name_of(who)),
+            super::flag::State::Dropped { left, .. } => format!("DOWN {:.0}", left.ceil()),
+        };
+        let wl = Hud::text_width(&line, s);
+        let lx = if t == 0 { cx - gap - wl } else { cx + gap };
+        let a = if f.state == super::flag::State::Home { 0.55 } else { 0.95 };
+        hud.label(lx, y + 22.0 * s, s, [ink[0], ink[1], ink[2], a], &line);
+    }
+    let _ = ctf;
+}
+
+/// A thin border in the colour of the flag on your back, for as long as it
+/// is there: you are the one everybody is after.
+fn carrying(sh: &Shooter, hud: &mut Hud, w: f32, h: f32, s: f32) {
+    let Some(team) = sh.flags.carried_by(0) else { return };
+    let k = TEAM_INK[(team as usize).min(1)];
+    let pulse = 0.35 + 0.15 * (sh.elapsed() * 4.0).sin();
+    let c = [k[0], k[1], k[2], pulse];
+    let t = (4.0 * s).max(2.0);
+    hud.rect(0.0, 0.0, w, t, c);
+    hud.rect(0.0, h - t, w, t, c);
+    hud.rect(0.0, 0.0, t, h, c);
+    hud.rect(w - t, 0.0, t, h, c);
 }

@@ -1,0 +1,1248 @@
+{
+ "places": {},
+ "events": [
+  {
+   "year": -2000000,
+   "event": "terrain",
+   "cause": "a low coastal plain of old sea floor, lifted a few metres out of the sea, rising inland into the hills the forest grows on; a block of basalt at the north end, harder than the rest, left standing as a headland",
+   "base": 36,
+   "hills": 4,
+   "ridges": 1.5,
+   "rough": 0.6,
+   "vary": 0.8,
+   "warp": 70,
+   "shelf": 7,
+   "relief": [
+    {
+     "at": [
+      1520,
+      760
+     ],
+     "radius": 430,
+     "height": 30,
+     "stretch": [
+      0,
+      2.2
+     ]
+    },
+    {
+     "at": [
+      1430,
+      160
+     ],
+     "radius": 260,
+     "height": 18
+    }
+   ],
+   "courses": [
+    {
+     "path": [
+      [
+       1600,
+       1010
+      ],
+      [
+       1390,
+       930
+      ],
+      [
+       1160,
+       990
+      ],
+      [
+       930,
+       940
+      ],
+      [
+       860,
+       975
+      ]
+     ],
+     "width": 70,
+     "depth": 10,
+     "depth_end": 4
+    }
+   ],
+   "sea": [
+    {
+     "edge": "west",
+     "reach": 520,
+     "bays": 35,
+     "rise": 260,
+     "skerries": 0.08
+    }
+   ]
+  },
+  {
+   "year": -600000,
+   "event": "subside",
+   "cause": "the shelf off the coast, let down along an old fault: the sea floor falls to twenty-odd metres a few hundred metres out",
+   "at": [
+    180,
+    1000
+   ],
+   "radius": 560,
+   "level": [
+    19,
+    27
+   ],
+   "grain": 120,
+   "edge": 220,
+   "ragged": 0.3
+  },
+  {
+   "year": -600000,
+   "event": "subside",
+   "cause": "the reefs off the headland, rock let down less than the open shelf",
+   "at": [
+    260,
+    260
+   ],
+   "radius": 300,
+   "level": [
+    10,
+    16
+   ],
+   "grain": 60,
+   "edge": 140,
+   "ragged": 0.35
+  },
+  {
+   "year": -600000,
+   "event": "subside",
+   "cause": "a deeper hollow in the shelf off the titan's head, where the bones that fell from it lie",
+   "at": [
+    520,
+    1300
+   ],
+   "radius": 200,
+   "level": [
+    16,
+    22
+   ],
+   "grain": 80,
+   "edge": 150,
+   "ragged": 0.25
+  },
+  {
+   "year": -9000,
+   "event": "dunes",
+   "cause": "the northern dunes: sand blown off the beach by the north-west wind and heaped into ridges forty-odd metres apart, half a kilometre deep",
+   "at": [
+    1150,
+    500
+   ],
+   "radius": 400,
+   "spacing": 46,
+   "height": 7.5,
+   "wind_bearing": 125,
+   "name": "dunes"
+  },
+  {
+   "year": -9000,
+   "event": "dunes",
+   "cause": "the southern dunes, broader and lower, running south past the creek",
+   "at": [
+    1180,
+    1130
+   ],
+   "radius": 410,
+   "spacing": 54,
+   "height": 6.5,
+   "wind_bearing": 116,
+   "name": "dunes"
+  },
+  {
+   "year": -8500,
+   "event": "drainage",
+   "cause": "the creek: rain off the forested hills, cutting its way west through the dunes to the sea",
+   "name": "creek",
+   "iters": 18,
+   "strength": 0.2,
+   "source": 6000,
+   "inflow": [
+    {
+     "at": [
+      1530,
+      1000
+     ],
+     "area": 2000000.0
+    }
+   ]
+  },
+  {
+   "year": -8400,
+   "event": "watercourse",
+   "cause": "the creek, finding its way down the cut to the beach",
+   "name": "creek",
+   "from": "creek_source",
+   "to": "creek_mouth",
+   "via": [
+    "creek_3",
+    "creek_6"
+   ],
+   "width": 6,
+   "depth": 1.6,
+   "bed": "river_gravel",
+   "bank": "wet_sand",
+   "meander": 10
+  },
+  {
+   "year": -1900000,
+   "event": "mesa",
+   "cause": "the headland: a block of basalt left standing when the sea cut the softer coast back",
+   "at": [
+    600,
+    150
+   ],
+   "radius": 72,
+   "height": 26,
+   "warp": 0.3,
+   "stretch": [
+    285,
+    2.3
+   ],
+   "skirt": 24,
+   "talus": 0.35,
+   "cap": "shore_grass",
+   "poi": "the headland"
+  },
+  {
+   "year": -1900000,
+   "event": "mesa",
+   "cause": "the headland's outer knob, lower, cut off at high water",
+   "at": [
+    455,
+    205
+   ],
+   "radius": 34,
+   "height": 15,
+   "warp": 0.35,
+   "skirt": 16,
+   "talus": 0.4,
+   "cap": "shore_grass"
+  },
+  {
+   "year": -9100,
+   "event": "mesa",
+   "cause": "a sea stack, the last of an older headland the waves cut back",
+   "at": [
+    395,
+    120
+   ],
+   "radius": 9,
+   "height": 40,
+   "warp": 0.2,
+   "talus": 0.2,
+   "cap": "basalt",
+   "poi": "the sea stacks"
+  },
+  {
+   "year": -9100,
+   "event": "mesa",
+   "cause": "a sea stack, the last of an older headland the waves cut back",
+   "at": [
+    420,
+    300
+   ],
+   "radius": 12,
+   "height": 34,
+   "warp": 0.2,
+   "talus": 0.2,
+   "cap": "basalt"
+  },
+  {
+   "year": -9100,
+   "event": "mesa",
+   "cause": "a sea stack, the last of an older headland the waves cut back",
+   "at": [
+    505,
+    340
+   ],
+   "radius": 7,
+   "height": 28,
+   "warp": 0.2,
+   "talus": 0.2,
+   "cap": "basalt"
+  },
+  {
+   "year": -9100,
+   "event": "mesa",
+   "cause": "a sea stack, the last of an older headland the waves cut back",
+   "at": [
+    610,
+    470
+   ],
+   "radius": 10,
+   "height": 38,
+   "warp": 0.2,
+   "talus": 0.2,
+   "cap": "basalt"
+  },
+  {
+   "year": -9100,
+   "event": "mesa",
+   "cause": "a sea stack, the last of an older headland the waves cut back",
+   "at": [
+    560,
+    1300
+   ],
+   "radius": 8,
+   "height": 30,
+   "warp": 0.2,
+   "talus": 0.2,
+   "cap": "basalt"
+  },
+  {
+   "year": -9100,
+   "event": "mesa",
+   "cause": "a sea stack, the last of an older headland the waves cut back",
+   "at": [
+    470,
+    420
+   ],
+   "radius": 6,
+   "height": 24,
+   "warp": 0.2,
+   "talus": 0.2,
+   "cap": "basalt"
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the headland and the rock under it",
+   "name": "headland",
+   "at": [
+    560,
+    170
+   ],
+   "radius": 200
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the kelp reefs off the headland",
+   "name": "kelp",
+   "at": [
+    330,
+    250
+   ],
+   "radius": 230
+  },
+  {
+   "year": -5000,
+   "event": "skeleton",
+   "cause": "THE TITAN: the largest of the giants, come ashore here and dead on its belly along the waterline, head to the south in the surf; fourteen hundred metres from the tip of its jaw to its tail, which curls up into the dunes",
+   "name": "titan",
+   "kind": "toothed",
+   "path": [
+    [
+     650,
+     1490
+    ],
+    [
+     712,
+     1260
+    ],
+    [
+     800,
+     1010
+    ],
+    [
+     813,
+     760
+    ],
+    [
+     818,
+     520
+    ],
+    [
+     860,
+     330
+    ],
+    [
+     965,
+     180
+    ],
+    [
+     1060,
+     100
+    ]
+   ],
+   "skull": 0.15,
+   "vertebrae": 52,
+   "ribs": 16,
+   "broken": 0.35,
+   "sink": 0.6,
+   "skull_sink": 3,
+   "belly": "right",
+   "lean": 0.12,
+   "teeth": "titan_tooth",
+   "poi": "the titan",
+   "bone": "titan_bone",
+   "marrow": "titan_marrow",
+   "pits": "marrow_pit",
+   "lichen": "bone_lichen",
+   "lichen_share": 0.1,
+   "wet": "bone_barnacles",
+   "wet_depth": 5.0,
+   "deep": "drowned_bone",
+   "sand": "dune_sand"
+  },
+  {
+   "year": -4900,
+   "event": "skeleton",
+   "cause": "THE PREY: a baleen whale eighty metres long, killed by the giants and washed up at the north end of the beach, its jaw upturned",
+   "name": "prey",
+   "kind": "baleen",
+   "path": [
+    [
+     722,
+     270
+    ],
+    [
+     740,
+     330
+    ],
+    [
+     770,
+     386
+    ]
+   ],
+   "skull": 0.25,
+   "vertebrae": 40,
+   "ribs": 13,
+   "rib_height": 26,
+   "broken": 0.3,
+   "sink": 0.5,
+   "teeth": "baleen_plate",
+   "poi": "the baleen whale",
+   "bone": "titan_bone",
+   "marrow": "titan_marrow",
+   "pits": "marrow_pit",
+   "lichen": "bone_lichen",
+   "lichen_share": 0.1,
+   "wet": "bone_barnacles",
+   "wet_depth": 5.0,
+   "deep": "drowned_bone",
+   "sand": "dune_sand"
+  },
+  {
+   "year": -4950,
+   "event": "skeleton",
+   "cause": "THE CALF: one of the giants' own young, fifty metres long, curled in the dunes the way it died",
+   "name": "calf",
+   "kind": "toothed",
+   "path": [
+    [
+     1006,
+     310
+    ],
+    [
+     1030,
+     290
+    ],
+    [
+     1058,
+     296
+    ],
+    [
+     1066,
+     326
+    ],
+    [
+     1052,
+     348
+    ]
+   ],
+   "skull": 0.22,
+   "vertebrae": 36,
+   "ribs": 12,
+   "rib_height": 22,
+   "broken": 0.2,
+   "sink": 0.45,
+   "teeth": "titan_tooth",
+   "poi": "the calf",
+   "bone": "titan_bone",
+   "marrow": "titan_marrow",
+   "pits": "marrow_pit",
+   "lichen": "bone_lichen",
+   "lichen_share": 0.1,
+   "wet": "bone_barnacles",
+   "wet_depth": 5.0,
+   "deep": "drowned_bone",
+   "sand": "dune_sand"
+  },
+  {
+   "year": -100,
+   "event": "region",
+   "cause": "the sea floor off the titan's head, where its loose bones and teeth lie",
+   "name": "boneyard",
+   "at": {
+    "from": "titan_jaw",
+    "by": [
+     -60,
+     20
+    ]
+   },
+   "radius": 110
+  },
+  {
+   "year": -100,
+   "event": "region",
+   "cause": "the bacterial mats closest to the fallen bones",
+   "name": "mat",
+   "at": {
+    "from": "titan_jaw",
+    "by": [
+     -60,
+     30
+    ]
+   },
+   "radius": 40
+  },
+  {
+   "year": 1,
+   "event": "place",
+   "cause": "THE EYE: a faint light in the titan's landward eye socket, there only while the moon is out",
+   "structure": "titan_eye",
+   "at": "titan_eye_left",
+   "height": 18.4,
+   "when": {
+    "moon": true
+   },
+   "poi": "the titan's eye"
+  },
+  {
+   "year": 1,
+   "event": "area",
+   "cause": "THE TITAN: the skull",
+   "name": "the Skull",
+   "kind": "skull",
+   "at": "titan_skull",
+   "radius": 60
+  },
+  {
+   "year": 1,
+   "event": "area",
+   "cause": "THE TITAN: the ribcage",
+   "name": "the Ribs",
+   "kind": "ribs",
+   "at": "titan_ribs",
+   "radius": 200
+  },
+  {
+   "year": 1,
+   "event": "area",
+   "cause": "THE TITAN: the spine",
+   "name": "the Spine",
+   "kind": "spine",
+   "at": "titan_spine_6",
+   "radius": 150
+  },
+  {
+   "year": -2000,
+   "event": "subside",
+   "cause": "a blowout: the wind broke through the grass here and dug a bowl down to the damp sand",
+   "at": [
+    1240,
+    620
+   ],
+   "radius": 46,
+   "drop": [
+    3,
+    5
+   ],
+   "grain": 30,
+   "edge": 18,
+   "ragged": 0.35,
+   "stretch": 1.6,
+   "bearing": 125
+  },
+  {
+   "year": -1999,
+   "event": "region",
+   "cause": "the blowout",
+   "name": "hollow",
+   "at": [
+    1240,
+    620
+   ],
+   "radius": 41.4
+  },
+  {
+   "year": -2000,
+   "event": "subside",
+   "cause": "a blowout: the wind broke through the grass here and dug a bowl down to the damp sand",
+   "at": [
+    1330,
+    1040
+   ],
+   "radius": 38,
+   "drop": [
+    2.5,
+    4
+   ],
+   "grain": 30,
+   "edge": 18,
+   "ragged": 0.35,
+   "stretch": 1.6,
+   "bearing": 125
+  },
+  {
+   "year": -1999,
+   "event": "region",
+   "cause": "the blowout",
+   "name": "hollow",
+   "at": [
+    1330,
+    1040
+   ],
+   "radius": 34.2
+  },
+  {
+   "year": -2000,
+   "event": "subside",
+   "cause": "a blowout: the wind broke through the grass here and dug a bowl down to the damp sand",
+   "at": [
+    1120,
+    1300
+   ],
+   "radius": 30,
+   "drop": [
+    2,
+    3.5
+   ],
+   "grain": 30,
+   "edge": 18,
+   "ragged": 0.35,
+   "stretch": 1.6,
+   "bearing": 125
+  },
+  {
+   "year": -1999,
+   "event": "region",
+   "cause": "the blowout",
+   "name": "hollow",
+   "at": [
+    1120,
+    1300
+   ],
+   "radius": 27.0
+  },
+  {
+   "year": -2000,
+   "event": "subside",
+   "cause": "a blowout: the wind broke through the grass here and dug a bowl down to the damp sand",
+   "at": [
+    1180,
+    230
+   ],
+   "radius": 34,
+   "drop": [
+    2.5,
+    4
+   ],
+   "grain": 30,
+   "edge": 18,
+   "ragged": 0.35,
+   "stretch": 1.6,
+   "bearing": 125
+  },
+  {
+   "year": -1999,
+   "event": "region",
+   "cause": "the blowout",
+   "name": "hollow",
+   "at": [
+    1180,
+    230
+   ],
+   "radius": 30.6
+  },
+  {
+   "year": 1891,
+   "event": "route",
+   "cause": "the cabin path: from the beach over the dunes to the woodcutter's cabin",
+   "from": {
+    "from": "titan_hips",
+    "by": [
+     40,
+     0
+    ]
+   },
+   "to": {
+    "from": "cabin",
+    "by": [
+     -10,
+     0
+    ]
+   },
+   "kit": "footpath",
+   "poi": "the cabin path"
+  },
+  {
+   "year": 1891,
+   "event": "sign",
+   "cause": "the cabin path: a board where it leaves the beach",
+   "at": {
+    "from": "titan_hips",
+    "by": [
+     30,
+     6
+    ]
+   },
+   "text": [
+    "CABIN",
+    "1 MILE"
+   ],
+   "style": "timber_sign",
+   "bearing": 270,
+   "age": 120
+  },
+  {
+   "year": -250,
+   "event": "place",
+   "cause": "BONEYARD: bones and teeth that fell off the head and rolled into the shallows",
+   "structure": "titan_tooth",
+   "at": {
+    "from": "titan_jaw",
+    "by": [
+     -55,
+     20
+    ]
+   },
+   "bearing": 0,
+   "poi": "the boneyard"
+  },
+  {
+   "year": -250,
+   "event": "place",
+   "cause": "BONEYARD: bones and teeth that fell off the head and rolled into the shallows",
+   "structure": "titan_tooth",
+   "at": {
+    "from": "titan_jaw",
+    "by": [
+     -25,
+     -5
+    ]
+   },
+   "bearing": 135
+  },
+  {
+   "year": -250,
+   "event": "place",
+   "cause": "BONEYARD: bones and teeth that fell off the head and rolled into the shallows",
+   "structure": "titan_tooth",
+   "at": {
+    "from": "titan_jaw",
+    "by": [
+     -80,
+     50
+    ]
+   },
+   "bearing": 275
+  },
+  {
+   "year": -250,
+   "event": "place",
+   "cause": "BONEYARD: bones and teeth that fell off the head and rolled into the shallows",
+   "structure": "bone_shard",
+   "at": {
+    "from": "titan_jaw",
+    "by": [
+     0,
+     40
+    ]
+   },
+   "bearing": 85
+  },
+  {
+   "year": -250,
+   "event": "place",
+   "cause": "BONEYARD: bones and teeth that fell off the head and rolled into the shallows",
+   "structure": "bone_shard",
+   "at": {
+    "from": "titan_jaw",
+    "by": [
+     -95,
+     -10
+    ]
+   },
+   "bearing": 350
+  },
+  {
+   "year": -250,
+   "event": "place",
+   "cause": "BONEYARD: bones and teeth that fell off the head and rolled into the shallows",
+   "structure": "bone_shard",
+   "at": {
+    "from": "titan_jaw",
+    "by": [
+     -40,
+     75
+    ]
+   },
+   "bearing": 270
+  },
+  {
+   "year": -250,
+   "event": "place",
+   "cause": "BONEYARD: bones and teeth that fell off the head and rolled into the shallows",
+   "structure": "titan_tooth",
+   "at": {
+    "from": "titan_jaw",
+    "by": [
+     15,
+     -30
+    ]
+   },
+   "bearing": 340
+  },
+  {
+   "year": -250,
+   "event": "place",
+   "cause": "BONEYARD: bones and teeth that fell off the head and rolled into the shallows",
+   "structure": "bone_shard",
+   "at": {
+    "from": "titan_jaw",
+    "by": [
+     -115,
+     80
+    ]
+   },
+   "bearing": 120
+  },
+  {
+   "year": -240,
+   "event": "place",
+   "cause": "a bone carried far into the dunes by some storm nobody remembers",
+   "structure": "bone_shard",
+   "at": [
+    1300,
+    760
+   ],
+   "bearing": 260
+  },
+  {
+   "year": -240,
+   "event": "place",
+   "cause": "a bone carried far into the dunes by some storm nobody remembers",
+   "structure": "titan_tooth",
+   "at": [
+    1150,
+    980
+   ],
+   "bearing": 330
+  },
+  {
+   "year": -240,
+   "event": "place",
+   "cause": "a bone carried far into the dunes by some storm nobody remembers",
+   "structure": "bone_shard",
+   "at": [
+    1380,
+    420
+   ],
+   "bearing": 0
+  },
+  {
+   "year": -240,
+   "event": "place",
+   "cause": "a bone carried far into the dunes by some storm nobody remembers",
+   "structure": "bone_shard",
+   "at": [
+    1060,
+    1180
+   ],
+   "bearing": 80
+  },
+  {
+   "year": 1890,
+   "event": "seat",
+   "cause": "a level place at the forest edge",
+   "name": "cabin",
+   "near": [
+    1380,
+    600
+   ],
+   "within": 80,
+   "rule": "flat"
+  },
+  {
+   "year": 1890,
+   "event": "place",
+   "cause": "a woodcutter's cabin at the forest edge, built when the lighthouse was, empty since",
+   "structure": "woodcutter_hut",
+   "at": "cabin",
+   "bearing": 270,
+   "age": 90,
+   "poi": "the cabin"
+  },
+  {
+   "year": 1890,
+   "event": "place",
+   "cause": "a giant spruce that came down in a gale and lies where it fell",
+   "structure": "fallen_trunk",
+   "at": {
+    "from": "cabin",
+    "by": [
+     30,
+     -24
+    ]
+   },
+   "bearing": 200
+  },
+  {
+   "year": -300,
+   "event": "subside",
+   "cause": "the great earthquake dropped the spruce wood behind the beach a metre under the high tide, and the salt killed it standing",
+   "at": [
+    705,
+    650
+   ],
+   "radius": 52,
+   "level": [
+    0.3,
+    1.4
+   ],
+   "grain": 30,
+   "edge": 26,
+   "ragged": 0.35
+  },
+  {
+   "year": -600,
+   "event": "region",
+   "cause": "a stand of Douglas fir and redwood inland that no fire or saw reached",
+   "name": "firstand",
+   "at": [
+    1460,
+    800
+   ],
+   "radius": 65
+  },
+  {
+   "year": -300,
+   "event": "region",
+   "cause": "the stumps of a spruce forest the sea drowned in the great earthquake, three hundred years ago",
+   "name": "stumps",
+   "at": [
+    712,
+    650
+   ],
+   "radius": 72
+  },
+  {
+   "year": -300,
+   "event": "area",
+   "cause": "the drowned stumps",
+   "name": "the Drowned Wood",
+   "kind": "stumps",
+   "at": [
+    712,
+    650
+   ],
+   "radius": 72
+  },
+  {
+   "year": -200,
+   "event": "place",
+   "cause": "TEETH: a tooth fallen from the titan's jaw, carried up the beach by storms and left standing in the sand",
+   "structure": "titan_tooth",
+   "at": {
+    "from": "titan_skull",
+    "by": [
+     30,
+     -60
+    ]
+   },
+   "bearing": 20,
+   "poi": "the teeth"
+  },
+  {
+   "year": -200,
+   "event": "place",
+   "cause": "TEETH: a tooth fallen from the titan's jaw, carried up the beach by storms and left standing in the sand",
+   "structure": "titan_tooth",
+   "at": {
+    "from": "titan_skull",
+    "by": [
+     58,
+     -92
+    ]
+   },
+   "bearing": 110
+  },
+  {
+   "year": -200,
+   "event": "place",
+   "cause": "TEETH: a tooth fallen from the titan's jaw, carried up the beach by storms and left standing in the sand",
+   "structure": "titan_tooth",
+   "at": {
+    "from": "titan_skull",
+    "by": [
+     94,
+     -70
+    ]
+   },
+   "bearing": 200
+  },
+  {
+   "year": -200,
+   "event": "place",
+   "cause": "TEETH: a tooth fallen from the titan's jaw, carried up the beach by storms and left standing in the sand",
+   "structure": "titan_tooth",
+   "at": {
+    "from": "titan_skull",
+    "by": [
+     0,
+     -118
+    ]
+   },
+   "bearing": 300
+  },
+  {
+   "year": -200,
+   "event": "place",
+   "cause": "TEETH: a tooth fallen from the titan's jaw, carried up the beach by storms and left standing in the sand",
+   "structure": "titan_tooth",
+   "at": {
+    "from": "titan_skull",
+    "by": [
+     78,
+     -140
+    ]
+   },
+   "bearing": 250
+  },
+  {
+   "year": -200,
+   "event": "place",
+   "cause": "TEETH: a tooth fallen from the titan's jaw, carried up the beach by storms and left standing in the sand",
+   "structure": "titan_tooth",
+   "at": {
+    "from": "titan_skull",
+    "by": [
+     40,
+     -170
+    ]
+   },
+   "bearing": 80
+  },
+  {
+   "year": -200,
+   "event": "area",
+   "cause": "TEETH: the beach where the teeth stand",
+   "name": "Teeth Strand",
+   "kind": "beach",
+   "at": {
+    "from": "titan_skull",
+    "by": [
+     60,
+     -100
+    ]
+   },
+   "radius": 80
+  },
+  {
+   "year": -150,
+   "event": "place",
+   "cause": "a harpoon thirty metres long, rusted through, its head buried in a vertebra near the hips; it was there before the whalers came",
+   "structure": "giant_harpoon",
+   "at": [
+    848,
+    522
+   ],
+   "bearing": 180,
+   "poi": "the harpoon"
+  },
+  {
+   "year": 1841,
+   "event": "place",
+   "cause": "STATION: the try-works where the whalers boiled down the blubber",
+   "structure": "try_works",
+   "at": {
+    "from": "creek_mouth",
+    "by": [
+     48,
+     -38
+    ]
+   },
+   "bearing": 270,
+   "age": 180,
+   "poi": "the try-works"
+  },
+  {
+   "year": 1841,
+   "event": "place",
+   "cause": "STATION: the whalers' store",
+   "structure": "net_shed",
+   "at": {
+    "from": "creek_mouth",
+    "by": [
+     70,
+     -56
+    ]
+   },
+   "bearing": 270,
+   "age": 180
+  },
+  {
+   "year": 1841,
+   "event": "place",
+   "cause": "STATION: the slip they hauled the boats up",
+   "structure": "jetty",
+   "at": {
+    "from": "creek_mouth",
+    "by": [
+     14,
+     -30
+    ]
+   },
+   "bearing": 270,
+   "age": 180
+  },
+  {
+   "year": 1841,
+   "event": "area",
+   "cause": "STATION: the whalers' station",
+   "name": "Try-works Creek",
+   "kind": "ruin",
+   "at": {
+    "from": "creek_mouth",
+    "by": [
+     45,
+     -40
+    ]
+   },
+   "radius": 60
+  },
+  {
+   "year": 1846,
+   "event": "sign",
+   "cause": "STATION: the board the last crew nailed up when they left",
+   "at": {
+    "from": "creek_mouth",
+    "by": [
+     36,
+     -24
+    ]
+   },
+   "text": [
+    "SHORE STATION",
+    "1841 - 1846"
+   ],
+   "style": "timber_sign",
+   "bearing": 270,
+   "age": 180
+  },
+  {
+   "year": 1894,
+   "event": "seat",
+   "cause": "the seaward tip of the headland, where the light shows furthest out to sea",
+   "name": "lighthead",
+   "near": [
+    500,
+    142
+   ],
+   "within": 20,
+   "rule": "high"
+  },
+  {
+   "year": 1894,
+   "event": "place",
+   "cause": "LIGHT: the lighthouse, built in 1894 and kept for sixty years; empty now",
+   "structure": "gannet_light",
+   "at": "lighthead",
+   "bearing": 270,
+   "age": 70,
+   "poi": "the lighthouse"
+  },
+  {
+   "year": 1894,
+   "event": "place",
+   "cause": "LIGHT: the keeper's house beside the tower",
+   "structure": "white_house",
+   "at": {
+    "from": "lighthead",
+    "by": [
+     14,
+     10
+    ]
+   },
+   "bearing": 180,
+   "age": 70
+  },
+  {
+   "year": 1894,
+   "event": "area",
+   "cause": "LIGHT: the headland",
+   "name": "Gannet Head",
+   "kind": "headland",
+   "at": "lighthead",
+   "radius": 120
+  },
+  {
+   "year": 1903,
+   "event": "place",
+   "cause": "a three-masted barque driven ashore in the gale of 1903, her iron frames rusting beside the baleen whale's ribs",
+   "structure": "wreck_ribs",
+   "at": {
+    "from": "prey_ribs",
+    "by": [
+     40,
+     -70
+    ]
+   },
+   "bearing": 200,
+   "age": 120,
+   "poi": "the wreck"
+  },
+  {
+   "year": 0,
+   "event": "vent",
+   "cause": "the surf driven up through the titan's blowhole, every few seconds, whatever the sea is doing",
+   "at": "titan_blowhole",
+   "points": [
+    [
+     0,
+     0,
+     50
+    ]
+   ],
+   "fx": "blowhole_spout",
+   "rate": 0.18,
+   "spread": 2
+  },
+  {
+   "year": 1,
+   "event": "area",
+   "cause": "the baleen whale",
+   "name": "the Baleen Bones",
+   "kind": "bones",
+   "at": "prey_ribs",
+   "radius": 50
+  },
+  {
+   "year": 1,
+   "event": "area",
+   "cause": "the calf",
+   "name": "the Calf",
+   "kind": "bones",
+   "at": "calf_ribs",
+   "radius": 40
+  },
+  {
+   "year": 1,
+   "event": "area",
+   "cause": "the dunes",
+   "name": "the Long Dunes",
+   "kind": "dunes",
+   "at": [
+    1200,
+    820
+   ],
+   "radius": 300
+  }
+ ]
+}

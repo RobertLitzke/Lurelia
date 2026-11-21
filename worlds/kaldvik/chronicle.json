@@ -1,1129 +1,2206 @@
 {
-  "places": {
-    "head": [
-      880,
-      470
-    ],
-    "hang_lip": [
-      528,
-      470
-    ],
-    "cirque": [
-      565,
-      95
-    ],
-    "mouth": [
-      60,
-      550
-    ],
-    "laugin": [
-      756,
-      286
-    ],
-    "fumaroles": [
-      236,
-      830
-    ],
-    "trolls": [
-      300,
-      380
-    ],
-    "market": [
-      890,
-      474
-    ]
+ "places": {},
+ "events": [
+  {
+   "year": -60000000,
+   "event": "terrain",
+   "cause": "lava flow on lava flow, laid over a million years of eruptions: a plateau, higher in the north-east where the vents were, sagging along the old rivers that drained it west",
+   "base": 128,
+   "hills": 34,
+   "ridges": 9,
+   "rough": 6,
+   "vary": 0.8,
+   "warp": 75,
+   "relief": [
+    {
+     "at": [
+      650,
+      120
+     ],
+     "radius": 240,
+     "height": 44
+    },
+    {
+     "at": [
+      900,
+      760
+     ],
+     "radius": 200,
+     "height": 36
+    },
+    {
+     "at": [
+      240,
+      230
+     ],
+     "radius": 200,
+     "height": 22
+    },
+    {
+     "at": [
+      230,
+      860
+     ],
+     "radius": 240,
+     "height": -8
+    },
+    {
+     "at": [
+      960,
+      170
+     ],
+     "radius": 160,
+     "height": -14
+    },
+    {
+     "at": [
+      520,
+      800
+     ],
+     "radius": 150,
+     "height": 20
+    }
+   ],
+   "courses": [
+    {
+     "path": [
+      [
+       1060,
+       380
+      ],
+      [
+       880,
+       460
+      ],
+      [
+       670,
+       560
+      ],
+      [
+       480,
+       460
+      ],
+      [
+       310,
+       560
+      ],
+      [
+       130,
+       650
+      ],
+      [
+       -30,
+       600
+      ]
+     ],
+     "width": 100,
+     "depth": 34,
+     "depth_end": 84
+    },
+    {
+     "path": [
+      [
+       610,
+       40
+      ],
+      [
+       580,
+       240
+      ],
+      [
+       545,
+       420
+      ]
+     ],
+     "width": 70,
+     "depth": 14,
+     "depth_end": 30
+    },
+    {
+     "path": [
+      [
+       330,
+       1010
+      ],
+      [
+       300,
+       830
+      ],
+      [
+       370,
+       640
+      ]
+     ],
+     "width": 70,
+     "depth": 16,
+     "depth_end": 36
+    },
+    {
+     "path": [
+      [
+       860,
+       1040
+      ],
+      [
+       800,
+       830
+      ],
+      [
+       690,
+       620
+      ]
+     ],
+     "width": 80,
+     "depth": 26,
+     "depth_end": 72
+    }
+   ],
+   "sea": [
+    {
+     "edge": "west",
+     "reach": 95,
+     "bays": 70,
+     "rise": 45
+    }
+   ]
   },
-  "events": [
+  {
+   "year": -10000000,
+   "event": "dip",
+   "cause": "the western block, let down toward the sea along old faults: its flows run at a slant down the outer fjord",
+   "at": [
+    260,
+    560
+   ],
+   "radius": 480,
+   "bearing": 225,
+   "grade": 0.07,
+   "warp": 4
+  },
+  {
+   "year": -10000000,
+   "event": "dip",
+   "cause": "the land behind the head, tipped the other way, so the beds climb toward the sea",
+   "at": [
+    830,
+    430
+   ],
+   "radius": 360,
+   "bearing": 40,
+   "grade": 0.05,
+   "warp": 3
+  },
+  {
+   "year": -4000000,
+   "event": "drainage",
+   "cause": "rivers, before the ice: the old river and everything that ran into it, cutting back from the sea",
+   "iters": 22,
+   "strength": 0.2,
+   "inflow": [
     {
-      "year": -60000000,
-      "event": "landmass",
-      "cause": "lava flow on lava flow, laid flat as a table over a million years of eruptions",
-      "centre": [
-        512,
-        512
-      ],
-      "radius": 2600,
-      "roughness": 0.55,
-      "hills": 40,
-      "ridges": 5
+     "at": [
+      1018,
+      396
+     ],
+     "area": 2500000.0
     },
     {
-      "year": -50000000,
-      "event": "deposit",
-      "cause": "the basalt plateau, thickest inland, every flow a step in the walls",
-      "at": [
-        620,
-        470
-      ],
-      "radius": 1500,
-      "thickness": 140,
-      "mat": "basalt",
-      "shape": "dome"
+     "at": [
+      850,
+      1016
+     ],
+     "area": 900000.0
+    }
+   ]
+  },
+  {
+   "year": -2000000,
+   "event": "glaciate",
+   "cause": "the ice: a great glacier down the old river's valley, grinding it far below the sea it would let in, and smaller ones down every side valley, left hanging over its walls when the ice went",
+   "name": "fjord",
+   "inflow": [
+    {
+     "at": [
+      1018,
+      396
+     ],
+     "area": 3000000.0
     },
     {
-      "year": -10000000,
-      "event": "dip",
-      "cause": "the western block, let down toward the sea along old faults: its flows run at a slant down the outer fjord",
-      "at": [
-        260,
-        560
-      ],
-      "radius": 480,
-      "bearing": 225,
-      "grade": 0.07,
-      "warp": 4
-    },
+     "at": [
+      850,
+      1016
+     ],
+     "area": 1700000.0
+    }
+   ],
+   "min_area": 26000,
+   "width": [
+    22,
+    62
+   ],
+   "depth": [
+    9,
+    72
+   ],
+   "side": [
+    36,
+    100
+   ],
+   "rim": 196,
+   "shape": 1.9,
+   "ledge": 8.0,
+   "floor_mat": "river_gravel",
+   "sill": {
+    "top": 20.5,
+    "length": 45,
+    "inset": 90
+   },
+   "cirque_above": 118,
+   "valleys": [
     {
-      "year": -10000000,
-      "event": "dip",
-      "cause": "the land behind the head, tipped the other way, so the beds climb toward the sea",
-      "at": [
-        830,
-        430
-      ],
-      "radius": 360,
-      "bearing": 40,
-      "grade": 0.05,
-      "warp": 3
-    },
-    {
-      "year": -2600000,
-      "event": "trough",
-      "cause": "the north glacier, feeding the big one from a high cirque; it shrank back first and left its valley hanging over the fjord",
-      "path": [
-        [
-          560,
-          150
-        ],
-        [
-          550,
-          260
-        ],
-        [
-          536,
-          390
-        ],
-        [
-          526,
-          480
-        ]
-      ],
-      "width": 42,
-      "floor": 122,
-      "floor_end": 104,
-      "rim": 200,
-      "side": 75,
-      "shape": 2.2,
-      "poi": "Hengdal, the hanging valley",
-      "ledge": 7.0
-    },
-    {
-      "year": -2500000,
-      "event": "trough",
-      "cause": "a smaller tributary from the south fell, hanging the same way",
-      "path": [
-        [
-          300,
-          960
-        ],
-        [
-          296,
-          800
-        ],
-        [
-          310,
-          660
-        ],
-        [
-          330,
-          590
-        ]
-      ],
-      "width": 34,
-      "floor": 98,
-      "floor_end": 86,
-      "rim": 160,
-      "side": 60,
-      "shape": 2.2,
-      "ledge": 7.0
-    },
-    {
-      "year": -2000000,
-      "event": "trough",
-      "cause": "the upper valley, where the great glacier gathered before it went down to the sea",
-      "path": [
-        [
-          1080,
-          410
-        ],
-        [
-          960,
-          440
-        ],
-        [
-          880,
-          466
-        ],
-        [
-          800,
-          480
-        ]
-      ],
-      "width": 60,
-      "floor": 62,
-      "floor_end": 25,
-      "rim": 175,
-      "side": 120,
-      "shape": 2.0,
-      "ledge": 7.0
-    },
-    {
-      "year": -1900000,
-      "event": "trough",
-      "cause": "the great glacier, grinding the fjord far below the sea it would let in when it went",
-      "path": [
-        [
-          810,
-          470
-        ],
-        [
-          700,
-          515
-        ],
-        [
-          590,
-          505
-        ],
-        [
-          460,
-          520
-        ],
-        [
-          330,
-          590
-        ],
-        [
-          190,
-          600
-        ],
-        [
-          70,
-          560
-        ],
-        [
-          -40,
-          540
-        ]
-      ],
-      "width": 46,
-      "width_end": 90,
-      "floor": 10,
-      "floor_end": 1,
-      "rim": 192,
-      "side": 120,
-      "shape": 1.7,
-      "floor_mat": "river_gravel",
-      "sill": {
-        "at": [
-          110,
-          575
-        ],
-        "top": 20.5,
-        "length": 45
-      },
-      "poi": "Kaldvik fjord",
-      "ledge": 9.0
-    },
-    {
-      "year": -1800000,
-      "event": "trough",
-      "cause": "a side glacier's last bite, now a cove the sea freezes over first",
-      "path": [
-        [
-          372,
-          700
-        ],
-        [
-          376,
-          630
-        ],
-        [
-          372,
-          560
-        ]
-      ],
-      "width": 46,
-      "floor": 23,
-      "floor_end": 18,
-      "rim": 90,
-      "side": 60,
-      "shape": 2.0,
-      "poi": "Isvika, the ice cove",
-      "ledge": 7.0
-    },
-    {
-      "year": -1800000,
-      "event": "trough",
-      "cause": "a second cove under the north wall by the head",
-      "path": [
-        [
-          700,
-          390
-        ],
-        [
-          704,
-          450
-        ],
-        [
-          708,
-          498
-        ]
-      ],
-      "width": 36,
-      "floor": 23,
-      "floor_end": 19,
-      "rim": 80,
-      "side": 50,
-      "shape": 2.0,
-      "ledge": 7.0
-    },
-    {
-      "year": -1500000,
-      "event": "mesa",
-      "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
-      "at": [
-        292,
-        372
-      ],
-      "radius": 5,
-      "height": 30,
-      "warp": 0.18,
-      "talus": 0.35,
-      "cap": "basalt",
-      "poi": "Trollkonur, the troll women"
-    },
-    {
-      "year": -1500000,
-      "event": "mesa",
-      "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
-      "at": [
-        304,
-        360
-      ],
-      "radius": 4,
-      "height": 22,
-      "warp": 0.18,
-      "talus": 0.35,
-      "cap": "basalt"
-    },
-    {
-      "year": -1500000,
-      "event": "mesa",
-      "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
-      "at": [
-        318,
-        378
-      ],
-      "radius": 5.5,
-      "height": 34,
-      "warp": 0.18,
-      "talus": 0.35,
-      "cap": "basalt"
-    },
-    {
-      "year": -1500000,
-      "event": "mesa",
-      "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
-      "at": [
-        286,
-        392
-      ],
-      "radius": 4,
-      "height": 18,
-      "warp": 0.18,
-      "talus": 0.35,
-      "cap": "basalt"
-    },
-    {
-      "year": -1500000,
-      "event": "mesa",
-      "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
-      "at": [
-        310,
-        396
-      ],
-      "radius": 4.5,
-      "height": 26,
-      "warp": 0.18,
-      "talus": 0.35,
-      "cap": "basalt"
-    },
-    {
-      "year": -1500000,
-      "event": "mesa",
-      "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
-      "at": [
-        330,
-        366
-      ],
-      "radius": 3.5,
-      "height": 15,
-      "warp": 0.18,
-      "talus": 0.35,
-      "cap": "basalt"
-    },
-    {
-      "year": -1500000,
-      "event": "mesa",
-      "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
-      "at": [
-        700,
-        792
-      ],
-      "radius": 5,
-      "height": 26,
-      "warp": 0.18,
-      "talus": 0.35,
-      "cap": "basalt"
-    },
-    {
-      "year": -1500000,
-      "event": "mesa",
-      "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
-      "at": [
-        712,
-        806
-      ],
-      "radius": 4,
-      "height": 19,
-      "warp": 0.18,
-      "talus": 0.35,
-      "cap": "basalt"
-    },
-    {
-      "year": -12000,
-      "event": "cirque",
-      "cause": "the last of the ice, still sitting in the bowl it carved at the head of the hanging valley",
-      "at": [
-        566,
-        78
-      ],
+     "name": "hengdal",
+     "near": [
+      575,
+      260
+     ],
+     "poi": "Hengdal, the hanging valley",
+     "cirque": {
       "radius": 80,
-      "floor": 136,
-      "rim": 215,
-      "opens": 175,
       "ice": "glacier_ice",
       "ice_m": 7,
       "poi": "Kaldbreen glacier"
+     }
     },
     {
-      "year": -9000,
-      "event": "mesa",
-      "cause": "sea stacks, the last of a headland the waves cut back",
-      "at": [
-        36,
-        500
-      ],
-      "radius": 6,
-      "height": 50,
-      "warp": 0.15,
-      "talus": 0.2,
-      "cap": "basalt",
-      "poi": "the Drangar sea stacks"
+     "name": "sudurdal",
+     "near": [
+      800,
+      850
+     ],
+     "poi": "Sudurdal"
     },
     {
-      "year": -9000,
-      "event": "mesa",
-      "cause": "sea stacks, the last of a headland the waves cut back",
-      "at": [
-        50,
-        606
-      ],
-      "radius": 4,
-      "height": 40,
-      "warp": 0.15,
-      "talus": 0.2,
-      "cap": "basalt"
-    },
-    {
-      "year": -9000,
-      "event": "mesa",
-      "cause": "sea stacks, the last of a headland the waves cut back",
-      "at": [
-        90,
-        598
-      ],
-      "radius": 5,
-      "height": 44,
-      "warp": 0.15,
-      "talus": 0.2,
-      "cap": "basalt"
-    },
-    {
-      "year": -6000,
-      "event": "fell",
-      "cause": "the wind off the ice sheet and a hundred winters of frost: snow scoured off the rises, black knobs standing through it, the ground cracked into polygons",
-      "above": 92,
-      "wind": 60,
-      "scour": 0.26,
-      "rock": "basalt",
-      "tors": 0.2,
-      "tor_height": 5.0,
-      "polygons": 0.22,
-      "gravel": "scree",
-      "drifts": 0.45
-    },
-    {
-      "year": -3000,
-      "event": "lake",
-      "name": "Laugin",
-      "cause": "a hot pool on the shelf above the head, fed from below",
-      "at": [
-        756,
-        286
-      ],
-      "radius": 9,
-      "depth": 1.4,
-      "bed": "sinter",
-      "ragged": 0.2,
-      "steep": true
-    },
-    {
-      "year": -2900,
-      "event": "spring",
-      "cause": "the heat under the hot pool: the snow never lies round it, and it steams in any frost",
-      "at": [
-        756,
-        286
-      ],
-      "radius": 9,
-      "ring": 12,
-      "sinter": "sinter",
-      "stain": "sinter_stain",
-      "vents": 5,
-      "steam": 7
-    },
-    {
-      "year": -2900,
-      "event": "spring",
-      "cause": "a dry field of fumaroles on the south fell, sulphur-crusted and steaming",
-      "at": [
-        236,
-        830
-      ],
-      "radius": 14,
-      "ring": 9,
-      "sinter": "sinter",
-      "stain": "sinter_stain",
-      "vents": 8,
-      "steam": 4
-    },
-    {
-      "year": 0,
-      "event": "icefall",
-      "cause": "Hengdalsfossen, frozen: the stream from the glacier goes over the lip of the hanging valley and in December hangs down the wall as ice",
-      "from": [
-        534,
-        360
-      ],
-      "toward": [
-        526,
-        480
-      ],
-      "width": 14,
-      "ice": "fall_ice",
-      "blue": "fall_ice_blue",
-      "stream": [
-        [
-          552,
-          240
-        ],
-        [
-          544,
-          300
-        ],
-        [
-          538,
-          345
-        ],
-        [
-          534,
-          372
-        ]
-      ],
-      "poi": "Hengdalsfossen, the frozen fall"
-    },
-    {
-      "year": 0,
-      "event": "sea_ice",
-      "cause": "the first ice of the winter, in the cove that freezes first",
-      "at": [
-        376,
-        668
-      ],
-      "radius": 62,
-      "ice": "sea_ice",
-      "young": "young_ice",
-      "snow": "snow",
-      "leads": 0.3,
-      "poi": "Isvika, the ice cove"
-    },
-    {
-      "year": 0,
-      "event": "sea_ice",
-      "cause": "ice in the north cove by the head",
-      "at": [
-        705,
-        455
-      ],
-      "radius": 40,
-      "ice": "sea_ice",
-      "young": "young_ice",
-      "snow": "snow",
-      "leads": 0.2
-    },
-    {
-      "year": 0,
-      "event": "sea_ice",
-      "cause": "shore-fast ice along the shallows at the head, where the river's fresh water freezes first",
-      "at": [
-        792,
-        488
-      ],
-      "radius": 46,
-      "ice": "sea_ice",
-      "young": "young_ice",
-      "snow": "snow",
-      "leads": 0.15
-    },
-    {
-      "year": 0,
-      "event": "vent",
-      "cause": "sea smoke: the fjord's open water, warmer than the frozen air, steaming in the still cold",
-      "at": [
-        470,
-        530
-      ],
-      "points": [
-        [
-          -320,
-          45,
-          0.3
-        ],
-        [
-          -240,
-          55,
-          0.3
-        ],
-        [
-          -170,
-          45,
-          0.3
-        ],
-        [
-          -50,
-          0,
-          0.3
-        ],
-        [
-          10,
-          -8,
-          0.3
-        ],
-        [
-          90,
-          -22,
-          0.3
-        ],
-        [
-          170,
-          -25,
-          0.3
-        ],
-        [
-          230,
-          -25,
-          0.3
-        ]
-      ],
-      "fx": "sea_smoke",
-      "rate": 3.0,
-      "spread": 22,
-      "on_sea": true
-    },
-    {
-      "year": 1600,
-      "event": "region",
-      "cause": "HAMLET: the cleared ground the hamlet stands on, cut back from the spruce",
-      "name": "hamlet",
-      "at": [
-        892,
-        476
-      ],
-      "radius": 58
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the rorbu",
-      "structure": "rorbu",
-      "at": [
-        858,
-        446
-      ],
-      "bearing": 270
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the rorbu",
-      "structure": "rorbu",
-      "at": [
-        859,
-        461
-      ],
-      "bearing": 270
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the rorbu",
-      "structure": "rorbu",
-      "at": [
-        860,
-        476
-      ],
-      "bearing": 270
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the naust",
-      "structure": "naust",
-      "at": [
-        860,
-        496
-      ],
-      "bearing": 0
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the stockfish rack",
-      "structure": "stockfish_rack",
-      "at": [
-        876,
-        432
-      ],
-      "bearing": 0
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the stockfish rack",
-      "structure": "stockfish_rack",
-      "at": [
-        878,
-        444
-      ],
-      "bearing": 0
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the red house",
-      "structure": "red_house",
-      "at": [
-        882,
-        503
-      ],
-      "bearing": 270
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the white house",
-      "structure": "white_house",
-      "at": [
-        905,
-        452
-      ],
-      "bearing": 270
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the ochre house",
-      "structure": "ochre_house",
-      "at": [
-        899,
-        514
-      ],
-      "bearing": 270
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the red house",
-      "structure": "red_house",
-      "at": [
-        916,
-        486
-      ],
-      "bearing": 270
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the turf house",
-      "structure": "turf_house",
-      "at": [
-        924,
-        432
-      ],
-      "bearing": 270
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the white church",
-      "structure": "white_church",
-      "at": [
-        934,
-        506
-      ],
-      "bearing": 270
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the market spruce",
-      "structure": "market_spruce",
-      "at": [
-        890,
-        474
-      ],
-      "bearing": 0
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the stall red",
-      "structure": "stall_red",
-      "at": [
-        879,
-        466
-      ],
-      "bearing": 90
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the stall green",
-      "structure": "stall_green",
-      "at": [
-        879,
-        482
-      ],
-      "bearing": 90
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the stall green",
-      "structure": "stall_green",
-      "at": [
-        901,
-        466
-      ],
-      "bearing": 270
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the stall red",
-      "structure": "stall_red",
-      "at": [
-        901,
-        482
-      ],
-      "bearing": 270
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the stall red",
-      "structure": "stall_red",
-      "at": [
-        890,
-        461
-      ],
-      "bearing": 180
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the stall green",
-      "structure": "stall_green",
-      "at": [
-        890,
-        488
-      ],
-      "bearing": 0
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the yule goat",
-      "structure": "yule_goat",
-      "at": [
-        873,
-        475
-      ],
-      "bearing": 270
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the lamp post",
-      "structure": "lamp_post",
-      "at": [
-        877,
-        474
-      ],
-      "bearing": 0
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the lamp post",
-      "structure": "lamp_post",
-      "at": [
-        903,
-        474
-      ],
-      "bearing": 0
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the lamp post",
-      "structure": "lamp_post",
-      "at": [
-        890,
-        457
-      ],
-      "bearing": 0
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the lamp post",
-      "structure": "lamp_post",
-      "at": [
-        890,
-        493
-      ],
-      "bearing": 0
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the lamp post",
-      "structure": "lamp_post",
-      "at": [
-        868,
-        468
-      ],
-      "bearing": 0
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the lamp post",
-      "structure": "lamp_post",
-      "at": [
-        912,
-        496
-      ],
-      "bearing": 0
-    },
-    {
-      "year": 1700,
-      "event": "place",
-      "cause": "HAMLET: the Nordstjerne, an expedition ship that wintered in Isvika in 1915 and never got out: her crew walked to the hamlet over the ice in the spring",
-      "structure": "beset_ship",
-      "at": [
-        378,
-        684
-      ],
-      "bearing": 90,
-      "poi": "the Nordstjerne, beset"
-    },
-    {
-      "year": 1700,
-      "event": "vent",
-      "cause": "HAMLET: smoke from every chimney in the hamlet",
-      "at": [
-        890,
-        474
-      ],
-      "points": [
-        [
-          -7.88,
-          31.38,
-          9.95
-        ],
-        [
-          15.12,
-          -19.38,
-          9.95
-        ],
-        [
-          9.12,
-          42.12,
-          8.2
-        ],
-        [
-          26.12,
-          14.38,
-          9.95
-        ],
-        [
-          33.88,
-          -44.38,
-          6.7
-        ]
-      ],
-      "fx": "chimney_smoke",
-      "rate": 2.5,
-      "spread": 0.3
-    },
-    {
-      "year": 1700,
-      "event": "vent",
-      "cause": "HAMLET: smoke from the rorbu stoves",
-      "at": [
-        890,
-        474
-      ],
-      "points": [
-        [
-          -31.88,
-          -29.88,
-          9.7
-        ],
-        [
-          -30.88,
-          -14.88,
-          9.7
-        ],
-        [
-          -29.88,
-          0.12,
-          9.7
-        ]
-      ],
-      "fx": "chimney_smoke",
-      "rate": 2.0,
-      "spread": 0.3,
-      "on_sea": true
-    },
-    {
-      "year": 1700,
-      "event": "lamp",
-      "cause": "HAMLET: the market's lights and the street lanterns, lit at dusk",
-      "at": [
-        890,
-        474
-      ],
-      "points": [
-        [
-          -11,
-          -8,
-          2.6
-        ],
-        [
-          -11,
-          8,
-          2.6
-        ],
-        [
-          11,
-          -8,
-          2.6
-        ],
-        [
-          11,
-          8,
-          2.6
-        ],
-        [
-          0,
-          -13,
-          2.6
-        ],
-        [
-          0,
-          14,
-          2.6
-        ],
-        [
-          -13,
-          0,
-          3.6
-        ],
-        [
-          13,
-          0,
-          3.6
-        ],
-        [
-          0,
-          -17,
-          3.6
-        ],
-        [
-          0,
-          19,
-          3.6
-        ],
-        [
-          -22,
-          -6,
-          3.6
-        ],
-        [
-          22,
-          22,
-          3.6
-        ],
-        [
-          0,
-          0,
-          6.0
-        ]
-      ],
-      "reach": 13,
-      "colour": [
-        255,
-        206,
-        140
-      ],
-      "strength": 1.7,
-      "after_dark": true
-    },
-    {
-      "year": 1700,
-      "event": "area",
-      "cause": "HAMLET: the hamlet",
-      "name": "Kaldvik",
-      "kind": "village",
-      "at": [
-        890,
-        474
-      ],
-      "radius": 60
+     "name": "skardal",
+     "near": [
+      305,
+      760
+     ]
     }
-  ]
+   ],
+   "poi": "Kaldvik fjord"
+  },
+  {
+   "year": -1600000,
+   "event": "seat",
+   "cause": "where the old vents stood on the north-west fell",
+   "name": "trolls",
+   "near": [
+    285,
+    300
+   ],
+   "within": 130,
+   "rule": "high"
+  },
+  {
+   "year": -1600000,
+   "event": "seat",
+   "cause": "a second pair of vents on the south-east fell",
+   "name": "trolls2",
+   "near": [
+    890,
+    770
+   ],
+   "within": 120,
+   "rule": "high"
+  },
+  {
+   "year": -1500000,
+   "event": "mesa",
+   "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
+   "at": {
+    "from": "trolls",
+    "by": [
+     -14,
+     -6
+    ]
+   },
+   "radius": 5,
+   "height": 30,
+   "warp": 0.18,
+   "talus": 0.35,
+   "cap": "basalt",
+   "poi": "Trollkonur, the troll women"
+  },
+  {
+   "year": -1500000,
+   "event": "mesa",
+   "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
+   "at": {
+    "from": "trolls",
+    "by": [
+     -2,
+     -18
+    ]
+   },
+   "radius": 4,
+   "height": 22,
+   "warp": 0.18,
+   "talus": 0.35,
+   "cap": "basalt"
+  },
+  {
+   "year": -1500000,
+   "event": "mesa",
+   "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
+   "at": {
+    "from": "trolls",
+    "by": [
+     12,
+     0
+    ]
+   },
+   "radius": 5.5,
+   "height": 34,
+   "warp": 0.18,
+   "talus": 0.35,
+   "cap": "basalt"
+  },
+  {
+   "year": -1500000,
+   "event": "mesa",
+   "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
+   "at": {
+    "from": "trolls",
+    "by": [
+     -20,
+     14
+    ]
+   },
+   "radius": 4,
+   "height": 18,
+   "warp": 0.18,
+   "talus": 0.35,
+   "cap": "basalt"
+  },
+  {
+   "year": -1500000,
+   "event": "mesa",
+   "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
+   "at": {
+    "from": "trolls",
+    "by": [
+     4,
+     18
+    ]
+   },
+   "radius": 4.5,
+   "height": 26,
+   "warp": 0.18,
+   "talus": 0.35,
+   "cap": "basalt"
+  },
+  {
+   "year": -1500000,
+   "event": "mesa",
+   "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
+   "at": {
+    "from": "trolls",
+    "by": [
+     24,
+     -12
+    ]
+   },
+   "radius": 3.5,
+   "height": 15,
+   "warp": 0.18,
+   "talus": 0.35,
+   "cap": "basalt"
+  },
+  {
+   "year": -1500000,
+   "event": "mesa",
+   "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
+   "at": {
+    "from": "trolls2",
+    "by": [
+     -6,
+     -7
+    ]
+   },
+   "radius": 5,
+   "height": 26,
+   "warp": 0.18,
+   "talus": 0.35,
+   "cap": "basalt"
+  },
+  {
+   "year": -1500000,
+   "event": "mesa",
+   "cause": "basalt necks: the plugs of old vents, harder than the flows round them, left standing when the ice stripped the plateau",
+   "at": {
+    "from": "trolls2",
+    "by": [
+     6,
+     7
+    ]
+   },
+   "radius": 4,
+   "height": 19,
+   "warp": 0.18,
+   "talus": 0.35,
+   "cap": "basalt"
+  },
+  {
+   "year": -9100,
+   "event": "seat",
+   "cause": "open water off the fjord mouth",
+   "name": "drangar",
+   "near": {
+    "from": "fjord_mouth",
+    "by": [
+     -80,
+     -30
+    ]
+   },
+   "within": 110,
+   "rule": "sea",
+   "size": 16
+  },
+  {
+   "year": -9000,
+   "event": "mesa",
+   "cause": "sea stacks, the last of a headland the waves cut back",
+   "at": {
+    "from": "drangar",
+    "by": [
+     -22,
+     -23
+    ]
+   },
+   "radius": 6,
+   "height": 50,
+   "warp": 0.15,
+   "talus": 0.2,
+   "cap": "basalt",
+   "poi": "the Drangar sea stacks"
+  },
+  {
+   "year": -9000,
+   "event": "mesa",
+   "cause": "sea stacks, the last of a headland the waves cut back",
+   "at": {
+    "from": "drangar",
+    "by": [
+     -8,
+     12
+    ]
+   },
+   "radius": 4,
+   "height": 40,
+   "warp": 0.15,
+   "talus": 0.2,
+   "cap": "basalt"
+  },
+  {
+   "year": -9000,
+   "event": "mesa",
+   "cause": "sea stacks, the last of a headland the waves cut back",
+   "at": {
+    "from": "drangar",
+    "by": [
+     32,
+     10
+    ]
+   },
+   "radius": 5,
+   "height": 44,
+   "warp": 0.15,
+   "talus": 0.2,
+   "cap": "basalt"
+  },
+  {
+   "year": -6000,
+   "event": "fell",
+   "cause": "the wind off the ice sheet and a hundred winters of frost: snow scoured off the rises, black knobs standing through it, the ground cracked into polygons",
+   "above": 92,
+   "wind": 60,
+   "scour": 0.26,
+   "rock": "basalt",
+   "tors": 0.2,
+   "tor_height": 5.0,
+   "polygons": 0.22,
+   "gravel": "scree",
+   "drifts": 0.45
+  },
+  {
+   "year": -3100,
+   "event": "seat",
+   "cause": "a level shelf on the wall above the head, where the heat comes up",
+   "name": "laugin",
+   "near": {
+    "from": "fjord_head",
+    "by": [
+     -90,
+     -170
+    ],
+    "as_if": 90
+   },
+   "within": 150,
+   "rule": "flat",
+   "elev": [
+    60,
+    150
+   ],
+   "size": 26
+  },
+  {
+   "year": -3000,
+   "event": "lake",
+   "cause": "a hot pool on the shelf above the head, fed from below",
+   "name": "Laugin",
+   "at": "laugin",
+   "radius": 9,
+   "depth": 1.4,
+   "bed": "sinter",
+   "ragged": 0.2,
+   "steep": true
+  },
+  {
+   "year": -2900,
+   "event": "spring",
+   "cause": "the heat under the hot pool: the snow never lies round it, and it steams in any frost",
+   "at": "laugin",
+   "radius": 9,
+   "ring": 12,
+   "sinter": "sinter",
+   "stain": "sinter_stain",
+   "vents": 5,
+   "steam": 7
+  },
+  {
+   "year": -2950,
+   "event": "seat",
+   "cause": "level ground on the south fell, over a crack that still breathes",
+   "name": "fumaroles",
+   "near": [
+    540,
+    810
+   ],
+   "within": 150,
+   "rule": "flat",
+   "elev": [
+    90,
+    200
+   ],
+   "size": 30
+  },
+  {
+   "year": -2900,
+   "event": "spring",
+   "cause": "a dry field of fumaroles on the south fell, sulphur-crusted and steaming",
+   "at": "fumaroles",
+   "radius": 14,
+   "ring": 9,
+   "sinter": "sinter",
+   "stain": "sinter_stain",
+   "vents": 8,
+   "steam": 4
+  },
+  {
+   "year": 0,
+   "event": "icefall",
+   "cause": "Hengdalsfossen, frozen: the stream from the glacier goes over the lip of the hanging valley and in December hangs down the wall as ice",
+   "from": "hengdal_above",
+   "toward": "hengdal_out",
+   "width": 14,
+   "ice": "fall_ice",
+   "blue": "fall_ice_blue",
+   "stream": [
+    "hengdal_1",
+    "hengdal_2",
+    "hengdal_3",
+    "hengdal_above"
+   ],
+   "poi": "Hengdalsfossen, the frozen fall"
+  },
+  {
+   "year": -1,
+   "event": "seat",
+   "cause": "the side arm the sea freezes first",
+   "name": "isvika",
+   "near": [
+    700,
+    660
+   ],
+   "within": 170,
+   "rule": "cove",
+   "size": 30
+  },
+  {
+   "year": -1,
+   "event": "seat",
+   "cause": "a sheltered corner under the north wall",
+   "name": "northcove",
+   "near": [
+    470,
+    400
+   ],
+   "within": 150,
+   "rule": "cove",
+   "size": 22
+  },
+  {
+   "year": 0,
+   "event": "sea_ice",
+   "cause": "the first ice of the winter, in the arm that freezes first",
+   "at": "isvika",
+   "radius": 62,
+   "ice": "sea_ice",
+   "young": "young_ice",
+   "snow": "snow",
+   "leads": 0.3,
+   "poi": "Isvika, the ice cove"
+  },
+  {
+   "year": 0,
+   "event": "sea_ice",
+   "cause": "ice in the cove under the north wall",
+   "at": "northcove",
+   "radius": 40,
+   "ice": "sea_ice",
+   "young": "young_ice",
+   "snow": "snow",
+   "leads": 0.2
+  },
+  {
+   "year": 0,
+   "event": "sea_ice",
+   "cause": "shore-fast ice along the shallows at the head, where the river's fresh water freezes first",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     -44,
+     6
+    ],
+    "as_if": 90
+   },
+   "radius": 46,
+   "ice": "sea_ice",
+   "young": "young_ice",
+   "snow": "snow",
+   "leads": 0.15
+  },
+  {
+   "year": 0,
+   "event": "vent",
+   "cause": "sea smoke: the fjord's open water, warmer than the frozen air, steaming in the still cold",
+   "at": "fjord_2",
+   "points": [
+    [
+     0,
+     0,
+     0.3
+    ]
+   ],
+   "fx": "sea_smoke",
+   "rate": 3.0,
+   "spread": 22,
+   "on_sea": true
+  },
+  {
+   "year": 0,
+   "event": "vent",
+   "cause": "sea smoke: the fjord's open water, warmer than the frozen air, steaming in the still cold",
+   "at": "fjord_3",
+   "points": [
+    [
+     0,
+     0,
+     0.3
+    ]
+   ],
+   "fx": "sea_smoke",
+   "rate": 3.0,
+   "spread": 22,
+   "on_sea": true
+  },
+  {
+   "year": 0,
+   "event": "vent",
+   "cause": "sea smoke: the fjord's open water, warmer than the frozen air, steaming in the still cold",
+   "at": "fjord_4",
+   "points": [
+    [
+     0,
+     0,
+     0.3
+    ]
+   ],
+   "fx": "sea_smoke",
+   "rate": 3.0,
+   "spread": 22,
+   "on_sea": true
+  },
+  {
+   "year": 0,
+   "event": "vent",
+   "cause": "sea smoke: the fjord's open water, warmer than the frozen air, steaming in the still cold",
+   "at": "fjord_5",
+   "points": [
+    [
+     0,
+     0,
+     0.3
+    ]
+   ],
+   "fx": "sea_smoke",
+   "rate": 3.0,
+   "spread": 22,
+   "on_sea": true
+  },
+  {
+   "year": 0,
+   "event": "vent",
+   "cause": "sea smoke: the fjord's open water, warmer than the frozen air, steaming in the still cold",
+   "at": "fjord_6",
+   "points": [
+    [
+     0,
+     0,
+     0.3
+    ]
+   ],
+   "fx": "sea_smoke",
+   "rate": 3.0,
+   "spread": 22,
+   "on_sea": true
+  },
+  {
+   "year": 0,
+   "event": "vent",
+   "cause": "sea smoke: the fjord's open water, warmer than the frozen air, steaming in the still cold",
+   "at": "fjord_7",
+   "points": [
+    [
+     0,
+     0,
+     0.3
+    ]
+   ],
+   "fx": "sea_smoke",
+   "rate": 3.0,
+   "spread": 22,
+   "on_sea": true
+  },
+  {
+   "year": 0,
+   "event": "vent",
+   "cause": "sea smoke: the fjord's open water, warmer than the frozen air, steaming in the still cold",
+   "at": "fjord_8",
+   "points": [
+    [
+     0,
+     0,
+     0.3
+    ]
+   ],
+   "fx": "sea_smoke",
+   "rate": 3.0,
+   "spread": 22,
+   "on_sea": true
+  },
+  {
+   "year": 0,
+   "event": "vent",
+   "cause": "sea smoke: the fjord's open water, warmer than the frozen air, steaming in the still cold",
+   "at": "fjord_9",
+   "points": [
+    [
+     0,
+     0,
+     0.3
+    ]
+   ],
+   "fx": "sea_smoke",
+   "rate": 3.0,
+   "spread": 22,
+   "on_sea": true
+  },
+  {
+   "year": 1600,
+   "event": "region",
+   "cause": "HAMLET: the cleared ground the hamlet stands on, cut back from the spruce",
+   "name": "hamlet",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     36,
+     2
+    ],
+    "as_if": 90
+   },
+   "radius": 58
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the rorbu",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     2,
+     -28
+    ],
+    "as_if": 90
+   },
+   "structure": "rorbu",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the rorbu",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     3,
+     -13
+    ],
+    "as_if": 90
+   },
+   "structure": "rorbu",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the rorbu",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     4,
+     2
+    ],
+    "as_if": 90
+   },
+   "structure": "rorbu",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the naust",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     4,
+     22
+    ],
+    "as_if": 90
+   },
+   "structure": "naust",
+   "bearing": 0
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the stockfish rack",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     20,
+     -42
+    ],
+    "as_if": 90
+   },
+   "structure": "stockfish_rack",
+   "bearing": 0
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the stockfish rack",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     22,
+     -30
+    ],
+    "as_if": 90
+   },
+   "structure": "stockfish_rack",
+   "bearing": 0
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the red house",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     26,
+     29
+    ],
+    "as_if": 90
+   },
+   "structure": "red_house",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the white house",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     49,
+     -22
+    ],
+    "as_if": 90
+   },
+   "structure": "white_house",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the ochre house",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     43,
+     40
+    ],
+    "as_if": 90
+   },
+   "structure": "ochre_house",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the red house",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     60,
+     12
+    ],
+    "as_if": 90
+   },
+   "structure": "red_house",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the turf house",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     68,
+     -42
+    ],
+    "as_if": 90
+   },
+   "structure": "turf_house",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the white church",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     78,
+     32
+    ],
+    "as_if": 90
+   },
+   "structure": "white_church",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the market spruce",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     34,
+     0
+    ],
+    "as_if": 90
+   },
+   "structure": "market_spruce",
+   "bearing": 0
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the stall red",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     23,
+     -8
+    ],
+    "as_if": 90
+   },
+   "structure": "stall_red",
+   "bearing": 90
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the stall green",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     23,
+     8
+    ],
+    "as_if": 90
+   },
+   "structure": "stall_green",
+   "bearing": 90
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the stall green",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     45,
+     -8
+    ],
+    "as_if": 90
+   },
+   "structure": "stall_green",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the stall red",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     45,
+     8
+    ],
+    "as_if": 90
+   },
+   "structure": "stall_red",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the stall red",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     34,
+     -13
+    ],
+    "as_if": 90
+   },
+   "structure": "stall_red",
+   "bearing": 180
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the stall green",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     34,
+     14
+    ],
+    "as_if": 90
+   },
+   "structure": "stall_green",
+   "bearing": 0
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the yule goat",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     17,
+     1
+    ],
+    "as_if": 90
+   },
+   "structure": "yule_goat",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the lamp post",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     21,
+     0
+    ],
+    "as_if": 90
+   },
+   "structure": "lamp_post",
+   "bearing": 0
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the lamp post",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     47,
+     0
+    ],
+    "as_if": 90
+   },
+   "structure": "lamp_post",
+   "bearing": 0
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the lamp post",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     34,
+     -17
+    ],
+    "as_if": 90
+   },
+   "structure": "lamp_post",
+   "bearing": 0
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the lamp post",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     34,
+     19
+    ],
+    "as_if": 90
+   },
+   "structure": "lamp_post",
+   "bearing": 0
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the lamp post",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     12,
+     -6
+    ],
+    "as_if": 90
+   },
+   "structure": "lamp_post",
+   "bearing": 0
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the lamp post",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     56,
+     22
+    ],
+    "as_if": 90
+   },
+   "structure": "lamp_post",
+   "bearing": 0
+  },
+  {
+   "year": 1700,
+   "event": "vent",
+   "cause": "HAMLET: smoke from every chimney in the hamlet",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     34,
+     0
+    ],
+    "as_if": 90
+   },
+   "points": [
+    [
+     -7.88,
+     31.38,
+     9.95
+    ],
+    [
+     15.12,
+     -19.38,
+     9.95
+    ],
+    [
+     9.12,
+     42.12,
+     8.2
+    ],
+    [
+     26.12,
+     14.38,
+     9.95
+    ],
+    [
+     33.88,
+     -44.38,
+     6.7
+    ]
+   ],
+   "fx": "chimney_smoke",
+   "rate": 2.5,
+   "spread": 0.3
+  },
+  {
+   "year": 1700,
+   "event": "vent",
+   "cause": "HAMLET: smoke from the rorbu stoves",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     34,
+     0
+    ],
+    "as_if": 90
+   },
+   "points": [
+    [
+     -31.88,
+     -29.88,
+     9.7
+    ],
+    [
+     -30.88,
+     -14.88,
+     9.7
+    ],
+    [
+     -29.88,
+     0.12,
+     9.7
+    ]
+   ],
+   "fx": "chimney_smoke",
+   "rate": 2.0,
+   "spread": 0.3,
+   "on_sea": true
+  },
+  {
+   "year": 1700,
+   "event": "lamp",
+   "cause": "HAMLET: the market's lights and the street lanterns, lit at dusk",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     34,
+     0
+    ],
+    "as_if": 90
+   },
+   "points": [
+    [
+     -11,
+     -8,
+     2.6
+    ],
+    [
+     -11,
+     8,
+     2.6
+    ],
+    [
+     11,
+     -8,
+     2.6
+    ],
+    [
+     11,
+     8,
+     2.6
+    ],
+    [
+     0,
+     -13,
+     2.6
+    ],
+    [
+     0,
+     14,
+     2.6
+    ],
+    [
+     -13,
+     0,
+     3.6
+    ],
+    [
+     13,
+     0,
+     3.6
+    ],
+    [
+     0,
+     -17,
+     3.6
+    ],
+    [
+     0,
+     19,
+     3.6
+    ],
+    [
+     -22,
+     -6,
+     3.6
+    ],
+    [
+     22,
+     22,
+     3.6
+    ],
+    [
+     0,
+     0,
+     6.0
+    ]
+   ],
+   "reach": 13,
+   "colour": [
+    255,
+    206,
+    140
+   ],
+   "strength": 1.7,
+   "after_dark": true
+  },
+  {
+   "year": 1700,
+   "event": "area",
+   "cause": "HAMLET: the hamlet",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     34,
+     0
+    ],
+    "as_if": 90
+   },
+   "name": "Kaldvik",
+   "kind": "village",
+   "radius": 60
+  },
+  {
+   "year": -9050,
+   "event": "seat",
+   "cause": "a tongue of old lava on the south shore of the outer fjord",
+   "name": "lava_shore",
+   "near": [
+    230,
+    680
+   ],
+   "within": 160,
+   "rule": "shore",
+   "size": 14
+  },
+  {
+   "year": 1701,
+   "event": "region",
+   "cause": "a tongue of old lava on the south shore, black columns and black sand under the snow",
+   "name": "west_coast",
+   "at": "lava_shore",
+   "radius": 60
+  },
+  {
+   "year": 1890,
+   "event": "seat",
+   "cause": "the headland north of the fjord mouth, the last high ground before open sea",
+   "name": "ytternes",
+   "near": {
+    "from": "fjord_mouth",
+    "by": [
+     -10,
+     -125
+    ]
+   },
+   "within": 90,
+   "rule": "high"
+  },
+  {
+   "year": 1891,
+   "event": "place",
+   "cause": "LIGHT: the light the herring fleet paid for after the winter of 1888, when two boats missed the mouth in snow and went onto the Drangar",
+   "structure": "lighthouse",
+   "at": "ytternes",
+   "bearing": 270,
+   "poi": "Ytternes light"
+  },
+  {
+   "year": 1891,
+   "event": "lamp",
+   "cause": "LIGHT: the lamp, lit at dusk",
+   "at": "ytternes",
+   "points": [
+    [
+     0,
+     0,
+     14.5
+    ]
+   ],
+   "reach": 46,
+   "colour": [
+    255,
+    232,
+    180
+   ],
+   "strength": 3.2,
+   "after_dark": true
+  },
+  {
+   "year": 1891,
+   "event": "area",
+   "cause": "LIGHT: the headland",
+   "name": "Ytternes",
+   "kind": "headland",
+   "at": "ytternes",
+   "radius": 55
+  },
+  {
+   "year": 1820,
+   "event": "seat",
+   "cause": "the one landing on the outer fjord, in the lee of the north wall",
+   "name": "nesvaer",
+   "near": "fjord_7",
+   "within": 150,
+   "rule": "shore",
+   "size": 14
+  },
+  {
+   "year": 1820,
+   "event": "place",
+   "cause": "STATION: the rorbu at the outer station",
+   "structure": "rorbu",
+   "at": {
+    "from": "nesvaer",
+    "by": [
+     -3,
+     -9
+    ],
+    "as_if": 90
+   },
+   "bearing": 270
+  },
+  {
+   "year": 1820,
+   "event": "place",
+   "cause": "STATION: the rorbu at the outer station",
+   "structure": "rorbu",
+   "at": {
+    "from": "nesvaer",
+    "by": [
+     -3,
+     6
+    ],
+    "as_if": 90
+   },
+   "bearing": 270
+  },
+  {
+   "year": 1820,
+   "event": "place",
+   "cause": "STATION: the naust at the outer station",
+   "structure": "naust",
+   "at": {
+    "from": "nesvaer",
+    "by": [
+     9,
+     22
+    ],
+    "as_if": 90
+   },
+   "bearing": 270
+  },
+  {
+   "year": 1820,
+   "event": "place",
+   "cause": "STATION: the stockfish rack at the outer station",
+   "structure": "stockfish_rack",
+   "at": {
+    "from": "nesvaer",
+    "by": [
+     15,
+     -14
+    ],
+    "as_if": 90
+   },
+   "bearing": 0
+  },
+  {
+   "year": 1820,
+   "event": "place",
+   "cause": "STATION: the stockfish rack at the outer station",
+   "structure": "stockfish_rack",
+   "at": {
+    "from": "nesvaer",
+    "by": [
+     17,
+     -3
+    ],
+    "as_if": 90
+   },
+   "bearing": 0
+  },
+  {
+   "year": 1820,
+   "event": "place",
+   "cause": "STATION: the landing stage",
+   "structure": "jetty",
+   "at": {
+    "from": "nesvaer",
+    "by": [
+     -7,
+     -15
+    ],
+    "as_if": 90
+   },
+   "bearing": 270,
+   "poi": "Nesvaer, the outer station"
+  },
+  {
+   "year": 1820,
+   "event": "area",
+   "cause": "STATION: the outer station",
+   "name": "Nesvaer",
+   "kind": "landing",
+   "at": "nesvaer",
+   "radius": 40
+  },
+  {
+   "year": 1750,
+   "event": "seat",
+   "cause": "level ground up the valley, where the hamlet takes its sheep in June",
+   "name": "saeter",
+   "near": {
+    "from": "fjord_head",
+    "by": [
+     135,
+     0
+    ],
+    "as_if": 90
+   },
+   "within": 55,
+   "rule": "flat",
+   "elev": [
+    1,
+    48
+   ],
+   "size": 30
+  },
+  {
+   "year": 1750,
+   "event": "place",
+   "cause": "SAETER: the summer farm, shut up since September",
+   "structure": "turf_house",
+   "at": "saeter",
+   "bearing": 270,
+   "poi": "the saeter"
+  },
+  {
+   "year": 1750,
+   "event": "place",
+   "cause": "SAETER: the fold",
+   "structure": "stock_pen",
+   "at": {
+    "from": "saeter",
+    "by": [
+     24,
+     15
+    ]
+   }
+  },
+  {
+   "year": 1750,
+   "event": "place",
+   "cause": "SAETER: the well",
+   "structure": "well",
+   "at": {
+    "from": "saeter",
+    "by": [
+     -12,
+     9
+    ]
+   }
+  },
+  {
+   "year": 1750,
+   "event": "place",
+   "cause": "SAETER: a length of the home-field wall",
+   "structure": "field_wall",
+   "at": {
+    "from": "saeter",
+    "by": [
+     -20,
+     -16
+    ]
+   },
+   "bearing": 0
+  },
+  {
+   "year": 1750,
+   "event": "place",
+   "cause": "SAETER: a length of the home-field wall",
+   "structure": "field_wall",
+   "at": {
+    "from": "saeter",
+    "by": [
+     8,
+     -19
+    ]
+   },
+   "bearing": 90
+  },
+  {
+   "year": 1750,
+   "event": "place",
+   "cause": "SAETER: a length of the home-field wall",
+   "structure": "field_wall",
+   "at": {
+    "from": "saeter",
+    "by": [
+     30,
+     -8
+    ]
+   },
+   "bearing": 0
+  },
+  {
+   "year": 1750,
+   "event": "area",
+   "cause": "SAETER: the summer farm",
+   "name": "Saeter",
+   "kind": "farm",
+   "at": "saeter",
+   "radius": 45
+  },
+  {
+   "year": 1751,
+   "event": "route",
+   "cause": "SAETER: the track the sheep are driven up in June and down in September",
+   "from": {
+    "from": "fjord_head",
+    "by": [
+     84,
+     4
+    ],
+    "as_if": 90
+   },
+   "to": {
+    "from": "saeter",
+    "by": [
+     -16,
+     2
+    ]
+   },
+   "kit": "footpath"
+  },
+  {
+   "year": 1760,
+   "event": "route",
+   "cause": "the path the hamlet takes up to the hot pool, by the ledges",
+   "from": {
+    "from": "fjord_head",
+    "by": [
+     50,
+     -34
+    ],
+    "as_if": 90
+   },
+   "to": {
+    "from": "laugin",
+    "by": [
+     0,
+     14
+    ]
+   },
+   "kit": "footpath",
+   "poi": "the pool path"
+  },
+  {
+   "year": 1760,
+   "event": "place",
+   "cause": "the lantern left burning at the pool, so nobody walks into it in the dark",
+   "structure": "lamp_post",
+   "at": {
+    "from": "laugin",
+    "by": [
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "year": 1760,
+   "event": "lamp",
+   "cause": "the lantern at the pool",
+   "at": {
+    "from": "laugin",
+    "by": [
+     0,
+     15
+    ]
+   },
+   "points": [
+    [
+     0,
+     0,
+     3.6
+    ]
+   ],
+   "reach": 13,
+   "colour": [
+    255,
+    206,
+    140
+   ],
+   "strength": 1.7,
+   "after_dark": true
+  },
+  {
+   "year": 1760,
+   "event": "area",
+   "cause": "the hot pool",
+   "name": "Laugin",
+   "kind": "pool",
+   "at": "laugin",
+   "radius": 24
+  },
+  {
+   "year": 1500,
+   "event": "seat",
+   "cause": "a top on the fell that can be seen from the next",
+   "name": "varde_n",
+   "near": [
+    665,
+    150
+   ],
+   "within": 75,
+   "rule": "high"
+  },
+  {
+   "year": 1500,
+   "event": "place",
+   "cause": "CAIRN: a varde, a way-mark of stacked basalt older than the hamlet; from each you can see the next",
+   "structure": "cairn",
+   "at": "varde_n",
+   "slots": {
+    "stone": "basalt"
+   },
+   "poi": "Kaldhovd varde"
+  },
+  {
+   "year": 1500,
+   "event": "area",
+   "cause": "CAIRN: the top",
+   "name": "Kaldhovd",
+   "kind": "summit",
+   "at": "varde_n",
+   "radius": 50
+  },
+  {
+   "year": 1500,
+   "event": "seat",
+   "cause": "a top on the fell that can be seen from the next",
+   "name": "varde_w",
+   "near": [
+    165,
+    265
+   ],
+   "within": 75,
+   "rule": "high"
+  },
+  {
+   "year": 1500,
+   "event": "place",
+   "cause": "CAIRN: a varde, a way-mark of stacked basalt older than the hamlet; from each you can see the next",
+   "structure": "cairn",
+   "at": "varde_w",
+   "slots": {
+    "stone": "basalt"
+   },
+   "poi": "Vesthovd varde"
+  },
+  {
+   "year": 1500,
+   "event": "area",
+   "cause": "CAIRN: the top",
+   "name": "Vesthovd",
+   "kind": "summit",
+   "at": "varde_w",
+   "radius": 50
+  },
+  {
+   "year": 1500,
+   "event": "seat",
+   "cause": "a top on the fell that can be seen from the next",
+   "name": "varde_s",
+   "near": [
+    460,
+    850
+   ],
+   "within": 85,
+   "rule": "high"
+  },
+  {
+   "year": 1500,
+   "event": "place",
+   "cause": "CAIRN: a varde, a way-mark of stacked basalt older than the hamlet; from each you can see the next",
+   "structure": "cairn",
+   "at": "varde_s",
+   "slots": {
+    "stone": "basalt"
+   },
+   "poi": "Sudhovd varde"
+  },
+  {
+   "year": 1500,
+   "event": "area",
+   "cause": "CAIRN: the top",
+   "name": "Sudhovd",
+   "kind": "summit",
+   "at": "varde_s",
+   "radius": 50
+  },
+  {
+   "year": 1915,
+   "event": "place",
+   "cause": "DEPOT: the Nordstjerne's depot, laid in the autumn of 1915 for a spring journey onto the ice that was never made",
+   "structure": "surveyor_camp",
+   "at": {
+    "from": "hengdal_2",
+    "by": [
+     9,
+     3
+    ]
+   },
+   "poi": "the Nordstjerne's depot"
+  },
+  {
+   "year": 1915,
+   "event": "place",
+   "cause": "DEPOT: the cairn that marks it",
+   "structure": "cairn",
+   "at": {
+    "from": "hengdal_2",
+    "by": [
+     15,
+     -4
+    ]
+   },
+   "slots": {
+    "stone": "basalt"
+   }
+  },
+  {
+   "year": 0,
+   "event": "sea_ice",
+   "cause": "the pack: floes driven onto the open coast by the north-west wind and frozen to the cliffs and to each other, a white shelf out to the horizon until April",
+   "at": [
+    52,
+    300
+   ],
+   "radius": 135,
+   "ice": "sea_ice",
+   "young": "young_ice",
+   "snow": "snow",
+   "leads": 0.35,
+   "poi": "the pack"
+  },
+  {
+   "year": 0,
+   "event": "sea_ice",
+   "cause": "the pack: floes driven onto the open coast by the north-west wind and frozen to the cliffs and to each other, a white shelf out to the horizon until April",
+   "at": [
+    46,
+    150
+   ],
+   "radius": 125,
+   "ice": "sea_ice",
+   "young": "young_ice",
+   "snow": "snow",
+   "leads": 0.35
+  },
+  {
+   "year": 0,
+   "event": "sea_ice",
+   "cause": "the pack: floes driven onto the open coast by the north-west wind and frozen to the cliffs and to each other, a white shelf out to the horizon until April",
+   "at": [
+    64,
+    440
+   ],
+   "radius": 95,
+   "ice": "sea_ice",
+   "young": "young_ice",
+   "snow": "snow",
+   "leads": 0.35
+  },
+  {
+   "year": 1,
+   "event": "seat",
+   "cause": "out on the pack, where the ice closed on her",
+   "name": "nordstjerne",
+   "near": [
+    66,
+    300
+   ],
+   "within": 40,
+   "rule": "flat",
+   "elev": [
+    0.05,
+    1.5
+   ],
+   "size": 44
+  },
+  {
+   "year": 1915,
+   "event": "place",
+   "cause": "WRECK: the Nordstjerne, an expedition ship caught by the pack off Ytternes in the autumn of 1915 and never let go: her crew walked to the hamlet over the ice in the spring, and she has stood in it every winter since",
+   "structure": "beset_ship",
+   "at": "nordstjerne",
+   "bearing": 20,
+   "poi": "the Nordstjerne, beset"
+  },
+  {
+   "year": 1915,
+   "event": "area",
+   "cause": "WRECK: the pack ice",
+   "name": "The Pack",
+   "kind": "ice",
+   "at": [
+    52,
+    300
+   ],
+   "radius": 120
+  },
+  {
+   "year": 1850,
+   "event": "seat",
+   "cause": "level ground in the wood, a morning's row from the hamlet",
+   "name": "skog",
+   "near": [
+    300,
+    885
+   ],
+   "within": 130,
+   "rule": "flat",
+   "elev": [
+    3,
+    70
+   ],
+   "size": 24
+  },
+  {
+   "year": 1850,
+   "event": "place",
+   "cause": "WOOD: the woodcutter's hut; the hamlet's firewood and the rack timber come from here",
+   "structure": "woodcutter_hut",
+   "at": "skog",
+   "bearing": 0,
+   "poi": "the woodcutter's hut"
+  },
+  {
+   "year": 1850,
+   "event": "place",
+   "cause": "WOOD: cordwood stacked for the sledge",
+   "structure": "log_pile",
+   "at": {
+    "from": "skog",
+    "by": [
+     9,
+     7
+    ]
+   }
+  },
+  {
+   "year": 1850,
+   "event": "place",
+   "cause": "WOOD: the chopping block",
+   "structure": "chopping_block",
+   "at": {
+    "from": "skog",
+    "by": [
+     -7,
+     6
+    ]
+   }
+  },
+  {
+   "year": 1850,
+   "event": "vent",
+   "cause": "WOOD: smoke from the hut's stove",
+   "at": "skog",
+   "points": [
+    [
+     0,
+     0,
+     6.5
+    ]
+   ],
+   "fx": "chimney_smoke",
+   "rate": 2.0,
+   "spread": 0.3
+  },
+  {
+   "year": 1850,
+   "event": "area",
+   "cause": "WOOD: the wood",
+   "name": "Skogen",
+   "kind": "wood",
+   "at": "skog",
+   "radius": 110
+  },
+  {
+   "year": -9000,
+   "event": "place",
+   "cause": "the lava tongue's columns, where the sea has cut it back",
+   "structure": "basalt_columns",
+   "at": {
+    "from": "lava_shore",
+    "by": [
+     5,
+     -9
+    ],
+    "as_if": 90
+   }
+  },
+  {
+   "year": -9000,
+   "event": "place",
+   "cause": "the lava tongue's columns, where the sea has cut it back",
+   "structure": "basalt_columns",
+   "at": {
+    "from": "lava_shore",
+    "by": [
+     11,
+     7
+    ],
+    "as_if": 90
+   }
+  },
+  {
+   "year": -9000,
+   "event": "place",
+   "cause": "the lava tongue's columns, where the sea has cut it back",
+   "structure": "basalt_columns",
+   "at": {
+    "from": "lava_shore",
+    "by": [
+     3,
+     15
+    ],
+    "as_if": 90
+   }
+  },
+  {
+   "year": 1701,
+   "event": "area",
+   "cause": "the black strand",
+   "name": "Svartsand",
+   "kind": "shore",
+   "at": "lava_shore",
+   "radius": 55
+  },
+  {
+   "year": 0,
+   "event": "icefall",
+   "cause": "Skardfossen: the stream out of the south-west wood, frozen where the valley ends above the outer fjord",
+   "from": "skardal_above",
+   "toward": "skardal_out",
+   "width": 10,
+   "ice": "fall_ice",
+   "blue": "fall_ice_blue",
+   "stream": [
+    "skardal_2",
+    "skardal_3",
+    "skardal_above"
+   ],
+   "poi": "Skardfossen"
+  },
+  {
+   "year": 1,
+   "event": "area",
+   "cause": "the hanging valley",
+   "name": "Hengdal",
+   "kind": "valley",
+   "at": "hengdal_2",
+   "radius": 65
+  },
+  {
+   "year": 1,
+   "event": "area",
+   "cause": "the glacier",
+   "name": "Kaldbreen",
+   "kind": "glacier",
+   "at": "hengdal_head",
+   "radius": 85
+  },
+  {
+   "year": 1,
+   "event": "area",
+   "cause": "the ice cove",
+   "name": "Isvika",
+   "kind": "cove",
+   "at": "isvika",
+   "radius": 60
+  },
+  {
+   "year": 1,
+   "event": "area",
+   "cause": "the south-east valley",
+   "name": "Sudurdal",
+   "kind": "valley",
+   "at": "sudurdal_2",
+   "radius": 95
+  },
+  {
+   "year": 1,
+   "event": "area",
+   "cause": "the troll women",
+   "name": "Trollkonur",
+   "kind": "rocks",
+   "at": "trolls",
+   "radius": 45
+  },
+  {
+   "year": 1,
+   "event": "area",
+   "cause": "the stacks off the mouth",
+   "name": "The Drangar",
+   "kind": "rocks",
+   "at": "drangar",
+   "radius": 55
+  }
+ ]
 }

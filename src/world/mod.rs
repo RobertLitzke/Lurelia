@@ -6,14 +6,18 @@
 pub const WIND: glam::Vec2 = glam::Vec2::new(0.944, 0.33);
 
 pub mod atlas;
+pub mod bones;
 pub mod canopy;
 pub mod chronicle;
 pub mod city;
 pub mod clock;
+pub mod damp;
+pub mod lightning;
 pub mod falls;
 pub mod fields;
 pub mod flora;
 pub mod gen;
+pub mod gravity;
 pub mod material;
 pub mod matlib;
 pub mod noise;

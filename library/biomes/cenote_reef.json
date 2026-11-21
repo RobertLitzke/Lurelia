@@ -20,7 +20,12 @@
     {"plant": "tube_sponge", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "wall_plate_coral", "density": 0.8, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "karst_vine", "density": 0.9, "placement": {"verb": "scatter", "params": {}}},
-    {"plant": "fern", "density": 0.08, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "fern", "density": 0.08, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "sea_whip",
+      "density": 0.01,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.3, "max": 1.0}}
+    }
   ],
   "creatures": [
     {"creature": "reef_chromis", "count": 105},

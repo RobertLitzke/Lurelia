@@ -19,7 +19,12 @@
     {"plant": "table_coral_teal", "density": 0.03, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "brain_coral", "density": 0.04, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "finger_coral", "density": 0.04, "placement": {"verb": "scatter", "params": {}}},
-    {"plant": "plate_coral", "density": 0.02, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "plate_coral", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "sea_whip",
+      "density": 0.015,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.3, "max": 1.0}}
+    }
   ],
   "creatures": [
     {"creature": "reef_chromis", "count": 140},

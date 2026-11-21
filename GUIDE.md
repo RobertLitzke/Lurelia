@@ -31,10 +31,26 @@ are what this world and this game put on offer, and GO and BACK stand at the
 foot of the screen. A list longer than the window scrolls (the wheel, the
 arrow keys, or the bar beside it) rather than running under the buttons. EXPLORE is the game as it has always been;
 DEATHMATCH is the arena, on a world whose world.json has `"shooter"` rules
-(Slagdeck). The options are src/launch.rs: the animals, the day and night and
-each way of travelling the world allows, then the match's difficulty, bots and
-target score. What you pick is kept per world and per game, so each world
-comes back as you last played it. Behind the menu it cycles through the
+(Slagdeck); TEAM DEATHMATCH is the same arena in two sides, and CAPTURE THE
+FLAG is offered where those rules have a `ctf` block (Sluice, Ctfbox). The
+options are src/launch.rs: the animals, the day and night and each way of
+travelling the world allows, then the match's difficulty, bots and target
+score, and in a team match your side (and for capture the flag the captures
+and time limit in place of a target). A line that could change nothing is
+left out: ANIMALS where no biome of the world has any, the clock and the
+weather on a map in space, WEATHER where the climate has one kind of day.
+What you pick is kept per world and per game, so each world comes back as you
+last played it; a small star before a value says it is not the world's own,
+and DEFAULTS puts them all back.
+
+The world list is in groups: the last three worlds opened (once there are
+two), then places to explore, arenas, and the workshop (`local/worlds/` that
+is not an arena). Home, End, Page Up and Page Down move through it. Under the
+list the screen says what the highlighted world is: its world.json `blurb`
+(or the first sentence of its story.md) and a line of facts counted from its
+files (size, biomes, species, seasons). A world's `title` is the name it is
+shown by where the folder name is not it, and `"listed": false` keeps a bench
+or a test off the list while `--world` still opens it. Behind the menu it cycles through the
 pictures in `screenshots/` and `photos/` (yours) and each world's `pictures/`
 folder (bundled, any file name), cropped to 16:9 and cross-faded. The title
 screen shows every world's; once a world is on the line, OPEN WORLD shows only
@@ -56,8 +72,9 @@ mouse; left and right (or right click) step a setting back and forth.
 The settings are the player's, not a world's, and live in
 `saves/settings.json`: fullscreen, style, shadows, sloped ground,
 antialiasing, view distance (64 to 256 m, applied at the next world load),
-vsync, the performance stats overlay (F3), the debug minimap (F6), and the
-last world played. Antialiasing is off or 4x; the renderer reads it when
+vsync, the performance stats overlay (F3), the debug minimap (F6), sound on
+or off with its four levels (VOLUME, AMBIENCE, EFFECTS and MUSIC, 0 to 100
+in tens; see "Sound"), and the last world played. Antialiasing is off or 4x; the renderer reads it when
 it is made, so a change waits for the next start, and the line says so.
 On an RTX 3060 at 1080p, 4x costs about 1.0 ms of frame time over off. 2x is
 not offered: it measured no cheaper than 4x on a 3060 and looks worse, and a
@@ -77,7 +94,10 @@ one patch release back (`libloading` 0.8.8, `parking_lot` 0.12.3 with
 `parking_lot_core` 0.9.10, `winapi-util` 0.1.9): their newer releases link
 Windows DLLs by name, which on the GNU toolchain needs an assembler Rust
 doesn't ship. A plain `cargo update` will undo the pins and break that build.
-The MSVC toolchain doesn't need them. wgpu is pinned at 25.0.2.
+The MSVC toolchain doesn't need them. wgpu is pinned at 25.0.2, and cpal (the
+sound device) at 0.16.0 for the same reason: 0.17 and later depend on
+`windows` 0.62, which links by name, and fail on the GNU toolchain with
+`error calling dlltool`.
 
 ## Controls
 
@@ -116,9 +136,10 @@ The MSVC toolchain doesn't need them. wgpu is pinned at 25.0.2.
 | B | Sloped ground on or off |
 | F7 | The LOOK page: the light, the colour ramps and the grade (see "The LOOK page") |
 | F8 | The EDIT page: a creature or plant in a studio, with its library entry beside it (see "The EDIT page") |
-| H or F1 / F3 | Help / stats overlay |
+| H or F1 / F3 | Help / stats overlay. Its last line names what the crosshair is on: a creature or find, else the material, its id, distance and voxel, and `IN <name>` when that voxel belongs to a library structure |
 | F6 | Debug minimap: the ground 320 m round you in the map colours, north up |
 | F5 | Save (also saved on exit and every 30 s after edits) |
+| F9 | Sound readout: what the ambience round you is made of, and why (see "Sound") |
 | F11 | Fullscreen (saved in the settings) |
 | Esc | Pause menu |
 
@@ -799,8 +820,9 @@ them off one at a time for comparisons.
 
 ## Weather
 
-One kind of day at a time, for the whole world (`src/world/weather.rs`). Six
-kinds: **sun**, **heat**, **clouds**, **rain**, **snow** and **fog**. Sun is
+One kind of day at a time, for the whole world (`src/world/weather.rs`). Seven
+kinds: **sun**, **heat**, **clouds**, **rain**, **snow**, **fog** and the dry
+**storm**, which only a world that names it in its climate ever sees. Sun is
 the fair afternoon everything else in the engine was tuned under, so its row
 of numbers is all ones and zeroes and a sunny world draws exactly as the
 styles were tuned; the other five are stated as how far they lean away from it.
@@ -810,8 +832,8 @@ cloud deck, how flat the light is, multipliers on the haze and the wind, mist
 lying everywhere, how much rain or snow is falling, how hot it is, and shifts
 to the grade's warmth, saturation and exposure. Two kinds crossfade into one
 row over about half a game hour, so every value is continuous and nothing
-snaps. Weather touches no voxel and no texture: a snowy day leaves bare ground
-bare and a wet one leaves the rock dry.
+snaps. What falls is the weather; what it leaves behind -- wet ground,
+puddles, frost, fog in the valleys -- is the next section's.
 
 **What each one looks like.** Heat scours the sky clear, thickens the air
 pale, pushes the colour and stops the wind dead. Clouds spread the deck to
@@ -878,7 +900,9 @@ story rather than its name:
 | Redrock | high desert going dry: glare, the short hard rain that cut the cliffs, snow on the rim in winter | -- |
 | Thornpan | the flood comes in the dry season, so sun and heat with a little mist | snow, rain in quantity |
 | Windbarrow | open downs with cloud driving over, rain in it, fog and winter snow | heat |
+| Ribshore | the Oregon coast in the wet half of the year: sea fog, low cloud and rain most days, few clear ones | heat, snow |
 | Slagdeck | a cold coast, open to the weather: grey, and wet some of the time | heat, snow, fog |
+| Saltmirror | a desert pan: sun and heat, now and then a shower that floods the pan, dry storms | snow |
 | Duelbox | one kind of day for ever | everything else |
 
 Two of those are rules about play rather than about the place. Windbarrow
@@ -903,13 +927,93 @@ any kind a world asks for that nothing is called. The whole thing
 runs on the game clock, so stopping the clock holds the sky as well as the
 light.
 
-**Looking at it.** **M** steps through the six kinds and pins the weather
+**Dry storms** (`storm`) close the sky in dark and cool and bring the wind
+up, but nothing falls: lightning comes out of the deck instead
+(`src/world/lightning.rs`). A strike lands somewhere between a few hundred
+metres and the horizon, every few seconds in the thick of it, and is one to
+four return strokes over half a second. It touches no voxel. The channel is
+drawn into the sky colour (`bolt_light` in `common.wgsl`), a jagged line from
+the cloud base to the ground with one branch, so everything that mirrors the
+sky shows it as well: a wet pan, a puddle, the sea. The flash lifts the sky
+and its fill light a cold blue-white for as long as the stroke lasts, so the
+whole land blinks with it. There is no thunder. A storm never turns to rain
+and only follows sun, heat or cloud; a world with no climate of its own never
+sees one. `VG_BOLT=x,z[,flash]` holds a strike there for a headless shot.
+
+**Looking at it.** **M** steps through the seven kinds and pins the weather
 where it is put, the way N steps the hour; the stats panel (G) shows the clock
 and the kind. `--weather KIND` holds one kind for a headless shot. The launch
 screen has a WEATHER switch; off keeps fair weather for the whole run.
 
-Weather does not touch the player: there is no slipping, no cold and no
-visibility rule in the shooter.
+Weather reaches the player only through the animals: rain masks your
+footsteps and the wind carries your scent (Stalking, below). There is no
+slipping, no cold and no visibility rule in the shooter.
+
+## What the weather leaves
+
+The weather is what is falling now; `src/world/damp.rs` is what it has left
+on the ground, so it runs on the history rather than the moment. Like lying
+snow it is one state for the whole world, a few numbers stepped on the game
+clock, and where on the land each shows is the shaders' business.
+
+- **Wet.** Rain and melt water soak the ground; sun, wind and heat dry it,
+  but only once the rain stops, so a shower leaves the land dark for a few
+  hours after the sky clears. A clear, still night brings dew (damp, never
+  soaked) and a foggy day keeps it damp. Wet ground goes darker and deeper
+  in colour and takes a faint sheen of the sky; plants darken less and
+  leaves take no sheen (`damp_ground` and `damp_light` in `scene.wgsl`, and
+  the grass in `foliage.wgsl`).
+- **Puddles.** Once the ground is near soaked, standing water fills and then
+  drains slower than the wet dries, so puddles outlast the shower by an
+  afternoon. They lie only on level bare ground -- paths, earth, rock, never
+  grass or leaves -- a little thicker in hollows, grow outward from a noise
+  as they fill, and have a soaked dark rim. A puddle is mostly the sky it
+  reflects, clouds included, over the dark bed under it, and rain roughens
+  it.
+- **Frost.** It forms on a clear, still night in a cold season (every winter
+  night can, spring and autumn half as hard, summer never, and a climate
+  that never snows a quarter as much), whitening grass from the tips down
+  and anything that faces up. It is two numbers, frost where the sun has
+  been and frost where it has not, and each point picks between them by its
+  own shadow, so after sunrise a white edge retreats behind every shadow:
+  the sun takes it within the hour, shade keeps it for hours on a winter
+  morning. Points of rime glitter in the sun close up.
+- **Fog in the hollows.** A clear, calm night over ground with water in it
+  thickens a mist that lies lowest in the valleys (it is added to the mist
+  floor, which already pools below the smoothed ground); the sun burns it
+  off within a couple of hours and any wind clears it.
+
+None of it is saved: a world opens on ground that suits the sky it opens
+under. `VG_DAMP=wet,pools,frost_shade,frost_sun,fog` (each 0 to 1, any left
+off kept) sets it for a headless shot, for instance
+`VG_DAMP=0,0,0.55,0 --hour 7.4 --season autumn` for a frosty morning.
+
+### Sheet floods, reflections and the mirage
+
+A ground material with `"floods": true` (a salt pan, a playa) does not
+gather puddles. Its first standing water covers it from edge to edge, an inch
+of clear water with the bed bright through it, and it stays a sheet until
+the water is nearly gone, breaking into islands of crust only at the end
+(`damp_ground` in `scene.wgsl`). Saltmirror's salt and brine mud flood.
+
+Standing water reflects the world, not only the sky. The terrain writes
+alpha over 1 where it holds a pool or a sheet, and the water pass adds its
+coverage to the bed's alpha instead of blending it, so the post pass can
+tell a mirror from everything else (opaque surfaces write exactly 1). For
+each mirror pixel `mirror` in `post.wgsl` reflects the view about straight
+up from the water's surface (the sea's level for open water, whose own depth
+is not in the buffer) and marches it across the depth buffer; what it first
+passes behind is what the water shows, weighted by the Fresnel term. What
+is off the screen is not reflected, and the sky the scene shader put there
+stays. `VOXEL_SSR=0` turns it off for a comparison.
+
+A world may set `mirage` in `world.json` (0 to 1, default 0). In the heat of
+the day, with the sun well up and the ground dry, everything below the
+horizon from about a hundred metres out shows what stands at four times the
+angle above it, upside down: the far flat goes to sky-coloured water and
+whatever stands on it floats over its own squeezed reflection. The air at
+the horizon shimmers (`mirage` in `post.wgsl`, strength from
+`Game::mirage`). Saltmirror sets 1.
 
 ## Seasons
 
@@ -950,6 +1054,11 @@ end at any time of day. The pull picks the night before or the night after in
 the proportion that leaves the average exactly two days. A world opening in
 the afternoon is therefore about a quarter of the way through its season.
 
+**Dry grass.** world.json `straw` (0 to 1, default 0) holds the grass that far
+over to straw whatever the season, for a dry country; a season with more straw
+of its own (autumn 0.45, winter 0.8) still takes it further. Megalith, a steppe
+arena, sets 0.9: its turf is tan in summer.
+
 **The leaves.** A plant with an `autumn` colour in its library entry is
 deciduous: it wears that colour in autumn and stands bare in winter, keeping
 its trunk and its limbs. Everything without one is evergreen and keeps its
@@ -975,8 +1084,9 @@ is made of, but never on a street, a laid floor or a lake bed. The permanent
 snow line does not move with the season. Winter sees to it that the snow starts
 somewhere in its first day rather than leaving a whole winter to the dice --
 unless the world's climate has no snow in it at all, which is what makes
-Thornpan's winter the dry season it should be. Nothing about snow reaches the
-player: it does not slow walking and it is not deep enough to wade.
+Thornpan's winter the dry season it should be. Snow reaches the player only
+through the animals, which hear a step on it less: it does not slow walking
+and it is not deep enough to wade.
 
 **Animals.** The year thins a species the way the hour does. Insects are
 almost entirely gone in winter, half the birds with them (migration), and most
@@ -1027,6 +1137,18 @@ do cliffs, whose risers are taller than the smoothing reaches. B or `--blocky`
 switches all of it back to plain voxels; the change regenerates the loaded
 world nearest first, swapping each column in place.
 
+A world can bevel materials that are square everywhere else by naming them in
+a `"round_edges"` list in its `world.json` (the library flag is
+`bevel_steps`). The rule is for built things, not land: a corner where every
+face meeting it runs flat for two voxels stays square, so box edges, wall
+corners and the foot of a wall keep their lines, while a staggered edge of
+one-voxel pieces (a stair, the stepped side of a blast hole, a stepped circle)
+is bevelled like faceted rock. A corner never moves along an axis where the
+shape runs straight on, so a stepped pillar rounds in plan and the floor round
+its foot stays flat (`clean_axes` in `mesh.rs`). The arenas list their walls
+and decks, but not pads, lamps, glass or liquids; it adds about 2% to
+an arena's quads. Delete the line to turn it off for that world.
+
 On gentle ground the corners come from the generator's true ground height,
 not only the voxels: where the four columns round a corner are unedited and
 within a voxel of each other, the corner sits at their mean true height
@@ -1069,7 +1191,11 @@ Trees cast the shadows of their square voxels (leaf cells for leaves), not
 their rounded shape: rounded shadows needed about 60% more shadow quads. The
 rounded surface lies within a fraction of a cell of the square one, so it
 doesn't shadow itself, but a canopy's shadow on the ground has a blocky
-outline.
+outline. Tube faces (mesh/lean.rs, marked by the quad's tube bit) are the
+exception: their square faces are only the anchors they hang from, so they
+cast from their real corners, and a leaning stem or a rope casts a smooth
+shadow. Entity models (the bike, the glider, the guns) get tubes the same
+way: `models::Grid::rod` records a thread, and `mesh::mesh_model_t` draws it.
 
 ## Detail sprites
 
@@ -1183,6 +1309,121 @@ Particles, motes, waterfall spray, sign plates and the sea plane take their
 quad corners from one place (`quad_corner` and `billboard` at the end of
 `common.wgsl`).
 `VOXEL_FX=0` in the environment turns them off for comparisons.
+
+## Sound
+
+Everything you hear is synthesised while it plays; the game ships no
+recordings. There are three buses, each with its level in SETTINGS:
+**ambience** (the place itself), **effects** (guns, rounds striking, bursts,
+footsteps, pickups, the match's signals, and the animals when they have
+voices) and **music** (nothing yet). VOLUME is over all three, and the levels
+are heard on a curve, so 50 sounds like half. SOUND off lets go of the sound
+device altogether. The mix ducks to a third behind the pause menu and goes
+silent when the window loses focus. A machine with no output device plays
+silently; headphones pulled out are picked up again within two seconds.
+
+### The ambience
+
+The ambience is worked out from the world round you ten times a second and is
+quiet on purpose: near the edge of hearing at the default volume. Four things
+make it, and the F9 readout lists each number and what set it:
+
+- **The biome**, sampled on two rings round you (12 m and 30 m) so an edge
+  crossfades: how much wind reaches the ground there, how much grass there is
+  to stir, and what rain lands on. A biome's `sound` block says so where the
+  defaults are wrong (`library/README.md`); without one, grass comes from the
+  surface material (its `grass`, or a name holding "grass", as the sprites
+  have it) and the ground from the material's name.
+- **The weather**: the wind drives the gusts and every rustle, rain opens
+  the rain, and fog and falling snow hush the whole mix.
+- **The water**: rivers and lakes (still water barely laps), every
+  waterfall, and the surf where the sea breaks in the shallows, each summed
+  over rings of samples into a direction and a spread. A river 50 m off is
+  narrow and to one side; standing in it, it is all round. Under water the
+  whole mix goes dull and a low rumble takes over.
+- **The voxels round your head**: leaf cells near and above you are the
+  leaves you hear (so one tree in a meadow rustles and the meadow doesn't),
+  five rays up say how much sky you can see (under a roof the near raindrops
+  stop and the hiss goes dull; drips go on under leaves for a minute or two
+  after the rain), and eight level rays find the walls that make the reverb
+  (short and dark in a wood, long in a canyon or a cave).
+
+The voices are filtered noise, crowds of short events (leaf slaps,
+raindrops, drips; Cook's PhISEM; grass is a crowd too dense to pick out,
+swelling as the sward sways, since sparse sharp ones sound like rain), bubbles for running water (van den Doel's
+model: a bubble rings at about 3.26 / radius Hz with a rising pitch) and
+three wave trains for the surf. All eleven measure within 4 dB of -32 dBFS at
+full strength (`sound::tests::every_voice_is_about_as_loud`; a slow river is
+the quiet one), so the numbers in the readout are the mix. Running water is
+heard by how much river the rings round the ear find, so a creek on its bank
+is about half as loud as a broad river and a lot gentler: slow water is a
+few soft bubbles over a murmur, fast water a crowd of them.
+
+### Effects
+
+Each gun's report is worked out from its fire mode (`sound::fx::Report::of`):
+a fast hitscan gun is a minigun, a heavy one a sniper rifle, a shell with a
+big burst a rocket, one that bounces a disc, and so on, so a new weapon
+sounds like something the day it is written. A shot is made of noise, with
+no tones in it (a sine falling in pitch is how a drum is made, and the guns
+sounded like drums while they had one): a crack of highpassed noise a few
+milliseconds long, a broadband blast, a boom of noise lowpassed near 150 Hz,
+and a tail, the sum driven through a soft clipper. The sniper rifle's crack
+comes twice, the second a few milliseconds behind like an echo off the
+ground. Every shot and burst starts on a pressure pulse (the Friedlander
+waveform a muzzle blast actually is: a jump, a fall through zero, a shallow
+negative phase), a millisecond for the sidearm, three for the rocket tube,
+six for a burst; noise alone is heard as "chh" and the pulse as a pop. The
+minigun's rounds are over in about 25 ms, so at 1100 rpm they are a
+rat-a-tat rather than a roar, and every round is a little louder or softer
+than the last. A burst is the same with a bigger boom, lower the bigger it is. A
+rocket in flight roars where it is, as a held voice like a beam's, posted
+each frame by the watch and pitched up coming on and down going away.
+Beams hum while they are held; the bore's is a sawtooth drone at 46 Hz
+over a grinding rumble. Rounds striking the world sound like what they struck, and
+now and then whine off rock or metal.
+
+A round that goes past you whizzes. `Combat::fire` posts each hitscan
+round's line from the muzzle to where it stopped (`Noise::past`), and
+`fx::place` finds where that line came nearest your ear: within 5 m, and
+only if the round carried on past (one that stopped short of you, or hit
+you, is heard as that instead) and the nearest point is not at the muzzle
+(your own rounds). The whizz is narrow noise falling in pitch, the Doppler
+sweep of something passing a still listener, placed at that nearest point
+so it is on the side it went by. The sniper's round is taken to be
+supersonic and snaps as well. A scatter gun's pellets go past as one
+whizz.
+
+Every effect is placed against you: louder near (inverse distance from
+2.5 m), panned by bearing, duller through more air and from behind, and late
+by the speed of sound, so a burst 200 m off is a flash and then, half a
+second later, a thud.
+
+Code posts a sound with `sound::emit(Noise)` from wherever it happens; the
+window takes them once a frame. Gunfire is posted by `Combat::fire` and
+`hold_beam`, bounces by the shell, impacts and bursts by `Game` from the
+fight's cues, digging and placing by `Game::dig` and `place`. Everything
+else is heard by watching (`src/sound/watch.rs`): footsteps by the ground
+underfoot (a heel and then a toe 70 ms later, each a soft thud with the
+ground's scuff, swish, crunch or slosh over it, well under the guns), jumps, landings, jump pads, teleporters, and in a match the
+player hurt or killed or respawned, pickups by kind, reloads, a new weapon in
+hand, the hit marker and the killing-blow marker going up, bots hit and
+going down, and flags changing hands. Hurt sounds come at most every 0.3 s,
+because a beam's damage lands every step.
+
+### Checking it
+
+You cannot hear a test, so sound is checked by measuring and by listening to
+files. `--sound-bake FILE --secs N` opens a world with no window, stands the
+camera where `--pos`/`--ground`, `--look`, `--hour`, `--weather` and
+`--season` say, runs the world (bots fight, the player stands), and renders
+what would be heard into a WAV, printing the readout, the level and every
+sound posted:
+
+```bash
+cargo run --release -- --world glassfall --ground 330,290 --weather rain --sound-bake rain_in_the_pines.wav --secs 30
+cargo run --release -- --world slagdeck --sound-bake match.wav --secs 30
+```
 
 ## Tree crowns
 
@@ -1336,6 +1577,46 @@ then, since nothing steps the ragdoll of a body that is not in a mouth.
 `VG_DEAD_SHARE=0.3` makes nearly a third of the animals skeletons, which is
 how to go and look at them; `VG_JUVENILE_SHARE` and `VG_AGED_SHARE` do the
 same for the living stages.
+
+## Stalking, prints and trampled grass
+
+Animals sense the player by sight, noise, closeness and scent (CREATURES.md
+"Running from the player" has the numbers). In play that means: approach
+from downwind (the grass leans the way the wind blows, and your scent goes
+that way); move while an animal has its head down and freeze when it comes
+up, which lets its alarm settle; keep off dry leaf litter and gravel, use
+moss, wet ground and the cover of rain; crouch. Spook one in a herd and the
+rest go with it.
+
+**Prints.** Walkers report a footfall each stride (`walk.rs`, within 90 m of
+the player) and the player one every 0.75 m on foot; `src/creatures/sign.rs`
+keeps them as marks, up to 4096, oldest going first. What the ground takes
+is read from the material's name (`Tread`): snow, mud and sand always take a
+print, bare earth once the rain has softened it, grass and low plants are
+trampled instead, and rock, gravel, planks and leaf litter take nothing.
+The print's shape follows the foot -- two-toed hooves (deer, cattle, pigs),
+four toes round a pad (most mammals), a bear's five over a broad pad, a
+bird's three forward and one back, the player's lugged boot -- and its size
+the body. They are worn away by the weather: rain blurs mud and earth, new
+snow fills snow, wind smooths sand, warmth melts it, and a fair day keeps a
+snow print for a day. How worn a print is is how old it reads: crisp edges
+and a deep dent fresh, soft and shallow old. `render/signs.rs` and
+`shaders/signs.wgsl` draw them as flat quads that multiply into the ground
+after the land is down, so a dent in snow goes blue-grey and one in mud
+dark, whatever the light.
+
+**Trampled grass.** Anything at least half a metre tall walking through
+grass presses it down along its way, wider for a bigger body (a deer about
+0.7 m across, a bison more); a herd on one line refreshes one trail rather
+than laying patches on patches. The grass springs back over about six game
+hours. A 64 m map round the camera (`render/foliage.rs` `trample_texels`)
+tells the sprite shader how flat each spot is and which way it was laid, and
+grass and low plants (not leaves up in a tree) are pressed down, laid over
+and show their paler side.
+
+`VG_MARKS=1` lays a short trail of each foot ahead of the player once the
+world is in, for judging the prints and the trampling in a headless shot; on
+ground that takes nothing it shows nothing.
 
 ## Herds
 
@@ -1518,6 +1799,39 @@ A world whose spawn point is inside a building needs `spawn_up` (metres above
 the bare ground), or the player is pushed up through the building and comes
 out on its roof.
 
+### Gravity
+
+A world sets its own gravity in `world.json`:
+
+```json
+"gravity": { "g": 0.3, "toward": "plane" }
+```
+
+`g` is a share of the engine's own 24 m/s² (1 if left out, and 0 to 4 is
+allowed), so 0.3 makes a jump go a little over three times as high and hang
+that much longer. Starfall uses 0.3, and the arena builder writes it for
+any map in space. It applies to the player and the bots, dead bodies and their
+chunks, shells (a weapon's `gravity` is scaled by `g`, and the bots' lead and
+dodge prediction with it) and particles. The bike, glider, rope and the
+creatures keep their own tuned gravity.
+
+Under 0.6 the world counts as low gravity and a body in the air is steered:
+the keys turn it toward where they point at 16 m/s² however fast it is going,
+without taking off speed it already has that way, and with no key held it
+drifts on. At the engine's own gravity a body thrown faster than a sprint
+keeps its momentum and the keys only add to it.
+
+`toward` is what gravity pulls toward. Only `"plane"` exists, which is straight
+down everywhere. A point (an asteroid you walk all the way round) or a surface
+(a ringworld) would be further values; `Gravity::down` in
+`src/world/gravity.rs` is where falling things would read them, but collision
+and the camera also assume down is -y and would need the same change. Any
+other value is refused when the world loads.
+
+The bots' nav graph is not rebuilt for gravity: its jump and drop links are
+the ones the importer found, so in low gravity the bots walk the same routes
+and do not use the higher jump.
+
 A route may finish off the graph. A pad is not on a node on any map whose
 items and nodes come from different places, so a `Path` carries a `tail`: the
 nodes get the bot across the map and the last couple of metres are a walk
@@ -1655,7 +1969,7 @@ pad that throws you. Both are the same shape of thing, so they are one list
 
 ```json
 "portals": [
-  {"name": "pit", "at": [110.0, 92.0], "up": 0.0, "to": "gallery"},
+  {"name": "pit", "at": [110.0, 92.0], "up": 0.0, "to": "gallery", "both": true},
   {"name": "gallery", "at": [148.0, 60.0], "up": 11.0, "bearing": 180},
   {"name": "kick", "at": [96.0, 40.0], "up": 0.0, "push": [0, 6.7, 0]}
 ]
@@ -1663,13 +1977,20 @@ pad that throws you. Both are the same shape of thing, so they are one list
 
 `at` and `up` place the foot of it, `up` measured from the same floor
 everything else a world states a height for is measured from. `to` names the
-portal a body is sent to. `bearing` is the way it faces on arrival, and its
-speed turns with it, so a teleporter you run into at full tilt puts you out
-running. `push` is metres a second: the vertical part replaces what the body
-had, which is what makes a jump pad a jump pad, and the level part is added.
+portal a body is sent to. `bearing` is the portal's exit direction: the way
+a body faces coming out of it, degrees clockwise from north, with its level
+speed pointed the same way, so a teleporter you run into at full tilt puts you
+out running. Leave it out and the portal faces arrivals the most open way, as
+measured from the voxels round it, so nobody lands facing a wall. `push` is
+metres a second: the vertical part replaces what the body had, which is what
+makes a jump pad a jump pad, and the level part is added.
 
-A portal that is only a destination needs no `to`. Using one cools both ends
-for half a second, so a pair does not bounce a body back and forth. The
+A portal that is only a destination needs no `to`. `both: true` on the sending
+end makes the pair two-way, the far end sending back to it. A portal acts on
+a body as it steps in, not while it stands there, so arriving on a two-way
+pad does not bounce you back; you have to step off and on again. Bots learn a
+way from the nav links, which the arena importer writes in both directions
+for a two-way pair; a hand-edited world needs the return link as well. The
 player and the bots both go through; the `portals` key in the headless report
 counts how often each was used, since a teleporter nobody can reach looks
 exactly like one that works.
@@ -1928,8 +2249,7 @@ bench, condors fly over the cliffs, feral burros roam round Harlow, and
 mustangs and sandhill cranes graze the high meadows. Geese, mallards and a
 swan are on the reservoir, acorn woodpeckers and flickers in the pines,
 dragonflies and meadowhawks in the canyon. The story is in
-`worlds/redrock/story.md`; `worlds/redrock/make_chronicle.py` writes its
-chronicle.
+`worlds/redrock/story.md`; its chronicle is edited as JSON.
 
 ### Jadewater
 
@@ -1981,11 +2301,10 @@ the lagoon. Three things nobody explains: the cave light, which lays down
 stone; the rays that swim in air; and the Choir, seven identical towers in a
 ring round a blue hole east of the temple (835,790).
 
-The story is in `worlds/jadewater/story.md`; `make_library.py` writes its
-library entries and `make_chronicle.py` its chronicle.
+The story is in `worlds/jadewater/story.md`; its chronicle is edited as
+JSON.
 
-Two reefs sit at the end of `chronicle.json` (`make_chronicle.py` keeps them verbatim in its
-TAIL, so a rerun writes the same file): the atoll off the spawn beach in the south-west (144 m across, four motu, one pass) and the Deep Eye, a `cenote` in a karst hill in the
+Two reefs sit at the end of `chronicle.json`: the atoll off the spawn beach in the south-west (144 m across, four motu, one pass) and the Deep Eye, a `cenote` in a karst hill in the
 bamboo country at (560, 190) with its water at 41.8 m and 29 m of it, coral on its floor.
 
 ### Hemlow
@@ -2024,8 +2343,8 @@ forests), hedgehogs, kingfishers on the Hem, and marsh lights pulsing over
 the bog after sunset. Hag stones (pebbles with a hole) turn up along the river and round
 the stones.
 
-The story is in `worlds/hemlow/story.md`; `make_library.py` writes its
-library entries.
+The story is in `worlds/hemlow/story.md`; its library entries are
+edited as JSON.
 
 ### Lowmouth
 
@@ -2085,8 +2404,8 @@ the flood is out on the bay at night, seen only from more than 150 m.
 
 The world sets `water` `still` (no shore foam, a dim reflection, murky), and
 its materials leave out `id`. The story is in `worlds/lowmouth/story.md`;
-`make_library.py` and `make_chronicle.py` write its library entries and
-chronicle.
+its chronicle is edited as JSON, and `make_spurs.py` rebuilds the stilt
+houses' walks to the boardwalks in place.
 
 ### Windbarrow
 
@@ -2149,8 +2468,8 @@ mouths and four daylight shafts; `cave_chalk` carries a low `glow` so the
 passages are walkable without a light. The bone beds and the scratched block
 stand at its mouths.
 
-The story is in `worlds/windbarrow/story.md`; `make_library.py` and
-`make_chronicle.py` write its library entries and chronicle.
+The story is in `worlds/windbarrow/story.md`; its chronicle is edited as
+JSON.
 
 ### Thornpan
 
@@ -2217,12 +2536,108 @@ slope alone, half the country would be granite.
 
 Two limits of the shape ops: the `disc` op only draws in
 the x and z axes (a `"y"` disc comes out as a one-voxel slab standing on edge),
-and `log` is horizontal only, so a vertical trunk or mast is a `cylinder`. A
+and `log` is horizontal only, so a vertical trunk is a `cylinder` (a `yaw`
+turns a log or a disc to any bearing in the ground plane). Anything
+thin at an angle (a leaning mast, rigging, a brace, a spoke) is a `segment`:
+the mesher draws it as a smooth tube along its line (`src/mesh/lean.rs`). A
 flute cut into a hollow trunk goes through to the hollow and opens a window in
 the back of the tree.
 
-The story is in `worlds/thornpan/story.md`; `make_library.py` and
-`make_chronicle.py` write its library entries and chronicle.
+The story is in `worlds/thornpan/story.md`; its chronicle is edited as
+JSON.
+
+### Ribshore
+
+A grey northern coast, 1.5 km across, with the skeleton of a giant lying along
+its beach: a toothed animal like a whale, about 1.4 km from the tip of its jaw
+to its tail. Sea on the west, a wide wet beach, then half a kilometre of
+rhythmic dune ridges held by dunegrass, purple lupine and sea buckthorn, and
+Sitka spruce at the east edge. A basalt headland with a lighthouse stands at
+the north-west, with sea stacks off it and bull kelp on the reefs. The grade
+is cool, grey-green and high in contrast; the climate leans on fog, and a new
+game opens on a foggy autumn morning.
+
+The skeleton is the `skeleton` event (`world/chronicle/events/skeleton.rs`),
+which draws bones as volumes in `world/bones.rs` rather than as a structure:
+a structure is a dense voxel grid that only turns in quarter turns, and one
+rib alone would be about twenty million voxels. Each bone is a short list of
+tapered capsules, flattened or cut where the bone is, with carves for the
+inside of the skull, its eye sockets and blowhole. The chunk generator asks
+per voxel whether a point is inside one (`Bones::draw`, after the routed
+lines and before the trees), so a skeleton draws at every level of detail and
+a buried bone is found by digging. The animal lies on its belly: the vertebrae
+are worn flat on top and half sunk, with sand drifted level into the gaps so
+the spine can be walked or ridden end to end; the ribs stand up from both
+sides like tusks, each with its own height, reach, lean and wobble, a third of
+them snapped off with the piece lying beside; the skull sits upright in the
+surf with its jaws open and teeth in both. Broken ends show an ochre
+honeycomb of marrow, bone open to the sky grows lichen, and bone near the
+waterline is crusted. The same event makes a baleen whale under the headland
+(plates standing in rows on an upturned snout) and a calf in the dunes.
+
+The rest is ordinary coast built from `terrain`, `subside` (the shelf off the
+coast, and a deeper hollow off the head where loose bones and teeth lie),
+two `dunes` fields piled by the north-west wind, `drainage` and a
+`watercourse` for the creek, `mesa`s for the headland and the stacks, and
+blowout bowls let down into the dunes. Smaller sites: the whalers' try-works
+at the creek mouth (1841-46), fallen teeth standing in the wet sand, drowned
+spruce stumps among the seaward ribs, driftwood at the dune foot, a cabin and
+a fallen giant spruce at the forest edge, and the empty lighthouse. The
+driftwood keeps to the wrack's landward edge and the first metres of grass
+(edge placement with `field`), lying along the shore at any bearing.
+
+At night a faint amber light fills the titan's landward eye socket (`titan_eye`, placed with `when` `moon`, so it is there only while the moon is out; the skeleton event names each socket `<name>_eye_left` and `_eye_right` and prints its height). An old stand of giant fir and redwood stands inland in the spruce (region
+`firstand`, biome `rib_oldgrowth`, round 1460,800).
+
+Bald eagles (the library `eagle`, which hunts in every world it lives in) circle the headland, the
+wrack and the spruce, sit on the tallest spruce, firs, redwoods and drowned snags, and stoop
+on gulls, puffins and fish near the surface (CREATURES.md, `soar`).
+
+New creatures: walrus, albatross (the `glide` flock verb: long low circles,
+roosting together on high ground near the coast), black oystercatcher, the
+bone crab (rig plan `crab`, which walks sideways), the giant octopus (verb
+`creep`, rig plan `octopus`: its arms are serpent paths laid over rocks and
+bones, and it pales toward sand as you close in), mola and sixgill shark. New
+plants: sitka spruce, shore pine, sea buckthorn and lupine (a sprite layer of
+its own). Anomalies: a harpoon twenty metres long stuck in a vertebra near
+the hips, there before the whalers came, and a blowhole that spouts on a
+rhythm whatever the sea is doing. Its chronicle is edited as JSON.
+
+### Saltmirror
+
+A salt pan 1.5 km across, flat to the horizon, with the Saltmirror Array on
+it: eleven radio dishes built larger than life, a hundred metres across, on
+three dirt-road arms from a hub, the pads further apart the further out. The
+array was built 1964-71 and abandoned ten years ago, three weeks after
+something came down over the range at night. A grey quartzite range with
+fynbos (heath, restio, protea, pincushion, silver trees in the ravines) fills
+the north-east corner, white gypsum dunes are piled against its foot, and
+gravel fans below it carry cardon, saguaro, ocotillo and cholla. The pan has
+two waters: the Brine in the south, a few centimetres deep over pink mud,
+which lies like a mirror of the sky, with flamingos on it; and the Turquoise
+in the north-west, a clear blue-green lake ringed with brine eyes and
+orange microbial mats. Three quartzite rock islands carry the cacti.
+Elephant-sized salt tortoises cross the open salt.
+
+Places: the control building at the hub, the transporter stopped halfway
+out the east arm with a dish on its back, the staff camp on the fan
+(A-frames, prefab bungalows, the mess hall with its planet mural, the water
+tower, pickups in the motor pool), Varga Dome on the western summit, and the
+last pickup at the end of the fire road. Behind the eastern ridge, in a
+hollow you cannot see from the pan, is the wreck: a dark lifting body broken
+in two in a ten-year-old burn, its pieces and hull shards (a collectible)
+strewn down the slope. The anomaly is pad 12, at the end of the short arm:
+from more than 420 m away between 10:30 and 15:30 a dish stands on it, and up
+close there is only the pad (a `place` with `when`).
+
+Its weather was written for it: after a shower the salt floods into one
+sheet that mirrors the sky and the dishes (`floods`), dry storms come in with
+silent lightning that shows overhead and again in the wet pan (`storm`), and
+on hot days the far flat turns to a mirage (`mirage`). See "Sheet floods,
+reflections and the mirage" under the weather.
+
+The dishes use the `dish` shape op (a paraboloid shell at any tilt), added
+for this world. Its chronicle is edited as JSON.
 
 ### Slagdeck
 
@@ -2283,6 +2698,8 @@ cargo run --release -- --headless --screenshot shot.png --stats stats.json
   stands on the ground instead. Yaw 0 looks north (-Z), -90 looks east.
 - `--dig N`, `--place N` and `--showcase` exercise editing and the creature
   models before the screenshot.
+- `--sound-bake FILE --secs N` renders what is heard where the camera
+  stands into a WAV (see "Sound").
 - `--anim-sheet NAME:moves` on a snake shows its crawl at four phases of the
   wave, a turn and a swim below, and stretched out, coiled, coiled with its
   head up, climbing, draped and limp above.
@@ -2329,9 +2746,42 @@ cargo run --release -- --headless --screenshot shot.png --stats stats.json
   logbook (0) or scrapbook page N. To put an animal in front of the lens use
   `VG_SPAWN=deer VG_SPAWN_DIST=10` and look toward it. The stats JSON lists
   the current tasks under `camera_tasks`.
+- `--frames N` sets how many frames a headless run steps before the
+  screenshot (default 30), and `--wait S` the most seconds it waits for the
+  view to stream in before giving up and shooting anyway.
+- `--tour S` walks a loop round the island for S seconds and reports every
+  creature met, by species.
+- `--hud` shots take `--show-help` (the key help over the view) and
+  `--show-worlds` (the OPEN WORLD screen for the current world).
+- The bot and weapon benches: `--duel N` (with `--duel-seconds S` and
+  `--duel-weapon NAME` for one gun's row) is the weapon bench under
+  "Shooters"; `--tourney N` (with `--tourney-seconds S`) the movement
+  tournament and `--league N` (with `--league-weapon NAME|all`) the league,
+  both in `docs/BOTS.md`. `--no-player` takes the player out of a
+  shooter match, so a headless match measures the bots against each other.
 - `tools/timing.sh` wraps a headless run and prints a one-line summary.
 - `cargo test --release` runs the unit tests (noise, generator, mesher,
   physics, allocator, riding, gliding, climbing and the rope).
+
+Environment switches that the sections above do not mention, all for
+comparisons and debugging:
+
+- `VOXEL_GRASS_FILL=0` drops the near grass fill, `VOXEL_SPRITE_RANGES=0`
+  draws every sprite at every distance, `VOXEL_TUBES=0` turns off stem
+  bevelling, and `VOXEL_UNDERSTORY=0` the grass understory in `scene.wgsl`.
+- `VOXEL_TIMING=1` prints how long the horizon map took to bake.
+- `VOXEL_TEX_SHEET=out.png` writes the material texture sheet as it is
+  built.
+- `VG_SPAWN_WET=1` lets `VG_SPAWN` set walkers down in rivers, to test
+  swimming; `VG_CATCH_M=12` lets a hunter take prey across a clearing and
+  prints each kill.
+- `VG_CATALOG_DEBUG=1` prints how `--catalog` framed each subject.
+- `VG_EDIT_POSE`, `VG_EDIT_POSE2`, `VG_EDIT_ORBIT`, `VG_EDIT_SECS`,
+  `VG_EDIT_PAINT` and `VG_EDIT_STEP` drive the EDIT page in a headless
+  `--edit` shot (`src/tools/headless.rs` reads them).
+- `SPRITES_OUT=dir` and `TEXOPTS_OUT=dir` point the two ignored export tests
+  (`cargo test -- --ignored export_sprites` and `export_texture_options`) at
+  a folder.
 
 ### The catalogue
 

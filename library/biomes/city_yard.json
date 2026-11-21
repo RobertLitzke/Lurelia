@@ -1,6 +1,6 @@
 {
   "name": "city_yard",
-  "version": 1,
+  "version": 2,
   "introduced_by": "city",
   "notes": "Yards, verges and the green between houses: the default of a city world.",
   "priority": 1,
@@ -27,7 +27,9 @@
       "plant": "fern",
       "density": 0.008,
       "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.0, "max": 1.0}}
-    }
+    },
+    {"plant": "street_maple", "density": 0.002, "placement": {"verb": "lone", "params": {"spacing": 10}}},
+    {"plant": "street_oak", "density": 0.0012, "placement": {"verb": "lone", "params": {"spacing": 14}}}
   ],
   "creatures": [{"creature": "crow", "count": 4}]
 }

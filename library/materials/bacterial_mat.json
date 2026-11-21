@@ -1,0 +1,15 @@
+{
+  "name": "bacterial_mat",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Mats of bacteria on the sea floor round the youngest bone: white and orange, slick.",
+  "smooth": true,
+  "texture": {
+    "pattern": "blotch",
+    "base": [206, 202, 190],
+    "alt": [196, 142, 92],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [208, 204, 194], "alt": [196, 150, 104]}
+  }
+}

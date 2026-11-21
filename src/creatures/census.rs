@@ -66,6 +66,9 @@ pub fn activities(world: &hecs::World, land: Option<&crate::world::fields::World
     for s in world.query::<&super::snake::Serpent>().iter() {
         *out.entry(format!("snake {}", s.doing())).or_insert(0) += 1;
     }
+    for o in world.query::<&super::octopus::Octopus>().iter() {
+        *out.entry(format!("octopus {}", o.doing())).or_insert(0) += 1;
+    }
     // Flitting birds: on a shrub or tree top, on the ground, or flying.
     for (f, look) in world.query::<(&Flit, &Look)>().iter() {
         let rise = land.map_or(0.0, |l| look.pos.y - l.f.height(look.pos.x, look.pos.z));

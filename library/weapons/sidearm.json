@@ -2,17 +2,17 @@
   "name": "sidearm",
   "version": 1,
   "introduced_by": "slagdeck",
-  "notes": "The gun you are left with: a stubby bullpup with its magazine along the top, accurate enough to be worth aiming and light enough that you go looking for something else. It rewards a head shot by half again. The right button fires short bursts of three at the full cyclic rate with a beat between them, tight enough to land all three on a man at middle range and quick enough to matter up close.",
+  "notes": "The gun you are left with: a stubby bullpup with its magazine along the top, accurate enough to be worth aiming and light enough that you go looking for something else. It rewards a head shot by half again. The right button fires bursts of six in rapid succession with a beat between them; the muzzle climbs through a burst, so the first round goes where you aimed and the last ones wander, which makes it a close-range answer. It takes the same bullets as the minigun, out of one store: rounds fired from either are gone from both, and a pad for either fills both.",
   "display": "SIDEARM",
   "slot": 2,
-  "ammo_max": 180,
+  "ammo_max": 400,
   "ammo_start": 180,
-  "mag": 60,
+  "mag": 40,
   "reload_s": 1.45,
   "fire": {
     "kind": "hitscan",
-    "rpm": 330.0,
-    "damage": 13.5,
+    "rpm": 396.0,
+    "damage": 9.45,
     "spread_deg": 0.55,
     "range": 200.0,
     "falloff": 0.72,
@@ -24,9 +24,10 @@
   "alt": {
     "kind": "hitscan",
     "rpm": 900.0,
-    "burst": 3,
+    "burst": 6,
     "burst_gap_s": 0.28,
-    "damage": 12.0,
+    "burst_spread_deg": 0.6,
+    "damage": 8.4,
     "spread_deg": 1.1,
     "range": 170.0,
     "falloff": 0.62,
@@ -36,5 +37,6 @@
     "tracer_s": 0.04
   },
   "view": "sidearm",
-  "tint": [0.38, 0.4, 0.43]
+  "tint": [0.38, 0.4, 0.43],
+  "ammo_type": "bullets"
 }

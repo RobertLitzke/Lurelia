@@ -38,6 +38,10 @@ pub struct EventCtx<'a> {
     /// The world folder, for events that read a file from it.
     pub dir: &'a Path,
     places: &'a HashMap<String, [f32; 2]>,
+    /// Places events found on the land they shaped (`seat`, `glaciate`), by
+    /// name: where, and the bearing it faces if it faces one. Looked up
+    /// before `places`.
+    pub seats: HashMap<String, (Vec2, Option<f32>)>,
     pub f: Fields,
     pub shapes: Vec<Shape>,
     pub placed: Vec<Placed>,
@@ -70,6 +74,7 @@ impl<'a> EventCtx<'a> {
             lib,
             dir,
             places,
+            seats: HashMap::default(),
             f,
             shapes: Vec::new(),
             placed: Vec::new(),
@@ -90,18 +95,65 @@ impl<'a> EventCtx<'a> {
         }
     }
 
-    /// A position: coordinates, or a name from the chronicle's `places`.
+    /// A position: coordinates, a name (a place an event found, else one
+    /// from the chronicle's `places`), or an offset from a name.
     pub fn pos(&mut self, p: &Pos) -> Vec2 {
         match p {
             Pos::At(a) => Vec2::new(a[0], a[1]),
-            Pos::Named(n) => match self.places.get(n) {
-                Some(a) => Vec2::new(a[0], a[1]),
-                None => {
-                    self.warnings.push(format!("unknown place {n}"));
-                    Vec2::ZERO
+            Pos::Named(n) => self.named(n),
+            Pos::Rel { from, by, .. } => {
+                let base = self.named(from);
+                let by = Vec2::new(by[0], by[1]);
+                // Quarter turns clockwise, seen from above (x east, y south).
+                base + match self.turn(p) {
+                    1 => Vec2::new(-by.y, by.x),
+                    2 => -by,
+                    3 => Vec2::new(by.y, -by.x),
+                    _ => by,
                 }
-            },
+            }
         }
+    }
+
+    fn named(&mut self, n: &str) -> Vec2 {
+        if let Some((p, _)) = self.seats.get(n) {
+            return *p;
+        }
+        match self.places.get(n) {
+            Some(a) => Vec2::new(a[0], a[1]),
+            None => {
+                self.warnings.push(format!("unknown place {n}"));
+                Vec2::ZERO
+            }
+        }
+    }
+
+    /// How many quarter turns clockwise a position's surroundings are turned
+    /// from the way they were drawn (`Pos::Rel` with `as_if`): the offset,
+    /// and anything laid out round it, turns by this.
+    pub fn turn(&self, p: &Pos) -> u8 {
+        let Pos::Rel { from, as_if: Some(drawn), .. } = p else {
+            return 0;
+        };
+        match self.seats.get(from) {
+            Some((_, Some(faces))) => (((faces - drawn).rem_euclid(360.0) + 45.0) / 90.0) as u8 % 4,
+            _ => 0,
+        }
+    }
+
+    /// Turn `[east, south]` metres round a position by its quarter turns.
+    pub fn turned(&self, p: &Pos, d: [f32; 2]) -> [f32; 2] {
+        match self.turn(p) {
+            1 => [-d[1], d[0]],
+            2 => [-d[0], -d[1]],
+            3 => [d[1], -d[0]],
+            _ => d,
+        }
+    }
+
+    /// Name a place an event found, for later events to build on.
+    pub fn seat(&mut self, name: &str, at: Vec2, faces: Option<f32>) {
+        self.seats.insert(name.to_string(), (at, faces));
     }
 
     /// A material's id by name (0, with a warning, if the library lacks it).

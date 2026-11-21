@@ -1,27 +1,67 @@
 {
   "name": "windbarrow",
+  "blurb": "Open chalk country under golden grass, six thousand years ago: barrows, mammoths and the wind.",
   "size_m": 1536,
   "height_m": 128,
   "sea_level_m": 20,
-  "underwater": {"visibility": 11, "light": 0.15},
+  "underwater": {
+    "visibility": 11,
+    "light": 0.15
+  },
   "seed": 1883,
-  "sun": {"latitude": 50},
-  "seeds": 1,
+  "sun": {
+    "latitude": 50
+  },
   "rock": [
-    ["chalk_white", 0.75],
-    ["chalk_grey", 0.25]
+    [
+      "chalk_white",
+      0.75
+    ],
+    [
+      "chalk_grey",
+      0.25
+    ]
   ],
   "strata": [
-    ["chalk_grey", 0],
-    ["chalk_white", 24],
-    ["flint_band", 61],
-    ["chalk_white", 63.5],
-    ["flint_band", 70],
-    ["chalk_white", 72.5]
+    [
+      "chalk_grey",
+      0
+    ],
+    [
+      "chalk_white",
+      24
+    ],
+    [
+      "flint_band",
+      61
+    ],
+    [
+      "chalk_white",
+      63.5
+    ],
+    [
+      "flint_band",
+      70
+    ],
+    [
+      "chalk_white",
+      72.5
+    ]
   ],
-  "spawn": [500, 740],
+  "spawn_at": {
+    "from": "durn",
+    "by": [
+      70,
+      -50
+    ]
+  },
   "spawn_bearing": 38,
-  "seasons": ["spring", "summer", "autumn", "winter"],
+  "seasons": [
+    "spring",
+    "summer",
+    "autumn",
+    "winter"
+  ],
   "start_season": "summer",
   "weather": {
     "sun": 1.0,

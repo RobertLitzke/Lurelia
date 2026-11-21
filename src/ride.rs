@@ -1420,20 +1420,22 @@ fn seg(g: &mut Grid, a: [f32; 3], b: [f32; 3], r: f32, c: u8) {
     }
 }
 
-/// A wheel in the plane x = 15..17, centred at (y, z).
+/// A wheel in the plane x = 16, centred at (y, z): a round tyre and a thin
+/// rim, each a ring of rods, and four spokes, all drawn as tubes.
 fn wheel(g: &mut Grid, y: f32, z: f32) {
-    for yy in 0..14 {
-        for zz in (z as i32 - 7)..=(z as i32 + 7) {
-            let d = ((yy as f32 + 0.5 - y).powi(2) + (zz as f32 + 0.5 - z).powi(2)).sqrt();
-            if (4.4..=5.6).contains(&d) {
-                g.fill([15, yy, zz], [17, yy + 1, zz + 1], TYRE);
-            } else if (3.9..4.4).contains(&d) {
-                g.set(16, yy, zz, METAL);
-            }
+    let ring = |g: &mut Grid, rad: f32, r: f32, c: u8| {
+        let n = 24;
+        for k in 0..n {
+            let (a0, a1) = (k as f32 / n as f32 * std::f32::consts::TAU, (k + 1) as f32 / n as f32 * std::f32::consts::TAU);
+            g.rod([16.0, y + rad * a0.cos(), z + rad * a0.sin()], [16.0, y + rad * a1.cos(), z + rad * a1.sin()], r, c);
         }
+    };
+    ring(g, 4.95, 0.65, TYRE);
+    ring(g, 4.1, 0.3, METAL);
+    for k in 0..4 {
+        let a = k as f32 * std::f32::consts::FRAC_PI_4 + 0.3;
+        g.rod([16.0, y - 4.0 * a.cos(), z - 4.0 * a.sin()], [16.0, y + 4.0 * a.cos(), z + 4.0 * a.sin()], 0.22, METAL);
     }
-    seg(g, [16.0, y, z - 4.0], [16.0, y, z + 4.0], 0.3, METAL);
-    seg(g, [16.0, y - 4.0, z], [16.0, y + 4.0, z], 0.3, METAL);
 }
 
 /// Mountain bike facing -Z, wheels on y = 0; 1/16 m voxels. `whole` false for
@@ -1447,25 +1449,25 @@ fn bike(g: &mut Grid, whole: bool) {
     let head_lo = [16.0, 11.0, 9.0];
     let head_hi = [16.0, 14.0, 8.4];
     let seat = [16.0, 14.0, 19.0];
-    seg(g, bb, head_lo, 0.75, FRAME);
-    seg(g, seat, head_hi, 0.6, FRAME);
-    seg(g, bb, seat, 0.65, FRAME);
-    seg(g, bb, [16.0, wy, rear], 0.5, FRAME);
-    seg(g, seat, [16.0, wy, rear], 0.5, FRAME);
-    seg(g, head_lo, head_hi, 0.8, FRAME);
-    seg(g, head_lo, [16.0, wy, front], 0.55, METAL);
+    // The frame, fork, bar and cranks are rods: round tubes at any angle.
+    g.rod(bb, head_lo, 0.75, FRAME);
+    g.rod(seat, head_hi, 0.6, FRAME);
+    g.rod(bb, seat, 0.65, FRAME);
+    g.rod(bb, [16.0, wy, rear], 0.5, FRAME);
+    g.rod(seat, [16.0, wy, rear], 0.5, FRAME);
+    g.rod(head_lo, head_hi, 0.8, FRAME);
+    g.rod(head_lo, [16.0, wy, front], 0.55, METAL);
     if whole {
-        // Stem, bar and grips, on voxel centres: a segment between centres
-        // fills nothing.
-        seg(g, head_hi, [16.0, 16.0, 8.0], 0.5, METAL);
-        seg(g, [10.5, 16.5, 8.5], [21.5, 16.5, 8.5], 0.45, METAL);
-        seg(g, [9.5, 16.5, 8.5], [10.5, 16.5, 8.5], 0.55, TYRE);
-        seg(g, [21.5, 16.5, 8.5], [22.5, 16.5, 8.5], 0.55, TYRE);
+        // Stem, bar and grips.
+        g.rod(head_hi, [16.0, 16.0, 8.0], 0.5, METAL);
+        g.rod([10.5, 16.5, 8.5], [21.5, 16.5, 8.5], 0.45, METAL);
+        g.rod([9.3, 16.5, 8.5], [10.5, 16.5, 8.5], 0.6, TYRE);
+        g.rod([21.5, 16.5, 8.5], [22.7, 16.5, 8.5], 0.6, TYRE);
         // Saddle.
         g.fill([15, 15, 18], [18, 16, 22], TYRE);
     }
     // Cranks.
-    seg(g, [13.0, 4.5, 15.0], [19.0, 4.5, 18.0], 0.5, METAL);
+    g.rod([13.0, 4.5, 15.0], [19.0, 4.5, 18.0], 0.5, METAL);
 }
 
 /// A gloved hand closed on the grip at `x`, with a bit of sleeve behind it
@@ -1488,8 +1490,8 @@ const BAR_FP_UP: f32 = 0.5;
 /// voxels made a slab across the view. The bar runs between the gloves of the
 /// first-person bike and the stem drops to its head tube.
 fn bar_fp(g: &mut Grid) {
-    g.fill([5, 16, 16], [27, 17, 17], METAL);
-    g.fill([15, 12, 16], [17, 17, 17], METAL);
+    g.rod([5.0, 16.5, 16.5], [27.0, 16.5, 16.5], 0.55, METAL);
+    g.rod([16.0, 12.0, 16.5], [16.0, 16.5, 16.5], 0.7, METAL);
 }
 
 /// Rider standing on the pedals, leaning over the bar.
@@ -1522,7 +1524,8 @@ fn flyer(g: &mut Grid) {
             let b = [16.0 + side * 2.0, 5.5, 20.0 - 6.0 * t];
             seg(g, a, b, 0.55, if t > 0.85 { SUIT_DARK } else { SUIT });
         }
-        seg(g, [sx, 6.2, 9.0], wrist, 0.85, SUIT_DARK);
+        // The spar along the leading edge.
+        g.rod([sx, 6.2, 9.0], wrist, 0.85, SUIT_DARK);
         g.fill([wrist[0] as i32 - 1, 5, 10], [wrist[0] as i32 + 1, 7, 12], SKIN);
     }
     // Leg wing between the legs.
@@ -1531,7 +1534,7 @@ fn flyer(g: &mut Grid) {
         seg(g, [16.0 - 1.5 - 3.5 * t, 5.0, 20.0 + 10.0 * t], [16.0 + 1.5 + 3.5 * t, 5.0, 20.0 + 10.0 * t], 0.55, SUIT);
     }
     for side in [-1.0f32, 1.0] {
-        seg(g, [16.0 + side * 1.8, 5.2, 19.0], [16.0 + side * 5.0, 5.2, 30.0], 1.0, SUIT_DARK);
+        g.rod([16.0 + side * 1.8, 5.2, 19.0], [16.0 + side * 5.0, 5.2, 30.0], 1.0, SUIT_DARK);
         g.fill([16 + (side * 5.0) as i32 - 1, 4, 30], [16 + (side * 5.0) as i32 + 1, 7, 32], BOOT);
     }
     // Body, pack and head.
@@ -1580,8 +1583,8 @@ fn wing_fp(g: &mut Grid, side: f32) {
         seg(g, a, b, 0.6, if t > 0.92 { SUIT_DARK } else { SUIT });
     }
     // The sleeve along the leading edge, a darker seam, and the glove.
-    seg(g, shoulder, wrist, 0.9, SUIT);
-    seg(g, [shoulder[0], shoulder[1] + 0.8, shoulder[2]], [wrist[0], wrist[1] + 0.8, wrist[2]], 0.5, SUIT_DARK);
+    g.rod(shoulder, wrist, 0.9, SUIT);
+    g.rod([shoulder[0], shoulder[1] + 0.8, shoulder[2]], [wrist[0], wrist[1] + 0.8, wrist[2]], 0.5, SUIT_DARK);
     g.ellipsoid(wrist, [1.1, 0.9, 1.3], BOOT);
 }
 

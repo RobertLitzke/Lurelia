@@ -1,0 +1,15 @@
+{
+  "name": "baleen_plate",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Baleen: dark plates of keratin, fraying to bristle at their edges.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [52, 50, 48],
+    "alt": [78, 72, 64],
+    "scale": 4,
+    "contrast": 0.9,
+    "calm": {"base": [60, 58, 56], "alt": [84, 78, 70]}
+  }
+}

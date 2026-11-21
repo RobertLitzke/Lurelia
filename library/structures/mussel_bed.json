@@ -1,0 +1,17 @@
+{
+  "name": "mussel_bed",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "A bed of mussels and gooseneck barnacles on the rock, black and grey.",
+  "size": [24, 4, 20],
+  "anchor": [12, 0, 10],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"mussel": "mussel_black"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [12, 0.5, 10], "radius": [11, 1.4, 9], "mat": "mussel"},
+    {"op": "ellipsoid", "centre": [7, 1.5, 7], "radius": [4, 1.4, 3], "mat": "mussel"},
+    {"op": "ellipsoid", "centre": [16, 1.4, 13], "radius": [4, 1.6, 4], "mat": "mussel"}
+  ]
+}

@@ -35,6 +35,8 @@ pub struct Prefs {
     /// (src/launch.rs).
     #[serde(deserialize_with = "crate::util::or_default")]
     pub last: crate::launch::Launch,
+    /// Sound on or off, and the volume of each bus (src/sound).
+    pub sound: crate::sound::Levels,
 }
 
 impl Default for Prefs {
@@ -46,6 +48,7 @@ impl Default for Prefs {
             view: 128.0,
             vsync: false,
             last: crate::launch::Launch::default(),
+            sound: crate::sound::Levels::default(),
         }
     }
 }
@@ -112,6 +115,11 @@ pub enum Setting {
     View,
     Vsync,
     Stats,
+    Sound,
+    Volume,
+    Ambience,
+    Effects,
+    Music,
 }
 
 /// What a menu line does when chosen.
@@ -127,6 +135,8 @@ pub enum Choice {
     LaunchOpt(u8),
     /// Go, with what the launch screen says.
     Start,
+    /// Put this world and game's options back as the world wrote them.
+    LaunchReset,
     /// A line of an open dropdown: the world, or the game, at this index.
     ChooseWorld(u8),
     ChooseMode(u8),
@@ -177,6 +187,8 @@ pub enum Choice {
     EditPose,
     /// The grey platform, or the world's own ground.
     EditGrid,
+    /// The studio's fixed light, or the world's.
+    EditLight,
     /// Step one of the entry's fields (`editor::knobs`).
     EditKnob(u8),
     /// Open the picker on one of the entry's colours: which heading it sits
@@ -207,6 +219,11 @@ pub struct Item {
     /// A line drawn as a button -- bigger, in a box, in a row with the other
     /// buttons under the list -- rather than as a row of the list.
     pub button: bool,
+    /// A value that stands somewhere other than its default: a small star
+    /// before it says so.
+    pub changed: bool,
+    /// The heading this line is the first under, in an open dropdown.
+    pub group: Option<&'static str>,
     pub choice: Choice,
 }
 
@@ -220,6 +237,8 @@ impl Item {
             help: "",
             drop: false,
             button: false,
+            changed: false,
+            group: None,
             choice,
         }
     }
@@ -252,6 +271,8 @@ impl Item {
 pub fn world_title(name: &str) -> String {
     if name == "random" {
         "RANDOM ISLAND".to_string()
+    } else if let Some(t) = crate::launch::info(name).title {
+        t.to_uppercase()
     } else {
         name.replace('_', " ").to_uppercase()
     }
@@ -298,7 +319,7 @@ pub fn launch_items(l: &crate::launch::Launch, here: Option<&str>) -> Vec<Item> 
     let mut out = vec![
         Item {
             note: (here == Some(l.world.as_str())).then(|| "here now".to_string()),
-            help: "Which world to open.",
+            help: Some(crate::launch::info(&l.world).foot).filter(|f| !f.is_empty()).unwrap_or("Which world to open."),
             ..Item::drop("WORLD", Choice::LaunchWorld, world_title(&l.world))
         },
         Item {
@@ -309,6 +330,7 @@ pub fn launch_items(l: &crate::launch::Launch, here: Option<&str>) -> Vec<Item> 
     for (i, o) in crate::launch::options(&l.world, l.mode).iter().enumerate() {
         out.push(Item {
             help: o.help,
+            changed: l.changed(o),
             ..Item::value(&o.label, Choice::LaunchOpt(i as u8), l.value(o))
         });
     }
@@ -317,6 +339,10 @@ pub fn launch_items(l: &crate::launch::Launch, here: Option<&str>) -> Vec<Item> 
         ..Item::button("GO", Choice::Start)
     });
     out.push(Item::button("BACK", Choice::Back));
+    out.push(Item {
+        help: "Put every line above back to what this world and game start with.",
+        ..Item::button("DEFAULTS", Choice::LaunchReset)
+    });
     out
 }
 
@@ -324,10 +350,14 @@ pub fn launch_items(l: &crate::launch::Launch, here: Option<&str>) -> Vec<Item> 
 /// offers. `which` is 0 for the world and 1 for the game.
 pub fn drop_items(l: &crate::launch::Launch, which: u8) -> Vec<Item> {
     if which == 0 {
-        crate::worldload::available()
+        l.world_rows()
             .iter()
             .enumerate()
-            .map(|(i, w)| Item::new(&world_title(w), Choice::ChooseWorld(i as u8)))
+            .map(|(i, r)| Item {
+                group: r.head,
+                help: crate::launch::info(&r.world).foot,
+                ..Item::new(&world_title(&r.world), Choice::ChooseWorld(i as u8))
+            })
             .collect()
     } else {
         crate::launch::modes(&l.world)
@@ -342,7 +372,7 @@ pub fn drop_items(l: &crate::launch::Launch, which: u8) -> Vec<Item> {
 /// line of that row that is picked.
 pub fn drop_at(l: &crate::launch::Launch, which: u8) -> usize {
     if which == 0 {
-        crate::worldload::available().iter().position(|w| *w == l.world).unwrap_or(0)
+        l.world_rows().iter().position(|r| r.world == l.world).unwrap_or(0)
     } else {
         crate::launch::modes(&l.world).iter().position(|m| *m == l.mode).unwrap_or(0)
     }
@@ -352,6 +382,8 @@ fn mode_help(m: crate::launch::Mode) -> &'static str {
     match m {
         crate::launch::Mode::Explore => "The world to walk, ride, climb and photograph: the game as it has always been.",
         crate::launch::Mode::Fps => "An arena match: guns, respawns, and whoever gets the most kills.",
+        crate::launch::Mode::Team => "The same arena in two sides, cyan and magenta: a side's kills between them win it.",
+        crate::launch::Mode::Ctf => "Two sides and a flag each: take theirs off its stand and carry it home to score.",
     }
 }
 
@@ -385,8 +417,18 @@ pub fn settings_items(p: &Prefs, in_world: bool, msaa_now: u32) -> Vec<Item> {
         set("VIEW DISTANCE", Setting::View, view),
         set("VSYNC", Setting::Vsync, on(p.vsync)),
         set("PERFORMANCE STATS", Setting::Stats, on(p.settings.show_stats)),
+        set("SOUND", Setting::Sound, on(p.sound.on)),
+        set("VOLUME", Setting::Volume, p.sound.volume.to_string()),
+        set("AMBIENCE", Setting::Ambience, p.sound.ambience.to_string()),
+        set("EFFECTS", Setting::Effects, p.sound.effects.to_string()),
+        set("MUSIC", Setting::Music, p.sound.music.to_string()),
         Item::new("BACK", Choice::Back),
     ]
+}
+
+/// A level one step of ten up or down, held between 0 and 100.
+fn tens(v: u8, dir: i32) -> u8 {
+    (v as i32 / 10 * 10 + dir.signum() * 10).clamp(0, 100) as u8
 }
 
 /// Change a setting one step (`dir` +1 or -1). The caller applies it.
@@ -403,6 +445,13 @@ pub fn step(p: &mut Prefs, s: Setting, dir: i32) {
         }
         Setting::Vsync => p.vsync = !p.vsync,
         Setting::Stats => p.settings.show_stats = !p.settings.show_stats,
+        Setting::Sound => p.sound.on = !p.sound.on,
+        // Levels step by ten and stop at the ends rather than wrapping: a
+        // volume that jumps from 100 to 0 under a held key is a fright.
+        Setting::Volume => p.sound.volume = tens(p.sound.volume, dir),
+        Setting::Ambience => p.sound.ambience = tens(p.sound.ambience, dir),
+        Setting::Effects => p.sound.effects = tens(p.sound.effects, dir),
+        Setting::Music => p.sound.music = tens(p.sound.music, dir),
         Setting::View => {
             let n = VIEWS.len() as i32;
             let at = VIEWS.iter().position(|v| (*v - p.view).abs() < 1.0).unwrap_or(2) as i32;
@@ -623,7 +672,7 @@ pub fn draw_menu(hud: &mut Hud, menu: &mut Menu, heading: &str, items: &[Item], 
     let t = line_type(u, false);
     let size = t.size;
     let cap = t.cap();
-    let pitch = (1.95 * size).round();
+    let mut pitch = (1.95 * size).round();
     let vt = italic(u, 2.05);
     let nt = italic(u, 1.7);
     let ht = heading_type(u);
@@ -660,6 +709,12 @@ pub fn draw_menu(hud: &mut Hud, menu: &mut Menu, heading: &str, items: &[Item], 
         Place::Left => h - 6.0 * u - button_space - left_top,
         Place::Centre => h - 9.0 * u - button_space - head_h - 4.0 * u,
     };
+    // A list a little too long for its room closes its lines up before it
+    // scrolls: the launch screen's dozen lines are better all in view,
+    // tighter, than nine of them and a bar.
+    if rows.len() as f32 * pitch > room {
+        pitch = (room / rows.len() as f32).floor().clamp((1.5 * size).round(), pitch);
+    }
     // A list too long for the window is scrolled instead of running off the
     // bottom of the screen (`Menu::top`, the wheel and the bar below).
     let shown = rows.len().min((room / pitch).floor().max(3.0) as usize);
@@ -760,6 +815,9 @@ pub fn draw_menu(hud: &mut Hud, menu: &mut Menu, heading: &str, items: &[Item], 
             drop = [vx, ry, (right - vx).max(value_w), pitch];
         } else if let Some(v) = &it.value {
             let vx = x + label_w + col_gap;
+            if it.changed {
+                hud.star(vx - 1.7 * u, mid, 0.9 * u, with_a(p.apricot, 0.85));
+            }
             // Unselected values start where the selected one's text does,
             // after its left arrow, so nothing jumps as the selection moves.
             right = if lit {
@@ -846,11 +904,20 @@ pub fn draw_menu(hud: &mut Hud, menu: &mut Menu, heading: &str, items: &[Item], 
         let text = soften(foot);
         let fw = Hud::measure(nt, &text);
         match place {
+            // Under the list and its buttons, on the shaded side of the
+            // screen, where the eye already is. A second line (a world's
+            // facts under its sentence) is set quieter.
             Place::Left => {
-                let x = w - 7.0 * u - fw;
-                let base = h - 4.6 * u;
-                hud.set_lit(nt, x, base, Ink::Flat(p.foot), 0.7, &text);
-                hud.star(x - 1.0 * u - 0.6 * u, base - nt.size * 0.28, 1.2 * u, p.apricot);
+                let _ = fw;
+                let mut lines = text.split('\n');
+                let base = h - 3.6 * u;
+                if let Some(first) = lines.next() {
+                    hud.set_lit(nt, x_left, base, Ink::Flat(p.foot), 0.7, first);
+                    hud.star(x_left - 1.0 * u - 0.6 * u, base - nt.size * 0.28, 1.2 * u, p.apricot);
+                }
+                if let Some(second) = lines.next() {
+                    hud.set_lit(italic(u, 1.5), x_left, base + 2.2 * u, Ink::Flat(with_a(p.note, 0.78)), 0.6, second);
+                }
             }
             Place::Centre => {
                 hud.set_lit(nt, cx - fw * 0.5, h - 5.0 * u, Ink::Flat(p.note), 0.7, &text);
@@ -869,7 +936,11 @@ pub fn draw_dropdown(hud: &mut Hud, menu: &mut Menu, items: &[Item], anchor: [f3
     let lt = Type::new(Face::Caps, 1.5 * u, 0.12);
     let pitch = (2.3 * lt.size).round();
     let pad = 1.4 * u;
-    let wide = items.iter().map(|i| Hud::measure(lt, &i.label)).fold(anchor[2], f32::max) + pad * 2.0 + 2.0 * u;
+    // A list in groups keeps room at the right of each line for the group's
+    // name, which stands on the group's first line.
+    let gt = italic(u, 1.35);
+    let grouped = items.iter().any(|i| i.group.is_some());
+    let wide = items.iter().map(|i| Hud::measure(lt, &i.label)).fold(anchor[2], f32::max) + pad * 2.0 + if grouped { 11.0 * u } else { 2.0 * u };
     // Kept on screen: a row near the right edge (the EDIT page's lists) drops
     // a panel that would otherwise hang off it.
     let x = (anchor[0] - pad).min(w - wide - 1.5 * u).max(1.5 * u);
@@ -919,6 +990,13 @@ pub fn draw_dropdown(hud: &mut Hud, menu: &mut Menu, items: &[Item], anchor: [f3
             Ink::Flat(p.ink)
         };
         hud.set_lit(lt, x + pad + 1.0 * u, base, ink, if lit { 0.9 } else { 0.7 }, &it.label);
+        if let Some(g) = it.group {
+            if i > first {
+                hud.rect(x + pad, ry, wide - pad * 2.0, line, with_a(p.apricot, 0.3));
+            }
+            let gw = Hud::measure(gt, g);
+            hud.set_lit(gt, x + wide - pad - 2.6 * u - gw, base, Ink::Flat(with_a(p.note, 0.7)), 0.5, g);
+        }
         // The one in force keeps a star, so the list says where it stands.
         if i == in_force {
             hud.star(x + wide - pad - 0.8 * u, base - lt.cap() * 0.5, 1.2 * u, p.apricot);
@@ -950,6 +1028,12 @@ pub fn draw_dropdown(hud: &mut Hud, menu: &mut Menu, items: &[Item], anchor: [f3
         menu.track = [bx, by, bw, bh];
         menu.thumb = [bx, ty, bw, th];
     }
+}
+
+/// Shade the whole screen, for a list standing open over a page: what is
+/// behind it reads as behind it, the buttons it hangs across included.
+pub fn dim(hud: &mut Hud, w: f32, h: f32) {
+    hud.rect(0.0, 0.0, w, h, with_a(pal().plum, 0.5));
 }
 
 /// The Lurelia logo, top left, its L on the menu's left edge.

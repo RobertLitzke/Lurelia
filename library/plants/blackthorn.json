@@ -1,0 +1,21 @@
+{
+  "name": "blackthorn",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Blackthorn: a dense thicket of near-black thorny stems, small leaves, sloes thick along the stems in autumn. Hedges and the field corners.",
+  "form": "canes",
+  "height": [1.8, 3.2],
+  "trunk_radius": [0.06, 0.09],
+  "crown_radius": [1.0, 1.6],
+  "bark": "blackthorn_bark",
+  "leaf": "leaves",
+  "canopy": "tufts",
+  "max_slope": 0.9,
+  "autumn": "leaves_autumn",
+  "stems": [8, 14],
+  "cane_lean": 0.35,
+  "cane_bend": 0.04,
+  "cane_spurs": 0.6,
+  "flower": "sloes",
+  "flower_seasons": ["autumn"]
+}

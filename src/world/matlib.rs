@@ -17,6 +17,8 @@ pub struct MatTable {
     smooth: [bool; 256],
     rounds: [bool; 256],
     facets: [bool; 256],
+    /// Faceted only where stepped (`bevel_steps`).
+    steps: [bool; 256],
     tubes: [bool; 256],
     crisp: [bool; 256],
     passable: [bool; 256],
@@ -129,6 +131,11 @@ pub mod flag {
     /// this is where a material's behaviour lives and the rules can then ask
     /// one question of the voxel under a body rather than carry a list.
     pub const HURT_SHIFT: u32 = 20;
+    /// Fills only the lower half of its voxel (`MaterialDef::slab`).
+    pub const SLAB: u32 = 1 << 28;
+    /// Floods into one sheet of standing water after rain, not puddles
+    /// (`MaterialDef::floods`).
+    pub const FLOODS: u32 = 1 << 29;
 }
 
 /// The multiply that takes `base` to `want`, both sRGB bytes. Clamped to the
@@ -320,6 +327,7 @@ pub fn install(lib: &Library) {
         smooth: [false; 256],
         rounds: [false; 256],
         facets: [false; 256],
+        steps: [false; 256],
         tubes: [false; 256],
         crisp: [false; 256],
         passable: [false; 256],
@@ -362,8 +370,9 @@ pub fn install(lib: &Library) {
         };
         t.faces[i] = Some([top, side, bottom]);
         t.smooth[i] = m.smooth;
-        t.rounds[i] = m.round || m.facet;
-        t.facets[i] = m.facet;
+        t.rounds[i] = m.round || m.facet || m.bevel_steps;
+        t.facets[i] = m.facet || m.bevel_steps;
+        t.steps[i] = m.bevel_steps;
         t.crisp[i] = m.crisp;
         t.passable[i] = m.passable;
         t.grass[i] = m.grass.as_ref().map(|g| [g.sparse, g.dense, g.short]);
@@ -398,6 +407,8 @@ pub fn install(lib: &Library) {
             | if lname.contains("grass") { flag::UNDERSTORY } else { 0 }
             | if m.underwater { flag::UNDERWATER } else { 0 }
             | if m.floating { flag::FLOATING } else { 0 }
+            | if m.slab { flag::SLAB } else { 0 }
+            | if m.floods { flag::FLOODS } else { 0 }
             | ((m.glow * 10.0).round().clamp(0.0, 63.0) as u32) << flag::GLOW_SHIFT
             | (m.hurt.round().clamp(0.0, 63.0) as u32) << flag::HURT_SHIFT;
     }
@@ -483,7 +494,12 @@ pub fn install(lib: &Library) {
         let bi = b as usize;
         for (k, (suffix, gflag)) in [("x", flag::GRAIN_X), ("z", flag::GRAIN_Z)].into_iter().enumerate() {
             let Some(i) = free.next() else {
-                eprintln!("materials: no free id left for the grain of {key}");
+                // With no world chosen every wood in the library is counted
+                // as reached and there are never ids for them all; nothing is
+                // built from that table, so it is not worth a line.
+                if lib.reach.is_some() {
+                    eprintln!("materials: no free id left for the grain of {key}");
+                }
                 break 'woods;
             };
             if b < 17 {
@@ -495,6 +511,8 @@ pub fn install(lib: &Library) {
                 t.faces[i] = t.faces[bi];
                 t.smooth[i] = t.smooth[bi];
                 t.rounds[i] = t.rounds[bi];
+                t.facets[i] = t.facets[bi];
+                t.steps[i] = t.steps[bi];
                 t.tubes[i] = t.tubes[bi];
                 t.crisp[i] = t.crisp[bi];
                 t.passable[i] = t.passable[bi];
@@ -527,6 +545,11 @@ pub fn rounds(m: u8) -> bool {
 }
 
 /// Rounded in flat facets (see flag::FACET).
+/// Faceted only where the surface is stepped (see `Material::bevel_steps`).
+pub fn steps_only(m: u8) -> bool {
+    m >= 17 && tab().is_some_and(|t| t.steps.get(m as usize).copied().unwrap_or(false))
+}
+
 pub fn facets(m: u8) -> bool {
     m >= 17 && tab().is_some_and(|t| t.facets.get(m as usize).copied().unwrap_or(false))
 }
@@ -538,6 +561,12 @@ pub fn tubes(m: u8) -> bool {
 /// Ground drawn with a sharp border against other ground (no noisy blend).
 pub fn crisp(m: u8) -> bool {
     m >= 17 && tab().is_some_and(|t| t.crisp.get(m as usize).copied().unwrap_or(false))
+}
+
+/// Does material `m` fill only the lower half of its voxel?
+#[inline]
+pub fn slab(m: u8) -> bool {
+    m >= 17 && has(m, flag::SLAB)
 }
 
 /// Thin growth bodies pass through (store.rs `solid`).

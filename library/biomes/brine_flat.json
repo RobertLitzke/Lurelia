@@ -1,0 +1,14 @@
+{
+  "name": "brine_flat",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The brine at the low end of the pan: a few centimetres of rosy water over slick mud, where the flamingos feed.",
+  "priority": 6,
+  "rules": {"underwater": true},
+  "surface": "brine_mud",
+  "subsurface": "salt_mud",
+  "fringe": 0,
+  "map_color": [208, 176, 176],
+  "plants": [],
+  "creatures": []
+}

@@ -1,0 +1,16 @@
+{
+  "name": "hull_shard",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "A piece of the hull's skin lying in the fynbos below the wreck: dark, very light for its size, with a violet sheen and an edge that is not quite cold.",
+  "display": "hull shard",
+  "voxel": 0.03,
+  "colors": {"skin": [48, 44, 58], "sheen": [140, 110, 200, 0.6]},
+  "ops": [
+    {"op": "box", "from": [11, 0, 12], "to": [21, 2, 20], "mat": "skin"},
+    {"op": "box", "from": [13, 2, 13], "to": [19, 3, 18], "mat": "skin"},
+    {"op": "box", "from": [9, 0, 14], "to": [11, 1, 17], "mat": "skin"},
+    {"op": "set", "at": [15, 3, 15], "mat": "sheen"},
+    {"op": "set", "at": [18, 2, 18], "mat": "sheen"}
+  ]
+}

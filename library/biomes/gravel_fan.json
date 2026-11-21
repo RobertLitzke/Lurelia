@@ -1,0 +1,55 @@
+{
+  "name": "gravel_fan",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The gravel fans at the foot of the range: grey stones and sand washed out of the ravines, and the cactus forest on them, cardon and saguaro over ocotillo, cholla, prickly pear and agave, with lizards everywhere.",
+  "priority": 7,
+  "rules": {"elev": [1.0, 20]},
+  "surface": "fan_gravel",
+  "subsurface": "fan_gravel",
+  "map_color": [176, 170, 150],
+  "plants": [
+    {
+      "plant": "cardon",
+      "density": 0.0012,
+      "placement": {"verb": "clustered", "params": {"size": 60, "min": 0.25, "max": 1.0}}
+    },
+    {
+      "plant": "saguaro",
+      "density": 0.001,
+      "placement": {"verb": "clustered", "params": {"size": 50, "min": 0.3, "max": 1.0}}
+    },
+    {
+      "plant": "ocotillo",
+      "density": 0.003,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.2, "max": 0.9}}
+    },
+    {
+      "plant": "cholla",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 25, "min": 0.3, "max": 1.0}}
+    },
+    {
+      "plant": "prickly_pear",
+      "density": 0.003,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.3, "max": 1.0}}
+    },
+    {"plant": "agave", "density": 0.0025, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "sagebrush",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.1, "max": 0.8}}
+    },
+    {"plant": "ephedra", "density": 0.003, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "lizard", "count": 16},
+    {"creature": "jackrabbit", "count": 5},
+    {"creature": "coyote", "count": 2},
+    {"creature": "rattlesnake", "count": 2},
+    {"creature": "desert_tortoise", "count": 4},
+    {"creature": "desert_toad", "count": 3},
+    {"creature": "canyon_bat", "count": 4},
+    {"creature": "raven", "count": 2}
+  ]
+}

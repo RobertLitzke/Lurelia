@@ -1,0 +1,18 @@
+{
+  "name": "goo_burst_haze",
+  "version": 1,
+  "introduced_by": "goo_burst",
+  "notes": "A sour green haze where a goo burst went off, rising slowly.",
+  "shape": "puff",
+  "count": [8, 12],
+  "speed": [1.0, 3.0],
+  "cone_deg": 120,
+  "life": [1.2, 2.2],
+  "size": [0.3, 1.3],
+  "size_jitter": 0.3,
+  "gravity": -0.4,
+  "drag": 2.6,
+  "wind": 0.7,
+  "color": [86, 120, 52],
+  "alpha": 0.35
+}

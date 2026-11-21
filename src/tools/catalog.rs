@@ -648,7 +648,7 @@ pub fn run(args: &Args) {
         let bird = m.rig.as_ref().is_some_and(|r| r.plan == Some(Plan::Bird));
         // Just the sizes: the model itself stays borrowed from the game otherwise.
         let (height, half_w) = (m.height, m.half_w);
-        let swims = matches!(mover, Mover::School | Mover::Breach);
+        let swims = matches!(mover, Mover::School | Mover::Breach | Mover::Creep);
         let floats = matches!(mover, Mover::Paddle);
         // Habitat: the heart of its largest biome (over deep water for swimmers).
         let home = present
@@ -669,7 +669,7 @@ pub fn run(args: &Args) {
         let level = game.water_at(Vec3::new(x, gy, z)).0;
         let lift = match mover {
             Mover::Buzz { .. } => 0.5,
-            Mover::Circle { .. } | Mover::Flock { soar: true } => size,
+            Mover::Circle { .. } | Mover::Flock { soar: true, .. } => size,
             _ => 0.0,
         };
         let wet = level > gy + 0.3;

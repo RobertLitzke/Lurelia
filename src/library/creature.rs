@@ -610,6 +610,8 @@ pub(super) fn op_colours(ops: &[Op], colors: &HashMap<String, Vec<f32>>, what: &
             | Op::Cylinder { mat, .. }
             | Op::Log { mat, .. }
             | Op::Disc { mat, .. }
+            | Op::Dish { mat, .. }
+            | Op::Segment { mat, .. }
             | Op::Set { mat, .. } => vec![mat],
             Op::RecolourBelow { from, to, .. } | Op::Recolour { from, to, .. } => vec![from, to],
             Op::Repeat { ops, .. } => {

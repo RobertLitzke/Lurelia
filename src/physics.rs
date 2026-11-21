@@ -128,10 +128,16 @@ fn overlaps(store: &Store, p: Vec3, half_w: f32, height: f32, solid: impl Fn(&St
     let y1 = ((p.y + height) * V - EPS).floor() as i32;
     let z0 = ((p.z - half_w) * V + EPS).floor() as i32;
     let z1 = ((p.z + half_w) * V - EPS).floor() as i32;
+    // The feet in voxels: a slab in the bottom row is clear of a body
+    // standing at or above its middle.
+    let feet = p.y * V;
     for y in y0..=y1 {
         for z in z0..=z1 {
             for x in x0..=x1 {
                 if solid(store, x, y, z) {
+                    if y == y0 && feet >= y as f32 + 0.5 - EPS && store.slab(x, y, z) {
+                        continue;
+                    }
                     return true;
                 }
             }
@@ -205,7 +211,11 @@ pub fn move_body_with(store: &Store, pos: &mut Vec3, b: &mut Body, delta: Vec3, 
                 // clear wins.
                 let plates: Vec<f32> = plates_in(store, p, hw, h).map(|s| if d.y < 0.0 { s.hi_m.y } else { s.lo_m.y - h }).collect();
                 let grid = if d.y < 0.0 { ((p.y * V).floor() + 1.0) / V } else { ((p.y + h) * V).floor() / V - EPS - h };
-                let mut stops: Vec<f32> = std::iter::once(grid).chain(plates).filter(|&y| if d.y < 0.0 { y >= p.y && y <= pos.y + BACK } else { y <= p.y && y >= pos.y - BACK }).collect();
+                // Falling, the middle of the voxel too, which is the top of
+                // a slab (`Store::slab`); anything else rejects it below as
+                // a stop that still hits.
+                let half = (d.y < 0.0).then(|| ((p.y * V).floor() + 0.5) / V);
+                let mut stops: Vec<f32> = std::iter::once(grid).chain(half).chain(plates).filter(|&y| if d.y < 0.0 { y >= p.y && y <= pos.y + BACK } else { y <= p.y && y >= pos.y - BACK }).collect();
                 if d.y < 0.0 {
                     stops.sort_by(f32::total_cmp);
                 } else {
@@ -237,10 +247,11 @@ pub fn move_body_with(store: &Store, pos: &mut Vec3, b: &mut Body, delta: Vec3, 
             // Try climbing a ledge.
             let mut climbed = false;
             if (b.on_ground || grounded) && step_up > 0.0 {
-                let max_k = (step_up * V).round() as i32;
-                // Every voxel ledge in reach, and the deck of any platform
-                // in the way, which sits wherever the plate has got to.
-                let mut ups: Vec<f32> = (1..=max_k).map(|k| (pos.y * V + EPS).floor() / V + k as f32 / V).collect();
+                let max_k = (step_up * V * 2.0).round() as i32;
+                // Every ledge in reach, by half voxels so the top of a slab
+                // is one, and the deck of any platform in the way, which
+                // sits wherever the plate has got to.
+                let mut ups: Vec<f32> = (1..=max_k).map(|k| ((pos.y * V * 2.0 + EPS).floor() + k as f32) / (2.0 * V)).collect();
                 ups.extend(plates_in(store, p, hw, h).map(|s| s.hi_m.y).filter(|&y| y > pos.y && y <= pos.y + step_up));
                 ups.sort_by(f32::total_cmp);
                 for up in ups {
@@ -342,11 +353,13 @@ pub fn free_body(store: &Store, pos: &mut Vec3, hw: f32, h: f32, max: f32, hits:
 /// Returns the distance dropped (0 when there is no ground that close).
 /// `hits` is the caller's notion of solid, as for `move_body_with`.
 pub fn snap_down(store: &Store, pos: &mut Vec3, b: &mut Body, max: f32, hits: impl Fn(&Store, Vec3, f32, f32) -> bool) -> f32 {
-    let base = (pos.y * V).round() / V;
-    let max_k = (max * V).round() as i32;
+    // By half voxels, so stepping off a slab comes down onto the floor
+    // beside it and stepping off a ledge comes down onto a slab.
+    let base = (pos.y * V * 2.0).round() / (2.0 * V);
+    let max_k = (max * V * 2.0).round() as i32;
     for k in 1..=max_k {
         let mut q = *pos;
-        q.y = base - k as f32 / V;
+        q.y = base - k as f32 / (2.0 * V);
         if hits(store, q, b.half_w, b.height) {
             return 0.0;
         }
@@ -369,9 +382,8 @@ pub fn snap_down(store: &Store, pos: &mut Vec3, b: &mut Body, max: f32, hits: im
 /// rocket, it hits the wall and comes off it, and it slides to a stop. The
 /// pose is not this function's business: the limbs are a ragdoll
 /// (`anim::ragdoll`), driven by the same velocity.
+/// It falls under the world's gravity, as a living body does.
 
-/// The same gravity a living body falls under, metres a second squared.
-const DEAD_GRAVITY: f32 = 24.0;
 /// How much of the speed into a surface comes back out of it. A body is not
 /// a ball: it hits, it gives, and most of the speed stays in the floor.
 const BOUNCE: f32 = 0.3;
@@ -400,7 +412,8 @@ pub fn tumble(store: &Store, pos: &mut Vec3, body: &mut Body, dt: f32) -> bool {
         body.vel = Vec3::ZERO;
         return false;
     }
-    body.vel.y = (body.vel.y - DEAD_GRAVITY * dt).max(-FASTEST);
+    body.vel += store.gravity.pull(*pos) * dt;
+    body.vel.y = body.vel.y.max(-FASTEST);
     let was = body.vel;
     // No step up: a corpse does not climb the stair it is sliding into.
     move_body(store, pos, body, body.vel * dt, 0.0);
@@ -453,6 +466,19 @@ pub(crate) mod tests {
         let m = (17u8..=254)
             .find(|&m| crate::world::matlib::has(m, crate::world::matlib::flag::WATER))
             .expect("the library has a water material in it");
+        (m, table)
+    }
+
+    /// Any material the library flags as a slab, with the table lock held
+    /// for as long as the id is used (see `water_material`).
+    pub(crate) fn slab_material() -> (u8, std::sync::MutexGuard<'static, ()>) {
+        let table = crate::world::matlib::table_lock();
+        let (mut lib, _) = crate::library::Library::load(&crate::library::data_root());
+        // The library holds more materials than a world has ids for, so
+        // reach the one a pad stands on rather than hoping it got one.
+        lib.assign_ids(Some(["pickup_pad_health".to_string()].into_iter().collect()));
+        crate::world::matlib::install(&lib);
+        let m = (17u8..=254).find(|&m| crate::world::matlib::slab(m)).expect("the library has a slab material in it");
         (m, table)
     }
 
@@ -540,6 +566,48 @@ pub(crate) mod tests {
         assert_eq!(water_voxel_top(&s, Vec3::new(1.0, 9.9, 0.0)), Some(10.0), "and from just under the surface");
         assert_eq!(water_voxel_top(&s, Vec3::new(1.0, 10.1, 0.0)), None, "nothing above the surface is in water");
         assert_eq!(water_voxel_top(&s, Vec3::new(-1.0, 8.0, 0.0)), None, "nor is the rock beside it");
+    }
+
+    /// A slab is stood on at its middle: a body walks up onto one without
+    /// jumping, stands an eighth of a metre up, comes down onto it from a
+    /// fall, and steps back off it onto the floor.
+    #[test]
+    fn a_slab_is_half_a_voxel_high() {
+        let (slab, _table) = slab_material();
+        let mut s = floor_store();
+        for z in -8..8 {
+            for x in 8..16 {
+                s.set(x, 32, z, slab);
+            }
+        }
+        assert!(s.slab(10, 32, 0) && s.solid(10, 32, 0));
+        let mut pos = Vec3::new(1.0, 8.0, 0.0);
+        let mut b = Body::new(0.3, 1.75);
+        b.on_ground = true;
+        for _ in 0..30 {
+            b.vel.y -= 24.0 / 60.0;
+            let d = Vec3::new(4.0 / 60.0, b.vel.y / 60.0, 0.0);
+            move_body(&s, &mut pos, &mut b, d, 0.5);
+        }
+        assert!(pos.x > 2.5, "it did not get onto the slab: x = {}", pos.x);
+        assert!((pos.y - 8.125).abs() < 1e-3, "it is not standing on the slab's top: y = {}", pos.y);
+        assert!(b.on_ground);
+        // Dropped onto it from above.
+        let mut fall = Vec3::new(3.0, 10.0, 0.0);
+        let mut b = Body::new(0.3, 1.75);
+        for _ in 0..200 {
+            b.vel.y -= 24.0 / 60.0;
+            let d = b.vel / 60.0;
+            move_body(&s, &mut fall, &mut b, d, 0.5);
+        }
+        assert!((fall.y - 8.125).abs() < 1e-3, "it fell to y = {}", fall.y);
+        // Off the edge, the floor is an eighth of a metre down.
+        let mut off = Vec3::new(1.5, 8.125, 0.0);
+        let mut b = Body::new(0.3, 1.75);
+        assert!((snap_down(&s, &mut off, &mut b, 0.5, hits) - 0.125).abs() < 1e-4, "y = {}", off.y);
+        // And the ground under a point on it is its top.
+        let (y, _) = crate::creatures::terrain::voxel_ground(&s, 3.0, 0.0, 12.0).unwrap();
+        assert!((y - 8.125).abs() < 1e-4, "voxel_ground says {y}");
     }
 
     #[test]

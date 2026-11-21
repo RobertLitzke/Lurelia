@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Structure Viewer</title>
+<style>
+  :root { --bg: #1d2024; --panel: rgba(20,22,26,0.85); --fg: #dde2e8; --dim: #8a929c; --accent: #e0a040; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font: 13px/1.4 system-ui, sans-serif; overflow: hidden; }
+  #view { position: fixed; inset: 0; }
+  #info { position: fixed; top: 10px; left: 10px; max-width: 420px; background: var(--panel); padding: 10px 12px; border-radius: 6px; }
+  #info h1 { font-size: 15px; margin: 0 0 4px; }
+  #info .notes { color: var(--dim); margin: 4px 0 6px; }
+  #info .warn { color: #f08070; }
+  #controls { position: fixed; bottom: 10px; left: 10px; background: var(--panel); padding: 8px 12px; border-radius: 6px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  #controls label { display: flex; gap: 6px; align-items: center; }
+  #drop { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--dim); pointer-events: none; }
+  body.dragging #drop { background: rgba(224,160,64,0.12); color: var(--accent); outline: 3px dashed var(--accent); outline-offset: -12px; }
+  #live { color: var(--accent); }
+  input[type=range] { width: 160px; }
+</style>
+</head>
+<body>
+<div id="view"></div>
+<div id="drop">Drop a structure .json here</div>
+<div id="info" hidden></div>
+<div id="controls">
+  <label>Cut height <input id="cut" type="range" min="1" max="1" value="1"> <span id="cutv"></span></label>
+  <label><input id="showBox" type="checkbox" checked> Bounds</label>
+  <label><input id="showCarve" type="checkbox" checked> Carve</label>
+  <label><input id="spin" type="checkbox"> Auto-spin</label>
+  <button id="reset">Reset view</button>
+  <span id="live"></span>
+</div>
+<script src="palette.js"></script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+const PALETTE = window.PALETTE || {};
+const CARVE = 255;
+
+// ---- Shape compiler: a port of src/world/shape.rs `run` ----------------
+// Ids: 0 air, 255 carve, 1.. materials in order of first use.
+function compile(def) {
+  const size = def.size.map(v => v | 0);
+  const [sx, sy, sz] = size;
+  const mat = new Uint8Array(Math.max(0, sx * sy * sz));
+  const names = [null];         // id -> material name
+  const unknown = new Set();
+  const slots = def.slots || {};
+  const resolve = (n) => {
+    if (n === "air") return 0;
+    if (n === "carve") return CARVE;
+    const real = slots[n] ?? n;
+    if (!(real in PALETTE)) { unknown.add(real === n ? n : `${n} -> ${real}`); }
+    let id = names.indexOf(real);
+    if (id < 0) { id = names.length; names.push(real); }
+    if (id >= CARVE) return null;
+    return id;
+  };
+  const idx = (x, y, z) => (x < 0 || y < 0 || z < 0 || x >= sx || y >= sy || z >= sz) ? -1 : (y * sz + z) * sx + x;
+  const put = (x, y, z, m) => { const i = idx(x, y, z); if (i >= 0) mat[i] = m; };
+  const fl = Math.floor, ce = Math.ceil, tr = Math.trunc;
+  const turned = (axis, yaw) => { const a = yaw * Math.PI / 180 + (axis === "x" ? 0 : Math.PI / 2); return [Math.cos(a), Math.sin(a)]; };
+
+  function run(ops, off) {
+    const add = a => [a[0] + off[0], a[1] + off[1], a[2] + off[2]];
+    for (const op of ops) {
+      const m = op.mat !== undefined ? resolve(op.mat) : 0;
+      if (op.mat !== undefined && m === null) continue;
+      switch (op.op) {
+        case "box": {
+          const a = add(op.from), b = add(op.to);
+          for (let y = a[1]; y < b[1]; y++) for (let z = a[2]; z < b[2]; z++) for (let x = a[0]; x < b[0]; x++) put(x, y, z, m);
+          break;
+        }
+        case "walls": {
+          const a = add(op.from), b = add(op.to), t = Math.max(1, op.thick ?? 1);
+          for (let y = a[1]; y < b[1]; y++) for (let z = a[2]; z < b[2]; z++) for (let x = a[0]; x < b[0]; x++) {
+            const inside = x >= a[0] + t && x < b[0] - t && z >= a[2] + t && z < b[2] - t;
+            if (!inside) put(x, y, z, m);
+          }
+          break;
+        }
+        case "gable": {
+          const a = add(op.from), b = add(op.to), rise = Math.max(1, op.rise ?? 1), ax = op.axis === "x";
+          const [c0, c1] = ax ? [a[2], b[2]] : [a[0], b[0]];
+          const [l0, l1] = ax ? [a[0], b[0]] : [a[2], b[2]];
+          for (let k = 0; ; k++) {
+            const inset = tr(k / rise), lo = c0 + inset, hi = c1 - inset;
+            if (lo >= hi) break;
+            const next = tr((k + 1) / rise);
+            const nlo = Math.max(c0 + next, lo + 1), nhi = Math.min(c1 - next, hi - 1);
+            const y = a[1] + k;
+            for (let c = lo; c < hi; c++) for (let l = l0; l < l1; l++) {
+              if (c < nlo || c >= nhi || l === l0 || l === l1 - 1) ax ? put(l, y, c, m) : put(c, y, l, m);
+            }
+          }
+          break;
+        }
+        case "ellipsoid": {
+          const c = add(op.centre), r = op.radius;
+          for (let y = fl(c[1] - r[1]); y <= ce(c[1] + r[1]); y++)
+            for (let z = fl(c[2] - r[2]); z <= ce(c[2] + r[2]); z++)
+              for (let x = fl(c[0] - r[0]); x <= ce(c[0] + r[0]); x++) {
+                const d = ((x + .5 - c[0]) / r[0]) ** 2 + ((y + .5 - c[1]) / r[1]) ** 2 + ((z + .5 - c[2]) / r[2]) ** 2;
+                if (d <= 1) put(x, y, z, m);
+              }
+          break;
+        }
+        case "dish": {
+          const v = add(op.vertex), t = (op.tilt ?? 0) * Math.PI / 180, w = (op.yaw ?? 0) * Math.PI / 180;
+          const axis = [Math.sin(t) * Math.cos(w), Math.cos(t), Math.sin(t) * Math.sin(w)];
+          const thick = op.thick ?? 1.5, r = Math.max(1, op.radius), d = op.depth, half = Math.max(0.5, thick) * 0.5;
+          const reach = Math.sqrt(r * r + d * d) + thick + 1;
+          for (let y = fl(v[1] - reach); y <= ce(v[1] + reach); y++)
+            for (let z = fl(v[2] - reach); z <= ce(v[2] + reach); z++)
+              for (let x = fl(v[0] - reach); x <= ce(v[0] + reach); x++) {
+                const q = [x + .5 - v[0], y + .5 - v[1], z + .5 - v[2]];
+                const h = q[0] * axis[0] + q[1] * axis[1] + q[2] * axis[2];
+                const rr = Math.hypot(q[0] - h * axis[0], q[1] - h * axis[1], q[2] - h * axis[2]);
+                if (rr > r) continue;
+                const slope = 2 * d * rr / (r * r);
+                if (Math.abs(h - d * (rr / r) ** 2) / Math.sqrt(1 + slope * slope) <= half) put(x, y, z, m);
+              }
+          break;
+        }
+        case "cylinder": {
+          const b = add(op.base), r = op.radius;
+          for (let y = fl(b[1]); y < ce(b[1] + op.height); y++) {
+            for (let z = fl(b[2] - r); z <= ce(b[2] + r); z++)
+              for (let x = fl(b[0] - r); x <= ce(b[0] + r); x++)
+                if ((x + .5 - b[0]) ** 2 + (z + .5 - b[2]) ** 2 <= r * r) put(x, y, z, m);
+            if (r > 0 && r < 0.75) put(fl(b[0]), y, fl(b[2]), m);
+          }
+          break;
+        }
+        case "log": {
+          const b = add(op.base), r = op.radius, len = op.length, yaw = op.yaw ?? 0;
+          if (yaw !== 0) {
+            const d = turned(op.axis, yaw), e = [b[0] + d[0] * len, b[2] + d[1] * len];
+            const x0 = fl(Math.min(b[0], e[0]) - r) - 1, x1 = ce(Math.max(b[0], e[0]) + r) + 1;
+            const z0 = fl(Math.min(b[2], e[1]) - r) - 1, z1 = ce(Math.max(b[2], e[1]) + r) + 1;
+            for (let y = fl(b[1] - r); y <= ce(b[1] + r); y++) {
+              const dy = y + .5 - b[1];
+              for (let z = z0; z <= z1; z++) for (let x = x0; x <= x1; x++) {
+                const u = x + .5 - b[0], vv = z + .5 - b[2];
+                const t = u * d[0] + vv * d[1], across = -u * d[1] + vv * d[0];
+                if (t >= 0 && t < len && across * across + dy * dy <= r * r) put(x, y, z, m);
+              }
+            }
+          } else {
+            const ax = op.axis === "x", rc = ce(r);
+            for (let t = 0; t < ce(len); t++)
+              for (let y = fl(b[1] - r); y <= ce(b[1] + r); y++)
+                for (let w = -rc - 1; w <= rc + 1; w++) {
+                  const x = ax ? fl(b[0]) + t : fl(b[0]) + w;
+                  const z = ax ? fl(b[2]) + w : fl(b[2]) + t;
+                  const across = ax ? z + .5 - b[2] : x + .5 - b[0];
+                  if (across ** 2 + (y + .5 - b[1]) ** 2 <= r * r) put(x, y, z, m);
+                }
+          }
+          break;
+        }
+        case "disc": {
+          const c = add(op.centre), r = op.radius, thick = op.thick, yaw = op.yaw ?? 0;
+          if (yaw !== 0) {
+            const n = turned(op.axis, yaw), ri = ce(r) + 2, half = Math.max(0.5, thick * 0.5);
+            for (let y = tr(c[1]) - ri; y <= tr(c[1]) + ri; y++) {
+              const dy = y + .5 - c[1];
+              for (let z = tr(c[2]) - ri; z <= tr(c[2]) + ri; z++) for (let x = tr(c[0]) - ri; x <= tr(c[0]) + ri; x++) {
+                const u = x + .5 - c[0], vv = z + .5 - c[2];
+                const w = u * n[0] + vv * n[1], side = -u * n[1] + vv * n[0];
+                if (Math.abs(w) <= half && side * side + dy * dy <= r * r) put(x, y, z, m);
+              }
+            }
+          } else {
+            const ax = op.axis === "x", ri = ce(r) + 1, ti = ce(thick * 0.5), k = ax ? 2 : 0;
+            for (let y = tr(c[1]) - ri; y <= tr(c[1]) + ri; y++)
+              for (let u = tr(c[k]) - ri; u <= tr(c[k]) + ri; u++)
+                for (let w = -ti; w < Math.max(ti, 1); w++) {
+                  const x = ax ? tr(c[0]) + w : u, z = ax ? u : tr(c[2]) + w;
+                  const du = u + .5 - c[k];
+                  if (du * du + (y + .5 - c[1]) ** 2 <= r * r) put(x, y, z, m);
+                }
+          }
+          break;
+        }
+        case "set": { const a = add(op.at); put(a[0], a[1], a[2], m); break; }
+        case "segment": {
+          const hull = Math.max(op.radius, 0.62);
+          for (let i = 0; i + 1 < op.points.length; i++) {
+            const a = add(op.points[i]), b = add(op.points[i + 1]);
+            const lo = k => fl(Math.min(a[k], b[k]) - hull), hi = k => ce(Math.max(a[k], b[k]) + hull);
+            const d = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
+            const l2 = Math.max(1e-6, d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+            for (let y = lo(1); y <= hi(1); y++) for (let z = lo(2); z <= hi(2); z++) for (let x = lo(0); x <= hi(0); x++) {
+              const c = [x + .5, y + .5, z + .5];
+              const t = Math.min(1, Math.max(0, ((c[0] - a[0]) * d[0] + (c[1] - a[1]) * d[1] + (c[2] - a[2]) * d[2]) / l2));
+              const q = [a[0] + d[0] * t - c[0], a[1] + d[1] * t - c[1], a[2] + d[2] * t - c[2]];
+              if (q[0] * q[0] + q[1] * q[1] + q[2] * q[2] < hull * hull) put(x, y, z, m);
+            }
+          }
+          break;
+        }
+        case "recolour_below": {
+          const f = resolve(op.from), t = resolve(op.to);
+          if (f === null || t === null) break;
+          for (let i = 0; i < mat.length; i++) if (tr(i / (sx * sz)) < op.y + off[1] && mat[i] === f) mat[i] = t;
+          break;
+        }
+        case "recolour": {
+          const f = resolve(op.from), t = resolve(op.to);
+          if (f === null || t === null) break;
+          const a = add(op.at), b = add(op.until);
+          for (let y = a[1]; y < b[1]; y++) for (let z = a[2]; z < b[2]; z++) for (let x = a[0]; x < b[0]; x++) {
+            const i = idx(x, y, z); if (i >= 0 && mat[i] === f) mat[i] = t;
+          }
+          break;
+        }
+        case "repeat":
+          for (let k = 0; k < op.count; k++) run(op.ops, [off[0] + op.step[0] * k, off[1] + op.step[1] * k, off[2] + op.step[2] * k]);
+          break;
+        default:
+          unknown.add("op:" + op.op);
+      }
+    }
+  }
+  run(def.ops || [], [0, 0, 0]);
+  return { size, mat, names, unknown };
+}
+
+// ---- Meshing: one quad per exposed face, vertex colours ---------------
+const FACES = [
+  { d: [1, 0, 0], c: [[1,0,0],[1,1,0],[1,1,1],[1,0,1]], shade: 0.80 },
+  { d: [-1, 0, 0], c: [[0,0,1],[0,1,1],[0,1,0],[0,0,0]], shade: 0.80 },
+  { d: [0, 1, 0], c: [[0,1,1],[1,1,1],[1,1,0],[0,1,0]], shade: 1.00 },
+  { d: [0, -1, 0], c: [[0,0,0],[1,0,0],[1,0,1],[0,0,1]], shade: 0.55 },
+  { d: [0, 0, 1], c: [[1,0,1],[1,1,1],[0,1,1],[0,0,1]], shade: 0.90 },
+  { d: [0, 0, -1], c: [[0,0,0],[0,1,0],[1,1,0],[1,0,0]], shade: 0.70 },
+];
+
+function hashColour(name) {
+  let h = 0; for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return [80 + (h & 127), 80 + ((h >> 7) & 127), 80 + ((h >> 14) & 127)];
+}
+
+function mesh(shape, cut, wantCarve) {
+  const { size: [sx, sy, sz], mat, names } = shape;
+  const cols = names.map(n => {
+    if (!n) return null;
+    const c = new THREE.Color().setRGB(...(PALETTE[n] || hashColour(n)).map(v => v / 255), THREE.SRGBColorSpace);
+    return [c.r, c.g, c.b];
+  });
+  const at = (x, y, z) => (x < 0 || y < 0 || z < 0 || x >= sx || y >= cut || z >= sz) ? 0 : mat[(y * sz + z) * sx + x];
+  const solidPos = [], solidCol = [], carvePos = [];
+  for (let y = 0; y < Math.min(sy, cut); y++) for (let z = 0; z < sz; z++) for (let x = 0; x < sx; x++) {
+    const m = mat[(y * sz + z) * sx + x];
+    if (m === 0) continue;
+    const isCarve = m === CARVE;
+    if (isCarve && !wantCarve) continue;
+    const jitter = 0.94 + 0.06 * (((x * 73856093) ^ (y * 19349663) ^ (z * 83492791)) & 255) / 255;
+    for (const f of FACES) {
+      const n = at(x + f.d[0], y + f.d[1], z + f.d[2]);
+      if (isCarve ? n === CARVE : (n !== 0 && n !== CARVE)) continue;
+      const p = isCarve ? carvePos : solidPos;
+      const q = f.c.map(c => [x + c[0], y + c[1], z + c[2]]);
+      for (const i of [0, 1, 2, 0, 2, 3]) p.push(...q[i]);
+      if (!isCarve) { const c = cols[m], s = f.shade * jitter; for (let i = 0; i < 6; i++) solidCol.push(c[0] * s, c[1] * s, c[2] * s); }
+    }
+  }
+  return { solidPos, solidCol, carvePos };
+}
+
+// ---- Scene -------------------------------------------------------------
+const view = document.getElementById("view");
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(devicePixelRatio);
+view.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1d2024);
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 10000);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+const root = new THREE.Group();
+scene.add(root);
+
+function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); }
+addEventListener("resize", resize); resize();
+
+let current = null;   // { def, shape }
+const ui = {
+  info: document.getElementById("info"), cut: document.getElementById("cut"), cutv: document.getElementById("cutv"),
+  showBox: document.getElementById("showBox"), showCarve: document.getElementById("showCarve"),
+  spin: document.getElementById("spin"), live: document.getElementById("live"),
+};
+
+function clearRoot() {
+  for (const o of [...root.children]) { root.remove(o); o.geometry?.dispose(); o.material?.dispose(); }
+}
+
+function rebuild() {
+  if (!current) return;
+  clearRoot();
+  const { def, shape } = current;
+  const [sx, sy, sz] = shape.size;
+  const cut = +ui.cut.value;
+  ui.cutv.textContent = `${cut} / ${sy}`;
+  const { solidPos, solidCol, carvePos } = mesh(shape, cut, ui.showCarve.checked);
+  // Centre the footprint on the origin, y = 0 on the ground.
+  root.position.set(-sx / 2, 0, -sz / 2);
+  if (solidPos.length) {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(solidPos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(solidCol, 3));
+    root.add(new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true })));
+  }
+  if (carvePos.length) {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(carvePos, 3));
+    root.add(new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: 0xff4040, transparent: true, opacity: 0.18, depthWrite: false, side: THREE.DoubleSide })));
+  }
+  if (ui.showBox.checked) {
+    const box = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(sx, sy, sz)), new THREE.LineBasicMaterial({ color: 0x607080 }));
+    box.position.set(sx / 2, sy / 2, sz / 2); root.add(box);
+    // Ground plane at y = 0 and the front (local -z) arrow.
+    const grid = new THREE.GridHelper(Math.max(sx, sz) + 16, Math.round((Math.max(sx, sz) + 16) / 4), 0x3a4048, 0x2a2f36);
+    grid.position.set(sx / 2, 0, sz / 2); root.add(grid);
+    const len = Math.max(4, Math.min(sx, sz) * 0.3);
+    root.add(new THREE.ArrowHelper(new THREE.Vector3(0, 0, -1), new THREE.Vector3(sx / 2, 0.1, 0), len, 0xe0a040, len * 0.3, len * 0.2));
+    const an = def.anchor || [0, 0, 0];
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.6), new THREE.MeshBasicMaterial({ color: 0x40c0ff }));
+    dot.position.set(an[0] + 0.5, an[1] + 0.5, an[2] + 0.5); root.add(dot);
+  }
+}
+
+function frame() {
+  const [sx, sy, sz] = current.shape.size;
+  const r = Math.hypot(sx, sy, sz) / 2;
+  controls.target.set(0, sy / 2, 0);
+  const d = r / Math.sin(camera.fov * Math.PI / 360) * 1.1;
+  camera.position.set(d * 0.6, sy / 2 + d * 0.45, -d * 0.66);  // from the front-right
+  camera.far = d * 10; camera.updateProjectionMatrix();
+  controls.update();
+}
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function load(text, fileName, keepView) {
+  let def;
+  try { def = JSON.parse(text); } catch (e) { showError(fileName, "JSON parse error: " + e.message); return; }
+  if (!Array.isArray(def.size) || !Array.isArray(def.ops)) { showError(fileName, "Not a structure (needs size and ops)."); return; }
+  const t0 = performance.now();
+  const shape = compile(def);
+  const ms = performance.now() - t0;
+  const sameSize = current && current.shape.size.join() === shape.size.join();
+  current = { def, shape };
+  ui.cut.max = shape.size[1];
+  if (!keepView || !sameSize) ui.cut.value = shape.size[1];
+  let solid = 0, carve = 0; for (const m of shape.mat) { if (m === CARVE) carve++; else if (m) solid++; }
+  const [sx, sy, sz] = shape.size;
+  const unknown = [...shape.unknown];
+  ui.info.hidden = false;
+  ui.info.innerHTML = `<h1>${esc(def.name || fileName)}</h1>
+    ${def.notes ? `<div class="notes">${esc(def.notes)}</div>` : ""}
+    <div>${sx} x ${sy} x ${sz} voxels (${(sx / 4).toFixed(1)} x ${(sy / 4).toFixed(1)} x ${(sz / 4).toFixed(1)} m)</div>
+    <div>${solid.toLocaleString()} solid, ${carve.toLocaleString()} carve, ${def.ops.length} ops, compiled in ${ms.toFixed(0)} ms</div>
+    ${def.base ? `<div>base: ${esc(def.base)}</div>` : ""}
+    ${unknown.length ? `<div class="warn">No colour for: ${unknown.map(esc).join(", ")}</div>` : ""}`;
+  document.getElementById("drop").textContent = "";
+  rebuild();
+  if (!keepView || !sameSize) frame();
+}
+
+function showError(name, msg) {
+  ui.info.hidden = false;
+  ui.info.innerHTML = `<h1>${esc(name)}</h1><div class="warn">${esc(msg)}</div>`;
+}
+
+// ---- Drag and drop, with live reload when the dropped file changes -----
+let watch = null;   // { handle, lastModified, name }
+addEventListener("dragover", e => { e.preventDefault(); document.body.classList.add("dragging"); });
+addEventListener("dragleave", e => { if (!e.relatedTarget) document.body.classList.remove("dragging"); });
+addEventListener("drop", async e => {
+  e.preventDefault();
+  document.body.classList.remove("dragging");
+  const item = [...e.dataTransfer.items].find(i => i.kind === "file");
+  if (!item) return;
+  // Chromium hands out a handle we can re-read when the file changes on disk.
+  const handlePromise = item.getAsFileSystemHandle ? item.getAsFileSystemHandle() : null;
+  const file = item.getAsFile();
+  watch = null; ui.live.textContent = "";
+  load(await file.text(), file.name, false);
+  const handle = handlePromise && await handlePromise.catch(() => null);
+  if (handle && handle.kind === "file") {
+    watch = { handle, lastModified: file.lastModified, name: file.name };
+    ui.live.textContent = "watching " + file.name;
+  }
+});
+setInterval(async () => {
+  if (!watch) return;
+  try {
+    const f = await watch.handle.getFile();
+    if (f.lastModified !== watch.lastModified) {
+      watch.lastModified = f.lastModified;
+      load(await f.text(), watch.name, true);
+      ui.live.textContent = "watching " + watch.name + " (reloaded " + new Date().toLocaleTimeString() + ")";
+    }
+  } catch { /* file mid-write or gone; try again next tick */ }
+}, 1000);
+
+ui.cut.addEventListener("input", rebuild);
+ui.showBox.addEventListener("change", rebuild);
+ui.showCarve.addEventListener("change", rebuild);
+document.getElementById("reset").addEventListener("click", () => current && frame());
+// For testing: window.loadStructure(jsonText, name)
+window.loadStructure = (text, name) => load(text, name || "structure", false);
+
+renderer.setAnimationLoop(() => {
+  controls.autoRotate = ui.spin.checked;
+  controls.update();
+  renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>

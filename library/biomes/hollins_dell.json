@@ -1,0 +1,68 @@
+{
+  "name": "hollins_dell",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "The wet hollows of the Hollins: alder, willow and birch over fern to the waist, every trunk green, mist lying in it by evening and lights in the mist.",
+  "priority": 4,
+  "rules": {"moist": [0.62, 1.0]},
+  "surface": "moss_grass",
+  "subsurface": "peat",
+  "map_color": [70, 142, 96],
+  "plants": [
+    {
+      "plant": "alder",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 24, "min": 0.3, "max": 1.0}}
+    },
+    {
+      "plant": "willow",
+      "density": 0.0028,
+      "placement": {"verb": "clustered", "params": {"size": 22, "min": 0.2, "max": 1.0}}
+    },
+    {
+      "plant": "birch",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.2, "max": 1.0}}
+    },
+    {"plant": "pale_birch", "density": 0.0016, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "fern",
+      "density": 0.42,
+      "placement": {"verb": "clustered", "params": {"size": 9, "min": 0.25, "max": 1.0}}
+    },
+    {
+      "plant": "reedmace",
+      "density": 0.03,
+      "placement": {"verb": "clustered", "params": {"size": 6, "min": 0.55, "max": 1.0}}
+    },
+    {
+      "plant": "glassbloom",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 8, "min": 0.6, "max": 1.0}}
+    },
+    {"plant": "hanging_vine", "density": 0.3, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "snag", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "shelf_fungus", "density": 0.4},
+    {"plant": "tree_moss", "density": 0.95}
+  ],
+  "features": [
+    {"structure": "mossy_log", "density": 0.0014, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "fallen_trunk", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "frog", "count": 10},
+    {"creature": "toad", "count": 4},
+    {"creature": "fae_toad", "count": 4},
+    {"creature": "dragonfly", "count": 8},
+    {"creature": "glass_dragonfly", "count": 8},
+    {"creature": "marsh_light", "count": 7},
+    {"creature": "firefly", "count": 110},
+    {"creature": "lantern_moth", "count": 24},
+    {"creature": "kingfisher", "count": 2},
+    {"creature": "heron", "count": 1},
+    {"creature": "mossback_deer", "count": 3},
+    {"creature": "otter", "count": 1}
+  ],
+  "collectibles": [{"item": "hag_stone", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}],
+  "mist": 0.28
+}

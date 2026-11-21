@@ -1,0 +1,15 @@
+{
+  "name": "papyrus_head",
+  "version": 1,
+  "introduced_by": "thornpan",
+  "notes": "Papyrus heads: a mop of fine green rays.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [140, 176, 70],
+    "alt": [118, 156, 58],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [146, 182, 76], "alt": [124, 162, 64]}
+  }
+}

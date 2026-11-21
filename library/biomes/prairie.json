@@ -31,5 +31,6 @@
     {"creature": "gopher_snake", "count": 2},
     {"creature": "garter_snake", "count": 2}
   ],
-  "collectibles": [{"item": "pine_cone", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}}]
+  "collectibles": [{"item": "pine_cone", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}}],
+  "sound": {"wind": 1.2}
 }

@@ -13655,6 +13655,7 @@
    "bearing": 0,
    "age": 300,
    "poi": "the jar field"
-  }
+  },
+   {"year": 1, "event": "region", "cause": "a sheltered bight on the east shore where the mangroves took hold", "name": "mouth", "at": [772, 300], "radius": 42}
  ]
 }

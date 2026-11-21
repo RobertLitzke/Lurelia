@@ -1,0 +1,15 @@
+{
+  "name": "tamarisk_bark",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Tamarisk stems: red-brown, thin and many.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [124, 74, 60],
+    "alt": [100, 60, 50],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [130, 80, 66], "alt": [106, 66, 56]}
+  }
+}

@@ -4,20 +4,59 @@ use crate::world::fields::{Fields, Pos};
 use crate::world::noise::perlin2;
 use serde::Deserialize;
 
-/// Paints a named region (a ragged disc) for biome rules.
+/// Paints a named region for biome rules: a ragged disc, or with `poly` the
+/// inside of that outline exactly (a walled field).
 #[derive(Deserialize, Debug)]
 pub struct Region {
     name: String,
-    at: Pos,
+    #[serde(default)]
+    at: Option<Pos>,
+    #[serde(default)]
     radius: f32,
+    #[serde(default)]
+    poly: Vec<Pos>,
 }
 
 impl Process for Region {
     fn apply(&self, cx: &mut EventCtx) -> String {
-        let Region { name, at, radius } = self;
+        let Region { name, at, radius, poly } = self;
         let seed = cx.seed;
-        let c = cx.pos(at);
         let rid = cx.f.region_id(name);
+        if poly.len() >= 3 {
+            let pts: Vec<glam::Vec2> = poly.iter().map(|p| cx.pos(p)).collect();
+            let (mut lo, mut hi) = (pts[0], pts[0]);
+            for p in &pts {
+                lo = lo.min(*p);
+                hi = hi.max(*p);
+            }
+            let f = &mut cx.f;
+            let mut cells = 0usize;
+            for i in 0..f.n * f.n {
+                let p = f.centre(i);
+                if p.x < lo.x || p.y < lo.y || p.x > hi.x || p.y > hi.y {
+                    continue;
+                }
+                // Even-odd crossing count.
+                let mut inside = false;
+                let mut j = pts.len() - 1;
+                for k in 0..pts.len() {
+                    let (a, b) = (pts[k], pts[j]);
+                    if (a.y > p.y) != (b.y > p.y) && p.x < (b.x - a.x) * (p.y - a.y) / (b.y - a.y) + a.x {
+                        inside = !inside;
+                    }
+                    j = k;
+                }
+                if inside {
+                    f.region[i] = rid;
+                    cells += 1;
+                }
+            }
+            return format!("region {name}: {cells} m2 inside its outline");
+        }
+        let Some(at) = at else {
+            return format!("region {name}: no `at` and no `poly`, skipped");
+        };
+        let (c, radius) = (cx.pos(at), radius);
         each_near(&mut cx.f, c, radius * 1.2, |f: &mut Fields, i, d, p| {
             if d < radius * (1.0 + 0.2 * perlin2(p.x * 0.05, p.y * 0.05, seed)) {
                 f.region[i] = rid;

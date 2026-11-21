@@ -3,13 +3,20 @@
   "version": 1,
   "introduced_by": "lowmouth",
   "notes": "Black mangrove: a bushy tree on the mud banks just above the tide.",
-  "form": "broad",
+  "form": "branching",
   "height": [3, 5],
   "trunk_radius": [0.15, 0.22],
   "crown_radius": [1.8, 2.6],
   "bark": "mangrove_bark",
   "leaf": "mangrove_leaves",
+  "curve": "kinked",
+  "canopy": "cloud",
+  "leader": 0.3,
+  "fill": 0.8,
+  "spread": 0.7,
   "max_slope": 0.8,
   "standing_water": [-0.8, 0.5],
-  "affords": ["cover"]
+  "affords": ["cover"],
+  "stems": [2, 4],
+  "thin_limbs": 0.12
 }

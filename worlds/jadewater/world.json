@@ -1,5 +1,6 @@
 {
   "name": "jadewater",
+  "blurb": "A shallow green sea with a forest of limestone towers standing in it, jungle on their tops and reefs at their feet.",
   "size_m": 1024,
   "height_m": 160,
   "sea_level_m": 12,
@@ -69,6 +70,8 @@
     "patch_reef",
     "blue_hole",
     "motu",
-    "cenote_reef"
+    "cenote_reef",
+    "mangrove_keys",
+    "mudflat"
   ]
 }

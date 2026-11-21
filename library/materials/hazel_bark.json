@@ -1,0 +1,15 @@
+{
+  "name": "hazel_bark",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Hazel stems: smooth grey-brown with pale lenticels.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [118, 96, 78],
+    "alt": [150, 132, 112],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [124, 102, 84], "alt": [156, 138, 118]}
+  }
+}

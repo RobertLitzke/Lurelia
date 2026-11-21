@@ -1,0 +1,14 @@
+{
+  "name": "drowned_stump",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The stump of a spruce the sea drowned three hundred years ago: silver, thick, root-flared, its top snapped off jagged.",
+  "form": "snag",
+  "height": [1.5, 5.0],
+  "trunk_radius": [0.55, 0.95],
+  "buttress": 0.7,
+  "crown_radius": [0.5, 0.8],
+  "bark": "silver_deadwood",
+  "leaf": "silver_deadwood",
+  "max_slope": 1.0
+}

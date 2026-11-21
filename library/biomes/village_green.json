@@ -1,6 +1,6 @@
 {
   "name": "village_green",
-  "version": 1,
+  "version": 2,
   "introduced_by": "glassfall",
   "notes": "Old fields and yards around a settlement, gone to meadow.",
   "priority": 9,
@@ -26,7 +26,10 @@
     {"creature": "cow", "count": 3},
     {"creature": "sheep", "count": 5},
     {"creature": "squirrel", "count": 3},
-    {"creature": "bat", "count": 3}
+    {"creature": "bat", "count": 3},
+    {"creature": "tawny_owl", "count": 1},
+    {"creature": "hedgehog", "count": 2},
+    {"creature": "barn_owl", "count": 1}
   ],
   "collectibles": [
     {"item": "pottery_shard", "density": 0.005, "placement": {"verb": "scatter", "params": {}}},

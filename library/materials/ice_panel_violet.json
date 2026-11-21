@@ -1,0 +1,16 @@
+{
+  "name": "ice_panel_violet",
+  "version": 1,
+  "introduced_by": "transmission",
+  "notes": "Composite wall panelling in a frozen base, a cold violet: the uplink and transmitter bays, high and bright.",
+  "smooth": false,
+  "crisp": true,
+  "texture": {
+    "pattern": "coursed",
+    "base": [110, 98, 150],
+    "alt": [96, 84, 134],
+    "scale": 1,
+    "contrast": 1.0,
+    "calm": {"base": [118, 106, 158], "alt": [104, 92, 142]}
+  }
+}

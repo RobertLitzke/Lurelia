@@ -1,5 +1,5 @@
 use crate::util::FxHashMap as HashMap;
-use crate::world::chronicle::geom::{densify, each_near};
+use crate::world::chronicle::geom::{densify, each_near, spline};
 use crate::world::chronicle::{EventCtx, Process};
 use crate::world::falls::{Fall, FALL_MIN};
 use crate::world::fields::{Fields, Pos, Wet};
@@ -34,6 +34,22 @@ pub struct River {
     /// up to a gorge; this stops it. None: no limit.
     #[serde(default)]
     floor: Option<f32>,
+    /// Metres over which the river grows from a trickle to its full width
+    /// and depth. 0, the default, starts it full-grown, which reads as a
+    /// river from nowhere unless it runs out of a lake: give one that rises
+    /// at a spring 150 to 300.
+    #[serde(default)]
+    rise: f32,
+    /// The river comes in from beyond the world: carry it back from its
+    /// first point to the nearest edge, so it does not begin a few metres
+    /// inside the map.
+    #[serde(default)]
+    from_edge: bool,
+    /// Bend the path into a smooth curve through its points before anything
+    /// else. A path of found points (a `drainage` river's) is otherwise a row
+    /// of straight stretches with a corner at each one.
+    #[serde(default)]
+    curve: bool,
 }
 
 fn default_meander() -> f32 {
@@ -60,11 +76,15 @@ pub struct Rivers(pub HashMap<String, RiverRec>);
 
 impl Process for River {
     fn apply(&self, cx: &mut EventCtx) -> String {
-        let River { name, path, width, depth, bed, bank, meander, floor, .. } = self;
+        let River { name, path, width, depth, bed, bank, meander, floor, rise, from_edge, curve, .. } = self;
         let pts: Vec<Vec2> = path.iter().map(|p| cx.pos(p)).collect();
+        let pts = if *curve { spline(&pts, false, 8.0) } else { pts };
         let line = densify(&pts, *meander, cx.seed);
         let bed_m = cx.mat(bed);
         let bank_m = bank.as_ref().map_or(0, |b| cx.mat(b));
+        let line = if *from_edge { to_edge(&cx.f, &line) } else { line };
+        let k = head(cx, name, &line, *width, *depth, bed_m, bank_m, *floor, *rise);
+        let line = line[k..].to_vec();
         carve(cx, &line, *width, *depth, bed_m, *floor);
         let len = line.windows(2).map(|w| w[0].distance(w[1])).sum::<f32>();
         let seed = cx.seed;
@@ -122,6 +142,55 @@ pub fn carve(cx: &mut EventCtx, line: &[Vec2], width: f32, depth: f32, bed_m: u8
             f.surface[i] = bed_m;
         }
     }
+}
+
+/// A line carried back from its first point to the nearest edge of the world
+/// and a little past it.
+pub fn to_edge(f: &Fields, line: &[Vec2]) -> Vec<Vec2> {
+    let Some(&p) = line.first() else {
+        return line.to_vec();
+    };
+    let out = [Vec2::new(-6.0, p.y), Vec2::new(f.size + 6.0, p.y), Vec2::new(p.x, -6.0), Vec2::new(p.x, f.size + 6.0)];
+    let far = out.into_iter().min_by(|a, b| a.distance(p).partial_cmp(&b.distance(p)).unwrap()).unwrap();
+    let steps = (far.distance(p) / 3.0).ceil().max(1.0) as usize;
+    let mut v: Vec<Vec2> = (0..steps).map(|s| far.lerp(p, s as f32 / steps as f32)).collect();
+    v.extend_from_slice(line);
+    v
+}
+
+/// The head of a river that rises on the map: its first `rise` metres cut in
+/// three stretches, each wider and deeper than the last, so it starts as a
+/// trickle and is a river by the end of them. Returns where along `line` the
+/// full-grown river takes over (0 with no `rise`).
+#[allow(clippy::too_many_arguments)]
+pub fn head(cx: &mut EventCtx, name: &str, line: &[Vec2], width: f32, depth: f32, bed: u8, bank: u8, floor: Option<f32>, rise: f32) -> usize {
+    if rise <= 0.0 || line.len() < 12 {
+        return 0;
+    }
+    let total: f32 = line.windows(2).map(|w| w[0].distance(w[1])).sum();
+    let rise = rise.min(total * 0.45);
+    let at = |metres: f32| -> usize {
+        let mut left = metres;
+        for (k, w) in line.windows(2).enumerate() {
+            left -= w[0].distance(w[1]);
+            if left <= 0.0 {
+                return k + 1;
+            }
+        }
+        line.len() - 1
+    };
+    let cuts = [0, at(rise / 3.0), at(rise * 2.0 / 3.0), at(rise)];
+    let seed = cx.seed;
+    for (k, (share_w, share_d)) in [(0.3f32, 0.45f32), (0.55, 0.65), (0.8, 0.85)].into_iter().enumerate() {
+        let piece = &line[cuts[k]..=cuts[k + 1]];
+        if piece.len() < 2 {
+            continue;
+        }
+        let (w, d) = ((width * share_w).max(1.6), depth * share_d);
+        carve(cx, piece, w, d, bed, floor);
+        cx.state.get::<Rivers>().0.insert(format!("{name}~{k}"), RiverRec { line: piece.to_vec(), width: w, depth: d, bed, bank, seed: seed.wrapping_add(k as u32 + 1), floor });
+    }
+    cuts[3]
 }
 
 /// Points along `line` about a metre apart.

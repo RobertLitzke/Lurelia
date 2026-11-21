@@ -1,0 +1,15 @@
+{
+  "name": "coralline_pink",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Coralline algae: a pink crust on every rock the sea covers.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [194, 138, 148],
+    "alt": [168, 114, 128],
+    "scale": 5,
+    "contrast": 0.8,
+    "calm": {"base": [190, 142, 150], "alt": [170, 122, 134]}
+  }
+}

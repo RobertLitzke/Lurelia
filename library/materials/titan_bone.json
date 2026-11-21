@@ -1,0 +1,16 @@
+{
+  "name": "titan_bone",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The titan's bone: dark wet grey, stained by the sea and the sand, paler where the rain runs.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [118, 116, 110],
+    "alt": [92, 90, 86],
+    "scale": 2,
+    "contrast": 0.8,
+    "calm": {"base": [124, 122, 116], "alt": [98, 96, 92]}
+  },
+  "round": true
+}

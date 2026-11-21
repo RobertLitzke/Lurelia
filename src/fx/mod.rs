@@ -396,7 +396,7 @@ impl Fx {
                 return true;
             }
             let d = &defs[p.def as usize];
-            p.vel.y -= d.gravity * dt;
+            p.vel += store.gravity.drop(p.pos, d.gravity) * dt;
             // Drag pulls the particle toward moving with the air: in still
             // air it slows to a stop, in wind it drifts downwind.
             let air = wind * d.wind;

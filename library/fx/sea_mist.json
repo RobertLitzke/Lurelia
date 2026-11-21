@@ -1,0 +1,18 @@
+{
+  "name": "sea_mist",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Mist off the surf, drifting inland low over the wet sand.",
+  "shape": "puff",
+  "count": [2, 4],
+  "speed": [0.3, 0.8],
+  "cone_deg": 70,
+  "life": [6.0, 10.0],
+  "size": [3.0, 6.0],
+  "size_jitter": 0.4,
+  "gravity": -0.05,
+  "drag": 0.4,
+  "wind": 1.0,
+  "color": [222, 228, 230],
+  "alpha": 0.12
+}

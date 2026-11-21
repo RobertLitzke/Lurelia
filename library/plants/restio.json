@@ -1,0 +1,12 @@
+{
+  "name": "restio",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Restio: tussocks of jointed reed, tawny and green, the grass of the fynbos. Drawn as sprites.",
+  "form": "herb",
+  "height": [0.7, 1.3],
+  "crown_radius": [0.4, 0.7],
+  "bark": "dead_wood",
+  "leaf": "sawgrass_blades",
+  "max_slope": 1.1
+}

@@ -130,6 +130,11 @@ pub struct Fish {
 
 /// The height a fish of species `sp` living as `habit` swims at, over bed `bed`
 /// under surface `top`, at `lane` (0 to 1) of its band.
+/// A swimmer as tall as a seal or more, which floats low and swims level.
+fn big_swimmer(m: &crate::models::Model) -> bool {
+    m.height > 0.6
+}
+
 fn band_y(sp: &Species, habit: Habit, bed: f32, top: f32, lane: f32) -> f32 {
     let room = (top - 0.3).max(bed + 0.1);
     if habit == Habit::Rest {
@@ -540,7 +545,7 @@ pub fn update(
             let settle = if habit == Habit::Rest { (to_goal.length() / 2.0).min(1.0) } else { 1.0 };
             acc += (to_goal.normalize_or_zero() * cruise * settle - Vec3::new(f.vel.x, 0.0, f.vel.z)) * if fleeing { 2.0 } else { 0.6 };
             let d = depth(p.x, p.z);
-            let b_here = bed(p.x, p.z);
+            let b_here = terrain.bed_under(p);
             let mut want_y = band_y(sp, habit, b_here, top_here, f.lane);
             if habit == Habit::Rest && settle > 0.3 {
                 // Gliding to a new spot: lifted a little off the sand.
@@ -620,10 +625,24 @@ pub fn update(
             // Anything swimming in one of the sea's streams rides it.
             let stream = crate::player::dive::sea_current(p, top_here, |x, z| depth(x, z) >= crate::player::dive::CURRENT_DEPTH);
             l.pos += (f.vel + stream * 0.85) * dt;
-            let b = bed(l.pos.x, l.pos.z);
+            let b = terrain.bed_under(l.pos);
             // (max: a fish over a bar that is barely awash stays on it.)
             let top = surf(l.pos.x, l.pos.z);
-            l.pos.y = l.pos.y.clamp(b + 0.1, (top - 0.12).max(b + 0.1));
+            // The model stands on its pivot, its belly. Anything as big as a
+            // seal keeps most of itself under, back awash at most: kept only
+            // under the surface by its belly, a walrus rode on top of the
+            // water like a log.
+            let under = models[l.model].height * if big_swimmer(&models[l.model]) { 0.75 } else { 0.0 };
+            l.pos.y = l.pos.y.clamp(b + 0.1, (top - 0.12 - under).max(b + 0.1));
+            // The bed is the floor under the fish (`bed_under`), but the
+            // rock beside it is not in that: a step into a solid voxel is
+            // refused and the fish turns back the way it came. (One already
+            // in rock, set down there by the spawner, may swim out.)
+            if terrain.in_rock(l.pos) && !terrain.in_rock(p) {
+                l.pos = p;
+                f.vel.x = -f.vel.x;
+                f.vel.z = -f.vel.z;
+            }
             // A leap now and then, more often when scattering.
             let rate = sp.beh.leap.max(0.0) / 60.0 * if fleeing { 4.0 } else { 1.0 };
             if l.pos.y > top - 2.6 && d > shoal && f.rng.unit() < rate * dt {
@@ -651,8 +670,11 @@ pub fn update(
             f.wag += dt * (5.0 + speed * 6.0);
             a.prev = a.pose.clone();
             // A fish hanging nearly still keeps level: a slow drift up or
-            // down must not stand it on its nose.
-            let pitch = f.vel.y.atan2(flat.length().max(0.6)).clamp(-1.0, 1.0);
+            // down must not stand it on its nose. A big body (a seal, a
+            // walrus, a shark) tips only a little: it pivots on its belly, so
+            // a fish's tilt stood a walrus up on its tail.
+            let lim = if big_swimmer(&models[l.model]) { 0.3 } else { 1.0 };
+            let pitch = f.vel.y.atan2(flat.length().max(0.6)).clamp(-lim, lim);
             a.pose.bones[0] = Vec3::new(pitch, 0.0, 0.0);
             if rig.plan == Some(Plan::Ray) {
                 // Mantas: a slow ripple out along the wings, quicker when fast.

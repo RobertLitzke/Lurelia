@@ -18,5 +18,6 @@
   "max_slope": 0.8,
   "standing_water": [-1.5, 1.6],
   "affords": ["perch", "nest"],
-  "autumn": "leaves_autumn"
+  "autumn": "leaves_autumn",
+  "thin_limbs": 0.12
 }

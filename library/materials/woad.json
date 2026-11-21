@@ -1,0 +1,15 @@
+{
+  "name": "woad",
+  "version": 1,
+  "introduced_by": "megalith",
+  "notes": "A woad-blue limewash, pale and worn through to the cream in places: the blue team's colour on Megalith's carved stone, as `ochre_wash` is the red team's.",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [128, 146, 172],
+    "alt": [116, 134, 160],
+    "scale": 6,
+    "contrast": 0.5,
+    "calm": {"base": [134, 152, 176], "alt": [122, 140, 164]}
+  }
+}

@@ -1,7 +1,5 @@
 use super::*;
 
-use super::*;
-
 /// A key an op does not have fails the op, naming the key, where it used
 /// to be dropped without a word (`Op` is internally tagged, which
 /// `parse_known` cannot see into).
@@ -28,6 +26,22 @@ fn library_is_valid() {
     for style in ["classic", "saturated"] {
         assert!(looks.iter().any(|l| l.name == style), "no look for the {style} style");
     }
+}
+
+/// `library/schema/structure.schema.json` is generated from `StructureDef`
+/// and `Op` and their doc comments, so it says what the loader reads. After
+/// changing either, rewrite it with `WRITE_SCHEMA=1 cargo test structure_schema`.
+#[test]
+fn structure_schema_is_current() {
+    let want = serde_json::to_string_pretty(&schemars::schema_for!(StructureDef)).unwrap() + "\n";
+    let path = data_root().join("library/schema/structure.schema.json");
+    if std::env::var_os("WRITE_SCHEMA").is_some() {
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(&path, &want).unwrap();
+        return;
+    }
+    let have = std::fs::read_to_string(&path).unwrap_or_default().replace("\r\n", "\n");
+    assert!(have == want, "{} is out of date: run WRITE_SCHEMA=1 cargo test structure_schema", path.display());
 }
 
 /// A material this world cannot reach gets no id and no texture layer,

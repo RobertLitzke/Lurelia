@@ -12,5 +12,6 @@
     {"plant": "ponderosa", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 40}}},
     {"plant": "young_ponderosa", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}
   ],
-  "features": [{"structure": "basalt_columns", "density": 5e-05, "placement": {"verb": "scatter", "params": {}}}]
+  "features": [{"structure": "basalt_columns", "density": 5e-05, "placement": {"verb": "scatter", "params": {}}}],
+  "sound": {"wind": 1.15}
 }

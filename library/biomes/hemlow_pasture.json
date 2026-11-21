@@ -1,0 +1,30 @@
+{
+  "name": "hemlow_pasture",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Sheep pasture inside the village's dry-stone walls: turf grazed short, a thorn or two left for shade, one old oak to a field.",
+  "priority": 9,
+  "rules": {"region": "pasture"},
+  "surface": "lawn_grass",
+  "subsurface": "dirt",
+  "map_color": [142, 196, 98],
+  "plants": [
+    {"plant": "hawthorn", "density": 0.0007, "placement": {"verb": "lone", "params": {"spacing": 34}}},
+    {"plant": "great_oak", "density": 0.00012, "placement": {"verb": "lone", "params": {"spacing": 90}}}
+  ],
+  "features": [],
+  "creatures": [
+    {"creature": "sheep", "count": 34},
+    {"creature": "cow", "count": 3},
+    {"creature": "horse", "count": 2},
+    {"creature": "rabbit", "count": 8},
+    {"creature": "starling", "count": 24},
+    {"creature": "crow", "count": 4},
+    {"creature": "sparrow", "count": 8},
+    {"creature": "barn_owl", "count": 1},
+    {"creature": "firefly", "count": 70},
+    {"creature": "lantern_moth", "count": 8},
+    {"creature": "hedgehog", "count": 2}
+  ],
+  "collectibles": []
+}

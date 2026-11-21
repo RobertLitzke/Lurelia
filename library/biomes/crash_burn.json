@@ -1,0 +1,28 @@
+{
+  "name": "crash_burn",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The burn round the wreck, ten years on: black snags of the old bushes standing over fynbos that came back thicker than anywhere else on the range, proteas crowding the scar, pieces of the hull lying in it all the way down the slope.",
+  "priority": 14,
+  "rules": {"region": "crash", "burn_age": [0, 30]},
+  "surface": "fynbos_grass",
+  "subsurface": "ash",
+  "rock": "quartzite",
+  "map_color": [92, 96, 80],
+  "plants": [
+    {
+      "plant": "protea",
+      "density": 0.03,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.1, "max": 1.0}}
+    },
+    {"plant": "pincushion", "density": 0.012, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "restio", "density": 0.04, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "broken_snag", "density": 0.003, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [
+    {"structure": "craft_debris", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "craft_rib", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [{"creature": "raven", "count": 2}, {"creature": "bee", "count": 8}],
+  "collectibles": [{"item": "hull_shard", "density": 0.0025, "placement": {"verb": "scatter", "params": {}}}]
+}

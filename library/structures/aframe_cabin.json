@@ -1,0 +1,31 @@
+{
+  "name": "aframe_cabin",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "A staff A-frame (1968): a steep shingle roof down to a plank deck, the front gable (local -Z) all glass, a stove pipe through the back of the roof. Half the camp lived in these.",
+  "size": [30, 32, 40],
+  "anchor": [15, 0, 20],
+  "foundation": 4,
+  "decays": true,
+  "tags": ["array", "camp", "house"],
+  "slots": {"roof": "shingle_dark"},
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [30, 2, 40], "mat": "planks", "part": "floor"},
+    {"op": "gable", "from": [2, 2, 6], "to": [28, 2, 38], "axis": "z", "rise": 2, "mat": "roof", "part": "roof"},
+    {
+      "op": "gable",
+      "from": [3, 2, 6],
+      "to": [27, 2, 7],
+      "axis": "z",
+      "rise": 2,
+      "mat": "window_glass",
+      "part": "glass"
+    },
+    {"op": "gable", "from": [3, 2, 37], "to": [27, 2, 38], "axis": "z", "rise": 2, "mat": "planks", "part": "timber"},
+    {"op": "box", "from": [12, 2, 6], "to": [18, 11, 7], "mat": "air"},
+    {"op": "box", "from": [12, 2, 6], "to": [18, 3, 7], "mat": "planks", "part": "floor"},
+    {"op": "box", "from": [4, 2, 0], "to": [26, 6, 1], "mat": "planks", "part": "timber"},
+    {"op": "box", "from": [4, 2, 24], "to": [6, 6, 26], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [20, 22, 30], "to": [22, 30, 32], "mat": "brick_brown", "part": "stone"}
+  ]
+}

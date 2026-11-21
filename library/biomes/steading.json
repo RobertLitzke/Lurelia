@@ -1,6 +1,6 @@
 {
   "name": "steading",
-  "version": 1,
+  "version": 2,
   "introduced_by": "windbarrow",
   "notes": "The ground of a Windbarrow village: yards trodden to bare chalk between the round houses, barley plots behind hurdles, hearths, racks and pens, cattle and sheep standing about.",
   "priority": 22,
@@ -27,7 +27,8 @@
     {"creature": "sparrow", "count": 12},
     {"creature": "starling", "count": 16},
     {"creature": "crow", "count": 4},
-    {"creature": "bee", "count": 6}
+    {"creature": "bee", "count": 6},
+    {"creature": "barn_owl", "count": 1}
   ],
   "collectibles": [
     {"item": "pottery_shard", "density": 0.002, "placement": {"verb": "scatter", "params": {}}},

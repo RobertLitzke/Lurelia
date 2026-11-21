@@ -1,0 +1,83 @@
+{
+  "name": "ribshore",
+  "blurb": "A grey northern coast of wet sand and grassy dunes, with the bones of a giant twelve hundred metres long lying across it.",
+  "size_m": 1536,
+  "height_m": 256,
+  "sea_level_m": 34,
+  "seed": 4410,
+  "underwater": {
+    "visibility": 20,
+    "light": 0.35
+  },
+  "rock": [
+    [
+      "basalt",
+      0.7
+    ],
+    [
+      "stone_dark",
+      0.3
+    ]
+  ],
+  "spawn": [
+    748,
+    600
+  ],
+  "spawn_bearing": 172,
+  "seasons": [
+    "spring",
+    "summer",
+    "autumn",
+    "winter"
+  ],
+  "start_season": "autumn",
+  "weather": {
+    "fog": 1.4,
+    "clouds": 1.4,
+    "sun": 0.5,
+    "rain": 1.1
+  },
+  "start_weather": "fog",
+  "start_hour": 10.5,
+  "sun": {
+    "latitude": 46
+  },
+  "moss": 0.6,
+  "weathering": 1.0,
+  "default_biome": "rib_spruce",
+  "seabed_biome": "rib_shelf",
+  "biomes": [
+    "rib_spruce",
+    "rib_plain",
+    "rib_dunes",
+    "rib_hollow",
+    "rib_blowout",
+    "rib_wrack",
+    "rib_beach",
+    "rib_headland",
+    "rib_tidepools",
+    "rib_shoals",
+    "rib_kelp",
+    "rib_shelf",
+    "rib_boneyard",
+    "rib_mat",
+    "rib_stumps"
+  ],
+  "water": {
+    "shallow": [
+      84,
+      112,
+      110
+    ],
+    "deep": [
+      30,
+      54,
+      62
+    ]
+  },
+  "glide": {
+    "thermals": 0.4,
+    "ridge_from": 300,
+    "ridge_speed": 8
+  }
+}

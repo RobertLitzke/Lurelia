@@ -1,0 +1,15 @@
+{
+  "name": "transporter_yellow",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The transporter's paint: a highway-machine yellow faded to mustard, worn to rust along every edge.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [196, 158, 70],
+    "alt": [150, 96, 56],
+    "scale": 3,
+    "contrast": 0.8,
+    "calm": {"base": [196, 162, 84], "alt": [156, 108, 70]}
+  }
+}

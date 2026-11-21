@@ -1,0 +1,15 @@
+{
+  "name": "try_brick",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Fire brick, blackened with old soot: the try-works where the blubber was boiled.",
+  "smooth": false,
+  "texture": {
+    "pattern": "coursed",
+    "base": [116, 72, 56],
+    "alt": [60, 48, 44],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [122, 84, 70], "alt": [72, 60, 56]}
+  }
+}

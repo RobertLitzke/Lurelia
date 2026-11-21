@@ -21,11 +21,15 @@ const TARGET_R: f32 = 0.45;
 /// What share of `pellets` lands on a body at `dist`, given a cone of
 /// `spread_deg`. One pellet with no spread is all of it; nine shards at
 /// fifty metres is nearly none.
-fn landing(pellets: u32, spread_deg: f32, dist: f32) -> f32 {
+fn landing(pellets: u32, spread_deg: f32, ring: bool, dist: f32) -> f32 {
     let n = pellets.max(1) as f32;
     let cone = dist * spread_deg.to_radians().tan();
     if cone <= TARGET_R {
         return n;
+    }
+    // A ring past the body's width lands only the arc that crosses it.
+    if ring {
+        return n * (2.0 * TARGET_R / (std::f32::consts::PI * cone)).min(1.0);
     }
     n * (TARGET_R / cone).powi(2)
 }
@@ -66,7 +70,7 @@ fn reach(f: &FireDef) -> f32 {
 pub fn carry(g: &Held) -> f32 {
     let fire = reach(&g.def.fire);
     match g.def.alt.as_ref() {
-        Some(a) if g.def.zoom <= 0.0 => fire.max(reach(a)),
+        Some(a) => fire.max(reach(a)),
         _ => fire,
     }
 }
@@ -88,13 +92,10 @@ pub fn rating(g: &Held, dist: f32, accuracy: f32) -> f32 {
 }
 
 /// The second fire mode a bot may actually press, which is not the same as
-/// `Held::mode(Alt)`: a gun with a sight has no second mode (the right
-/// button only narrows the view), and a gun with no `alt` at all falls back
-/// to its primary, which is not a choice worth weighing.
+/// `Held::mode(Alt)`: a gun with no `alt` falls back to its primary there,
+/// which is not a choice worth weighing, and a sight with no `alt` only
+/// narrows the view. A sight that charges is an `alt` like any other.
 fn alt_of(g: &Held) -> Option<&FireDef> {
-    if g.def.zoom > 0.0 {
-        return None;
-    }
     g.def.alt.as_ref()
 }
 
@@ -104,9 +105,8 @@ fn alt_of(g: &Held) -> Option<&FireDef> {
 /// much better the other one has to be.
 ///
 /// Nothing in here knows which gun it is holding. A gun whose right button is
-/// worth more at this range gets the right button, and the one weapon file
-/// that says `zoom` gets the left one always, because its right button fires
-/// nothing at all.
+/// worth more at this range gets the right button. A sight with no `alt`
+/// gets the left one always, because its right button fires nothing.
 pub fn button(g: &Held, dist: f32, accuracy: f32, held: Trigger, margin: f32) -> Trigger {
     let Some(alt) = alt_of(g) else { return Trigger::Fire };
     let fire = mode_rating(g, &g.def.fire, dist, accuracy);
@@ -142,7 +142,7 @@ pub fn mode_rating(g: &Held, f: &FireDef, dist: f32, accuracy: f32) -> f32 {
     if !g.unlimited() && g.in_gun() < f.per_shot {
         return 0.0;
     }
-    let land = landing(f.pellets, f.spread_deg, dist);
+    let land = landing(f.pellets, f.spread_deg, f.ring, dist);
     // What a bot of this skill actually gets on the body: a third of it for
     // free, the rest bought with aim.
     let aim = accuracy.clamp(0.0, 1.0);
@@ -357,17 +357,29 @@ mod tests {
         assert_eq!(button(&skipjack, 40.0, 0.1, Trigger::Fire, m), Trigger::Fire, "it lobbed a cluster down a hall");
     }
 
-    /// A gun whose right button is a sight is always fired on the left: the
-    /// right one puts nothing in the air to be worth anything.
+    /// A sight with no `alt` is always fired on the left: the right button
+    /// puts nothing in the air to be worth anything. The sniper rifle's
+    /// sight charges, so its right button is weighed like any other: the
+    /// charge costs more time than its multiplier pays back, so a bot on the
+    /// plain shot stays on it at every range.
     #[test]
-    fn a_sight_never_gets_the_right_button() {
+    fn a_sight_gets_the_right_button_only_if_it_charges() {
         let (lib, _) = Library::load(std::path::Path::new("."));
         let rifle = held(&lib, "sniper_rifle");
         assert!(rifle.def.zoom > 0.0, "the sniper rifle stopped having a sight");
+        let charge = rifle.def.alt.as_ref().expect("the sniper rifle's sight stopped charging");
+        assert!(charge.charge_s > 0.0, "the sniper rifle's alt does not charge");
         for d in [2.0f32, 20.0, 200.0] {
             for aim in [0.0f32, 1.0] {
-                assert_eq!(button(&rifle, d, aim, Trigger::Alt, 0.25), Trigger::Fire, "at {d} m with aim {aim}");
+                assert!(mode_rating(&rifle, charge, d, aim) > 0.0, "the charged shot is worth nothing at {d} m with aim {aim}");
+                assert_eq!(button(&rifle, d, aim, Trigger::Fire, 0.25), Trigger::Fire, "at {d} m with aim {aim}");
             }
+        }
+        let mut def = (*rifle.def).clone();
+        def.alt = None;
+        let bare = Held::new(Arc::new(def), true);
+        for d in [2.0f32, 20.0, 200.0] {
+            assert_eq!(button(&bare, d, 1.0, Trigger::Alt, 0.25), Trigger::Fire, "a bare sight got the right button at {d} m");
         }
     }
 

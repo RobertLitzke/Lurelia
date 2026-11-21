@@ -1,0 +1,18 @@
+{
+  "name": "titan_eye",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "The light in the titan's eye: the lighthouse lantern's amber, faint, lit only at night.",
+  "smooth": false,
+  "glow": 0.45,
+  "texture": {
+    "pattern": "blotch",
+    "base": [226, 176, 104],
+    "alt": [246, 208, 140],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [228, 180, 108], "alt": [246, 210, 144]}
+  },
+  "night_glow": true,
+  "round": true
+}

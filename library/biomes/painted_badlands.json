@@ -14,5 +14,6 @@
   ],
   "features": [{"structure": "petrified_log", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}],
   "creatures": [{"creature": "lizard", "count": 4}],
-  "collectibles": [{"item": "petrified_wood", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}]
+  "collectibles": [{"item": "petrified_wood", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}],
+  "sound": {"ground": "stone"}
 }

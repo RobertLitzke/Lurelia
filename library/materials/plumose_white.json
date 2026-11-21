@@ -1,0 +1,15 @@
+{
+  "name": "plumose_white",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "Plumose anemones: tall white stalks with feathery crowns.",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [226, 222, 212],
+    "alt": [204, 200, 190],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [226, 222, 214], "alt": [206, 202, 194]}
+  }
+}

@@ -2,7 +2,7 @@
   "name": "rocket_launcher",
   "version": 1,
   "introduced_by": "slagdeck",
-  "notes": "A straight tube: the rocket flies level and bursts on whatever it meets. It takes a third of its own blast, which is enough to rocket-jump onto the catwalk and not quite enough to kill you doing it. One in the tube and a second to reload, so a rocket already away is no reason to wait -- three of them can be in the air at once. The right button lobs a bouncing grenade for shooting round corners.",
+  "notes": "A straight tube: the rocket flies level and bursts on whatever it meets. It takes a third of its own blast, which is enough to rocket-jump onto the catwalk and not quite enough to kill you doing it. One in the tube and a second to reload, so a rocket already away is no reason to wait -- three of them can be in the air at once. The right button fires a guided rocket, a little slower and a fifth weaker, that turns after wherever you are pointing -- not at once, it swings round behind your aim -- so you can fly it round a corner or walk it onto a man who dodged.",
   "display": "ROCKET LAUNCHER",
   "slot": 9,
   "ammo_max": 50,
@@ -32,16 +32,23 @@
   "alt": {
     "kind": "shell",
     "rpm": 240.0,
-    "damage": 16.0,
-    "speed": 22.0,
-    "gravity": 18.0,
-    "bounces": 3,
-    "fuse_s": 2.2,
-    "kick": 0.7,
-    "splash": {"damage": 70.0, "radius": 5.6, "push": 11.0, "self_damage": 0.34, "self_push": 1.0},
-    "tracer": [0.9, 0.74, 0.3],
+    "damage": 30.4,
+    "speed": 30.0,
+    "fuse_s": 8.0,
+    "guide": 2.2,
+    "kick": 1.3,
+    "splash": {
+      "damage": 65.6,
+      "radius": 5.0,
+      "push": 11.0,
+      "self_damage": 0.34,
+      "self_push": 1.0,
+      "crater": 0.33,
+      "curve": 1.22
+    },
+    "tracer": [1.0, 0.36, 0.5],
     "tracer_s": 0.08,
-    "look": "grenade"
+    "look": "rocket"
   },
   "view": "launcher",
   "grip": [

@@ -20,10 +20,12 @@ the rock weathers in. Seven of these hills break the grass: the Stacks. The
 biggest, Lamp Kopje, stands twenty-four metres over the plain and can be seen
 from everywhere in the country that is not behind another one.
 
-Two faults run north-east to south-west, forty metres apart in height and
-about a hundred and sixty metres apart on the ground. The block between them
-dropped. The river found the trough and has used it ever since, which is why
-the upper river is straight and narrow and the lower one is not.
+Two faults cross the country from the north down to the basin, bending as they
+go, about a hundred and sixty metres apart on the ground. The block between
+them dropped some fifteen metres. The river found the trough and has used it
+ever since, which is why the upper river is narrow and walled and the lower one
+is not. Everything else that runs in the rains has cut its own dry valley down
+to the water, so the country round the basin is all spurs and gullies.
 
 Before any of this mattered, the basin was a lake. It filled to within a metre
 of thirty-four, drowned everything but the tops of the Stacks, and held at that
@@ -33,6 +35,13 @@ the low country and the flanks of every one of the Stacks. Close up, the band
 is shells. Barnacles, cemented in plates, with the look of something that grew
 in moving salt water and died where it grew. There is no sea within a month's
 walking.
+
+It stood at that height long enough to cut a bench into every slope, with a
+low bluff behind it, and at a second, lower height on its way out. Both
+benches can be followed round the hills for miles, level as a floor.
+
+Out in the sandveld two hollows hold the rains into the dry season. Everything
+that does not live on the river drinks at one or the other.
 
 The lake went. Nobody here knows why, and the country keeps three
 inconveniently clear records of it:

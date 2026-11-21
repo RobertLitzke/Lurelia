@@ -1,0 +1,15 @@
+{
+  "name": "hazel_catkins",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Hazel catkins: pale yellow lambs' tails hanging on the bare stems, late winter.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [214, 196, 108],
+    "alt": [190, 170, 90],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [220, 202, 114], "alt": [196, 176, 96]}
+  }
+}

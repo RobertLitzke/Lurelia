@@ -33,9 +33,6 @@ pub struct Gib {
     pub spin: Vec3,
 }
 
-/// Metres a second squared: the dead body's gravity, so a chunk falls the
-/// way a corpse does (`physics::DEAD_GRAVITY`).
-const GRAVITY: f32 = 24.0;
 /// Of the speed into the floor, what comes back out of a bounce.
 const BOUNCE: f32 = 0.38;
 /// Of the speed along the floor, what a bounce keeps.
@@ -86,7 +83,7 @@ pub fn step(gibs: &mut [Gib], store: &Store, dt: f32) {
         if g.vel == Vec3::ZERO && g.spin == Vec3::ZERO {
             continue;
         }
-        g.vel.y -= GRAVITY * dt;
+        g.vel += store.gravity.pull(g.pos) * dt;
         let mut landed = false;
         // One axis at a time, so a chunk that hits a wall slides down it
         // rather than sticking where it touched.

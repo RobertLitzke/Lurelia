@@ -1,0 +1,22 @@
+{
+  "name": "protea",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "King protea: a bush of stiff grey-green stems, each one ending in a cup-shaped pink flower head the size of a plate, from winter into spring. The burn round the wreck is thick with them.",
+  "form": "canes",
+  "height": [1.0, 1.9],
+  "trunk_radius": [0.05, 0.07],
+  "crown_radius": [0.6, 0.9],
+  "bark": "juniper_bark",
+  "leaf": "protea_leaves",
+  "canopy": "tufts",
+  "max_slope": 1.0,
+  "stems": [5, 9],
+  "cane_lean": 0.35,
+  "cane_bend": 0.03,
+  "cane_spurs": 0.3,
+  "flower": "protea_flower",
+  "flower_tips": true,
+  "flower_seasons": ["winter", "spring"],
+  "affords": ["nectar"]
+}
