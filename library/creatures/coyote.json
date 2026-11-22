@@ -1,12 +1,13 @@
 {
   "name": "coyote",
-  "version": 2,
+  "version": 3,
   "introduced_by": "redrock",
-  "notes": "Coyote: grey-tan, bushy tail with a dark tip; hunts jackrabbits and lizards, keeps its distance.",
-  "voxel": 0.055,
+  "notes": "Coyote: grey-tan with a darker saddle, pale throat and belly, narrow dark-nosed muzzle, big upright ears, long slim legs and a bushy tail carried low with a dark tip; hunts jackrabbits and lizards, keeps its distance. v3: rebuilt at 0.0275 m voxels on a 64^3 grid; the hind legs hinge at the stifle.",
+  "voxel": 0.0275,
+  "grid": [64, 64, 64],
   "half_w": 0.2,
   "height": 0.85,
-  "colors": {"coyote": [168, 140, 104], "rabbit_light": [210, 196, 176], "dark": [36, 28, 24]},
+  "colors": {"coyote": [168, 140, 104], "rabbit_light": [210, 196, 176], "dark": [36, 28, 24], "back": [104, 92, 78]},
   "behaviour": {
     "movement": "skulk",
     "sleeps_on_side": true,
@@ -21,71 +22,123 @@
     "off_hours": 0.2
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [16, 10, 15], "radius": [3.2, 3.4, 7], "mat": "coyote"},
-    {"op": "recolour_below", "y": 8, "from": "coyote", "to": "rabbit_light"},
-    {"op": "box", "from": [14, 0, 10], "to": [15, 8, 11], "mat": "coyote", "part": "leg_fl"},
-    {"op": "box", "from": [17, 0, 10], "to": [18, 8, 11], "mat": "coyote", "part": "leg_fr"},
-    {"op": "box", "from": [14, 0, 19], "to": [15, 8, 20], "mat": "coyote", "part": "leg_hl"},
-    {"op": "box", "from": [17, 0, 19], "to": [18, 8, 20], "mat": "coyote", "part": "leg_hr"},
-    {"op": "ellipsoid", "centre": [16, 13.5, 7], "radius": [3, 2.6, 3], "mat": "coyote", "part": "head"},
-    {"op": "box", "from": [15, 11, 2], "to": [18, 14, 5], "mat": "coyote", "part": "head"},
-    {"op": "box", "from": [15, 11, 2], "to": [18, 12, 5], "mat": "rabbit_light", "part": "head"},
-    {"op": "set", "at": [16, 13, 1], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [14, 14, 5], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [18, 14, 5], "mat": "dark", "part": "head"},
-    {"op": "box", "from": [13, 15, 7], "to": [15, 19, 8], "mat": "coyote", "part": "ear_l"},
-    {"op": "box", "from": [17, 15, 7], "to": [19, 19, 8], "mat": "coyote", "part": "ear_r"},
-    {"op": "ellipsoid", "centre": [16, 9, 25.5], "radius": [2.4, 2.4, 4.5], "mat": "coyote", "part": "tail"},
-    {"op": "ellipsoid", "centre": [16, 8, 29.5], "radius": [1.7, 1.7, 1.8], "mat": "dark", "part": "tail"}
+    {"op": "ellipsoid", "centre": [32, 21, 23.5], "radius": [5.2, 7.6, 7.5], "mat": "coyote"},
+    {"op": "ellipsoid", "centre": [32, 22.5, 31], "radius": [4.2, 5.6, 5.5], "mat": "coyote"},
+    {"op": "ellipsoid", "centre": [32, 22, 39], "radius": [4.4, 6.2, 6.8], "mat": "coyote"},
+    {"op": "ellipsoid", "centre": [32, 25, 20], "radius": [3.8, 5.2, 5], "mat": "coyote"},
+    {"op": "recolour", "at": [24, 23, 14], "until": [40, 40, 47], "from": "coyote", "to": "back"},
+    {"op": "recolour", "at": [24, 0, 14], "until": [40, 17, 47], "from": "coyote", "to": "rabbit_light"},
+    {"op": "recolour", "at": [28, 19, 13], "until": [36, 26, 24], "from": "coyote", "to": "rabbit_light"},
+    {"op": "ellipsoid", "centre": [32, 28, 15], "radius": [3.8, 3.6, 4.2], "mat": "coyote", "part": "head"},
+    {"op": "ellipsoid", "centre": [32, 27, 10.0], "radius": [2.4, 2.2, 3.68], "mat": "coyote", "part": "head"},
+    {"op": "ellipsoid", "centre": [32, 26.6, 7.2], "radius": [1.8, 1.6, 2.4], "mat": "coyote", "part": "head"},
+    {"op": "ellipsoid", "centre": [32, 25.3, 10.0], "radius": [1.7, 0.9, 3.6], "mat": "rabbit_light", "part": "head"},
+    {"op": "ellipsoid", "centre": [32, 25, 15.5], "radius": [3.3, 2, 4.4], "mat": "rabbit_light", "part": "head"},
+    {"op": "ellipsoid", "centre": [32, 28.2, 10.4], "radius": [1.3, 0.9, 3.2], "mat": "back", "part": "head"},
+    {"op": "ellipsoid", "centre": [32, 27.2, 4.96], "radius": [1.6, 1.3, 0.96], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [29, 29, 12], "mat": "dark", "part": "head"},
+    {"op": "set", "at": [34, 29, 12], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [27, 30, 15], "to": [31, 33, 19], "mat": "coyote", "part": "ear_l"},
+    {"op": "box", "from": [27, 33, 16], "to": [30, 36, 19], "mat": "coyote", "part": "ear_l"},
+    {"op": "box", "from": [28, 36, 16], "to": [30, 39, 18], "mat": "coyote", "part": "ear_l"},
+    {"op": "box", "from": [28, 39, 16], "to": [29, 41, 17], "mat": "coyote", "part": "ear_l"},
+    {"op": "box", "from": [28, 31, 15], "to": [29, 36, 16], "mat": "dark", "part": "ear_l"},
+    {"op": "box", "from": [33, 30, 15], "to": [37, 33, 19], "mat": "coyote", "part": "ear_r"},
+    {"op": "box", "from": [34, 33, 16], "to": [37, 36, 19], "mat": "coyote", "part": "ear_r"},
+    {"op": "box", "from": [34, 36, 16], "to": [36, 39, 18], "mat": "coyote", "part": "ear_r"},
+    {"op": "box", "from": [35, 39, 16], "to": [36, 41, 17], "mat": "coyote", "part": "ear_r"},
+    {"op": "box", "from": [35, 31, 15], "to": [36, 36, 16], "mat": "dark", "part": "ear_r"},
+    {"op": "segment", "points": [[28.8, 18, 23], [28.8, 8.5, 22.5]], "radius": 1.5, "mat": "coyote", "part": "leg_fl"},
+    {
+      "op": "segment",
+      "points": [[28.8, 8.5, 22.5], [28.8, 2, 21.5]],
+      "radius": 1.0,
+      "mat": "coyote",
+      "part": "leg_fl"
+    },
+    {"op": "ellipsoid", "centre": [28.8, 1, 20.5], "radius": [1.3, 1, 2], "mat": "back", "part": "leg_fl"},
+    {
+      "op": "segment",
+      "points": [[29.5, 20, 40], [29.5, 12.5, 36.5]],
+      "radius": 2.3,
+      "mat": "coyote",
+      "part": "leg_hl"
+    },
+    {"op": "segment", "points": [[29.5, 12.5, 36.5], [29.5, 7, 41]], "radius": 1.2, "mat": "coyote", "part": "leg_hl"},
+    {"op": "segment", "points": [[29.5, 7, 41], [29.5, 2, 39.5]], "radius": 0.9, "mat": "coyote", "part": "leg_hl"},
+    {"op": "ellipsoid", "centre": [29.5, 1, 38.5], "radius": [1.3, 1, 2], "mat": "back", "part": "leg_hl"},
+    {"op": "segment", "points": [[35.2, 18, 23], [35.2, 8.5, 22.5]], "radius": 1.5, "mat": "coyote", "part": "leg_fr"},
+    {
+      "op": "segment",
+      "points": [[35.2, 8.5, 22.5], [35.2, 2, 21.5]],
+      "radius": 1.0,
+      "mat": "coyote",
+      "part": "leg_fr"
+    },
+    {"op": "ellipsoid", "centre": [35.2, 1, 20.5], "radius": [1.3, 1, 2], "mat": "back", "part": "leg_fr"},
+    {
+      "op": "segment",
+      "points": [[34.5, 20, 40], [34.5, 12.5, 36.5]],
+      "radius": 2.3,
+      "mat": "coyote",
+      "part": "leg_hr"
+    },
+    {"op": "segment", "points": [[34.5, 12.5, 36.5], [34.5, 7, 41]], "radius": 1.2, "mat": "coyote", "part": "leg_hr"},
+    {"op": "segment", "points": [[34.5, 7, 41], [34.5, 2, 39.5]], "radius": 0.9, "mat": "coyote", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [34.5, 1, 38.5], "radius": [1.3, 1, 2], "mat": "back", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [32, 20.5, 47], "radius": [2.1, 2.5, 3.4], "mat": "coyote", "part": "tail"},
+    {"op": "ellipsoid", "centre": [32, 17, 51], "radius": [2.6, 3.1, 3.8], "mat": "coyote", "part": "tail"},
+    {"op": "ellipsoid", "centre": [32, 13.5, 55], "radius": [2.3, 2.8, 3.4], "mat": "coyote", "part": "tail"},
+    {"op": "ellipsoid", "centre": [32, 10.5, 58], "radius": [1.8, 2.3, 2.5], "mat": "dark", "part": "tail"}
   ],
   "rig": {
     "plan": "quadruped",
     "bones": [
       {"name": "body", "role": "root"},
-      {"name": "head", "role": "head", "parent": "body", "joint": [16, 12, 9.5]},
-      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [14, 15, 7.5], "side": "l"},
-      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [18, 15, 7.5], "side": "r"},
-      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14.5, 8, 10.5], "side": "l", "pair": 0},
+      {"name": "head", "role": "head", "parent": "body", "joint": [32, 25, 19]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [29.5, 30, 17], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [34.5, 30, 17], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [28.8, 17, 22.5], "side": "l", "pair": 0},
       {
         "name": "leg_fl_low",
         "role": "leg",
         "parent": "leg_fl",
-        "joint": [14.5, 4, 10.5],
-        "claims": [[[14, 0, 10], [15, 4, 11]]],
+        "joint": [28.8, 8.5, 22.5],
         "side": "l",
-        "pair": 0
+        "pair": 0,
+        "claims": [[[26, 0, 18], [32, 8, 26]]]
       },
-      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [17.5, 8, 10.5], "side": "r", "pair": 0},
-      {
-        "name": "leg_fr_low",
-        "role": "leg",
-        "parent": "leg_fr",
-        "joint": [17.5, 4, 10.5],
-        "claims": [[[17, 0, 10], [18, 4, 11]]],
-        "side": "r",
-        "pair": 0
-      },
-      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14.5, 8, 19.5], "side": "l", "pair": 1},
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [29.5, 19, 40], "side": "l", "pair": 1},
       {
         "name": "leg_hl_low",
         "role": "leg",
         "parent": "leg_hl",
-        "joint": [14.5, 4, 19.5],
-        "claims": [[[14, 0, 19], [15, 4, 20]]],
+        "joint": [29.5, 12.5, 36.5],
         "side": "l",
-        "pair": 1
+        "pair": 1,
+        "claims": [[[26, 0, 33], [32, 12, 44]]]
       },
-      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [17.5, 8, 19.5], "side": "r", "pair": 1},
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [35.2, 17, 22.5], "side": "r", "pair": 0},
+      {
+        "name": "leg_fr_low",
+        "role": "leg",
+        "parent": "leg_fr",
+        "joint": [35.2, 8.5, 22.5],
+        "side": "r",
+        "pair": 0,
+        "claims": [[[32, 0, 18], [38, 8, 26]]]
+      },
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [34.5, 19, 40], "side": "r", "pair": 1},
       {
         "name": "leg_hr_low",
         "role": "leg",
         "parent": "leg_hr",
-        "joint": [17.5, 4, 19.5],
-        "claims": [[[17, 0, 19], [18, 4, 20]]],
+        "joint": [34.5, 12.5, 36.5],
         "side": "r",
-        "pair": 1
+        "pair": 1,
+        "claims": [[[32, 0, 33], [38, 12, 44]]]
       },
-      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 10, 21.5]}
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [32, 22, 44]}
     ]
   }
 }

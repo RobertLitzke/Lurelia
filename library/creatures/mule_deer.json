@@ -1,14 +1,14 @@
 {
   "name": "mule_deer",
-  "version": 1,
+  "version": 2,
   "introduced_by": "redrock",
   "notes": "Mule deer: grey-brown desert deer with big ears and a black-tipped tail.",
   "colors": {"coat": [168, 140, 104], "belly": [210, 196, 176]},
   "behaviour": {"wary": 12, "flightiness": 1.3},
   "like": "deer",
   "extra_ops": [
-    {"op": "box", "from": [11, 24, 7], "to": [14, 28, 8], "mat": "coat", "part": "ear_l"},
-    {"op": "box", "from": [19, 24, 7], "to": [22, 28, 8], "mat": "coat", "part": "ear_r"},
-    {"op": "box", "from": [15, 15, 25], "to": [18, 16, 27], "mat": "dark", "part": "tail"}
+    {"op": "segment", "points": [[22, 37, 10.5], [18.2, 42.3, 10.8]], "radius": 1.6, "mat": "coat", "part": "ear_l"},
+    {"op": "segment", "points": [[26, 37, 10.5], [29.8, 42.3, 10.8]], "radius": 1.6, "mat": "coat", "part": "ear_r"},
+    {"op": "ellipsoid", "centre": [24, 23.2, 40.6], "radius": [1.0, 1.3, 0.9], "mat": "dark", "part": "tail"}
   ]
 }

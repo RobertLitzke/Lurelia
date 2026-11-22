@@ -1,6 +1,6 @@
 {
   "name": "lechwe",
-  "version": 1,
+  "version": 2,
   "introduced_by": "thornpan",
   "notes": "Red lechwe: a chestnut antelope of the flood meadows, hocks always wet, running in splashing herds through water a foot deep. The males carry long horns swept back in a shallow lyre.",
   "colors": {"coat": [172, 108, 52], "belly": [240, 236, 228], "antler": [214, 196, 160]},
@@ -16,16 +16,22 @@
   "like": "deer",
   "scale": 0.95,
   "extra_ops": [
-    {"op": "box", "from": [12, 25, 4], "to": [22, 32, 9], "mat": "air", "part": "head"},
-    {"op": "box", "from": [12, 25, 7], "to": [14, 27, 8], "mat": "coat", "part": "ear_l"},
-    {"op": "box", "from": [19, 25, 7], "to": [21, 27, 8], "mat": "coat", "part": "ear_r"},
-    {"op": "box", "from": [15, 26, 6], "to": [16, 29, 7], "mat": "antler", "part": "head"},
-    {"op": "box", "from": [17, 26, 6], "to": [18, 29, 7], "mat": "antler", "part": "head"},
-    {"op": "set", "at": [15, 29, 7], "mat": "antler", "part": "head"},
-    {"op": "set", "at": [17, 29, 7], "mat": "antler", "part": "head"},
-    {"op": "set", "at": [15, 30, 8], "mat": "antler", "part": "head"},
-    {"op": "set", "at": [17, 30, 8], "mat": "antler", "part": "head"},
-    {"op": "set", "at": [15, 31, 7], "mat": "antler", "part": "head"},
-    {"op": "set", "at": [17, 31, 7], "mat": "antler", "part": "head"}
+    {"op": "box", "from": [12, 38, 4], "to": [36, 58, 16], "mat": "air", "part": "head"},
+    {"op": "segment", "points": [[22, 37, 10.5], [19.48, 40.06, 10.8]], "radius": 1.1, "mat": "coat", "part": "ear_l"},
+    {"op": "segment", "points": [[26, 37, 10.5], [28.52, 40.06, 10.8]], "radius": 1.1, "mat": "coat", "part": "ear_r"},
+    {
+      "op": "segment",
+      "points": [[22.8, 38.2, 9], [21.8, 42, 8.4], [22.4, 46, 9.6], [23, 49.5, 12]],
+      "radius": 0.8,
+      "mat": "antler",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[25.2, 38.2, 9], [26.2, 42, 8.4], [25.6, 46, 9.6], [25, 49.5, 12]],
+      "radius": 0.8,
+      "mat": "antler",
+      "part": "head"
+    }
   ]
 }

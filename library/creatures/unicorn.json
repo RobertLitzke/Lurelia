@@ -1,6 +1,6 @@
 {
   "name": "unicorn",
-  "version": 1,
+  "version": 2,
   "introduced_by": "glassfall",
   "notes": "One deer in a hundred is born white with a single faintly glowing horn and no antlers. It lives and runs with ordinary deer and is harder to get near.",
   "colors": {"coat": [240, 236, 228], "belly": [240, 236, 228], "horn": [244, 236, 214, 1.1]},
@@ -8,13 +8,16 @@
   "like": "deer",
   "rarity": 0.01,
   "extra_ops": [
-    {"op": "box", "from": [12, 26, 4], "to": [21, 32, 7], "mat": "air"},
-    {"op": "set", "at": [16, 26, 5], "mat": "horn", "part": "head"},
-    {"op": "set", "at": [16, 27, 5], "mat": "horn", "part": "head"},
-    {"op": "set", "at": [16, 28, 4], "mat": "horn", "part": "head"},
-    {"op": "set", "at": [16, 29, 4], "mat": "horn", "part": "head"},
-    {"op": "set", "at": [16, 30, 3], "mat": "horn", "part": "head"},
-    {"op": "set", "at": [16, 31, 3], "mat": "horn", "part": "head"}
+    {"op": "box", "from": [12, 38, 4], "to": [36, 58, 16], "mat": "air", "part": "head"},
+    {"op": "segment", "points": [[22, 37, 10.5], [19.48, 40.06, 10.8]], "radius": 1.1, "mat": "coat", "part": "ear_l"},
+    {"op": "segment", "points": [[26, 37, 10.5], [28.52, 40.06, 10.8]], "radius": 1.1, "mat": "coat", "part": "ear_r"},
+    {
+      "op": "segment",
+      "points": [[24, 38, 7.5], [24, 41, 6.2], [24, 48, 4.5]],
+      "radius": 0.9,
+      "mat": "horn",
+      "part": "head"
+    }
   ],
   "vary": {"shade": 0.02, "hue": 0.0}
 }

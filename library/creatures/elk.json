@@ -1,9 +1,15 @@
 {
   "name": "elk",
-  "version": 1,
+  "version": 2,
   "introduced_by": "glassfall",
-  "notes": "Elk: bigger and greyer than the red deer, with a heavy neck under a dark shaggy mane and a wide rack. Herds of three to seven on high ground.",
-  "colors": {"coat": [140, 118, 96], "belly": [210, 196, 176], "mane": [150, 98, 60]},
+  "notes": "Elk: heavier and paler than the red deer, tan body and rump, a thick dark neck under a shaggy mane and a wide branching rack. Herds of three to seven on high ground.",
+  "colors": {
+    "coat": [184, 154, 114],
+    "belly": [222, 206, 176],
+    "mane": [86, 58, 40],
+    "rump": [236, 218, 184],
+    "leg": [84, 60, 44]
+  },
   "behaviour": {
     "walk_speed": 1.2,
     "flee_speed": 7.0,
@@ -14,16 +20,72 @@
   "like": "deer",
   "scale": 1.625,
   "extra_ops": [
-    {"op": "ellipsoid", "centre": [16.5, 17.2, 10.0], "radius": [2.4, 2.6, 2.3], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.5, 19.6, 9.2], "radius": [2.0, 2.4, 2.0], "mat": "mane", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.5, 21.8, 8.7], "radius": [1.7, 1.8, 1.7], "mat": "mane", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.5, 18.0, 8.0], "radius": [1.5, 3.0, 1.3], "mat": "mane", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.5, 20.5, 10.4], "radius": [1.1, 2.4, 1.0], "mat": "coat", "part": "neck"},
-    {"op": "set", "at": [14, 31, 7], "mat": "antler", "part": "head"},
-    {"op": "set", "at": [18, 31, 7], "mat": "antler", "part": "head"},
-    {"op": "set", "at": [15, 30, 7], "mat": "antler", "part": "head"},
-    {"op": "set", "at": [17, 30, 7], "mat": "antler", "part": "head"},
-    {"op": "set", "at": [13, 29, 7], "mat": "antler", "part": "head"},
-    {"op": "set", "at": [19, 29, 7], "mat": "antler", "part": "head"}
+    {"op": "ellipsoid", "centre": [24, 21.5, 25], "radius": [6.4, 6.4, 11.5], "mat": "coat"},
+    {"op": "recolour_below", "y": 16, "from": "coat", "to": "belly"},
+    {"op": "ellipsoid", "centre": [24, 22.5, 34], "radius": [5.6, 5.8, 5], "mat": "coat"},
+    {"op": "ellipsoid", "centre": [24, 22, 36.9], "radius": [4.4, 4.6, 2.4], "mat": "rump"},
+    {"op": "ellipsoid", "centre": [24, 28, 15], "radius": [4.7, 5.2, 4.4], "mat": "mane", "part": "neck"},
+    {"op": "ellipsoid", "centre": [24, 29, 12.8], "radius": [3.6, 5.2, 3.2], "mat": "mane", "part": "neck"},
+    {"op": "ellipsoid", "centre": [24, 33, 13.8], "radius": [3.3, 3.8, 2.7], "mat": "mane", "part": "neck"},
+    {"op": "ellipsoid", "centre": [24, 29.5, 10.2], "radius": [1.9, 3.6, 1.9], "mat": "mane", "part": "neck"},
+    {"op": "ellipsoid", "centre": [24, 32, 12], "radius": [2.4, 2.0, 1.5], "mat": "coat", "part": "neck"},
+    {
+      "op": "segment",
+      "points": [[22.3, 38.2, 9.5], [19.5, 42.5, 10], [16.5, 47, 12], [13.5, 51.5, 14.5], [12.5, 54, 15]],
+      "radius": 0.8,
+      "mat": "antler",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[25.7, 38.2, 9.5], [28.5, 42.5, 10], [31.5, 47, 12], [34.5, 51.5, 14.5], [35.5, 54, 15]],
+      "radius": 0.8,
+      "mat": "antler",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[21.5, 39.5, 8.6], [20.5, 43, 5.8], [20, 46.5, 3.8]],
+      "radius": 0.8,
+      "mat": "antler",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[26.5, 39.5, 8.6], [27.5, 43, 5.8], [28, 46.5, 3.8]],
+      "radius": 0.8,
+      "mat": "antler",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[19.5, 42.5, 10], [18, 46.5, 6.5], [17, 50, 5]],
+      "radius": 0.8,
+      "mat": "antler",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[28.5, 42.5, 10], [30, 46.5, 6.5], [31, 50, 5]],
+      "radius": 0.8,
+      "mat": "antler",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[16.5, 47, 12], [15, 51, 8.5], [14, 54.5, 7.5]],
+      "radius": 0.8,
+      "mat": "antler",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[31.5, 47, 12], [33, 51, 8.5], [34, 54.5, 7.5]],
+      "radius": 0.8,
+      "mat": "antler",
+      "part": "head"
+    },
+    {"op": "segment", "points": [[14.5, 50, 13.8], [13, 52, 9.5]], "radius": 0.8, "mat": "antler", "part": "head"},
+    {"op": "segment", "points": [[33.5, 50, 13.8], [35, 52, 9.5]], "radius": 0.8, "mat": "antler", "part": "head"}
   ]
 }
