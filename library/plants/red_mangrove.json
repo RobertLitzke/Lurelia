@@ -1,17 +1,17 @@
 {
   "name": "red_mangrove",
-  "version": 1,
+  "version": 2,
   "introduced_by": "lowmouth",
-  "notes": "Red mangrove: a low dark crown on a tangle of arching prop roots, standing in the shallows of the river mouth.",
+  "notes": "Red mangrove: a dense dark rounded crown, low and wide, on a tangle of arching prop roots with drop roots from the limbs, standing in the shallows of the river mouth.",
   "form": "mangrove",
-  "height": [3, 11],
-  "trunk_radius": [0.3, 0.45],
-  "crown_radius": [2.4, 4.6],
+  "height": [3, 8],
+  "trunk_radius": [0.35, 0.5],
+  "crown_radius": [3.0, 5.0],
   "bark": "mangrove_bark",
   "leaf": "glossy_leaves",
   "max_slope": 0.8,
-  "stems": [5, 8],
+  "stems": [7, 11],
   "standing_water": [0.05, 1.7],
   "affords": ["perch", "cover"],
-  "thin_limbs": 0.2
+  "thin_limbs": 0.16
 }
