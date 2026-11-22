@@ -1,0 +1,23 @@
+{
+  "name": "ginkgo",
+  "version": 3,
+  "introduced_by": "hemlow",
+  "notes": "Ginkgo: an irregular, open, often lopsided crown on a few strong ascending limbs, fan leaves fresh green in summer and clear gold in autumn, dropped all at once. Old trees are broad and may stand on several trunks, young ones narrow and gawky. Older than the dinosaurs.",
+  "form": "branching",
+  "height": [12, 24],
+  "trunk_radius": [0.35, 0.55],
+  "crown_radius": [2.7, 4.0],
+  "bark": "grey_brown_bark",
+  "leaf": "ginkgo_leaves",
+  "curve": "sweep",
+  "canopy": "lobes",
+  "leader": 0.5,
+  "fill": 0.1,
+  "spread": 0.5,
+  "dome": 0.0,
+  "max_slope": 0.6,
+  "stems": [1, 2],
+  "autumn": "gold_leaves",
+  "thin_limbs": 0.25,
+  "trunk_taper": 0.4
+}

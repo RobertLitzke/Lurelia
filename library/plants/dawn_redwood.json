@@ -1,0 +1,21 @@
+{
+  "name": "dawn_redwood",
+  "version": 3,
+  "introduced_by": "saurischia",
+  "notes": "Dawn redwood: a deciduous redwood with a fluted, buttressed red trunk that flares at the foot and a narrow conical crown of soft feathery sprays that turn copper in autumn and fall, leaving the bare trunk and limbs in winter. Crowns vary in height, lean and limb spacing. Wet ground in the Fernwood.",
+  "form": "conifer",
+  "height": [20, 36],
+  "trunk_radius": [0.55, 1.0],
+  "buttress": 0.8,
+  "crown_radius": [1.9, 3.1],
+  "bark": "redwood_bark",
+  "leaf": "dawn_needles",
+  "max_slope": 0.4,
+  "autumn": "dawn_rust",
+  "crown_base": 0.22,
+  "taper": 0.9,
+  "affords": ["perch"],
+  "sweep": "ragged",
+  "whorls": [12, 20],
+  "lean": 0.04
+}
