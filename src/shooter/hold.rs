@@ -122,6 +122,8 @@ pub fn placed(model: usize, models: &[Model], at: Vec3, yaw: f32, rot: Quat, tin
             tint: [tint[0], tint[1], tint[2], 0.0],
             rot: [rot.x, rot.y, rot.z, rot.w],
             shift: [0.0; 4],
+            flesh: [[0.0; 4]; 3],
+            glow: [0.0; 4],
         },
     ))
 }

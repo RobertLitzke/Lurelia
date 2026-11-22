@@ -1,6 +1,6 @@
 {
   "name": "cormorant",
-  "version": 2,
+  "version": 3,
   "introduced_by": "glassfall",
   "notes": "circle: Pelagic cormorant: glossy black, long-necked, flying low and straight over the water and sitting on it between dives.",
   "colors": {
@@ -25,5 +25,17 @@
   },
   "like": "starling",
   "scale": 2.6,
-  "extra_ops": [{"op": "box", "from": [15, 9, 9], "to": [17, 11, 12], "mat": "head", "part": "head"}]
+  "extra_ops": [
+    {"op": "box", "from": [15, 9, 7], "to": [17, 10, 9], "mat": "air", "part": "head"},
+    {
+      "op": "segment",
+      "points": [[16, 9.2, 11], [16, 9.8, 8], [16, 10.6, 5.5]],
+      "radius": 0.9,
+      "mat": "head",
+      "part": "head"
+    },
+    {"op": "ellipsoid", "centre": [16, 10.9, 4.4], "radius": [1.2, 1.2, 1.6], "mat": "head", "part": "head"},
+    {"op": "box", "from": [15, 10, 1], "to": [17, 11, 3], "mat": "beak", "part": "head"},
+    {"op": "set", "at": [16, 9, 1], "mat": "beak", "part": "head"}
+  ]
 }

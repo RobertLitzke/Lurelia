@@ -1,0 +1,471 @@
+{
+  "$defs": {
+    "CalmColours": {
+      "properties": {
+        "alt": {
+          "default": null,
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "base": {
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "contrast": {
+          "default": null,
+          "description": "Scales the recipe's contrast in the calm style (crack lines included).",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "pattern": {
+          "default": null,
+          "description": "A different pattern verb for the calm style only.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scale": {
+          "default": null,
+          "description": "Pattern cells per metre in the calm style, when it differs.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "base"
+      ],
+      "type": "object"
+    },
+    "Drift": {
+      "anyOf": [
+        {
+          "items": {
+            "items": {
+              "format": "float",
+              "type": "number"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        {
+          "properties": {
+            "calm": {
+              "default": null,
+              "items": {
+                "items": {
+                  "format": "float",
+                  "type": "number"
+                },
+                "maxItems": 3,
+                "minItems": 3,
+                "type": "array"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "classic": {
+              "default": null,
+              "items": {
+                "items": {
+                  "format": "float",
+                  "type": "number"
+                },
+                "maxItems": 3,
+                "minItems": 3,
+                "type": "array"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "The ends of a material's broad colour field (`drift`), in sRGB bytes: one\npair for both styles, or a pair for each. A style with no pair of its own\nfalls back to the ramp its `tint` class gives it."
+    },
+    "GrassDef": {
+      "additionalProperties": false,
+      "description": "How grass grows on a ground material (`grass` in its file). The defaults\nare what every grass material had before: thin cover in the bare patches,\nthick in the lush ones, and tufts from about a hand to knee high.",
+      "properties": {
+        "dense": {
+          "default": 0.8500000238418579,
+          "description": "Share of columns with a tuft where it is at its highest.",
+          "format": "float",
+          "type": "number"
+        },
+        "short": {
+          "default": 1.0,
+          "description": "Height of the shortest grass, in the old minimum's units: 3.0 makes\nthe short grass three times as tall. The long grass of a meadow adds\n1.7 on top of it whatever this is.",
+          "format": "float",
+          "type": "number"
+        },
+        "sparse": {
+          "default": 0.10000000149011612,
+          "description": "Share of columns with a tuft where the meadow noise is at its lowest.",
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "Recipe": {
+      "properties": {
+        "alt": {
+          "default": null,
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "base": {
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "calm": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CalmColours"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Colours for the calm style; the pattern is softened there automatically."
+        },
+        "contrast": {
+          "default": 1.0,
+          "format": "float",
+          "type": "number"
+        },
+        "pattern": {
+          "description": "Texture pattern verb: noise, speckle, strata, columns, cracks, blotch,\nplanks, coursed, glass, ripples, grain, rings, thatch, flat.",
+          "type": "string"
+        },
+        "scale": {
+          "default": 4.0,
+          "description": "Pattern cells across one metre tile.",
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "required": [
+        "pattern",
+        "base"
+      ],
+      "type": "object"
+    },
+    "Sprites": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "properties": {
+            "rule": {
+              "type": "string"
+            },
+            "shape": {
+              "default": null,
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "rule"
+          ],
+          "type": "object"
+        }
+      ],
+      "description": "A material's `sprites`: a rule by name, or a rule with a leaf shape."
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "if": {
+    "not": {
+      "required": [
+        "like"
+      ]
+    }
+  },
+  "patternProperties": {
+    "^_": {}
+  },
+  "properties": {
+    "bevel_steps": {
+      "default": false,
+      "description": "Faceted only where the surface is stepped: a corner where every face\nthat meets it runs flat for two voxels (the edge of a box, a wall\ncorner, the foot of a wall) stays square, and a staggered edge of\none-voxel pieces is bevelled. For built things; implies `facet`. The\narenas set it per world (`round_edges` in world.json).",
+      "type": "boolean"
+    },
+    "bottom": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Recipe"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "crisp": {
+      "default": false,
+      "description": "Ground whose border with other ground is drawn sharp, not blended with\nnoise (paving, road surfaces).",
+      "type": "boolean"
+    },
+    "drift": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Drift"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The two colours this material drifts between across the land, tens of\nmetres at a time: a meadow going from sage to dry ochre, a canopy from\ncool to warm. Declared as colours and shipped to the shader as the\nmultiply that takes the material's own texture to each end, so a\nmaterial need not match its drift to its pattern by hand.\n\nWithout it a material takes the ramp its `tint` class gives it, which\nis the same ramp for every meadow in every world."
+    },
+    "facet": {
+      "default": false,
+      "description": "Rounded rock drawn in flat facets like sloped ground, not soft blobs:\nthe corners sit on the plain voxel surface (no blur) and the light\nis softened toward the face as on hillsides. Implies `round`.",
+      "type": "boolean"
+    },
+    "floating": {
+      "default": false,
+      "description": "Its detail sprites lie flat on the sea's surface above where they\ngrow, whatever the depth: lily pads and the other floating leaves.",
+      "type": "boolean"
+    },
+    "floods": {
+      "default": false,
+      "description": "Flat ground that a shower floods from edge to edge instead of in\npuddles: a salt pan or a playa, where an inch of water turns the\nwhole flat into a mirror of the sky (scene.wgsl `damp_ground`).",
+      "type": "boolean"
+    },
+    "foliage": {
+      "default": null,
+      "description": "Leaves or needles: the bike brushes through and a rope won't hold.\nDefault: a plant material whose name says leaf, needle, frond,\ncanopy, bush or shrub.",
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "glints": {
+      "default": null,
+      "description": "Flashes in the sun texel by texel. Default: the name contains \"glass\".",
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "glow": {
+      "default": 0.0,
+      "description": "Gives its own light (bioluminescent moss, cave ceilings): drawn bright\nin shade and at night, strength 0 (none) to about 1.5.",
+      "format": "float",
+      "type": "number"
+    },
+    "glow_specks": {
+      "default": false,
+      "description": "Only the bright, blue-green specks of its texture give light, not the\nrock between them (glow-worm ceilings, the lantern film).",
+      "type": "boolean"
+    },
+    "grass": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GrassDef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "How thick and how long the grass tufts on this ground grow\n(mesh/sprites.rs). Without it a material whose name holds GRASS takes\nthe defaults below: a thin steppe and a hay meadow grew alike. Any\nother ground that has one grows short dry tufts in its own colour."
+    },
+    "hue": {
+      "description": "With `like`: warms (above 0) or cools (below) every colour taken from the parent.",
+      "type": "number"
+    },
+    "hurt": {
+      "default": 0.0,
+      "description": "Damage a second to anything standing in it: molten slag, lava, acid.\nA property of the stuff rather than a hazard listed per world, so a\npool of it bites wherever it is put -- the arena's own slag pit and\nan imported map's lava alike. 0 to 63; over about 20 is instant\ndeath rather than a thing to run across.",
+      "format": "float",
+      "type": "number"
+    },
+    "id": {
+      "default": null,
+      "description": "The id the entry asks for in its file (`\"id\"`), 17..254, or none.\nEach world keeps the ids its materials ask for where it can; entries\nwithout one (and any that clash in a world) take free ids at load.",
+      "format": "uint16",
+      "maximum": 65535,
+      "minimum": 0,
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "introduced_by": {
+      "default": "",
+      "type": "string"
+    },
+    "like": {
+      "description": "The entry this one is a variant of (src/inherit.rs): it starts from that entry and overrides what it gives.",
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "night_glow": {
+      "default": false,
+      "description": "Its `glow` is a lamp behind it: dark by day, lit from dusk to dawn.",
+      "type": "boolean"
+    },
+    "notes": {
+      "description": "One sentence on what the entry is, for people and the catalogue.",
+      "type": "string"
+    },
+    "passable": {
+      "default": false,
+      "description": "Thin growth that bodies pass through (hanging vines): drawn like any\nvoxel, but physics never collides with it.",
+      "type": "boolean"
+    },
+    "round": {
+      "default": false,
+      "description": "Rock the mesher rounds like a tree crown (surface nets): free-standing\nnatural forms such as hoodoos. Never for ground the land is made of.",
+      "type": "boolean"
+    },
+    "shade": {
+      "description": "With `like`: a brightness multiple on every colour taken from the parent.",
+      "type": "number"
+    },
+    "slab": {
+      "default": false,
+      "description": "A half-height block, like a slab: it fills the lower half of its\nvoxel and leaves the upper half open, so a body standing on it\nstands an eighth of a metre up. The mesher draws it half height and\nphysics stands on its top. Ray casts still treat it as a whole voxel.",
+      "type": "boolean"
+    },
+    "smooth": {
+      "default": false,
+      "description": "Ground that the mesher smooths into slopes.",
+      "type": "boolean"
+    },
+    "sprites": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Sprites"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "What grows on the material as sprites (mesh/sprites.rs `SPRITE_RULES`):\n`\"grass\"`, `\"fern\"`, `\"needles\"`, `\"cattail head\"`, or for leaves a\nshape as well, `{\"rule\": \"leaves\", \"shape\": \"broad\"}`. Left out, nothing\ngrows on it, whatever it is called; a world's ground with a `grass`\nblock still grows short dry tufts."
+    },
+    "surface": {
+      "default": null,
+      "description": "What it is like to drive on (world/surface.rs: hardpack, rock,\nsand_wet, sand_soft, grass, mud, snow). Guessed from the name if\nleft out.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "texture": {
+      "$ref": "#/$defs/Recipe"
+    },
+    "tint": {
+      "default": null,
+      "description": "Broad colour fields across the land: \"meadow\" (like grass), \"leaves\" or\n\"needles\" (calm style only). Default none.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "top": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Recipe"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "tube": {
+      "default": null,
+      "description": "A thin stem the mesher draws as an octagon instead of a square\n(vines, culms, canes, poles): the edges along the stem are bevelled.\nDefault: the leaf of a vine and the stem of bamboo, canes or kelp.",
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "underwater": {
+      "default": false,
+      "description": "Its detail sprites grow under the sea as well as over it: eelgrass and\nthe other drowned meadows, which are otherwise hidden at the\nwaterline like land grass.",
+      "type": "boolean"
+    },
+    "version": {
+      "default": 1,
+      "format": "uint32",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "was": {
+      "default": [],
+      "description": "Names this material had before others were merged into it\n(`reedmace_head` into `cattail_head`). Anything that still names one,\na save above all, gets this material: a world that reaches an old name\nreaches it, and `Library::material` and `matlib::id_of` answer to it.",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "water": {
+      "default": false,
+      "description": "Water drawn as solid voxels (rivers): walking creatures keep out.",
+      "type": "boolean"
+    }
+  },
+  "then": {
+    "required": [
+      "name",
+      "texture"
+    ]
+  },
+  "title": "MaterialDef",
+  "type": "object"
+}

@@ -11,7 +11,9 @@
   "creatures": [
     {"creature": "gull", "count": 8},
     {"creature": "brown_pelican", "count": 4},
-    {"creature": "sea_turtle", "count": 1}
+    {"creature": "sea_turtle", "count": 1},
+    {"creature": "sanderling", "count": 24},
+    {"creature": "snowy_plover", "count": 6}
   ],
   "collectibles": [{"item": "seashell", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}]
 }

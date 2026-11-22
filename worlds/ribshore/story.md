@@ -89,7 +89,7 @@ is empty now.
 
 ## What is not explained
 
-- A harpoon twenty metres long, rusted through, is stuck in one of the
+- A harpoon thirty metres long, rusted through, is stuck in one of the
   vertebrae near the hips. It was there before the whalers came. Nobody made
   it.
 - The blowhole spouts on a rhythm, whatever the sea is doing.

@@ -39,6 +39,9 @@ pub struct Screenshot {
     saved_pitch: f32,
     /// Seconds left of the white flash after a screenshot.
     pub flash: f32,
+    /// The left button was down last frame. A held button comes back in
+    /// `actions.dig` every frame (main.rs), so only the press takes a shot.
+    clicking: bool,
 }
 
 pub fn forward(yaw: f32, pitch: f32) -> Vec3 {
@@ -58,6 +61,7 @@ impl Screenshot {
             saved_yaw: yaw,
             saved_pitch: pitch,
             flash: 0.0,
+            clicking: false,
         }
     }
 
@@ -129,9 +133,11 @@ impl Activity for Screenshot {
         if std::mem::take(&mut actions.tilt_right) {
             self.tilt(5.0);
         }
-        if std::mem::take(&mut actions.dig) {
+        let down = std::mem::take(&mut actions.dig);
+        if down && !self.clicking {
             *cx.screenshot_request = true;
         }
+        self.clicking = down;
         self.fly(input, cx.player.yaw, cx.player.pitch, cx.player.pos, cx.store, dt);
     }
 

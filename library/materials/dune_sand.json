@@ -4,6 +4,7 @@
   "introduced_by": "ribshore",
   "notes": "Dry dune sand, pale and fine, rippled by the wind.",
   "smooth": true,
+  "surface": "sand_soft",
   "texture": {
     "pattern": "ripples",
     "base": [148, 146, 134],

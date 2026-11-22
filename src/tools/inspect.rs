@@ -121,13 +121,15 @@ pub fn write_map(args: &Args, path: &std::path::Path) {
 /// the library. Returns the exit code (1 when anything is wrong).
 pub fn check_world(args: &Args) -> i32 {
     let name = worldload::selected();
+    let (edges, seam_problems) = worldload::edges_for(&name);
     let (lib, errors) = worldload::library_for(&name);
     let mut problems: Vec<String> = errors;
+    problems.extend(seam_problems);
     problems.extend(lib.validate());
     problems.extend(crate::brain::avatar::build(Some(&lib), &mut crate::models::palette()).problems);
     println!("library: {}; {} texture layers for this world", lib.summary(), world::matlib::layer_count());
     let dir = worldload::world_dir(&name);
-    match world::chronicle::build_world(&dir, lib) {
+    match world::chronicle::build_world_with(&dir, lib, &edges) {
         Ok(w) => {
             if args.gazetteer {
                 println!("{}", world::chronicle::gazetteer(&w));
@@ -186,4 +188,75 @@ pub fn check_world(args: &Args) -> i32 {
     } else {
         1
     }
+}
+
+/// `--seam out.png`: build the selected world against its neighbours, say how
+/// each edge meets, and write a map of the world and its neighbours side by
+/// side at half a pixel a metre (`VG_MAP_PX_PER_M` changes it).
+pub fn seam(path: &std::path::Path) -> i32 {
+    use glam::Vec2;
+    use world::seam::{Edge, Side};
+    let name = worldload::selected();
+    let (near, problems) = worldload::neighbours_of(&name);
+    for p in &problems {
+        eprintln!("{p}");
+    }
+    if near.is_empty() {
+        eprintln!("world {name} names no neighbours that build");
+        return 1;
+    }
+    let dir = worldload::world_dir(&name);
+    let def: serde_json::Value = std::fs::read_to_string(dir.join("world.json")).ok().and_then(|t| serde_json::from_str(&t).ok()).unwrap_or_default();
+    let size = def["size_m"].as_f64().unwrap_or(0.0) as f32;
+    let sea = def["sea_level_m"].as_f64().unwrap_or(0.0) as f32;
+    let n = (size / world::fields::CELL).round() as usize;
+    let edges: Vec<Edge> = near.iter().map(|(s, o, w)| Edge::take(w, *s, *o, n, sea)).collect();
+    let (lib, _) = worldload::library_for(&name);
+    let w = match world::chronicle::build_world_with(&dir, lib, &edges) {
+        Ok(w) => w,
+        Err(e) => {
+            eprintln!("world {name}: {e}");
+            return 1;
+        }
+    };
+    for l in w.log.iter().filter(|l| l.contains("seam")) {
+        println!("{}", l.trim());
+    }
+    for e in &edges {
+        println!("{}", world::seam::report(&w, e));
+    }
+    // Each world's corner in this world's metres, then one canvas round all.
+    let per_m: f32 = std::env::var("VG_MAP_PX_PER_M").ok().and_then(|v| v.parse().ok()).unwrap_or(0.5);
+    let mut tiles: Vec<(Vec2, &world::fields::World)> = vec![(Vec2::ZERO, &w)];
+    for (side, off, far) in &near {
+        let fs = far.f.size;
+        let at = match side {
+            Side::South => Vec2::new(*off, size),
+            Side::North => Vec2::new(*off, -fs),
+            Side::East => Vec2::new(size, *off),
+            Side::West => Vec2::new(-fs, *off),
+        };
+        tiles.push((at, far));
+    }
+    let lo = tiles.iter().fold(Vec2::splat(f32::MAX), |a, (p, _)| a.min(*p));
+    let hi = tiles.iter().fold(Vec2::splat(f32::MIN), |a, (p, t)| a.max(*p + Vec2::splat(t.f.size)));
+    let (cw, ch) = (((hi.x - lo.x) * per_m) as usize, ((hi.y - lo.y) * per_m) as usize);
+    let mut canvas = vec![0u8; cw * ch * 4];
+    for (at, t) in &tiles {
+        let px = (t.f.size * per_m) as usize;
+        let img = world::atlas::image(t, px);
+        let (ox, oy) = (((at.x - lo.x) * per_m) as usize, ((at.y - lo.y) * per_m) as usize);
+        for y in 0..px.min(ch.saturating_sub(oy)) {
+            let row = &img[y * px * 4..(y + 1) * px * 4];
+            let start = ((oy + y) * cw + ox) * 4;
+            let len = (px * 4).min((cw - ox) * 4);
+            canvas[start..start + len].copy_from_slice(&row[..len]);
+        }
+    }
+    if let Err(e) = crate::util::save_png(path, cw as u32, ch as u32, &canvas) {
+        eprintln!("{}: {e}", path.display());
+        return 1;
+    }
+    println!("wrote {} ({cw} x {ch})", path.display());
+    0
 }

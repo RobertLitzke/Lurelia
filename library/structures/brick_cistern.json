@@ -1,18 +1,30 @@
 {
   "name": "brick_cistern",
-  "version": 1,
+  "version": 2,
   "introduced_by": "lowmouth",
-  "notes": "A round brick cistern 5 m across that caught rainwater for the sugar house, open at the top, two rusted iron hoops round it.",
-  "size": [25, 15, 25],
+  "notes": "A round brick cistern 5.5 m across with a footing and a coping, that caught rainwater for the sugar house, open at the top, two rusted iron hoops, an iron ladder and a spigot on local -Z. Hollow inside, 2 voxels of wall.",
+  "size": [25, 17, 25],
   "anchor": [12, 0, 12],
   "foundation": 4,
   "level": true,
   "tags": ["levee"],
   "slots": {"wall": "brick_brown", "iron": "rust_iron"},
   "ops": [
-    {"op": "cylinder", "base": [12, 0, 12], "radius": 10, "height": 14, "mat": "wall", "part": "wall"},
+    {"op": "cylinder", "base": [12, 0, 12], "radius": 11, "height": 2, "mat": "wall", "part": "wall"},
+    {"op": "cylinder", "base": [12, 2, 12], "radius": 10, "height": 12, "mat": "wall", "part": "wall"},
+    {"op": "cylinder", "base": [12, 13, 12], "radius": 10.6, "height": 1, "mat": "wall", "part": "wall"},
     {"op": "cylinder", "base": [12, 1, 12], "radius": 8, "height": 14, "mat": "air", "part": "wall"},
     {"op": "cylinder", "base": [12, 4, 12], "radius": 10.4, "height": 1, "mat": "iron", "part": "metal"},
-    {"op": "cylinder", "base": [12, 10, 12], "radius": 10.4, "height": 1, "mat": "iron", "part": "metal"}
+    {"op": "cylinder", "base": [12, 4, 12], "radius": 8, "height": 1, "mat": "air", "part": "metal"},
+    {"op": "cylinder", "base": [12, 10, 12], "radius": 10.4, "height": 1, "mat": "iron", "part": "metal"},
+    {"op": "cylinder", "base": [12, 10, 12], "radius": 8, "height": 1, "mat": "air", "part": "metal"},
+    {"op": "box", "from": [10, 0, 1], "to": [11, 15, 2], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [14, 0, 1], "to": [15, 15, 2], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [10, 2, 1], "to": [15, 3, 2], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [10, 5, 1], "to": [15, 6, 2], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [10, 8, 1], "to": [15, 9, 2], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [10, 11, 1], "to": [15, 12, 2], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [10, 14, 1], "to": [15, 15, 2], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [12, 2, 0], "to": [13, 3, 2], "mat": "iron", "part": "metal"}
   ]
 }

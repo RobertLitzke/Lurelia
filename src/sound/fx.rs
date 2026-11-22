@@ -98,10 +98,16 @@ pub enum Kind {
     /// A rocket in flight: held like a beam for as long as it flies, posted
     /// from where it is each frame (`Noise::key` says which).
     Rush,
+    /// Another car's engine (a race's rivals): held while posted, from where
+    /// it is, pitched by its revs.
+    Engine,
     /// A round passing close by: its line from the muzzle to where it
     /// stopped (`Noise::at` is the far end). `place` finds where it came
     /// nearest the ear. `crack` is a supersonic round, which snaps as well.
-    Whizz { from: Vec3, crack: bool },
+    Whizz {
+        from: Vec3,
+        crack: bool,
+    },
     /// A round whining off something hard.
     Ricochet,
     /// A shell coming off a wall.
@@ -112,7 +118,9 @@ pub enum Kind {
     Splat(f32),
     Sparks,
     /// The player's round landed: on the body, or in the head.
-    Hit { head: bool },
+    Hit {
+        head: bool,
+    },
     /// The player killed someone.
     Kill,
     /// The player was hurt, by how much of their health (0 to 1).
@@ -165,11 +173,23 @@ pub struct Noise {
 
 impl Noise {
     pub fn at(kind: Kind, at: Vec3, gain: f32) -> Noise {
-        Noise { kind, at: Some(at), gain, key: 0, pitch: 1.0 }
+        Noise {
+            kind,
+            at: Some(at),
+            gain,
+            key: 0,
+            pitch: 1.0,
+        }
     }
 
     pub fn ear(kind: Kind, gain: f32) -> Noise {
-        Noise { kind, at: None, gain, key: 0, pitch: 1.0 }
+        Noise {
+            kind,
+            at: None,
+            gain,
+            key: 0,
+            pitch: 1.0,
+        }
     }
 
     /// A round fired from `at` by fire mode `f`.
@@ -184,7 +204,13 @@ impl Noise {
         // The bore drones for as long as it is held, so it sits well under
         // a shot that is over in a moment: 5 dB under the pulse gun.
         let gain = if r == Report::Bore { 0.45 } else { 0.8 };
-        Noise { kind: Kind::Beam(r), at: Some(at), gain, key: by as u32 + 1, pitch: 1.0 }
+        Noise {
+            kind: Kind::Beam(r),
+            at: Some(at),
+            gain,
+            key: by as u32 + 1,
+            pitch: 1.0,
+        }
     }
 
     /// A hitscan round from `from` to `to`, for the whizz if it passes
@@ -198,13 +224,31 @@ impl Noise {
         Noise::at(Kind::Whizz { from, crack }, to, if crack { 1.2 } else { 0.8 })
     }
 
+    /// A car's engine at `at`, `rpm` 0 (idle) to 1; `key` tells the cars
+    /// apart.
+    pub fn engine(at: Vec3, rpm: f32, key: u32) -> Noise {
+        Noise {
+            kind: Kind::Engine,
+            at: Some(at),
+            gain: 0.7,
+            key: 2000 + key,
+            pitch: 0.6 + 0.9 * rpm.clamp(0.0, 1.0),
+        }
+    }
+
     /// A rocket at `at` flying at `vel`, heard from `ear`; `key` tells it
     /// from the other rockets in the air.
     pub fn rush(at: Vec3, vel: Vec3, ear: Vec3, key: u32) -> Noise {
         // Coming on, higher; going away, lower: c / (c + speed away).
         let away = vel.dot((at - ear).normalize_or_zero());
         let pitch = (343.0 / (343.0 + away)).clamp(0.6, 1.6);
-        Noise { kind: Kind::Rush, at: Some(at), gain: 1.0, key: 1000 + key, pitch }
+        Noise {
+            kind: Kind::Rush,
+            at: Some(at),
+            gain: 1.0,
+            key: 1000 + key,
+            pitch,
+        }
     }
 }
 
@@ -273,44 +317,96 @@ struct Layer {
     decay: f32,
 }
 
-const L: Layer = Layer { src: Src::Noise, hz: [0.0, 0.0], filt: Filt::Off, cut: [0.0, 0.0], q: 0.7, glide: 0.0, amp: 1.0, at: 0.0, attack: 0.001, decay: 0.05 };
+const L: Layer = Layer {
+    src: Src::Noise,
+    hz: [0.0, 0.0],
+    filt: Filt::Off,
+    cut: [0.0, 0.0],
+    q: 0.7,
+    glide: 0.0,
+    amp: 1.0,
+    at: 0.0,
+    attack: 0.001,
+    decay: 0.05,
+};
 
 /// Noise through a bandpass: a crack, a click, a hiss.
 const fn band(hz: f32, q: f32, amp: f32, decay: f32) -> Layer {
-    Layer { filt: Filt::Bp, cut: [hz, hz], q, amp, decay, ..L }
+    Layer {
+        filt: Filt::Bp,
+        cut: [hz, hz],
+        q,
+        amp,
+        decay,
+        ..L
+    }
 }
 
 /// Noise through a lowpass: a body, a rumble, a tail.
 const fn low(hz: f32, amp: f32, decay: f32) -> Layer {
-    Layer { filt: Filt::Lp, cut: [hz, hz], amp, decay, ..L }
+    Layer {
+        filt: Filt::Lp,
+        cut: [hz, hz],
+        amp,
+        decay,
+        ..L
+    }
 }
 
 /// Noise through a highpass: sparks, spray, a hiss.
 const fn high(hz: f32, amp: f32, decay: f32) -> Layer {
-    Layer { filt: Filt::Hp, cut: [hz, hz], amp, decay, ..L }
+    Layer {
+        filt: Filt::Hp,
+        cut: [hz, hz],
+        amp,
+        decay,
+        ..L
+    }
 }
 
 /// A sine falling from `a` to `b`: a thump, a chime.
 const fn tone(a: f32, b: f32, glide: f32, amp: f32, decay: f32) -> Layer {
-    Layer { src: Src::Sine, hz: [a, b], glide, amp, decay, ..L }
+    Layer {
+        src: Src::Sine,
+        hz: [a, b],
+        glide,
+        amp,
+        decay,
+        ..L
+    }
 }
 
 /// The crack: white noise highpassed, over in a few milliseconds, with no
 /// attack to speak of.
 const fn crack(hz: f32, amp: f32, decay: f32) -> Layer {
-    Layer { attack: 0.0001, ..high(hz, amp, decay) }
+    Layer {
+        attack: 0.0001,
+        ..high(hz, amp, decay)
+    }
 }
 
 /// A muzzle blast's pulse (`Src::Pulse`), positive phase `ms` long,
 /// highpassed so the shot does not push the speaker cone out and leave it
 /// there. Its envelope only ends the layer: the pulse shapes itself.
 const fn pulse(ms: f32, amp: f32) -> Layer {
-    Layer { src: Src::Pulse, hz: [1000.0 / ms, 1000.0 / ms], filt: Filt::Hp, cut: [150.0, 150.0], attack: 0.0, decay: ms * 0.004, amp, ..L }
+    Layer {
+        src: Src::Pulse,
+        hz: [1000.0 / ms, 1000.0 / ms],
+        filt: Filt::Hp,
+        cut: [150.0, 150.0],
+        attack: 0.0,
+        decay: ms * 0.004,
+        amp,
+        ..L
+    }
 }
 
 /// The blast: broadband noise, a little longer than the crack.
 const fn blast(hz: f32, amp: f32, decay: f32) -> Layer {
-    Layer { attack: 0.0003, ..low(hz, amp, decay) }
+    Layer {
+        attack: 0.0003,
+        ..low(hz, amp, decay)
+    }
 }
 
 /// The boom: noise lowpassed, the bass of a shot without the pitch of a
@@ -318,12 +414,20 @@ const fn blast(hz: f32, amp: f32, decay: f32) -> Layer {
 /// is a drum again, so the q stays at 1. Lowpassed noise near 150 Hz keeps
 /// little of its power, so the amps are large.
 const fn boom(hz: f32, amp: f32, decay: f32) -> Layer {
-    Layer { q: 1.0, attack: 0.002, ..low(hz, amp, decay) }
+    Layer {
+        q: 1.0,
+        attack: 0.002,
+        ..low(hz, amp, decay)
+    }
 }
 
 /// The tail: the report coming back off the land, a little behind.
 const fn tail(hz: f32, amp: f32, decay: f32) -> Layer {
-    Layer { at: 0.015, attack: 0.03, ..low(hz, amp, decay) }
+    Layer {
+        at: 0.015,
+        attack: 0.03,
+        ..low(hz, amp, decay)
+    }
 }
 
 const fn later(l: Layer, at: f32) -> Layer {
@@ -370,13 +474,23 @@ fn recipe(k: Kind) -> Recipe {
     let r = |ls: &[Layer], send: f32| g(ls, send, 0.0);
     match k {
         // Guns: crack, blast, boom, tail (see the module notes), no tones.
-        Shot(Report::Pistol) => g(&[pulse(1.2, 1.5), crack(1700.0, 1.6, 0.003), blast(3800.0, 1.0, 0.03), boom(220.0, 2.4, 0.055), tail(780.0, 0.25, 0.2)], 0.6, 1.6),
+        Shot(Report::Pistol) => g(
+            &[pulse(1.2, 1.5), crack(1700.0, 1.6, 0.003), blast(3800.0, 1.0, 0.03), boom(220.0, 2.4, 0.055), tail(780.0, 0.25, 0.2)],
+            0.6,
+            1.6,
+        ),
         // Rat-a-tat: at eighteen rounds a second each one must be over
         // before the next, or they smear into a roar. A pulse for the pop,
         // a short crack and body, a boom cut short, and the action's
         // metallic tick just behind; little room, so the gaps stay clear.
         Shot(Report::Minigun) => g(
-            &[pulse(1.2, 1.4), crack(2400.0, 0.8, 0.0015), blast(3500.0, 0.7, 0.012), boom(220.0, 2.2, 0.018), later(band(3800.0, 6.0, 0.3, 0.01), 0.02)],
+            &[
+                pulse(1.2, 1.4),
+                crack(2400.0, 0.8, 0.0015),
+                blast(3500.0, 0.7, 0.012),
+                boom(220.0, 2.2, 0.018),
+                later(band(3800.0, 6.0, 0.3, 0.01), 0.02),
+            ],
             0.2,
             1.6,
         ),
@@ -396,7 +510,14 @@ fn recipe(k: Kind) -> Recipe {
             0.9,
             2.2,
         ),
-        Shot(Report::Swing) => r(&[swept(slow(band(500.0, 1.2, 0.8, 0.07), 0.04), 1800.0, 0.06), later(low(400.0, 0.9, 0.06), 0.06), later(tone(120.0, 50.0, 0.04, 0.8, 0.06), 0.06)], 0.3),
+        Shot(Report::Swing) => r(
+            &[
+                swept(slow(band(500.0, 1.2, 0.8, 0.07), 0.04), 1800.0, 0.06),
+                later(low(400.0, 0.9, 0.06), 0.06),
+                later(tone(120.0, 50.0, 0.04, 0.8, 0.06), 0.06),
+            ],
+            0.3,
+        ),
         // A whoomp: the motor lighting in the tube, noise whose lowpass
         // opens upward from a low roar, over a short boom. Nothing above a
         // couple of kHz, which is static rather than rocket. `Rush` carries
@@ -416,21 +537,52 @@ fn recipe(k: Kind) -> Recipe {
         // A rocket's motor in flight: a dark roar, held. Its decay is how
         // fast it falls away once the rocket is gone.
         Rush => g(&[low(380.0, 3.5, 0.1), band(900.0, 0.8, 1.0, 0.1), low(1800.0, 0.3, 0.1)], 0.5, 1.2),
-        Shot(Report::Lob) => g(&[pulse(2.5, 1.2), crack(1500.0, 0.5, 0.003), band(320.0, 3.0, 1.8, 0.06), boom(160.0, 3.5, 0.08), blast(2000.0, 0.6, 0.03)], 0.4, 1.4),
-        Shot(Report::Scatter) => g(&[pulse(1.8, 1.8), crack(1500.0, 1.4, 0.004), blast(3000.0, 1.4, 0.07), boom(130.0, 6.5, 0.16), tail(600.0, 0.5, 0.5)], 0.8, 2.0),
-        Shot(Report::Disc) => r(&[from(tone(900.0, 1500.0, 0.05, 0.6, 0.08), Src::Saw), band(4200.0, 2.0, 0.5, 0.04), tone(160.0, 80.0, 0.03, 0.5, 0.04)], 0.4),
+        // A two-stroke buzz: a pulse train for the firing, a growl under it.
+        Engine => g(&[pulse(7.0, 0.9), band(240.0, 2.0, 1.2, 0.1), low(420.0, 1.0, 0.1)], 0.3, 1.4),
+        Shot(Report::Lob) => g(
+            &[
+                pulse(2.5, 1.2),
+                crack(1500.0, 0.5, 0.003),
+                band(320.0, 3.0, 1.8, 0.06),
+                boom(160.0, 3.5, 0.08),
+                blast(2000.0, 0.6, 0.03),
+            ],
+            0.4,
+            1.4,
+        ),
+        Shot(Report::Scatter) => g(
+            &[pulse(1.8, 1.8), crack(1500.0, 1.4, 0.004), blast(3000.0, 1.4, 0.07), boom(130.0, 6.5, 0.16), tail(600.0, 0.5, 0.5)],
+            0.8,
+            2.0,
+        ),
+        Shot(Report::Disc) => r(
+            &[from(tone(900.0, 1500.0, 0.05, 0.6, 0.08), Src::Saw), band(4200.0, 2.0, 0.5, 0.04), tone(160.0, 80.0, 0.03, 0.5, 0.04)],
+            0.4,
+        ),
         Shot(Report::Goo) => r(&[band(480.0, 3.0, 1.0, 0.1), tone(320.0, 110.0, 0.06, 0.7, 0.12), later(band(900.0, 4.0, 0.4, 0.06), 0.05)], 0.3),
-        Shot(Report::Slug) => g(&[pulse(1.6, 1.6), crack(1800.0, 1.0, 0.003), blast(2600.0, 1.0, 0.05), boom(150.0, 5.5, 0.13), tail(500.0, 0.4, 0.4)], 0.6, 1.8),
+        Shot(Report::Slug) => g(
+            &[pulse(1.6, 1.6), crack(1800.0, 1.0, 0.003), blast(2600.0, 1.0, 0.05), boom(150.0, 5.5, 0.13), tail(500.0, 0.4, 0.4)],
+            0.6,
+            1.8,
+        ),
         // Beams are held: their decay is how fast they fall away once let go.
         // The bore's cutting head: a sawtooth drone at 46 Hz, a grinding
         // rumble under it and a little grit. 55 Hz was too thin and 38 Hz
         // too low.
         Beam(Report::Bore) | Shot(Report::Bore) => g(
-            &[from(tone(46.0, 46.0, 0.0, 0.75, 0.12), Src::Saw), low(180.0, 1.8, 0.12), band(260.0, 1.8, 0.8, 0.12), band(2000.0, 2.5, 0.2, 0.12)],
+            &[
+                from(tone(46.0, 46.0, 0.0, 0.75, 0.12), Src::Saw),
+                low(180.0, 1.8, 0.12),
+                band(260.0, 1.8, 0.8, 0.12),
+                band(2000.0, 2.5, 0.2, 0.12),
+            ],
             0.4,
             1.3,
         ),
-        Beam(_) | Shot(Report::Pulse) => r(&[from(tone(220.0, 220.0, 0.0, 0.45, 0.1), Src::Saw), tone(440.0, 440.0, 0.0, 0.35, 0.1), band(3400.0, 4.0, 0.2, 0.1)], 0.4),
+        Beam(_) | Shot(Report::Pulse) => r(
+            &[from(tone(220.0, 220.0, 0.0, 0.45, 0.1), Src::Saw), tone(440.0, 440.0, 0.0, 0.35, 0.1), band(3400.0, 4.0, 0.2, 0.1)],
+            0.4,
+        ),
         Impact(Ground::Stone) => r(&[band(3600.0, 1.4, 0.9, 0.012), band(1200.0, 1.0, 0.5, 0.02)], 0.5),
         Impact(Ground::Water) => r(&[band(1400.0, 2.0, 0.7, 0.03), tone(900.0, 1700.0, 0.03, 0.4, 0.04)], 0.3),
         Impact(Ground::Leaves) => r(&[band(2500.0, 0.8, 0.6, 0.03), low(800.0, 0.4, 0.03)], 0.3),
@@ -438,9 +590,20 @@ fn recipe(k: Kind) -> Recipe {
         // A round going past: narrow noise falling in pitch as it goes (the
         // Doppler sweep), rising fast as it comes. A supersonic round
         // snaps first.
-        Whizz { crack: false, .. } => r(&[swept(slow(band(3200.0, 4.0, 1.0, 0.07), 0.025), 1100.0, 0.08), swept(slow(band(6000.0, 3.0, 0.4, 0.05), 0.02), 2500.0, 0.06)], 0.2),
+        Whizz { crack: false, .. } => r(
+            &[
+                swept(slow(band(3200.0, 4.0, 1.0, 0.07), 0.025), 1100.0, 0.08),
+                swept(slow(band(6000.0, 3.0, 0.4, 0.05), 0.02), 2500.0, 0.06),
+            ],
+            0.2,
+        ),
         Whizz { crack: true, .. } => r(
-            &[pulse(0.3, 1.2), crack(3000.0, 1.6, 0.002), band(5200.0, 1.2, 0.6, 0.01), swept(slow(band(2800.0, 3.0, 0.8, 0.08), 0.015), 900.0, 0.09)],
+            &[
+                pulse(0.3, 1.2),
+                crack(3000.0, 1.6, 0.002),
+                band(5200.0, 1.2, 0.6, 0.01),
+                swept(slow(band(2800.0, 3.0, 0.8, 0.08), 0.015), 900.0, 0.09),
+            ],
             0.4,
         ),
         Ricochet => r(&[tone(2900.0, 1300.0, 0.18, 0.35, 0.2)], 0.6),
@@ -469,11 +632,34 @@ fn recipe(k: Kind) -> Recipe {
         Hurt(_) => r(&[low(260.0, 1.0, 0.12), tone(120.0, 55.0, 0.06, 0.8, 0.1), band(900.0, 1.0, 0.2, 0.04)], 0.2),
         Death => r(&[tone(220.0, 55.0, 0.5, 0.8, 0.45), low(300.0, 0.8, 0.35), later(low(150.0, 0.5, 0.4), 0.1)], 0.8),
         Clank => r(&[band(1100.0, 8.0, 1.0, 0.09), band(2300.0, 6.0, 0.5, 0.06), band(3000.0, 1.0, 0.4, 0.008)], 0.4),
-        Shutdown => r(&[from(tone(420.0, 50.0, 0.25, 0.6, 0.6), Src::Saw), band(5000.0, 1.0, 0.4, 0.05), later(band(4200.0, 1.2, 0.3, 0.04), 0.12), later(low(300.0, 0.6, 0.2), 0.05)], 0.6),
+        Shutdown => r(
+            &[
+                from(tone(420.0, 50.0, 0.25, 0.6, 0.6), Src::Saw),
+                band(5000.0, 1.0, 0.4, 0.05),
+                later(band(4200.0, 1.2, 0.3, 0.04), 0.12),
+                later(low(300.0, 0.6, 0.2), 0.05),
+            ],
+            0.6,
+        ),
         Pickup(Pick::Health) => r(&[tone(660.0, 660.0, 0.0, 0.5, 0.12), later(tone(990.0, 990.0, 0.0, 0.45, 0.18), 0.07)], 0.3),
-        Pickup(Pick::Armour) => r(&[band(1400.0, 6.0, 0.7, 0.08), from(tone(330.0, 330.0, 0.0, 0.3, 0.14), Src::Square), later(tone(495.0, 495.0, 0.0, 0.3, 0.16), 0.07)], 0.3),
+        Pickup(Pick::Armour) => r(
+            &[
+                band(1400.0, 6.0, 0.7, 0.08),
+                from(tone(330.0, 330.0, 0.0, 0.3, 0.14), Src::Square),
+                later(tone(495.0, 495.0, 0.0, 0.3, 0.16), 0.07),
+            ],
+            0.3,
+        ),
         Pickup(Pick::Ammo) => r(&[band(2600.0, 2.0, 0.8, 0.012), later(band(2200.0, 2.0, 0.8, 0.012), 0.06), later(low(700.0, 0.4, 0.04), 0.06)], 0.2),
-        Pickup(Pick::Weapon) => r(&[tone(523.0, 523.0, 0.0, 0.4, 0.1), later(tone(659.0, 659.0, 0.0, 0.4, 0.1), 0.07), later(tone(784.0, 784.0, 0.0, 0.45, 0.2), 0.14), band(1800.0, 3.0, 0.5, 0.02)], 0.3),
+        Pickup(Pick::Weapon) => r(
+            &[
+                tone(523.0, 523.0, 0.0, 0.4, 0.1),
+                later(tone(659.0, 659.0, 0.0, 0.4, 0.1), 0.07),
+                later(tone(784.0, 784.0, 0.0, 0.45, 0.2), 0.14),
+                band(1800.0, 3.0, 0.5, 0.02),
+            ],
+            0.3,
+        ),
         Grab => r(&[tone(740.0, 740.0, 0.0, 0.4, 0.08), later(tone(990.0, 990.0, 0.0, 0.35, 0.1), 0.05)], 0.3),
         Switch => r(&[band(1800.0, 2.0, 0.8, 0.02), later(band(2600.0, 3.0, 0.7, 0.012), 0.09)], 0.15),
         ReloadOut => r(&[band(2200.0, 3.0, 0.8, 0.015), later(swept(band(900.0, 2.0, 0.5, 0.06), 1500.0, 0.05), 0.03)], 0.15),
@@ -484,31 +670,69 @@ fn recipe(k: Kind) -> Recipe {
         // a scuff on stone, a swish through grass, a crunch of leaves, a
         // slosh in water.
         Step(Ground::Stone) => r(
-            &[slow(low(320.0, 0.9, 0.035), 0.004), slow(band(1200.0, 0.8, 0.22, 0.02), 0.003), later(slow(low(420.0, 0.5, 0.03), 0.004), 0.07), later(slow(band(1800.0, 0.8, 0.18, 0.035), 0.006), 0.07)],
+            &[
+                slow(low(320.0, 0.9, 0.035), 0.004),
+                slow(band(1200.0, 0.8, 0.22, 0.02), 0.003),
+                later(slow(low(420.0, 0.5, 0.03), 0.004), 0.07),
+                later(slow(band(1800.0, 0.8, 0.18, 0.035), 0.006), 0.07),
+            ],
             0.15,
         ),
         Step(Ground::Grass) => r(
-            &[slow(low(250.0, 0.8, 0.04), 0.006), slow(band(3000.0, 0.6, 0.18, 0.06), 0.015), later(slow(low(320.0, 0.4, 0.03), 0.006), 0.07), later(slow(band(2600.0, 0.6, 0.15, 0.07), 0.02), 0.06)],
+            &[
+                slow(low(250.0, 0.8, 0.04), 0.006),
+                slow(band(3000.0, 0.6, 0.18, 0.06), 0.015),
+                later(slow(low(320.0, 0.4, 0.03), 0.006), 0.07),
+                later(slow(band(2600.0, 0.6, 0.15, 0.07), 0.02), 0.06),
+            ],
             0.05,
         ),
         Step(Ground::Leaves) => r(
-            &[slow(low(260.0, 0.8, 0.04), 0.006), slow(band(2200.0, 0.7, 0.25, 0.05), 0.008), later(slow(band(3200.0, 0.8, 0.2, 0.06), 0.01), 0.05), later(slow(low(340.0, 0.4, 0.03), 0.006), 0.07)],
+            &[
+                slow(low(260.0, 0.8, 0.04), 0.006),
+                slow(band(2200.0, 0.7, 0.25, 0.05), 0.008),
+                later(slow(band(3200.0, 0.8, 0.2, 0.06), 0.01), 0.05),
+                later(slow(low(340.0, 0.4, 0.03), 0.006), 0.07),
+            ],
             0.05,
         ),
         Step(Ground::Water) => r(
-            &[slow(low(300.0, 0.45, 0.05), 0.008), slow(band(900.0, 1.0, 0.2, 0.08), 0.012), tone(650.0, 1200.0, 0.04, 0.07, 0.05), later(slow(band(1300.0, 1.0, 0.15, 0.07), 0.015), 0.06)],
+            &[
+                slow(low(300.0, 0.45, 0.05), 0.008),
+                slow(band(900.0, 1.0, 0.2, 0.08), 0.012),
+                tone(650.0, 1200.0, 0.04, 0.07, 0.05),
+                later(slow(band(1300.0, 1.0, 0.15, 0.07), 0.015), 0.06),
+            ],
             0.05,
         ),
-        Step(Ground::Soft) => r(&[slow(low(300.0, 0.9, 0.045), 0.006), slow(band(900.0, 0.8, 0.12, 0.03), 0.005), later(slow(low(380.0, 0.5, 0.035), 0.006), 0.07)], 0.05),
+        Step(Ground::Soft) => r(
+            &[
+                slow(low(300.0, 0.9, 0.045), 0.006),
+                slow(band(900.0, 0.8, 0.12, 0.03), 0.005),
+                later(slow(low(380.0, 0.5, 0.035), 0.006), 0.07),
+            ],
+            0.05,
+        ),
         Jump => r(&[slow(band(700.0, 1.2, 0.35, 0.08), 0.03)], 0.1),
         Land(_) => r(&[low(240.0, 1.0, 0.09), tone(90.0, 45.0, 0.05, 0.7, 0.08), band(1500.0, 1.0, 0.2, 0.02)], 0.3),
         Pad => r(&[tone(110.0, 420.0, 0.15, 0.8, 0.25), swept(slow(band(600.0, 1.5, 0.6, 0.25), 0.02), 2400.0, 0.2)], 0.5),
-        Teleport => r(&[from(tone(300.0, 1400.0, 0.2, 0.4, 0.35), Src::Saw), swept(slow(band(1500.0, 2.0, 0.6, 0.3), 0.05), 5000.0, 0.25)], 0.6),
+        Teleport => r(
+            &[from(tone(300.0, 1400.0, 0.2, 0.4, 0.35), Src::Saw), swept(slow(band(1500.0, 2.0, 0.6, 0.3), 0.05), 5000.0, 0.25)],
+            0.6,
+        ),
         Respawn => r(&[swept(slow(band(400.0, 2.0, 0.6, 0.4), 0.15), 3200.0, 0.4), tone(440.0, 880.0, 0.3, 0.3, 0.5)], 0.6),
-        FlagTaken(true) | FlagCaptured(false) => r(&[from(tone(440.0, 440.0, 0.0, 0.4, 0.15), Src::Square), later(from(tone(330.0, 330.0, 0.0, 0.4, 0.3), Src::Square), 0.15)], 0.3),
+        FlagTaken(true) | FlagCaptured(false) => r(
+            &[from(tone(440.0, 440.0, 0.0, 0.4, 0.15), Src::Square), later(from(tone(330.0, 330.0, 0.0, 0.4, 0.3), Src::Square), 0.15)],
+            0.3,
+        ),
         FlagTaken(false) => r(&[tone(523.0, 523.0, 0.0, 0.45, 0.12), later(tone(784.0, 784.0, 0.0, 0.45, 0.25), 0.12)], 0.3),
         FlagCaptured(true) => r(
-            &[tone(523.0, 523.0, 0.0, 0.4, 0.12), later(tone(659.0, 659.0, 0.0, 0.4, 0.12), 0.12), later(tone(784.0, 784.0, 0.0, 0.4, 0.12), 0.24), later(tone(1047.0, 1047.0, 0.0, 0.5, 0.4), 0.36)],
+            &[
+                tone(523.0, 523.0, 0.0, 0.4, 0.12),
+                later(tone(659.0, 659.0, 0.0, 0.4, 0.12), 0.12),
+                later(tone(784.0, 784.0, 0.0, 0.4, 0.12), 0.24),
+                later(tone(1047.0, 1047.0, 0.0, 0.5, 0.4), 0.36),
+            ],
             0.3,
         ),
         FlagDropped => r(&[tone(392.0, 330.0, 0.1, 0.4, 0.3)], 0.3),
@@ -538,7 +762,10 @@ pub fn place(n: &Noise, eye: Vec3, facing: [f32; 2], pitch: f32) -> Option<Shot>
     let passed;
     let n = match (n.kind, n.at) {
         (Kind::Whizz { from, .. }, Some(to)) => {
-            passed = Noise { at: Some(nearest(from, to, eye)?), ..*n };
+            passed = Noise {
+                at: Some(nearest(from, to, eye)?),
+                ..*n
+            };
             &passed
         }
         _ => n,
@@ -571,7 +798,15 @@ pub fn place(n: &Noise, eye: Vec3, facing: [f32; 2], pitch: f32) -> Option<Shot>
     if gain < 0.004 {
         return None;
     }
-    Some(Shot { kind: n.kind, gain: gain.min(2.0), pan: side, cut, delay, pitch: pitch * n.pitch, key: n.key })
+    Some(Shot {
+        kind: n.kind,
+        gain: gain.min(2.0),
+        pan: side,
+        cut,
+        delay,
+        pitch: pitch * n.pitch,
+        key: n.key,
+    })
 }
 
 /// Metres from the ear inside which a round is heard going past.
@@ -635,12 +870,15 @@ pub const VOICES: usize = 40;
 
 impl Fx {
     pub fn new() -> Fx {
-        Fx { voices: Vec::with_capacity(VOICES), rng: Rng::new(0xF00D) }
+        Fx {
+            voices: Vec::with_capacity(VOICES),
+            rng: Rng::new(0xF00D),
+        }
     }
 
     /// Start a noise (or keep a held one up).
     pub fn start(&mut self, s: Shot, sr: f32) {
-        let hold = matches!(s.kind, Kind::Beam(_) | Kind::Rush);
+        let hold = matches!(s.kind, Kind::Beam(_) | Kind::Rush | Kind::Engine);
         let lr = pan(s.pan);
         if hold {
             if let Some(v) = self.voices.iter_mut().find(|v| v.hold && v.key == s.key && v.release >= 1.0) {
@@ -693,7 +931,11 @@ impl Fx {
             kind: s.kind,
             pan: s.pan,
             recipe,
-            st: std::array::from_fn(|k| LayerState { phase: 0.0, filt: Biquad::default(), rng: Rng::new(seed.wrapping_add(k as u32 * 7919)) }),
+            st: std::array::from_fn(|k| LayerState {
+                phase: 0.0,
+                filt: Biquad::default(),
+                rng: Rng::new(seed.wrapping_add(k as u32 * 7919)),
+            }),
             t: 0.0,
             wait: (s.delay * sr) as usize,
             gain,

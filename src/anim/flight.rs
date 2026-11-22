@@ -7,8 +7,8 @@
 //! "up" is roll * side, a wing folded back is yaw -side * 1.45; root roll +a
 //! banks left, root pitch +a lifts the head.
 
-use crate::anim::{Plan, Role};
 use super::{Pose, Rig};
+use crate::anim::{Plan, Role};
 use crate::world::noise::Rng;
 use glam::Vec3;
 use std::f32::consts::TAU;
@@ -99,6 +99,14 @@ pub struct Flight {
     /// much (0 still, 1 walking).
     pub stride: f32,
     pub walk: f32,
+    /// Metres covered in one stride cycle (two steps): 0.3 for a goose, a
+    /// few centimetres for a sandpiper, whose legs go in a blur.
+    pub stride_m: f32,
+    /// Seconds between pecks while on its feet, least and spread: a
+    /// sandpiper probes the sand all the time, a sparrow now and then.
+    pub peck_every: (f32, f32),
+    /// Hangs with its body tilted up while it hovers (hummingbirds).
+    pub upright: bool,
     prev_yaw: f32,
     rng: Rng,
 }
@@ -126,6 +134,9 @@ impl Flight {
             was_perched: false,
             stride: 0.0,
             walk: 0.0,
+            stride_m: 0.3,
+            peck_every: (1.5, 4.0),
+            upright: false,
             prev_yaw: f32::NAN,
             rng: Rng::walker(seed | 1),
         };
@@ -207,6 +218,10 @@ impl Flight {
             1.35
         } else if inp.perched {
             0.0
+        } else if self.upright && flat < 2.0 {
+            // Hovering: hung tilted up, beating forward and back. Climbing
+            // straight up it stands nearly upright.
+            0.75 * (1.0 - flat / 2.0) + 0.3 * (vy / 3.0).clamp(0.0, 1.0)
         } else {
             climb.clamp(-0.6, 0.5) + 0.5 * self.flare
         };
@@ -224,7 +239,11 @@ impl Flight {
         self.peck_timer -= dt;
         if inp.perched && self.peck_timer <= 0.0 {
             // A clinging woodpecker drums: bursts of quick blows.
-            self.peck_timer = if inp.cling { 0.12 + if self.rand() < 0.15 { 1.5 } else { 0.0 } } else { 1.5 + self.rand() * 4.0 };
+            self.peck_timer = if inp.cling {
+                0.12 + if self.rand() < 0.15 { 1.5 } else { 0.0 }
+            } else {
+                self.peck_every.0 + self.rand() * self.peck_every.1
+            };
             self.peck = 1.0;
         }
         self.peck = (self.peck - dt * if inp.cling { 9.0 } else { 3.0 }).max(0.0);
@@ -232,7 +251,10 @@ impl Flight {
         // about two steps per 0.3 m.
         let walk_want = if inp.perched && !inp.cling { (flat / 0.12).clamp(0.0, 1.0) } else { 0.0 };
         self.walk += (walk_want - self.walk) * k(8.0);
-        self.stride = (self.stride + dt * (flat / 0.3).clamp(0.6, 4.0) * (self.walk > 0.02) as u8 as f32).fract();
+        // Short legs stride faster, up to eight cycles a second (a blur at 60
+        // frames a second, not an alias).
+        let cap = (1.2 / self.stride_m.max(0.05)).clamp(4.0, 8.0);
+        self.stride = (self.stride + dt * (flat / self.stride_m.max(0.05)).clamp(0.6, cap) * (self.walk > 0.02) as u8 as f32).fract();
     }
 
     pub fn compose(&self, rig: &Rig, voxel: f32) -> Pose {
@@ -304,5 +326,61 @@ impl Flight {
         // Perched: stand on the feet, which hang below the model's floor.
         p.root.y = -rig.floor * voxel * f;
         p
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn input(vel: Vec3, perched: bool) -> Input {
+        Input {
+            dt: 1.0 / 60.0,
+            vel,
+            yaw: 0.0,
+            perched,
+            landing: false,
+            cling: false,
+        }
+    }
+
+    /// A hummingbird hangs tilted up while it hovers and flies level once it
+    /// gets going; another bird hovering in place does not tilt.
+    #[test]
+    fn a_hummingbird_hovers_tilted_up() {
+        let mut hum = Flight::new(Pattern::Hover, 12.0, 7);
+        hum.upright = true;
+        let mut moth = Flight::new(Pattern::Hover, 12.0, 7);
+        for _ in 0..120 {
+            hum.step(&input(Vec3::ZERO, false));
+            moth.step(&input(Vec3::ZERO, false));
+        }
+        assert!(hum.pitch > 0.6, "{}", hum.pitch);
+        assert!(moth.pitch.abs() < 0.05, "{}", moth.pitch);
+        for _ in 0..120 {
+            hum.step(&input(Vec3::new(0.0, 0.0, -6.0), false));
+        }
+        assert!(hum.pitch.abs() < 0.1, "{}", hum.pitch);
+    }
+
+    /// Short legs stride faster at the same pace, up to the cap.
+    #[test]
+    fn short_legs_stride_faster() {
+        let run = |stride_m: f32| {
+            let mut f = Flight::new(Pattern::Flap, 8.0, 3);
+            f.stride_m = stride_m;
+            let mut turns = 0.0;
+            let mut last = f.stride;
+            for _ in 0..600 {
+                f.step(&input(Vec3::new(0.0, 0.0, -1.0), true));
+                let d = f.stride - last;
+                turns += if d < 0.0 { d + 1.0 } else { d };
+                last = f.stride;
+            }
+            turns / 10.0
+        };
+        let (goose, piper) = (run(0.3), run(0.1));
+        assert!((goose - 1.0 / 0.3).abs() < 0.3, "{goose}");
+        assert!(piper > goose * 2.0 && piper <= 8.0 + 1e-3, "{piper}");
     }
 }

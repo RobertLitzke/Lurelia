@@ -12,6 +12,123 @@ use super::matlib;
 use super::noise::{hash3, hash32, perlin3, unit};
 use glam::Vec3;
 
+/// A root flare at least this wide (metres, `buttress` on a plant) is drawn
+/// as separate plank buttresses rather than one fluted cone.
+pub const PLANK_FLARE: f32 = 1.5;
+
+/// How far a plank buttress runs out past the trunk, as a multiple of the
+/// flare: a fin is a long low wall, not a lobe.
+pub const PLANK_REACH: f32 = 1.8;
+
+/// A trunk's widest radius at `hy` m over its base: the taper, the foot and
+/// the buttress lobes or plank fins at their crest. `woody` draws the trunk
+/// inside it; an event that builds round a trunk (a canopy platform, a stair
+/// wound up it) keeps outside it. `stem_min` is the thinnest the trunk is
+/// drawn at the voxel size in hand (0 for a big tree).
+pub fn trunk_reach(t: &Tree, hy: f32, stem_min: f32) -> f32 {
+    let plank = t.flare >= PLANK_FLARE;
+    let flare_h = if plank { t.flare * 2.2 } else { (t.flare * 4.0).max(1.0) };
+    let taper = 1.0 - 0.3 * (hy / t.trunk_h).max(0.0);
+    let mut flare = 0.14 * (1.0 - hy / 0.5).max(0.0);
+    if plank {
+        let k = (1.0 - hy / flare_h).max(0.0);
+        flare += t.flare * PLANK_REACH * k.powf(1.6);
+    } else if t.flare > 0.0 {
+        let k = (1.0 - hy / flare_h).max(0.0);
+        flare += t.flare * k * k;
+    }
+    (t.trunk_r * taper).max(stem_min) + flare
+}
+
+/// How deep the lumps on a crown clump cut (`canopy::Lumps`).
+const LUMP_AMP: f32 = 0.20;
+
+/// The most `noise::perlin3` ever answers in either direction: 1.036 at
+/// worst over every choice of lattice gradients, rounded up.
+const PERLIN3_MAX: f32 = 1.1;
+
+/// Voxels to a side of the blocks `raster_into` settles at once. Measured on
+/// a grove of 80 m trees: 4 is fastest; 8 settles too few blocks, and
+/// splitting an unsettled block further costs more in classifier calls than
+/// it saves in voxel tests.
+const BLOCK: i32 = 4;
+
+/// Rasterise `f` over the box `lo`..`hi` (metres) into the padded chunk,
+/// writing only into air. The box is walked in blocks of `BLOCK` voxels a
+/// side, and `class` is shown each block's extent first (the centres of its
+/// lowest and highest voxels): `Some(AIR)` skips the block, `Some(m)` fills
+/// its air with `m`, `None` tests each voxel with `f`. A classifier may only answer
+/// where `f` would have given that same answer for every voxel in the
+/// block. Returns whether anything was written.
+#[allow(clippy::too_many_arguments)]
+fn raster_into(v: &mut [u8; PAD3], o: Vec3, vsize: f32, lo: Vec3, hi: Vec3, class: &dyn Fn(Vec3, Vec3) -> Option<u8>, f: &dyn Fn(Vec3) -> u8) -> bool {
+    let lim = PAD as i32 - 1;
+    let idx = |m: f32, o: f32| ((m - o) / vsize).floor() as i32;
+    let (x0, x1) = (idx(lo.x, o.x).max(0), idx(hi.x, o.x).min(lim));
+    let (y0, y1) = (idx(lo.y, o.y).max(0), idx(hi.y, o.y).min(PADY as i32 - 1));
+    let (z0, z1) = (idx(lo.z, o.z).max(0), idx(hi.z, o.z).min(lim));
+    let mut st = Walk { v, o, vsize, class, f, any: false };
+    let mut by = y0;
+    while by <= y1 {
+        let ey = (by + BLOCK - 1).min(y1);
+        let mut bz = z0;
+        while bz <= z1 {
+            let ez = (bz + BLOCK - 1).min(z1);
+            let mut bx = x0;
+            while bx <= x1 {
+                let ex = (bx + BLOCK - 1).min(x1);
+                st.block([bx, by, bz], [ex, ey, ez]);
+                bx = ex + 1;
+            }
+            bz = ez + 1;
+        }
+        by = ey + 1;
+    }
+    st.any
+}
+
+/// `raster_into`'s state while it walks the blocks.
+struct Walk<'a> {
+    v: &'a mut [u8; PAD3],
+    o: Vec3,
+    vsize: f32,
+    class: &'a dyn Fn(Vec3, Vec3) -> Option<u8>,
+    f: &'a dyn Fn(Vec3) -> u8,
+    any: bool,
+}
+
+impl Walk<'_> {
+    fn at(&self, p: [i32; 3]) -> Vec3 {
+        self.o + (Vec3::new(p[0] as f32, p[1] as f32, p[2] as f32) + 0.5) * self.vsize
+    }
+
+    /// Settle the block of voxels `a..=b`, or test each of its voxels.
+    fn block(&mut self, a: [i32; 3], b: [i32; 3]) {
+        let settled = (self.class)(self.at(a), self.at(b));
+        if settled == Some(AIR) {
+            return;
+        }
+        for py in a[1]..=b[1] {
+            for pz in a[2]..=b[2] {
+                for px in a[0]..=b[0] {
+                    let i = pidx(px as usize, py as usize, pz as usize);
+                    if self.v[i] != AIR {
+                        continue;
+                    }
+                    let m = match settled {
+                        Some(m) => m,
+                        None => (self.f)(self.at([px, py, pz])),
+                    };
+                    if m != AIR {
+                        self.v[i] = m;
+                        self.any = true;
+                    }
+                }
+            }
+        }
+    }
+}
+
 /// The chunk a stamp writes into: the padded voxels, the array's minimum
 /// corner in metres, the voxel edge at this level of detail, and the world's
 /// leaf seed (a stamp mixes its own seed into it).
@@ -45,32 +162,15 @@ impl Stamp for Tree {
 /// `o` is the padded array's minimum corner in metres. Returns true if anything
 /// was written.
 fn woody(t: &Tree, v: &mut [u8; PAD3], o: Vec3, vsize: f32, leaf_seed: u32) -> bool {
-    let mut any = false;
+    let any = std::cell::Cell::new(false);
     let mut herb = false;
-    let mut raster = |lo: Vec3, hi: Vec3, v: &mut [u8; PAD3], f: &dyn Fn(Vec3) -> u8| {
-        let lim = PAD as i32 - 1;
-        let idx = |m: f32, o: f32| ((m - o) / vsize).floor() as i32;
-        let (x0, x1) = (idx(lo.x, o.x).max(0), idx(hi.x, o.x).min(lim));
-        let (y0, y1) = (idx(lo.y, o.y).max(0), idx(hi.y, o.y).min(PADY as i32 - 1));
-        let (z0, z1) = (idx(lo.z, o.z).max(0), idx(hi.z, o.z).min(lim));
-        for py in y0..=y1 {
-            let ym = o.y + (py as f32 + 0.5) * vsize;
-            for pz in z0..=z1 {
-                let zm = o.z + (pz as f32 + 0.5) * vsize;
-                for px in x0..=x1 {
-                    let i = pidx(px as usize, py as usize, pz as usize);
-                    if v[i] != AIR {
-                        continue;
-                    }
-                    let m = f(Vec3::new(o.x + (px as f32 + 0.5) * vsize, ym, zm));
-                    if m != AIR {
-                        v[i] = m;
-                        any = true;
-                    }
-                }
-            }
+    let raster = |lo: Vec3, hi: Vec3, v: &mut [u8; PAD3], f: &dyn Fn(Vec3) -> u8| {
+        if raster_into(v, o, vsize, lo, hi, &|_, _| None, f) {
+            any.set(true);
         }
     };
+    // The same, with a classifier that settles whole blocks at once.
+    let raster_b = |lo: Vec3, hi: Vec3, v: &mut [u8; PAD3], class: &dyn Fn(Vec3, Vec3) -> Option<u8>, f: &dyn Fn(Vec3) -> u8| raster_into(v, o, vsize, lo, hi, class, f);
 
     // Where the trunk stands and how wide it is. A conifer's needle cone
     // has to agree with it: the leaf mesher works in cells of 2x2x2
@@ -103,20 +203,16 @@ fn woody(t: &Tree, v: &mut [u8; PAD3], o: Vec3, vsize: f32, leaf_seed: u32) -> b
         0.0
     };
     let c = Vec3::new(snap(t.pos.x), t.pos.y, snap(t.pos.z));
-    // Root flare: lobes like buttress roots, gone by a few metres up.
-    let flare_h = (t.flare * 4.0).max(1.0);
+    // Root flare: lobes like buttress roots, gone by a few metres up. A big
+    // flare is drawn as plank buttresses instead (`PLANK_FLARE`): thin walls
+    // standing out from the trunk, rather than one fluted cone, which at
+    // rainforest sizes reads as a plinth the tree stands on.
+    let plank = t.flare >= PLANK_FLARE;
+    let flare_h = if plank { t.flare * 2.2 } else { (t.flare * 4.0).max(1.0) };
     let leaf_cell = 2.0 * vsize;
     // The trunk's widest radius at height `hy`: the taper, the foot and
     // the buttress lobes at their crest, matching the raster below.
-    let trunk_at = |hy: f32| -> f32 {
-        let taper = 1.0 - 0.3 * (hy / t.trunk_h).max(0.0);
-        let mut flare = 0.14 * (1.0 - hy / 0.5).max(0.0);
-        if t.flare > 0.0 {
-            let k = (1.0 - hy / flare_h).max(0.0);
-            flare += t.flare * k * k;
-        }
-        (t.trunk_r * taper).max(stem_min) + flare
-    };
+    let trunk_at = |hy: f32| -> f32 { trunk_reach(t, hy, stem_min) };
     let mut trunk_top = t.trunk_h;
     // Past the full-detail band a conifer's leaf cells are 1 m and 2 m
     // across, far too coarse to clothe a 30 cm trunk, so the trunk simply
@@ -136,14 +232,88 @@ fn woody(t: &Tree, v: &mut [u8; PAD3], o: Vec3, vsize: f32, leaf_seed: u32) -> b
     // 0.12 m) keep their own size and place. Herbs (trunk_r 0) have none.
     if t.trunk_r > 0.0 {
         let rmin = stem_min;
-        let rmax = t.trunk_r.max(rmin) + 0.14 + t.flare;
+        let rmax = t.trunk_r.max(rmin) + 0.14 + t.flare * if plank { PLANK_REACH } else { 1.0 };
         let lobes = 5.0 + (t.seed % 3) as f32;
         let phase = (t.seed % 628) as f32 * 0.01;
-        raster(c + Vec3::new(-rmax, -0.8, -rmax), c + Vec3::new(rmax, trunk_top, rmax), v, &|p: Vec3| {
+        // Plank buttresses: each fin a direction, a reach (a fraction of the
+        // flare) and a height of its own, so no two trees stand alike.
+        let fins: Vec<(f32, f32, f32, f32)> = if plank {
+            let n = 4 + (t.seed % 4) as usize;
+            (0..n)
+                .map(|i| {
+                    let h = hash32(t.seed ^ (i as u32).wrapping_mul(0x9e37_79b9));
+                    let a = phase + i as f32 * std::f32::consts::TAU / n as f32 + (unit(h) - 0.5) * 0.9;
+                    let reach = 0.55 + 0.45 * unit(hash32(h ^ 0x68e3));
+                    (a.cos(), a.sin(), reach, 0.7 + 0.3 * unit(hash32(h ^ 0x2c1b)))
+                })
+                .collect()
+        } else {
+            Vec::new()
+        };
+        // A fin is at least this thick, so it survives the coarser voxels
+        // of the far bands instead of breaking into a dotted line.
+        let fin_min = 0.6 * vsize;
+        // A block whose every point is nearer the axis than the trunk is
+        // at its narrowest (the block's top) is all bark; one whose every
+        // point is further out than anything reaches at the block's foot,
+        // fins included, is all air. Exact either way: the taper, the flare
+        // and the fins only shrink as they climb.
+        let trunk_class = |a: Vec3, b: Vec3| -> Option<u8> {
+            let m = (a + b) * 0.5;
+            let rc = ((m.x - c.x).powi(2) + (m.z - c.z).powi(2)).sqrt();
+            let hh = (((b.x - a.x) * 0.5).powi(2) + ((b.z - a.z) * 0.5).powi(2)).sqrt();
+            let (hy_lo, hy_hi) = (a.y - c.y, b.y - c.y);
+            let inner = t.trunk_r * (1.0 - 0.3 * (hy_hi / t.trunk_h).max(0.0));
+            if rc + hh < inner {
+                return Some(t.bark);
+            }
+            let k = (1.0 - hy_lo / flare_h).max(0.0);
+            let outer = trunk_at(hy_lo) + t.flare * 0.12 * k * k + if plank { 0.5 + fin_min } else { 0.0 } + 0.01;
+            if rc - hh > outer {
+                return Some(AIR);
+            }
+            None
+        };
+        if raster_b(c + Vec3::new(-rmax, -0.8, -rmax), c + Vec3::new(rmax, trunk_top, rmax), v, &trunk_class, &|p: Vec3| {
             let hy = p.y - c.y;
             let (dx, dz) = (p.x - c.x, p.z - c.z);
             let taper = 1.0 - 0.3 * (hy / t.trunk_h).max(0.0);
             let mut flare = 0.14 * (1.0 - hy / 0.5).max(0.0);
+            if plank {
+                let core = t.trunk_r * taper;
+                // A little swell of the trunk itself, so the fins grow out
+                // of it rather than being stuck on.
+                let k = (1.0 - hy / flare_h).max(0.0);
+                let r = core + flare + t.flare * 0.12 * k * k;
+                let d2 = dx * dx + dz * dz;
+                if d2 < r * r {
+                    return t.bark;
+                }
+                for &(fx, fz, reach, tall) in &fins {
+                    let along = dx * fx + dz * fz;
+                    if along <= 0.0 {
+                        continue;
+                    }
+                    let k = (1.0 - hy / (flare_h * tall)).max(0.0);
+                    if k <= 0.0 {
+                        continue;
+                    }
+                    // The fin's outer edge falls in a concave sweep from
+                    // high on the trunk to far out on the ground.
+                    let out = core + t.flare * PLANK_REACH * reach * k.powf(1.6);
+                    if along > out {
+                        continue;
+                    }
+                    let across = (dx * fz - dz * fx).abs();
+                    // Thickest where it leaves the trunk, thinning outward.
+                    let edge = 1.0 - ((along - core).max(0.0) / (out - core).max(0.01));
+                    let half = (0.18 + 0.22 * edge + 0.08 * k).max(fin_min * 0.5);
+                    if across < half {
+                        return t.bark;
+                    }
+                }
+                return AIR;
+            }
             if t.flare > 0.0 {
                 let k = (1.0 - hy / flare_h).max(0.0);
                 let ang = dz.atan2(dx);
@@ -155,7 +325,9 @@ fn woody(t: &Tree, v: &mut [u8; PAD3], o: Vec3, vsize: f32, leaf_seed: u32) -> b
             } else {
                 AIR
             }
-        });
+        }) {
+            any.set(true);
+        }
     } else if t.leaf != AIR {
         // A herb: one voxel of its leaf material just above the ground,
         // which the sprite pass turns into the whole plant.
@@ -221,7 +393,15 @@ fn woody(t: &Tree, v: &mut [u8; PAD3], o: Vec3, vsize: f32, leaf_seed: u32) -> b
                 // So is a limb thinner than the plant's `thin_limbs` (sticks),
                 // whatever its bark.
                 let tube = matlib::tubes(t.bark);
-                for &(a, b, r) in &t.branches {
+                // Past full detail a conifer draws no limbs at all, for the
+                // same reason its trunk stops at the crown base above. A
+                // whorl's limb is 5 to 14 cm, but here it is drawn as the
+                // whole chain of 0.5 m or 1 m voxels its centre line crosses,
+                // and that chain stands out through the needle sleeve meant
+                // to hide it: distant Sitka spruce came out with rows of
+                // rust-coloured blocks across their crowns.
+                let limbs = !(t.kind == TreeKind::Pine && vsize > 0.3);
+                for &(a, b, r) in t.branches.iter().filter(|_| limbs) {
                     if tube || r < t.sticks {
                         let rr = r.max(0.62 * vsize);
                         let pad = Vec3::splat(rr + 0.05);
@@ -282,6 +462,27 @@ fn woody(t: &Tree, v: &mut [u8; PAD3], o: Vec3, vsize: f32, leaf_seed: u32) -> b
                     }
                 });
             }
+            // Past full detail a conifer's needles also run up its axis as a
+            // spine one leaf cell across (a 2x2 column of 0.5 m voxels, which
+            // the leaf mesher takes as a cell, or one column of 1 m voxels),
+            // as high as the clumps cover the axis. Near the tip the leader's
+            // needle core is under 0.3 m solid, so at these voxels it hit a
+            // voxel centre in some layers and not others, and the top of
+            // every spruce broke into flecks hanging over the crown. The
+            // spine keeps what is there in one piece without widening it.
+            if t.kind == TreeKind::Pine && t.leaf != AIR && vsize > 0.3 {
+                let cell = if vsize < 0.75 { 2.0 * vsize } else { vsize };
+                let (x0, z0) = ((t.pos.x / cell).floor() * cell, (t.pos.z / cell).floor() * cell);
+                let e = 0.01 * vsize;
+                raster(Vec3::new(x0 + e, t.pos.y + t.canopy_lo, z0 + e), Vec3::new(x0 + cell - e, t.pos.y + t.top, z0 + cell - e), v, &|p: Vec3| {
+                    let q = Vec3::new(t.pos.x, p.y, t.pos.z);
+                    if t.blobs.iter().any(|b| b.dist(q, t.squash) < 1.0) {
+                        t.leaf
+                    } else {
+                        AIR
+                    }
+                });
+            }
             // Each clump of foliage is one of four shapes (canopy.rs),
             // with a ragged edge, sparse gaps near the surface, and broad
             // lumps that keep the crown lobed from any distance.
@@ -292,8 +493,34 @@ fn woody(t: &Tree, v: &mut [u8; PAD3], o: Vec3, vsize: f32, leaf_seed: u32) -> b
                 }
                 let outer = 1.32;
                 let (lo, hi) = b.bounds(t.squash, outer);
-                let lumps = Lumps::new(ls ^ (bi as u32).wrapping_mul(0x9e37_79b9), 0.20);
-                raster(b.c + lo, b.c + hi, v, &|p: Vec3| {
+                let lumps = Lumps::new(ls ^ (bi as u32).wrapping_mul(0x9e37_79b9), LUMP_AMP);
+                // How fast the normalised distance can change per metre
+                // (canopy.rs `Blob::max_rate`): a block whose centre is
+                // further than that allows from the shape is wholly outside
+                // it, and one deep enough in is wholly inside the solid
+                // core, where every voxel would come out leaf anyway. How
+                // deep is enough depends on how far in the lumps can pull
+                // the edge over the block (`Lumps::least`). Only the blocks
+                // across the skin are tested voxel by voxel.
+                let rate = b.max_rate(t.squash);
+                let blob_class = |a: Vec3, z: Vec3| -> Option<u8> {
+                    let m = (a + z) * 0.5;
+                    let half = (z - a).length() * 0.5;
+                    let d = b.dist(m, t.squash);
+                    let slack = rate * half;
+                    if d - slack > outer {
+                        return Some(AIR);
+                    }
+                    let low = d - slack;
+                    if low > 0.0 {
+                        let stretch = ((m - b.c).length() + half) / (low * b.r);
+                        if d + slack < 0.68 * Lumps::least(LUMP_AMP, stretch) {
+                            return Some(mat);
+                        }
+                    }
+                    None
+                };
+                if raster_b(b.c + lo, b.c + hi, v, &blob_class, &|p: Vec3| {
                     let d = b.dist(p, t.squash);
                     if d > outer {
                         return AIR;
@@ -306,7 +533,14 @@ fn woody(t: &Tree, v: &mut [u8; PAD3], o: Vec3, vsize: f32, leaf_seed: u32) -> b
                     if d < 0.68 * edge {
                         return mat;
                     }
-                    if d < edge + 0.30 * perlin3(p.x * 1.7, p.y * 1.7, p.z * 1.7, ls) {
+                    // The ragged edge moves the surface by at most
+                    // 0.3 x PERLIN3_MAX, so outside that band the noise
+                    // cannot change the answer and is not looked up.
+                    let rag = 0.30 * PERLIN3_MAX;
+                    if d >= edge + rag {
+                        return AIR;
+                    }
+                    if d < edge - rag || d < edge + 0.30 * perlin3(p.x * 1.7, p.y * 1.7, p.z * 1.7, ls) {
                         if d > 0.82 * edge {
                             let h = hash3((p.x * 4.0) as i32, (p.y * 4.0) as i32, (p.z * 4.0) as i32, ls);
                             // The sparse skin is a full-detail effect: at
@@ -321,11 +555,13 @@ fn woody(t: &Tree, v: &mut [u8; PAD3], o: Vec3, vsize: f32, leaf_seed: u32) -> b
                         return mat;
                     }
                     AIR
-                });
+                }) {
+                    any.set(true);
+                }
             }
         }
     }
-    any || herb
+    any.get() || herb
 }
 
 /// Moss, lichen or shelf fungus on a host (flora::place_crusts): each entry of
@@ -461,4 +697,125 @@ fn vine(t: &Tree, v: &mut [u8; PAD3], o: Vec3, vsize: f32) -> bool {
         }
     }
     any
+}
+
+#[cfg(test)]
+mod tip_tests {
+    use super::*;
+    use crate::library::Library;
+    use crate::world::gen::{M, MY};
+    use crate::world::material::{BARK, LEAVES};
+    use std::path::Path;
+
+    /// A tree pressed whole into one grid of `vsize` voxels, by stacking
+    /// presses of chunk-sized windows. Returns (grid, nx, ny, origin).
+    fn press_whole(t: &Tree, vsize: f32) -> (Vec<u8>, usize, usize, Vec3) {
+        let n = 32usize;
+        // On even world voxels, as the leaf cells are.
+        let even = |m: f32, back: f32| ((m / vsize - back) / 2.0).floor() * 2.0 * vsize;
+        let o = Vec3::new(even(t.pos.x, 16.0), even(t.pos.y, 2.0), even(t.pos.z, 16.0));
+        let ny = ((t.top + 4.0) / vsize).ceil() as usize;
+        let mut g = vec![AIR; n * n * ny];
+        let mut y0 = 0usize;
+        while y0 < ny {
+            let mut v = Box::new([AIR; PAD3]);
+            let po = o + Vec3::new(-(M as f32) * vsize, (y0 as f32 - MY as f32) * vsize, -(M as f32) * vsize);
+            t.press(&mut Press { v: &mut v, o: po, vsize, leaf_seed: 7 });
+            for y in 0..32usize {
+                if y0 + y >= ny {
+                    break;
+                }
+                for z in 0..n {
+                    for x in 0..n {
+                        g[((y0 + y) * n + z) * n + x] = v[pidx(x + M, y + MY, z + M)];
+                    }
+                }
+            }
+            y0 += 32;
+        }
+        (g, n, ny, o)
+    }
+
+    /// Leaf voxels (26-connected) outside the largest leaf component, and
+    /// the highest of them above the main mass's top, in metres.
+    fn strays(g: &[u8], n: usize, ny: usize, leaf: u8) -> (usize, usize) {
+        let mut comp = vec![0u32; g.len()];
+        let mut sizes = vec![0usize];
+        for s in 0..g.len() {
+            if g[s] != leaf || comp[s] != 0 {
+                continue;
+            }
+            let id = sizes.len() as u32;
+            sizes.push(0);
+            let mut stack = vec![s];
+            comp[s] = id;
+            while let Some(i) = stack.pop() {
+                sizes[id as usize] += 1;
+                let (x, z, y) = (i % n, (i / n) % n, i / (n * n));
+                for dy in -1i32..=1 {
+                    for dz in -1i32..=1 {
+                        for dx in -1i32..=1 {
+                            let (xx, yy, zz) = (x as i32 + dx, y as i32 + dy, z as i32 + dz);
+                            if xx < 0 || zz < 0 || yy < 0 || xx >= n as i32 || zz >= n as i32 || yy >= ny as i32 {
+                                continue;
+                            }
+                            let j = (yy as usize * n + zz as usize) * n + xx as usize;
+                            if g[j] == leaf && comp[j] == 0 {
+                                comp[j] = id;
+                                stack.push(j);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        let main = (1..sizes.len()).max_by_key(|&k| sizes[k]).unwrap_or(0);
+        let total: usize = sizes.iter().sum();
+        (total - sizes.get(main).copied().unwrap_or(0), sizes.len() - 2.min(sizes.len()))
+    }
+
+    /// Past full detail a spruce's crown is drawn in one piece: no needles
+    /// left hanging over the tip where the leader's thin core missed the
+    /// coarse voxels (the spine in `woody`). Checked on what the mesher
+    /// draws: leaf cells of 2x2x2 voxels at 0.5 m, the voxels themselves at
+    /// 1 m. Full detail is not held to it; its thin tip leans on leaf cards.
+    #[test]
+    fn coarse_conifer_crowns_hold_together() {
+        let (lib, errs) = Library::load(Path::new("."));
+        assert!(errs.is_empty(), "{errs:?}");
+        let p = &lib.plants[lib.plant("sitka_spruce").unwrap()];
+        for vsize in [0.5f32, 1.0] {
+            let (mut sv, mut sc, mut cv, mut cc) = (0, 0, 0, 0);
+            for s in 0..80u32 {
+                let h = hash32(s ^ 0x5151);
+                let mut t = crate::world::flora::grow(&lib, p, Vec3::new(37.0 * unit(h), 40.0 + 9.0 * unit(h >> 8), 23.0 * unit(h >> 16)), hash32(s.wrapping_mul(2654435761)), crate::library::Worn::default());
+                t.leaf = LEAVES;
+                t.bark = BARK;
+                let (g, n, ny, _) = press_whole(&t, vsize);
+                let (v, c) = strays(&g, n, ny, LEAVES);
+                sv += v;
+                sc += c;
+                // The leaf cells the mesher draws at this level (mesh.rs
+                // leaf_blocks: five of a 2x2x2 cell's voxels).
+                let (cn, cy) = (n / 2, ny / 2);
+                let mut cells = vec![AIR; cn * cn * cy];
+                for y in 0..cy {
+                    for z in 0..cn {
+                        for x in 0..cn {
+                            let k = (0..8).filter(|i| g[((2 * y + (i >> 1 & 1)) * n + 2 * z + (i >> 2 & 1)) * n + 2 * x + (i & 1)] == LEAVES).count();
+                            if k >= 5 {
+                                cells[(y * cn + z) * cn + x] = LEAVES;
+                            }
+                        }
+                    }
+                }
+                let (v, c) = strays(&cells, cn, cy, LEAVES);
+                cv += v;
+                cc += c;
+            }
+            println!("vsize {vsize}: {sv} stray leaf voxels in {sc} pieces; {cv} stray leaf cells in {cc} pieces, over 80 trees");
+            let drawn = if vsize < 0.75 { cc } else { sc };
+            assert_eq!(drawn, 0, "at {vsize} m voxels, {drawn} pieces of spruce crown float clear of the tree");
+        }
+    }
 }

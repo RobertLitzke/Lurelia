@@ -64,7 +64,15 @@ pub fn burst(parts: &[(Part, Vec3, Quat)], chest: Vec3, fling: Vec3, seed: u32) 
             let vel = fling * (0.18 + 0.14 * r(2)) + out * (2.0 + 2.5 * r(3)) + Vec3::Y * (1.5 + 3.0 * r(4)) + sideways * 0.6;
             let vel = vel.clamp_length_max(FASTEST);
             let spin = Vec3::new(r(5) - 0.5, r(6) - 0.5, r(7) - 0.5) * 22.0;
-            Gib { part, pos, prev: pos, vel, rot, prev_rot: rot, spin }
+            Gib {
+                part,
+                pos,
+                prev: pos,
+                vel,
+                rot,
+                prev_rot: rot,
+                spin,
+            }
         })
         .collect()
 }

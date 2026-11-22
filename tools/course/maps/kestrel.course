@@ -1,0 +1,36 @@
+# Kestrel Ice Ring: a beginner's kart circuit in an ice canyon.
+# Units in metres: x east, z south, from the world's north-west corner.
+course kestrel size 512 style ice
+title KESTREL ICE RING
+blurb A kart circuit cut through the ice: a long start straight, a climb over Beacon Hill between walls of blue ice, a hairpin on its shoulder and a dip through the hollow.
+race laps 3 rivals 3 vehicle kart
+road 12 walls 2.5
+land 30 4
+hour 13.5
+
+hill 300 190 150 15     # Beacon Hill, which the course climbs over
+hill 105 320 75 -5      # the hollow to its west
+
+# The centreline in race order; the first point is the start line.
+# A third number lifts the road there (metres): crests, humps and dips.
+point 130 420           # start / finish, heading east down the straight
+point 250 428
+point 360 420
+point 428 388           # the long left onto the climb
+point 452 322
+point 432 256 0.5
+point 386 214 1.0
+point 338 196 2.0       # the crest
+point 306 158 1.0
+point 296 104 0.5       # over the shoulder
+point 250 66 0.5
+point 190 80 0.5
+point 172 136 0.5
+point 206 184
+point 236 236 1.5       # the hump in the downhill S
+point 206 278
+point 152 290
+point 104 286           # into the hollow
+point 74 320 -1.0
+point 68 360 -0.5
+point 90 405            # the last bend onto the straight

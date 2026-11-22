@@ -28,7 +28,10 @@
     {"creature": "desert_tortoise", "count": 2},
     {"creature": "bee", "count": 2},
     {"creature": "canyon_bat", "count": 4},
-    {"creature": "bighorn", "count": 2}
+    {"creature": "bighorn", "count": 2},
+    {"creature": "roadrunner", "count": 1},
+    {"creature": "annas_hummingbird", "count": 2},
+    {"creature": "gambels_quail", "count": 12}
   ],
   "sound": {"ground": "stone"}
 }

@@ -1,0 +1,16 @@
+{
+  "name": "white_sand",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "White sand, fine and rippled by the wind: gypsum blown off a dry lake floor, lime sand on a lagoon floor (under shallow water it turns the sea turquoise). Replaces gypsum_sand and lime_sand.",
+  "was": ["gypsum_sand", "lime_sand"],
+  "smooth": true,
+  "texture": {
+    "pattern": "ripples",
+    "base": [222, 218, 206],
+    "alt": [206, 202, 190],
+    "scale": 5,
+    "contrast": 0.7,
+    "calm": {"base": [216, 212, 202], "alt": [202, 198, 188]}
+  }
+}

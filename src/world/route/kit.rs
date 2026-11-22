@@ -57,7 +57,7 @@ pub enum Ground {
 
 // ---- the file --------------------------------------------------------------
 
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct KitDef {
     pub name: String,
     #[serde(default = "one_u")]
@@ -97,6 +97,8 @@ pub struct KitDef {
     pub posts: Vec<PostDef>,
     #[serde(default)]
     pub piers: Option<PierDef>,
+    #[serde(default)]
+    pub braces: Vec<BraceDef>,
     /// How far the deck sags at mid-span, metres (rope bridges).
     #[serde(default)]
     pub sag: f32,
@@ -116,7 +118,7 @@ pub struct KitDef {
 }
 
 /// A pavement each side, past a planting gap.
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct WalkDef {
     pub width: f32,
     #[serde(default)]
@@ -130,7 +132,7 @@ pub struct WalkDef {
 }
 
 /// The slab a line rides on where it leaves the ground.
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct DeckDef {
     /// How thick the slab is under the walking surface, metres.
     #[serde(default = "quarter")]
@@ -143,7 +145,7 @@ pub struct DeckDef {
 }
 
 /// A member running the whole length: a guard rail, a kerb, a rope.
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct RailDef {
     #[serde(default = "both")]
     pub side: String,
@@ -159,7 +161,7 @@ pub struct RailDef {
 }
 
 /// A member repeated along the line: a fence post, a lamp, a pier cap.
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct PostDef {
     #[serde(default = "both")]
     pub side: String,
@@ -178,8 +180,26 @@ pub struct PostDef {
     pub mat: String,
 }
 
+/// A strut repeated along the line, running across it on a slant: a knee
+/// brace under a platform from the deck's edge in to the trunk. Its ends are
+/// [across, up] in metres, across measured left of the line as for a rail
+/// (`side: "right"` and `"both"` mirror it), up from the deck surface.
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
+pub struct BraceDef {
+    #[serde(default = "both")]
+    pub side: String,
+    pub every: f32,
+    #[serde(default)]
+    pub phase: f32,
+    pub from: [f32; 2],
+    pub to: [f32; 2],
+    #[serde(default = "quarter")]
+    pub thick: f32,
+    pub mat: String,
+}
+
 /// What holds a deck up where it stands clear of the ground.
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct PierDef {
     pub every: f32,
     pub radius: f32,
@@ -239,6 +259,17 @@ pub struct Post {
     pub mat: u8,
 }
 
+#[derive(Clone, Debug)]
+pub struct Brace {
+    pub side: Side,
+    pub every: f32,
+    pub phase: f32,
+    pub from: [f32; 2],
+    pub to: [f32; 2],
+    pub thick: f32,
+    pub mat: u8,
+}
+
 #[derive(Clone, Copy, Debug)]
 pub struct Piers {
     pub every: f32,
@@ -274,6 +305,7 @@ pub struct Kit {
     pub deck_under: u8,
     pub rails: Vec<Rail>,
     pub posts: Vec<Post>,
+    pub braces: Vec<Brace>,
     pub piers: Option<Piers>,
     pub sag: f32,
     /// Index into the world's kit list for airborne stretches.
@@ -328,6 +360,19 @@ impl Kit {
                 mat: mat(&p.mat),
             })
             .collect();
+        let braces: Vec<Brace> = def
+            .braces
+            .iter()
+            .map(|b| Brace {
+                side: Side::read(&b.side),
+                every: b.every.max(0.5),
+                phase: b.phase,
+                from: b.from,
+                to: b.to,
+                thick: b.thick.max(0.25),
+                mat: mat(&b.mat),
+            })
+            .collect();
         let shoulder = def.shoulder.as_deref().map_or(surface, &mut mat);
         let walk = def.walk.as_ref().map(|w| Walk {
             width: w.width,
@@ -379,6 +424,12 @@ impl Kit {
         if let Some(p) = &def.piers {
             reach = reach.max(p.radius);
         }
+        let mut drop = deck_thick;
+        for b in &braces {
+            reach = reach.max(b.from[0].abs().max(b.to[0].abs()) + b.thick);
+            rise = rise.max(b.from[1].max(b.to[1]) + b.thick);
+            drop = drop.max(-(b.from[1].min(b.to[1])) + b.thick);
+        }
         Kit {
             name: def.name.clone(),
             ground,
@@ -392,6 +443,7 @@ impl Kit {
             deck_under,
             rails,
             posts,
+            braces,
             piers,
             sag: def.sag,
             span: None,
@@ -400,7 +452,7 @@ impl Kit {
             max_span: def.max_span,
             reach: reach + 0.3,
             rise,
-            drop: deck_thick,
+            drop,
         }
     }
 
@@ -452,6 +504,27 @@ impl Kit {
             }
             if (s - p.phase).rem_euclid(p.every) < p.along {
                 return Some(p.mat);
+            }
+        }
+        for b in &self.braces {
+            if (s - b.phase).rem_euclid(b.every) >= b.thick {
+                continue;
+            }
+            // Mirrored to the right for a right-hand or two-sided strut.
+            let sides: &[f32] = match b.side {
+                Side::Left | Side::Centre => &[1.0],
+                Side::Right => &[-1.0],
+                Side::Both => &[1.0, -1.0],
+            };
+            for &m in sides {
+                let (ax, ay) = (b.from[0] * m, b.from[1]);
+                let (bx, by) = (b.to[0] * m, b.to[1]);
+                let (dx, dy) = (bx - ax, by - ay);
+                let t = (((across - ax) * dx + (up - ay) * dy) / (dx * dx + dy * dy).max(1e-6)).clamp(0.0, 1.0);
+                let (qx, qy) = (ax + dx * t - across, ay + dy * t - up);
+                if qx * qx + qy * qy < b.thick * b.thick * 0.25 {
+                    return Some(b.mat);
+                }
             }
         }
         None

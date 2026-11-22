@@ -1,0 +1,20 @@
+{
+  "name": "cedar_walk",
+  "version": 1,
+  "introduced_by": "canopy_test",
+  "notes": "A plank walkway strung between tree platforms: a 1.75 m deck that sags half a metre at mid-span, a top rail and balusters both sides, and a taller post every 3 m. Clears headroom through foliage it passes.",
+  "ground": "deck",
+  "width": 1.75,
+  "mat": "weathered_planks",
+  "lift": 0.0,
+  "sag": 0.5,
+  "clear": 2.4,
+  "max_span": 50.0,
+  "deck": {"thick": 0.25, "mat": "weathered_planks", "under": "timber_frame"},
+  "rails": [{"side": "both", "out": 0.0, "from": 0.95, "to": 1.2, "thick": 0.25, "mat": "timber_frame"}],
+  "posts": [
+    {"side": "both", "out": 0.0, "every": 0.5, "size": [0.25, 0.95, 0.25], "mat": "timber_frame"},
+    {"side": "both", "out": 0.0, "every": 3.0, "size": [0.25, 1.45, 0.25], "mat": "timber_frame"}
+  ],
+  "tags": ["walkway", "bridge", "treehouse"]
+}

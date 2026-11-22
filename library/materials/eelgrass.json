@@ -4,6 +4,7 @@
   "introduced_by": "lowmouth",
   "notes": "Drowned meadow: fine dark-green grass on a soft bed, growing under the water as land grass grows over it. Its sprites are not hidden at the waterline (underwater).",
   "smooth": true,
+  "sprites": "grass",
   "texture": {
     "pattern": "grain",
     "base": [52, 92, 64],

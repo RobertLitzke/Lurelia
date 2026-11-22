@@ -13,7 +13,7 @@ use crate::creatures::age::{Stage, Stages};
 use serde::Deserialize;
 
 /// Spreads, each a fraction either side of the species' own value.
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct Vary {
     /// Body size.
     #[serde(default = "d_size")]
@@ -75,11 +75,19 @@ impl Default for Vary {
 pub struct Repaint {
     pub mul: [f32; 3],
     pub add: [f32; 3],
+    /// A gain on the model's glowing colours, 1 leaving them as drawn: the
+    /// fourth number a coat gives a glowing colour, over the one the model
+    /// has (`glow_gain`). One gain for the whole model, like the colour map.
+    pub glow: f32,
 }
 
 impl Repaint {
     /// The map that leaves a model as it was drawn.
-    pub const PLAIN: Repaint = Repaint { mul: [1.0; 3], add: [0.0; 3] };
+    pub const PLAIN: Repaint = Repaint {
+        mul: [1.0; 3],
+        add: [0.0; 3],
+        glow: 1.0,
+    };
 
     /// Where this map sends one colour.
     pub fn of(&self, c: [f32; 3]) -> [f32; 3] {
@@ -91,6 +99,7 @@ impl Repaint {
         Repaint {
             mul: [0, 1, 2].map(|i| a.mul[i] + (b.mul[i] - a.mul[i]) * t),
             add: [0, 1, 2].map(|i| a.add[i] + (b.add[i] - a.add[i]) * t),
+            glow: a.glow + (b.glow - a.glow) * t,
         }
     }
 }
@@ -133,6 +142,19 @@ pub fn fit(pairs: &[([f32; 3], [f32; 3])]) -> Repaint {
     out
 }
 
+/// The gain on a model's glow that a coat asks for: pairs of (the glow a
+/// colour has, the glow the coat gives it). Only colours that glow and are
+/// given a fourth number vote, and the gain is their geometric mean, so a
+/// coat asking one colour for half again and another for two thirds of its
+/// glow gets one gain between them. 1 where nobody votes.
+pub fn glow_gain(pairs: &[(f32, f32)]) -> f32 {
+    let logs: Vec<f32> = pairs.iter().filter(|(g, _)| *g > 0.0).map(|(g, w)| (w.max(1e-3) / g).ln()).collect();
+    if logs.is_empty() {
+        return 1.0;
+    }
+    (logs.iter().sum::<f32>() / logs.len() as f32).exp()
+}
+
 /// A named coat ready to wear: its share of the population, how many shades
 /// it comes in, and the maps for the two ends of its range. Built once, when
 /// the world's creatures are compiled (worldload.rs).
@@ -167,6 +189,7 @@ pub fn wears(coats: &[crate::library::Coat], colors: &std::collections::HashMap<
         .iter()
         .map(|c| {
             let mut ends = [Vec::new(), Vec::new()];
+            let mut glows = [Vec::new(), Vec::new()];
             for (slot, paint) in &c.paint {
                 let (Some(base), Some((lo, hi))) = (colors.get(slot), paint.ends()) else {
                     continue;
@@ -174,12 +197,21 @@ pub fn wears(coats: &[crate::library::Coat], colors: &std::collections::HashMap<
                 let b = lin(base);
                 ends[0].push((b, lin(lo)));
                 ends[1].push((b, lin(hi)));
+                for (k, want) in [lo, hi].into_iter().enumerate() {
+                    if let (Some(&g), Some(&w)) = (base.get(3), want.get(3)) {
+                        glows[k].push((g, w));
+                    }
+                }
+            }
+            let mut ends = [fit(&ends[0]), fit(&ends[1])];
+            for (e, g) in ends.iter_mut().zip(&glows) {
+                e.glow = glow_gain(g);
             }
             Wear {
                 name: c.name.clone(),
                 share: c.share,
                 shades: c.shades.max(1),
-                ends: [fit(&ends[0]), fit(&ends[1])],
+                ends,
             }
         })
         .collect()
@@ -204,6 +236,8 @@ pub struct Morph {
     /// How stiffly it moves: 1 as usual, less for an old animal (shorter
     /// strides, fewer ear flicks).
     pub supple: f32,
+    /// Gain on the glowing colours, from the coat it wears (`Repaint::glow`).
+    pub glow: f32,
 }
 
 impl Morph {
@@ -214,6 +248,7 @@ impl Morph {
     pub fn wear(&mut self, coat: &Repaint) {
         self.shift = [0, 1, 2].map(|i| coat.add[i] * self.tint[i]);
         self.tint = [0, 1, 2].map(|i| coat.mul[i] * self.tint[i]);
+        self.glow = coat.glow;
     }
 
     pub fn roll(v: &Vary, seed: u32) -> Self {
@@ -237,6 +272,7 @@ impl Morph {
             habits,
             head: 1.0,
             supple: 1.0,
+            glow: 1.0,
         }
     }
 
@@ -368,7 +404,8 @@ mod tests {
                 wary: 1.0,
                 habits: [1.0; ACTS.len()],
                 head: 1.0,
-                supple: 1.0
+                supple: 1.0,
+                glow: 1.0
             }
         );
     }

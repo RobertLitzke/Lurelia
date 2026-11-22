@@ -1,0 +1,14 @@
+{
+  "name": "giant_redwood",
+  "version": 1,
+  "introduced_by": "canopy_test",
+  "notes": "conifer: An old-growth redwood twice the height of the valley groves: a fluted red column bare for half its height, the crown a drooping spire above the broadleaf canopy.",
+  "height": [72, 92],
+  "trunk_radius": [2.6, 3.4],
+  "buttress": 1.2,
+  "crown_radius": [8, 11],
+  "max_slope": 0.5,
+  "like": "redwood",
+  "crown_base": 0.5,
+  "whorls": [14, 20]
+}

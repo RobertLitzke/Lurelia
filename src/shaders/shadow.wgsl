@@ -46,7 +46,8 @@ fn vs_shadow_entity(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii:
         return out;
     }
     let s = inst.info.x;
-    let l = qrot(inst.rot, (qv.local - inst.info.yzw) * s);
+    let r = qrot(inst.rot, (qv.local - inst.info.yzw) * s);
+    let l = r + flesh_offset(r, inst.flesh);
     let c = cos(inst.pos_yaw.w);
     let sn = sin(inst.pos_yaw.w);
     let world = inst.pos_yaw.xyz + vec3<f32>(l.x * c + l.z * sn, l.y, -l.x * sn + l.z * c);

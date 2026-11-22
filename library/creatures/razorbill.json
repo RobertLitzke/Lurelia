@@ -1,0 +1,39 @@
+{
+  "name": "razorbill",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "circle: Razorbill: black above and white below, a heavy blunt black bill crossed by a white line and a fine white line from the bill to the eye. Nests on cliff ledges beside the puffins, circles low off the cliffs and sits on the sea below them, diving for fish.",
+  "colors": {
+    "body": [22, 22, 26],
+    "head": [22, 22, 26],
+    "beak": [20, 20, 22],
+    "wing": [22, 22, 26],
+    "tail": [22, 22, 26],
+    "legs": [34, 34, 38],
+    "white": [238, 236, 230]
+  },
+  "behaviour": {
+    "movement": "circle",
+    "walk_speed": 10,
+    "flee_speed": 13,
+    "wary": 10,
+    "flightiness": 0.8,
+    "fly_height": 6,
+    "floats": true,
+    "flight": "flap",
+    "group": null,
+    "dive_depth": 10,
+    "wind": 1,
+    "winter": 0.4
+  },
+  "like": "starling",
+  "scale": 1.9,
+  "extra_ops": [
+    {"op": "recolour_below", "y": 8, "from": "body", "to": "white"},
+    {"op": "box", "from": [15, 8, 6], "to": [17, 11, 9], "mat": "beak", "part": "head"},
+    {"op": "box", "from": [15, 8, 7], "to": [17, 11, 8], "mat": "white", "part": "head"},
+    {"op": "set", "at": [14, 10, 9], "mat": "white", "part": "head"},
+    {"op": "set", "at": [17, 10, 9], "mat": "white", "part": "head"},
+    {"op": "box", "from": [15, 8, 25], "to": [18, 9, 28], "mat": "tail", "part": "tail"}
+  ]
+}

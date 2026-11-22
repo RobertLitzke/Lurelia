@@ -168,7 +168,7 @@ pub fn shape(f: &mut Fields, rec: &LakeRec, owner: &mut HashMap<u32, f32>, water
         }
         if water && out < super::river::MARGIN && level > sea + 0.02 {
             owner.insert(i as u32, f32::NEG_INFINITY);
-            f.inland.insert(i as u32, Wet { level, flow: [0.0, 0.0] });
+            f.inland.insert(i as u32, Wet { level, flow: [0.0, 0.0], ebb: 0.0 });
         }
     }
     level

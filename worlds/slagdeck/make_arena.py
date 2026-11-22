@@ -75,7 +75,7 @@ def box(x0, x1, y0, y1, z0, z1, mat, part=None):
     ops.append(op)
 
 
-def slab(x0, x1, z0, z1, top, body="works_beam", face="works_grate", thick=1.0):
+def slab(x0, x1, z0, z1, top, body="works_panel", face="works_grate", thick=1.0):
     """A floor whose top face is at `top`: a metre of structure under a
     quarter-metre of walking surface."""
     box(x0, x1, top - thick, top - 0.25, z0, z1, body, "floor")
@@ -121,7 +121,7 @@ def lamp(x, z, hang, under, reach=16.0, strength=2.0, span=1.5):
     """A fitting hung from `under` down to `hang`, and the light it gives.
     The fitting is voxels in the structure; the light is a point in the
     chronicle, because light is not a thing you can build out of blocks."""
-    box(x - 0.125, x + 0.125, hang + 0.25, under, z - 0.125, z + 0.125, "works_beam", "metal")
+    box(x - 0.125, x + 0.125, hang + 0.25, under, z - 0.125, z + 0.125, "works_panel", "metal")
     box(x - span * 0.5, x + span * 0.5, hang, hang + 0.25, z - 0.25, z + 0.25, "works_lamp", "glass")
     LAMPS.append((round(x, 2), round(z, 2), round(hang - 0.4, 2), reach, strength))
 
@@ -189,7 +189,7 @@ slab(LX0, LX1, HZ0, HZ0 + WIDE, LEDGE, face="deck_floor")
 ramp(LX1, LX1 + 12.0, HZ0, HZ0 + WIDE, WALK, LEDGE, "-x")
 # Two columns under it, so it is held up by something.
 for x in (LX0 + 1.0, LX1 - 2.0):
-    box(x, x + 1.0, WALK, LEDGE - 1.0, HZ0 + 1.5, HZ0 + 2.5, "works_beam", "metal")
+    box(x, x + 1.0, WALK, LEDGE - 1.0, HZ0 + 1.5, HZ0 + 2.5, "works_panel", "metal")
 
 # ---- ramps from the hall floor up to the ring -------------------------------
 ramp(HX0 + WIDE, HX0 + WIDE + 16.0, 50.0, 54.0, DECK, WALK, "-x")
@@ -203,10 +203,10 @@ ramp(74.0, 78.0, EROOM[2] - 16.0, EROOM[2], DECK, WALK, "+z")
 # ---- the pit ----------------------------------------------------------------
 air(PX0, PX1, PIT, DECK, PZ0, PZ1)
 # Line its walls, so the pit is a tapping floor and not a hole in a slab.
-box(PX0, PX1, SLAG, DECK, PZ0, PZ0 + 0.25, "works_beam", "wall")
-box(PX0, PX1, SLAG, DECK, PZ1 - 0.25, PZ1, "works_beam", "wall")
-box(PX0, PX0 + 0.25, SLAG, DECK, PZ0, PZ1, "works_beam", "wall")
-box(PX1 - 0.25, PX1, SLAG, DECK, PZ0, PZ1, "works_beam", "wall")
+box(PX0, PX1, SLAG, DECK, PZ0, PZ0 + 0.25, "works_panel", "wall")
+box(PX0, PX1, SLAG, DECK, PZ1 - 0.25, PZ1, "works_panel", "wall")
+box(PX0, PX0 + 0.25, SLAG, DECK, PZ0, PZ1, "works_panel", "wall")
+box(PX1 - 0.25, PX1, SLAG, DECK, PZ0, PZ1, "works_panel", "wall")
 box(PX0, PX1, SLAG, PIT, PZ0, PZ1, "slag_pool", "floor")
 # A ramp out of it, up its west side to the south lip.
 ramp(PX0, PX0 + WIDE, PZ1 - 14.0, PZ1, PIT, DECK, "+z")
@@ -218,17 +218,17 @@ stripe(PX1, PX1 + 0.5, PZ0, PZ1, DECK)
 # ---- pillars in the hall ----------------------------------------------------
 for px in (31.0, 57.0):
     for pz in (20.0, 56.0):
-        box(px, px + 1.0, DECK, TOP, pz, pz + 1.0, "works_beam", "metal")
+        box(px, px + 1.0, DECK, TOP, pz, pz + 1.0, "works_panel", "metal")
 
 # ---- pilasters and a rail down the hall's walls -----------------------------
 # A flat grey wall forty metres long is nothing to read a room by; these give
 # the eye something to measure the hall against without taking cover away.
 for px in [HX0 + 2.0 + 8.0 * i for i in range(5)]:
     for pz, pz1 in [(HZ0 - WALL, HZ0), (HZ1, HZ1 + WALL)]:
-        box(px, px + 0.5, DECK, TOP - 1.0, pz - 0.25, pz1 + 0.25, "works_beam", "metal")
+        box(px, px + 0.5, DECK, TOP - 1.0, pz - 0.25, pz1 + 0.25, "works_panel", "metal")
 for pz in [HZ0 + 3.0 + 8.0 * i for i in range(6)]:
     for px, px1 in [(HX0 - WALL, HX0), (HX1, HX1 + WALL)]:
-        box(px - 0.25, px1 + 0.25, DECK, TOP - 1.0, pz, pz + 0.5, "works_beam", "metal")
+        box(px - 0.25, px1 + 0.25, DECK, TOP - 1.0, pz, pz + 0.5, "works_panel", "metal")
 for a, b, c, d2 in [
     (HX0 - WALL - 0.25, HX1 + WALL + 0.25, HZ0 - WALL - 0.25, HZ0),
     (HX0 - WALL - 0.25, HX1 + WALL + 0.25, HZ1, HZ1 + WALL + 0.25),
@@ -239,7 +239,7 @@ for a, b, c, d2 in [
 
 # ---- roof trusses over the open hall ----------------------------------------
 for tz in (14.0, 22.0, 30.0, 38.0, 46.0, 54.0):
-    box(HX0, HX1, TOP - 1.0, TOP - 0.5, tz, tz + 0.5, "works_beam", "frame")
+    box(HX0, HX1, TOP - 1.0, TOP - 0.5, tz, tz + 0.5, "works_panel", "frame")
     box(HX0, HX1, TOP - 0.5, TOP, tz + 0.125, tz + 0.375, "rust_iron", "frame")
 
 # ---- openings ---------------------------------------------------------------
@@ -279,7 +279,7 @@ for wz in (30.0, 40.0, 50.0):
 # ---- the roof ---------------------------------------------------------------
 # Over the whole deck. Under it the hall is a room rather than a yard, and
 # nothing outside the building can see in or shoot in.
-box(X0, X1, TOP, TOP + 0.25, Z0, Z1, "works_beam", "roof")
+box(X0, X1, TOP, TOP + 0.25, Z0, Z1, "works_panel", "roof")
 box(X0, X1, TOP + 0.25, TOP + 0.5, Z0, Z1, "corrugated_tin", "roof")
 # Monitor slots between the trusses, the way a works roof lets its fume out.
 # Barred over, for the same reason the windows are: standing in the hall you
@@ -598,7 +598,7 @@ link("egal_w", "ring_e", "drop")
 # the pit ramp, down in the open and a long way from anywhere, so fetching it
 # costs you position. It was at the bottom of the pit, which was a better idea
 # on paper -- the pit is slag and burns, so the best gun cost health as well --
-# but steering does not know that ground can hurt (BACKLOG 364), and what it
+# but steering does not know that ground can hurt, and what it
 # actually bought was bots wading into the slag after it. A pad is no place to
 # express a risk the other fighters cannot perceive.
 # The scrap gun is in the west sump, close quarters, where it

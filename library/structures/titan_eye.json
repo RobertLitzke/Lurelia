@@ -1,14 +1,90 @@
 {
   "name": "titan_eye",
-  "version": 1,
+  "version": 2,
   "introduced_by": "ribshore",
-  "notes": "A faint amber light filling the titan's eye socket, as if a lamp burned in the skull. It is there only at night: at sunrise the socket is empty bone again.",
+  "notes": "A faint amber light filling the titan's eye socket, as if a lamp burned in the skull: a hollow shell of light 8.5 m across around three crossed rings and a small hot core. It is there only at night: at sunrise the socket is empty bone again.",
   "size": [40, 36, 40],
   "anchor": [20, 18, 20],
   "level": false,
   "decays": false,
   "base": "rim",
   "tags": ["ribshore", "titan"],
-  "slots": {"glow": "titan_eye"},
-  "ops": [{"op": "ellipsoid", "centre": [20, 18, 20], "radius": [17, 15, 17], "mat": "glow"}]
+  "slots": {"glow": "titan_eye", "core": "candle_flame"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [20.0, 18, 20.0], "radius": [17, 15, 17], "mat": "glow", "part": "glow"},
+    {"op": "ellipsoid", "centre": [20.0, 18, 20.0], "radius": [15, 13, 15], "mat": "air", "part": "glow"},
+    {"op": "cylinder", "base": [20.0, 17.5, 20.0], "radius": 11, "height": 1, "mat": "glow", "part": "glow"},
+    {"op": "disc", "centre": [20.0, 18, 20.0], "radius": 11, "thick": 1, "axis": "x", "mat": "glow", "part": "glow"},
+    {"op": "disc", "centre": [20.0, 18, 20.0], "radius": 11, "thick": 1, "axis": "z", "mat": "glow", "part": "glow"},
+    {"op": "cylinder", "base": [20.0, 16.5, 20.0], "radius": 9.4, "height": 3, "mat": "air", "part": "glow"},
+    {"op": "disc", "centre": [20.0, 18, 20.0], "radius": 9.4, "thick": 3, "axis": "x", "mat": "air", "part": "glow"},
+    {"op": "disc", "centre": [20.0, 18, 20.0], "radius": 9.4, "thick": 3, "axis": "z", "mat": "air", "part": "glow"},
+    {
+      "op": "segment",
+      "points": [[24.0, 18.0, 20.0], [33.5, 18.0, 20.0]],
+      "radius": 0.7,
+      "mat": "glow",
+      "part": "glow"
+    },
+    {"op": "segment", "points": [[16.0, 18.0, 20.0], [6.5, 18.0, 20.0]], "radius": 0.7, "mat": "glow", "part": "glow"},
+    {
+      "op": "segment",
+      "points": [[20.0, 22.0, 20.0], [20.0, 30.0, 20.0]],
+      "radius": 0.7,
+      "mat": "glow",
+      "part": "glow"
+    },
+    {"op": "segment", "points": [[20.0, 14.0, 20.0], [20.0, 6.0, 20.0]], "radius": 0.7, "mat": "glow", "part": "glow"},
+    {
+      "op": "segment",
+      "points": [[20.0, 18.0, 24.0], [20.0, 18.0, 33.5]],
+      "radius": 0.7,
+      "mat": "glow",
+      "part": "glow"
+    },
+    {"op": "segment", "points": [[20.0, 18.0, 16.0], [20.0, 18.0, 6.5]], "radius": 0.7, "mat": "glow", "part": "glow"},
+    {
+      "op": "segment",
+      "points": [[22.83, 20.83, 20.0], [29.55, 26.49, 20.0]],
+      "radius": 0.7,
+      "mat": "glow",
+      "part": "glow"
+    },
+    {
+      "op": "segment",
+      "points": [[17.17, 20.83, 20.0], [10.45, 26.49, 20.0]],
+      "radius": 0.7,
+      "mat": "glow",
+      "part": "glow"
+    },
+    {
+      "op": "segment",
+      "points": [[20.0, 20.83, 22.83], [20.0, 26.49, 29.55]],
+      "radius": 0.7,
+      "mat": "glow",
+      "part": "glow"
+    },
+    {
+      "op": "segment",
+      "points": [[20.0, 20.83, 17.17], [20.0, 26.49, 10.45]],
+      "radius": 0.7,
+      "mat": "glow",
+      "part": "glow"
+    },
+    {
+      "op": "segment",
+      "points": [[22.83, 15.17, 20.0], [29.55, 9.51, 20.0]],
+      "radius": 0.7,
+      "mat": "glow",
+      "part": "glow"
+    },
+    {
+      "op": "segment",
+      "points": [[20.0, 15.17, 17.17], [20.0, 9.51, 10.45]],
+      "radius": 0.7,
+      "mat": "glow",
+      "part": "glow"
+    },
+    {"op": "ellipsoid", "centre": [20.0, 18, 20.0], "radius": [3.5, 3.5, 3.5], "mat": "core", "part": "glow"}
+  ]
 }

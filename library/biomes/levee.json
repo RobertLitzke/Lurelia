@@ -21,6 +21,7 @@
     {"creature": "crow", "count": 6},
     {"creature": "starling", "count": 30},
     {"creature": "sandhill_crane", "count": 3},
-    {"creature": "great_horned_owl", "count": 1}
+    {"creature": "great_horned_owl", "count": 1},
+    {"creature": "killdeer", "count": 3}
   ]
 }

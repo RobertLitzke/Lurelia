@@ -1,0 +1,14 @@
+{
+  "name": "breakwater",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "Capstones along the crest of a granite breakwater: big squared blocks set end to end along both edges, staggered, with the walk between. Lay it on an `earthwork` with `mat` granite, which heaps the mole itself up out of the water.",
+  "ground": "follow",
+  "width": 4.0,
+  "mat": "granite",
+  "posts": [
+    {"side": "left", "out": -0.7, "every": 2.2, "size": [1.8, 0.7, 1.1], "mat": "granite"},
+    {"side": "right", "out": -0.7, "every": 2.2, "phase": 1.1, "size": [1.8, 0.7, 1.1], "mat": "granite"}
+  ],
+  "tags": ["wall"]
+}

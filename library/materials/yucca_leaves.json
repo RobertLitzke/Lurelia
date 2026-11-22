@@ -5,6 +5,7 @@
   "notes": "Stiff yucca blades.",
   "id": 130,
   "smooth": false,
+  "sprites": "leaves",
   "texture": {
     "pattern": "grain",
     "base": [112, 132, 82],

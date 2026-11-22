@@ -5,6 +5,7 @@
   "notes": "Elder blossom: flat cream corymbs that lie on the crown's green.",
   "id": 72,
   "smooth": false,
+  "sprites": "flower",
   "texture": {
     "pattern": "blotch",
     "base": [230, 224, 190],

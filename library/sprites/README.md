@@ -13,8 +13,8 @@ Each PNG here replaces the built-in drawing of the same name. Delete a PNG to go
 | `tuft_seed.png` | card | meadows, the tallest patches | yes |
 | `flowers_white.png` | card | meadows, in drifts | no |
 | `flowers_blue.png` | card | meadows, in drifts | no |
-| `leaves_a.png` | billboard | broadleaf, birch and autumn canopies | yes |
-| `leaves_b.png` | billboard | the same, smaller leaves | yes |
+| `leaves_a.png` | billboard | birch canopies, and a quarter of the groves of plain and autumn leaves | yes |
+| `leaves_b.png` | billboard | the same, a leafy twig for the crown's rim | yes |
 | `needles.png` | billboard | pine and conifer canopies | yes |
 | `frond.png` | frond | fern marker voxels (plant form `herb`) | yes |
 | `fireweed.png` | card | fireweed marker voxels (plant form `herb`) | no |
@@ -28,6 +28,11 @@ Each PNG here replaces the built-in drawing of the same name. Delete a PNG to go
 | `flowers_red.png` | card | prairie grass (scarlet paintbrush), in patches and fields | no |
 | `huckleberry.png` | card | huckleberry marker voxels (plant form `herb`) | no |
 | `thimbleberry.png` | card | thimbleberry marker voxels (plant form `herb`) | no |
+| `leaves_broad_a.png`, `leaves_broad_b.png` | billboard | beech, tupelo, salal, mangrove, banyan, live oak, buckthorn and protea leaves, and a quarter of the plain-leaf groves | yes |
+| `leaves_lobed_a.png`, `leaves_lobed_b.png` | billboard | bramble leaves, the autumn vine, and a quarter of the plain-leaf groves | yes |
+| `leaves_maple_a.png`, `leaves_maple_b.png` | billboard | maple leaves (`maple_leaves`, `maple_red`) and the gold maple's `gold_leaves` | yes |
+| `leaves_narrow_a.png`, `leaves_narrow_b.png` | billboard | willow, desert willow, bamboo, reed and silver leaves | yes |
+| `leaves_heart_a.png`, `leaves_heart_b.png` | billboard | ivy, cottonwood, hyacinth and vine leaves, and a quarter of the plain-leaf groves | yes |
 
 ## Format
 
@@ -48,6 +53,7 @@ Each PNG here replaces the built-in drawing of the same name. Delete a PNG to go
 
 ## Billboards (leaves and needles)
 
+- Each leaf shape has two cards: `_a` is the filler, clusters of leaves on short twigs round the middle, and `_b` the rim, a forking twig that leaves the card at the bottom edge. Plain `leaves` (oak, alder, hazel and most other broadleaf plants) take one shape per grove of about 16 m, picked by `grove` in `src/mesh/sprites.rs`, so neighbouring woods differ; a species leaf material gets its own shape from its `sprites` entry (`{"rule": "leaves", "shape": "broad"}`, `LEAF_SHAPES`).
 - Centred. A billboard always faces the camera and is rolled to a random angle, so there is no up or down. Keep the shape inside the inscribed circle; corners get seen at every angle.
 - In the game a billboard is 0.45 to 0.8 m across, centred just outside a leafy block's face, so roughly half of it is hidden inside the crown. The outer half is what feathers the canopy's silhouette. Ragged, leafy outlines matter more than the middle.
 - Wind shakes the whole billboard a little and rolls it slightly.

@@ -5,6 +5,8 @@
   "notes": "Orange-brown ponderosa needle litter on the plateau floor.",
   "id": 113,
   "smooth": true,
+  "surface": "hardpack",
+  "sprites": "pine duff",
   "texture": {
     "pattern": "noise",
     "base": [106, 76, 52],

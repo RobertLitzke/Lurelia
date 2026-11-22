@@ -5,9 +5,9 @@
   "notes": "The white dunes: gypsum piled against the range by the south-west wind, soaptree yuccas on the crests, rabbitbrush in the hollows and pale lizards that match the sand.",
   "priority": 13,
   "rules": {"region": "white_dunes"},
-  "surface": "gypsum_sand",
-  "subsurface": "gypsum_sand",
-  "rock": "gypsum_sand",
+  "surface": "white_sand",
+  "subsurface": "white_sand",
+  "rock": "white_sand",
   "fringe": 4,
   "map_color": [240, 238, 230],
   "plants": [
@@ -26,6 +26,7 @@
   "creatures": [
     {"creature": "white_lizard", "count": 12},
     {"creature": "coyote", "count": 1},
-    {"creature": "jackrabbit", "count": 2}
+    {"creature": "jackrabbit", "count": 2},
+    {"creature": "snowy_plover", "count": 6}
   ]
 }

@@ -6,6 +6,11 @@ use super::fields::World;
 use glam::Vec2;
 
 pub fn write(w: &World, path: &std::path::Path, px: usize) -> std::io::Result<()> {
+    crate::util::save_png(path, px as u32, px as u32, &image(w, px))
+}
+
+/// The map as RGBA rows, `px` across and down.
+pub fn image(w: &World, px: usize) -> Vec<u8> {
     let f = &w.f;
     let scale = f.size / px as f32;
     let mut img = vec![0u8; px * px * 4];
@@ -76,5 +81,5 @@ pub fn write(w: &World, path: &std::path::Path, px: usize) -> std::io::Result<()
         dot(Vec2::new(it.pos.x, it.pos.z), 1, [120, 255, 255]);
     }
     dot(Vec2::new(w.spawn.x, w.spawn.z), 4, [255, 255, 0]);
-    crate::util::save_png(path, px as u32, px as u32, &img)
+    img
 }

@@ -26,13 +26,18 @@ The first build takes about a minute; later builds take 5 to 20 seconds.
 The game opens on the title screen (borderless fullscreen, or a maximized
 window with fullscreen off): RETURN (the world you were last in, as you left
 it), OPEN WORLD, settings, controls, or quit. OPEN WORLD is the one screen
-that sets a run up: the world and the game are dropdowns, the lines under them
-are what this world and this game put on offer, and GO and BACK stand at the
-foot of the screen. A list longer than the window scrolls (the wheel, the
+that sets a run up: the game and the world are dropdowns, the lines under them
+are what this game and this world put on offer, and GO and BACK stand at the
+foot of the screen. The game comes first, and the world list is then the
+worlds that offer it: each world lists its games in world.json `"games"`, by
+their names in `library/games/` (a world with no list is one to explore).
+Picking a game the world on the line does not offer moves to the world that
+game was last played in. A list longer than the window scrolls (the wheel, the
 arrow keys, or the bar beside it) rather than running under the buttons. EXPLORE is the game as it has always been;
 DEATHMATCH is the arena, on a world whose world.json has `"shooter"` rules
-(Slagdeck); TEAM DEATHMATCH is the same arena in two sides, and CAPTURE THE
-FLAG is offered where those rules have a `ctf` block (Sluice, Ctfbox). The
+(Porch); TEAM DEATHMATCH is the same arena in two sides, CAPTURE THE
+FLAG needs those rules to have a `ctf` block (Sluice, Megalith), and INSTAGIB
+is a variant of deathmatch with rules of its own (`library/games/instagib.json`). The
 options are src/launch.rs: the animals, the day and night and each way of
 travelling the world allows, then the match's difficulty, bots and target
 score, and in a team match your side (and for capture the flag the captures
@@ -43,7 +48,7 @@ What you pick is kept per world and per game, so each world comes back as you
 last played it; a small star before a value says it is not the world's own,
 and DEFAULTS puts them all back.
 
-The world list is in groups: the last three worlds opened (once there are
+The world list holds the worlds that offer the game, in groups: the last three worlds opened (once there are
 two), then places to explore, arenas, and the workshop (`local/worlds/` that
 is not an arena). Home, End, Page Up and Page Down move through it. Under the
 list the screen says what the highlighted world is: its world.json `blurb`
@@ -111,6 +116,7 @@ sound device) at 0.16.0 for the same reason: 0.17 and later depend on
 | Shift | Sprint; a sprint burst on the bike; boost while gliding; in a deathmatch, the boost over the running pace |
 | X | Get on or off the mountain bike |
 | K | Get into the kayak at the water's edge (or in the shallows), or out of it onto the nearest footing |
+| U | Get into the world's vehicle (Ribshore's sand rail), or out of it; far from the parked one, bring it over; held while driving, put it back on its wheels |
 | C | Glide: spring about 3.7 m up from the ground and open the wings, open them in the air, fold them in flight |
 | Space in a long fall | Open the wings (needs 6 m of air below) |
 | Walk into a wall | Climb it |
@@ -172,8 +178,9 @@ ground falls away faster than gravity can follow, so any lip or crest taken at
 speed is a jump. It rolls along on its own at about 9.4 m/s (34 km/h); W
 pedals it to 12.2 m/s and S brakes. On the flat that is its top speed: the
 speed worth having comes from a hill, a tuck or a token. It turns toward where you look as fast as
-its grip allows (A and D turn the view too); look far to the side and it keeps
-going straight. Shift is a sprint out of the saddle: a burst of about 1.4 s
+its grip allows (A and D turn the view too, winding up to 2 rad/s over about
+a tenth of a second and back down on release, so a tap nudges the view); look
+far to the side and it keeps going straight. Shift is a sprint out of the saddle: a burst of about 1.4 s
 that takes it toward 90 km/h and refills in 4 s, shown by the bar under the
 speed. Downhill it speeds up gently and levels off near 70 km/h on steep
 ground. Holding Space loads the suspension (the view sinks) and letting go
@@ -321,6 +328,132 @@ boat, so Lowmouth's boardwalks (1.5 m up) and footbridges (2.5 m in the
 middle) are made to be paddled under. In first person you see the bow deck
 and the paddle turning over stroke by stroke; the chase camera shows the
 paddler.
+
+## Driving
+
+A world that lists `"vehicles"` in its `world.json` can be driven. Ribshore
+has a sand rail and an older beach buggy (`library/vehicles/`), and Redrock
+has the buggy for the desert floor; the launch
+screen picks which one U brings, and its DRIVE switch takes driving out.
+
+U gets in. The first time it sets the car down at your feet, facing the way
+you look; after that it is wherever you left it, and U within 5 m of it gets
+back in, while U further off brings it over. U again gets out on the
+driver's side and leaves it parked; held for most of a second it puts the car
+back on its wheels where it last had all four down. The parked car is saved
+with the world.
+
+W is the throttle, S brakes and then reverses, Ctrl is the handbrake (the
+rear wheels lock and slide), Shift boosts while the wheels are down, and
+Space held squats the car on its springs and letting go hops it. In the chase
+camera the front wheels turn toward where the view points and A and D turn the
+view, as on the bike. In the driver's seat the view is fixed to the car and
+turns as it turns, reversing included; A and D steer and the mouse looks round
+the cab. In the air W and S pitch the nose and A and D roll; four wheels down at
+once off a jump of half a second or more is a clean landing, which gives back
+a little speed and some boost. A car on its side or roof and nearly stopped
+rights itself after a second. The chase camera is the default (V for the
+driver's seat, hands on the wheel).
+
+On Ribshore the wet beach below the tide line is the fast line, and the dune
+ridges behind it are 40 to 54 m apart, so at 70 km/h each crest is a jump. The boost-token trails
+(`ride/boost.rs`) show for the car as they do for the bike, and a car takes a
+token anywhere across its width. Most animals bolt from an engine long before
+it arrives; one that doesn't is pushed aside unharmed and the car loses some
+speed for it, more for a big one.
+Shrubs under 1.8 m (sagebrush, rabbitbrush, small cacti) are flattened as the car
+reaches them and cost it a little speed. That isn't saved: the shrub is back
+once its ground streams in again. Anything taller, a juniper or an ocotillo,
+stops the car or turns it aside.
+
+The surface matters: the wet beach is firm and fast, dune sand bogs a slow
+car and planes a fast one, grass and mud have less grip. A material says
+which it is with `"surface"` in its JSON (`hardpack`, `rock`, `sand_wet`,
+`sand_soft`, `grass`, `mud`, `snow`), else it is guessed from the name
+(`src/world/surface.rs`). Water slows the car; past the hubs the engine
+stalls, and deeper than that it floats.
+
+The tune is the JSON in `library/vehicles/`: mass, springs, grip, power,
+steering lock and every assist. The game reads it again whenever a file
+there changes, so you can edit it while driving. F3 shows each wheel's load,
+slip and compression at the bottom left, and on the right a tuning panel
+with every number in the tune: PageUp and PageDown pick a line, `[` and `]`
+step it, `-` and `=` step it ten times as far, Backspace puts it back to the
+file's value, and P writes the changed lines into the vehicle's file. Pause
+(Esc) and the panel shows every line for the mouse: drag a line left or
+right, roll the wheel over it to step it, right-click it for the file's
+value, and click the bottom line to save. Edits
+not yet saved are lost when any vehicle file changes on disk. To measure a
+change without a window:
+
+    lurelia --world ribshore --headless --ride drive --ride-secs 8 --chase --screenshot out.png
+
+prints the position and speed every half second and how rough the ride was.
+For numbers to tune against, `TUNE=beach_buggy cargo test --release
+vehicle_report -- --ignored --nocapture` reads the vehicle's file and prints
+its pace, how far one voxel-high bump pitches and rolls it, how it copes
+with rough ground, and whether a handbrake drift holds or spins. It reads
+the file at run time, so edit and run again without building.
+`vehicle_laps` (same form) puts the bot from `src/vehicle/bot.rs` at the wheel
+for three laps of a test circuit, part of it bumpy, and prints the lap times,
+how closely it held the line, how far it fell short of the speed the bot
+asked for, and any time off the road, spins, flips and resets. The bot's
+style stays fixed, so a change in the numbers is the tune's doing. With
+`DUMP=file` it also writes the track and the path driven as CSV.
+
+`vehicle_tournament` races three bots in three cars for 20 rounds of three
+races, each bot driving each car once a round from each grid slot, with the
+cars bumping each other and the bots pulling out to pass. Odd rounds replace
+the car with fewest points by a variation on the best one (two numbers moved
+up to 15%, kept only if it passes a bump, rough-ground and drift check);
+even rounds do the same for the bots' styles. `SEED=` and `ROUNDS=` vary it.
+It prints each round's points and what changed, then the final tunes as JSON
+lines to paste into a vehicle file and the final bot styles.
+The physics is in `src/vehicle/` and the design in `notes/WHEELS_PLAN.md`.
+
+## Kart racing
+
+The Kestrel Ice Ring (`worlds/kestrel`) is a kart circuit in a canyon of ice,
+and RACE is its mode on the launch screen (`--world kestrel` opens it that
+way). You start at the back of a grid of four karts: three bots, blue, green
+and yellow, and you in red. Three laps, 1.3 km round between ice walls, over
+the shoulder of Beacon Hill and down through the hollow. W drives, S brakes, A and D steer. Space hops; held with the
+steering over at speed it drifts, and every 0.8 s of drift charges a tier
+of boost, up to two, that fires when you let go. The HUD shows your place,
+the lap, the race clock and your speed. A kart that is stuck, over, or well
+off the track for three seconds is put back on it. When you finish, the
+results come in as the others do; Enter races again.
+
+A new course is a `.course` text file: the land, its hills, and the
+centreline as a list of points, in a few dozen lines. `tools/course/FORMAT.md`
+describes it and `tools/course/course_file.py` builds the world from it;
+Kestrel is `tools/course/maps/kestrel.course`.
+
+The pieces underneath, for a race built some other way:
+
+- `library/vehicles/kart.json` is the kart. The `drift_` keys turn the hop
+  into the drift; any vehicle can have them.
+- The `circuit` chronicle event lays a paved loop with kerbs through a
+  `path`, graded smooth, banked a little on its turns. `rise` lifts the road
+  at each path point (up to about 3 m above the ground, or it leaves a gap),
+  and `wall` stands walls that high along both sides. It keeps its centreline
+  and heights for the race.
+- world.json `race` names the circuit, the laps, how many rivals (1 to 3) and
+  the vehicle. The world's `vehicles` should list that vehicle first, since
+  the wheel model is sized from it.
+- `src/race.rs` runs it. The rivals drive with `vehicle::bot` (`Style::kart`
+  for karts, `Style::racer` otherwise), see crests and descents through the
+  circuit's heights, pass a slower car ahead, and bump off each other and
+  you. A rival out where the world isn't loaded is carried round the
+  centreline until the ground is there.
+
+To watch a whole race without a window, with a bot driving your kart:
+
+    lurelia --world kestrel --headless --ride race --ride-secs 200 --chase --screenshot out.png
+
+It prints the standings every second. To tune the kart against the bots on
+the test circuit, made smooth: `BUMPS=0 TUNE=kart cargo test --release
+vehicle_tournament -- --ignored --nocapture`.
 
 ## Under water
 
@@ -781,6 +914,30 @@ shadows near a walking player are centred on it, and the lead is capped at the m
 reaching back to its own split. Headless `--stats` counts whole redraws as
 `cascade_redraws`, one number per outer cascade.
 
+The maps hold only the faces turned away from the sun (entities included: their
+shadow pass culls front faces), so a sunlit face is compared against the far side
+of its own solid and needs almost no depth bias. `cascade_shadow` in scene.wgsl
+gives each surface its own:
+
+- Tight, a texel and a half plus a normal offset that grows as the sun grazes:
+  voxel faces turned to the sun and entities. Contact shadows stay shut: the top
+  of a post under a canopy, the foot of a wall under its eaves, an animal's head
+  on its neck.
+- One voxel (0.24 m along the light): rounded trees and faceted rock, which cast
+  from shapes that lean off the faces drawn, tubes, faces turned away that a
+  smoothed normal still lights, and sloped quads where the sun grazes them (it
+  striped a dome along its shadow line).
+- The old bias, 0.24 m and 0.54 m in the saturated style: leaves, which cast
+  from 0.5 m leaf cells and streak at less, and everything not drawn as terrain
+  or entities.
+
+The old bias everywhere left a lit band that deep under every overhang. One
+thing it did on purpose is gone: in the saturated style one-voxel ledges on a
+steep wall that slopes don't smooth now shade the face below them. The shadow
+pass's own raster bias (`sbias`) stays: without it shadow edges move a few
+pixels and leaf crowns speckle. `VOXEL_SHADOW_BIAS=legacy` puts the old bias
+and two-sided entity casting back, for comparisons.
+
 ### Light past the cascades
 
 The cascades stop at 160 m. With nothing past that, a far hillside would show
@@ -817,6 +974,107 @@ you stand in it or look across at it.
 
 `VOXEL_CLOUD_SHADOW=0`, `VOXEL_HORIZON=0` and `VOXEL_SKY_OCCLUSION=0` turn
 them off one at a time for comparisons.
+
+## Tides
+
+A world with `"tide": {"range": 2.5}` in world.json has a sea that goes out
+and comes back on the game clock (`src/world/tide.rs`). `sea_level_m` is
+high water: the beaches, shore plants, jetties and buildings were all placed
+against it, so the tide only goes out from there and never floods dry land.
+Low water is `range` metres below. One tide, high water to high water, takes
+`period_h` game hours (default 18, three quarters of a day), so the sea is out
+at its lowest nine hours after each high. The first high water is at `high`
+on the first day (default 6). The tide runs on the day count and the hour
+together, so each day's tides come six hours later than the last's, and a
+given `--hour` on the first day always shows the same tide (06:00 high, 15:00
+low, 24:00 high again). Leaving the block out is a still sea, which is right for a lake, an arena or
+a sheltered sea.
+
+Only the open sea moves: every cell below sea level joined to the edge of the
+map through cells below it (`tide::ocean_cells`). A hollow below sea level the
+sea cannot reach keeps its water at high water, drawn by a second plane over
+the cells the heightmap's g channel marks (`Fields::basin_grid`, `vs_water`).
+A world whose sea reaches no edge gets no tide, and `--validate` says so.
+
+Rivers that run to the sea fall with it near their mouths. Each river cell
+has an `ebb` (`Wet::ebb`): 0 for lakes, rivers that end in a lake and water
+above a waterfall; for the rest, the channel's depth less 10 cm, so a river
+thins over its bed at low water rather than running dry. Water at the sea's
+own level falls the whole way; the fall shrinks linearly to nothing a full
+range above the sea, so the river never runs uphill (`Tide::river_fall`,
+`river_fall` in common.wgsl). With a tide, every river that reaches the
+sea runs on to low water: its line is carried past its end, leaning downhill
+across the flats (`extend_to_low` in river.rs), its channel cut a little into
+them, and the water there stands at the sea's level and drains to 10 cm over
+the bed as the tide goes out, so the river follows the sea down instead of
+stopping at the old mouth. Those cells draw nothing while the sea covers
+them (`vs_river`). Without a tide nothing past the mouth changes, and flora
+ignores water at the sea's level, so worlds without one build exactly as
+before. Gameplay reads the same numbers through
+`Fields::wet_now` and `Fields::sea_now`; `wet` is still the high-water
+level, which is what the generator builds against. Falls into the sea
+reach down to it, and ground the tide has uncovered stays dark and wet up to
+the high-water line (`tide_wet`). No land plant grows below high water
+(`drowned` in foliage.wgsl), and seagrass the tide leaves out lies flat on
+the sand, and where the water is shallower than a blade is long the rest of
+it floats along under the surface. Kelp is loose strands drawn in the shader,
+shaped to the sea as it stands now, so a falling tide lays more of each
+strand along the surface instead of lifting it into the air (docs/UNDERWATER.md
+"Kelp"). Seabirds afloat on the sea ride its level now (`Terrain::sea_at`).
+
+The sea plane moves in 6.25 cm steps, midway between the steps the smoothed
+ground is built in, so it never lies flush with a flat beach and flickers.
+
+## Surf
+
+A world with `"surf": {"height": 1.2}` in world.json has waves breaking on
+its shores (`src/world/surf.rs`). `height` is the breaker height on a fair
+day in metres; the wind scales it, and some waves come bigger than others in
+sets. `length_m` (16) is the distance between crests and `period_s` (7) the
+seconds between waves. Leaving it out is a sea that only laps, which suits a
+lagoon world, a fjord or a bayou. Ribshore has 1.2, Glassfall 0.9, Hemlow
+0.7, Jadewater 0.35 and Kaldvik 0.25.
+
+It is drawn in the shaders, nothing moves on the CPU. At load,
+`surf::shore_grid` bakes two fields into the heightmap's b and a channels:
+how far each point lies seaward of the high-water coast, smoothed over about
+10 m so crests bend round the coast rather than copying every notch, and how
+open the sea is there, from a wide blur of the same distance, so a lagoon or
+a cove behind a spit stays calm. Crests are lines of equal seaward distance
+moving in toward the shore (`surf_at` in scene.wgsl). Out at sea they show
+only as bands of slope in the water's normal, which steepen as the water
+shoals; where the water is about as shallow as the wave is high they break
+(`fs_water`): solid white on the face and crest, lace behind it, a little
+churn over the inner zone. On the beach, `swash` runs a sheet of water up
+the sand after each wave and slides it back, with froth along its front, and
+the sand it reaches stays dark. It follows the tide, since all of it is
+measured from the sea's level now. The crests' wobble is baked into the
+grid too, so the CPU knows the waves exactly: the surf sound's middle train
+keeps time with the wave breaking nearest the ear (`Shore::breaker`,
+`Surf::run` in sound/voice.rs), its foam coming up as that wave's face goes
+white, louder for a set's big ones.
+
+### Swell
+
+The open sea's surface itself rises and falls: three long waves (40 m by
+default, `swell_length_m`, with two shorter ones at angles) rolling in from
+the side the open coast faces (`swell_heading`, the average seaward slope of
+the shore grid). `swell` in the surf block is crest to trough on a fair day,
+half the breaker height if left out, 0 for a flat sea; the wind scales it.
+It dies away in water under four metres deep, where the surf takes over, and
+in sheltered water. With a swell the sea is drawn as a 192 x 192 mesh round
+the camera, a metre apart beside it and coarser toward the horizon
+(`vs_water`, `SEA_GRID`); a wave shorter than four mesh steps is left out of
+the mesh rather than aliased, and the lighting carries every wave at every
+distance. `swell` in scene.wgsl and `surf::swell` in Rust are the same
+function, fed the same clock and wind (`Game::follow_swell`), so the player
+swimming, the kayak, bots, seabirds, fish and whales ride the waves on
+screen (`Fields::sea_at`, `game::water_over`, `Terrain::sea_at`). The kayak
+also pitches and rolls with the water's slope under it (`Ride::water_slope`).
+The high-water plane over a sealed hollow writes its depth, so the
+reflections in post.wgsl take it as a pool at its own surface. On an RTX 3060 at 1600 x 900 the
+water pass costs 0.31 ms with a still sea, 0.38 with surf and 0.58 with surf
+and swell.
 
 ## Weather
 
@@ -962,7 +1220,11 @@ clock, and where on the land each shows is the shaders' business.
   soaked) and a foggy day keeps it damp. Wet ground goes darker and deeper
   in colour and takes a faint sheen of the sky; plants darken less and
   leaves take no sheen (`damp_ground` and `damp_light` in `scene.wgsl`, and
-  the grass in `foliage.wgsl`).
+  the grass in `foliage.wgsl`). Rock faces and tree trunks wet nearly as
+  much as the ground, in vertical streaks where the rain ran down, and the
+  underside of an overhang stays drier. Creatures and other things out in
+  the open darken too (`entity_colour`), less underneath, but not under the
+  sea or under the land.
 - **Puddles.** Once the ground is near soaked, standing water fills and then
   drains slower than the wet dries, so puddles outlast the shower by an
   afternoon. They lie only on level bare ground -- paths, earth, rock, never
@@ -1014,6 +1276,14 @@ angle above it, upside down: the far flat goes to sky-coloured water and
 whatever stands on it floats over its own squeezed reflection. The air at
 the horizon shimmers (`mirage` in `post.wgsl`, strength from
 `Game::mirage`). Saltmirror sets 1.
+
+The mirage is worked out from each pixel's ray in the world, so it lies
+along the true horizon when the view banks. A pixel takes part only where
+its ray reaches the bottom two and a half metres of air over the ground
+under the camera, more than about a hundred metres out and at a grazing
+angle (under about 1.7 degrees): anything nearer or taller hides it, and
+from high up the band thins away past the world's edge. `VG_ROLL=degrees`
+banks the camera for a headless shot.
 
 ## Seasons
 
@@ -1480,7 +1750,13 @@ directly, measured from the trunk's own centre (which is snapped to a voxel
 corner, so it stands up to half a voxel off the tree's). Past the full-detail
 band the cells are 1 m and 2 m across and can clothe nothing at any price, so
 there the trunk simply stops at the foot of the crown: no one can see a
-conifer's trunk through its own crown at that range.
+conifer's trunk through its own crown at that range. The whorl limbs are left
+out there too: drawn as the chain of coarse voxels their centre line crosses,
+they stuck out of their needle sleeves as rust-coloured blocks across every
+distant spruce. And the needles run up the axis there as a spine one leaf cell
+across, as high as the clumps reach it: the leader's core near the tip is
+under 0.3 m solid, which coarse voxels caught in some layers and missed in
+others, so the tip came apart into flecks hanging over the crown.
 
 How much clothing is needed falls away with the trunk, and has to: what the
 margin buys is room for a cell with no bark in it, so a sapling whose stem is
@@ -1491,6 +1767,27 @@ the margin is capped against the bark's own width
 (`flora::conifer_clothe`), the clump minimums against the crown's radius, and
 the core's minimum draws in toward the tip, which is what lets a 3 m sapling
 and a 40 m redwood come out of the same code as cones.
+
+A root flare of 1.5 m or more (`buttress` on the plant, `PLANK_FLARE` in
+`stamp.rs`) is drawn as plank buttresses: four to seven thin walls standing
+out from the trunk, each with its own bearing, reach and height, sweeping
+down from high on the trunk to far out on the ground. A smaller flare is the
+old fluted cone. At rainforest sizes a cone reads as a plinth the tree stands
+on.
+
+Every trunk and crown clump is rasterised in blocks of 4x4x4 voxels before
+any voxel is tested (`raster_into` in `stamp.rs`). A block wholly outside the
+shape is skipped and one wholly inside its solid core is filled without a
+test, both decided from one sample at the block's middle and a bound on how
+fast the shape's distance can change (`Blob::max_rate`, and for a trunk its
+taper and flare, which only shrink as they climb). The bounds are exact, so
+the voxels come out as they did before: on a grove of 80 m trees it halved
+tree drawing, and every world's quad count and a screenshot came out
+identical. The ragged edge's noise is looked up only inside the band where
+it can change the answer. `Lumps::least` is the subtle part: the lumps
+divide by the clump's normalised distance, which is a true length only for
+an unsquashed ball, so along a sleeve they can cut much deeper than their
+nominal fifth.
 
 The tip is the other end of the same problem. A conifer really does taper to a
 point, and nothing at 25 cm voxels can be both that narrow and solid enough to
@@ -1543,7 +1840,14 @@ terrain, creatures, sprites, sky, motes, water, post) with timestamp queries
 and prints the averages every 60 frames as `GPUPROF` lines; `VOXEL_TRACE=1`
 logs frames over 16 ms with their CPU breakdown. Both work headless.
 `--bench` (or `tools/timing.sh --bench`) flies a fixed route and reports frame
-time percentiles; run it on an otherwise idle machine.
+time percentiles; run it on an otherwise idle machine. Under vsync the
+world moves by a step evened out to the display's refresh rather than by the
+loop's bunched intervals (`pacing.rs`, see docs/PERFORMANCE.md).
+`--bench-route field` walks a loop at eye height instead, round the spawn or
+`--ground`; on Hemlow that is a field of grazing animals. Hitches in play show
+on the stats panel (F3) as `HITCH`, with the part of the frame that took the
+time, and `VOXEL_TRACE=1` prints each one (docs/PERFORMANCE.md, "Finding
+hitches in play").
 
 ## Ages, bones and predation
 
@@ -2091,7 +2395,8 @@ the kit's `span` across the hole and puts piers under it.
 `network` routes a set of links together. Each line laid makes its own ground
 dearer, so the next link joins it at a junction rather than running alongside;
 links are laid widest first, and where two meet both are trimmed back and the
-crossing is aproned.
+crossing is aproned. Links that cross away from a node are aproned too, and a
+kit's `max_span` now holds over open water as well as over gaps.
 
 `ribbon` takes the polyline as given (`closed` for a ring, `meander` for a
 line that wanders, `height` to hold it at a fixed height above sea level) and
@@ -2103,6 +2408,19 @@ geography a world is built round, and `branches` leave it for their own
 mouths, which is how a delta is written: Thornpan's Spread and Lowmouth's
 passes are both one event. What it cuts is registered as a river, so the
 water settles into it and an `avulsion` can still break it out.
+
+`canopy_town` is a network in the trees: it grows giant host trees where
+it puts them, rings each trunk with a platform, strings walkways between
+the platforms (the shortest set that joins them all, then a few loops) and
+winds stairs up a few trunks from the ground. `docs/ROUTES.md`, "In the
+trees", has the rules.
+
+```json
+{"year": 1880, "event": "canopy_town", "cause": "the treehouse town",
+ "at": "centre", "radius": 90, "hosts": ["giant_redwood", "giant_douglas"],
+ "count": 26, "spacing": 22, "ring": "tree_ring", "rail": "tree_rail",
+ "walk": "cedar_walk", "stair": "tree_stair", "stairs": 3}
+```
 
 `village` lays out streets and builds on their frontages: `grid`, `radial`,
 `organic` or `linear`, turned by `bearing` (a quarter turn suits a grid,
@@ -2602,6 +2920,52 @@ plants: sitka spruce, shore pine, sea buckthorn and lupine (a sprite layer of
 its own). Anomalies: a harpoon twenty metres long stuck in a vertebra near
 the hips, there before the whalers came, and a blowhole that spouts on a
 rhythm whatever the sea is doing. Its chronicle is edited as JSON.
+
+### Gannet Harbor
+
+The coast north of Ribshore, 1.5 km across, built to meet Ribshore's north
+edge: its world.json names `"neighbours": {"south": {"world": "ribshore"}}`,
+and the build takes a strip off Ribshore's edge and blends its own land, coast
+distances and trees into it (`world/seam.rs`; `notes/UBERWORLD_PLAN.md`). Its
+south edge therefore runs on into Ribshore's beach, dunes and spruce, and the
+two will walk as one once worlds can be joined at runtime. It shares
+Ribshore's sea level, tide, surf, sky and weather; its grade is Ribshore's
+made a little greener and brighter, to suit the pasture and redwoods. `--seam out.png`
+prints how each edge meets and writes a map of the world beside its
+neighbours.
+
+The coast is let into a broad shallow bight, Mercy Bay, with clam flats, salt
+marsh and an eelgrass floor. A New England whaling town stands on its east
+shore, kept and empty: streets laid out by `village`, timber wharves
+(the `wharf` kit), two whalers at the wharves, one at anchor and one
+careened on the marine railway, and a granite breakwater (an `earthwork`
+laid in granite with `mat`, capped by the `breakwater` kit) with the harbour
+light at its end. Gannets circle over the bay and plunge into it after fish
+(`plunge` on the `circle` mover, CREATURES.md). Behind it walled
+fields (Voronoi cells of the farmland, each a `region` and a closed
+`fieldstone_wall` ribbon) with farmsteads, sheds and two orchards; a lane
+north over the fields to the redwoods and a branch to Shad Landing, a hamlet
+at the mouth of the Cold River. The river is `drainage` with two inflows over
+the north and east edges and a `watercourse` for each branch. Coast redwood
+along the north edge, two old groves, and the edge of a faerie wood in the
+north-east corner (`gh_faewood`, like Hemlow's Hollins), for the world that will
+sit north of it. A baleen whale like Ribshore's lies half in the dunes and
+half in the spruce south of the bay.
+
+Offshore, Hake Island is a granite block with tiered cliffs on its seaward
+side (`mesa` with `tiers` and `dip`), a puffin colony on the cliff tops and an
+abandoned 1950s-70s marine station on the low east side. Hogback Island has a
+sea cave in its south side, eight metres down in the kelp, that rises into a
+chamber under the island (four `passage`s: the tunnel below sea level, a pool,
+a sand slope and a dry back lit by two shafts) where the whaler *Thankful*
+lies half buried. Anomalies: the town's people are gone and something keeps
+it; the station's last hydrophone tapes keep time with Ribshore's blowhole.
+
+New entries: fourteen `gh_` biomes, the `fieldstone_wall` kit, the `whaler` in three states
+(moored, careened on a marine railway, buried), small craft, the New England houses and
+waterfront buildings, the rope walk, a covered bridge, the station ruins, and the gannet,
+salmon, lobster, banana slug, razorbill, apple, lowbush blueberry and cordgrass
+(`notes/GANNET_HARBOR.md` lists them all).
 
 ### Saltmirror
 

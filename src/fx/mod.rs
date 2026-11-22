@@ -268,7 +268,12 @@ impl Fx {
     #[cfg(test)]
     pub fn with_defs(defs: Vec<FxDef>) -> Fx {
         let owed = vec![0.0; defs.len()];
-        Fx { defs, owed, on: true, ..Default::default() }
+        Fx {
+            defs,
+            owed,
+            on: true,
+            ..Default::default()
+        }
     }
 
     #[cfg(test)]
@@ -556,6 +561,10 @@ mod tests {
         for _ in 0..50 {
             fx.step(1.0 / 60.0, &store);
         }
-        assert!(fx.items.iter().all(|p| p.rest && (p.pos.y - 1.01).abs() < 1e-3), "{:?}", fx.items.iter().map(|p| p.pos).collect::<Vec<_>>());
+        assert!(
+            fx.items.iter().all(|p| p.rest && (p.pos.y - 1.01).abs() < 1e-3),
+            "{:?}",
+            fx.items.iter().map(|p| p.pos).collect::<Vec<_>>()
+        );
     }
 }

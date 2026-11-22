@@ -5,8 +5,8 @@
 //! foot forward and tips a neck back (the head looks up); yaw +a turns left;
 //! root pitch +a lifts the front of the body.
 
-use crate::anim::{Plan, Role};
 use super::{Pose, Rig};
+use crate::anim::{Plan, Role};
 use glam::Vec3;
 use std::f32::consts::TAU;
 

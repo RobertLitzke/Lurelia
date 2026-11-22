@@ -5,6 +5,7 @@
   "notes": "The grass of a frost hollow: every blade rimed white and glittering, whatever the hour and whatever the season.",
   "smooth": true,
   "glints": true,
+  "sprites": "grass",
   "texture": {
     "pattern": "noise",
     "base": [196, 202, 202],

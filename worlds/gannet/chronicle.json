@@ -1,0 +1,3597 @@
+{
+ "places": {},
+ "events": [
+  {
+   "year": -2000000,
+   "event": "terrain",
+   "cause": "the coast north of the titan's beach: low granite country with a broad bight let into it, two islands of harder rock standing in its mouth, hills rising east and north into the forest",
+   "base": 44,
+   "hills": 5,
+   "ridges": 1.0,
+   "rough": 0.6,
+   "vary": 0.7,
+   "warp": 45,
+   "shelf": 7,
+   "relief": [
+    {
+     "at": [
+      300,
+      960
+     ],
+     "radius": 500,
+     "height": -44
+    },
+    {
+     "at": [
+      880,
+      880
+     ],
+     "radius": 330,
+     "height": -24
+    },
+    {
+     "at": [
+      1110,
+      1060
+     ],
+     "radius": 200,
+     "height": -21
+    },
+    {
+     "at": [
+      200,
+      1540
+     ],
+     "radius": 380,
+     "height": -34
+    },
+    {
+     "at": [
+      325,
+      975
+     ],
+     "radius": 205,
+     "height": 72,
+     "stretch": [
+      100,
+      1.2
+     ]
+    },
+    {
+     "at": [
+      360,
+      600
+     ],
+     "radius": 68,
+     "height": 60,
+     "stretch": [
+      95,
+      2.0
+     ]
+    },
+    {
+     "at": [
+      1550,
+      600
+     ],
+     "radius": 450,
+     "height": 18
+    },
+    {
+     "at": [
+      700,
+      -100
+     ],
+     "radius": 420,
+     "height": 16,
+     "stretch": [
+      90,
+      2.5
+     ]
+    },
+    {
+     "at": [
+      1150,
+      600
+     ],
+     "radius": 250,
+     "height": 6
+    },
+    {
+     "at": [
+      150,
+      330
+     ],
+     "radius": 260,
+     "height": -22
+    },
+    {
+     "at": [
+      1500,
+      1620
+     ],
+     "radius": 460,
+     "height": 24
+    },
+    {
+     "at": [
+      120,
+      1260
+     ],
+     "radius": 320,
+     "height": 12
+    }
+   ],
+   "courses": [
+    {
+     "path": [
+      [
+       1080,
+       -20
+      ],
+      [
+       1060,
+       150
+      ],
+      [
+       1010,
+       260
+      ],
+      [
+       880,
+       320
+      ],
+      [
+       720,
+       380
+      ],
+      [
+       640,
+       400
+      ]
+     ],
+     "width": 40,
+     "depth": 6
+    },
+    {
+     "path": [
+      [
+       1560,
+       60
+      ],
+      [
+       1300,
+       130
+      ],
+      [
+       1100,
+       220
+      ]
+     ],
+     "width": 30,
+     "depth": 5
+    }
+   ]
+  },
+  {
+   "year": -1900000,
+   "event": "mesa",
+   "cause": "Hake Island: a block of granite the sea has cut cliffs round, highest and sheerest on the west where the swell comes in",
+   "at": [
+    262,
+    962
+   ],
+   "radius": 160,
+   "top": 26,
+   "warp": 0.35,
+   "stretch": [
+    10,
+    1.15
+   ],
+   "skirt": 26,
+   "talus": 0.4,
+   "tiers": 2,
+   "dip": [
+    100,
+    0.05
+   ],
+   "cap": "shore_grass",
+   "poi": "Hake Island"
+  },
+  {
+   "year": -1900000,
+   "event": "mesa",
+   "cause": "Hogback Island: a long whaleback of granite, higher than Hake and narrower",
+   "at": [
+    360,
+    600
+   ],
+   "radius": 58,
+   "top": 30,
+   "warp": 0.3,
+   "stretch": [
+    95,
+    2.2
+   ],
+   "skirt": 18,
+   "talus": 0.35,
+   "tiers": 1,
+   "cap": "shore_grass",
+   "poi": "Hogback Island"
+  },
+  {
+   "year": -9100,
+   "event": "mesa",
+   "cause": "a sea stack, the last of an older headland the waves cut back",
+   "at": [
+    315,
+    430
+   ],
+   "radius": 9,
+   "height": 34,
+   "warp": 0.2,
+   "talus": 0.2,
+   "cap": "granite"
+  },
+  {
+   "year": -9100,
+   "event": "mesa",
+   "cause": "a sea stack, the last of an older headland the waves cut back",
+   "at": [
+    190,
+    512
+   ],
+   "radius": 11,
+   "height": 40,
+   "warp": 0.2,
+   "talus": 0.2,
+   "cap": "granite",
+   "poi": "the sea stacks"
+  },
+  {
+   "year": -9100,
+   "event": "mesa",
+   "cause": "a sea stack, the last of an older headland the waves cut back",
+   "at": [
+    110,
+    1245
+   ],
+   "radius": 8,
+   "height": 28,
+   "warp": 0.2,
+   "talus": 0.2,
+   "cap": "granite"
+  },
+  {
+   "year": -9100,
+   "event": "mesa",
+   "cause": "a sea stack, the last of an older headland the waves cut back",
+   "at": [
+    62,
+    1015
+   ],
+   "radius": 10,
+   "height": 36,
+   "warp": 0.2,
+   "talus": 0.2,
+   "cap": "granite"
+  },
+  {
+   "year": -9100,
+   "event": "mesa",
+   "cause": "a sea stack, the last of an older headland the waves cut back",
+   "at": [
+    84,
+    880
+   ],
+   "radius": 7,
+   "height": 26,
+   "warp": 0.2,
+   "talus": 0.2,
+   "cap": "granite"
+  },
+  {
+   "year": -9000,
+   "event": "dunes",
+   "cause": "the dunes north of the titan's beach, lower than its own, running in under the forest edge",
+   "at": [
+    1000,
+    1322
+   ],
+   "radius": 185,
+   "spacing": 46,
+   "height": 6.0,
+   "wind_bearing": 125,
+   "name": "dunes"
+  },
+  {
+   "year": -8500,
+   "event": "drainage",
+   "cause": "the Cold River: rain off the redwood country to the north and a branch off the hills to the east, cutting west to the sea",
+   "name": "cold",
+   "iters": 18,
+   "strength": 0.2,
+   "source": 6000,
+   "inflow": [
+    {
+     "at": [
+      1080,
+      2
+     ],
+     "area": 6000000.0
+    },
+    {
+     "at": [
+      1534,
+      75
+     ],
+     "area": 2500000.0
+    }
+   ]
+  },
+  {
+   "year": -8400,
+   "event": "watercourse",
+   "cause": "the Cold River, running down the valley it cut to its mouth at the head of the bay's north shore",
+   "name": "cold_river",
+   "from": "cold_source",
+   "to": "cold_mouth",
+   "width": 16,
+   "depth": 2.0,
+   "bed": "river_cobbles",
+   "bank": "river_gravel",
+   "meander": 8,
+   "from_edge": true
+  },
+  {
+   "year": -8400,
+   "event": "watercourse",
+   "cause": "the Cold River's east branch, off the hills in the north-east corner",
+   "name": "east_branch",
+   "from": [
+    1530,
+    76
+   ],
+   "to": [
+    1062,
+    232
+   ],
+   "width": 9,
+   "depth": 1.4,
+   "bed": "river_cobbles",
+   "bank": "river_gravel",
+   "meander": 8,
+   "from_edge": true
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the islands' turf and rock",
+   "name": "island",
+   "at": [
+    310,
+    970
+   ],
+   "radius": 240
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the islands' turf and rock",
+   "name": "island",
+   "at": [
+    360,
+    600
+   ],
+   "radius": 150
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the kelp forest between the islands",
+   "name": "kelp",
+   "at": [
+    320,
+    760
+   ],
+   "radius": 140
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the puffin colony on Hake's west cliff tops",
+   "name": "puffinry",
+   "at": [
+    150,
+    955
+   ],
+   "radius": 80
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the inner bay, sheltered and shallow",
+   "name": "bay",
+   "poly": [
+    [
+     1270,
+     1200
+    ],
+    [
+     1180,
+     1240
+    ],
+    [
+     1000,
+     1280
+    ],
+    [
+     900,
+     1180
+    ],
+    [
+     950,
+     1000
+    ],
+    [
+     960,
+     860
+    ],
+    [
+     1120,
+     900
+    ],
+    [
+     1290,
+     960
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "salt marsh in the calm corner of the bay",
+   "name": "marsh",
+   "at": [
+    1200,
+    1195
+   ],
+   "radius": 55
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the barrens behind the beach south of the bay",
+   "name": "barrens",
+   "at": [
+    960,
+    1250
+   ],
+   "radius": 110
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the redwoods along the north edge",
+   "name": "redwood",
+   "poly": [
+    [
+     -10,
+     -10
+    ],
+    [
+     1546,
+     -10
+    ],
+    [
+     1546,
+     210
+    ],
+    [
+     1400,
+     230
+    ],
+    [
+     1250,
+     300
+    ],
+    [
+     1120,
+     340
+    ],
+    [
+     980,
+     360
+    ],
+    [
+     820,
+     330
+    ],
+    [
+     640,
+     290
+    ],
+    [
+     420,
+     250
+    ],
+    [
+     200,
+     210
+    ],
+    [
+     -10,
+     190
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "an old grove the loggers never reached",
+   "name": "grove",
+   "at": [
+    480,
+    110
+   ],
+   "radius": 95
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "an old grove the loggers never reached",
+   "name": "grove",
+   "at": [
+    1240,
+    80
+   ],
+   "radius": 80
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "where the redwoods turn into the faerie wood that lies north of here",
+   "name": "faewood",
+   "at": [
+    1490,
+    50
+   ],
+   "radius": 210
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the spruce along the east edge, the same wood as behind the titan's beach",
+   "name": "spruce",
+   "poly": [
+    [
+     1110,
+     1546
+    ],
+    [
+     1546,
+     1546
+    ],
+    [
+     1546,
+     860
+    ],
+    [
+     1470,
+     900
+    ],
+    [
+     1430,
+     1080
+    ],
+    [
+     1360,
+     1180
+    ],
+    [
+     1300,
+     1290
+    ],
+    [
+     1180,
+     1360
+    ],
+    [
+     1120,
+     1420
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "a stand of old fir and redwood in the spruce",
+   "name": "firstand",
+   "at": [
+    1460,
+    560
+   ],
+   "radius": 70
+  },
+  {
+   "year": -4900,
+   "event": "skeleton",
+   "cause": "THE INLAND WHALE: another of the giants' kills, a baleen whale eighty metres long, come ashore when the sea stood higher and the beach was here; half in the dune grass now and half under the spruce",
+   "name": "whale",
+   "kind": "baleen",
+   "path": [
+    [
+     1040,
+     1442
+    ],
+    [
+     1098,
+     1420
+    ],
+    [
+     1158,
+     1404
+    ]
+   ],
+   "skull": 0.25,
+   "vertebrae": 40,
+   "ribs": 13,
+   "rib_height": 26,
+   "broken": 0.3,
+   "sink": 0.5,
+   "teeth": "baleen_plate",
+   "poi": "the inland whale",
+   "bone": "titan_bone",
+   "marrow": "titan_marrow",
+   "pits": "marrow_pit",
+   "lichen": "bone_lichen",
+   "lichen_share": 0.18,
+   "wet": "bone_barnacles",
+   "wet_depth": 5.0,
+   "deep": "drowned_bone",
+   "sand": "dune_sand"
+  },
+  {
+   "year": 2000,
+   "event": "area",
+   "cause": "the inland whale",
+   "name": "the Whalebone",
+   "kind": "bones",
+   "at": "whale_ribs",
+   "radius": 60
+  },
+  {
+   "year": -3000,
+   "event": "passage",
+   "cause": "the sea cave under Hogback: a crack the swell worked open, its mouth in the kelp on the island's south side",
+   "path": [
+    [
+     352,
+     705
+    ],
+    [
+     356,
+     672
+    ],
+    [
+     348,
+     645
+    ],
+    [
+     354,
+     618
+    ]
+   ],
+   "height": -6,
+   "radius": 3.6,
+   "wall": "stone_dark",
+   "wander": 2,
+   "poi": "the sea cave"
+  },
+  {
+   "year": -3000,
+   "event": "passage",
+   "cause": "THE GROTTO: the chamber the sea cave opens into under the middle of the island, the sea coming in at its foot",
+   "path": [
+    [
+     346,
+     612
+    ],
+    [
+     360,
+     606
+    ]
+   ],
+   "height": -1,
+   "radius": 12,
+   "wall": "stone_dark"
+  },
+  {
+   "year": -3000,
+   "event": "passage",
+   "cause": "THE GROTTO: the sand slope at the back of the chamber, where the swell has piled a beach",
+   "path": [
+    [
+     360,
+     600
+    ],
+    [
+     376,
+     595
+    ]
+   ],
+   "height": 7.1,
+   "radius": 12,
+   "wall": "stone_dark"
+  },
+  {
+   "year": -3000,
+   "event": "passage",
+   "cause": "THE GROTTO: the dry back of the chamber, lit by two chimneys to the turf",
+   "path": [
+    [
+     374,
+     592
+    ],
+    [
+     398,
+     586
+    ]
+   ],
+   "height": 8.2,
+   "radius": 14,
+   "wall": "stone_dark",
+   "shafts": 2
+  },
+  {
+   "year": 1849,
+   "event": "place",
+   "cause": "THE THANKFUL: the whaler that came back past Hake in the fog of 1849 with a full hold and was never seen again, half buried in the grotto's sand",
+   "structure": "whaler_buried",
+   "at": [
+    378,
+    594
+   ],
+   "height": 0.5,
+   "bearing": 100,
+   "poi": "the Thankful"
+  },
+  {
+   "year": 1849,
+   "event": "area",
+   "cause": "the grotto",
+   "name": "Thankful's Grotto",
+   "kind": "cave",
+   "at": [
+    375,
+    596
+   ],
+   "radius": 26
+  },
+  {
+   "year": 1952,
+   "event": "seat",
+   "cause": "a level place on Hake's low east side, looking at the town",
+   "name": "station",
+   "near": [
+    440,
+    975
+   ],
+   "within": 70,
+   "rule": "flat"
+  },
+  {
+   "year": 1952,
+   "event": "place",
+   "cause": "THE STATION: built for the navy as a listening post, a university marine station from 1961, left in a week in 1979",
+   "structure": "lab_block",
+   "at": {
+    "from": "station",
+    "by": [
+     0,
+     0
+    ]
+   },
+   "bearing": 270,
+   "age": 46,
+   "poi": "Hake Island Marine Station"
+  },
+  {
+   "year": 1952,
+   "event": "place",
+   "cause": "THE STATION: built for the navy as a listening post, a university marine station from 1961, left in a week in 1979",
+   "structure": "quonset_hut",
+   "at": {
+    "from": "station",
+    "by": [
+     -30,
+     26
+    ]
+   },
+   "bearing": 0,
+   "age": 46
+  },
+  {
+   "year": 1952,
+   "event": "place",
+   "cause": "THE STATION: built for the navy as a listening post, a university marine station from 1961, left in a week in 1979",
+   "structure": "quonset_hut",
+   "at": {
+    "from": "station",
+    "by": [
+     -14,
+     34
+    ]
+   },
+   "bearing": 0,
+   "age": 46
+  },
+  {
+   "year": 1952,
+   "event": "place",
+   "cause": "THE STATION: built for the navy as a listening post, a university marine station from 1961, left in a week in 1979",
+   "structure": "generator_shed",
+   "at": {
+    "from": "station",
+    "by": [
+     24,
+     30
+    ]
+   },
+   "bearing": 90,
+   "age": 46
+  },
+  {
+   "year": 1952,
+   "event": "place",
+   "cause": "THE STATION: built for the navy as a listening post, a university marine station from 1961, left in a week in 1979",
+   "structure": "radio_shack",
+   "at": {
+    "from": "station",
+    "by": [
+     -38,
+     -18
+    ]
+   },
+   "bearing": 270,
+   "age": 46
+  },
+  {
+   "year": 1952,
+   "event": "place",
+   "cause": "THE STATION: built for the navy as a listening post, a university marine station from 1961, left in a week in 1979",
+   "structure": "water_tank",
+   "at": {
+    "from": "station",
+    "by": [
+     10,
+     -30
+    ]
+   },
+   "bearing": 0,
+   "age": 46
+  },
+  {
+   "year": 1952,
+   "event": "place",
+   "cause": "THE STATION: built for the navy as a listening post, a university marine station from 1961, left in a week in 1979",
+   "structure": "lab_trailer",
+   "at": {
+    "from": "station",
+    "by": [
+     30,
+     -14
+    ]
+   },
+   "bearing": 180,
+   "age": 46
+  },
+  {
+   "year": 1952,
+   "event": "seat",
+   "cause": "the station's landing on the bay side",
+   "name": "station_landing",
+   "near": [
+    520,
+    980
+   ],
+   "within": 60,
+   "rule": "shore"
+  },
+  {
+   "year": 1952,
+   "event": "place",
+   "cause": "THE STATION: the landing stage, half fallen in",
+   "structure": "jetty",
+   "at": "station_landing",
+   "bearing": 90,
+   "age": 46
+  },
+  {
+   "year": 1961,
+   "event": "place",
+   "cause": "THE STATION: the hut where they banded the puffins; the records are still in it",
+   "structure": "woodcutter_hut",
+   "at": [
+    196,
+    952
+   ],
+   "bearing": 270,
+   "age": 46,
+   "poi": "the banding hut"
+  },
+  {
+   "year": 1979,
+   "event": "sign",
+   "cause": "THE STATION: the board at the landing",
+   "at": {
+    "from": "station_landing",
+    "by": [
+     -10,
+     6
+    ]
+   },
+   "text": [
+    "MARINE STATION"
+   ],
+   "style": "timber_sign",
+   "bearing": 90,
+   "age": 46
+  },
+  {
+   "year": 2000,
+   "event": "area",
+   "cause": "Hake Island",
+   "name": "Hake Island",
+   "kind": "island",
+   "at": [
+    310,
+    970
+   ],
+   "radius": 200
+  },
+  {
+   "year": 2000,
+   "event": "area",
+   "cause": "the puffin colony",
+   "name": "Puffin Head",
+   "kind": "headland",
+   "at": [
+    175,
+    955
+   ],
+   "radius": 70
+  },
+  {
+   "year": 2000,
+   "event": "area",
+   "cause": "Hogback Island",
+   "name": "Hogback Island",
+   "kind": "island",
+   "at": [
+    360,
+    600
+   ],
+   "radius": 130
+  },
+  {
+   "year": 1702,
+   "event": "seat",
+   "cause": "the town's waterfront on the east shore of the bay, where the ground comes down gently to deep enough water",
+   "name": "harbor",
+   "near": [
+    1262,
+    1040
+   ],
+   "within": 60,
+   "rule": "shore"
+  },
+  {
+   "year": 1702,
+   "event": "place",
+   "cause": "THE ROPE WALK: a hundred and fifty metres of shed behind the town where the ships' cordage was laid up",
+   "structure": "rope_walk",
+   "at": {
+    "from": "harbor",
+    "by": [
+     178,
+     -10
+    ]
+   },
+   "bearing": 0,
+   "poi": "the rope walk"
+  },
+  {
+   "year": 1702,
+   "event": "village",
+   "cause": "GANNET HARBOR: a fishing station in the 1680s, a whaling town by 1790, kept and painted and empty now",
+   "name": "gannet_harbor",
+   "at": {
+    "from": "harbor",
+    "by": [
+     95,
+     -10
+    ]
+   },
+   "radius": 150,
+   "layout": "organic",
+   "street": "village_street",
+   "lane": "dirt_lane",
+   "houses": 34,
+   "bearing": 0,
+   "spacing": 17,
+   "setback": 3,
+   "plot": 8,
+   "walk": "road_gravel",
+   "buildings": [
+    "cape_cod",
+    "saltbox",
+    "cape_cod",
+    "georgian_house",
+    "saltbox",
+    "captains_house",
+    "chandlery",
+    "cape_cod",
+    "saltbox",
+    "sail_loft",
+    "georgian_house",
+    "cape_cod",
+    "cooperage",
+    "captains_house",
+    "saltbox",
+    "ice_house"
+   ],
+   "extras": [
+    {
+     "structure": "white_church",
+     "near": "centre"
+    },
+    {
+     "structure": "customs_house",
+     "near": "centre"
+    },
+    {
+     "structure": "cemetery",
+     "near": "edge"
+    },
+    {
+     "structure": "village_inn",
+     "near": "centre"
+    }
+   ]
+  },
+  {
+   "year": 1790,
+   "event": "ribbon",
+   "cause": "THE WHARVES: timber wharves on piles where the whalers fitted out",
+   "path": [
+    [
+     1255,
+     1065
+    ],
+    [
+     1221.5,
+     1058.5
+    ],
+    [
+     1188,
+     1048
+    ]
+   ],
+   "kit": "wharf",
+   "height": 2.0,
+   "poi": "the wharves"
+  },
+  {
+   "year": 1790,
+   "event": "ribbon",
+   "cause": "THE WHARVES: timber wharves on piles where the whalers fitted out",
+   "path": [
+    [
+     1252,
+     1098
+    ],
+    [
+     1211.0,
+     1097.0
+    ],
+    [
+     1170,
+     1092
+    ]
+   ],
+   "kit": "wharf",
+   "height": 2.0
+  },
+  {
+   "year": 1790,
+   "event": "ribbon",
+   "cause": "THE WHARVES: timber wharves on piles where the whalers fitted out",
+   "path": [
+    [
+     1248,
+     1130
+    ],
+    [
+     1220.0,
+     1137.0
+    ],
+    [
+     1192,
+     1140
+    ]
+   ],
+   "kit": "wharf",
+   "height": 2.0
+  },
+  {
+   "year": 1850,
+   "event": "place",
+   "cause": "THE FLEET: a whaler at the long wharf, rigged and ready for sea, no crew",
+   "structure": "whaler",
+   "at": [
+    1176,
+    1078
+   ],
+   "bearing": 255,
+   "height": 0
+  },
+  {
+   "year": 1850,
+   "event": "place",
+   "cause": "THE FLEET: a second whaler alongside, rigged and ready for sea",
+   "structure": "whaler",
+   "at": [
+    1176,
+    1124
+   ],
+   "bearing": 255,
+   "height": 0
+  },
+  {
+   "year": 1850,
+   "event": "place",
+   "cause": "THE FLEET: a whaler at anchor out in the bay",
+   "structure": "whaler",
+   "at": [
+    1080,
+    1020
+   ],
+   "bearing": 230,
+   "height": 0
+  },
+  {
+   "year": 1850,
+   "event": "seat",
+   "cause": "the marine railway at the south end of the waterfront",
+   "name": "railway",
+   "near": [
+    1250,
+    1165
+   ],
+   "within": 40,
+   "rule": "shore"
+  },
+  {
+   "year": 1850,
+   "event": "place",
+   "cause": "THE FLEET: a whaler hauled out on the marine railway and careened, half re-coppered",
+   "structure": "whaler_careened",
+   "at": {
+    "from": "railway",
+    "by": [
+     8,
+     0
+    ]
+   },
+   "bearing": 70
+  },
+  {
+   "year": 1880,
+   "event": "earthwork",
+   "cause": "THE BREAKWATER: a mole of granite blocks run out from the south shore to shelter the wharves from the south-west swell",
+   "parts": [
+    {
+     "from": [
+      1134,
+      1216
+     ],
+     "to": [
+      1104,
+      1182
+     ],
+     "width": 6,
+     "top": 3.0
+    },
+    {
+     "from": [
+      1104,
+      1182
+     ],
+     "to": [
+      1086,
+      1168
+     ],
+     "width": 6,
+     "top": 3.0
+    },
+    {
+     "from": [
+      1088,
+      1169
+     ],
+     "to": [
+      1083,
+      1165
+     ],
+     "width": 12,
+     "top": 3.0
+    }
+   ],
+   "slope": 1.2,
+   "mat": "granite",
+   "poi": "the breakwater"
+  },
+  {
+   "year": 1880,
+   "event": "ribbon",
+   "cause": "THE BREAKWATER: the capstones along its crest",
+   "path": [
+    [
+     1134,
+     1216
+    ],
+    [
+     1104,
+     1182
+    ],
+    [
+     1088,
+     1169
+    ]
+   ],
+   "kit": "breakwater",
+   "curve": false
+  },
+  {
+   "year": 1894,
+   "event": "place",
+   "cause": "the harbour light at the end of the breakwater",
+   "structure": "lighthouse",
+   "at": [
+    1084,
+    1166
+   ],
+   "bearing": 270
+  },
+  {
+   "year": 1702,
+   "event": "sign",
+   "cause": "the board at the head of the wharves",
+   "at": {
+    "from": "harbor",
+    "by": [
+     14,
+     -6
+    ]
+   },
+   "text": [
+    "GANNET HARBOR"
+   ],
+   "style": "timber_sign",
+   "bearing": 270
+  },
+  {
+   "year": 2000,
+   "event": "area",
+   "cause": "the town",
+   "name": "Gannet Harbor",
+   "kind": "town",
+   "at": {
+    "from": "harbor",
+    "by": [
+     90,
+     -10
+    ]
+   },
+   "radius": 170
+  },
+  {
+   "year": 2000,
+   "event": "area",
+   "cause": "the bay",
+   "name": "Mercy Bay",
+   "kind": "bay",
+   "at": [
+    1080,
+    1080
+   ],
+   "radius": 200
+  },
+  {
+   "year": 1720,
+   "event": "route",
+   "cause": "the Post Road: the town's road east, to the edge of the map and on",
+   "from": {
+    "from": "harbor",
+    "by": [
+     200,
+     -30
+    ]
+   },
+   "to": [
+    1535,
+    975
+   ],
+   "kit": "village_street",
+   "poi": "the Post Road"
+  },
+  {
+   "year": 1760,
+   "event": "seat",
+   "cause": "Shad Landing: the ferry place at the river mouth",
+   "name": "shad",
+   "near": [
+    742,
+    428
+   ],
+   "within": 60,
+   "rule": "flat"
+  },
+  {
+   "year": 1760,
+   "event": "network",
+   "cause": "the farm lanes: north from the town over the fields, across the Cold River and into the redwoods, with a branch to Shad Landing",
+   "nodes": {
+    "town": {
+     "from": "harbor",
+     "by": [
+      150,
+      -110
+     ]
+    },
+    "cross": [
+     1160,
+     560
+    ],
+    "ford": [
+     1008,
+     292
+    ],
+    "north_end": [
+     1030,
+     1
+    ],
+    "landing": {
+     "from": "shad",
+     "by": [
+      40,
+      0
+     ]
+    }
+   },
+   "links": [
+    {
+     "from": "town",
+     "to": "cross",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "cross",
+     "to": "ford",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "ford",
+     "to": "north_end",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "cross",
+     "to": "landing",
+     "kit": "dirt_lane"
+    }
+   ]
+  },
+  {
+   "year": 1760,
+   "event": "village",
+   "cause": "SHAD LANDING: a hamlet at the river mouth, the ferry and the shad nets",
+   "name": "shad_landing",
+   "at": {
+    "from": "shad",
+    "by": [
+     55,
+     10
+    ]
+   },
+   "radius": 45,
+   "layout": "linear",
+   "street": "dirt_lane",
+   "houses": 6,
+   "bearing": 30,
+   "spacing": 16,
+   "plot": 5,
+   "buildings": [
+    "settler_house",
+    "woodcutter_hut",
+    "white_house",
+    "settler_house",
+    "stockfish_rack",
+    "settler_store"
+   ]
+  },
+  {
+   "year": 1760,
+   "event": "place",
+   "cause": "SHAD LANDING: the ferry stage",
+   "structure": "jetty",
+   "at": "shad",
+   "bearing": 250
+  },
+  {
+   "year": 1760,
+   "event": "place",
+   "cause": "SHAD LANDING: a net shed over the water",
+   "structure": "net_shed",
+   "at": {
+    "from": "shad",
+    "by": [
+     0,
+     22
+    ]
+   },
+   "bearing": 250
+  },
+  {
+   "year": 2000,
+   "event": "area",
+   "cause": "the hamlet",
+   "name": "Shad Landing",
+   "kind": "village",
+   "at": {
+    "from": "shad",
+    "by": [
+     40,
+     0
+    ]
+   },
+   "radius": 70
+  },
+  {
+   "year": 2000,
+   "event": "area",
+   "cause": "the river",
+   "name": "the Cold River",
+   "kind": "river",
+   "at": "cold_5",
+   "radius": 120
+  },
+  {
+   "year": 2000,
+   "event": "area",
+   "cause": "the redwoods",
+   "name": "the Redwoods",
+   "kind": "wood",
+   "at": [
+    700,
+    110
+   ],
+   "radius": 260
+  },
+  {
+   "year": 2000,
+   "event": "area",
+   "cause": "the dunes",
+   "name": "the Whalebone Dunes",
+   "kind": "dunes",
+   "at": [
+    980,
+    1390
+   ],
+   "radius": 150
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     1143,
+     526
+    ],
+    [
+     1136,
+     578
+    ],
+    [
+     1098,
+     591
+    ],
+    [
+     1054,
+     552
+    ],
+    [
+     1084,
+     494
+    ],
+    [
+     1099,
+     494
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1143,
+     526
+    ],
+    [
+     1136,
+     578
+    ],
+    [
+     1098,
+     591
+    ],
+    [
+     1054,
+     552
+    ],
+    [
+     1084,
+     494
+    ],
+    [
+     1099,
+     494
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a hayfield walled off when the woods were cleared for sheep",
+   "name": "hay",
+   "poly": [
+    [
+     1158,
+     684
+    ],
+    [
+     1210,
+     640
+    ],
+    [
+     1238,
+     654
+    ],
+    [
+     1261,
+     708
+    ],
+    [
+     1220,
+     749
+    ],
+    [
+     1180,
+     754
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1158,
+     684
+    ],
+    [
+     1210,
+     640
+    ],
+    [
+     1238,
+     654
+    ],
+    [
+     1261,
+     708
+    ],
+    [
+     1220,
+     749
+    ],
+    [
+     1180,
+     754
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     1356,
+     801
+    ],
+    [
+     1323,
+     788
+    ],
+    [
+     1313,
+     723
+    ],
+    [
+     1362,
+     676
+    ],
+    [
+     1380,
+     679
+    ],
+    [
+     1388,
+     788
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1356,
+     801
+    ],
+    [
+     1323,
+     788
+    ],
+    [
+     1313,
+     723
+    ],
+    [
+     1362,
+     676
+    ],
+    [
+     1380,
+     679
+    ],
+    [
+     1388,
+     788
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a orchard walled off when the woods were cleared for sheep",
+   "name": "orchard",
+   "poly": [
+    [
+     1223,
+     755
+    ],
+    [
+     1261,
+     710
+    ],
+    [
+     1306,
+     724
+    ],
+    [
+     1322,
+     786
+    ],
+    [
+     1260,
+     810
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1223,
+     755
+    ],
+    [
+     1261,
+     710
+    ],
+    [
+     1306,
+     724
+    ],
+    [
+     1322,
+     786
+    ],
+    [
+     1260,
+     810
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a hayfield walled off when the woods were cleared for sheep",
+   "name": "hay",
+   "poly": [
+    [
+     1355,
+     551
+    ],
+    [
+     1329,
+     566
+    ],
+    [
+     1277,
+     535
+    ],
+    [
+     1282,
+     464
+    ],
+    [
+     1337,
+     450
+    ],
+    [
+     1367,
+     479
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1355,
+     551
+    ],
+    [
+     1329,
+     566
+    ],
+    [
+     1277,
+     535
+    ],
+    [
+     1282,
+     464
+    ],
+    [
+     1337,
+     450
+    ],
+    [
+     1367,
+     479
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     1229,
+     548
+    ],
+    [
+     1205,
+     604
+    ],
+    [
+     1136,
+     577
+    ],
+    [
+     1143,
+     528
+    ],
+    [
+     1187,
+     508
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1229,
+     548
+    ],
+    [
+     1205,
+     604
+    ],
+    [
+     1136,
+     577
+    ],
+    [
+     1143,
+     528
+    ],
+    [
+     1187,
+     508
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     1207,
+     633
+    ],
+    [
+     1155,
+     680
+    ],
+    [
+     1107,
+     674
+    ],
+    [
+     1092,
+     624
+    ],
+    [
+     1102,
+     597
+    ],
+    [
+     1133,
+     580
+    ],
+    [
+     1200,
+     608
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1207,
+     633
+    ],
+    [
+     1155,
+     680
+    ],
+    [
+     1107,
+     674
+    ],
+    [
+     1092,
+     624
+    ],
+    [
+     1102,
+     597
+    ],
+    [
+     1133,
+     580
+    ],
+    [
+     1200,
+     608
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a hayfield walled off when the woods were cleared for sheep",
+   "name": "hay",
+   "poly": [
+    [
+     1242,
+     650
+    ],
+    [
+     1216,
+     634
+    ],
+    [
+     1209,
+     611
+    ],
+    [
+     1235,
+     547
+    ],
+    [
+     1274,
+     535
+    ],
+    [
+     1326,
+     570
+    ],
+    [
+     1318,
+     614
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1242,
+     650
+    ],
+    [
+     1216,
+     634
+    ],
+    [
+     1209,
+     611
+    ],
+    [
+     1235,
+     547
+    ],
+    [
+     1274,
+     535
+    ],
+    [
+     1326,
+     570
+    ],
+    [
+     1318,
+     614
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     1440,
+     571
+    ],
+    [
+     1444,
+     660
+    ],
+    [
+     1386,
+     675
+    ],
+    [
+     1366,
+     676
+    ],
+    [
+     1321,
+     615
+    ],
+    [
+     1329,
+     569
+    ],
+    [
+     1360,
+     555
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1440,
+     571
+    ],
+    [
+     1444,
+     660
+    ],
+    [
+     1386,
+     675
+    ],
+    [
+     1366,
+     676
+    ],
+    [
+     1321,
+     615
+    ],
+    [
+     1329,
+     569
+    ],
+    [
+     1360,
+     555
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     1063,
+     720
+    ],
+    [
+     1000,
+     659
+    ],
+    [
+     988,
+     634
+    ],
+    [
+     1090,
+     629
+    ],
+    [
+     1102,
+     672
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1063,
+     720
+    ],
+    [
+     1000,
+     659
+    ],
+    [
+     988,
+     634
+    ],
+    [
+     1090,
+     629
+    ],
+    [
+     1102,
+     672
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a hayfield walled off when the woods were cleared for sheep",
+   "name": "hay",
+   "poly": [
+    [
+     1242,
+     372
+    ],
+    [
+     1302,
+     362
+    ],
+    [
+     1350,
+     386
+    ],
+    [
+     1333,
+     445
+    ],
+    [
+     1280,
+     461
+    ],
+    [
+     1254,
+     436
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1242,
+     372
+    ],
+    [
+     1302,
+     362
+    ],
+    [
+     1350,
+     386
+    ],
+    [
+     1333,
+     445
+    ],
+    [
+     1280,
+     461
+    ],
+    [
+     1254,
+     436
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     1345,
+     892
+    ],
+    [
+     1259,
+     878
+    ],
+    [
+     1246,
+     868
+    ],
+    [
+     1264,
+     814
+    ],
+    [
+     1320,
+     790
+    ],
+    [
+     1353,
+     806
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1345,
+     892
+    ],
+    [
+     1259,
+     878
+    ],
+    [
+     1246,
+     868
+    ],
+    [
+     1264,
+     814
+    ],
+    [
+     1320,
+     790
+    ],
+    [
+     1353,
+     806
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     1138,
+     796
+    ],
+    [
+     1121,
+     778
+    ],
+    [
+     1066,
+     720
+    ],
+    [
+     1108,
+     679
+    ],
+    [
+     1155,
+     686
+    ],
+    [
+     1173,
+     756
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1138,
+     796
+    ],
+    [
+     1121,
+     778
+    ],
+    [
+     1066,
+     720
+    ],
+    [
+     1108,
+     679
+    ],
+    [
+     1155,
+     686
+    ],
+    [
+     1173,
+     756
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a hayfield walled off when the woods were cleared for sheep",
+   "name": "hay",
+   "poly": [
+    [
+     977,
+     484
+    ],
+    [
+     1029,
+     440
+    ],
+    [
+     1077,
+     489
+    ],
+    [
+     1054,
+     551
+    ],
+    [
+     1025,
+     553
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     977,
+     484
+    ],
+    [
+     1029,
+     440
+    ],
+    [
+     1077,
+     489
+    ],
+    [
+     1054,
+     551
+    ],
+    [
+     1025,
+     553
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     1143,
+     389
+    ],
+    [
+     1240,
+     374
+    ],
+    [
+     1247,
+     440
+    ],
+    [
+     1197,
+     466
+    ],
+    [
+     1151,
+     433
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1143,
+     389
+    ],
+    [
+     1240,
+     374
+    ],
+    [
+     1247,
+     440
+    ],
+    [
+     1197,
+     466
+    ],
+    [
+     1151,
+     433
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     1148,
+     433
+    ],
+    [
+     1195,
+     471
+    ],
+    [
+     1189,
+     504
+    ],
+    [
+     1142,
+     527
+    ],
+    [
+     1103,
+     492
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1148,
+     433
+    ],
+    [
+     1195,
+     471
+    ],
+    [
+     1189,
+     504
+    ],
+    [
+     1142,
+     527
+    ],
+    [
+     1103,
+     492
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a hayfield walled off when the woods were cleared for sheep",
+   "name": "hay",
+   "poly": [
+    [
+     1365,
+     678
+    ],
+    [
+     1311,
+     722
+    ],
+    [
+     1263,
+     706
+    ],
+    [
+     1244,
+     650
+    ],
+    [
+     1322,
+     612
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1365,
+     678
+    ],
+    [
+     1311,
+     722
+    ],
+    [
+     1263,
+     706
+    ],
+    [
+     1244,
+     650
+    ],
+    [
+     1322,
+     612
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a orchard walled off when the woods were cleared for sheep",
+   "name": "orchard",
+   "poly": [
+    [
+     1251,
+     444
+    ],
+    [
+     1280,
+     467
+    ],
+    [
+     1273,
+     535
+    ],
+    [
+     1231,
+     543
+    ],
+    [
+     1195,
+     509
+    ],
+    [
+     1199,
+     467
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1251,
+     444
+    ],
+    [
+     1280,
+     467
+    ],
+    [
+     1273,
+     535
+    ],
+    [
+     1231,
+     543
+    ],
+    [
+     1195,
+     509
+    ],
+    [
+     1199,
+     467
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     1443,
+     660
+    ],
+    [
+     1446,
+     795
+    ],
+    [
+     1394,
+     785
+    ],
+    [
+     1386,
+     681
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1443,
+     660
+    ],
+    [
+     1446,
+     795
+    ],
+    [
+     1394,
+     785
+    ],
+    [
+     1386,
+     681
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a hayfield walled off when the woods were cleared for sheep",
+   "name": "hay",
+   "poly": [
+    [
+     1358,
+     383
+    ],
+    [
+     1436,
+     420
+    ],
+    [
+     1439,
+     465
+    ],
+    [
+     1367,
+     473
+    ],
+    [
+     1341,
+     447
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1358,
+     383
+    ],
+    [
+     1436,
+     420
+    ],
+    [
+     1439,
+     465
+    ],
+    [
+     1367,
+     473
+    ],
+    [
+     1341,
+     447
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     1447,
+     800
+    ],
+    [
+     1447,
+     899
+    ],
+    [
+     1383,
+     895
+    ],
+    [
+     1348,
+     892
+    ],
+    [
+     1357,
+     807
+    ],
+    [
+     1393,
+     789
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1447,
+     800
+    ],
+    [
+     1447,
+     899
+    ],
+    [
+     1383,
+     895
+    ],
+    [
+     1348,
+     892
+    ],
+    [
+     1357,
+     807
+    ],
+    [
+     1393,
+     789
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     930,
+     520
+    ],
+    [
+     976,
+     488
+    ],
+    [
+     1022,
+     553
+    ],
+    [
+     976,
+     610
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     930,
+     520
+    ],
+    [
+     976,
+     488
+    ],
+    [
+     1022,
+     553
+    ],
+    [
+     976,
+     610
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a hayfield walled off when the woods were cleared for sheep",
+   "name": "hay",
+   "poly": [
+    [
+     1239,
+     862
+    ],
+    [
+     1146,
+     793
+    ],
+    [
+     1180,
+     759
+    ],
+    [
+     1221,
+     754
+    ],
+    [
+     1258,
+     810
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1239,
+     862
+    ],
+    [
+     1146,
+     793
+    ],
+    [
+     1180,
+     759
+    ],
+    [
+     1221,
+     754
+    ],
+    [
+     1258,
+     810
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     1438,
+     467
+    ],
+    [
+     1443,
+     569
+    ],
+    [
+     1360,
+     556
+    ],
+    [
+     1367,
+     482
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1438,
+     467
+    ],
+    [
+     1443,
+     569
+    ],
+    [
+     1360,
+     556
+    ],
+    [
+     1367,
+     482
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a pasture walled off when the woods were cleared for sheep",
+   "name": "pasture",
+   "poly": [
+    [
+     1030,
+     442
+    ],
+    [
+     1078,
+     401
+    ],
+    [
+     1134,
+     389
+    ],
+    [
+     1145,
+     431
+    ],
+    [
+     1099,
+     487
+    ],
+    [
+     1084,
+     487
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1030,
+     442
+    ],
+    [
+     1078,
+     401
+    ],
+    [
+     1134,
+     389
+    ],
+    [
+     1145,
+     431
+    ],
+    [
+     1099,
+     487
+    ],
+    [
+     1084,
+     487
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1780,
+   "event": "region",
+   "cause": "a hayfield walled off when the woods were cleared for sheep",
+   "name": "hay",
+   "poly": [
+    [
+     1051,
+     553
+    ],
+    [
+     1095,
+     597
+    ],
+    [
+     1087,
+     620
+    ],
+    [
+     991,
+     633
+    ],
+    [
+     975,
+     609
+    ],
+    [
+     1024,
+     557
+    ]
+   ]
+  },
+  {
+   "year": 1780,
+   "event": "ribbon",
+   "cause": "the dry-stone walls round the fields, laid from the stones the ploughs turned up",
+   "path": [
+    [
+     1051,
+     553
+    ],
+    [
+     1095,
+     597
+    ],
+    [
+     1087,
+     620
+    ],
+    [
+     991,
+     633
+    ],
+    [
+     975,
+     609
+    ],
+    [
+     1024,
+     557
+    ]
+   ],
+   "kit": "fieldstone_wall",
+   "closed": true,
+   "curve": false
+  },
+  {
+   "year": 1790,
+   "event": "seat",
+   "cause": "a farmstead",
+   "name": "farm0",
+   "near": [
+    1250,
+    520
+   ],
+   "within": 60,
+   "rule": "flat"
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "a farmhouse",
+   "structure": "cape_cod",
+   "at": "farm0",
+   "bearing": 180
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "the farm's barn",
+   "structure": "gambrel_barn",
+   "at": {
+    "from": "farm0",
+    "by": [
+     18,
+     6
+    ]
+   },
+   "bearing": 270
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "the farm's cart shed",
+   "structure": "cart_shed",
+   "at": {
+    "from": "farm0",
+    "by": [
+     -4,
+     20
+    ]
+   },
+   "bearing": 0
+  },
+  {
+   "year": 1790,
+   "event": "seat",
+   "cause": "a farmstead",
+   "name": "farm1",
+   "near": [
+    1380,
+    700
+   ],
+   "within": 60,
+   "rule": "flat"
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "a farmhouse",
+   "structure": "saltbox",
+   "at": "farm1",
+   "bearing": 180
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "the farm's barn",
+   "structure": "gambrel_barn",
+   "at": {
+    "from": "farm1",
+    "by": [
+     18,
+     6
+    ]
+   },
+   "bearing": 270
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "the farm's cart shed",
+   "structure": "cart_shed",
+   "at": {
+    "from": "farm1",
+    "by": [
+     -4,
+     20
+    ]
+   },
+   "bearing": 0
+  },
+  {
+   "year": 1790,
+   "event": "seat",
+   "cause": "a farmstead",
+   "name": "farm2",
+   "near": [
+    1100,
+    470
+   ],
+   "within": 60,
+   "rule": "flat"
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "a farmhouse",
+   "structure": "georgian_house",
+   "at": "farm2",
+   "bearing": 180
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "the farm's barn",
+   "structure": "gambrel_barn",
+   "at": {
+    "from": "farm2",
+    "by": [
+     18,
+     6
+    ]
+   },
+   "bearing": 270
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "the farm's cart shed",
+   "structure": "cart_shed",
+   "at": {
+    "from": "farm2",
+    "by": [
+     -4,
+     20
+    ]
+   },
+   "bearing": 0
+  },
+  {
+   "year": 1790,
+   "event": "seat",
+   "cause": "a farmstead",
+   "name": "farm3",
+   "near": [
+    1330,
+    860
+   ],
+   "within": 60,
+   "rule": "flat"
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "a farmhouse",
+   "structure": "cape_cod",
+   "at": "farm3",
+   "bearing": 180
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "the farm's barn",
+   "structure": "gambrel_barn",
+   "at": {
+    "from": "farm3",
+    "by": [
+     18,
+     6
+    ]
+   },
+   "bearing": 270
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "the farm's cart shed",
+   "structure": "cart_shed",
+   "at": {
+    "from": "farm3",
+    "by": [
+     -4,
+     20
+    ]
+   },
+   "bearing": 0
+  },
+  {
+   "year": 1800,
+   "event": "place",
+   "cause": "a field shed",
+   "structure": "byre",
+   "at": [
+    1180,
+    640
+   ],
+   "bearing": 0
+  },
+  {
+   "year": 1800,
+   "event": "place",
+   "cause": "a field shed",
+   "structure": "byre",
+   "at": [
+    1410,
+    560
+   ],
+   "bearing": 180
+  },
+  {
+   "year": 1800,
+   "event": "place",
+   "cause": "a field shed",
+   "structure": "byre",
+   "at": [
+    1290,
+    770
+   ],
+   "bearing": 180
+  },
+  {
+   "year": 1800,
+   "event": "place",
+   "cause": "a field shed",
+   "structure": "cart_shed",
+   "at": [
+    1030,
+    560
+   ],
+   "bearing": 90
+  },
+  {
+   "year": 1800,
+   "event": "place",
+   "cause": "a field shed",
+   "structure": "byre",
+   "at": [
+    1200,
+    420
+   ],
+   "bearing": 180
+  },
+  {
+   "year": 1800,
+   "event": "place",
+   "cause": "a field shed",
+   "structure": "byre",
+   "at": [
+    1420,
+    820
+   ],
+   "bearing": 180
+  },
+  {
+   "year": 1830,
+   "event": "place",
+   "cause": "the sugar shack at the forest edge, where they boil the sap in March",
+   "structure": "sugar_shack",
+   "at": [
+    1452,
+    470
+   ],
+   "bearing": 270
+  },
+  {
+   "year": 2000,
+   "event": "area",
+   "cause": "the farmland",
+   "name": "the Uplands",
+   "kind": "fields",
+   "at": [
+    1230,
+    620
+   ],
+   "radius": 230
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "THE WATERFRONT: fish houses and lobster shacks on piles along the shore",
+   "structure": "fish_house",
+   "at": [
+    1238,
+    1012
+   ],
+   "bearing": 255
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "THE WATERFRONT: fish houses and lobster shacks on piles along the shore",
+   "structure": "lobster_shack",
+   "at": [
+    1236,
+    990
+   ],
+   "bearing": 255
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "THE WATERFRONT: fish houses and lobster shacks on piles along the shore",
+   "structure": "fish_house",
+   "at": [
+    1176,
+    1170
+   ],
+   "bearing": 255
+  },
+  {
+   "year": 1790,
+   "event": "place",
+   "cause": "THE WATERFRONT: fish houses and lobster shacks on piles along the shore",
+   "structure": "lobster_shack",
+   "at": [
+    1166,
+    1186
+   ],
+   "bearing": 255
+  },
+  {
+   "year": 1850,
+   "event": "place",
+   "cause": "THE FLEET: the boats, tied up or at a mooring",
+   "structure": "dory",
+   "at": [
+    1214,
+    1046
+   ],
+   "bearing": 250,
+   "height": 0
+  },
+  {
+   "year": 1850,
+   "event": "place",
+   "cause": "THE FLEET: the boats, tied up or at a mooring",
+   "structure": "whaleboat",
+   "at": [
+    1206,
+    1086
+   ],
+   "bearing": 255,
+   "height": 0
+  },
+  {
+   "year": 1850,
+   "event": "place",
+   "cause": "THE FLEET: the boats, tied up or at a mooring",
+   "structure": "dory",
+   "at": [
+    1212,
+    1118
+   ],
+   "bearing": 260,
+   "height": 0
+  },
+  {
+   "year": 1850,
+   "event": "place",
+   "cause": "THE FLEET: the boats, tied up or at a mooring",
+   "structure": "sloop",
+   "at": [
+    1120,
+    1150
+   ],
+   "bearing": 210,
+   "height": 0
+  },
+  {
+   "year": 1850,
+   "event": "place",
+   "cause": "THE FLEET: the boats, tied up or at a mooring",
+   "structure": "pinky",
+   "at": [
+    1135,
+    980
+   ],
+   "bearing": 200,
+   "height": 0
+  },
+  {
+   "year": 1850,
+   "event": "place",
+   "cause": "a dory hauled out above the tide",
+   "structure": "dory_upturned",
+   "at": [
+    1262,
+    1040
+   ],
+   "bearing": 10
+  },
+  {
+   "year": 1850,
+   "event": "place",
+   "cause": "a dory hauled out above the tide",
+   "structure": "dory_upturned",
+   "at": [
+    1264,
+    1036
+   ],
+   "bearing": 30
+  },
+  {
+   "year": 1952,
+   "event": "place",
+   "cause": "THE STATION: the seawater tank hall, its roof half gone",
+   "structure": "tank_hall",
+   "at": {
+    "from": "station",
+    "by": [
+     -6,
+     40
+    ]
+   },
+   "bearing": 270,
+   "age": 46
+  },
+  {
+   "year": 1760,
+   "event": "place",
+   "cause": "SHAD LANDING: a dory hauled out by the ferry stage",
+   "structure": "dory_upturned",
+   "at": {
+    "from": "shad",
+    "by": [
+     10,
+     -8
+    ]
+   },
+   "bearing": 250
+  },
+  {
+   "year": 1820,
+   "event": "place",
+   "cause": "THE COVERED BRIDGE: where the north lane crosses the Cold River, roofed so the snow stays off the deck",
+   "structure": "covered_bridge",
+   "at": [
+    1010,
+    249
+   ],
+   "bearing": 350,
+   "poi": "the covered bridge"
+  },
+  {
+   "year": 2000,
+   "event": "lamp",
+   "cause": "THE GROTTO: daylight down the two chimneys and up off the water, enough to see the Thankful by",
+   "at": [
+    370,
+    596
+   ],
+   "level": 0,
+   "points": [
+    [
+     16,
+     -7,
+     10
+    ],
+    [
+     -2,
+     1,
+     7
+    ],
+    [
+     -18,
+     13,
+     3
+    ]
+   ],
+   "reach": 20,
+   "colour": [
+    196,
+    218,
+    222
+   ],
+   "strength": 1.0
+  }
+ ]
+}

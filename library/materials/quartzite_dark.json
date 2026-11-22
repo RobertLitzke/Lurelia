@@ -3,13 +3,6 @@
   "version": 1,
   "introduced_by": "saltmirror",
   "notes": "The darker beds of the range's quartzite, iron-stained, that make the bands on every crag.",
-  "smooth": false,
-  "texture": {
-    "pattern": "strata",
-    "base": [104, 100, 98],
-    "alt": [86, 84, 84],
-    "scale": 3,
-    "contrast": 0.9,
-    "calm": {"base": [112, 108, 104], "alt": [96, 92, 90]}
-  }
+  "like": "quartzite",
+  "texture": {"alt": [86, 84, 84], "calm": {"alt": [96, 92, 90], "base": [112, 108, 104]}, "base": [104, 100, 98]}
 }

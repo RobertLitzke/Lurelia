@@ -38,6 +38,7 @@
     "shooter",
     "screenshot"
   ],
+  "games": ["ctf", "team"],
   "biomes": [
     "space_void"
   ],

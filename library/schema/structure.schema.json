@@ -791,7 +791,7 @@
       ]
     },
     "PartRef": {
-      "description": "What the voxels are for. In a structure, how they decay with age: `roof`,\n`cloth` and `glass` fail in whole sections; `timber`, `frame`, `wall`,\n`stone` and `metal` crumble from the top of each column; `floor` mostly\nstays. Any other name, or none, never decays. `stone` and `wall` grow moss.\nIn a creature, the body part the voxels move with (`head`, `tail`, ...).",
+      "description": "What the voxels are for. In a structure, how they decay with age: `roof`,\n`cloth` and `glass` fail in whole sections; `floor` never decays; every\nother part (`timber`, `frame`, `wall`, `stone`, `metal`, any other name,\nor none) crumbles from the top of each column at the same rate\n(`gen::crumbled`). `stone` and `wall` grow moss.\nIn a creature, the body part the voxels move with (`head`, `tail`, ...).",
       "type": "string"
     }
   }

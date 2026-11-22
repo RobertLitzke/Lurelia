@@ -1,0 +1,16 @@
+{
+  "name": "tree_stair",
+  "version": 1,
+  "introduced_by": "canopy_test",
+  "notes": "A stair wound round a trunk from the ground to a platform: a 1.5 m plank ramp with a rail and balusters both sides.",
+  "ground": "deck",
+  "width": 1.5,
+  "mat": "weathered_planks",
+  "lift": 0.0,
+  "clear": 2.2,
+  "max_span": 0.0,
+  "deck": {"thick": 0.25, "mat": "weathered_planks", "under": "timber_frame"},
+  "rails": [{"side": "both", "out": 0.0, "from": 0.95, "to": 1.2, "thick": 0.25, "mat": "timber_frame"}],
+  "posts": [{"side": "both", "out": 0.0, "every": 0.5, "size": [0.25, 0.95, 0.25], "mat": "timber_frame"}],
+  "tags": ["stair", "treehouse"]
+}

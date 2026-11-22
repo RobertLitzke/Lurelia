@@ -4,7 +4,9 @@
   "introduced_by": "ribshore",
   "notes": "Dunegrass on the stabilised dunes: tan blades with a little green at the root, tall and combed one way by the wind.",
   "smooth": true,
+  "surface": "grass",
   "drift": {"calm": [[112, 130, 88], [156, 150, 104]]},
+  "sprites": "grass",
   "texture": {
     "pattern": "noise",
     "base": [128, 136, 94],

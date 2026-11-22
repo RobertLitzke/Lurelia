@@ -62,7 +62,10 @@
     {"creature": "bee", "count": 4},
     {"creature": "desert_toad", "count": 2},
     {"creature": "canyon_bat", "count": 4},
-    {"creature": "rattlesnake", "count": 3}
+    {"creature": "rattlesnake", "count": 3},
+    {"creature": "roadrunner", "count": 2},
+    {"creature": "annas_hummingbird", "count": 2},
+    {"creature": "gambels_quail", "count": 16}
   ],
   "collectibles": [{"item": "arrowhead", "density": 4e-05, "placement": {"verb": "scatter", "params": {}}}]
 }

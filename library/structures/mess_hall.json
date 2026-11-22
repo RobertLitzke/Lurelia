@@ -1,134 +1,151 @@
 {
   "name": "mess_hall",
-  "version": 1,
+  "version": 2,
   "introduced_by": "saltmirror",
-  "notes": "The camp's mess hall (1966): a long prefab with a flat tin roof, a row of windows down the front (local -Z) and a yellow door, trestle tables still set out inside, and a mural of the sun and the planets in a row along the back wall.",
-  "size": [96, 20, 52],
+  "notes": "The camp's mess hall (1966): a 24 by 13 m prefab with a flat tin roof, 5.8 m to its stovepipe, a row of windows and a porch with the ajar yellow door on the front (local -Z), trestle tables inside and a kitchen counter with a stovepipe at the back.",
+  "size": [96, 24, 52],
   "anchor": [48, 0, 26],
   "foundation": 4,
   "decays": true,
   "tags": ["array", "camp"],
-  "slots": {"siding": "siding_cream", "trim": "falu_red"},
+  "slots": {
+    "siding": "siding_cream",
+    "trim": "falu_red",
+    "planks": "planks",
+    "tin": "corrugated_tin",
+    "glass": "window_glass",
+    "door": "door_yellow",
+    "concrete": "concrete",
+    "iron": "rust_iron",
+    "panel": "panel_grey",
+    "dark": "panel_dark",
+    "vent": "roof_vent",
+    "flag": "ribbon_red",
+    "blue": "mural_blue",
+    "sun": "sign_yellow",
+    "chalk": "chalk_rubble",
+    "ochre": "ochre",
+    "earth": "woad",
+    "terra": "terracotta",
+    "wash": "ochre_wash",
+    "uranus": "celadon_glaze",
+    "neptune": "karst_blue",
+    "white": "trim_white"
+  },
   "ops": [
     {"op": "box", "from": [0, 0, 0], "to": [96, 2, 52], "mat": "planks", "part": "floor"},
-    {"op": "walls", "from": [2, 2, 4], "to": [94, 13, 48], "mat": "siding", "thick": 1, "part": "wall"},
-    {"op": "box", "from": [0, 13, 2], "to": [96, 15, 50], "mat": "corrugated_tin", "part": "roof"},
-    {"op": "box", "from": [0, 12, 2], "to": [96, 13, 3], "mat": "trim", "part": "roof"},
+    {"op": "walls", "from": [2, 2, 4], "to": [94, 14, 48], "mat": "siding", "thick": 1, "part": "wall"},
+    {"op": "box", "from": [2, 2, 4], "to": [94, 3, 5], "mat": "trim", "part": "wall"},
+    {"op": "box", "from": [0, 14, 2], "to": [96, 16, 50], "mat": "tin", "part": "roof"},
+    {"op": "box", "from": [0, 13, 2], "to": [96, 14, 3], "mat": "trim", "part": "roof"},
+    {"op": "box", "from": [4, 16, 14], "to": [92, 17, 38], "mat": "tin", "part": "roof"},
+    {
+      "op": "repeat",
+      "count": 8,
+      "step": [12, 0, 0],
+      "ops": [{"op": "box", "from": [6, 12, 5], "to": [7, 14, 47], "mat": "planks", "part": "timber"}]
+    },
     {
       "op": "repeat",
       "count": 7,
       "step": [12, 0, 0],
-      "ops": [{"op": "box", "from": [8, 6, 4], "to": [16, 11, 5], "mat": "window_glass", "part": "glass"}]
+      "ops": [
+        {"op": "box", "from": [7, 5, 3], "to": [17, 12, 4], "mat": "trim", "part": "wall"},
+        {"op": "box", "from": [8, 6, 3], "to": [16, 11, 4], "mat": "air"},
+        {"op": "box", "from": [8, 6, 4], "to": [16, 11, 5], "mat": "glass", "part": "glass"}
+      ]
     },
     {
       "op": "repeat",
       "count": 3,
       "step": [24, 0, 0],
-      "ops": [{"op": "box", "from": [20, 6, 47], "to": [32, 11, 48], "mat": "window_glass", "part": "glass"}]
+      "ops": [
+        {"op": "box", "from": [19, 5, 47], "to": [33, 12, 48], "mat": "trim", "part": "wall"},
+        {"op": "box", "from": [20, 6, 47], "to": [32, 11, 48], "mat": "glass", "part": "glass"}
+      ]
     },
-    {"op": "box", "from": [44, 2, 4], "to": [50, 11, 5], "mat": "door_yellow", "part": "timber"},
     {"op": "box", "from": [44, 2, 4], "to": [50, 11, 5], "mat": "air"},
-    {"op": "box", "from": [42, 2, 0], "to": [52, 3, 4], "mat": "concrete", "part": "floor"},
-    {"op": "box", "from": [10, 2, 14], "to": [22, 5, 18], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [10, 2, 12], "to": [22, 3, 13], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [10, 2, 19], "to": [22, 3, 20], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [10, 2, 28], "to": [22, 5, 32], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [10, 2, 26], "to": [22, 3, 27], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [10, 2, 33], "to": [22, 3, 34], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [30, 2, 14], "to": [42, 5, 18], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [30, 2, 12], "to": [42, 3, 13], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [30, 2, 19], "to": [42, 3, 20], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [30, 2, 28], "to": [42, 5, 32], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [30, 2, 26], "to": [42, 3, 27], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [30, 2, 33], "to": [42, 3, 34], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [56, 2, 14], "to": [68, 5, 18], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [56, 2, 12], "to": [68, 3, 13], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [56, 2, 19], "to": [68, 3, 20], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [56, 2, 28], "to": [68, 5, 32], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [56, 2, 26], "to": [68, 3, 27], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [56, 2, 33], "to": [68, 3, 34], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [76, 2, 14], "to": [88, 5, 18], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [76, 2, 12], "to": [88, 3, 13], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [76, 2, 19], "to": [88, 3, 20], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [76, 2, 28], "to": [88, 5, 32], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [76, 2, 26], "to": [88, 3, 27], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [76, 2, 33], "to": [88, 3, 34], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [4, 2, 40], "to": [30, 6, 46], "mat": "panel_grey", "part": "wall"},
-    {"op": "box", "from": [32, 4, 46], "to": [92, 12, 47], "mat": "mural_blue", "part": "wall"},
+    {"op": "box", "from": [43, 2, 5], "to": [44, 11, 11], "mat": "door", "part": "timber"},
+    {"op": "box", "from": [43, 11, 3], "to": [51, 12, 5], "mat": "trim", "part": "wall"},
+    {"op": "box", "from": [42, 0, 2], "to": [52, 2, 4], "mat": "concrete", "part": "floor"},
+    {"op": "box", "from": [42, 0, 0], "to": [52, 1, 2], "mat": "concrete", "part": "floor"},
+    {"op": "box", "from": [40, 0, 0], "to": [41, 13, 1], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [53, 0, 0], "to": [54, 13, 1], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [40, 13, 0], "to": [54, 14, 4], "mat": "tin", "part": "roof"},
+    {"op": "segment", "points": [[42.5, 6.4, 0.5], [42.5, 6.4, 3.5]], "radius": 0.4, "mat": "iron", "part": "metal"},
+    {"op": "segment", "points": [[51.5, 6.4, 0.5], [51.5, 6.4, 3.5]], "radius": 0.4, "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [86, 2, 47], "to": [90, 11, 48], "mat": "door", "part": "timber"},
+    {"op": "box", "from": [85, 0, 48], "to": [91, 2, 50], "mat": "concrete", "part": "floor"},
     {
-      "op": "disc",
-      "centre": [36, 8, 45.5],
-      "radius": 3.6,
-      "thick": 1,
-      "axis": "z",
-      "mat": "sign_yellow",
-      "part": "wall"
+      "op": "repeat",
+      "count": 2,
+      "step": [46, 0, 0],
+      "ops": [
+        {
+          "op": "repeat",
+          "count": 2,
+          "step": [0, 0, 14],
+          "ops": [
+            {"op": "box", "from": [10, 4, 14], "to": [22, 5, 18], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [11, 2, 14], "to": [12, 4, 18], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [20, 2, 14], "to": [21, 4, 18], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [10, 3, 11], "to": [22, 4, 13], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [10, 3, 19], "to": [22, 4, 21], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [11, 2, 11], "to": [12, 3, 13], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [20, 2, 11], "to": [21, 3, 13], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [11, 2, 19], "to": [12, 3, 21], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [20, 2, 19], "to": [21, 3, 21], "mat": "planks", "part": "timber"}
+          ]
+        }
+      ]
     },
     {
-      "op": "disc",
-      "centre": [42, 8, 45.5],
-      "radius": 0.8,
-      "thick": 1,
-      "axis": "z",
-      "mat": "chalk_rubble",
-      "part": "wall"
+      "op": "repeat",
+      "count": 2,
+      "step": [46, 0, 0],
+      "ops": [
+        {
+          "op": "repeat",
+          "count": 2,
+          "step": [0, 0, 14],
+          "ops": [
+            {"op": "box", "from": [30, 4, 14], "to": [42, 5, 18], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [31, 2, 14], "to": [32, 4, 18], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [40, 2, 14], "to": [41, 4, 18], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [30, 3, 11], "to": [42, 4, 13], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [30, 3, 19], "to": [42, 4, 21], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [31, 2, 11], "to": [32, 3, 13], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [40, 2, 11], "to": [41, 3, 13], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [31, 2, 19], "to": [32, 3, 21], "mat": "planks", "part": "timber"},
+            {"op": "box", "from": [40, 2, 19], "to": [41, 3, 21], "mat": "planks", "part": "timber"}
+          ]
+        }
+      ]
     },
+    {"op": "box", "from": [4, 2, 40], "to": [30, 5, 46], "mat": "panel", "part": "wall"},
+    {"op": "box", "from": [4, 5, 40], "to": [30, 6, 46], "mat": "dark", "part": "wall"},
+    {"op": "box", "from": [6, 6, 43], "to": [13, 8, 46], "mat": "dark", "part": "metal"},
+    {"op": "box", "from": [6, 10, 43], "to": [13, 12, 46], "mat": "panel", "part": "metal"},
+    {"op": "box", "from": [4, 8, 45], "to": [30, 9, 46], "mat": "planks", "part": "timber"},
+    {"op": "box", "from": [14, 8, 45], "to": [30, 10, 46], "mat": "planks", "part": "timber"},
+    {"op": "box", "from": [8, 2, 36], "to": [30, 5, 38], "mat": "panel", "part": "wall"},
+    {"op": "box", "from": [8, 5, 36], "to": [30, 6, 38], "mat": "dark", "part": "wall"},
+    {"op": "cylinder", "base": [9.5, 16, 44], "radius": 1.5, "height": 6, "mat": "iron", "part": "metal"},
+    {"op": "cylinder", "base": [9.5, 22, 44], "radius": 2, "height": 1, "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [40, 17, 24], "to": [44, 19, 28], "mat": "vent", "part": "roof"},
+    {"op": "box", "from": [70, 17, 24], "to": [74, 19, 28], "mat": "vent", "part": "roof"},
+    {"op": "segment", "points": [[34, 0, 1], [34, 22, 1]], "radius": 0.5, "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [35, 18, 1], "to": [42, 22, 2], "mat": "flag", "part": "cloth"},
+    {"op": "box", "from": [32, 4, 46], "to": [92, 12, 47], "mat": "blue", "part": "wall"},
+    {"op": "disc", "centre": [36, 8, 45.5], "radius": 3.6, "thick": 1, "axis": "z", "mat": "sun", "part": "wall"},
+    {"op": "disc", "centre": [42, 8, 45.5], "radius": 0.8, "thick": 1, "axis": "z", "mat": "chalk", "part": "wall"},
     {"op": "disc", "centre": [46, 8, 45.5], "radius": 1.1, "thick": 1, "axis": "z", "mat": "ochre", "part": "wall"},
-    {
-      "op": "disc",
-      "centre": [51, 8, 45.5],
-      "radius": 1.2,
-      "thick": 1,
-      "axis": "z",
-      "mat": "door_blue",
-      "part": "wall"
-    },
-    {
-      "op": "disc",
-      "centre": [56, 8, 45.5],
-      "radius": 1.0,
-      "thick": 1,
-      "axis": "z",
-      "mat": "terracotta",
-      "part": "wall"
-    },
-    {
-      "op": "disc",
-      "centre": [64, 8, 45.5],
-      "radius": 2.6,
-      "thick": 1,
-      "axis": "z",
-      "mat": "ochre_wash",
-      "part": "wall"
-    },
-    {
-      "op": "disc",
-      "centre": [73, 8, 45.5],
-      "radius": 2.2,
-      "thick": 1,
-      "axis": "z",
-      "mat": "sign_yellow",
-      "part": "wall"
-    },
-    {
-      "op": "disc",
-      "centre": [81, 8, 45.5],
-      "radius": 1.6,
-      "thick": 1,
-      "axis": "z",
-      "mat": "karst_blue",
-      "part": "wall"
-    },
-    {
-      "op": "disc",
-      "centre": [88, 8, 45.5],
-      "radius": 1.5,
-      "thick": 1,
-      "axis": "z",
-      "mat": "door_blue",
-      "part": "wall"
-    },
-    {"op": "box", "from": [70, 8, 45], "to": [76, 9, 46], "mat": "sign_white", "part": "wall"},
-    {"op": "box", "from": [84, 13, 30], "to": [88, 18, 34], "mat": "rust_iron", "part": "metal"}
+    {"op": "disc", "centre": [51, 8, 45.5], "radius": 1.2, "thick": 1, "axis": "z", "mat": "earth", "part": "wall"},
+    {"op": "disc", "centre": [56, 8, 45.5], "radius": 1.0, "thick": 1, "axis": "z", "mat": "terra", "part": "wall"},
+    {"op": "disc", "centre": [64, 8, 45.5], "radius": 2.6, "thick": 1, "axis": "z", "mat": "wash", "part": "wall"},
+    {"op": "disc", "centre": [73, 8, 45.5], "radius": 2.2, "thick": 1, "axis": "z", "mat": "sun", "part": "wall"},
+    {"op": "disc", "centre": [81, 8, 45.5], "radius": 1.6, "thick": 1, "axis": "z", "mat": "uranus", "part": "wall"},
+    {"op": "disc", "centre": [88, 8, 45.5], "radius": 1.5, "thick": 1, "axis": "z", "mat": "neptune", "part": "wall"},
+    {"op": "box", "from": [70, 8, 45], "to": [76, 9, 46], "mat": "white", "part": "wall"}
   ]
 }

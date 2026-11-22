@@ -4,6 +4,7 @@
   "introduced_by": "lowmouth",
   "notes": "Water hyacinth: glossy round leaves on swollen floating stalks, a mat over the water.",
   "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "heart"},
   "texture": {
     "pattern": "blotch",
     "base": [68, 118, 58],

@@ -26,10 +26,10 @@ chain is resolved (`src/inherit.rs`):
 | `scale` | Multiplies the parent's (or its own) `voxel`, `half_w`, `height` and `fly_height`. |
 | `voxel` | Edge of one model voxel in metres. The shape is drawn on a 32^3 grid, so this one number scales the whole animal. |
 | `half_w`, `height` | The collision box, in metres. |
-| `colors` | Colour name -> sRGB, with an optional fourth value for glow (the glassmoth's wings use 1.8). |
+| `colors` | Colour name -> sRGB, with an optional fourth value for glow (the glassmoth's wings use 1.8). A fourth value below 0 is iridescence instead: the colour is dusky until the sun's reflection off it lines up with the eye, then flashes, brighter than lit paint (`entity_colour` in scene.wgsl); an Anna's hummingbird's gorget uses -1.6. |
 | `ops` | The shape program: `box`, `ellipsoid`, `cylinder`, `log`, `disc`, `set`, `walls`, `gable`, `repeat`, `recolour_below` (bellies and socks) and `recolour` (a colour swapped inside a box: zebra stripes, a javelina's collar, a donkey's shoulder cross). Later ops overwrite earlier ones; `mat: "air"` carves. The model faces -Z and its pivot is the bottom centre. The same op language builds structures (`src/world/shape.rs`). |
 | `extra_ops` | Ops added after the parent's: longer ears, a mane, a horn, or `air` to carve something away. |
-| `behaviour` | `movement` (a Rust verb, below), `walk_speed`, `flee_speed`, `wary` (flee distance: how far out it minds you or a predator), `flightiness` and `juvenile_flightiness` (how readily it actually runs, below), `flees_from` (creature names or `"player"`), `hunts` (both take in the named creature's `like` children at any depth, so hunting rabbits means jackrabbits too), `fly_height`, `group` (family groups for walkers, flock and school sizes and boid weights), `leap` (fish: leaps per fish per minute; whales: the chance a dive ends in a breach), `floats` (seabirds that come down and float on the sea), `swims` (walkers: cross rivers and lakes too deep to wade by swimming, backs at the waterline and carried by the current; deer, bear, boar and horse and their children), `warns` (a snake that holds its ground and buzzes rather than leave), `active` and `off_hours` (the hours it keeps, below), `rain`, `snow`, `heat` and `wind` (the weather it keeps out of, below), `winter` (the share of it about in winter, below), `flight` and `wingbeat` (rigged birds, see ANIMATION.md) and `spawn_chance` (below 1 makes a creature rare: the chance, each half-second check while its biome wants one, that a missing one turns up). |
+| `behaviour` | `movement` (a Rust verb, below), `walk_speed`, `flee_speed`, `wary` (flee distance: how far out it minds you or a predator), `flightiness` and `juvenile_flightiness` (how readily it actually runs, below), `flees_from` (creature names or `"player"`), `hunts` (both take in the named creature's `like` children at any depth, so hunting rabbits means jackrabbits too), `fly_height`, `group` (family groups for walkers, flock and school sizes and boid weights), `leap` (fish: leaps per fish per minute; whales: the chance a dive ends in a breach), `floats` (seabirds that come down and float on the sea), `plunge` (floating seabirds that come down by plunging, gannets), `swims` (walkers: cross rivers and lakes too deep to wade by swimming, backs at the waterline and carried by the current; deer, bear, boar and horse and their children), `warns` (a snake that holds its ground and buzzes rather than leave), `active` and `off_hours` (the hours it keeps, below), `rain`, `snow`, `heat` and `wind` (the weather it keeps out of, below), `winter` (the share of it about in winter, below), `flight` and `wingbeat` (rigged birds, see ANIMATION.md) and `spawn_chance` (below 1 makes a creature rare: the chance, each half-second check while its biome wants one, that a missing one turns up). |
 | `vary` | How much individuals differ (below). |
 | `ages` | Which of the four ages its individuals come in (below). |
 | `rig` | Optional bones for animation, with ops tagged `part` naming their bone ([ANIMATION.md](ANIMATION.md)). |
@@ -49,7 +49,7 @@ runs each verb and with what settings. The movers are in `src/creatures/`:
 | `plod` | same, slow; instead of running it stops and draws head, legs and tail into its shell while the player is within `wary`, and comes out slowly once you leave (`Pose.tuck`, `motors::retract`; legs that stick out sideways fold back under the rim) | tortoise, desert tortoise, moss tortoise |
 | `bask` | `plod` on a beach, plus: about once every two and a half minutes (when not hiding) it crawls back to the sea at `flee_speed` and swims off in its `in_water` form; swimmers haul out again like seals. Swimmers with legs beat their front flippers and trail the hind pair | sea turtle |
 | `still` | same, never walks | (none) |
-| `circle` | `circle.rs`: a fixed circle 8 to 22 m across at `fly_height`; with `floats`, now and then it glides down to deep water under its circle, floats 15 to 45 s and goes back up (sooner if you come close) | gull, puffin, cormorant (float); crow |
+| `circle` | `circle.rs`: a fixed circle 8 to 22 m across at `fly_height`; with `floats`, now and then it glides down to deep water under its circle, floats 15 to 45 s and goes back up (sooner if you come close); with `plunge` too it comes down by folding its wings and dropping straight in (at least 2.5 m of water under it), goes under for a few seconds, floats, and climbs back to do it again within half a minute | gull, puffin, cormorant (float); gannet (plunge); crow |
 | `flutter` | `circle.rs` with a 1.5 to 4.5 m circle, slower | glassmoth, lantern moth |
 | `paddle` | `fowl.rs`: float on open water 0.6 to 8 m deep near the shore, paddle slowly; now and then walk out onto a low bank to graze and back in; flush together when one is inside the flushing radius (below) and fly low to water 40 to 90 m off, in a V behind the first to take off (followers join their place over the first quarter of the flight). Water is the sea or a river at least a metre from its banks: each bird keeps the level of its water and floats on the river's voxel tops, 0.32 m down where the smoothed water is drawn. On land the legs stride and the body waddles (`Flight.walk`) | goose, mallard, swan |
 | `cling` | `woodpecker.rs`: cling upright to a trunk (any placed plant 4 m+ with a trunk), drum in bursts, hitch up and round it, bound to another trunk 8 to 35 m away; farther when startled | woodpecker, pileated, northern flicker, acorn woodpecker |
@@ -66,6 +66,11 @@ runs each verb and with what settings. The movers are in `src/creatures/`:
 | `swim` | `snake.rs`: the same snake in water. At the surface with its head out and a long wave down its body, ducking under when startled, and hauling out on a bank to lie in the sun | water snake, anaconda |
 | `creep` | `octopus.rs`: on the sea floor in at least `shallows` of water (default 2 m). Lies with its arms let down over whatever is under it, creeps every half minute or so to the highest of a few spots 3 to 10 m off, pales toward the sand as you come within two and a half times `wary`, and when pressed jets off mantle first at `flee_speed` with its arms streaming behind ([ANIMATION.md](ANIMATION.md), "Octopuses") | giant octopus |
 | `breach` | `swim.rs`: alone offshore in water at least 14 m deep; dives 25 to 50 s, lies at the surface spouting every 6 to 11 s, and some dives end by going deep and driving up out of the water, twisting onto its side and falling back in a big splash | humpback |
+| `scurry` | `runner.rs`: a flock on a beach at the edge of the surf. Each bird reads where the swash will be half a second from now (`Terrain::water_edge`: the tide plus `Shore::swash_at`, the same sheet of water `swash` in scene.wgsl draws) along the line down the beach through it, and runs for a spot 0.15 to 1 m up the sand from it, so the flock runs up ahead of each wave and chases the water back down as it drains, at `walk_speed`, or 2.6 times that with water at its feet. It drifts along the beach with its band, keeps `group.spacing` from its neighbours and its legs go in a blur (`Flight::stride_m`). Flushed (or about every two and a half minutes for nothing) the band flies low together, at `fly_height`, out over the surf and back in 25 to 70 m along the beach, each bird keeping its place in the formation. A run blocked by a bank or a log is fluttered over | sanderling |
+| `patter` | `runner.rs`: run 1 to 5 m, stop dead, peck, run again, on dry open ground out of the swash; a loose band that flushes together and lands 14 to 40 m off | snowy plover, killdeer, lapwing |
+| `covey` | `runner.rs`: a band of quail feeding close together in run-stop-peck (never more than 8 m from where the band settled), one now and then up on a bush top keeping watch. While you are inside its flee distance the whole covey runs off on foot at 3.5 times `walk_speed`; only inside two fifths of that distance does it burst up all at once on whirring wings (`flap_glide`), scatter low and come down 20 to 45 m off | Gambel's quail |
+| `dash` | `runner.rs`: alone; trots 4 to 20 m at a time across open ground, sometimes at a sprint, now and then hops up onto a rock or bush top 0.5 to 2.5 m high to look round. With `hunts` it runs down what it eats at `flee_speed` and carries it off in its bill (`carry::Beak`) for half a minute, then is full for three. Startled it mostly sprints off on foot; three times in ten it flies a short way low instead | roadrunner (hunts lizards) |
+| `hum` | `hummer.rs`: hummingbirds. Sits on a bare top 1 to 5 m up, darts out to work a run of three to eight flowers, hovering a second or so at each facing in and backing out at the end, and goes back. Flowers are plants that afford `nectar` and are in bloom (`flower_seasons`, so an ocotillo only in spring; `Flora::blooming`) and the drifts of meadow wildflowers (`sprites::bloom_at`). One time in five, leaving its perch, it climbs 18 to 28 m and dives in a narrow U past the perch and up the other side, two to five times, the way a male Anna's courts. Hovering, the body hangs tilted up (`Flight::upright`) | Anna's hummingbird |
 
 Every walker (`graze`, `hop`, `skulk`, `wade` and the shelled and seal verbs) steers the same
 way. Each step it tests the way ahead (`walkable` in `walk.rs`, 1.2 to 3.5 m depending on
@@ -115,7 +120,7 @@ accordingly (`src/creatures/diel.rs`). `behaviour.active` is one of:
 | `active` | Out when | Who |
 |---|---|---|
 | `diurnal` | daylight | the default, and most of the library: starlings, crows, squirrels, bees, cranes, zebra |
-| `nocturnal` | after dark | owls, bats, badgers, hedgehogs, frogs and toads, crocodiles, hippo, jaguar, lion, the water snake, and the lights: fireflies, the marsh light and the corpse candle |
+| `nocturnal` | after dark | owls, bats, badgers, hedgehogs, frogs and toads, crocodiles, hippo, jaguar, lion, the water snake, and the lights: fireflies, the marsh light in both its coats (the wisp and the corpse candle) |
 | `crepuscular` | dawn and dusk, half out by day | deer and their children, rabbits and hares, fox, coyote, wolf, cougar and the big cats, bear, boar, otter, elephant, rattlesnake, desert tortoise, the dusk wren |
 | `any` | no hours of its own | fish, rays and the whale, seals, the sea turtle, the panda |
 
@@ -314,7 +319,7 @@ Other families:
 | manta ray (plan `ray`, three-bone wing chains) | sky ray (flies, `undulate`) -> kite ray | |
 | harbor seal (plan sprawler, `haulout`) | sea lion, swimming seal (`school`: the seal at sea), walrus (own shape with tusks, three metres, hardly bothers to move) | land and water |
 | reef shark | sixgill shark (three times the size, dark, one dorsal far back, keeps a metre or two over the deep floor) | |
-| glassmoth (no rig) | lantern moth | |
+| glassmoth (no rig) | | the lantern moth is its `lantern` coat |
 | bee (no rig, `buzz`) | bumblebee, glow bee | |
 | dragonfly (no rig, `dart`) | meadowhawk, glass dragonfly | |
 
@@ -498,9 +503,16 @@ That one map over the whole model is the constraint to write coats against:
   pastel: all fine. Sending two colours different ways is not -- a blue body to red while a
   green thorax goes brown is not one tint, which is why the red meadowhawk is still a dragonfly
   of its own and not a coat.
-- **A coat cannot add or take away a glow.** Emissiveness is in the palette, not the tint, so
-  the faerie wood's glowing recolours (glow_bee, dusk_wren, fae_toad, fae_horse,
-  glass_dragonfly) stay species.
+- **A coat can recolour a glow and make it burn brighter or dimmer, but cannot light a colour
+  that does not glow.** A glowing colour's light is the tinted colour times its strength in the
+  palette, so the tint already recolours it; a fourth number on a colour the coat paints asks
+  for a strength, and the ratio to the model's own becomes one gain on every glowing colour at
+  once (`Repaint::glow`, carried to the shader in `Instance::glow`). The glassmoth's `lantern`
+  coat paints the wings `[255, 210, 120, 2.4]` over its `[170, 120, 255, 1.8]`, so they turn
+  gold and burn a third brighter; the marsh light's `corpse` coat turns the wisp yellow at the
+  same strength. A gain cannot make something out of a zero, so the faerie wood's recolours
+  that glow where their parent does not (glow_bee, dusk_wren, fae_toad, fae_horse,
+  glass_dragonfly) stay species, and `--validate` reports a coat that asks it to.
 - **A coat carries no size and no temperament.** The pale hare is slower, larger and unafraid of
   people, so it is a species; a coat of a rabbit would only be a paler rabbit.
 - Colours the coat says nothing about follow the same map, which is usually right (a silver
@@ -515,7 +527,8 @@ for a fox or a whale is one animal and for a school of trout is the whole school
 
 `--validate` also catches a coat too rare to ever be met, two coats the player could not tell
 apart, shades spread so finely over a range that the steps cannot be seen, a coat that cannot
-reach a colour it declared, and a coat that drives an undeclared colour past white.
+reach a colour it declared or the glow it asked for, a glow asked of a colour that has none, and
+a coat that drives an undeclared colour past white.
 
 `VG_COATS=1` prints what each group was dressed in and the map it got.
 
@@ -686,8 +699,9 @@ library plant as its trunk position, plant index, height, crown radius and affor
 16 m grid. `near(x, z, radius, Some(affordance))` lists the plants within reach and `nearest`
 picks the closest.
 
-Three movers use it. Bees (`insects.rs`) look for `nectar`, which a dozen flowering
-plants list; woodpeckers find trunks through `Flora` without an affordance.
+Four movers use it. Bees (`insects.rs`) look for `nectar`, which a dozen flowering
+plants list, and so do hummingbirds (`hummer.rs`), which also ask `Flora::blooming` whether the
+plant is in flower this season; woodpeckers find trunks through `Flora` without an affordance.
 
 Walkers read `browse` (`walk.rs`): an animal with nothing on its list of prey, setting off on a
 walk, makes for the nearest plant within 22 m that affords browse about half the time rather
@@ -710,5 +724,20 @@ cargo run --release -- --headless --anim-sheet deer:herd --no-hud --hour 10 --si
 
 `:family` shows the creature with every relative loaded in that world (`--world redrock` for
 the jackrabbit and mule deer); `:herd` shows twenty individuals and then the rare morphs.
+
+Running birds and hummingbirds have dev hooks of their own. `VG_RUNNER=track` prints one surf
+bird's every step: how far seaward of it the water's edge is (negative when a wave has run past
+its feet) and whether it is hurrying, which is how the surf-chasing was checked:
+
+```bash
+VG_RUNNER=track VG_SPAWN=sanderling cargo run --release -- --headless --world ribshore --ground 640,371 --frames 1500 --screenshot x.png
+```
+
+`VG_RUNNER=1` prints a surf bird's reading of the beach now and then (where it stands, its goal,
+the water's edge and the sea). `VG_HUM=1` prints where each hummingbird dart ends (a flower, a
+perch, the top of a dive) and how high above the ground. `VG_CATCH_M` names the hunter in each
+kill, so a roadrunner taking a lizard shows. Headless `--stats` counts them in
+`creature_activities` (`runner standing`, `runner running`, `runner sprinting`, `runner
+flying`, `runner on a top`, `hummingbird at a flower`, `hummingbird diving` and so on).
 `src/inherit.rs` and `src/variety.rs` have unit tests for the merge rules, the spreads and how
 often rare morphs turn up.

@@ -124,6 +124,45 @@ fn veg_tint(albedo: vec3<f32>, mat: u32, world: vec3<f32>) -> vec3<f32> {
 // GRASS_FADE, LEAF_FADE and FILL_FADE (the distances over which each kind
 // shrinks away) come from the prelude, set in render/foliage.rs.
 
+// Kelp (mesh/sprites.rs STRAND): where a strand `len` metres long from a
+// holdfast at `root`, heading `angle`, is a share `tt` of the way along, in
+// the sea as it stands now (`fog.y`, which the tide moves). Where the water
+// is deeper than the strand it stands up through it, bowing a little at the
+// top. Where it is shallower the stipe leans out and curves over into the
+// surface, and the rest of its length lies along the surface, drifting: so
+// a falling tide lays more of it on the water instead of lifting it into
+// the air. The surge rocks the whole of it slowly.
+fn kelp_at(root: vec3<f32>, len: f32, angle: f32, tt: f32, time: f32) -> vec3<f32> {
+    let head = vec3<f32>(cos(angle), 0.0, sin(angle));
+    let d = max(g.fog.y - 0.05 - root.y, 0.1);
+    let dv = min(d, len * 0.97);
+    // 0 standing free under the surface, 1 reaching it with a metre to spare.
+    let ks = smoothstep(0.0, 1.0, len - d);
+    let slack = max(len - dv, 0.0);
+    let xr = min(0.12 * dv + 0.4 * slack, 0.75 * dv);
+    let a = min(length(vec2<f32>(dv, xr)) * (1.0 + 0.08 * ks), len);
+    let s = tt * len;
+    let ph = dot(root.xz, vec2<f32>(0.11, 0.07)) + angle;
+    let surge = vec3<f32>(0.8, 0.0, 0.6) * (sin(time * 0.55 + ph) * 0.5 + sin(time * 1.3 + angle * 3.0) * 0.08) * min(dv, 8.0) * 0.12;
+    let uu = min(s / max(a, 1e-3), 1.0);
+    let y = dv * mix(uu, uu * (2.0 - uu), ks);
+    let x = xr * mix(uu * uu, uu, ks);
+    var p = root + vec3<f32>(0.0, y, 0.0) + head * x + surge * uu * uu;
+    if (s > a) {
+        // Past the bend: on along the surface, wandering, or (standing free)
+        // straight on up.
+        let r = s - a;
+        let turn = angle + 0.35 * sin(time * 0.07 + ph) + 0.3 * sin(r * 0.45 + angle * 5.0);
+        p += mix(vec3<f32>(0.0, r, 0.0), vec3<f32>(cos(turn), 0.0, sin(turn)) * r, ks);
+    }
+    return p;
+}
+
+// Stipe segments in a strand (sprites.rs `kelp_segs`, the same).
+fn kelp_segs(len: f32) -> f32 {
+    return clamp(ceil(len / 0.8), 2.0, 40.0);
+}
+
 @vertex
 fn vs_sprite(@builtin(vertex_index) vi: u32) -> SpriteOut {
     // Drawn indexed, four vertices a sprite (see render QUAD_INDEX).
@@ -181,8 +220,11 @@ fn vs_sprite(@builtin(vertex_index) vi: u32) -> SpriteOut {
         // Under the sea only plants standing in it (sawgrass, cattails: big
         // plants and stalks) grow; grass doesn't, unless it is a drowned
         // meadow that says so (sprites.rs WET: eelgrass and its like).
+        // With a tide that is high water: nothing that needs dry feet grows
+        // on what the sea covers twice a day (world/tide.rs).
         let wet = ((q.w >> 21u) & 1u) == 1u;
-        let drowned = root.y < g.fog.y && fade_class != 2u && !still && !wet;
+        let high = select(g.fog.y, max(g.fog.y, g.tide.z), g.tide.w > 0.5);
+        let drowned = root.y < high && fade_class != 2u && !still && !wet;
         let f = grow(fd) * select(1.0, 0.0, drowned) * select(thin.x, 1.0, still);
         var across = vec3<f32>(cos(angle), 0.0, sin(angle));
         var upright = vec3<f32>(0.0, 1.0, 0.0);
@@ -216,6 +258,77 @@ fn vs_sprite(@builtin(vertex_index) vi: u32) -> SpriteOut {
         world = root + across * (u - 0.5) * w * f + upright * (v * hh) + bend * k;
         // Keep the blade's length roughly as it bends.
         world.y -= dot(bend, bend) / max(hh, 1e-3) * 0.5 * k;
+        if (wet && root.y < g.fog.y - 0.05 && world.y > g.fog.y - 0.05) {
+            // Water shallower than the blade is long (a tide part way out):
+            // the rest of it floats along under the surface, not through it.
+            let over = world.y - (g.fog.y - 0.05);
+            let lie = normalize(vec3<f32>(cos(seed * 1.3 + angle) + 0.8, 0.0, sin(seed * 1.3 + angle) + 0.6));
+            world = vec3<f32>(world.x, g.fog.y - 0.05, world.z) + lie * over;
+        }
+        if (wet && g.tide.w > 0.5 && root.y > g.fog.y - 0.05 && root.y < g.tide.z + 0.05) {
+            // Left out of the water by the tide (world/tide.rs): the blades
+            // lie down on the wet sand, each its own way.
+            let lie = vec3<f32>(cos(seed * 1.3 + angle), 0.0, sin(seed * 1.3 + angle));
+            world = root + across * (u - 0.5) * w * f + lie * (v * hh * 0.9) + vec3<f32>(0.0, v * hh * 0.12 + 0.02, 0.0);
+        }
+    } else if (kind == 5u) {
+        // Kelp: a stipe segment, a blade or a float on a strand shaped by
+        // `kelp_at`. Sizes are in metres here, not voxels: `h` is the
+        // strand's length.
+        let f = 1.0 - smoothstep(LEAF_FADE.x, LEAF_FADE.y, dist);
+        let len = f32((q.z >> 16u) & 255u) / 8.0;
+        let part = (q.w >> 8u) & 3u;
+        let index = f32((q.w >> 10u) & 255u);
+        let sea = g.fog.y;
+        let eye = normalize(root - g.cam_pos.xyz);
+        if (part == 0u) {
+            // A length of stipe from one joint to the next, a ribbon turned
+            // to the camera, overlapping its neighbours a little.
+            let n = kelp_segs(len);
+            let p0 = kelp_at(root, len, angle, index / n, t);
+            let p1 = kelp_at(root, len, angle, (index + 1.0) / n, t);
+            let dv = normalize(p1 - p0 + vec3<f32>(0.0, 1e-4, 0.0));
+            var across = cross(dv, eye);
+            across = select(vec3<f32>(1.0, 0.0, 0.0), normalize(across), dot(across, across) > 1e-6);
+            let ext = w * 0.3;
+            world = mix(p0 - dv * ext, p1 + dv * ext, v) + across * (u - 0.5) * w * f;
+            normal = normalize(vec3<f32>(0.0, 1.0, 0.0) - eye * 0.6);
+        } else if (part == 1u) {
+            // A blade at `index`/255 along the strand, turned by its seed.
+            // Under water it rises along the stipe and out to its side,
+            // fluttering; on the surface it lies flat, trailing with the
+            // canopy. Never above the water.
+            let tb = index / 255.0;
+            let bl = f32((q.w >> 18u) & 63u) * 0.25;
+            let pa = kelp_at(root, len, angle, tb, t);
+            let pb = kelp_at(root, len, angle, max(tb - 0.03, 0.0), t);
+            let tan = normalize(pa - pb + vec3<f32>(0.0, 1e-4, 0.0));
+            let az = seed / 256.0 * 6.2831853;
+            let out_dir = vec3<f32>(cos(az), 0.0, sin(az));
+            let head = vec3<f32>(cos(angle), 0.0, sin(angle));
+            let side = vec3<f32>(-head.z, 0.0, head.x);
+            let flutter = sin(t * 0.9 + seed * 0.37 + tb * 6.0) * 0.3;
+            let flat = 1.0 - smoothstep(0.15, 0.7, sea - pa.y);
+            let under = normalize(tan * 0.8 + out_dir * 0.4 + side * flutter);
+            let lying = normalize(vec3<f32>(out_dir.x * 0.3 + head.x + side.x * flutter, 0.0, out_dir.z * 0.3 + head.z + side.z * flutter));
+            let dir = normalize(mix(under, lying, flat));
+            var across = mix(cross(dir, eye), cross(dir, vec3<f32>(0.0, 1.0, 0.0)), flat);
+            across = select(vec3<f32>(1.0, 0.0, 0.0), normalize(across), dot(across, across) > 1e-6);
+            let wave = across * sin(v * 5.0 + t * 1.4 + seed) * 0.12 * v * bl;
+            world = pa + (dir * v * bl + across * (u - 0.5) * w + wave) * f;
+            world.y = min(world.y, sea - 0.03);
+            normal = normalize(mix(normalize(vec3<f32>(0.0, 1.0, 0.0) - eye * 0.6), vec3<f32>(0.0, 1.0, 0.0), flat));
+        } else {
+            // The float on the strand's end, a bulb facing the camera, its
+            // top just breaking the surface when it reaches it.
+            var pe = kelp_at(root, len, angle, 1.0, t);
+            pe.y = min(pe.y, sea - w * 0.15);
+            var right = cross(eye, vec3<f32>(0.0, 1.0, 0.0));
+            right = select(vec3<f32>(1.0, 0.0, 0.0), normalize(right), dot(right, right) > 1e-6);
+            let up = cross(right, eye);
+            world = pe + (right * (u - 0.5) + up * (v - 0.5)) * w * f;
+            normal = normalize(vec3<f32>(0.0, 1.0, 0.0) - eye * 0.5);
+        }
     } else if (kind == 4u) {
         // Pad: a floating leaf lying flat on the water over the bed it
         // roots in, turned by `angle`, lifting and tilting a little on the
@@ -305,7 +418,7 @@ fn vs_sprite(@builtin(vertex_index) vi: u32) -> SpriteOut {
     // laid over the way whatever went through was going. A leaf cluster up
     // in a tree is out of reach of any foot.
     let tr = trampled(root);
-    if (tr.x > 0.004 && root.y - ground_height(root.xz) < 1.2) {
+    if (kind != 5u && tr.x > 0.004 && root.y - ground_height(root.xz) < 1.2) {
         let up = max(world.y - root.y, 0.0);
         world = vec3<f32>(world.x, root.y + up * (1.0 - 0.85 * tr.x), world.z) + vec3<f32>(tr.y, 0.0, tr.z) * up * 0.45 * tr.x;
     }

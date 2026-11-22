@@ -1,47 +1,97 @@
 {
-  "notes": "Wet air in a green sea. Jade close to, milky aqua through the towers, the far ones nearly the colour of the sky; the haze kept low so each gorge stacks against the next.",
+  "notes": "Wet air over a green sea. Jade close to, milky aqua through the towers, and the far ones a blue-green paler than the sky. The haze holds its own colour (it is not held to the sky's value), so from a summit the gorges fill with jade milk instead of going white.",
   "ramp": [
     {
-      "at": 0.0,
+      "at": 0,
       "color": [
-        0.55,
-        1.1,
+        0.5,
+        1.12,
+        0.78
+      ]
+    },
+    {
+      "at": 0.4,
+      "color": [
+        0.4,
+        0.9,
         0.8
       ]
     },
     {
-      "at": 0.5,
+      "at": 1,
       "color": [
-        0.62,
-        1.0,
-        1.0
-      ]
-    },
-    {
-      "at": 1.0,
-      "color": [
-        0.78,
-        0.95,
-        1.05
+        0.3,
+        0.72,
+        0.7
       ]
     }
   ],
   "knobs": {
-    "ramp_reach": 520.0,
-    "haze_density": 2.1,
-    "haze_height": 70.0,
-    "sky_ramp": 0.6,
-    "contrast": 0.28,
-    "saturation": 1.05
+    "ramp_reach": 620.0,
+    "haze_density": 0.9,
+    "haze_height": 50.0,
+    "sky_ramp": 0.7,
+    "contrast": 0.32,
+    "saturation": 1.12,
+    "ramp_curve": 0.7,
+    "ramp_value": 0.35,
+    "sky_reach": 0.4,
+    "shade_ramp": 0.8,
+    "crown_shade": 1.0,
+    "sun_glow": 0.4
   },
   "ambient": [
-    0.24,
+    0.22,
     1.05,
-    0.86
+    0.92
   ],
   "sun_tint": [
+    1.04,
     1.0,
-    0.99,
-    0.84
+    0.8
+  ],
+  "zenith": [
+    0.1,
+    0.5,
+    0.98
+  ],
+  "horizon": [
+    0.52,
+    0.92,
+    0.98
+  ],
+  "tint": [
+    {
+      "at": 0,
+      "color": [
+        0.86,
+        1.02,
+        1.0
+      ]
+    },
+    {
+      "at": 0.4,
+      "color": [
+        0.95,
+        1.02,
+        0.98
+      ]
+    },
+    {
+      "at": 0.75,
+      "color": [
+        1.04,
+        1.02,
+        0.92
+      ]
+    },
+    {
+      "at": 1,
+      "color": [
+        1.08,
+        1.02,
+        0.88
+      ]
+    }
   ]
 }

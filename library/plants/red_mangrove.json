@@ -8,7 +8,7 @@
   "trunk_radius": [0.3, 0.45],
   "crown_radius": [2.4, 4.6],
   "bark": "mangrove_bark",
-  "leaf": "mangrove_leaves",
+  "leaf": "glossy_leaves",
   "max_slope": 0.8,
   "stems": [5, 8],
   "standing_water": [0.05, 1.7],

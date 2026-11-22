@@ -5,6 +5,7 @@
   "notes": "Short wind-cropped grass and moss on the tower tops and the top of the Old Wall.",
   "id": 250,
   "smooth": true,
+  "sprites": "grass",
   "texture": {
     "pattern": "noise",
     "base": [92, 112, 58],

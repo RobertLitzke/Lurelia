@@ -4,6 +4,7 @@
   "introduced_by": "thornpan",
   "notes": "Savanna grass: tall tussock grass gone gold in the dry, standing over pale sand that shows through between the tufts.",
   "smooth": true,
+  "sprites": "grass",
   "texture": {
     "pattern": "noise",
     "base": [150, 132, 84],

@@ -47,6 +47,49 @@ impl Library {
             if let Some(other) = m.file_id.and_then(|i| seen.insert(i, m.name.clone())) {
                 out.push(format!("material {}: id {} already used by {other}", m.name, m.file_id.unwrap_or(0)));
             }
+            // What grows on it (mesh/sprites.rs): a rule the engine has, a
+            // leaf shape only on leaves, and an entry wherever the name says
+            // LEAVES, GRASS, NEEDLES and the like, since without one nothing
+            // grows there and that is more often forgotten than meant.
+            use crate::mesh::sprites::{guess, LEAF_SHAPES, SPRITE_RULES};
+            match &m.sprites {
+                Some(s) => {
+                    if !SPRITE_RULES.contains(&s.rule()) {
+                        out.push(format!("material {}: sprites {:?} is not a rule (one of {})", m.name, s.rule(), SPRITE_RULES.join(", ")));
+                    }
+                    if let Some(sh) = s.shape() {
+                        if s.rule() != "leaves" {
+                            out.push(format!("material {}: only leaves take a shape, not {}", m.name, s.rule()));
+                        } else if !LEAF_SHAPES.iter().any(|(n, _)| *n == sh) {
+                            let all: Vec<&str> = LEAF_SHAPES.iter().map(|(n, _)| *n).collect();
+                            out.push(format!("material {}: leaf shape {sh:?} is not one of {}", m.name, all.join(", ")));
+                        }
+                    }
+                }
+                None if m.coat_of.is_none() => {
+                    if let Some((rule, shape)) = guess(&m.name.to_uppercase().replace('_', " ")) {
+                        let want = match shape {
+                            Some(sh) => format!("{{\"rule\": \"{rule}\", \"shape\": \"{sh}\"}}"),
+                            None => format!("\"{rule}\""),
+                        };
+                        out.push(format!(
+                            "material {}: its name reads like {rule} but nothing grows on it: give it \"sprites\": {want}, or \"none\"",
+                            m.name
+                        ));
+                    }
+                }
+                None => {}
+            }
+            // An old name must be free: a material that has it now wins, so
+            // the merge would quietly do nothing.
+            for w in &m.was {
+                if self.materials.iter().any(|o| &o.name == w) {
+                    out.push(format!("material {}: was {w}, but a material is still called that", m.name));
+                }
+                if let Some(o) = self.materials.iter().find(|o| o.name != m.name && o.was.contains(w)) {
+                    out.push(format!("material {}: was {w}, and so was {}", m.name, o.name));
+                }
+            }
             for r in [Some(&m.texture), m.top.as_ref(), m.bottom.as_ref()].into_iter().flatten() {
                 if !crate::render::recipes::PATTERNS.contains(&r.pattern.as_str()) {
                     out.push(format!("material {}: unknown pattern {}", m.name, r.pattern));

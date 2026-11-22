@@ -914,3 +914,64 @@ fn cane(img: &mut Img, r: &mut Rng, s: f32) {
     }
     darken_base(img, 0.3);
 }
+
+/// A length of kelp stipe for one segment of a strand (kind STRAND): a band
+/// down the middle the whole height of the card, so segments join end to
+/// end, rounded by shading toward its edges, with faint streaks along it.
+/// Grey, tinted by the stipe material.
+pub(super) fn kelp_stipe(img: &mut Img, r: &mut Rng, s: f32) {
+    let ph = r.range(0.0, 50.0);
+    paint(img, 0.0, 0.0, s, s, |x, y| {
+        let a = ((x - s * 0.5) / (s * 0.3)).abs();
+        if a > 1.0 {
+            return None;
+        }
+        let cov = ((1.0 - a) * s * 0.3).min(1.0);
+        let round = (1.0 - a * a).sqrt();
+        let streak = ((x * 0.9 + ph).sin() * 0.5 + 0.5) * 0.08 + ((y * 0.05 + x * 0.3 + ph).sin()) * 0.03;
+        let v = 0.5 + 0.38 * round + streak;
+        Some((cov, [v, v, v]))
+    });
+}
+
+/// A kelp blade, root at the bottom edge and tip at the top: a long strap,
+/// narrow at the root, widest a third of the way up and tapering to the tip,
+/// its edges ruffled and a paler band down the middle. Grey, tinted by the
+/// blade material.
+pub(super) fn kelp_blade(img: &mut Img, r: &mut Rng, s: f32) {
+    let ph = r.range(0.0, std::f32::consts::TAU);
+    paint(img, 0.0, 0.0, s, s, |x, y| {
+        let t = 1.0 - y / s;
+        let width = s * 0.72 * (t * 3.0).min(1.0).powf(0.6) * (1.0 - t).powf(0.7) / 0.62;
+        let ruffle = 1.0 + 0.12 * (t * 38.0 + ph).sin() + 0.06 * (t * 71.0).sin();
+        let half = width * 0.5 * ruffle;
+        let d = (x - s * 0.5).abs();
+        if d > half + 1.0 || half <= 0.0 {
+            return None;
+        }
+        let cov = (half - d + 0.5).clamp(0.0, 1.0);
+        let mid = 1.0 - (d / half.max(1.0)).min(1.0);
+        let wrinkle = 0.05 * ((t * 55.0 + x * 0.4 + ph).sin());
+        let v = 0.58 + 0.22 * mid * mid + 0.12 * t + wrinkle;
+        Some((cov, [v, v, v]))
+    });
+}
+
+/// A bull kelp's float: a round bulb with a light on its upper side. Grey,
+/// tinted by the float material.
+pub(super) fn kelp_float(img: &mut Img, s: f32) {
+    let c = [s * 0.5, s * 0.5];
+    let rad = s * 0.44;
+    paint(img, 0.0, 0.0, s, s, |x, y| {
+        let (dx, dy) = (x - c[0], y - c[1]);
+        let d = (dx * dx + dy * dy).sqrt();
+        if d > rad + 1.0 {
+            return None;
+        }
+        let cov = (rad - d + 0.5).clamp(0.0, 1.0);
+        let z = (1.0 - (d / rad).powi(2)).max(0.0).sqrt();
+        let light = (-dx * 0.3 - dy * 0.6) / rad + z * 0.8;
+        let v = (0.45 + 0.4 * light).clamp(0.25, 1.0);
+        Some((cov, [v, v, v]))
+    });
+}

@@ -190,7 +190,7 @@ pub fn look(view: &View, lens: Lens, orient: Orient, hour: f32, world: &hecs::Wo
     };
 
     let never = |_: Vec3| false;
-    for (look, me, crit, gull, anim, flit, flyer, morph) in world
+    for (look, me, crit, gull, anim, flit, flyer, morph, run) in world
         .query::<(
             &Look,
             Option<&Creature>,
@@ -200,6 +200,7 @@ pub fn look(view: &View, lens: Lens, orient: Orient, hour: f32, world: &hecs::Wo
             Option<&Flit>,
             Option<&Flyer>,
             Option<&crate::variety::Morph>,
+            Option<&crate::creatures::runner::Runner>,
         )>()
         .iter()
     {
@@ -220,7 +221,17 @@ pub fn look(view: &View, lens: Lens, orient: Orient, hour: f32, world: &hecs::Wo
         };
         let m = &models[look.model];
         let height = (m.height * morph.map_or(1.0, |m| m.scale)).max(0.15);
-        let doing = doing_of(look, anim, flit, flyer);
+        let doing = match run {
+            // A sandpiper on its feet is running or standing, not perched.
+            Some(r) if r.grounded() => {
+                if (look.pos - look.prev_pos).length() / crate::game::STEP > 0.3 {
+                    Doing::Moving
+                } else {
+                    Doing::Standing
+                }
+            }
+            _ => doing_of(look, anim, flit, flyer),
+        };
         add(name, like, Some(doing), look.pos, height, &never);
     }
 

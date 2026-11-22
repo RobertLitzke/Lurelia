@@ -1,8 +1,9 @@
 {
   "name": "works_panel",
-  "version": 1,
+  "version": 2,
   "introduced_by": "slagdeck",
-  "notes": "Painted sheet on the arena's walls: one flat grey, no pattern at all, so corners and openings stay sharp.",
+  "notes": "Flat charcoal grey with no pattern at all, so corners and openings stay sharp: the arena's wall sheet, its columns and trusses, the lips of the catwalks. v2: works_beam merged in.",
+  "was": ["works_beam"],
   "smooth": false,
   "texture": {"pattern": "flat", "base": [76, 80, 82], "scale": 1, "contrast": 1.0, "calm": {"base": [88, 92, 94]}}
 }

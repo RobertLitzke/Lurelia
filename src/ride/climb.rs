@@ -252,7 +252,7 @@ impl Ride {
             return;
         }
         let in_hand = match self.mode {
-            Mode::Bike | Mode::Kayak => false,
+            Mode::Bike | Mode::Kayak | Mode::Drive => false,
             Mode::Climb | Mode::Swing => true,
             Mode::Foot | Mode::Wing => self.rope_out,
         };
@@ -300,6 +300,7 @@ impl Ride {
         }
         match (self.mode, self.hook_target) {
             (Mode::Bike, _) => self.note = Some("OFF THE BIKE FIRST (X)".into()),
+            (Mode::Drive, _) => self.note = Some("OUT OF THE CAR FIRST (U)".into()),
             (Mode::Swing, Some(t)) if (t - self.anchor).length() > 3.0 => self.attach(p, t),
             (Mode::Swing, _) => self.mode = Mode::Foot,
             (Mode::Foot | Mode::Wing, _) if !self.rope_out => {

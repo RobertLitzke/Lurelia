@@ -1,0 +1,9 @@
+{
+  "name": "race",
+  "version": 1,
+  "introduced_by": "engine",
+  "kind": "race",
+  "title": "RACE",
+  "notes": "Laps of the map's circuit against bots, as many laps and rivals as the map says.",
+  "help": "Laps of the circuit against bots in the same car: first home wins."
+}

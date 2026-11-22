@@ -8,7 +8,7 @@
   "trunk_radius": [0.3, 0.4],
   "crown_radius": [3.5, 4.5],
   "bark": "bark",
-  "leaf": "leaves",
+  "leaf": "maple_leaves",
   "curve": "sweep",
   "canopy": "lobes",
   "leader": 0.55,

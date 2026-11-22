@@ -115,7 +115,7 @@ looks like. Nobody has explained why the mirage is always of a dish.
 
 ## Who is here now
 
-Nobody. The salt tortoises, as big as elephants, crossing the Mirror so
+Nobody. The salt tortoises, twice the height of an elephant, crossing the Mirror so
 slowly that from a dish rim they seem not to move; nobody knows how old they
 are, and the staff named them. Flamingos on the brine, pronghorn crossing the pan in the morning,
 coyotes and jackrabbits on the fans, vultures overhead, ravens on the dish

@@ -6,9 +6,9 @@
 //! `generation` tells the renderer to upload it again. Ids below 17 are the
 //! built-in materials in material.rs, which the shaders also know by number.
 
-use crate::world::flora::Form;
 use super::material::{self, layer};
 use crate::library::{Library, Recipe};
+use crate::world::flora::Form;
 use std::sync::atomic::{AtomicPtr, AtomicU32, Ordering};
 use std::sync::OnceLock;
 
@@ -26,6 +26,13 @@ pub struct MatTable {
     names: [Option<&'static str>; 256],
     /// Library names (the JSON file's "name"), for saves.
     keys: [Option<&'static str>; 256],
+    /// Names materials had before a merge (`was`), and the id each now has,
+    /// so a save that still names one loads the material it became.
+    was: Vec<(&'static str, u8)>,
+    /// What grows on each material as sprites (its `sprites` entry, a plant
+    /// coat's taken from the material it was copied from): the rule and the
+    /// leaf shape, lower case as written (mesh/sprites.rs).
+    sprites: [Option<(&'static str, Option<&'static str>)>; 256],
     /// Wood laid along X and along Z (`grained`): a copy of the material
     /// whose grain the shader turns to run along that axis. 0 where none.
     grain: [[u8; 2]; 256],
@@ -38,6 +45,12 @@ pub struct MatTable {
     /// How grass grows on this ground: [sparse, dense, short] from the
     /// material's `grass` block, where it has one.
     grass: [Option<[f32; 3]>; 256],
+    /// What the ground is like to drive on, where the material says
+    /// (`surface` in its file; world/surface.rs guesses the rest).
+    surface: [Option<crate::world::surface::Surface>; 256],
+    /// Kelp drawn as loose strands, keyed by the plant's marker voxel
+    /// (`kelp`).
+    kelp: [Option<Kelp>; 256],
     /// Texture layers after the built-in ones, in layer order.
     pub recipes: Vec<Recipe>,
 }
@@ -314,8 +327,19 @@ pub fn key(m: u8) -> Option<&'static str> {
 }
 
 /// The id of a material by its stable name (see `key`).
+/// A name a material had before a merge (`was`) gives the material it became;
+/// a grain copy's old key (`drowned_wood@x`) gives the new one's copy.
 pub fn id_of(key: &str) -> Option<u8> {
-    builtin_id(key).or_else(|| tab().and_then(|t| t.keys.iter().position(|k| *k == Some(key)).map(|i| i as u8)))
+    let now = |key: &str| builtin_id(key).or_else(|| tab().and_then(|t| t.keys.iter().position(|k| *k == Some(key)).map(|i| i as u8)));
+    now(key).or_else(|| {
+        let t = tab()?;
+        let (stem, grain) = key.split_once('@').map_or((key, None), |(s, g)| (s, Some(g)));
+        let &(_, id) = t.was.iter().find(|(w, _)| *w == stem)?;
+        match grain {
+            None => Some(id),
+            Some(g) => now(&format!("{}@{g}", t.keys[id as usize]?)),
+        }
+    })
 }
 
 /// Install the library's materials with the ids `Library::assign_ids` gave
@@ -334,10 +358,14 @@ pub fn install(lib: &Library) {
         flags: [0; 256],
         names: [None; 256],
         keys: [None; 256],
+        was: Vec::new(),
+        sprites: [None; 256],
         grain: [[0; 2]; 256],
         base: std::array::from_fn(|i| i as u8),
         drift: [[None; 256]; 2],
         grass: [None; 256],
+        surface: [None; 256],
+        kelp: [None; 256],
         recipes: Vec::new(),
     };
     let mut next = layer::COUNT;
@@ -376,6 +404,7 @@ pub fn install(lib: &Library) {
         t.crisp[i] = m.crisp;
         t.passable[i] = m.passable;
         t.grass[i] = m.grass.as_ref().map(|g| [g.sparse, g.dense, g.short]);
+        t.surface[i] = m.surface.as_deref().and_then(crate::world::surface::Surface::parse);
         if let Some(d) = &m.drift {
             // Against the texture the style actually draws: the top face
             // where the material has one (ground is seen from above), and
@@ -393,6 +422,17 @@ pub fn install(lib: &Library) {
         let named = m.coat_of.as_ref().unwrap_or(&m.name);
         t.names[i] = Some(Box::leak(named.to_uppercase().replace('_', " ").into_boxed_str()));
         t.keys[i] = Some(Box::leak(m.name.clone().into_boxed_str()));
+        for w in &m.was {
+            t.was.push((Box::leak(w.clone().into_boxed_str()), i as u8));
+        }
+        let spec = match &m.coat_of {
+            Some(src) => lib.materials.iter().find(|d| &d.name == src).and_then(|d| d.sprites.clone()),
+            None => m.sprites.clone(),
+        };
+        t.sprites[i] = spec.map(|s| {
+            let leak = |x: &str| -> &'static str { Box::leak(x.to_ascii_lowercase().into_boxed_str()) };
+            (leak(s.rule()), s.shape().map(leak))
+        });
         let lname = named.to_ascii_lowercase();
         let glinty = m.glints.unwrap_or(lname.contains("glass"));
         // Only glass flashes facet by facet; frost and ice get the soft sheen.
@@ -424,6 +464,27 @@ pub fn install(lib: &Library) {
                 }
             }
         }
+    }
+    // Kelp is one marker voxel on the bed (flora.rs `Form::Kelp`), drawn as
+    // strands that follow the tide (mesh/sprites.rs `Herb::Kelp`): the float
+    // marks a plant that has one, the blade one that doesn't.
+    for p in lib.plants.iter().filter(|p| p.form == Form::Kelp) {
+        let id = |n: Option<&String>| n.and_then(|n| lib.material(n)).filter(|&m| (17..255).contains(&(m as usize))).unwrap_or(0);
+        let (stipe, blade, float) = (id(Some(&p.bark)), id(p.leaf.as_ref()), id(p.flower.as_ref()));
+        let marker = if float != 0 { float } else { blade };
+        if marker == 0 || t.kelp[marker as usize].is_some() {
+            continue;
+        }
+        let avg = |r: [f32; 2]| 0.5 * (r[0] + r[1]);
+        t.kelp[marker as usize] = Some(Kelp {
+            stipe,
+            blade,
+            float,
+            stems: p.stems.unwrap_or([2.0, 4.0]),
+            width: (avg(p.trunk_radius) * 1.2).max(0.1),
+            size: avg(p.crown_radius),
+            reach: p.height,
+        });
     }
     // Every material a plant wears as a leaf, so the season can colour it
     // the way it colours the built-in leaves (world/season.rs).
@@ -578,6 +639,42 @@ pub fn passable(m: u8) -> bool {
 /// How grass grows on ground `m`: [sparse, dense, short], where its file says.
 pub fn grass(m: u8) -> Option<[f32; 3]> {
     (m >= 17).then(|| tab().and_then(|t| t.grass[m as usize])).flatten()
+}
+
+/// The driving surface material `m` declares, if it does.
+pub fn surface(m: u8) -> Option<crate::world::surface::Surface> {
+    tab().and_then(|t| t.surface.get(m as usize).copied().flatten())
+}
+
+/// A kelp plant drawn as loose strands from its marker voxel (flora.rs
+/// `Form::Kelp`, mesh/sprites.rs `Herb::Kelp`): its colours as material ids
+/// (0 for none) and its sizes.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Kelp {
+    pub stipe: u8,
+    pub blade: u8,
+    /// A bull kelp's float; with one, the stipe is bare and the blades
+    /// stream from the float.
+    pub float: u8,
+    /// Stipes from one holdfast, [lo, hi].
+    pub stems: [f32; 2],
+    /// How wide a stipe is drawn, metres.
+    pub width: f32,
+    /// The plant's crown radius, metres: blade sizes scale with it.
+    pub size: f32,
+    /// How long a stipe is, as a share of the water over the holdfast at
+    /// high water, [lo, hi]. The canopy's own length comes on top.
+    pub reach: [f32; 2],
+}
+
+/// The kelp that marker material `m` stands for, if it is one.
+pub fn kelp(m: u8) -> Option<Kelp> {
+    (m >= 17).then(|| tab().and_then(|t| t.kelp[m as usize])).flatten()
+}
+
+/// What material `m` grows as sprites: its `sprites` rule and leaf shape.
+pub fn sprites(m: u8) -> Option<(&'static str, Option<&'static str>)> {
+    tab().and_then(|t| t.sprites[m as usize])
 }
 
 pub fn name(m: u8) -> Option<&'static str> {

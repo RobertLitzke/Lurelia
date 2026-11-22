@@ -8,7 +8,7 @@
   "trunk_radius": [0.04, 0.06],
   "crown_radius": [0.6, 1.0],
   "bark": "dead_wood",
-  "leaf": "salal_leaves",
+  "leaf": "glossy_leaves",
   "squash": 0.7,
   "max_slope": 1.0
 }

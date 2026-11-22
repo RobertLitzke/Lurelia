@@ -3,15 +3,8 @@
   "version": 1,
   "introduced_by": "city",
   "notes": "City street asphalt with a clean edge at the kerb (crisp: no blending into the verge).",
+  "like": "asphalt",
   "id": 171,
-  "smooth": true,
   "crisp": true,
-  "texture": {
-    "pattern": "speckle",
-    "base": [74, 74, 76],
-    "alt": [92, 92, 94],
-    "scale": 8,
-    "contrast": 1.0,
-    "calm": {"base": [84, 84, 88], "alt": [100, 100, 104]}
-  }
+  "texture": {"alt": [92, 92, 94], "calm": {"alt": [100, 100, 104], "base": [84, 84, 88]}, "base": [74, 74, 76]}
 }

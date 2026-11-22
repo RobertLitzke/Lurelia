@@ -3,14 +3,6 @@
   "version": 1,
   "introduced_by": "transmission",
   "notes": "Composite wall panelling in a frozen base, painted oxide red: armouries and airlocks, the rooms that keep the weapons.",
-  "smooth": false,
-  "crisp": true,
-  "texture": {
-    "pattern": "coursed",
-    "base": [142, 76, 64],
-    "alt": [124, 64, 54],
-    "scale": 1,
-    "contrast": 1.0,
-    "calm": {"base": [150, 84, 72], "alt": [132, 72, 62]}
-  }
+  "like": "ice_panel",
+  "texture": {"alt": [124, 64, 54], "calm": {"alt": [132, 72, 62], "base": [150, 84, 72]}, "base": [142, 76, 64]}
 }

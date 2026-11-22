@@ -1,8 +1,9 @@
 {
   "name": "window_glass",
-  "version": 1,
+  "version": 2,
   "introduced_by": "redrock",
-  "notes": "Dark window glass (glints in the sun).",
+  "notes": "Dark window glass that glints in the sun. v2: pane_glass, the city's panes, merged in.",
+  "was": ["pane_glass"],
   "id": 136,
   "smooth": false,
   "texture": {

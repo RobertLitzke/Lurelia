@@ -6,6 +6,7 @@
   "id": 243,
   "smooth": false,
   "glow": 0.25,
+  "sprites": "flower",
   "texture": {
     "pattern": "blotch",
     "base": [236, 206, 214],

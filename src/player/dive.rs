@@ -187,7 +187,11 @@ impl Player {
         }
         // Ease toward what the keys ask, plus the current -- a river's, or
         // the sea's streams -- with no gravity.
-        let stream = if d.currents { sea_current(self.pos + Vec3::Y * DIVE_EYE, level, |x, z| deep_for_current(store, x, z, level)) } else { Vec3::ZERO };
+        let stream = if d.currents {
+            sea_current(self.pos + Vec3::Y * DIVE_EYE, level, |x, z| deep_for_current(store, x, z, level))
+        } else {
+            Vec3::ZERO
+        };
         d.stream = stream.length();
         let target = wish * speed + Vec3::new(current.x, 0.0, current.y) + stream;
         self.body.vel += (target - self.body.vel) * (EASE * dt).min(1.0);
@@ -302,7 +306,10 @@ mod tests {
         let who = world.spawn(());
         p.dive.hitch = Some(Hitch { who, off: Vec3::ZERO });
         p.dive.breath = 0.05;
-        let hold = MoveInput { focus_far: true, ..Default::default() };
+        let hold = MoveInput {
+            focus_far: true,
+            ..Default::default()
+        };
         step(&mut p, &mut r, &s, level, &hold, 0.1);
         assert!(p.dive.hitch.is_none(), "still holding on with no breath");
         step(&mut p, &mut r, &s, level, &hold, 3.0);
@@ -361,12 +368,34 @@ mod tests {
         p.pitch = 0.0;
         step(&mut p, &mut r, &s, level, &MoveInput { forward: true, ..Default::default() }, 3.0);
         let cruise = p.body.vel.length();
-        step(&mut p, &mut r, &s, level, &MoveInput { forward: true, sprint: true, ..Default::default() }, 1.0 / 60.0);
+        step(
+            &mut p,
+            &mut r,
+            &s,
+            level,
+            &MoveInput {
+                forward: true,
+                sprint: true,
+                ..Default::default()
+            },
+            1.0 / 60.0,
+        );
         let kicked = p.body.vel.length();
         assert!(kicked > cruise * 1.8, "kick {kicked} vs cruise {cruise}");
         // Mashing: release and press again at once.
         step(&mut p, &mut r, &s, level, &MoveInput { forward: true, ..Default::default() }, 1.0 / 60.0);
-        step(&mut p, &mut r, &s, level, &MoveInput { forward: true, sprint: true, ..Default::default() }, 1.0 / 60.0);
+        step(
+            &mut p,
+            &mut r,
+            &s,
+            level,
+            &MoveInput {
+                forward: true,
+                sprint: true,
+                ..Default::default()
+            },
+            1.0 / 60.0,
+        );
         assert_eq!(p.dive.chain, 1, "a kick 2 frames after the last one counted");
     }
 
@@ -379,7 +408,18 @@ mod tests {
         let mut top = f32::MIN;
         for k in 0..240 {
             let sprint = k % 50 == 0;
-            step(&mut p, &mut r, &s, level, &MoveInput { forward: true, sprint, ..Default::default() }, 1.0 / 60.0);
+            step(
+                &mut p,
+                &mut r,
+                &s,
+                level,
+                &MoveInput {
+                    forward: true,
+                    sprint,
+                    ..Default::default()
+                },
+                1.0 / 60.0,
+            );
             top = top.max(p.pos.y + EYE);
         }
         assert!(top > level + 0.6, "never cleared the water: eye peaked at {top}");

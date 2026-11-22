@@ -87,7 +87,7 @@ pub struct Cenotes(pub Vec<Pool>);
 pub fn settle(f: &mut Fields, c: &Cenotes) {
     for pool in &c.0 {
         for &i in &pool.cells {
-            f.inland.insert(i, Wet { level: pool.level, flow: [0.0, 0.0] });
+            f.inland.insert(i, Wet { level: pool.level, flow: [0.0, 0.0], ebb: 0.0 });
         }
         for &i in &pool.open {
             f.water[i as usize] = 1;

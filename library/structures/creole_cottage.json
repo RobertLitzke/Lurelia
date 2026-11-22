@@ -1,0 +1,97 @@
+{
+  "name": "creole_cottage",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "A creole cottage 24 voxels (6 m) wide and 20 deep (5 m) on brick piers, ridge east-west, with a 2 m deep front gallery under a broken-pitch roof, a centred blue door 1 m by 2.25 m between two windows, a partition with a doorway and a brick end chimney. Faces local -Z; nothing is carved.",
+  "size": [28, 30, 31],
+  "anchor": [14, 0, 15],
+  "foundation": 6,
+  "level": true,
+  "decays": true,
+  "tags": ["mire", "house"],
+  "slots": {
+    "wall": "siding_cream",
+    "roof": "shingle_dark",
+    "deck": "weathered_planks",
+    "post": "timber_frame",
+    "door": "door_blue",
+    "window": "window_glass",
+    "lamp": "lamplit_glass",
+    "brick": "brick_brown"
+  },
+  "ops": [
+    {
+      "op": "repeat",
+      "count": 5,
+      "step": [0, 0, 6],
+      "ops": [
+        {"op": "box", "from": [2, 0, 2], "to": [3, 3, 3], "mat": "brick", "part": "stone"},
+        {"op": "box", "from": [13, 0, 2], "to": [14, 3, 3], "mat": "brick", "part": "stone"},
+        {"op": "box", "from": [25, 0, 2], "to": [26, 3, 3], "mat": "brick", "part": "stone"}
+      ]
+    },
+    {"op": "box", "from": [1, 3, 1], "to": [27, 4, 29], "mat": "deck", "part": "floor"},
+    {"op": "walls", "from": [2, 4, 9], "to": [26, 16, 29], "mat": "wall", "thick": 1, "part": "wall"},
+    {"op": "box", "from": [2, 12, 1], "to": [26, 13, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [2, 4, 1], "to": [3, 13, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [8, 4, 1], "to": [9, 13, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [11, 4, 1], "to": [12, 13, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [17, 4, 1], "to": [18, 13, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [20, 4, 1], "to": [21, 13, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [25, 4, 1], "to": [26, 13, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [2, 8, 1], "to": [11, 9, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [17, 8, 1], "to": [26, 9, 2], "mat": "post", "part": "timber"},
+    {
+      "op": "repeat",
+      "count": 4,
+      "step": [2, 0, 0],
+      "ops": [{"op": "box", "from": [3, 4, 1], "to": [4, 8, 2], "mat": "post", "part": "timber"}]
+    },
+    {
+      "op": "repeat",
+      "count": 4,
+      "step": [2, 0, 0],
+      "ops": [{"op": "box", "from": [19, 4, 1], "to": [20, 8, 2], "mat": "post", "part": "timber"}]
+    },
+    {"op": "box", "from": [2, 8, 1], "to": [3, 9, 9], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [25, 8, 1], "to": [26, 9, 9], "mat": "post", "part": "timber"},
+    {
+      "op": "repeat",
+      "count": 3,
+      "step": [0, 0, 2],
+      "ops": [
+        {"op": "box", "from": [2, 4, 3], "to": [3, 8, 4], "mat": "post", "part": "timber"},
+        {"op": "box", "from": [25, 4, 3], "to": [26, 8, 4], "mat": "post", "part": "timber"}
+      ]
+    },
+    {"op": "box", "from": [12, 0, 0], "to": [17, 2, 1], "mat": "deck", "part": "floor"},
+    {"op": "box", "from": [12, 2, 1], "to": [17, 3, 2], "mat": "deck", "part": "floor"},
+    {"op": "box", "from": [0, 13, 0], "to": [28, 14, 3], "mat": "roof", "part": "roof"},
+    {"op": "box", "from": [0, 14, 3], "to": [28, 15, 5], "mat": "roof", "part": "roof"},
+    {"op": "box", "from": [0, 15, 5], "to": [28, 16, 7], "mat": "roof", "part": "roof"},
+    {"op": "gable", "from": [0, 16, 7], "to": [28, 16, 31], "axis": "x", "mat": "roof", "rise": 1, "part": "roof"},
+    {"op": "box", "from": [26, 0, 17], "to": [28, 29, 21], "mat": "brick", "part": "stone"},
+    {"op": "box", "from": [3, 4, 19], "to": [25, 16, 20], "mat": "wall", "part": "wall"},
+    {"op": "box", "from": [12, 4, 19], "to": [17, 13, 20], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [23, 4, 22], "to": [25, 12, 26], "mat": "brick", "part": "stone"},
+    {"op": "box", "from": [24, 4, 23], "to": [25, 8, 25], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [11, 4, 9], "to": [16, 13, 10], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [11, 4, 10], "to": [12, 13, 14], "mat": "door", "part": "timber"},
+    {"op": "box", "from": [5, 7, 9], "to": [9, 13, 10], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [18, 7, 9], "to": [22, 13, 10], "mat": "window", "part": "glass"},
+    {
+      "op": "repeat",
+      "count": 2,
+      "step": [0, 0, 9],
+      "ops": [
+        {"op": "box", "from": [2, 7, 13], "to": [3, 12, 16], "mat": "window", "part": "glass"},
+        {"op": "box", "from": [25, 7, 13], "to": [26, 12, 16], "mat": "window", "part": "glass"}
+      ]
+    },
+    {"op": "box", "from": [12, 4, 28], "to": [17, 13, 29], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [4, 7, 28], "to": [8, 12, 29], "mat": "window", "part": "glass"},
+    {"op": "box", "from": [21, 7, 28], "to": [25, 12, 29], "mat": "window", "part": "glass"},
+    {"op": "segment", "points": [[9, 13, 2], [9, 12, 2]], "radius": 0.5, "mat": "post", "part": "timber"},
+    {"op": "box", "from": [9, 10, 2], "to": [10, 12, 3], "mat": "lamp", "part": "glass"}
+  ]
+}

@@ -16,5 +16,10 @@
       "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.2, "max": 0.9}}
     }
   ],
-  "creatures": [{"creature": "flamingo", "count": 70}, {"creature": "heron", "count": 2}, {"creature": "coyote", "count": 1}]
+  "creatures": [
+    {"creature": "flamingo", "count": 70},
+    {"creature": "heron", "count": 2},
+    {"creature": "coyote", "count": 1},
+    {"creature": "snowy_plover", "count": 8}
+  ]
 }

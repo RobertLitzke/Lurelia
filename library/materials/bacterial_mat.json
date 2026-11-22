@@ -4,6 +4,7 @@
   "introduced_by": "ribshore",
   "notes": "Mats of bacteria on the sea floor round the youngest bone: white and orange, slick.",
   "smooth": true,
+  "surface": "mud",
   "texture": {
     "pattern": "blotch",
     "base": [206, 202, 190],

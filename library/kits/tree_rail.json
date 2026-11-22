@@ -1,0 +1,17 @@
+{
+  "name": "tree_rail",
+  "version": 1,
+  "introduced_by": "canopy_test",
+  "notes": "The outer rail of a tree platform: a top rail, balusters every half metre and a post every 2.5 m, on the left of the line, which round a ring laid anticlockwise is its outside. Laid over `tree_ring` at the same width and height; its deck repeats the ring's so the two agree.",
+  "ground": "deck",
+  "width": 2.5,
+  "lift": 0.0,
+  "max_span": 0.0,
+  "deck": {"thick": 0.25, "mat": "weathered_planks", "under": "timber_frame"},
+  "rails": [{"side": "left", "out": -0.25, "from": 0.95, "to": 1.2, "thick": 0.25, "mat": "timber_frame"}],
+  "posts": [
+    {"side": "left", "out": -0.25, "every": 0.5, "size": [0.25, 0.95, 0.25], "mat": "timber_frame"},
+    {"side": "left", "out": -0.25, "every": 2.5, "size": [0.25, 1.45, 0.25], "mat": "timber_frame"}
+  ],
+  "tags": ["platform", "rail", "treehouse"]
+}

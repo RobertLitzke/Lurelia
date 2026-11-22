@@ -20,7 +20,10 @@
     {"creature": "sea_turtle", "count": 2},
     {"creature": "harbor_seal", "count": 2},
     {"creature": "goose", "count": 6},
-    {"creature": "mallard", "count": 4}
+    {"creature": "mallard", "count": 4},
+    {"creature": "sanderling", "count": 24},
+    {"creature": "snowy_plover", "count": 6},
+    {"creature": "annas_hummingbird", "count": 1}
   ],
   "collectibles": [{"item": "seashell", "density": 0.004, "placement": {"verb": "scatter", "params": {}}}]
 }

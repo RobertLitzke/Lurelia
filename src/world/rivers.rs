@@ -5,7 +5,7 @@
 //! through it, the same way the sea plane meets the land.
 //!
 //! Waterfalls (`Fields::falls`) go in the same buffer after the surface, in
-//! the same 80-byte record read another way by the shader: the quads of each
+//! the same 96-byte record read another way by the shader: the quads of each
 //! falling sheet. Where each one lands is a `Spray` of its own, for the spray
 //! it throws up and the pool it churns.
 
@@ -31,11 +31,11 @@ pub fn buffers(f: &Fields) -> (Vec<RiverQuad>, Vec<RiverQuad>, Vec<Spray>) {
 
 fn surface(f: &Fields) -> Vec<RiverQuad> {
     let n = f.n as i32;
-    // (level, bed, flow x, flow z) at the corner (x, z) of the cell grid, from
-    // the cells round it whose water is near `own` (never averaged across a
-    // waterfall's drop).
-    let corner = |x: i32, z: i32, own: f32| -> [f32; 4] {
-        let (mut lv, mut fx, mut fz, mut wet) = (0.0, 0.0, 0.0, 0.0f32);
+    // (level, bed, flow x, flow z, ebb) at the corner (x, z) of the cell grid,
+    // from the cells round it whose water is near `own` (never averaged
+    // across a waterfall's drop).
+    let corner = |x: i32, z: i32, own: f32, own_ebb: f32| -> [f32; 5] {
+        let (mut lv, mut fx, mut fz, mut wet, mut eb) = (0.0, 0.0, 0.0, 0.0f32, 0.0f32);
         let (mut bed, mut cells) = (0.0, 0.0f32);
         for (dx, dz) in [(-1, -1), (0, -1), (-1, 0), (0, 0)] {
             let (cx, cz) = (x + dx, z + dz);
@@ -50,14 +50,15 @@ fn surface(f: &Fields) -> Vec<RiverQuad> {
                     lv += w.level;
                     fx += w.flow[0];
                     fz += w.flow[1];
+                    eb += w.ebb;
                     wet += 1.0;
                 }
             }
         }
         if wet == 0.0 {
-            return [own, bed / cells.max(1.0), 0.0, 0.0];
+            return [own, bed / cells.max(1.0), 0.0, 0.0, own_ebb];
         }
-        [lv / wet, bed / cells.max(1.0), fx / wet, fz / wet]
+        [lv / wet, bed / cells.max(1.0), fx / wet, fz / wet, eb / wet]
     };
     let mut keys: Vec<u32> = f.inland.keys().copied().collect();
     keys.sort_unstable();
@@ -74,8 +75,8 @@ fn surface(f: &Fields) -> Vec<RiverQuad> {
     keys.iter()
         .map(|&i| {
             let (x, z) = ((i as i32) % n, (i as i32) / n);
-            let own = f.inland[&i].level;
-            let c = [corner(x, z, own), corner(x + 1, z, own), corner(x + 1, z + 1, own), corner(x, z + 1, own)];
+            let (own, own_ebb) = (f.inland[&i].level, f.inland[&i].ebb);
+            let c = [corner(x, z, own, own_ebb), corner(x + 1, z, own, own_ebb), corner(x + 1, z + 1, own, own_ebb), corner(x, z + 1, own, own_ebb)];
             let cell = super::fields::CELL;
             // The fall whose foot churns this cell, by its index in f.falls + 1.
             let p = f.centre(i as usize);
@@ -90,6 +91,7 @@ fn surface(f: &Fields) -> Vec<RiverQuad> {
                 bed: c.map(|c| c[1]),
                 flow_x: c.map(|c| c[2]),
                 flow_z: c.map(|c| c[3]),
+                ebb: c.map(|c| c[4]),
             }
         })
         .collect()
@@ -114,6 +116,7 @@ fn fall_quads(f: &Fields) -> Vec<RiverQuad> {
                     bed: v(&b[r + 1]),
                     flow_x: v(&a[r + 1]),
                     flow_z: [u0 / half, u1 / half, u1 / half, u0 / half],
+                    ebb: [0.0; 4],
                 });
             }
         }

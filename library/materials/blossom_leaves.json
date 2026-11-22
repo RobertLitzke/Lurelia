@@ -5,6 +5,7 @@
   "notes": "Pink blossom on flowering cherries.",
   "id": 173,
   "smooth": false,
+  "sprites": "leaves",
   "texture": {
     "pattern": "blotch",
     "base": [226, 168, 190],

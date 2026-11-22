@@ -23,6 +23,11 @@ use ribbon::{Pier, Ribbons, Seg};
 /// Ground more than this far under the grade line is a gap the route spans.
 const GAP: f32 = 3.0;
 
+/// A deck standing this far over the ground leaves it to grow: a canopy
+/// walk 20 m up should not strip the ferns off the forest floor under it.
+/// Lower decks (a boardwalk, a jetty) still take their ground.
+pub const HIGH_DECK: f32 = 6.0;
+
 /// The kits a world has resolved so far, by name, so each is built once.
 #[derive(Default)]
 pub struct Kits(pub Vec<(String, usize)>);
@@ -168,6 +173,20 @@ pub struct Laid {
 /// (a bored passage, a skywalk strung between two towers) instead of letting
 /// it follow the land.
 pub fn lay_at(cx: &mut EventCtx, line: &[Vec2], kit_ix: usize, smooth: f32, at: Option<f32>) -> Laid {
+    let heights = at.map(|h| vec![cx.f.sea + h; line.len()]);
+    lay_inner(cx, line, kit_ix, smooth, heights)
+}
+
+/// Lay a line whose surface height is given point by point, metres above
+/// sea level as the world measures it (absolute): a walkway climbing from
+/// one platform to another, a stair wound round a trunk. Deck kits only
+/// make sense here; a graded kit would cut the land to the heights given.
+pub fn lay_heights(cx: &mut EventCtx, line: &[Vec2], kit_ix: usize, heights: Vec<f32>) -> Laid {
+    assert_eq!(line.len(), heights.len());
+    lay_inner(cx, line, kit_ix, 0.0, Some(heights))
+}
+
+fn lay_inner(cx: &mut EventCtx, line: &[Vec2], kit_ix: usize, smooth: f32, heights: Option<Vec<f32>>) -> Laid {
     if line.len() < 2 {
         return Laid {
             length: 0.0,
@@ -176,11 +195,12 @@ pub fn lay_at(cx: &mut EventCtx, line: &[Vec2], kit_ix: usize, smooth: f32, at: 
             piers: 0,
         };
     }
+    let at = heights.is_some();
     let kit = cx.state.get::<Ribbons>().kits[kit_ix].clone();
     let length: f32 = line.windows(2).map(|w| w[0].distance(w[1])).sum();
     // The height the surface runs at, point by point.
-    let base: Vec<f32> = match (at, kit.ground) {
-        (Some(h), _) => vec![cx.f.sea + h; line.len()],
+    let base: Vec<f32> = match (heights, kit.ground) {
+        (Some(h), _) => h,
         _ => match kit.ground {
             Ground::Grade => smoothed_ground(&cx.f, line, smooth, false),
             Ground::Deck => {
@@ -192,7 +212,7 @@ pub fn lay_at(cx: &mut EventCtx, line: &[Vec2], kit_ix: usize, smooth: f32, at: 
     };
     // Where the land falls away from the line: those stretches fly.
     let airborne: Vec<bool> = match kit.ground {
-        Ground::Bore | Ground::None | Ground::Follow if at.is_some() => vec![false; line.len()],
+        Ground::Bore | Ground::None | Ground::Follow if at => vec![false; line.len()],
         Ground::Grade => line.iter().enumerate().map(|(k, p)| cx.f.height(p.x, p.y) < base[k] - GAP).collect(),
         Ground::Deck => line.iter().enumerate().map(|(k, p)| cx.f.height(p.x, p.y) < base[k] - 0.5).collect(),
         _ => vec![false; line.len()],
@@ -217,8 +237,15 @@ pub fn lay_at(cx: &mut EventCtx, line: &[Vec2], kit_ix: usize, smooth: f32, at: 
         spans = grade_strip(cx, line, &base, &off, &[], &strip);
     } else if kit.ground == Ground::Deck || kit.ground == Ground::Follow {
         // Nothing is cut, but the ground under a deck or a fence is still
-        // taken: plants and later events keep off it.
-        take(&mut cx.f, line, kit.reach);
+        // taken: plants and later events keep off it. Not under a high
+        // deck, which the ground grows on under (flora.rs keeps the plants
+        // that would reach it out).
+        let low: Vec<bool> = if kit.ground == Ground::Deck {
+            line.iter().zip(&base).map(|(p, &y)| y - cx.f.height(p.x, p.y) < HIGH_DECK).collect()
+        } else {
+            vec![true; line.len()]
+        };
+        take(&mut cx.f, line, &low, kit.reach);
     }
     // Sag an airborne run toward its middle, so a rope bridge hangs.
     let base = sagged(&base, &airborne, kit.sag);
@@ -232,9 +259,13 @@ pub fn lay(cx: &mut EventCtx, line: &[Vec2], kit_ix: usize, smooth: f32) -> Laid
     lay_at(cx, line, kit_ix, smooth, None)
 }
 
-/// Mark the ground within `r` m of the line as taken.
-fn take(f: &mut Fields, line: &[Vec2], r: f32) {
-    for w in line.windows(2) {
+/// Mark the ground within `r` m of the line as taken, along every piece
+/// whose two ends are both `low`.
+fn take(f: &mut Fields, line: &[Vec2], low: &[bool], r: f32) {
+    for (k, w) in line.windows(2).enumerate() {
+        if !(low[k] && low[k + 1]) {
+            continue;
+        }
         let steps = (w[0].distance(w[1]) / 0.8).ceil().max(1.0) as i32;
         for k in 0..=steps {
             let p = w[0].lerp(w[1], k as f32 / steps as f32);

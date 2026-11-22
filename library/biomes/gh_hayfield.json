@@ -1,0 +1,21 @@
+{
+  "name": "gh_hayfield",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "A hayfield behind the walls, the grass left long and cut in strips late in the year.",
+  "priority": 9,
+  "rules": {"region": "hay"},
+  "surface": "meadow_grass",
+  "subsurface": "dirt",
+  "fringe": 0,
+  "map_color": [170, 184, 100],
+  "plants": [{"plant": "hawthorn", "density": 0.0002, "placement": {"verb": "lone", "params": {"spacing": 60}}}],
+  "features": [],
+  "creatures": [
+    {"creature": "rabbit", "count": 4},
+    {"creature": "starling", "count": 12},
+    {"creature": "crow", "count": 3},
+    {"creature": "killdeer", "count": 2}
+  ],
+  "collectibles": []
+}

@@ -24,7 +24,7 @@
   ],
   "features": [{"structure": "boulder", "density": 0.0005}, {"structure": "flat_rock", "density": 0.0004}],
   "creatures": [
-    {"creature": "corpse_candle", "count": 5},
+    {"creature": "marsh_light", "morph": "corpse", "count": 5},
     {"creature": "crow", "count": 3},
     {"creature": "wind_skate", "count": 2},
     {"creature": "sparrow", "count": 3},

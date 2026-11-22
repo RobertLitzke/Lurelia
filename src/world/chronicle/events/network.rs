@@ -1,4 +1,5 @@
 use crate::util::FxHashMap as HashMap;
+use crate::world::chronicle::geom::crossing_points;
 use crate::world::chronicle::{EventCtx, Process};
 use crate::world::fields::Pos;
 use crate::world::route::{self, cost, ribbon::Ribbons};
@@ -178,8 +179,40 @@ impl Process for Network {
             spans += l.spans.len();
             laid += 1;
         }
+        // Two links that cross away from any node: without a junction the
+        // one laid second cuts its grade through the first, leaving a step
+        // across it. The crossing is aproned at the later grade, and the
+        // apron's feather blends the earlier one into it. Underground,
+        // passages simply open into each other.
+        let mut crossings: Vec<Vec2> = Vec::new();
+        if self.height.is_none() {
+            let nodes: Vec<(Vec2, f32)> = deg.iter().map(|(n, &(_, half, _))| (at[n], (half + 1.5).max(2.5) + 3.0)).collect();
+            let mut found: Vec<(Vec2, f32, u8)> = Vec::new();
+            for i in 0..lines.len() {
+                for j in i + 1..lines.len() {
+                    let (Some(a), Some(b)) = (&lines[i], &lines[j]) else { continue };
+                    let half = halves[i].max(halves[j]);
+                    let mat = if halves[i] >= halves[j] { kits[i] } else { kits[j] }.map_or(0, |ki| cx.state.get::<Ribbons>().kits[ki].mat);
+                    for p in crossing_points(a, b) {
+                        if nodes.iter().any(|&(n, r)| n.distance(p) < r) || found.iter().any(|&(q, _, _)| q.distance(p) < 4.0) {
+                            continue;
+                        }
+                        found.push((p, (half + 1.5).max(2.5), mat));
+                    }
+                }
+            }
+            for (p, r, mat) in found {
+                route::junction(cx, p, r, mat);
+                crossings.push(p);
+            }
+        }
         format!(
-            "{laid} links, {total:.0} m, {junctions} junctions{}{}",
+            "{laid} links, {total:.0} m, {junctions} junctions{}{}{}",
+            if crossings.is_empty() {
+                String::new()
+            } else {
+                format!(", {} crossings at {}", crossings.len(), crossings.iter().map(|p| format!("{:.0},{:.0}", p.x, p.y)).collect::<Vec<_>>().join("; "))
+            },
             if spans == 0 { String::new() } else { format!(", {spans} spans") },
             if failed == 0 { String::new() } else { format!(", {failed} with no way through") },
         )

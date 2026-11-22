@@ -2,9 +2,10 @@
   "name": "ocotillo_flower",
   "version": 1,
   "introduced_by": "redrock",
-  "notes": "The ocotillo's scarlet spring flower spikes.",
+  "notes": "The ocotillo's scarlet spring flower spikes. A herb marker (mesh/sprites.rs): its voxels at the cane tips draw no faces, only narrow feathery spikes (NEEDLES cards tinted this colour).",
   "id": 203,
   "smooth": false,
+  "sprites": "ocotillo flower",
   "texture": {
     "pattern": "speckle",
     "base": [208, 50, 32],

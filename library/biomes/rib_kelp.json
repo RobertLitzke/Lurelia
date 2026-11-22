@@ -4,7 +4,7 @@
   "introduced_by": "ribshore",
   "notes": "Bull kelp over the rock reefs off the headland: a canopy at the surface, columns of light under it.",
   "priority": 4,
-  "rules": {"underwater": true, "region": "kelp", "elev": [-22, -4]},
+  "rules": {"underwater": true, "region": "kelp", "elev": [-22, -6]},
   "surface": "reef_rock",
   "subsurface": "stone_dark",
   "map_color": [70, 100, 76],

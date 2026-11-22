@@ -78,7 +78,12 @@ impl Default for Tapper {
     fn default() -> Self {
         // Every key as if last pressed long ago, or a body's first press of
         // each key would be held back.
-        Tapper { left: 0, key: Dodge::Forward, was: [false; 4], since: [u16::MAX; 4] }
+        Tapper {
+            left: 0,
+            key: Dodge::Forward,
+            was: [false; 4],
+            since: [u16::MAX; 4],
+        }
     }
 }
 

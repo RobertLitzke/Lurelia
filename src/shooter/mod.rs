@@ -414,8 +414,7 @@ impl Shooter {
                 base.flavour(def.bold, def.steady),
                 Box::new(duel::Duel::playing(
                     seed ^ 0x9e37 ^ (i as u32 + 1).wrapping_mul(0x85eb),
-                    duel::Style::without(&def.without, |w| eprintln!("world.json shooter: bot {}: {w}", def.name))
-                        .tuned(&def.tune, |w| eprintln!("world.json shooter: bot {}: {w}", def.name)),
+                    duel::Style::without(&def.without, |w| eprintln!("world.json shooter: bot {}: {w}", def.name)).tuned(&def.tune, |w| eprintln!("world.json shooter: bot {}: {w}", def.name)),
                 )),
                 tint,
                 &sh.avatar,
@@ -1228,6 +1227,14 @@ impl Shooter {
                 self.killed_one(who);
             }
         } else {
+            if who == 0 {
+                self.me.score.own_deaths += 1;
+            } else if let Some(b) = self.bots.get_mut(who - 1) {
+                b.fighter.score.own_deaths += 1;
+            }
+            if std::env::var("LEAGUE_SELF").is_ok() {
+                eprintln!("own death {who} blast{} at {:.1},{:.1},{:.1}", blast as u8, at.x, at.y, at.z);
+            }
             let line = format!("{} MANAGED IT ALONE", self.name_of(who));
             self.say(line);
         }
@@ -1284,7 +1291,13 @@ impl Shooter {
         if who != 0 && self.me.alive() && enemy(self.me.team) {
             away.push(player.pos);
         }
-        away.extend(self.bots.iter().enumerate().filter(|(i, b)| i + 1 != who && b.fighter.alive() && enemy(b.fighter.team)).map(|(_, b)| b.pos()));
+        away.extend(
+            self.bots
+                .iter()
+                .enumerate()
+                .filter(|(i, b)| i + 1 != who && b.fighter.alive() && enemy(b.fighter.team))
+                .map(|(_, b)| b.pos()),
+        );
         let s = self.next_spawn(&away, team);
         let pos = self.floor_at(store, s.at[0], s.at[1], s.ceiling, self.home.0.y).0;
         let yaw = -s.bearing.to_radians();
@@ -1349,7 +1362,17 @@ impl Shooter {
                 by: s.by,
             })
             .collect();
-        let mines: Vec<brain::Threat> = self.combat.mines().map(|(at, reach)| brain::Threat { at, vel: Vec3::ZERO, gravity: 0.0, reach, by: 0 }).collect();
+        let mines: Vec<brain::Threat> = self
+            .combat
+            .mines()
+            .map(|(at, reach)| brain::Threat {
+                at,
+                vel: Vec3::ZERO,
+                gravity: 0.0,
+                reach,
+                by: 0,
+            })
+            .collect();
         let orders = &self.orders;
         for (i, b) in self.bots.iter_mut().enumerate() {
             if !b.fighter.alive() {
@@ -1474,10 +1497,12 @@ impl Shooter {
             let trigger = self.bots[i].pilot.trigger;
             self.bots[i].fighter.arsenal.share();
             let shot = self.bots[i].fighter.arsenal.current_mut().map_or(Default::default(), |g| g.pull(trigger, dt));
-            let mode = self.bots[i].fighter.arsenal.current().and_then(|g| g.fired_mode(&shot, trigger).cloned().map(|mut f| {
-                f.spread_deg += g.bloom();
-                f
-            }));
+            let mode = self.bots[i].fighter.arsenal.current().and_then(|g| {
+                g.fired_mode(&shot, trigger).cloned().map(|mut f| {
+                    f.spread_deg += g.bloom();
+                    f
+                })
+            });
             // The spade, which is not a shot: a bot holding the Digger cuts
             // the wall in front of it, which is how one at the bottom of a
             // borer hole gets out of it.
@@ -1710,7 +1735,10 @@ impl Shooter {
             let plan = brain.plan(&cx, &sightings, news);
             for (i, b) in self.bots.iter().enumerate() {
                 if b.fighter.team == Some(team) {
-                    self.orders[i] = plan.iter().find(|(w, _)| *w == i + 1).map(|(_, o)| brain::Order { tweaks: self.tweaks[team as usize], ..*o });
+                    self.orders[i] = plan.iter().find(|(w, _)| *w == i + 1).map(|(_, o)| brain::Order {
+                        tweaks: self.tweaks[team as usize],
+                        ..*o
+                    });
                 }
             }
             self.team_brains[team as usize] = brain;
@@ -2039,10 +2067,12 @@ impl Activity for Shooter {
             self.sighted = alt && self.me.arsenal.current().is_some_and(|g| g.def.zoom > 0.0);
             self.me.arsenal.share();
             let shot = self.me.arsenal.current_mut().map_or(Default::default(), |g| g.pull(trigger, dt));
-            let mode = self.me.arsenal.current().and_then(|g| g.fired_mode(&shot, trigger).cloned().map(|mut f| {
-                f.spread_deg += g.bloom();
-                f
-            }));
+            let mode = self.me.arsenal.current().and_then(|g| {
+                g.fired_mode(&shot, trigger).cloned().map(|mut f| {
+                    f.spread_deg += g.bloom();
+                    f
+                })
+            });
             // The spade on the end of the Digger, which bites on its own
             // clock rather than the blast's (`library::DigDef`). It is the
             // one thing in a match that cuts the arena on purpose.
@@ -2228,6 +2258,8 @@ impl Activity for Shooter {
                     tint: [1.0, 1.0, 1.0, 0.0],
                     rot: [rot.x, rot.y, rot.z, rot.w],
                     shift: [0.0; 4],
+                    flesh: [[0.0; 4]; 3],
+                    glow: [0.0; 4],
                 },
             ));
         }
@@ -2369,7 +2401,11 @@ impl Activity for Shooter {
             match f.state {
                 flag::State::Dropped { at, .. } => {
                     let what = if ours { "YOUR FLAG" } else { "ENEMY FLAG" };
-                    out.push(crate::modes::Mark { at: at + Vec3::Y, ink, label: format!("{what} {}", far(at)) });
+                    out.push(crate::modes::Mark {
+                        at: at + Vec3::Y,
+                        ink,
+                        label: format!("{what} {}", far(at)),
+                    });
                 }
                 flag::State::Carried(0) => {}
                 flag::State::Carried(who) if !ours => {
@@ -2383,7 +2419,11 @@ impl Activity for Shooter {
                 }
                 flag::State::Carried(who) => {
                     if let Some(at) = self.side_sees(mine, who) {
-                        out.push(crate::modes::Mark { at: at + Vec3::Y, ink, label: format!("YOUR FLAG {}", far(at)) });
+                        out.push(crate::modes::Mark {
+                            at: at + Vec3::Y,
+                            ink,
+                            label: format!("YOUR FLAG {}", far(at)),
+                        });
                     }
                 }
                 flag::State::Home => {}
@@ -2392,7 +2432,11 @@ impl Activity for Shooter {
         if self.flags.carried_by(0).is_some() {
             if let Some(f) = self.flags.of(mine) {
                 let ink = round::TEAM_INK[(mine as usize).min(1)];
-                out.push(crate::modes::Mark { at: f.stand + Vec3::Y, ink, label: format!("HOME {}", far(f.stand)) });
+                out.push(crate::modes::Mark {
+                    at: f.stand + Vec3::Y,
+                    ink,
+                    label: format!("HOME {}", far(f.stand)),
+                });
             }
         }
         out
@@ -2853,7 +2897,10 @@ mod tests {
         let waited = steps as f32 * STEP;
         assert!(sh.gibs.iter().all(|g| g.0 < waited - 0.5), "the chunks of the first kill were never cleared away");
         assert!(sh.corpses.iter().all(|c| c.age < waited - 0.5), "the corpse of the second kill was never cleared away");
-        assert!(sh.gibs.iter().all(|g| g.0 <= life + STEP) && sh.corpses.iter().all(|c| c.age <= life + STEP), "something outlived its time");
+        assert!(
+            sh.gibs.iter().all(|g| g.0 <= life + STEP) && sh.corpses.iter().all(|c| c.age <= life + STEP),
+            "something outlived its time"
+        );
         assert!(sh.banner.is_none(), "the banner never went away");
     }
 
@@ -3296,10 +3343,30 @@ mod tests {
             })
             .collect();
         r.spawns = vec![
-            SpawnPoint { at: [-13.0, 3.0], bearing: 90.0, ceiling: None, team: Some(0) },
-            SpawnPoint { at: [-13.0, -3.0], bearing: 90.0, ceiling: None, team: Some(0) },
-            SpawnPoint { at: [13.0, 3.0], bearing: 270.0, ceiling: None, team: Some(1) },
-            SpawnPoint { at: [13.0, -3.0], bearing: 270.0, ceiling: None, team: Some(1) },
+            SpawnPoint {
+                at: [-13.0, 3.0],
+                bearing: 90.0,
+                ceiling: None,
+                team: Some(0),
+            },
+            SpawnPoint {
+                at: [-13.0, -3.0],
+                bearing: 90.0,
+                ceiling: None,
+                team: Some(0),
+            },
+            SpawnPoint {
+                at: [13.0, 3.0],
+                bearing: 270.0,
+                ceiling: None,
+                team: Some(1),
+            },
+            SpawnPoint {
+                at: [13.0, -3.0],
+                bearing: 270.0,
+                ceiling: None,
+                team: Some(1),
+            },
         ];
         let bot = |k: usize, team: u8| BotDef {
             name: format!("b{k}"),
@@ -3343,7 +3410,11 @@ mod tests {
                 break;
             }
         }
-        assert!(sh.captures()[1] > 0, "forty seconds alone and no capture; jobs seen {jobs:?}, flags {:?}", sh.flags.flags.iter().map(|f| f.state).collect::<Vec<_>>());
+        assert!(
+            sh.captures()[1] > 0,
+            "forty seconds alone and no capture; jobs seen {jobs:?}, flags {:?}",
+            sh.flags.flags.iter().map(|f| f.state).collect::<Vec<_>>()
+        );
         assert!(jobs.contains("attack") && jobs.contains("carry"), "it was never given the jobs: {jobs:?}");
     }
 
@@ -3387,7 +3458,11 @@ mod tests {
             run(&mut sh, &mut player, &store, 1, |_, _| {});
             for i in 0..3 {
                 match sh.orders[i] {
-                    Some(brain::Order { role: brain::Role::Defend, goal: brain::Goal::Hold { post, .. }, .. }) => {
+                    Some(brain::Order {
+                        role: brain::Role::Defend,
+                        goal: brain::Goal::Hold { post, .. },
+                        ..
+                    }) => {
                         on[i] += 1.0 / 60.0;
                         if on[i] > 4.0 {
                             let p = sh.bots[i].pos();

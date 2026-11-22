@@ -1,0 +1,15 @@
+{
+  "name": "wharf",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "A timber wharf on piles: a 6 m plank deck a metre and a half over the water, a stringpiece along both edges, bollards every 9 m to make a ship fast to, and piles every 2.5 m. Give the ribbon a `height` so it holds level over the falling shore.",
+  "ground": "deck",
+  "width": 6.0,
+  "mat": "weathered_planks",
+  "lift": 1.5,
+  "deck": {"thick": 0.5, "mat": "weathered_planks", "under": "timber_frame"},
+  "rails": [{"side": "both", "out": 0.0, "from": 0.0, "to": 0.25, "thick": 0.3, "mat": "timber_frame"}],
+  "posts": [{"side": "both", "out": -0.3, "every": 9.0, "size": [0.4, 0.7, 0.4], "mat": "timber_frame"}],
+  "piers": {"every": 2.5, "radius": 0.35, "mat": "timber_frame", "min_drop": 0.4},
+  "tags": ["walkway"]
+}

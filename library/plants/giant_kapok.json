@@ -1,0 +1,21 @@
+{
+  "name": "giant_kapok",
+  "version": 1,
+  "introduced_by": "canopy_test",
+  "notes": "branching: The emergent of the canopy town: a straight grey column on great plank buttresses, clear for forty metres, opening into a flat umbrella of limbs above every other crown. The host tree for the walkways.",
+  "form": "branching",
+  "height": [62, 80],
+  "trunk_radius": [1.5, 2.0],
+  "buttress": 4.0,
+  "crown_radius": [14, 19],
+  "bark": "banyan_bark",
+  "leaf": "glossy_leaves",
+  "curve": "arch",
+  "canopy": "lobes",
+  "leader": 0.15,
+  "fill": 0.7,
+  "spread": 0.0,
+  "limb": 0.6,
+  "max_slope": 0.5,
+  "affords": ["perch"]
+}

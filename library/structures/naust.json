@@ -1,42 +1,62 @@
 {
   "name": "naust",
-  "version": 1,
+  "version": 2,
   "introduced_by": "kaldvik",
-  "notes": "A boathouse: low dry-stone walls under a turf roof, the boat door in the gable end that faces the water (local -X).",
+  "notes": "A boathouse 10.5 m long and 6 m wide under a turf roof, with a 3 m wide open boat door in the end that faces the water (local -X), a man door in the -Z wall and a clinker boat on the slip. It levels the ground.",
   "size": [42, 24, 24],
   "anchor": [21, 0, 12],
   "foundation": 6,
   "level": true,
   "tags": ["kaldvik", "house"],
+  "slots": {
+    "stone": "fieldstone",
+    "roof": "turf_roof",
+    "plank": "weathered_planks",
+    "post": "oak_post",
+    "door": "door_wood",
+    "cobble": "river_cobbles",
+    "fish": "stockfish"
+  },
   "ops": [
-    {"op": "walls", "from": [1, 0, 1], "to": [41, 11, 23], "mat": "fieldstone", "thick": 2, "part": "stone"},
+    {"op": "walls", "from": [1, 0, 1], "to": [41, 11, 23], "mat": "stone", "thick": 2, "part": "stone"},
+    {"op": "gable", "from": [1, 11, 1], "to": [3, 11, 23], "axis": "x", "mat": "plank", "rise": 1, "part": "timber"},
+    {"op": "gable", "from": [39, 11, 1], "to": [41, 11, 23], "axis": "x", "mat": "plank", "rise": 1, "part": "timber"},
+    {"op": "box", "from": [1, 0, 6], "to": [3, 10, 18], "mat": "air", "part": "stone"},
+    {"op": "box", "from": [1, 0, 5], "to": [3, 11, 6], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [1, 0, 18], "to": [3, 11, 19], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [1, 10, 6], "to": [3, 11, 18], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [30, 0, 1], "to": [34, 10, 3], "mat": "air", "part": "stone"},
+    {"op": "box", "from": [30, 0, 2], "to": [34, 10, 3], "mat": "door", "part": "timber"},
+    {"op": "box", "from": [29, 10, 1], "to": [35, 11, 3], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [29, 0, 1], "to": [30, 10, 3], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [34, 0, 1], "to": [35, 10, 3], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [10, 6, 1], "to": [12, 8, 3], "mat": "air", "part": "stone"},
+    {"op": "box", "from": [20, 6, 1], "to": [22, 8, 3], "mat": "air", "part": "stone"},
+    {"op": "box", "from": [10, 6, 21], "to": [12, 8, 23], "mat": "air", "part": "stone"},
+    {"op": "box", "from": [20, 6, 21], "to": [22, 8, 23], "mat": "air", "part": "stone"},
+    {"op": "box", "from": [30, 6, 21], "to": [32, 8, 23], "mat": "air", "part": "stone"},
+    {"op": "gable", "from": [0, 11, 0], "to": [42, 11, 24], "axis": "x", "mat": "roof", "rise": 1, "part": "roof"},
+    {"op": "box", "from": [0, 22, 11], "to": [42, 23, 13], "mat": "plank", "part": "timber"},
+    {"op": "box", "from": [3, 0, 3], "to": [39, 1, 21], "mat": "cobble", "part": "floor"},
+    {"op": "box", "from": [0, 0, 5], "to": [3, 1, 19], "mat": "cobble", "part": "floor"},
+    {"op": "ellipsoid", "centre": [14, 4, 12], "radius": [10, 3, 4], "mat": "plank", "part": "timber"},
+    {"op": "ellipsoid", "centre": [14, 5, 12], "radius": [9, 3, 3], "mat": "air", "part": "timber"},
+    {"op": "box", "from": [9, 4, 9], "to": [10, 5, 15], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [14, 4, 9], "to": [15, 5, 15], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [19, 4, 9], "to": [20, 5, 15], "mat": "post", "part": "timber"},
+    {"op": "segment", "points": [[8, 5, 12], [8, 9, 12]], "radius": 0.5, "mat": "post", "part": "timber"},
+    {"op": "box", "from": [28, 9, 3], "to": [29, 10, 21], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [34, 9, 3], "to": [35, 10, 21], "mat": "post", "part": "timber"},
     {
-      "op": "gable",
-      "from": [0, 11, 0],
-      "to": [42, 11, 24],
-      "axis": "x",
-      "mat": "turf_roof",
-      "rise": 1,
-      "part": "roof"
+      "op": "repeat",
+      "count": 6,
+      "step": [0, 0, 3],
+      "ops": [
+        {"op": "box", "from": [28, 5, 5], "to": [29, 9, 6], "mat": "fish", "part": "timber"},
+        {"op": "box", "from": [34, 5, 5], "to": [35, 9, 6], "mat": "fish", "part": "timber"}
+      ]
     },
-    {
-      "op": "gable",
-      "from": [1, 11, 1],
-      "to": [2, 11, 23],
-      "axis": "x",
-      "mat": "weathered_planks",
-      "rise": 1,
-      "part": "timber"
-    },
-    {
-      "op": "gable",
-      "from": [40, 11, 1],
-      "to": [41, 11, 23],
-      "axis": "x",
-      "mat": "weathered_planks",
-      "rise": 1,
-      "part": "timber"
-    },
-    {"op": "box", "from": [1, 0, 5], "to": [3, 10, 19], "mat": "weathered_planks", "part": "timber"}
+    {"op": "cylinder", "base": [38, 1, 5], "radius": 1.5, "height": 3, "mat": "plank", "part": "timber"},
+    {"op": "cylinder", "base": [38, 1, 9], "radius": 1.5, "height": 3, "mat": "plank", "part": "timber"}
   ]
 }

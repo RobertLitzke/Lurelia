@@ -142,6 +142,14 @@ fn item_keys_for(event: u32, items: &[super::fields::Item]) -> Vec<u32> {
 }
 
 pub fn build_world(dir: &Path, lib: Library) -> Result<World, String> {
+    build_world_with(dir, lib, &[])
+}
+
+/// `build_world`, meeting the neighbours' edges (`world/seam.rs`): the
+/// strips are taken by the caller, from neighbours built first
+/// (`worldload::edges_for`), since building one installs its own
+/// material table.
+pub fn build_world_with(dir: &Path, lib: Library, edges: &[super::seam::Edge]) -> Result<World, String> {
     let t0 = std::time::Instant::now();
     let mut warnings = Vec::new();
     let read = |name: &str| -> Result<serde_json::Value, String> {
@@ -214,15 +222,53 @@ pub fn build_world(dir: &Path, lib: Library) -> Result<World, String> {
             last = std::time::Instant::now();
         }
     };
+    // The land along each neighbour's edge, blended to meet it.
+    for (side, nb) in def.neighbours.list() {
+        if !edges.iter().any(|e| e.side == side) {
+            log.push(format!("  seam  built without its {} neighbour ({}): the edge is left as the chronicle made it", side.name(), nb.world));
+        }
+    }
+    for e in edges {
+        let m = super::seam::blend(&mut cx.f, &lib, e, hash32(def.seed ^ 0x5ea3));
+        log.push(format!(
+            "  seam  {} edge against {}: before blending the land missed by {:.2} m at worst, {:.2} m on average; sea and land disagreed on {} of {} cells",
+            e.side.name(),
+            e.world,
+            m.max_step,
+            m.mean_step,
+            m.coast_cells,
+            m.cells
+        ));
+    }
     // A spawn on land the generator shaped is given by name (`spawn_at`).
     let spawn_at = def.spawn_at.clone().map(|p| (cx.pos(&p), cx.turn(&p)));
     let rivers = cx.state.take::<events::river::Rivers>();
     let lakes = cx.state.take::<events::lake::Lakes>();
+    // With a tide the rivers run on across the flats it uncovers, down to low
+    // water (river.rs `extend_to_low`).
+    if let Some(t) = def.tide {
+        cx.f.low_water = def.sea_level_m - t.range.max(0.0);
+    }
     events::river::settle_water(&mut cx.f, &lakes, &rivers);
     let cenotes = cx.state.take::<events::cenote::Cenotes>();
     events::cenote::settle(&mut cx.f, &cenotes);
     stage("water settling", &mut stages);
     cx.f.derive();
+    for e in edges {
+        super::seam::fix_distances(&mut cx.f, e);
+    }
+    if let Some(t) = def.tide {
+        cx.f.start_tide(t.range);
+        if t.range > 0.0 && !cx.f.tide.on() {
+            cx.warnings.push("world.json: a tide, but no open sea reaches the edge of the map, so the water stays still".to_string());
+        }
+        if t.period_h < 1.0 {
+            cx.warnings.push(format!("world.json: tide period_h is {}; an hour is the least", t.period_h));
+        }
+    }
+    if let Some(s) = def.surf {
+        cx.f.shore = crate::world::surf::Shore::build(&cx.f, &s, crate::render::HEIGHTS_N as usize);
+    }
     stage("fields derive", &mut stages);
     let tubes = cx.state.take::<events::lava_tube::Tubes>().0;
     let towers = cx.state.take::<events::tower::Towers>().0;
@@ -231,6 +277,7 @@ pub fn build_world(dir: &Path, lib: Library) -> Result<World, String> {
     let growths = cx.state.take::<events::tower::Growths>().0;
     let mut cx_when = std::mem::take(&mut cx.when);
     let city = cx.state.take::<super::city::City>();
+    let circuits = cx.state.take::<events::circuit::Circuits>().0;
     let mut ribbons = cx.state.take::<super::route::ribbon::Ribbons>();
     ribbons.index();
     let EventCtx {
@@ -341,6 +388,7 @@ pub fn build_world(dir: &Path, lib: Library) -> Result<World, String> {
         standing: Vec::new(),
         city,
         ribbons,
+        circuits,
         log,
         warnings,
         build_ms: 0.0,
@@ -360,6 +408,12 @@ pub fn build_world(dir: &Path, lib: Library) -> Result<World, String> {
     world.standing = maps.into_iter().map(|m| m.0).collect();
     stage("decay and gravity", &mut stages);
     flora::place_plants(&mut world);
+    for e in edges {
+        let gone = super::seam::clear_trees(&mut world.trees, e);
+        if gone > 0 {
+            world.log.push(format!("  seam  {gone} trees taken out of {}'s crowns along the {} edge", e.world, e.side.name()));
+        }
+    }
     stage("plants", &mut stages);
     // City street trees, at the positions the import gave. Growing one is
     // pure -- the library, a spot and a seed in, a tree out -- and a city has
@@ -490,7 +544,13 @@ mod tests {
     use crate::world::fields::Item;
 
     fn item(kind: &str, x: f32) -> Item {
-        Item { kind: kind.into(), pos: Vec3::new(x, 0.0, 0.0), size: 1.0, cause: 1, surface: true }
+        Item {
+            kind: kind.into(),
+            pos: Vec3::new(x, 0.0, 0.0),
+            size: 1.0,
+            cause: 1,
+            surface: true,
+        }
     }
 
     /// A find keeps its key when it moves, and when another kind of thing

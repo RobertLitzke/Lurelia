@@ -3,15 +3,12 @@
   "version": 2,
   "introduced_by": "jadewater",
   "notes": "A very pale limestone, nearly white with a cream cast: the palest towers. v2: drawn in flat facets (surface nets lit like sloped ground) instead of smoothed into slopes, so tower walls and the Old Wall's cliffs read as smooth rock, not one-voxel steps.",
+  "like": "karst_limestone",
   "id": 227,
-  "smooth": false,
   "texture": {
-    "pattern": "strata",
-    "base": [204, 206, 200],
     "alt": [188, 192, 188],
-    "scale": 2,
+    "calm": {"alt": [192, 196, 192], "base": [206, 208, 202]},
     "contrast": 0.5,
-    "calm": {"base": [206, 208, 202], "alt": [192, 196, 192]}
-  },
-  "facet": true
+    "base": [204, 206, 200]
+  }
 }

@@ -35,7 +35,7 @@
   "features": [{"structure": "boulder", "density": 0.0004}, {"structure": "flat_rock", "density": 0.0003}],
   "creatures": [
     {"creature": "cave_bear", "count": 3},
-    {"creature": "steppe_wolf", "count": 2},
+    {"creature": "wolf", "count": 2},
     {"creature": "eagle", "count": 2},
     {"creature": "marmot", "count": 8},
     {"creature": "rabbit", "count": 2},

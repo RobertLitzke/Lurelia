@@ -6,6 +6,7 @@
   "id": 188,
   "smooth": false,
   "passable": true,
+  "sprites": "vine leaves",
   "texture": {
     "pattern": "blotch",
     "base": [58, 96, 44],

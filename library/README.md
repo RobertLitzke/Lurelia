@@ -4,13 +4,16 @@ Every world builds from this one library, and each new world adds to it. An
 entry is a noun (data); what it can do is limited to the verbs written in Rust.
 The formats and the verb names are in `.claude/skills/worldgen/reference.md`;
 this file is how to work in the folder. `schema/` holds JSON Schemas generated
-from the loader's types (structures so far); `cargo test` fails when one falls
-behind the code, and `WRITE_SCHEMA=1 cargo test structure_schema` rewrites it.
+from the loader's types (structures, materials, plants, creatures, biomes and
+kits); `cargo test` fails when one falls behind the code, and
+`WRITE_SCHEMA=1 cargo test schema` rewrites them. A kind that takes `like`
+asks for its required keys only of an entry without one.
 `schema/structure.md` is the short form of it plus a review checklist, for an
 agent asked to review a structure file.
 
 ```
-materials/     one block material each: id, texture recipe, smooth or not
+materials/     one block material each: texture recipe, flags, what grows on it
+               (`sprites`); a variant is `like` another
 plants/        a growth form (a verb) and its sizes, bark and leaf materials,
                and optionally what it `affords` animals (docs/CREATURES.md)
 structures/    shape programs in 0.25 m voxels: buildings, arches, boulders
@@ -20,7 +23,8 @@ cities/        what an imported city is made of, and what to make of it
                instead: material roles, name swaps, ivy, more street trees
 creatures/     a 32^3 shape program plus a movement verb
 collectibles/  small finds, also 32^3 shape programs
-biomes/        rules for where a biome applies, and what grows and lives there
+biomes/        rules for where a biome applies, and what grows and lives there;
+               a variant is `like` another
 signs/         how a sign's board and lettering look, and the post under it
 fx/            particle effects: dust, splashes, chips, falling leaves (src/fx)
 sprites/       PNG overrides for the detail sprites (see its own README)
@@ -62,6 +66,19 @@ entries, and never edit it by hand.
 - A world can limit how it is played with `"modes"` in `world.json` (walk,
   bike, glide, climb, rope, screenshot, camera; see `src/modes.rs`). Leaving it
   out allows them all.
+- A world says which games it is built for with `"games"`, each a name in
+  `library/games/`, its own first. The launch screen offers those and opens on
+  the first; `cargo test` fails a world that lists a game that is not there,
+  or one it has no `shooter`, `ctf` or `race` block for. Leaving it out is a
+  world to explore.
+- A game (`library/games/<name>.json`) is a `kind` (explore, deathmatch, team,
+  ctf or race), a `title` and `help` for the launch screen, and the rules it
+  states: `weapons`, `health`, `health_max`, `armour`, `armour_max`,
+  `respawn_s`, `give_all`, `ammo_without_gun`, `friendly_fire`,
+  `"pickups": false` for a bare floor, `target`, `captures`, `return_s`,
+  `need_home`, `laps`, `rivals`. A rule left out is the map's own. A variant
+  says `"like": "deathmatch"` and what it changes; `instagib.json` is the
+  example. See `src/games.rs`.
 
 ## Rules
 
@@ -164,3 +181,11 @@ every world up to 2 km. The gazetteer ends with a height table every 64 m, and `
 adds a close-up height grid round one point: use it to put a structure
 against a cliff or on a rim instead of guessing. Then screenshot it (see the
 worldgen skill): a shape program that validates can still look wrong.
+
+For a structure, two tools do most of a review (`schema/structure.md` has the
+checklist they leave for a person):
+
+```bash
+python tools/check_structure.py library/structures/NAME.json   # or a replacement file
+python tools/shoot_structure.py NAME                           # screenshots/structures/NAME/
+```

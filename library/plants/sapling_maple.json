@@ -3,18 +3,14 @@
   "version": 1,
   "introduced_by": "glassfall",
   "notes": "A young broadleaf, head high to twice that, waiting in the shade for a gap in the canopy.",
-  "form": "branching",
   "height": [2.4, 4.2],
   "trunk_radius": [0.05, 0.08],
   "crown_radius": [0.6, 0.95],
-  "bark": "bark",
   "leaf": "leaves",
-  "curve": "sweep",
-  "canopy": "lobes",
   "leader": 0.7,
   "fill": 0.6,
   "spread": 0.3,
   "max_slope": 0.8,
-  "autumn": "leaves_autumn",
-  "thin_limbs": 0.12
+  "like": "maple",
+  "autumn": "leaves_autumn"
 }

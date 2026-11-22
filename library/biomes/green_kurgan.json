@@ -16,7 +16,12 @@
       "placement": {"verb": "clustered", "params": {"size": 6, "min": 0.4, "max": 1.0}}
     }
   ],
-  "creatures": [{"creature": "wind_skate", "count": 3}, {"creature": "sparrow", "count": 4}, {"creature": "bumblebee", "count": 4}],
+  "creatures": [
+    {"creature": "wind_skate", "count": 3},
+    {"creature": "sparrow", "count": 4},
+    {"creature": "bumblebee", "count": 4},
+    {"creature": "lapwing", "count": 4}
+  ],
   "collectibles": [{"item": "pottery_shard", "density": 0.001, "placement": {"verb": "scatter", "params": {}}}],
   "sound": {"wind": 1.25}
 }

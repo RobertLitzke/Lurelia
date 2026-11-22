@@ -1,0 +1,7 @@
+{
+  "name": "coat_black",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Black broadcloth: the crossroads figure's long coat and hat. A copy of door_black's colour that is not a door, so placed boxes of it stay cloth.",
+  "like": "door_black"
+}

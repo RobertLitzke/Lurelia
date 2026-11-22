@@ -2,7 +2,8 @@
 
 @group(0) @binding(0) var hdr: texture_2d<f32>;
 // s: x = 1 for the calm style, y = speed, z = camera near (m), w = time of day.
-// x: x = speed streaks, y = a clock wrapped to 64 s for them.
+// x: x = speed streaks, y = a clock wrapped to 64 s for them, z = the level
+//    of the ground under the camera (m), for the mirage.
 // w: the weather (world/weather.rs): x = rain, y = snow, z = the wind's
 //    multiplier, w = the camera's bearing in radians. x, y and z are 0, 0
 //    and 1 on a fair day.
@@ -449,47 +450,93 @@ fn mirror(px: vec2<f32>, uv: vec2<f32>, c: vec3<f32>) -> vec3<f32> {
     return mix(c, img * 0.92, m * mix(fres, 1.0, 0.15) * edge);
 }
 
-// The heat mirage over a flat (world.json `mirage`). Light coming in just
-// under the horizon is bent back up off the hot air over the ground, so the
-// far flat shows what is just above the horizon, upside down and squeezed:
+// The heat mirage over a flat (world.json `mirage`). A ray that runs into the
+// hot air lying on the ground at a grazing angle is bent back up, so far flat
+// ground shows what is just above the horizon, upside down and squeezed:
 // sky-coloured water from a hundred and fifty metres out, and anything
 // standing out there floating over its own reflection with its foot lost in
-// it. The air over the flat shimmers. Nearer ground keeps its own colour, so
-// the water is always out ahead and never where you stand.
+// it. The air over the flat shimmers.
+//
+// It is all worked out from the pixel's own ray in the world, so it lies
+// along the true horizon however the camera is rolled. A pixel takes part
+// only where its ray actually reaches the hot layer, the bottom couple of
+// metres of air over the ground (post.x.z is the ground's level), far enough
+// out and at a shallow enough angle: anything standing nearer, or taller than
+// the layer, hides the mirage behind it, and from high up the grazing angle
+// is only met past the edge of the world, so the band thins away as you rise.
 fn mirage(uv: vec2<f32>, c: vec3<f32>) -> vec3<f32> {
     let k = post.m.z;
     if (k < 0.01) {
         return c;
     }
     let dims = vec2<f32>(textureDimensions(hdr));
-    let pitch = post.m.x;
-    let th = post.m.y;
-    let ny = 1.0 - uv.y * 2.0;
-    let e = pitch + atan(ny * th);
-    if (e > 0.03 || e < -0.06) {
+    let cam = post.c.xyz;
+    // This pixel's ray, from a point on the near plane (reversed depth: 1).
+    let hn = post.ivp * vec4<f32>(uv.x * 2.0 - 1.0, 1.0 - uv.y * 2.0, 1.0, 1.0);
+    let dir = normalize(hn.xyz / hn.w - cam);
+    // How steeply it runs down (radians, near enough); negative going up.
+    let g = -dir.y;
+    if (g > 0.03 || g < -0.03) {
         return c;
     }
-    let dist = scene_depth(uv, dims);
-    let far = smoothstep(60.0, 140.0, dist);
+    let lift = max(cam.y - post.x.z, 0.0);
+    // How far along the ray the scene is: the sky counts as the world's edge.
+    let d = textureLoad(depth_tex, vec2<i32>(clamp(uv * dims, vec2<f32>(0.0), dims - 1.0)), 0);
+    var reach = 3000.0;
+    if (d > 0.0) {
+        let hp = post.ivp * vec4<f32>(uv.x * 2.0 - 1.0, 1.0 - uv.y * 2.0, d, 1.0);
+        reach = length(hp.xyz / hp.w - cam);
+    }
+    let far = smoothstep(60.0, 140.0, reach);
     if (far <= 0.0) {
         return c;
     }
+    // The lowest the ray gets over the ground in its far stretch (it is
+    // straight, so the lowest is at one end): inside the hot layer or not.
+    let s0 = min(100.0, reach);
+    let low = min(lift - g * s0, lift - g * reach);
+    let hot = 1.0 - smoothstep(0.8, 2.5, low);
+    // A mirage needs a grazing ray; much steeper and it goes into the ground.
+    let graze = 1.0 - smoothstep(0.012, 0.03, g);
+    let w = far * hot * graze;
+    if (w <= 0.001) {
+        return c;
+    }
+    // Which way the horizon runs on screen, and which way is up off it.
+    let right = normalize(cross(dir, vec3<f32>(0.0, 1.0, 0.0)));
+    let o = to_screen(cam + dir * 100.0).xy;
+    // In pixels, one pixel long: along the horizon, and up off it.
+    var along = (to_screen(cam + (dir + right * 0.01) * 100.0).xy - o) * dims;
+    along = along / max(length(along), 1e-6);
+    let upward = vec2<f32>(along.y, -along.x);
     let t = post.x.y;
-    // The shimmer: a fine waver, strongest at the horizon.
-    let at_line = 1.0 - smoothstep(0.0, 0.03, abs(e));
-    let wav = sin(uv.y * dims.y * 0.7 + t * 9.0) * 0.6 + sin(uv.x * dims.x * 0.04 - t * 5.3) * 0.4;
-    let src = uv + vec2<f32>(wav * 1.2, wav * 0.6) / dims * k * far * at_line;
+    // The shimmer: a fine waver in rows that follow the horizon, strongest
+    // right at it. Its phase runs with the ray's angle, not the screen row,
+    // so the rows roll with the view.
+    let th = post.m.y;
+    let rows = g * dims.y / (2.0 * th);
+    let at_line = 1.0 - smoothstep(0.0, 0.03, abs(g));
+    let wav = sin(rows * 0.7 + t * 9.0) * 0.6 + sin(dot(uv * dims, along) * 0.04 - t * 5.3) * 0.4;
+    let src = uv + (along * 1.2 + upward * 0.6) * wav * k * at_line / dims;
     var out = textureLoad(hdr, vec2<i32>(clamp(src * dims, vec2<f32>(0.0), dims - 1.0)), 0).rgb;
-    if (e < 0.0) {
+    if (g > 0.0) {
         // Under the line: what stands four times the angle above it, so the
         // reflection comes out squeezed, the way a mirage's does.
-        let e2 = -e * 4.0 + wav * 0.0008;
-        let ny2 = tan(e2 - pitch) / th;
-        let v2 = 0.5 - ny2 * 0.5;
-        let up = textureLoad(hdr, vec2<i32>(clamp(vec2<f32>(src.x, v2) * dims, vec2<f32>(0.0), dims - 1.0)), 0).rgb;
-        out = mix(out, up * vec3<f32>(0.96, 0.98, 1.0), k * smoothstep(0.0, 0.002, -e));
+        let e2 = g * 4.0 + wav * 0.0008;
+        let hz = normalize(vec2<f32>(dir.x, dir.z));
+        let dir2 = vec3<f32>(hz.x * cos(e2), sin(e2), hz.y * cos(e2));
+        let q = to_screen(cam + dir2 * 1000.0);
+        if (q.z > 0.0) {
+            let sp = q.xy + (src - uv);
+            // Only what stands beyond the hot stretch is mirrored: a mast
+            // fifty metres off is not in the far air's reflection.
+            let sd = scene_depth(sp, dims);
+            let beyond = smoothstep(60.0, 140.0, sd);
+            let up = textureLoad(hdr, vec2<i32>(clamp(sp * dims, vec2<f32>(0.0), dims - 1.0)), 0).rgb;
+            out = mix(out, up * vec3<f32>(0.96, 0.98, 1.0), k * beyond * smoothstep(0.0, 0.002, g));
+        }
     }
-    return mix(c, out, far);
+    return mix(c, out, w);
 }
 
 fn graded(in: FsTri) -> vec3<f32> {

@@ -66,7 +66,7 @@ impl Act {
 }
 
 /// One row of a species' activity table, as written in a rig's `activities`.
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct ActDef {
     /// Seconds, low and high.
     pub time: [f32; 2],
@@ -455,6 +455,9 @@ impl Life {
         motors::ears(rig, &mut p, (self.flick * std::f32::consts::PI).sin() * self.supple, self.alert * self.supple);
         motors::breathe(&mut p, self.t, 2.0 + 3.0 * self.alarm, leg_m);
         p.bones[0].x += self.tilt;
+        if rig.soft.is_some() {
+            p.sag = super::flesh::sag(self.level);
+        }
         motors::fold_wings(rig, &mut p);
         motors::retract(rig, &mut p, self.hide, leg_m);
         // All the way down, an animal that sleeps on its side is over.

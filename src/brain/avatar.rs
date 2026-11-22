@@ -24,8 +24,8 @@
 //! meaning anything the moment a bot has colours of its own. The plate tint
 //! is now what the world says it is: whose side this one is on.
 
-use crate::anim::{Plan, Role};
 use crate::anim::{figure::Figure, Rig};
+use crate::anim::{Plan, Role};
 use crate::library::Library;
 use crate::models::{self, srgb, Grid, Model};
 use glam::{Quat, Vec3};
@@ -128,6 +128,7 @@ fn stub() -> Avatar {
 
 fn empty_rig() -> Rig {
     Rig {
+        soft: None,
         plan: Some(Plan::Biped),
         bones: Vec::new(),
         activities: Default::default(),
@@ -371,11 +372,7 @@ pub fn build(lib: Option<&Library>, palette: &mut [[f32; 4]]) -> Avatar {
         av.problems = problems;
         return av;
     }
-    Avatar {
-        models: models_out,
-        bodies,
-        problems,
-    }
+    Avatar { models: models_out, bodies, problems }
 }
 
 /// The lamp bars' middles, in voxels from the chest joint: across the band
@@ -432,8 +429,14 @@ impl Body {
         let chest = (0..self.rig.bones.len()).filter(|&i| self.rig.bones[i].role == Role::Spine).next_back();
         let yq = Quat::from_rotation_y(yaw);
         let place = |off: Vec3| match chest.and_then(|i| fk.get(i)) {
-            Some(&(p, q)) => Bar { at: at + yq * (p + q * (off * self.voxel)), rot: yq * q },
-            None => Bar { at: at + Vec3::Y * 1.35 + yq * Vec3::new(off.x, 0.0, off.z) * self.voxel, rot: yq },
+            Some(&(p, q)) => Bar {
+                at: at + yq * (p + q * (off * self.voxel)),
+                rot: yq * q,
+            },
+            None => Bar {
+                at: at + Vec3::Y * 1.35 + yq * Vec3::new(off.x, 0.0, off.z) * self.voxel,
+                rot: yq,
+            },
         };
         self.bars.map(place)
     }
@@ -626,7 +629,10 @@ mod tests {
             (across(23), deep(18), deep(22), s.top as f32 * def.voxel)
         };
         let [brawny, heavy, lean] = BUILDS.map(measure);
-        assert!(brawny.0 > heavy.0 && brawny.0 > lean.0, "the brawny build is not the widest across the chest: {brawny:?} {heavy:?} {lean:?}");
+        assert!(
+            brawny.0 > heavy.0 && brawny.0 > lean.0,
+            "the brawny build is not the widest across the chest: {brawny:?} {heavy:?} {lean:?}"
+        );
         assert!(heavy.1 > brawny.1 && heavy.1 > lean.1, "the heavy build has no belly: {brawny:?} {heavy:?} {lean:?}");
         assert!(lean.2 < brawny.2 && lean.2 < heavy.2, "the lean build is not the thinnest at the ribs: {brawny:?} {heavy:?} {lean:?}");
         assert!(lean.3 > brawny.3 + 0.03 && lean.3 < 1.85, "the lean build is {} m tall against {}", lean.3, brawny.3);

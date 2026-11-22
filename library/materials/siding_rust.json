@@ -3,14 +3,7 @@
   "version": 1,
   "introduced_by": "city",
   "notes": "Barn-red painted lap siding.",
+  "like": "siding_cream",
   "id": 163,
-  "smooth": false,
-  "texture": {
-    "pattern": "planks",
-    "base": [140, 70, 56],
-    "alt": [122, 60, 48],
-    "scale": 4,
-    "contrast": 1.0,
-    "calm": {"base": [150, 80, 62], "alt": [132, 70, 56]}
-  }
+  "texture": {"alt": [122, 60, 48], "calm": {"alt": [132, 70, 56], "base": [150, 80, 62]}, "base": [140, 70, 56]}
 }

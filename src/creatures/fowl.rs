@@ -308,7 +308,10 @@ pub fn update(world: &mut hecs::World, species: &[Species], models: &[Model], dt
                         p.level = l;
                     }
                 }
-                let float_y = p.level - sink_m;
+                // On the sea it rides the tide and the swell; on a river,
+                // the level it settled on.
+                let water = if t.inland_water(look.pos.x, look.pos.z).is_some_and(|w| w.0 > t.sea + 0.05) { p.level } else { t.sea_at(look.pos.x, look.pos.z) };
+                let float_y = water - sink_m;
                 look.pos.y = float_y + 0.02 * p.bob.sin();
                 look.yaw = crate::util::turn_toward(look.yaw, p_yaw(p.heading), (dt * 3.0).min(1.0));
             }

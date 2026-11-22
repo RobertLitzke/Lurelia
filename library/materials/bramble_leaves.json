@@ -4,6 +4,7 @@
   "introduced_by": "hemlow",
   "notes": "Bramble leaves: dark green, in threes and fives.",
   "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "lobed"},
   "texture": {
     "pattern": "speckle",
     "base": [58, 92, 44],

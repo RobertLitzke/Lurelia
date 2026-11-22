@@ -5,6 +5,7 @@
   "notes": "Bright cottonwood leaves along the river.",
   "id": 127,
   "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "heart"},
   "texture": {
     "pattern": "blotch",
     "base": [88, 122, 54],

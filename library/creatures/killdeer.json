@@ -1,0 +1,29 @@
+{
+  "name": "killdeer",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "patter: Killdeer: a bigger, browner plover with two black bands across a white breast, an orange-red rump and longer legs. Run-stop-peck on bare ground, short grass, gravel bars and lake shores, alone or in twos and threes, a long way from any surf.",
+  "colors": {
+    "back": [132, 104, 72],
+    "head": [132, 104, 72],
+    "wing": [120, 94, 66],
+    "tail": [214, 110, 54],
+    "patch": [26, 22, 20],
+    "legs": [200, 190, 160]
+  },
+  "behaviour": {
+    "group": {"size": [1, 3], "spacing": 3, "range": 14},
+    "wary": 10,
+    "active": "diurnal",
+    "off_hours": 0.15,
+    "winter": 0.6
+  },
+  "like": "snowy_plover",
+  "scale": 1.35,
+  "extra_ops": [
+    {"op": "box", "from": [13, 10, 11], "to": [19, 11, 13], "mat": "patch"},
+    {"op": "box", "from": [13, 8, 13], "to": [19, 9, 15], "mat": "patch"},
+    {"op": "box", "from": [13, 12, 8], "to": [19, 13, 9], "mat": "patch", "part": "head"},
+    {"op": "box", "from": [15, 10, 24], "to": [17, 11, 26], "mat": "patch", "part": "tail"}
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "gh_river",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "The Cold River's banks: rounded rock and gravel, sword fern and moss, alder and bigleaf maple leaning over the water.",
+  "priority": 6,
+  "rules": {"river": [0, 20], "elev": [0.3, 80]},
+  "surface": "moss_grass",
+  "subsurface": "dirt",
+  "map_color": [70, 120, 96],
+  "plants": [
+    {"plant": "fern", "density": 0.12, "placement": {"verb": "clustered", "params": {"size": 10}}},
+    {"plant": "alder", "density": 0.012, "placement": {"verb": "riparian", "params": {"width": 12}}},
+    {"plant": "bigleaf_maple", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 18}}},
+    {"plant": "red_osier", "density": 0.006, "placement": {"verb": "riparian", "params": {"width": 8}}},
+    {"plant": "tree_moss", "density": 0.4, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [
+    {"structure": "boulder", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "flat_rock", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "mossy_log", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "otter", "count": 2},
+    {"creature": "salmon", "morph": "run", "count": 8},
+    {"creature": "trout", "count": 10},
+    {"creature": "heron", "count": 1},
+    {"creature": "kingfisher", "count": 2},
+    {"creature": "dragonfly", "count": 8}
+  ],
+  "collectibles": []
+}

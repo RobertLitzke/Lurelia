@@ -4,7 +4,7 @@
 use super::*;
 
 /// A placement rule: which verb, and its parameters.
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct Placement {
     pub verb: crate::world::flora::PlaceVerb,
     #[serde(default)]
@@ -23,7 +23,7 @@ impl Default for Placement {
     }
 }
 
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct PlantUse {
     pub plant: String,
     /// Plants per square metre where the placement allows them fully.
@@ -35,7 +35,7 @@ pub struct PlantUse {
     pub morph: Option<MorphPick>,
 }
 
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct FeatureUse {
     pub structure: String,
     pub density: f32,
@@ -46,7 +46,7 @@ pub struct FeatureUse {
 /// Which coats a biome wants of a creature or plant it lists: one by name
 /// ("the pale hare here"), or weights that override the entry's own ("mostly
 /// pale, some wild"). Left out, the entry's own weights stand.
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 #[serde(untagged)]
 pub enum MorphPick {
     One(String),
@@ -63,7 +63,7 @@ impl MorphPick {
     }
 }
 
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct CreatureUse {
     pub creature: String,
     /// How many to keep around the player while they are in this biome.
@@ -74,7 +74,7 @@ pub struct CreatureUse {
     pub morph: Option<MorphPick>,
 }
 
-#[derive(Deserialize, Clone, Debug, Default)]
+#[derive(Deserialize, Clone, Debug, Default, schemars::JsonSchema)]
 pub struct Rules {
     /// Height above sea, metres.
     #[serde(default)]
@@ -107,9 +107,16 @@ pub struct Rules {
     pub amphibious: bool,
 }
 
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct BiomeDef {
     pub name: String,
+    /// The biome this one is a variant of (src/inherit.rs), already merged
+    /// in: the faerie park is the city park with other plants, creatures and
+    /// ground. Lists (plants, creatures, features) are replaced whole, not
+    /// merged, so a child that changes one gives all of it.
+    #[serde(default)]
+    #[allow(dead_code)] // read by the catalogue and people
+    pub like: Option<String>,
     #[serde(default = "default_version")]
     #[allow(dead_code)] // read by tools/libfmt.py
     pub version: u32,
@@ -163,7 +170,7 @@ pub struct BiomeDef {
 
 /// A biome's `sound` block. Every field is optional; what is left out comes
 /// from the ground and from the voxels round the listener (sound/bed.rs).
-#[derive(Deserialize, Clone, Debug, Default)]
+#[derive(Deserialize, Clone, Debug, Default, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct BiomeSound {
     /// How much of the wind reaches the ground here, as a multiple of what

@@ -86,6 +86,11 @@ pub struct Thread {
     /// face neighbours): a tree's sticks are its bark, like its trunk, and
     /// the trunk's own voxels where a limb leaves it must keep their faces.
     pub lone: bool,
+    /// Cover only voxels marked in the chunk's ownership mask (`leaning`'s
+    /// `own`): a structure's segment, whose own voxels the shape records
+    /// (`Shape::thread_vox`), so it never hides a post or a shell of the
+    /// same material that it touches.
+    pub owned: bool,
 }
 
 /// Thicker stems than this (voxels) keep their voxel faces. Big faces are
@@ -234,14 +239,18 @@ fn fit(v: &[u8; PAD3], c: [isize; 3]) -> Option<Fit> {
 /// `model`: an entity model (palette colours, mesh::mesh_model_t): a thread
 /// covers voxels of exactly its colour, and no lines are fitted, since palette
 /// ids are not world materials and `tubes` means nothing for them.
-pub(super) fn leaning(v: &[u8; PAD3], threads: &[Thread], model: bool) -> Option<Lean> {
+///
+/// `own`: one flag per padded voxel, the voxels `owned` threads may cover
+/// (empty when no thread is `owned`).
+pub(super) fn leaning(v: &[u8; PAD3], threads: &[Thread], own: &[bool], model: bool) -> Option<Lean> {
     if threads.is_empty() && (model || !v.iter().any(|&m| tubes(m))) {
         return None;
     }
     let mut flags = vec![false; PAD3];
     let mut quads = Vec::new();
+    let ends = Ends::new(threads);
     for (k, th) in threads.iter().enumerate() {
-        thread(v, th, threads, k, model, &mut flags, &mut quads);
+        thread(v, th, threads, &ends, k, model, own, &mut flags, &mut quads);
     }
     for (i, &m) in v.iter().enumerate() {
         if model || !tubes(m) || flags[i] {
@@ -379,10 +388,46 @@ fn anchor(q: [Vec3; 4], n: Vec3, clamp: bool) -> (usize, [i32; 3], usize, f32) {
     (d, p, r, cost(r))
 }
 
+/// How near two ends have to be to join, voxels.
+const JOIN: f32 = 0.05;
 
+/// The chunk's thread ends by position, in cells twice `JOIN` across, so
+/// finding the pieces that meet at a point looks in the cells round it
+/// rather than at every thread: a cane field hands a chunk hundreds.
+struct Ends(crate::util::FxHashMap<[i32; 3], Vec<usize>>);
+
+impl Ends {
+    const CELL: f32 = 2.0 * JOIN;
+
+    fn cell(p: Vec3) -> [i32; 3] {
+        (p / Self::CELL).floor().as_ivec3().to_array()
+    }
+
+    fn new(all: &[Thread]) -> Self {
+        let mut m = crate::util::FxHashMap::<[i32; 3], Vec<usize>>::default();
+        for (j, th) in all.iter().enumerate() {
+            m.entry(Self::cell(th.a)).or_default().push(j);
+            if Self::cell(th.b) != Self::cell(th.a) {
+                m.entry(Self::cell(th.b)).or_default().push(j);
+            }
+        }
+        Ends(m)
+    }
+
+    /// The threads with an end in the cells round `p`: every thread with an
+    /// end within `JOIN` of it, and some further.
+    fn around(&self, p: Vec3) -> impl Iterator<Item = usize> + '_ {
+        let c = Self::cell(p);
+        (0..27).flat_map(move |n| {
+            let k = [c[0] + n % 3 - 1, c[1] + n / 3 % 3 - 1, c[2] + n / 9 - 1];
+            self.0.get(&k).into_iter().flatten().copied()
+        })
+    }
+}
 
 /// Draw thread `k` of `all` and mark the stem voxels it covers.
-fn thread(v: &[u8; PAD3], th: &Thread, all: &[Thread], k: usize, model: bool, flags: &mut [bool], out: &mut Vec<Quad>) {
+#[allow(clippy::too_many_arguments)]
+fn thread(v: &[u8; PAD3], th: &Thread, all: &[Thread], ends: &Ends, k: usize, model: bool, own: &[bool], flags: &mut [bool], out: &mut Vec<Quad>) {
     let full = th.b - th.a;
     let span = full.length();
     if span < 1e-3 {
@@ -392,7 +437,7 @@ fn thread(v: &[u8; PAD3], th: &Thread, all: &[Thread], k: usize, model: bool, fl
     // A thread carries on where another starts at its end (or ends at its
     // start): no cap there, and the two overlap a little so the bend closes.
     // The direction of the piece joined at `p`, if any.
-    let near = |p: Vec3| all.iter().enumerate().any(|(j, o)| j != k && (o.a.distance(p) < 0.05 || o.b.distance(p) < 0.05));
+    let near = |p: Vec3| ends.around(p).any(|j| j != k && (all[j].a.distance(p) < JOIN || all[j].b.distance(p) < JOIN));
     let (join_a, join_b) = (near(th.a), near(th.b));
     // A joint that barely turns is closed by the overlap: no caps there. It
     // has to be one rod carrying on into the next: a piece ending where this
@@ -402,10 +447,10 @@ fn thread(v: &[u8; PAD3], th: &Thread, all: &[Thread], k: usize, model: bool, fl
     // its tube, a fork -- each keep their caps, or the fat one is left open.
     let carries = |o: &Thread, from: Vec3, to: Vec3| {
         let d = (o.b - o.a).normalize_or_zero();
-        from.distance(to) < 0.05 && d.dot(t) > JOIN_STRAIGHT && o.mat == th.mat && (o.r - th.r).abs() <= 0.3 * o.r.max(th.r)
+        from.distance(to) < JOIN && d.dot(t) > JOIN_STRAIGHT && o.mat == th.mat && (o.r - th.r).abs() <= 0.3 * o.r.max(th.r)
     };
-    let smooth_a = all.iter().enumerate().any(|(j, o)| j != k && carries(o, o.b, th.a));
-    let smooth_b = all.iter().enumerate().any(|(j, o)| j != k && carries(o, o.a, th.b));
+    let smooth_a = ends.around(th.a).any(|j| j != k && carries(&all[j], all[j].b, th.a));
+    let smooth_b = ends.around(th.b).any(|j| j != k && carries(&all[j], all[j].a, th.b));
     // A thread knows its own radius, so it can be thinner than the voxel
     // line under it (the fitted stems cannot: `R`).
     let radius = th.r.max(0.15);
@@ -430,7 +475,7 @@ fn thread(v: &[u8; PAD3], th: &Thread, all: &[Thread], k: usize, model: bool, fl
             for x in (lo.x.floor() as isize).max(0)..=(hi.x.floor() as isize).min(PAD as isize - 1) {
                 let c = [x, y, z];
                 let Some(i) = index(c) else { continue };
-                if !ours(v[i]) {
+                if !ours(v[i]) || (th.owned && !own.get(i).copied().unwrap_or(false)) {
                     continue;
                 }
                 if th.lone {
@@ -527,9 +572,18 @@ fn thread(v: &[u8; PAD3], th: &Thread, all: &[Thread], k: usize, model: bool, fl
     // its piece's middle is in: on a thick tube the far side of the ring
     // lies in the next chunk, and pinned inside this one it tears.
     let inside = |p: Vec3| p.x >= 0.0 && p.y >= 0.0 && p.z >= 0.0 && p.x < PAD as f32 && p.y < PADY as f32 && p.z < PAD as f32;
+    // A face is this chunk's only if its middle is within half a voxel of the
+    // chunk's own 32 (`owned`), and a face's middle is within the radius of
+    // its piece's line. So a piece whose line, widened by the radius (and a
+    // voxel to spare), misses the chunk has no face here and is skipped
+    // before any is worked out: a long thread crosses many chunks.
+    let away = |lo: Vec3, hi: Vec3| (hi - off).cmplt(Vec3::splat(-1.5 - radius)).any() || (lo - off).cmpgt(Vec3::splat(33.5 + radius)).any();
     for j in 0..pieces {
         let c0 = a + t * (len * j as f32 / pieces as f32);
         let c1 = a + t * (len * (j + 1) as f32 / pieces as f32);
+        if away(c0.min(c1), c0.max(c1)) {
+            continue;
+        }
         let mid = (c0 + c1) * 0.5;
         let here = inside(mid).then(|| stem(mid));
         if here == Some(None) {
@@ -552,7 +606,7 @@ fn thread(v: &[u8; PAD3], th: &Thread, all: &[Thread], k: usize, model: bool, fl
     // Every end is capped but a joint that barely turns: at a sharper bend
     // the outside of the corner otherwise looks into the hollow tube.
     for (end, n, skip) in [(a + t * len, t, smooth_b), (a, -t, smooth_a)] {
-        if skip {
+        if skip || away(end, end) {
             continue;
         }
         let m = if inside(end - n * 0.2) { stem(end - n * 0.2) } else { None };

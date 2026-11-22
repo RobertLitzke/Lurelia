@@ -5,6 +5,7 @@
   "notes": "Ocotillo canes: grey-green, ridged and thorny.",
   "id": 202,
   "smooth": false,
+  "sprites": "ocotillo cane",
   "texture": {
     "pattern": "speckle",
     "base": [104, 102, 78],

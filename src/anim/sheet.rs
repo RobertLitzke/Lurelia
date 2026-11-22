@@ -15,10 +15,10 @@
 //!   adult and aged standing and mid-stride, then the skeleton settled from
 //!   three different falls, and the side-sleeping pose if it has one.
 
-use crate::anim::Plan;
 use super::life::{Act, Life};
 use super::motors::{self, Gait};
 use super::{Anim, Pose, Rig};
+use crate::anim::Plan;
 use crate::creatures::locomotion::Verb;
 use crate::entities::{Entities, Look};
 use crate::models::Model;
@@ -314,7 +314,11 @@ fn moves(rig: &Rig, voxel: f32, verb: &Verb, beh: &crate::library::Behaviour) ->
         l.compose(rig, voxel)
     };
     let mut lower = Vec::new();
-    let gaits: &[Gait] = if rig.plan == Some(Plan::Hopper) { &[Gait::Bound] } else { &[Gait::Walk, Gait::Trot, Gait::Gallop] };
+    let gaits: &[Gait] = if rig.plan == Some(Plan::Hopper) {
+        &[Gait::Bound]
+    } else {
+        &[Gait::Walk, Gait::Trot, Gait::Gallop]
+    };
     for &g in gaits {
         for k in 0..4 {
             let ph = k as f32 * 0.25;

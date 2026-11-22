@@ -5,6 +5,7 @@
   "notes": "Redwood foliage: flat dark sprays.",
   "id": 201,
   "smooth": false,
+  "sprites": "needles",
   "texture": {
     "pattern": "blotch",
     "base": [50, 76, 40],

@@ -18,7 +18,7 @@
     "door": "door_black",
     "trim": "trim_white",
     "roof": "roof_tar",
-    "window": "pane_glass",
+    "window": "window_glass",
     "lantern": "lamplit_glass"
   },
   "ops": [

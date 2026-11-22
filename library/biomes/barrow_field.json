@@ -27,7 +27,7 @@
     {"creature": "przewalski_horse", "count": 1},
     {"creature": "steppe_sheep", "count": 5},
     {"creature": "eagle", "count": 2},
-    {"creature": "corpse_candle", "count": 9},
+    {"creature": "marsh_light", "morph": "corpse", "count": 9},
     {"creature": "rabbit", "count": 3},
     {"creature": "marmot", "count": 4},
     {"creature": "wind_skate", "count": 3},

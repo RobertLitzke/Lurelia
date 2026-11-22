@@ -36,6 +36,10 @@ const CELL: f32 = 16.0;
 
 #[derive(Default)]
 pub struct Flora {
+    /// Per library plant, whether it is in flower this season (a plant that
+    /// names no `flower_seasons` always is). Empty means all are: set by
+    /// `set_season`.
+    pub blooming: Vec<bool>,
     refs: Vec<PlantRef>,
     /// Cell -> indices into `refs`, by trunk position.
     grid: HashMap<(i32, i32), Vec<u32>>,
@@ -70,7 +74,12 @@ impl Flora {
         for (k, r) in refs.iter().enumerate() {
             grid.entry((cell(r.pos.x), cell(r.pos.z))).or_default().push(k as u32);
         }
-        Flora { refs, grid }
+        Flora { blooming: Vec::new(), refs, grid }
+    }
+
+    /// Which plants are in flower in `season` (world/season.rs `Season::name`).
+    pub fn set_season(&mut self, lib: &crate::library::Library, season: &str) {
+        self.blooming = lib.plants.iter().map(|p| p.flower_seasons.is_empty() || p.flower_seasons.iter().any(|s| s == season)).collect();
     }
 
     /// Plants whose trunk stands within `radius` of (x, z) and that afford

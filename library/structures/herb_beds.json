@@ -8,7 +8,7 @@
   "level": false,
   "decays": false,
   "tags": ["hemlow", "prop"],
-  "slots": {"edge": "weathered_planks", "soil": "packed_dirt", "herb": "salal_leaves", "bloom": "rose_bush"},
+  "slots": {"edge": "weathered_planks", "soil": "packed_dirt", "herb": "glossy_leaves", "bloom": "rose_bush"},
   "ops": [
     {"op": "walls", "from": [0, 0, 0], "to": [20, 2, 6], "mat": "edge", "thick": 1, "part": "timber"},
     {"op": "box", "from": [1, 0, 1], "to": [19, 2, 5], "mat": "soil", "part": "floor"},

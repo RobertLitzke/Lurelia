@@ -4,6 +4,7 @@
   "introduced_by": "ribshore",
   "notes": "Sea buckthorn's narrow leaves, silver-grey above and paler below.",
   "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "broad"},
   "texture": {
     "pattern": "speckle",
     "base": [128, 138, 118],

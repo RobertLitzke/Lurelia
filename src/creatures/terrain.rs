@@ -143,11 +143,51 @@ impl Terrain<'_> {
         })
     }
 
+    /// The sea's surface at (x, z) now, with the swell on it
+    /// (`Fields::sea_at`); the flat sea level without a world.
+    pub fn sea_at(&self, x: f32, z: f32) -> f32 {
+        self.land.map_or(self.sea, |l| l.f.sea_at(x, z))
+    }
+
+    /// Where the sea's edge stands on a beach at (x, z), `ahead` seconds
+    /// from now: the sea's level with the tide, and the swash of the surf
+    /// running up the sand over it (world/surf.rs `swash_at`). The flat sea
+    /// without a world.
+    pub fn water_edge(&self, x: f32, z: f32, ahead: f32) -> f32 {
+        self.land.map_or(self.sea, |l| l.f.sea_now() + l.f.shore.swash_at(x, z, l.f.size, ahead))
+    }
+
+    /// The way down the beach to the sea at (x, z), flat and unit: across
+    /// the surf's smoothed shore grid where the world has surf (the line
+    /// the wave crests follow), else down the distance to the coast over a
+    /// few metres. None far from any coast.
+    pub fn seaward(&self, x: f32, z: f32) -> Option<Vec3> {
+        let l = self.land?;
+        let sh = &l.f.shore;
+        let d = 3.0;
+        let g = if !sh.seaward.is_empty() {
+            let s = |dx: f32, dz: f32| sh.seaward_at(x + dx, z + dz, l.f.size);
+            Vec3::new(s(d, 0.0) - s(-d, 0.0), 0.0, s(0.0, d) - s(0.0, -d))
+        } else {
+            let c = |dx: f32, dz: f32| l.f.coast_dist[l.f.idx(x + dx, z + dz)];
+            Vec3::new(c(-d, 0.0) - c(d, 0.0), 0.0, c(0.0, -d) - c(0.0, d))
+        };
+        (g.length() > 0.5).then(|| g.normalize())
+    }
+
+    /// Height of the ground as it is drawn at (x, z): the voxel top under
+    /// `from` with the smoothed mesh's slope on it (physics::drawn_ground_lift),
+    /// which is what the swash is drawn over and what feet should meet.
+    pub fn drawn(&self, x: f32, z: f32, from: f32) -> Option<f32> {
+        let (g, _) = self.ground(x, z, from)?;
+        Some(g + crate::physics::drawn_ground_lift(self.store, Vec3::new(x, g, z)))
+    }
+
     /// River water at (x, z): its surface and its depth over the bare
     /// ground (None off rivers and where the bank rises above it).
     pub fn inland_water(&self, x: f32, z: f32) -> Option<(f32, f32)> {
         let l = self.land?;
-        let w = l.f.wet(x, z)?;
+        let w = l.f.wet_now(x, z)?;
         let d = w.level - l.f.height(x, z);
         (d > 0.0).then_some((w.level, d))
     }

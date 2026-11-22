@@ -228,7 +228,7 @@ far it spreads, `trunk_r` how thick its limbs are, `stems` how many limbs or pla
 | `sponge` | a cluster of fat upright tubes; one alone is a barrel | tube sponge, barrel sponge |
 
 A coral needs `water_depth` and grows only where the water over the cell is within that band,
-measured from the lake's or cenote's own surface where there is one. Unlike kelp, whose height
+measured from the lake's or cenote's own surface where there is one. Unlike kelp, whose length
 is a share of the water over it, a coral keeps its own height. Where the water is too shallow
 for its tallest colony it is shrunk to fit 0.35 m under the surface (crown shrinking with it, to
 half at most); where the water is shallower than three quarters of its smallest colony it is
@@ -241,6 +241,35 @@ Voxels are 0.25 m, and the mesher keeps corners near the ground square so trunks
 ground without gaps. A coral's foot is therefore blocky and only what stands higher rounds, so
 species are sized tall enough to show it; the low ones (finger, small brain) stay chunky. Elkhorn
 palms are rounded sleeves because a flat plate a voxel or two thick drew as a board.
+
+## Kelp
+
+Kelp is not voxels. A kelp plant is one invisible marker voxel on the bed (flora.rs
+`Form::Kelp`: the float for a plant with a `flower`, the blade for one without), and the sprite
+pass draws it as strands (mesh/sprites.rs kind `STRAND`, `kelp`). Nothing about it is solid, so
+the diver, seals, sea lions and whales swim through a kelp forest.
+
+Each holdfast grows `stems` strands. A strand's length is fixed when the chunk is meshed: its
+`height` share of the water over the holdfast at high water, plus a canopy of 1.5 to 3 crown
+radii. The vertex shader (`kelp_at` in foliage.wgsl) shapes it against the sea as it stands now
+(`fog.y`). In water deeper than the strand it stands up through it with a slight bow at the top.
+In shallower water the stipe leans out and curves into the surface, and whatever is left of its
+length lies along the surface, wandering slowly. So at high water a strand trails a short canopy
+on the surface, and as the tide goes out the canopy gets longer. The surge rocks the whole
+strand.
+
+A strand is a chain of stipe segments (one per 0.8 m, at most 40), its blades and, for bull kelp,
+its float. Every sprite of a strand carries the holdfast as its root and the strand's length and
+heading, so each can work out the same curve; word3 holds which part it is and where along the
+strand. Giant kelp has a blade about every 0.9 m along the stipe and on along the canopy; bull
+kelp has a bare stipe with 6 to 10 long blades streaming from the float. Under water a blade
+rises along the stipe and out to its side; on the surface it lies flat and trails with the
+canopy, and it is never drawn above the water. The textures (`kelp_stipe`, `kelp_blade`,
+`kelp_float`) are grey and take their colour from the plant's bark, leaf and flower materials.
+
+A chunk's culling box grows by the longest strand in it, up and to each side, so a canopy stays
+drawn while the holdfast's chunk is off screen. Strands are drawn only on the finest level of
+chunks, like the other herbs, and fade with the leaves. They cast no shadows.
 
 ## Fish
 

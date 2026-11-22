@@ -29,7 +29,9 @@ nodes and links. A link is routed across the terrain by A\* over a cost field
 (slope, water, cliff, taken ground), so the world builder drops two points and
 the road finds the pass.
 Links meeting at a node are trimmed back and the junction is aproned, so
-crossings look built rather than overlaid. Links carry a rank — highway,
+crossings look built rather than overlaid. Two links that cross away from
+any node get an apron too, at the grade of the one laid second, which
+otherwise cut a step across the first; the event's summary lists where. Links carry a rank — highway,
 street, lane, path — and a rank change is where one kit hands over to
 another: a road meets a lane, a lane meets a footpath at a door.
 
@@ -37,6 +39,20 @@ A link that crosses a gap wider than it can grade becomes a span: the deck
 stays on the smoothed grade line, piers go down to the ground where the drop
 is deep enough, and the kit's `span` names what to build instead across the
 hole.
+
+A kit's `max_span` holds over water: the search knows how far each wet cell
+is from the nearest shore, and a crossing through a cell that far out is at
+least twice as long whichever banks it joins, so a cell more than half the
+span from land is refused. Before 2026-11-20 only the grid step was checked
+against it, and a footbridge kit would cross a lake.
+
+A deck standing more than 6 m over the ground (`route::HIGH_DECK`) leaves
+the ground under it to grow: plants that stay under the planks still grow
+there, and a tree whose crown would stand round the deck grows elsewhere.
+A lower deck (a boardwalk, a jetty) takes its ground, as it always did.
+Headroom a kit clears (`clear`) is kept from the trees, which are drawn
+after the ribbons: the ribbon writes `KEEP_AIR` there and the generator
+turns it back into air once the trees are in.
 
 ## The kit file
 
@@ -58,6 +74,10 @@ hole.
 deck at `lift` m over whatever is below, for boardwalks and skywalks),
 `follow` (leave the land alone and sit members on it, for fences) or `none`.
 
+`braces` are struts repeated along the line on a slant across it, each from
+one [across, up] point to another (up measured from the deck surface): a
+platform's knee braces from under the deck's edge in to the trunk.
+
 `side` is `left`, `right`, `both` or `centre`. `out` is metres outward from
 the surface edge, negative pulling in. `from` and `to` are heights above the
 surface. Posts repeat by arc length along the whole route, not per segment,
@@ -72,6 +92,38 @@ so a fence's posts stay evenly spaced across a corner.
 | `network` | named nodes and links, routed together, junctions resolved |
 | `village` | a layout (grid, radial, organic, linear) as a network, with buildings on its frontages and footpaths to their doors |
 | `watercourse` | a channel that finds its own way down, and the distributaries that leave it |
+| `canopy_town` | host trees grown at chronicle time, a ring platform round each trunk, walkways picked between them and stairs up a few trunks |
+
+## In the trees
+
+`canopy_town` builds a network whose nodes are platforms instead of points
+on the ground. It grows its host trees itself, from the seed flora will use
+(`Growth::seed`), so it knows each trunk's girth at platform height
+(`stamp::trunk_reach`) and where every limb is. Each platform is a closed
+`ring` ribbon at a height from a smooth field across the town, held under the
+crown, with its `rail` laid in arcs that leave a gap wherever something
+joins. Every pair of platforms close enough (`max_link`, rim to rim), level
+enough (`max_grade`) and with a clear straight line between them is a
+candidate walkway: clear of other trunks by 1.2 m past its edge, of other
+platforms within 4.5 m of its height, and of limbs by its headroom. The
+shortest set that joins them all is built first (a spanning tree, so one
+refused candidate only means another is taken), then up to `loops` times the
+platform count of shortcuts, each only where the way round over the built
+walkways is more than two and a half times the way across. Two walkways may
+cross in plan only when one passes 4.5 m over the other, and no two things
+join a platform within 34 degrees of each other. A town that still falls
+into separate groups says so in its summary and as a warning.
+
+Stairs go up the trunks spread furthest apart, starting with the lowest
+platform: a helix just outside the deck's edge, its radius following the
+trunk out over its buttresses, and a flat landing in onto the deck. It
+arrives at the far end of the longest stretch of rail, so its last turn,
+which passes close under the deck's edge, has no walkway over it.
+
+Walkways and platforms are laid with `route::lay_heights`, which takes the
+surface height point by point; `lay_at` is the same with one height for the
+whole line. `VG_CANOPY_DEBUG=1` prints every platform and walkway, for
+framing screenshots.
 
 ## Water
 

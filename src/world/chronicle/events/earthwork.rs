@@ -11,7 +11,8 @@ use serde::Deserialize;
 /// crest `width` m across standing `top` m over the sea and grassy sides at
 /// `slope` (metres of run per metre of rise). Where pieces overlap the higher
 /// one wins, so a body, wings and a head join into one mound. Ground already
-/// higher is left alone.
+/// higher is left alone. With `mat` the raised ground is laid in that
+/// material instead of grassing over: a granite breakwater, a shingle bank.
 #[derive(Deserialize, Debug)]
 pub struct Earthwork {
     #[serde(default)]
@@ -28,6 +29,10 @@ pub struct Earthwork {
     /// A name for the gazetteer's points of interest.
     #[serde(default)]
     poi: Option<String>,
+    /// Surface material for everything it raises (a breakwater's granite);
+    /// left out, the biome's own ground covers it.
+    #[serde(default)]
+    mat: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -58,6 +63,7 @@ impl Process for Earthwork {
         let (seed, cause) = (cx.seed, cx.cause);
         let s = self.slope.max(0.3);
         let relative = self.relative;
+        let mat = self.mat.as_ref().map(|m| cx.mat(m));
         // Relative heights stand on the ground as it was before this event,
         // so ridges that meet don't stack.
         let ground = if relative { cx.f.h.clone() } else { Vec::new() };
@@ -81,6 +87,9 @@ impl Process for Earthwork {
             if h > f.h[i] + 0.02 {
                 f.h[i] = h;
                 f.cause[i] = cause;
+                if let Some(m) = mat {
+                    f.surface[i] = m;
+                }
                 raised += 1;
                 highest = highest.max(h - f.sea);
             }

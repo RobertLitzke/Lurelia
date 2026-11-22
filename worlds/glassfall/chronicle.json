@@ -398,16 +398,26 @@
    "name": "village",
    "at": "village",
    "radius": 70,
-   "houses": 7,
+   "houses": 9,
    "buildings": [
     "settler_house",
     "settler_house",
-    "settler_longhouse"
+    "settler_longhouse",
+    "settler_store",
+    "settler_school"
    ],
    "extras": [
     {
      "structure": "mill",
      "near": "river"
+    },
+    {
+     "structure": "settler_smithy",
+     "near": "river"
+    },
+    {
+     "structure": "settler_barn",
+     "near": "edge"
     },
     {
      "structure": "well",
@@ -486,7 +496,7 @@
      735
     ]
    ],
-   "old_bed": "dry_bed",
+   "old_bed": "lake_mud",
    "silt": "silt",
    "silt_thick": 0.4
   },

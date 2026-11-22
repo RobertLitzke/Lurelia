@@ -4,6 +4,7 @@
   "introduced_by": "lowmouth",
   "notes": "Palmetto and cabbage palm fronds: stiff fans of grey-green blades.",
   "smooth": false,
+  "sprites": "palm frond",
   "texture": {
     "pattern": "grain",
     "base": [96, 124, 66],

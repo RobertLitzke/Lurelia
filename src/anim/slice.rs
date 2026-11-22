@@ -149,12 +149,32 @@ pub fn slice(def: &RigDef, ops: &[Op], whole: &[u8], colour_ok: &dyn Fn(&str) ->
         });
     }
     let floor = (0..N).find(|&y| (0..N).any(|z| (0..N).any(|x| owner[idx(x, y, z)] != NONE))).unwrap_or(0) as f32;
+    // The soft body: the bones with flesh and the box their voxels fill.
+    let weight: Vec<f32> = def.bones.iter().map(|b| b.flesh.clamp(0.0, 1.0)).collect();
+    let soft = if weight.iter().any(|w| *w > 0.0) {
+        let mut ext: Vec<Option<(Vec3, Vec3)>> = vec![None; def.bones.len()];
+        for y in 0..N {
+            for z in 0..N {
+                for x in 0..N {
+                    let o = owner[idx(x, y, z)] as usize;
+                    if let Some(e) = ext.get_mut(o) {
+                        let (a, b) = (Vec3::new(x as f32, y as f32, z as f32), Vec3::new(x as f32 + 1.0, y as f32 + 1.0, z as f32 + 1.0));
+                        *e = Some(e.map_or((a, b), |(lo, hi)| (lo.min(a), hi.max(b))));
+                    }
+                }
+            }
+        }
+        super::flesh::Soft::new(weight, &ext)
+    } else {
+        None
+    };
     Sliced {
         rig: Rig {
             plan: def.plan.clone(),
             bones,
             activities: def.activities.clone(),
             floor,
+            soft,
         },
         parts,
         owner,

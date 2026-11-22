@@ -1,0 +1,16 @@
+{
+  "name": "blueberry_red",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "Lowbush blueberry in autumn: the barrens turn crimson and wine-red from end to end.",
+  "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "pointed"},
+  "texture": {
+    "pattern": "blotch",
+    "base": [160, 30, 38],
+    "alt": [118, 26, 46],
+    "scale": 5,
+    "contrast": 0.9,
+    "calm": {"base": [166, 40, 44], "alt": [126, 36, 52]}
+  }
+}

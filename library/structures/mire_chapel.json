@@ -1,0 +1,85 @@
+{
+  "name": "mire_chapel",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "A timber chapel 20 voxels (5 m) wide and 32 deep (8 m) on brick piers, 4 m to the eaves, with a small gabled stoop, double doors 1.5 m by 2.5 m, tall side windows, pews and a chancel step inside, and an open bell gable on the front ridge. Faces local -Z; nothing is carved.",
+  "size": [24, 44, 40],
+  "anchor": [12, 0, 20],
+  "foundation": 6,
+  "level": true,
+  "decays": true,
+  "tags": ["mire", "church"],
+  "slots": {
+    "wall": "white_siding",
+    "roof": "shingle_dark",
+    "deck": "weathered_planks",
+    "post": "timber_frame",
+    "door": "door_wood",
+    "window": "window_warm",
+    "trim": "trim_white",
+    "bell": "rust_iron",
+    "brick": "brick_brown"
+  },
+  "ops": [
+    {
+      "op": "repeat",
+      "count": 6,
+      "step": [0, 0, 7],
+      "ops": [
+        {"op": "box", "from": [3, 0, 2], "to": [4, 3, 3], "mat": "brick", "part": "stone"},
+        {"op": "box", "from": [11, 0, 2], "to": [12, 3, 3], "mat": "brick", "part": "stone"},
+        {"op": "box", "from": [20, 0, 2], "to": [21, 3, 3], "mat": "brick", "part": "stone"}
+      ]
+    },
+    {"op": "box", "from": [1, 3, 1], "to": [23, 4, 39], "mat": "deck", "part": "floor"},
+    {"op": "walls", "from": [2, 4, 6], "to": [22, 20, 38], "mat": "wall", "thick": 1, "part": "wall"},
+    {"op": "box", "from": [6, 3, 0], "to": [18, 4, 1], "mat": "deck", "part": "floor"},
+    {"op": "box", "from": [8, 0, 0], "to": [16, 2, 1], "mat": "deck", "part": "floor"},
+    {"op": "box", "from": [8, 2, 1], "to": [16, 3, 2], "mat": "deck", "part": "floor"},
+    {"op": "box", "from": [7, 4, 1], "to": [8, 14, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [16, 4, 1], "to": [17, 14, 2], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [7, 14, 1], "to": [17, 15, 2], "mat": "post", "part": "timber"},
+    {"op": "gable", "from": [6, 15, 0], "to": [18, 15, 5], "axis": "z", "mat": "roof", "rise": 1, "part": "roof"},
+    {"op": "gable", "from": [0, 20, 5], "to": [24, 20, 40], "axis": "z", "mat": "roof", "rise": 1, "part": "roof"},
+    {"op": "box", "from": [9, 28, 5], "to": [10, 38, 6], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [14, 28, 5], "to": [15, 38, 6], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [9, 28, 8], "to": [10, 38, 9], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [14, 28, 8], "to": [15, 38, 9], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [9, 36, 5], "to": [15, 37, 9], "mat": "post", "part": "timber"},
+    {"op": "ellipsoid", "centre": [12, 34.5, 6.5], "radius": [2, 2.5, 2], "mat": "bell", "part": "metal"},
+    {"op": "segment", "points": [[12, 37, 6.5], [12, 36, 6.5]], "radius": 0.5, "mat": "post", "part": "timber"},
+    {"op": "gable", "from": [8, 38, 4], "to": [16, 38, 10], "axis": "z", "mat": "roof", "rise": 1, "part": "roof"},
+    {"op": "box", "from": [9, 4, 6], "to": [15, 14, 7], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [9, 4, 7], "to": [10, 14, 10], "mat": "door", "part": "timber"},
+    {"op": "box", "from": [14, 4, 7], "to": [15, 14, 10], "mat": "door", "part": "timber"},
+    {"op": "box", "from": [11, 16, 6], "to": [13, 19, 7], "mat": "window", "part": "glass"},
+    {
+      "op": "repeat",
+      "count": 4,
+      "step": [0, 0, 6],
+      "ops": [
+        {"op": "box", "from": [2, 8, 12], "to": [3, 17, 15], "mat": "window", "part": "glass"},
+        {"op": "box", "from": [21, 8, 12], "to": [22, 17, 15], "mat": "window", "part": "glass"}
+      ]
+    },
+    {"op": "box", "from": [6, 4, 32], "to": [18, 5, 37], "mat": "deck", "part": "floor"},
+    {"op": "box", "from": [10, 5, 34], "to": [14, 8, 36], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [12, 10, 36], "to": [13, 18, 37], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [10, 15, 36], "to": [15, 16, 37], "mat": "trim", "part": "timber"},
+    {
+      "op": "repeat",
+      "count": 5,
+      "step": [0, 0, 3],
+      "ops": [
+        {"op": "box", "from": [4, 6, 13], "to": [10, 9, 14], "mat": "deck", "part": "timber"},
+        {"op": "box", "from": [4, 5, 13], "to": [10, 6, 15], "mat": "deck", "part": "timber"},
+        {"op": "box", "from": [4, 4, 13], "to": [5, 5, 15], "mat": "deck", "part": "timber"},
+        {"op": "box", "from": [9, 4, 13], "to": [10, 5, 15], "mat": "deck", "part": "timber"},
+        {"op": "box", "from": [14, 6, 13], "to": [20, 9, 14], "mat": "deck", "part": "timber"},
+        {"op": "box", "from": [14, 5, 13], "to": [20, 6, 15], "mat": "deck", "part": "timber"},
+        {"op": "box", "from": [14, 4, 13], "to": [15, 5, 15], "mat": "deck", "part": "timber"},
+        {"op": "box", "from": [19, 4, 13], "to": [20, 5, 15], "mat": "deck", "part": "timber"}
+      ]
+    }
+  ]
+}

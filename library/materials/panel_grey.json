@@ -3,14 +3,7 @@
   "version": 1,
   "introduced_by": "city",
   "notes": "Grey fibre-cement panels on newer blocks.",
+  "like": "panel_dark",
   "id": 167,
-  "smooth": false,
-  "texture": {
-    "pattern": "coursed",
-    "base": [124, 128, 132],
-    "alt": [110, 114, 118],
-    "scale": 1,
-    "contrast": 1.0,
-    "calm": {"base": [136, 140, 144], "alt": [122, 126, 130]}
-  }
+  "texture": {"alt": [110, 114, 118], "calm": {"alt": [122, 126, 130], "base": [136, 140, 144]}, "base": [124, 128, 132]}
 }

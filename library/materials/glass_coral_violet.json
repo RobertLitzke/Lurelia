@@ -3,14 +3,6 @@
   "version": 1,
   "introduced_by": "underwater",
   "notes": "The strange coral's violet form: lilac glass with a faint light in it.",
-  "smooth": false,
-  "glow": 0.3,
-  "texture": {
-    "pattern": "glass",
-    "base": [198, 172, 236],
-    "alt": [172, 148, 214],
-    "scale": 4,
-    "contrast": 0.9,
-    "calm": {"base": [204, 178, 242], "alt": [178, 154, 220]}
-  }
+  "like": "glass_coral",
+  "texture": {"alt": [172, 148, 214], "calm": {"alt": [178, 154, 220], "base": [204, 178, 242]}, "base": [198, 172, 236]}
 }

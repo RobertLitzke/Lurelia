@@ -11,6 +11,8 @@
 //! - snake.rs: snakes on the ground, in trees and in the water.
 //! - fowl.rs, woodpecker.rs, insects.rs: waterfowl, woodpeckers, bees and
 //!   dragonflies.
+//! - runner.rs: running birds (shorebirds at the surf, plovers, roadrunners).
+//! - hummer.rs: hummingbirds at flowers.
 //! - birds.rs: wing animation for rigged birds.
 //! - census.rs: counts and the creature under the crosshair.
 //! - affordance.rs, plants.rs: what plants offer animals, and finding them.
@@ -30,10 +32,12 @@ pub mod flock;
 pub mod flung;
 pub mod fowl;
 pub mod herd;
+pub mod hummer;
 pub mod insects;
 pub mod locomotion;
 pub mod octopus;
 pub mod plants;
+pub mod runner;
 pub mod sign;
 pub mod snake;
 pub mod spawn;

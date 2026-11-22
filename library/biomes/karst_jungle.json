@@ -61,7 +61,7 @@
     {"creature": "elephant", "count": 2},
     {"creature": "fruit_bat", "count": 5},
     {"creature": "green_tree_snake", "count": 4},
-    {"creature": "jewel_kingfisher", "count": 2},
+    {"creature": "kingfisher", "count": 2},
     {"creature": "tiger", "count": 1}
   ],
   "sound": {"wind": 0.55, "leaves": 1.2, "notes": "Big loose leaves under a closed canopy."},

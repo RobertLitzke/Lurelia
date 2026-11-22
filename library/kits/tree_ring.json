@@ -1,0 +1,25 @@
+{
+  "name": "tree_ring",
+  "version": 1,
+  "introduced_by": "canopy_test",
+  "notes": "The deck of a platform built round a trunk, laid as a closed ring at a fixed height, with a knee brace every 2.5 m from under the deck's outer edge down to the trunk (left of the line, which round a ring laid anticlockwise is its outside). No rails of its own: the outer rail is `tree_rail`, laid in arcs so it can be broken where a walkway or a stair joins. Clears headroom through any foliage that grows into it.",
+  "ground": "deck",
+  "width": 2.5,
+  "mat": "weathered_planks",
+  "lift": 0.0,
+  "clear": 2.4,
+  "max_span": 0.0,
+  "deck": {"thick": 0.25, "mat": "weathered_planks", "under": "timber_frame"},
+  "braces": [
+    {
+      "side": "left",
+      "every": 2.5,
+      "phase": 1.0,
+      "from": [1.0, -0.3],
+      "to": [-1.75, -2.8],
+      "thick": 0.4,
+      "mat": "timber_frame"
+    }
+  ],
+  "tags": ["platform", "treehouse"]
+}

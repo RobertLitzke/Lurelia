@@ -1,0 +1,13 @@
+{
+  "name": "strangler_fig",
+  "version": 1,
+  "introduced_by": "canopy_test",
+  "notes": "branching: A fig that started high in another tree and sent its roots down round it: a fluted, many-stemmed grey trunk and one broad cloud of a crown under the emergents.",
+  "height": [38, 50],
+  "trunk_radius": [1.2, 1.6],
+  "buttress": 2.5,
+  "crown_radius": [11, 15],
+  "stems": [3, 5],
+  "like": "banyan",
+  "affords": ["perch"]
+}

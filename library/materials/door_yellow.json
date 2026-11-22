@@ -3,14 +3,7 @@
   "version": 1,
   "introduced_by": "city",
   "notes": "A front door painted mustard yellow.",
+  "like": "door_black",
   "id": 180,
-  "smooth": false,
-  "texture": {
-    "pattern": "noise",
-    "base": [196, 152, 52],
-    "alt": [182, 140, 46],
-    "scale": 1,
-    "contrast": 0.4,
-    "calm": {"base": [208, 164, 64], "alt": [194, 152, 58]}
-  }
+  "texture": {"alt": [182, 140, 46], "calm": {"alt": [194, 152, 58], "base": [208, 164, 64]}, "base": [196, 152, 52]}
 }

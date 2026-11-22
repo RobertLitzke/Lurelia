@@ -3,13 +3,6 @@
   "version": 1,
   "introduced_by": "kaldvik",
   "notes": "Red-and-white striped canvas over a market stall.",
-  "smooth": false,
-  "texture": {
-    "pattern": "strata",
-    "base": [196, 46, 40],
-    "alt": [232, 222, 210],
-    "scale": 3,
-    "contrast": 0.9,
-    "calm": {"base": [204, 54, 48], "alt": [240, 230, 218]}
-  }
+  "like": "stall_green",
+  "texture": {"alt": [232, 222, 210], "calm": {"alt": [240, 230, 218], "base": [204, 54, 48]}, "base": [196, 46, 40]}
 }

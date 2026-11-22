@@ -38,6 +38,7 @@
     "shooter",
     "screenshot"
   ],
+  "games": ["deathmatch", "team", "instagib"],
   "biomes": [
     "ice_deck",
     "arena_seabed"

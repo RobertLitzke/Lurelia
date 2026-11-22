@@ -5,6 +5,7 @@
   "notes": "Deep, soft moss-and-grass ground of the enchanted city. v2: grows its own tufts rather than taking the shared default, thick and half again as tall, since it is the floor of a wood growing indoors and short lawn read as mown.",
   "id": 181,
   "smooth": true,
+  "sprites": "grass",
   "texture": {
     "pattern": "noise",
     "base": [76, 120, 52],

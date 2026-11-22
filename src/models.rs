@@ -116,7 +116,15 @@ impl Grid {
             }
         }
         let off = Vec3::new(M as f32, MY as f32, M as f32);
-        self.threads.push(crate::mesh::Thread { a: va + off, b: vb + off, r, hull, mat: PALETTE_BASE + c, lone: false });
+        self.threads.push(crate::mesh::Thread {
+            a: va + off,
+            b: vb + off,
+            r,
+            hull,
+            mat: PALETTE_BASE + c,
+            lone: false,
+            owned: false,
+        });
     }
     pub(crate) fn set(&mut self, x: i32, y: i32, z: i32, c: u8) {
         if (0..32).contains(&x) && (0..32).contains(&y) && (0..32).contains(&z) {
@@ -390,6 +398,16 @@ pub struct Instance {
     /// Below 0 the shadow is cast thinned, -w of it (a bird high over the
     /// ground, entities.rs `shadow_fade`).
     pub shift: [f32; 4],
+    /// A soft body's flesh (anim/flesh.rs `Soft::instance`); all zero on
+    /// anything rigid, which the shaders skip.
+    pub flesh: [[f32; 4]; 3],
+    /// `[0]`: how much brighter than its palette says this copy's glowing
+    /// colours burn, as a gain less one, so all zeros draws it as built. A
+    /// named coat sets it (variety::Repaint `glow`): the lantern moth is the
+    /// glassmoth's model with its wings burning a third brighter. It only
+    /// scales a glow the model has; nothing here lights a colour that does
+    /// not glow. The rest is spare.
+    pub glow: [f32; 4],
 }
 
 /// `Instance::shift[3]` at and above this draws the instance see-through:

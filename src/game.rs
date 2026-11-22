@@ -43,12 +43,19 @@ const SHADOW_CASTERS_M: f32 = 80.0;
 /// `Player::update` wants it: the world's own water, which is a field.
 /// `water_at` adds the water a structure holds as voxels, and is what
 /// anything stepping a body should ask.
+///
+/// `sea` is the open sea's surface now (`Fields::sea_now` with a tide); a
+/// hollow below sea level that the sea cannot reach stays at high water.
 pub fn water_over(land: Option<&crate::world::fields::World>, sea: f32, p: Vec3) -> (f32, glam::Vec2) {
     match land {
-        Some(w) => match w.f.wet(p.x, p.z) {
-            Some(wet) if wet.level > sea => (wet.level, glam::Vec2::from(wet.flow)),
-            _ => (sea, glam::Vec2::ZERO),
-        },
+        Some(w) => {
+            // The open sea with its swell on it (`sea` is the level without).
+            let sea = if w.f.basin(p.x, p.z) { w.f.sea } else { sea + (w.f.sea_at(p.x, p.z) - w.f.sea_now()) };
+            match w.f.wet_now(p.x, p.z) {
+                Some(wet) if wet.level > sea => (wet.level, glam::Vec2::from(wet.flow)),
+                _ => (sea, glam::Vec2::ZERO),
+            }
+        }
         None => (sea, glam::Vec2::ZERO),
     }
 }
@@ -105,6 +112,8 @@ pub struct Actions {
     pub bike_toggle: bool,
     /// Get into or out of the kayak.
     pub kayak_toggle: bool,
+    /// U: get into or out of the world's vehicle.
+    pub vehicle_toggle: bool,
     /// Launch, open or fold the wings.
     pub glide: bool,
     /// First person or chase camera while riding.
@@ -129,6 +138,29 @@ pub struct Actions {
     /// Enter: go on with whatever is waiting. A finished match takes it as
     /// "play again" (src/shooter/round.rs).
     pub accept: bool,
+}
+
+/// The tuning panel's keys and, on the pause screen, its mouse.
+const TUNE_KEYS: &str = "PGUP PGDN PICK  [ ] STEP  - = X10  BKSP FILE  P SAVE";
+const TUNE_MOUSE: &str = "DRAG A LINE  WHEEL STEPS  RIGHT CLICK FILE  CLICK HERE TO SAVE";
+
+/// Where the tuning panel is drawn (Game::tune_layout).
+pub struct TuneLayout {
+    pub x: f32,
+    pub y0: f32,
+    pub line: f32,
+    pub s: f32,
+    pub first: usize,
+    pub show: usize,
+    pub name_w: f32,
+    pub wide: f32,
+}
+
+/// What the mouse is over on the tuning panel.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum TuneHit {
+    Line(usize),
+    Save,
 }
 
 /// The settings a player keeps from one run to the next, whatever world it
@@ -193,6 +225,16 @@ struct Progress {
     season: Option<String>,
     #[serde(default)]
     day: u32,
+    /// The car left parked (ride/drive.rs): which, where and which way up.
+    #[serde(default)]
+    parked: Option<ParkedSave>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+struct ParkedSave {
+    name: String,
+    pos: [f32; 3],
+    rot: [f32; 4],
 }
 
 fn lenient<'de, D: serde::Deserializer<'de>, T: serde::de::DeserializeOwned>(d: D) -> Result<Option<T>, D::Error> {
@@ -230,6 +272,8 @@ pub struct Game {
     /// Metres the player has walked since their last bootprint, and which
     /// foot it was.
     boot: (f32, bool),
+    /// Where each rear tyre last laid a piece of track.
+    tyre_marks: [Option<Vec3>; 2],
     pub streamer: Streamer,
     pub store: Store,
     pub player: Player,
@@ -323,6 +367,8 @@ pub struct Game {
     pub extra_inst: Vec<(usize, crate::models::Instance)>,
     /// Index of the first ride model (bike, flyer) in `models`.
     pub ride_models: usize,
+    /// Index of the first vehicle model (src/vehicle/draw.rs).
+    pub vehicle_models: usize,
     /// Index of the first weapon view-model in `models` (combat/viewmodel.rs).
     pub weapon_models: usize,
     /// The camera: film, tasks, the scrapbook (src/camera).
@@ -389,6 +435,9 @@ impl Game {
         // The launch screen's switches take modes away, and only a match
         // leaves the shooter's rules in (src/launch.rs).
         let allowed = launch.allowed(allowed);
+        // Driving needs something to drive.
+        let vehicles = loaded.as_ref().map(|l| l.world.def.vehicles.clone()).unwrap_or_default();
+        let allowed = if vehicles.is_empty() { allowed.without(ModeId::Drive) } else { allowed };
         // This world's sun and northern lights, before anything reads an hour.
         let sun_path = loaded.as_ref().and_then(|l| l.world.def.sun.as_ref()).map_or(crate::render::daylight::SunPath::DEFAULT, |s| s.path());
         crate::render::daylight::set_path(sun_path);
@@ -412,7 +461,7 @@ impl Game {
         // last one are that match, not the map, and a world you are
         // exploring is the only place where what you dug is worth keeping,
         // which is the same line the saved position is on below.
-        let arena = launch.mode.is_match();
+        let arena = launch.mode.fresh_start();
         let edits = if fresh || arena { EditMap::default() } else { load_edits(&save_dir.join("edits.bin")) };
         let progress: Option<Progress> = if fresh { None } else { load_progress(&save_dir.join("progress.json")) };
         // The seasons this world has, and the one it opens in: the launch
@@ -455,7 +504,7 @@ impl Game {
             // are exploring. A match opens on a spawn point, so remembering
             // the spot the last one ended on puts you back in it every
             // time -- which on one imported map is the bottom of the water.
-            if !launch.mode.is_match() {
+            if !launch.mode.fresh_start() {
                 player = Player::new(Vec3::from(p.pos), p.yaw);
                 player.pitch = p.pitch;
             }
@@ -463,6 +512,17 @@ impl Game {
             gems = p.gems.iter().copied().collect();
         }
         ride.allowed = allowed;
+        ride.catalogue = crate::vehicle::Catalogue::load(&crate::library::data_root());
+        ride.vehicle_pick = launch.vehicle.as_ref().and_then(|v| vehicles.iter().position(|n| n == v)).unwrap_or(0);
+        ride.vehicles = vehicles;
+        if let Some(p) = progress.as_ref().and_then(|p| p.parked.as_ref()).filter(|_| !launch.mode.fresh_start()) {
+            let mut car = crate::vehicle::Vehicle::new(ride.catalogue.get(&p.name), Vec3::ZERO, 0.0);
+            car.b.pos = Vec3::from(p.pos);
+            car.b.rot = glam::Quat::from_array(p.rot).normalize();
+            car.prev_pos = car.b.pos;
+            car.prev_rot = car.b.rot;
+            ride.parked = Some(car);
+        }
         ride.glide_air = loaded.as_ref().and_then(|l| l.world.def.glide.as_ref()).map_or_else(Default::default, |g| g.air());
         ride.set_seed(spec.seed);
         let sea = spec.sea_level_m;
@@ -520,10 +580,15 @@ impl Game {
             lightning: crate::world::lightning::Lightning::new(spec.seed as u32),
             marks: crate::creatures::sign::Marks::default(),
             boot: (0.0, false),
+            tyre_marks: [None; 2],
             weather,
             year,
             streamer,
-            store: Store { height_vox, gravity, ..Store::default() },
+            store: Store {
+                height_vox,
+                gravity,
+                ..Store::default()
+            },
             player,
             ride,
             ents,
@@ -569,6 +634,7 @@ impl Game {
             freeze_creatures: false,
             extra_inst: Vec::new(),
             ride_models: usize::MAX,
+            vehicle_models: usize::MAX,
             weapon_models: usize::MAX,
             camera,
             files: Vec::new(),
@@ -734,12 +800,35 @@ impl Game {
     /// mode should not cost the player their score or their ammunition.
     fn park_activity(&mut self) {
         if let Some(mut a) = self.activity.take() {
-            let keep = a.id() == ModeId::Shooter;
+            let keep = matches!(a.id(), ModeId::Shooter | ModeId::Race);
             a.exit(&mut self.player);
             if keep {
                 self.parked = Some(a);
             }
         }
+    }
+
+    /// On a world with a `race` launched as one, the race starts as soon as
+    /// the player is on the ground, and comes back after anything else has
+    /// had the activity slot.
+    fn start_race(&mut self) {
+        if self.editing || self.activity.is_some() || !self.spawned || !self.ride.allowed.has(ModeId::Race) {
+            return;
+        }
+        if let Some(a) = self.parked.take() {
+            self.activity = Some(a);
+            return;
+        }
+        let Some(w) = self.generator().world.clone() else { return };
+        // The map's race as this game runs it (src/games.rs).
+        let Some(def) = w.def.race.as_ref().map(|r| self.launch.def().race_rules(r)) else { return };
+        let Some(circuit) = w.circuits.iter().find(|c| c.name == def.circuit) else {
+            self.note(&format!("NO CIRCUIT CALLED {}", def.circuit.to_uppercase()));
+            self.ride.allowed = self.ride.allowed.without(ModeId::Race);
+            return;
+        };
+        let spec = self.ride.catalogue.get(&def.vehicle);
+        self.activity = Some(Box::new(crate::race::Race::new(&def, circuit, spec, self.vehicle_models)));
     }
 
     /// On a world whose world.json carries a `"shooter"` block, the gun is
@@ -754,38 +843,11 @@ impl Game {
             return;
         }
         let Some(w) = self.generator().world.clone() else { return };
-        let Some(mut rules) = w.def.shooter.clone() else { return };
-        // The launch screen says how many bots there are and how well they
-        // shoot; the world says everything else about the match. Asked for
-        // exactly what the world's own rules name, the world's own bots are
-        // played, names and characters and all.
-        if !self.launch.world_roster(&rules.bots) {
-            rules.bots = self.launch.roster();
-        }
-        rules.target_score = self.launch.target;
-        // The launch screen's mode decides what kind of match the world's
-        // rules are played as: a world with a `ctf` block still plays a
-        // deathmatch when that is what was asked for.
-        use crate::launch::Mode;
-        rules.teams = matches!(self.launch.mode, Mode::Team | Mode::Ctf);
-        rules.player_team = self.launch.side;
-        match (self.launch.mode, rules.ctf.as_mut()) {
-            // What the launch screen asked for; nothing asked for (the
-            // command line) keeps the world's own.
-            (Mode::Ctf, Some(c)) => {
-                if self.launch.captures > 0 {
-                    c.captures = self.launch.captures;
-                }
-                if self.launch.minutes > 0 {
-                    c.time_s = self.launch.minutes as f32 * 60.0;
-                }
-            }
-            (Mode::Ctf, None) => {}
-            _ => rules.ctf = None,
-        }
-        if rules.spoil.is_none() {
-            rules.spoil = w.def.rock.first().map(|r| r.0.clone());
-        }
+        let Some(map) = w.def.shooter.as_ref() else { return };
+        // The map says where things are, the game how it is played and the
+        // launch screen what was asked for this time: `games.rs` puts the
+        // three together, so nothing here knows which game this is.
+        let rules = self.launch.def().shooter_rules(map, &self.launch, w.def.rock.first().map(|r| r.0.as_str()));
         let seed = w.def.seed;
         let mut sh = match self.repeat {
             true => crate::shooter::Shooter::repeatable(&w.lib, &rules, self.home, &self.store, seed),
@@ -859,6 +921,9 @@ impl Game {
         self.ride_models = self.models.len();
         self.models.extend(crate::ride::models());
         crate::ride::palette(&mut self.palette);
+        self.vehicle_models = self.models.len();
+        let spec = self.ride.catalogue.get(self.ride.vehicle_name().unwrap_or("sand_rail"));
+        self.models.extend(crate::vehicle::draw::models(&spec, &mut self.palette));
         self.weapon_models = self.models.len();
         self.models.extend(crate::combat::viewmodel::models());
         crate::combat::viewmodel::palette(&mut self.palette);
@@ -874,6 +939,29 @@ impl Game {
 
     pub fn note(&mut self, msg: &str) {
         self.message = Some((msg.to_string(), 2.5));
+    }
+
+    /// Set the tide for the time (world/tide.rs): how far the open sea has
+    /// fallen, which every water query reads, and the sea's surface now. A
+    /// tide is longer than half a day and shorter than a day, so it runs on
+    /// the day count as well as the hour. The hour may also be set directly
+    /// (N, the launch screen), so this runs every tick, not only as the clock
+    /// moves.
+    pub fn follow_tide(&mut self) {
+        let Some(w) = self.streamer.generator().world.as_deref() else { return };
+        let Some(t) = w.def.tide.filter(|_| w.f.tide.on()) else { return };
+        w.f.tide.set_drop(t.drop_at(self.year.day as f32 * 24.0 + self.hour));
+        let now = w.f.sea_now();
+        self.sea = now;
+    }
+
+    /// Hand the swell the clock the renderer draws with and today's wind
+    /// (world/surf.rs), so what floats rides the waves on screen.
+    pub fn follow_swell(&mut self) {
+        let wind = self.weather.sky().wind;
+        if let Some(w) = self.streamer.generator().world.as_deref() {
+            w.f.shore.set_clock(self.time, wind);
+        }
     }
 
     pub fn tick(&mut self, dt: f32, input: &MoveInput, actions: &mut Actions) {
@@ -907,6 +995,8 @@ impl Game {
                 self.weather.nudge(k);
             }
         }
+        self.follow_tide();
+        self.follow_swell();
         if !self.activity.as_ref().is_some_and(|a| a.pauses_world()) {
             let sky = self.weather.sky();
             self.lightning.advance(dt, &sky, self.player.pos);
@@ -930,6 +1020,7 @@ impl Game {
             }
         }
         self.start_shooter();
+        self.start_race();
         if self.camera_actions(input, actions, dt) {
             // The logbook is open: the world waits.
             actions.dig = false;
@@ -956,6 +1047,7 @@ impl Game {
             actions.place = false;
             actions.bike_toggle = false;
             actions.kayak_toggle = false;
+            actions.vehicle_toggle = false;
             actions.glide = false;
             actions.cam_toggle = false;
             actions.toggle_fly = false;
@@ -989,6 +1081,9 @@ impl Game {
         } else if kayak_key {
             let level = self.water_at(self.player.pos).0;
             self.ride.toggle_kayak(&mut self.player, &self.store, level);
+        }
+        if std::mem::take(&mut actions.vehicle_toggle) && self.spawned && !self.player.fly {
+            self.ride.vehicle_key(&mut self.player, &self.store);
         }
         if std::mem::take(&mut actions.glide) && self.spawned && !self.player.fly {
             self.ride.glide_key(&mut self.player);
@@ -1067,10 +1162,12 @@ impl Game {
         }
 
         // Aim, dig and build.
+        let tr = crate::trace::start();
         let eye = self.eye(self.alpha);
         let fwd = self.player.forward();
         self.target = if self.spawned { self.store.raycast(eye, fwd, 6.0) } else { None };
         self.looking_at = if self.spawned { self.identify(eye, fwd) } else { None };
+        crate::trace::end("aim", tr);
         self.dig_cd -= dt;
         self.place_cd -= dt;
         if actions.dig && self.dig_cd <= 0.0 {
@@ -1267,8 +1364,10 @@ impl Game {
     fn fixed_step(&mut self, input: &MoveInput, paused: bool) {
         // The moving parts first, then the activity, then the player: a
         // rider steps off a floor that has already moved this step.
+        let tr = crate::trace::start();
         let player = self.spawned.then_some(&mut self.player);
         self.parts.step(STEP, &mut self.store, player, self.activity.as_deref_mut());
+        crate::trace::end("platforms", tr);
         if std::mem::take(&mut self.parts.placed) {
             // A platform has just been put where it lives: keep the grass
             // out of the room it sweeps, and mesh the ground under it again.
@@ -1278,7 +1377,9 @@ impl Game {
                 self.streamer.remesh_box(&self.store, Vec3::new(b[0], b[1] - 2.0, b[2]), Vec3::new(b[3], b[4], b[5]));
             }
         }
+        let tr = crate::trace::start();
         self.with_activity(|a, cx| a.step(cx, input));
+        crate::trace::end("activity", tr);
         if paused {
             return;
         }
@@ -1287,10 +1388,21 @@ impl Game {
         // The EDIT page's camera owns the eye while it is open (editor/cam.rs),
         // so the body is left standing where it was and put back untouched
         // when the page closes.
+        let tr = crate::trace::start();
         if self.spawned && !self.editing {
             let water = self.water_at(self.player.pos);
+            // How the water slopes here, for the kayak to pitch and roll with
+            // the swell.
+            let p = self.player.pos;
+            let e = 0.8;
+            let dx = self.water_at(p + Vec3::X * e).0 - self.water_at(p - Vec3::X * e).0;
+            let dz = self.water_at(p + Vec3::Z * e).0 - self.water_at(p - Vec3::Z * e).0;
+            self.ride.water_slope = if (dx.abs() + dz.abs()) < 1.0 { glam::Vec2::new(dx, dz) / (2.0 * e) } else { glam::Vec2::ZERO };
             let before = (self.player.body.on_ground, self.player.body.vel, self.player.pos);
             self.player.update(&mut self.ride, input, &self.store, self.sea, water, slopes, STEP);
+            if let Some(r) = self.activity.as_mut().and_then(|a| a.race_mut()) {
+                r.tick(&mut self.ride, &mut self.player, &self.store, self.sea, slopes, STEP);
+            }
             self.step_fx(before, water.0);
             self.dive_extras();
             // Off the edge of a map in space with no match on to kill you:
@@ -1305,6 +1417,7 @@ impl Game {
         } else {
             self.player.prev_pos = self.player.pos;
         }
+        crate::trace::end("player", tr);
         if !self.freeze_creatures {
             // How the animals read the player: where, how fast and how they
             // travel (creatures/startle.rs). Flying with the cheat on reads
@@ -1315,10 +1428,13 @@ impl Game {
             self.ents.hour = self.hour;
             self.ents.sky = self.weather.sky();
             self.ents.phase = self.year.phase();
+            self.ents.set_season(self.year.name());
             crate::render::daylight::set_declination(self.ents.phase.declination);
             let f = self.player.forward();
             self.ents.facing = Vec3::new(f.x, 0.0, f.z).normalize_or_zero();
+            let tr = crate::trace::start();
             self.ents.update(STEP, &self.store, gen, &threat, slopes, &self.models);
+            crate::trace::end("creatures", tr);
             // Spray the animals threw up this step (creatures/swim.rs).
             self.fx.take(&mut self.ents.cues);
             self.lay_marks();
@@ -1327,7 +1443,60 @@ impl Game {
             self.hitch_step(input.focus_far && !self.camera.active);
         }
         if self.spawned && !self.player.fly {
-            self.shoulder_past_animals();
+            if self.ride.car().is_some() {
+                self.shove_animals();
+                self.crush_shrubs();
+            } else {
+                self.shoulder_past_animals();
+            }
+        }
+    }
+
+    /// The car's rear tyres leave a track on ground that takes one: a piece
+    /// every `Foot::Tyre` length, laid from the last piece to here.
+    fn lay_tracks(&mut self, soft: f32) {
+        use crate::creatures::sign::{Foot, Step};
+        let Some(car) = self.ride.car() else {
+            self.tyre_marks = [None; 2];
+            return;
+        };
+        let len = Foot::Tyre.size(1.0);
+        let up = car.up();
+        let r = car.spec.wheel_radius;
+        let mut laid = Vec::new();
+        for (k, w) in car.wheels.iter().filter(|w| w.rear).enumerate() {
+            let patch = match (w.down, w.contact) {
+                (true, Some(c)) if c.depth < 0.05 => car.pos() + car.b.rot * w.mount - up * w.t - c.n * r,
+                _ => {
+                    self.tyre_marks[k] = None;
+                    continue;
+                }
+            };
+            let Some(last) = self.tyre_marks[k] else {
+                self.tyre_marks[k] = Some(patch);
+                continue;
+            };
+            let d = patch - last;
+            let flat = Vec3::new(d.x, 0.0, d.z);
+            if flat.length() > 4.0 {
+                self.tyre_marks[k] = Some(patch);
+            } else if flat.length() >= len {
+                let dir = flat.normalize();
+                let mid = last + dir * len * 0.5;
+                let mut pos = Vec3::new(mid.x, patch.y.min(last.y) + (patch.y - last.y).abs() * 0.5, mid.z);
+                pos.y += 0.01;
+                laid.push(Step {
+                    pos,
+                    yaw: (-dir.x).atan2(-dir.z),
+                    foot: Foot::Tyre,
+                    height: 1.0,
+                });
+                self.tyre_marks[k] = Some(last + dir * len);
+            }
+        }
+        for step in laid {
+            let ground = crate::creatures::sign::ground_at(&self.store, step.pos + Vec3::Y * 0.3);
+            self.marks.lay(&step, ground, soft);
         }
     }
 
@@ -1357,7 +1526,11 @@ impl Game {
                     // the drawn (sloped) surface.
                     let (vx, vz) = ((pos.x * 4.0).floor() as i32, (pos.z * 4.0).floor() as i32);
                     let top = ((pos.y + 4.0) * 4.0).floor() as i32;
-                    if let Some(vy) = (0..64).map(|d| top - d).find(|&y| self.store.get(vx, y, vz).is_some_and(|m| m != crate::world::material::AIR && !crate::world::matlib::has(m, crate::world::matlib::flag::FOLIAGE))) {
+                    if let Some(vy) = (0..64).map(|d| top - d).find(|&y| {
+                        self.store
+                            .get(vx, y, vz)
+                            .is_some_and(|m| m != crate::world::material::AIR && !crate::world::matlib::has(m, crate::world::matlib::flag::FOLIAGE))
+                    }) {
                         pos.y = (vy + 1) as f32 / 4.0;
                         pos.y += crate::physics::drawn_ground_lift(&self.store, pos);
                     }
@@ -1371,6 +1544,7 @@ impl Game {
             let ground = crate::creatures::sign::ground_at(&self.store, step.pos);
             self.marks.lay(&step, ground, soft);
         }
+        self.lay_tracks(soft);
         let on_foot = self.ride.mode == crate::ride::Mode::Foot && self.player.body.on_ground && !self.player.fly && !self.player.swimming && self.activity.is_none();
         if !on_foot {
             return;
@@ -1490,6 +1664,9 @@ impl Game {
             snow,
         };
         crate::fx::hooks::step(&mut self.fx, &body, &self.store, STEP);
+        if let Some(car) = self.ride.car() {
+            crate::fx::hooks::vehicle(&mut self.fx, car, &self.ride.drive_events, STEP);
+        }
         crate::fx::ambient::step(&mut self.fx, &self.store, eye, season, sky.wind, STEP);
         // Falling snow near the camera, as flakes in the world: they drift
         // past as you move, which the screen-space fall (post.wgsl) cannot.
@@ -1558,7 +1735,11 @@ impl Game {
                         emit(Noise::at(Kind::Ricochet, at, 0.5));
                     }
                 }
-                Cue::Burst { at, radius, look: crate::library::SplashLook::Goo } => emit(Noise::at(Kind::Splat(radius), at, 1.2)),
+                Cue::Burst {
+                    at,
+                    radius,
+                    look: crate::library::SplashLook::Goo,
+                } => emit(Noise::at(Kind::Splat(radius), at, 1.2)),
                 Cue::Burst { at, radius, .. } => emit(Noise::at(Kind::Burst(radius), at, 2.0 * (radius / 3.0).clamp(0.4, 2.0).sqrt())),
                 Cue::Sparks { at } => emit(Noise::at(Kind::Sparks, at, 0.6)),
                 Cue::Muzzle { .. } => {}
@@ -1600,7 +1781,11 @@ impl Game {
                     self.fx.burst("impact_sparks", at, Vec3::Y, 0, 2.0);
                     self.fx.burst("bore_sparks", at, Vec3::Y, 0, 1.5);
                 }
-                Cue::Burst { at, radius, look: crate::library::SplashLook::Goo } => {
+                Cue::Burst {
+                    at,
+                    radius,
+                    look: crate::library::SplashLook::Goo,
+                } => {
                     // Slime, not fire: a pale green flash, a green spray
                     // that hangs and drips, droplets flung out and falling,
                     // and a sour green haze where the smoke would be.
@@ -1669,6 +1854,134 @@ impl Game {
         if by != Vec3::ZERO {
             crate::physics::nudge(&self.store, &mut self.player.pos, by, hw, h);
         }
+    }
+
+    /// A car meeting an animal: the animal is pushed out of the way unharmed
+    /// and sent off at a run, and the car loses a little speed for it, more
+    /// for a big one. Most are gone before it arrives (the car is a loud,
+    /// fast threat to creatures/startle.rs); this is for the rest.
+    fn shove_animals(&mut self) {
+        use crate::creatures::age::Age;
+        use crate::creatures::walk::{Critter, Mood};
+        use crate::creatures::Look;
+        use crate::physics::Body;
+        let Some(car) = self.ride.car() else { return };
+        let (pos, rot) = (car.pos(), car.b.rot);
+        let inv = rot.inverse();
+        let s = &car.spec;
+        // The car's footprint in its own frame, from the ground up to the cage.
+        let half = Vec3::new(s.track * 0.5 + s.tyre_width * 0.5, 0.0, s.wheelbase * 0.5 + s.wheel_radius + 0.15);
+        let floor = -(s.wheel_radius + s.com_height);
+        let vel = car.b.vel;
+        let mut lost = 0.0f32;
+        for (look, body, crit, age) in self.ents.world.query_mut::<(&mut Look, &mut Body, Option<&mut Critter>, Option<&Age>)>() {
+            if age.is_some_and(|a| a.dead()) {
+                continue;
+            }
+            if (look.pos.x - pos.x).abs() > 4.0 || (look.pos.z - pos.z).abs() > 4.0 {
+                continue;
+            }
+            let rel = inv * (look.pos - pos);
+            if rel.y + body.height < floor || rel.y > floor + 1.8 {
+                continue;
+            }
+            // Overlap across and along, counting the animal's own width.
+            let ox = half.x + body.half_w - rel.x.abs();
+            let oz = half.z + body.half_w - rel.z.abs();
+            if ox <= 0.0 || oz <= 0.0 {
+                continue;
+            }
+            // Out to the nearer side, mostly across: an animal clipped by the
+            // nose is swept aside rather than pushed along in front.
+            let side = if rel.x >= 0.0 { 1.0 } else { -1.0 };
+            let by = if ox < oz * 1.5 {
+                rot * Vec3::new(side * ox, 0.0, 0.0)
+            } else {
+                rot * Vec3::new(0.0, 0.0, rel.z.signum() * oz)
+            };
+            let by = Vec3::new(by.x, 0.0, by.z);
+            crate::physics::nudge(&self.store, &mut look.pos, by, body.half_w, body.height);
+            let away = by.normalize_or_zero();
+            let speed = Vec3::new(vel.x, 0.0, vel.z).length();
+            body.vel = away * (2.0 + speed * 0.3).min(7.0) + Vec3::Y * (speed * 0.05).min(1.5);
+            if let Some(c) = crit {
+                c.mood = Mood::Flee;
+                c.heading = (-away.x).atan2(-away.z);
+                c.timer = c.timer.max(3.0);
+            }
+            // Bulk of the animal against the car's mass.
+            let bulk = (body.half_w * 2.0).powi(2) * body.height * 600.0;
+            lost = lost.max((bulk / s.mass).min(0.35));
+        }
+        if lost > 0.0 {
+            self.ride.slow_car(1.0 - lost);
+        }
+    }
+
+    /// A shrub the car is about to run over is flattened: its stems and
+    /// leaves are taken out of the store just ahead of the car, so it neither
+    /// stops the car nor throws it. The change is not saved
+    /// (`Streamer::edit_passing`): the shrub is back once its ground streams
+    /// in again. A shrub is a placed plant under `TALL` metres; anything
+    /// taller (a juniper, an ocotillo) is met by the chassis as before.
+    fn crush_shrubs(&mut self) {
+        const TALL: f32 = 1.8;
+        let Some(car) = self.ride.car() else { return };
+        let Some(world) = self.streamer.generator().world.clone() else { return };
+        let (pos, rot) = (car.pos(), car.b.rot);
+        let inv = rot.inverse();
+        let s = &car.spec;
+        let half = Vec3::new(s.track * 0.5 + s.tyre_width * 0.5, 0.0, s.wheelbase * 0.5 + s.wheel_radius + 0.15);
+        let floor = -(s.wheel_radius + s.com_height);
+        // A tenth of a second ahead of the nose (or the tail, reversing), so
+        // the shrub is gone before the chassis or a tyre reaches it.
+        let v_fwd = car.v_fwd();
+        let ahead = (v_fwd.abs() * 0.1).min(3.0);
+        let reach = half.z + ahead + 2.0;
+        let mut changes = Vec::new();
+        let mut bulk = 0.0f32;
+        for p in self.ents.plants.near(pos.x, pos.z, reach, None) {
+            if p.height > TALL {
+                continue;
+            }
+            let rel = inv * (p.pos - pos);
+            if rel.y > floor + 1.0 || rel.y + p.height < floor - 0.5 {
+                continue;
+            }
+            // Front is -Z in the car's frame.
+            let (front, back) = if v_fwd >= 0.0 { (half.z + ahead, half.z) } else { (half.z, half.z + ahead) };
+            let r = p.crown * 0.7;
+            if rel.x.abs() > half.x + r || rel.z < -front - r || rel.z > back + r {
+                continue;
+            }
+            let Some(def) = world.lib.plants.get(p.plant as usize) else { continue };
+            let bark = crate::world::matlib::id_of(&def.bark);
+            let ours = |m: u8| {
+                Some(crate::world::matlib::base(m)) == bark || crate::world::matlib::has(m, crate::world::matlib::flag::FOLIAGE | crate::world::matlib::flag::GROWS)
+            };
+            let c = p.crown + 0.25;
+            let lo = ((p.pos - Vec3::new(c, 0.25, c)) * 4.0).floor();
+            let hi = ((p.pos + Vec3::new(c, p.height + 0.25, c)) * 4.0).floor();
+            let before = changes.len();
+            for y in lo.y as i32..=hi.y as i32 {
+                for z in lo.z as i32..=hi.z as i32 {
+                    for x in lo.x as i32..=hi.x as i32 {
+                        if self.store.get(x, y, z).is_some_and(|m| m != crate::world::material::AIR && ours(m)) {
+                            changes.push(([x, y, z], crate::world::material::AIR));
+                        }
+                    }
+                }
+            }
+            if changes.len() > before {
+                bulk += p.height * p.crown * p.crown;
+            }
+        }
+        if changes.is_empty() {
+            return;
+        }
+        self.streamer.edit_passing(&mut self.store, &changes);
+        // Pushing through brush costs a little speed, a big shrub more.
+        self.ride.slow_car(1.0 - (bulk * 0.04).min(0.08));
     }
 
     fn dig(&mut self, hit: [i32; 3]) {
@@ -1751,13 +2064,21 @@ impl Game {
     }
 
     fn camera(&self) -> crate::rig::Camera {
-        if let Some(c) = self.activity.as_ref().and_then(|a| a.camera(&self.player)) {
+        let mut c = if let Some(c) = self.activity.as_ref().and_then(|a| a.camera(&self.player)) {
             c
         } else if self.player.fly {
             crate::rig::Camera::looking(self.player.eye(self.alpha), self.player.yaw, self.player.pitch)
         } else {
             self.ride.camera(&self.player, &self.store, self.alpha)
+        };
+        // `VG_ROLL=degrees` banks the view about where it looks, for checking
+        // a banked frame (the wingsuit's) in a headless shot.
+        static ROLL: std::sync::OnceLock<f32> = std::sync::OnceLock::new();
+        let roll = *ROLL.get_or_init(|| std::env::var("VG_ROLL").ok().and_then(|s| s.parse().ok()).unwrap_or(0.0));
+        if roll != 0.0 {
+            c.up = glam::Quat::from_axis_angle(c.fwd.normalize(), roll.to_radians()) * c.up;
         }
+        c
     }
 
     /// The lamps that can reach the camera's neighbourhood, nearest first.
@@ -1875,6 +2196,9 @@ impl Game {
         self.ride.gear(&self.player, &self.store, alpha, self.ride_models, &self.models, &mut self.inst);
         self.ride.tokens(self.ride_models, &self.models, &mut self.inst);
         self.ride.moored_instance(self.time, self.ride_models, &self.models, &mut self.inst);
+        if self.vehicle_models != usize::MAX {
+            self.ride.vehicle_instances(alpha, self.vehicle_models, &self.models, &mut self.inst);
+        }
         self.inst.extend(self.extra_inst.iter().cloned());
         let pinned_to = self.inst.len();
         self.parts.platforms.instances(self.alpha, &self.models, &mut self.inst);
@@ -1965,6 +2289,7 @@ impl Game {
             cam_fwd: fwd,
             time: self.time,
             underwater: eye.y < self.water_at(eye).0,
+            sea: self.sea,
             water_level: {
                 let w = self.water_at(eye).0;
                 if eye.y < w {
@@ -1998,6 +2323,7 @@ impl Game {
             ground_fog: if self.studio_lit() { 0.0 } else { self.damp.mist() },
             bolt: if self.studio_lit() { [0.0; 4] } else { self.lightning.uniform() },
             mirage: if self.studio_lit() { 0.0 } else { self.mirage() },
+            mirage_floor: self.generator().ground_under(eye.x, eye.z),
             snow_cover: {
                 let lying = self.year.turn().snow as f32 * 0.5;
                 let floor = self.generator().world.as_ref().map_or(0.0, |w| w.def.snow_cover);
@@ -2005,7 +2331,13 @@ impl Game {
             },
             space: self.generator().world.as_ref().is_some_and(|w| w.def.space),
             plain_grade: self.studio_lit(),
-            studio: self.generator().studio_floor.read().ok().and_then(|f| *f).map(|f| (f.x, f.z, f.half_m + crate::world::gen::STUDIO_BANK_M)),
+            studio: self
+                .generator()
+                .studio_floor
+                .read()
+                .ok()
+                .and_then(|f| *f)
+                .map(|f| (f.x, f.z, f.half_m + crate::world::gen::STUDIO_BANK_M)),
             lens: (self.camera.active && self.camera.raised && self.camera.book.is_none() && self.activity.is_none()).then(|| self.camera.lens.fx(self.camera.orient, aspect, true)),
         }
     }
@@ -2178,7 +2510,7 @@ impl Game {
 
     /// The frame-stats panel, top left: it is drawn over whatever else the
     /// HUD is doing, an activity's own HUD included.
-    fn build_stats(&self, hud: &mut Hud, s: f32, dim: [f32; 4]) {
+    fn build_stats(&self, hud: &mut Hud, s: f32, dim: [f32; 4], w: f32, h: f32) {
         if !self.settings.show_stats {
             return;
         }
@@ -2193,6 +2525,10 @@ impl Game {
             format!("QUADS {:.1}M  SHADOW {:.1}M  QUEUE {}", r.quads as f64 / 1e6, r.shadow_quads as f64 / 1e6, st.queued),
             format!("{:.0} {:.0} {:.0}  {}", p.x, p.y, p.z, if self.player.fly { "FLY" } else { self.ride.mode.name() }),
         ];
+        // The worst hitch of the last few seconds and what took the time.
+        if let Some((ms, part)) = crate::trace::worst() {
+            lines.push(format!("HITCH {:.0} MS  {}", ms, part.to_uppercase()));
+        }
         if self.instances_dropped > 0 {
             lines.push(format!("{} BODIES OVER THE INSTANCE CAP", self.instances_dropped));
         }
@@ -2215,6 +2551,117 @@ impl Game {
         for (i, l) in lines.iter().enumerate() {
             hud.label(16.0, 14.0 + i as f32 * line, s, dim, l);
         }
+        // Driving: each wheel's load, slip and compression, low on the left
+        // where nothing else is, for tuning the car (library/vehicles).
+        let wheels = self.ride.drive_debug();
+        if !wheels.is_empty() {
+            let wmax = wheels.iter().map(|l| Hud::text_width(l, s)).fold(0.0, f32::max);
+            let top = line * wheels.len() as f32 + 12.0;
+            let y0 = h - top - 60.0 * s;
+            hud.rect(8.0, y0 - 6.0, wmax + 16.0, top, [0.0, 0.0, 0.0, 0.35]);
+            for (i, l) in wheels.iter().enumerate() {
+                hud.label(16.0, y0 + i as f32 * line, s, dim, l);
+            }
+        }
+        self.build_tune(hud, w, h, false);
+    }
+
+    /// Where the tuning panel's lines go: on the right, a window round the
+    /// picked line while playing, every line (smaller) on the pause screen.
+    pub fn tune_layout(&self, w: f32, h: f32, paused: bool) -> Option<TuneLayout> {
+        if !self.settings.show_stats {
+            return None;
+        }
+        let lines = self.ride.tune_lines();
+        if lines.is_empty() {
+            return None;
+        }
+        let base = if h > 1200.0 { 3.0 } else { 2.0 };
+        let n = lines.len();
+        let (s, show) = if paused {
+            let s = ((h * 0.92) / ((n + 3) as f32 * 10.0)).min(base);
+            (s, n)
+        } else {
+            (base, (((h * 0.6) / (10.0 * base)) as usize).clamp(8, n))
+        };
+        let line = 10.0 * s;
+        let pick = lines.iter().position(|l| l.3).unwrap_or(0);
+        let first = pick.saturating_sub(show / 2).min(n - show);
+        let name_w = lines.iter().map(|l| Hud::text_width(&l.0, s)).fold(0.0, f32::max) + 12.0 * s;
+        let wide = (name_w + 80.0 * s)
+            .max(Hud::text_width(TUNE_KEYS, s * 0.8))
+            .max(Hud::text_width(TUNE_MOUSE, s * 0.8))
+            .max(Hud::text_width("TUNE  BEACH BUGGY  00 CHANGED", s));
+        let x = (w - wide - 24.0).floor();
+        let rows = show + 3;
+        let y0 = ((h - rows as f32 * line) * 0.5).floor();
+        Some(TuneLayout {
+            x,
+            y0,
+            line,
+            s,
+            first,
+            show,
+            name_w,
+            wide,
+        })
+    }
+
+    /// What on the tuning panel is under (cx, cy): a line, or the save line.
+    pub fn tune_hit(&self, w: f32, h: f32, cx: f32, cy: f32) -> Option<TuneHit> {
+        let l = self.tune_layout(w, h, true)?;
+        if cx < l.x - 8.0 || cx > l.x + l.wide + 8.0 {
+            return None;
+        }
+        let row = ((cy - l.y0 + 2.0) / l.line).floor();
+        if row < 1.0 {
+            return None;
+        }
+        let row = row as usize - 1;
+        if row < l.show {
+            Some(TuneHit::Line(l.first + row))
+        } else if row <= l.show + 1 {
+            Some(TuneHit::Save)
+        } else {
+            None
+        }
+    }
+
+    /// The vehicle tuning panel (vehicle/tune.rs), with the file's value
+    /// beside any line that has moved off it.
+    pub fn build_tune(&self, hud: &mut Hud, w: f32, h: f32, paused: bool) {
+        let Some(l) = self.tune_layout(w, h, paused) else { return };
+        let lines = self.ride.tune_lines();
+        let s = l.s;
+        let dim = [0.85, 0.9, 0.95, 0.85];
+        let white = [1.0, 1.0, 1.0, 0.95];
+        let warm = [1.0, 0.8, 0.4, 1.0];
+        let changed = lines.iter().filter(|l| l.2.is_some()).count();
+        let head = format!("TUNE  {}  {} CHANGED", self.ride.car().map_or(String::new(), |c| c.spec.title.clone()), changed);
+        let rows = l.show + 3;
+        hud.rect(l.x - 8.0, l.y0 - 6.0, l.wide + 16.0, rows as f32 * l.line + 12.0, [0.0, 0.0, 0.0, 0.55]);
+        hud.label(l.x, l.y0, s, white, &head);
+        for (row, (name, v, f, on)) in lines[l.first..l.first + l.show].iter().enumerate() {
+            let y = l.y0 + (row + 1) as f32 * l.line;
+            if *on {
+                hud.rect(l.x - 4.0, y - 2.0, l.wide + 8.0, l.line, [1.0, 1.0, 1.0, 0.14]);
+            }
+            let c = if f.is_some() {
+                warm
+            } else if *on {
+                white
+            } else {
+                dim
+            };
+            hud.label(l.x, y, s, c, name);
+            let vx = l.x + l.name_w;
+            let vw = hud.label(vx, y, s, c, v);
+            if let Some(f) = f {
+                hud.label(vx + vw + 8.0 * s, y, s, [dim[0], dim[1], dim[2], 0.6], &format!("({f})"));
+            }
+        }
+        let keys = if paused { TUNE_MOUSE } else { TUNE_KEYS };
+        hud.label(l.x, l.y0 + (l.show + 1) as f32 * l.line + 4.0, s * 0.8, dim, keys);
     }
 
     pub fn build_hud(&self, hud: &mut Hud, w: f32, h: f32) {
@@ -2258,7 +2705,7 @@ impl Game {
             // An activity draws its own HUD and nothing else of the game's,
             // but the frame stats are not the game's: they are the player's
             // instrument, and an arena is exactly where they are wanted.
-            self.build_stats(hud, s, dim);
+            self.build_stats(hud, s, dim, w, h);
             return;
         }
         if self.camera.active {
@@ -2295,7 +2742,7 @@ impl Game {
             self.build_compass(hud, cx, 16.0 + r, r);
         }
 
-        self.build_stats(hud, s, dim);
+        self.build_stats(hud, s, dim, w, h);
         if self.settings.minimap {
             let panel = if self.settings.show_stats { line * 5.0 + 20.0 } else { 0.0 };
             self.build_minimap(hud, 16.0, 16.0 + panel, 60.0 * s, s);
@@ -2487,6 +2934,12 @@ impl Game {
             best_flight: self.ride.soar.best,
             season: Some(self.year.season.name().to_string()),
             day: self.year.day,
+            // A car being driven is saved as parked where it is.
+            parked: self.ride.car().or(self.ride.parked.as_ref()).map(|c| ParkedSave {
+                name: c.spec.name.clone(),
+                pos: c.pos().to_array(),
+                rot: c.b.rot.to_array(),
+            }),
         };
         let path = self.save_dir.join("progress.json");
         let tmp = path.with_extension("tmp");
@@ -2539,7 +2992,7 @@ fn task_pool(species: &[crate::entities::Species], models: &[Model], gen: &Gener
         let mover = sp.verb().mover;
         let (flies, walks) = match mover {
             Mover::School | Mover::Breach | Mover::Creep | Mover::Buzz { .. } => continue,
-            Mover::Flock { .. } | Mover::Circle { .. } | Mover::Flit | Mover::Cling => (true, false),
+            Mover::Flock { .. } | Mover::Circle { .. } | Mover::Flit | Mover::Cling | Mover::Hum => (true, false),
             Mover::Walk { .. } => (false, models.get(sp.model).is_some_and(|m| m.rig.is_some())),
             _ => (false, false),
         };
@@ -2827,7 +3280,11 @@ mod tests {
         assert!(load_progress(&path).is_none());
         assert!(bad.exists());
 
-        let written = serde_json::to_value(Progress { version: PROGRESS_VERSION, ..Default::default() }).unwrap();
+        let written = serde_json::to_value(Progress {
+            version: PROGRESS_VERSION,
+            ..Default::default()
+        })
+        .unwrap();
         assert_eq!(written["version"], PROGRESS_VERSION);
         let _ = std::fs::remove_dir_all(&dir);
     }
@@ -2853,7 +3310,13 @@ impl Game {
             .dive
             .cues
             .drain(..)
-            .map(|(name, at, amount)| crate::fx::Cue { name, at, radius: 0.12, dir: Vec3::Y, amount })
+            .map(|(name, at, amount)| crate::fx::Cue {
+                name,
+                at,
+                radius: 0.12,
+                dir: Vec3::Y,
+                amount,
+            })
             .collect();
         if self.fx.on {
             let mut cues = cues;
@@ -2960,7 +3423,11 @@ impl Game {
         let (bw, bh) = (90.0 * s, 3.0 * s);
         let by = y + 15.0 * s;
         hud.rect(cx - bw * 0.5 - 1.0, by - 1.0, bw + 2.0, bh + 2.0, [0.0, 0.0, 0.0, 0.45]);
-        let c = if left > 10.0 / crate::player::dive::BREATH { [0.75, 0.95, 1.0, 0.9] } else { [1.0, 0.55, 0.4, 0.95] };
+        let c = if left > 10.0 / crate::player::dive::BREATH {
+            [0.75, 0.95, 1.0, 0.9]
+        } else {
+            [1.0, 0.55, 0.4, 0.95]
+        };
         hud.rect(cx - bw * 0.5, by, bw * left, bh, c);
     }
 }

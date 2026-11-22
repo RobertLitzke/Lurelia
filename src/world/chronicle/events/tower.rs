@@ -380,7 +380,7 @@ impl Process for TowerEvent {
                 let at = Vec3::new(p.x, y + TOWER_DY, p.y);
                 if growths.len() % 2 == 0 && !self.ledge_plants.is_empty() {
                     let name = &self.ledge_plants[(rnd() * self.ledge_plants.len() as f32) as usize % self.ledge_plants.len()];
-                    growths.push(Growth { plant: name.clone(), at, out: dir });
+                    growths.push(Growth { plant: name.clone(), at, out: dir, seed: None });
                 }
                 if let Some(v) = &self.ledge_vine {
                     let edge = c + tower.off[i] + dir * (r_here - 0.3);
@@ -388,6 +388,7 @@ impl Process for TowerEvent {
                         plant: v.clone(),
                         at: Vec3::new(edge.x, y + TOWER_DY, edge.y),
                         out: dir,
+                        seed: None,
                     });
                 }
             }

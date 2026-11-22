@@ -11,11 +11,11 @@
 //! (age::Age::fresh_kill), or, if the creature is too small to leave bones
 //! worth drawing, it goes.
 
-use crate::anim::Role;
 use super::age::Age;
 use super::terrain::Terrain;
 use super::walk::{Critter, Mood};
 use super::{Creature, Look, Species};
+use crate::anim::Role;
 use crate::anim::{ragdoll::Ragdoll, Anim};
 use crate::models::Model;
 use glam::Vec3;
@@ -47,6 +47,12 @@ const MUZZLE: f32 = 0.35;
 
 /// A bird of prey with a kill in its talons, until clock time `until`.
 pub struct Talons {
+    pub until: f32,
+}
+
+/// A bird with a kill in its bill (a roadrunner with a lizard), until
+/// clock time `until`: it has no walker's mood to say when it is done.
+pub struct Beak {
     pub until: f32,
 }
 
@@ -94,6 +100,8 @@ pub fn take(world: &mut hecs::World, species: &[Species], models: &[Model], kill
         let _ = world.remove_one::<super::fowl::Paddler>(victim);
         let _ = world.remove_one::<super::swim::Fish>(victim);
         let _ = world.remove_one::<super::flit::Flit>(victim);
+        let _ = world.remove_one::<super::runner::Runner>(victim);
+        let _ = world.remove_one::<super::hummer::Hummer>(victim);
         if flier {
             let _ = world.insert_one(hunter, Talons { until: now + CARRY_S * 2.0 });
         }
@@ -106,7 +114,8 @@ pub fn take(world: &mut hecs::World, species: &[Species], models: &[Model], kill
         }
         if std::env::var_os("VG_CATCH_M").is_some() {
             let who = world.get::<&Creature>(victim).map(|c| species[c.species].name.clone()).unwrap_or_default();
-            eprintln!("VG_CATCH: took a {who}, {}", if drag { "dragged" } else { "carried" });
+            let by = world.get::<&Creature>(hunter).map(|c| species[c.species].name.clone()).unwrap_or_default();
+            eprintln!("VG_CATCH: {by} took a {who}, {}", if drag { "dragged" } else { "carried" });
         }
         let mut anim = Anim::hold(limp.pose.clone());
         anim.ragdoll = Some(Box::new(limp));
@@ -137,9 +146,10 @@ pub fn update(world: &mut hecs::World, models: &[Model], dt: f32, now: f32, terr
     let mut fk = Vec::new();
     for (e, c, _) in world.query::<(hecs::Entity, &Carried, &Look)>().iter() {
         let talons = world.get::<&Talons>(c.by).ok().map(|t| t.until);
-        let done = match talons {
-            Some(until) => now > until,
-            None => world.get::<&Critter>(c.by).map(|cr| cr.mood != Mood::Feed).unwrap_or(true),
+        let beak = world.get::<&Beak>(c.by).ok().map(|b| b.until);
+        let done = match (talons, beak) {
+            (Some(until), _) | (None, Some(until)) => now > until,
+            (None, None) => world.get::<&Critter>(c.by).map(|cr| cr.mood != Mood::Feed).unwrap_or(true),
         };
         let Ok(cl) = world.get::<&Look>(c.by) else {
             drops.push(e);
@@ -217,6 +227,7 @@ pub fn update(world: &mut hecs::World, models: &[Model], dt: f32, now: f32, terr
     for e in drops {
         if let Ok(by) = world.get::<&Carried>(e).map(|c| c.by) {
             let _ = world.remove_one::<Talons>(by);
+            let _ = world.remove_one::<Beak>(by);
         }
         let _ = world.remove_one::<Carried>(e);
         // It lies where it was let go. Nothing steps the ragdoll of a body

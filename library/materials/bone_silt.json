@@ -4,6 +4,7 @@
   "introduced_by": "ribshore",
   "notes": "Pale silt round the deep bones, grey sand with bone grit in it.",
   "smooth": true,
+  "surface": "hardpack",
   "texture": {
     "pattern": "noise",
     "base": [150, 150, 140],

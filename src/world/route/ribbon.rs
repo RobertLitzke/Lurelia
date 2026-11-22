@@ -9,7 +9,7 @@
 use super::kit::{Ground, Kit};
 use crate::util::FxHashMap as HashMap;
 use crate::world::fields::BUCKET;
-use crate::world::material::AIR;
+use crate::world::material::{AIR, KEEP_AIR};
 use glam::{Vec2, Vec3};
 
 /// One straight piece of a route. `s0` is how far along the whole route its
@@ -136,8 +136,62 @@ impl Ribbons {
         })
     }
 
+    /// The lowest deck surface over the point, metres, among the decks within
+    /// `margin` of it: how much room a plant growing there has.
+    pub fn deck_over(&self, p: Vec2, margin: f32) -> Option<f32> {
+        let list = self.grid.get(&(bucket(p.x), bucket(p.y)))?;
+        let mut low: Option<f32> = None;
+        for &id in list.iter().filter(|&&id| id & PIER_BIT == 0) {
+            let s = &self.segs[(id & ID_MASK) as usize];
+            if !s.decked {
+                continue;
+            }
+            let kit = &self.kits[s.kit as usize];
+            let (d, t) = seg_dist(Vec2::new(s.a.x, s.a.z), Vec2::new(s.b.x, s.b.z), p);
+            if d > kit.half + margin {
+                continue;
+            }
+            let y = s.a.y + (s.b.y - s.a.y) * t - kit.drop;
+            low = Some(low.map_or(y, |l: f32| l.min(y)));
+        }
+        low
+    }
+
+    /// Does any deck within `margin` of the point (looking as far as
+    /// `margin` reaches, not only the point's own bucket) stand at least
+    /// `above` metres up and reach, from under its slab to the top of its
+    /// headroom, into the band `lo`..`hi`? Whether a tree's crown standing
+    /// there would swallow a deck.
+    pub fn deck_in(&self, p: Vec2, margin: f32, above: f32, lo: f32, hi: f32) -> bool {
+        if self.grid.is_empty() {
+            return false;
+        }
+        for bz in bucket(p.y - margin)..=bucket(p.y + margin) {
+            for bx in bucket(p.x - margin)..=bucket(p.x + margin) {
+                let Some(list) = self.grid.get(&(bx, bz)) else { continue };
+                for &id in list.iter().filter(|&&id| id & PIER_BIT == 0) {
+                    let s = &self.segs[(id & ID_MASK) as usize];
+                    if !s.decked {
+                        continue;
+                    }
+                    let kit = &self.kits[s.kit as usize];
+                    let (d, t) = seg_dist(Vec2::new(s.a.x, s.a.z), Vec2::new(s.b.x, s.b.z), p);
+                    if d > kit.half + margin {
+                        continue;
+                    }
+                    let y = s.a.y + (s.b.y - s.a.y) * t;
+                    if y >= above && y + kit.clear > lo && y - kit.drop < hi {
+                        return true;
+                    }
+                }
+            }
+        }
+        false
+    }
+
     /// Is the point under a deck that stands clear of the ground? Nothing
     /// grows there: a crown would come up through the planks.
+    #[allow(dead_code)] // kept beside `deck_over` for callers with no plant height
     pub fn under_deck(&self, p: Vec2, margin: f32) -> bool {
         let Some(list) = self.grid.get(&(bucket(p.x), bucket(p.y))) else {
             return false;
@@ -211,7 +265,7 @@ pub fn draw(r: &Ribbons, list: &[u32], v: &mut [u8], o: Vec3, vsize: f32, pad: u
                         }
                         // Headroom: a tunnel or an underpass keeps its air.
                         None if kit.clear > 0.0 && across.abs() <= kit.half && up > 0.0 && up < kit.clear => {
-                            v[idx(px, py, pz)] = AIR;
+                            v[idx(px, py, pz)] = KEEP_AIR;
                         }
                         None => {}
                     }

@@ -1,0 +1,15 @@
+{
+  "name": "apples",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "Ripe apples over the crown of an orchard tree in autumn: red with yellow-green showing through.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [184, 40, 34],
+    "alt": [196, 150, 60],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [190, 50, 42], "alt": [198, 154, 70]}
+  }
+}

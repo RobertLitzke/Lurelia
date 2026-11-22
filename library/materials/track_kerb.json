@@ -1,0 +1,16 @@
+{
+  "name": "track_kerb",
+  "version": 1,
+  "introduced_by": "kestrel",
+  "notes": "Red and white racing kerb along the edges of a circuit (event circuit's kerb).",
+  "smooth": true,
+  "surface": "hardpack",
+  "texture": {
+    "pattern": "columns",
+    "base": [196, 44, 38],
+    "alt": [232, 228, 220],
+    "scale": 8,
+    "contrast": 1.0,
+    "calm": {"base": [186, 60, 52], "alt": [226, 222, 214]}
+  }
+}

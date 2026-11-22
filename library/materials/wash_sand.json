@@ -5,6 +5,7 @@
   "notes": "Pale tan sand and pebbles in a dry wash or canyon floor.",
   "id": 110,
   "smooth": true,
+  "surface": "sand_wet",
   "texture": {
     "pattern": "speckle",
     "base": [212, 182, 142],

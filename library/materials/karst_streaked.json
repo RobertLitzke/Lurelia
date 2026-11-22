@@ -3,15 +3,13 @@
   "version": 2,
   "introduced_by": "jadewater",
   "notes": "A darker band of the limestone, streaked grey-black where water runs down the faces. v2: drawn in flat facets (surface nets lit like sloped ground) instead of smoothed into slopes, so tower walls and the Old Wall's cliffs read as smooth rock, not one-voxel steps.",
+  "like": "karst_limestone",
   "id": 231,
-  "smooth": false,
   "texture": {
-    "pattern": "strata",
-    "base": [100, 110, 120],
     "alt": [122, 132, 140],
-    "scale": 3,
+    "calm": {"alt": [122, 132, 142], "base": [104, 114, 124]},
     "contrast": 0.8,
-    "calm": {"base": [104, 114, 124], "alt": [122, 132, 142]}
-  },
-  "facet": true
+    "scale": 3,
+    "base": [100, 110, 120]
+  }
 }

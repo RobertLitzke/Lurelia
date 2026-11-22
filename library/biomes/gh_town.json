@@ -1,0 +1,25 @@
+{
+  "name": "gh_town",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "The town's lawns and verges: mown grass, street trees, roses by the doors. Kept, with nobody to keep it.",
+  "priority": 8,
+  "rules": {"region": "gannet_harbor", "elev": [0.5, 80]},
+  "surface": "lawn_grass",
+  "subsurface": "dirt",
+  "map_color": [160, 170, 150],
+  "plants": [
+    {"plant": "street_maple", "density": 0.0015, "placement": {"verb": "lone", "params": {"spacing": 22}}},
+    {"plant": "street_oak", "density": 0.0006, "placement": {"verb": "lone", "params": {"spacing": 30}}},
+    {"plant": "cottage_rose", "density": 0.004, "placement": {"verb": "clustered", "params": {"size": 6}}}
+  ],
+  "features": [],
+  "creatures": [
+    {"creature": "gull", "count": 12},
+    {"creature": "crow", "count": 4},
+    {"creature": "sparrow", "count": 10},
+    {"creature": "starling", "count": 10},
+    {"creature": "annas_hummingbird", "count": 2}
+  ],
+  "collectibles": []
+}

@@ -26,7 +26,7 @@ pub struct CollectibleDef {
     pub notes: String,
 }
 
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct CollectibleUse {
     pub item: String,
     /// Items per square metre where the placement allows them fully.

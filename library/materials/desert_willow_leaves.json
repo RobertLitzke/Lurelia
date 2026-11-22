@@ -4,6 +4,7 @@
   "introduced_by": "redrock",
   "notes": "Desert willow leaves: long, narrow, light green.",
   "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "narrow"},
   "texture": {
     "pattern": "speckle",
     "base": [118, 140, 80],

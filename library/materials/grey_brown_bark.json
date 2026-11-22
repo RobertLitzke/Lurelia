@@ -1,0 +1,16 @@
+{
+  "name": "grey_brown_bark",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "Thin grey-brown stems of shrubs and small trees: buttonbush, desert willow. Replaces buttonbush_bark and desert_willow_bark.",
+  "was": ["buttonbush_bark", "desert_willow_bark"],
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [112, 92, 72],
+    "alt": [94, 78, 62],
+    "scale": 4,
+    "contrast": 0.8,
+    "calm": {"base": [118, 98, 78], "alt": [100, 84, 68]}
+  }
+}

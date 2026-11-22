@@ -54,7 +54,7 @@ pub fn decay_rate(part: u8) -> f32 {
 }
 
 /// A compiled shape: `size` voxels, x fastest, then z, then y.
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Shape {
     pub size: [i32; 3],
     pub mat: Vec<u8>,
@@ -71,6 +71,13 @@ pub struct Shape {
     /// The `segment` ops' pieces, in local voxel units: drawn by the mesher
     /// as tubes along their lines where the structure stands (threads).
     pub threads: Vec<ShapeThread>,
+    /// The voxels (indices into `mat`) a `segment` drew and no later op
+    /// replaced: the only ones its tube may hide. A segment's thread hides
+    /// the voxels it covers, so without this a steel brace hid the steel
+    /// pole it was joined to, and an arc's ends punched holes in a dome.
+    pub thread_vox: Vec<u32>,
+    /// While compiling: `thread_vox` as one flag per voxel (empty after).
+    pub(crate) owned: Vec<bool>,
 }
 
 /// One straight piece of a `segment` op.
@@ -127,17 +134,49 @@ pub fn turn_logs(ops: &[Op], size: [i32; 3], anchor: [i32; 3], yaw: f32) -> Opti
     };
     for op in ops {
         match op.clone() {
-            Op::Log { base, radius, length, axis, mat, part, yaw: y0 } => {
+            Op::Log {
+                base,
+                radius,
+                length,
+                axis,
+                mat,
+                part,
+                yaw: y0,
+            } => {
                 let b = spin(base);
                 let d = turned_axis(&axis, y0 + yaw);
                 grow(b, radius + 1.0);
                 grow([b[0] + d[0] * length, 0.0, b[2] + d[1] * length], radius + 1.0);
-                out.push(Op::Log { base: b, radius, length, axis, mat, part, yaw: y0 + yaw });
+                out.push(Op::Log {
+                    base: b,
+                    radius,
+                    length,
+                    axis,
+                    mat,
+                    part,
+                    yaw: y0 + yaw,
+                });
             }
-            Op::Disc { centre, radius, thick, axis, mat, part, yaw: y0 } => {
+            Op::Disc {
+                centre,
+                radius,
+                thick,
+                axis,
+                mat,
+                part,
+                yaw: y0,
+            } => {
                 let c = spin(centre);
                 grow(c, radius + thick + 1.0);
-                out.push(Op::Disc { centre: c, radius, thick, axis, mat, part, yaw: y0 + yaw });
+                out.push(Op::Disc {
+                    centre: c,
+                    radius,
+                    thick,
+                    axis,
+                    mat,
+                    part,
+                    yaw: y0 + yaw,
+                });
             }
             _ => return None,
         }
@@ -169,8 +208,12 @@ pub fn compile(ops: &[Op], size: [i32; 3], resolve: &dyn Fn(&str) -> Option<u8>)
         roof: vec![0; (size[0] * size[2]).max(0) as usize],
         col_top: vec![0; (size[0] * size[2]).max(0) as usize],
         threads: Vec::new(),
+        thread_vox: Vec::new(),
+        owned: Vec::new(),
     };
     run(&mut s, ops, [0, 0, 0], resolve);
+    s.thread_vox = s.owned.iter().enumerate().filter(|&(i, &o)| o && s.mat[i] != 0).map(|(i, _)| i as u32).collect();
+    s.owned = Vec::new();
     for z in 0..size[2] {
         for x in 0..size[0] {
             for y in (0..size[1]).rev() {
@@ -202,6 +245,9 @@ pub fn compile(ops: &[Op], size: [i32; 3], resolve: &dyn Fn(&str) -> Option<u8>)
 
 fn put(s: &mut Shape, x: i32, y: i32, z: i32, m: u8, p: u8) {
     if let Some(i) = s.idx(x, y, z) {
+        if let Some(o) = s.owned.get_mut(i) {
+            *o = false;
+        }
         s.mat[i] = m;
         s.part[i] = if m == 0 { 0 } else { p };
     }
@@ -291,7 +337,16 @@ fn run(s: &mut Shape, ops: &[Op], off: [i32; 3], resolve: &dyn Fn(&str) -> Optio
                     }
                 }
             }
-            Op::Dish { vertex, radius, depth, thick, tilt, yaw, mat, part } => {
+            Op::Dish {
+                vertex,
+                radius,
+                depth,
+                thick,
+                tilt,
+                yaw,
+                mat,
+                part,
+            } => {
                 let Some(m) = resolve(mat) else { continue };
                 let v = addf(*vertex);
                 let p = part_code(part.as_ref());
@@ -490,7 +545,20 @@ fn run(s: &mut Shape, ops: &[Op], off: [i32; 3], resolve: &dyn Fn(&str) -> Optio
                                 let t = (((c[0] - a[0]) * d[0] + (c[1] - a[1]) * d[1] + (c[2] - a[2]) * d[2]) / l2).clamp(0.0, 1.0);
                                 let q = [a[0] + d[0] * t - c[0], a[1] + d[1] * t - c[1], a[2] + d[2] * t - c[2]];
                                 if q[0] * q[0] + q[1] * q[1] + q[2] * q[2] < hull * hull {
-                                    put(s, x, y, z, m, p);
+                                    // A solid segment fills only air (or a
+                                    // carve mark): what it passes through
+                                    // keeps its own voxels, and its tube is
+                                    // drawn over them.
+                                    let Some(i) = s.idx(x, y, z) else { continue };
+                                    if m == 0 {
+                                        put(s, x, y, z, m, p);
+                                    } else if s.mat[i] == 0 || s.mat[i] == CARVE {
+                                        put(s, x, y, z, m, p);
+                                        if s.owned.is_empty() {
+                                            s.owned = vec![false; s.mat.len()];
+                                        }
+                                        s.owned[i] = true;
+                                    }
                                 }
                             }
                         }
@@ -607,5 +675,32 @@ mod tests {
         assert_eq!(s.get(3, 1, 3).0, 0, "inside is hollow");
         assert_eq!(s.get(2, 4, 0), (7, PART_ROOF));
         assert!(s.top >= 7, "roof rises: top {}", s.top);
+    }
+    /// A segment fills only air and owns only what it drew: a brace of the
+    /// pole's own steel leaves the pole's voxels to the pole (they keep
+    /// their faces), and later ops take voxels back from it.
+    #[test]
+    fn segments_own_only_the_air_they_fill() {
+        let ops: Vec<Op> = serde_json::from_str(
+            r#"[
+            {"op":"box","from":[4,0,1],"to":[6,12,3],"mat":"steel"},
+            {"op":"segment","points":[[4,4,2],[0,10,2]],"radius":0.8,"mat":"steel"},
+            {"op":"box","from":[0,10,0],"to":[2,12,4],"mat":"steel"}
+        ]"#,
+        )
+        .unwrap();
+        let s = compile(&ops, [8, 12, 4], &|n| (n == "steel").then_some(3));
+        let owned = |x: i32, y: i32, z: i32| s.thread_vox.contains(&(s.idx(x, y, z).unwrap() as u32));
+        assert!(!s.thread_vox.is_empty(), "the brace owns its voxels");
+        for y in 0..12 {
+            for z in 1..3 {
+                for x in 4..6 {
+                    assert!(!owned(x, y, z), "pole voxel {x},{y},{z} taken by the brace");
+                }
+            }
+        }
+        assert!(owned(2, 7, 2) || owned(1, 7, 2) || owned(2, 6, 2), "brace middle owned");
+        assert!(!owned(0, 10, 2) && !owned(1, 11, 2), "the later box took the brace's end back");
+        assert_eq!(s.get(4, 4, 2).0, 3, "pole stands");
     }
 }

@@ -1,0 +1,9 @@
+{
+  "name": "liana",
+  "version": 1,
+  "introduced_by": "canopy_test",
+  "notes": "A woody climber that has reached the canopy and hangs back down to the floor: long strands from the big crowns.",
+  "height": [14, 34],
+  "like": "hanging_vine",
+  "hosts": ["tree"]
+}

@@ -4,6 +4,7 @@
   "introduced_by": "redrock",
   "notes": "Desert willow flowers: lilac-pink trumpets at the stem tips, spring and summer.",
   "smooth": false,
+  "sprites": "flower",
   "texture": {
     "pattern": "speckle",
     "base": [212, 146, 190],

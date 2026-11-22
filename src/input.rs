@@ -24,6 +24,8 @@ pub enum Action {
     Escape,
     Bike,
     Kayak,
+    /// U: get in or out of the world's vehicle; held while driving, reset it.
+    Vehicle,
     Glide,
     Camera,
     FreeCamera,
@@ -138,6 +140,11 @@ pub const BINDINGS: &[Binding] = &[
         keys: &[K::KeyK],
         name: "K",
         action: Action::Kayak,
+    },
+    Binding {
+        keys: &[K::KeyU],
+        name: "U",
+        action: Action::Vehicle,
     },
     Binding {
         keys: &[K::KeyC],
@@ -320,6 +327,8 @@ pub fn hold(i: &mut MoveInput, a: Action, down: bool) -> bool {
     match a {
         Action::TiltLeft => i.focus_near = down,
         Action::TiltRight => i.focus_far = down,
+        // Pressed (main.rs posts the press) and held (the hold resets the car).
+        Action::Vehicle => i.vehicle = down,
         _ => {}
     }
     let slot = match a {
@@ -447,6 +456,20 @@ pub const HELP: &[HelpBox] = &[
             acts(&[Action::Jump], "LOAD THE SUSPENSION, LET GO TO POP", ModeId::Bike),
             acts(&[Action::Down], "TUCK: LOWER DRAG, A HARDER PULL DOWNHILL", ModeId::Bike),
             acts(&[Action::Camera], "FIRST PERSON OR CHASE CAMERA", ModeId::Bike),
+        ],
+    },
+    HelpBox {
+        title: "DRIVING",
+        rows: &[
+            acts(&[Action::Vehicle], "GET IN, GET OUT; FAR FROM IT, BRING IT OVER", ModeId::Drive),
+            keys("HOLD U", "PUT IT BACK ON ITS WHEELS", Some(ModeId::Drive)),
+            keys("W / S", "THROTTLE / BRAKE, THEN REVERSE", Some(ModeId::Drive)),
+            keys("MOUSE / A D", "STEER WHERE YOU LOOK", Some(ModeId::Drive)),
+            acts(&[Action::Down], "HANDBRAKE", ModeId::Drive),
+            acts(&[Action::Jump], "LOAD THE SPRINGS, LET GO TO HOP", ModeId::Drive),
+            acts(&[Action::Sprint], "BOOST", ModeId::Drive),
+            keys("W S A D IN THE AIR", "PITCH AND ROLL", Some(ModeId::Drive)),
+            acts(&[Action::Camera], "CHASE OR FIRST PERSON", ModeId::Drive),
         ],
     },
     HelpBox {

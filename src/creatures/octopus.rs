@@ -185,10 +185,17 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, models: &[Model], 
             .iter()
             .map(|(ch, angle)| {
                 let from = at + base(rig, ch, root, m.voxel);
-                let mut spine = Spine { pts: spread(ch, m.voxel, from, angle + face, 0.0, 0.9), phase: 0.0 };
+                let mut spine = Spine {
+                    pts: spread(ch, m.voxel, from, angle + face, 0.0, 0.9),
+                    phase: 0.0,
+                };
                 spine.settle(&|x, z| Some(bed(terrain, x, z, at.y + 1.0)), LIFT, 1.0);
                 spine.tighten(ch, m.voxel);
-                Arm { chain: ch.clone(), spine, angle: *angle }
+                Arm {
+                    chain: ch.clone(),
+                    spine,
+                    angle: *angle,
+                }
             })
             .collect();
         let mut oct = Octopus {
@@ -402,7 +409,11 @@ pub fn sheet(rig: &Rig, vox: f32, pivot: Vec3) -> [Vec<(String, Pose)>; 2] {
                     s.tighten(ch, vox);
                     pts = s.pts;
                 }
-                Arm { chain: ch.clone(), spine: Spine { pts, phase: 0.0 }, angle: *angle }
+                Arm {
+                    chain: ch.clone(),
+                    spine: Spine { pts, phase: 0.0 },
+                    angle: *angle,
+                }
             })
             .collect();
         lay(rig, &arms, root.1, Vec3::ZERO, &mut pose);

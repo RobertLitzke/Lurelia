@@ -3,13 +3,6 @@
   "version": 1,
   "introduced_by": "underwater",
   "notes": "Violet plate coral, darker in its folds.",
-  "smooth": false,
-  "texture": {
-    "pattern": "speckle",
-    "base": [140, 98, 178],
-    "alt": [116, 80, 156],
-    "scale": 4,
-    "contrast": 1.0,
-    "calm": {"base": [146, 104, 184], "alt": [122, 86, 162]}
-  }
+  "like": "coral_rose",
+  "texture": {"alt": [116, 80, 156], "calm": {"alt": [122, 86, 162], "base": [146, 104, 184]}, "base": [140, 98, 178]}
 }

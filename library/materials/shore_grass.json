@@ -4,6 +4,8 @@
   "introduced_by": "glassfall",
   "id": 50,
   "smooth": true,
+  "surface": "grass",
+  "sprites": "shore grass",
   "texture": {
     "pattern": "noise",
     "base": [140, 150, 86],

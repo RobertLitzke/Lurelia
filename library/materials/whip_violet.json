@@ -3,13 +3,6 @@
   "version": 1,
   "introduced_by": "underwater",
   "notes": "Sea whip: a flexible gorgonian rod, violet, its polyps a fuzz along it.",
-  "smooth": false,
-  "texture": {
-    "pattern": "speckle",
-    "base": [134, 78, 150],
-    "alt": [166, 108, 176],
-    "scale": 5,
-    "contrast": 0.8,
-    "calm": {"base": [140, 84, 156], "alt": [172, 114, 182]}
-  }
+  "like": "whip_orange",
+  "texture": {"alt": [166, 108, 176], "calm": {"alt": [172, 114, 182], "base": [140, 84, 156]}, "base": [134, 78, 150]}
 }

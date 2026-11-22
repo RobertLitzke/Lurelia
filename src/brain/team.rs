@@ -237,7 +237,11 @@ impl TeamBrain {
                 // returning enemy walks into. Its own flag coming home is a
                 // flag event, so the next plan sends it on at once.
                 let goal = match (cx.own.seen, cx.posts.first()) {
-                    (Seen::Carried { .. } | Seen::Dropped(_), Some(&post)) if trying("hide") => Goal::Hold { post, leash: 4.0, watch: cx.theirs.stand },
+                    (Seen::Carried { .. } | Seen::Dropped(_), Some(&post)) if trying("hide") => Goal::Hold {
+                        post,
+                        leash: 4.0,
+                        watch: cx.theirs.stand,
+                    },
                     _ => Goal::Point(cx.own.stand),
                 };
                 out.push((c, Order::new(Role::Carry, goal, 1.0)));
@@ -420,7 +424,15 @@ impl TeamBrain {
                 let pick = free.iter().min_by(|a, b| a.at.distance(v).total_cmp(&b.at.distance(v))).map(|m| m.who);
                 if let Some(who) = pick {
                     let middle = (cx.own.stand + cx.theirs.stand) * 0.5;
-                    let mut o = Order::new(Role::Overwatch, Goal::Hold { post: v, leash: OVERWATCH_LEASH_M, watch: middle }, 0.4);
+                    let mut o = Order::new(
+                        Role::Overwatch,
+                        Goal::Hold {
+                            post: v,
+                            leash: OVERWATCH_LEASH_M,
+                            watch: middle,
+                        },
+                        0.4,
+                    );
                     o.reach = Some(OVERWATCH_REACH_M);
                     out.push((who, o));
                     take(&mut free, who);
@@ -695,7 +707,16 @@ mod tests {
     fn in_a_standoff_everybody_but_the_carrier_retrieves() {
         let ms = [member(1, -38.0), member(2, -10.0), member(3, 0.0), member(4, 10.0)];
         let mut tb = TeamBrain::default();
-        let c = cx(&ms, Seen::Carried { by: 7, at: Some(Vec3::new(20.0, 0.0, 0.0)) }, Seen::Carried { by: 1, at: None }, &[], &[]);
+        let c = cx(
+            &ms,
+            Seen::Carried {
+                by: 7,
+                at: Some(Vec3::new(20.0, 0.0, 0.0)),
+            },
+            Seen::Carried { by: 1, at: None },
+            &[],
+            &[],
+        );
         let out = tb.plan(&c, &[], true);
         assert_eq!(roles(&out), vec![Role::Carry, Role::Retrieve, Role::Retrieve, Role::Retrieve], "{out:?}");
     }
@@ -726,7 +747,11 @@ mod tests {
         let mut tb = with(&["stance"]);
         let calm = tb.plan(&cx(&ms, Seen::Home, Seen::Home, &[], &posts), &[], true);
         assert!(post(&calm).x > -15.0, "the defender stayed home with nobody about: {calm:?}");
-        let near = [Sighting { who: 9, at: Vec3::new(-20.0, 0.0, 0.0), when: 10.0 }];
+        let near = [Sighting {
+            who: 9,
+            at: Vec3::new(-20.0, 0.0, 0.0),
+            when: 10.0,
+        }];
         let threat = tb.plan(&cx(&ms, Seen::Home, Seen::Home, &[], &posts), &near, true);
         assert_eq!(post(&threat), posts[0], "the defender stayed forward with an enemy near the flag");
     }
@@ -735,9 +760,15 @@ mod tests {
     fn with_every_enemy_just_killed_everybody_attacks() {
         let ms = [member(1, -35.0), member(2, -30.0), member(3, -25.0)];
         let mut tb = with(&["reset"]);
-        let wiped = TeamCtx { reset: 3, ..cx(&ms, Seen::Home, Seen::Home, &[], &[]) };
+        let wiped = TeamCtx {
+            reset: 3,
+            ..cx(&ms, Seen::Home, Seen::Home, &[], &[])
+        };
         assert!(tb.plan(&wiped, &[], true).iter().all(|(_, o)| o.role == Role::Attack));
-        let two = TeamCtx { reset: 2, ..cx(&ms, Seen::Home, Seen::Home, &[], &[]) };
+        let two = TeamCtx {
+            reset: 2,
+            ..cx(&ms, Seen::Home, Seen::Home, &[], &[])
+        };
         assert!(tb.plan(&two, &[], true).iter().any(|(_, o)| o.role == Role::Defend));
     }
 

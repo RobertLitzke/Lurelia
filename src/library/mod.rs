@@ -40,24 +40,24 @@ fn default_fringe() -> f32 {
     3.0
 }
 
+mod biome;
+mod check;
+mod collectible;
+mod creature;
+mod look;
 mod material;
 mod plant;
 mod shape;
-mod creature;
-mod look;
-mod collectible;
 mod weapon;
-mod biome;
-mod check;
 
+pub use biome::*;
+pub use collectible::*;
+pub use creature::*;
+pub use look::*;
 pub use material::*;
 pub use plant::*;
 pub use shape::*;
-pub use creature::*;
-pub use look::*;
-pub use collectible::*;
 pub use weapon::*;
-pub use biome::*;
 
 // ---- the library --------------------------------------------------------------
 
@@ -177,14 +177,17 @@ impl Library {
         let mut lib = Library {
             index: Index::default(),
             reach: None,
-            materials: load_dir::<MaterialDef>(&lib_dir.join("materials"), &mut errors).into_iter().map(|x| x.1).collect(),
+            // Materials inherit (`"like": "quartzite", "shade": 0.78`), so a
+            // variant of a texture is a few lines.
+            materials: load_dir_inherit::<MaterialDef>(&lib_dir.join("materials"), &mut errors).into_iter().map(|x| x.1).collect(),
             plants: load_dir_inherit::<PlantDef>(&lib_dir.join("plants"), &mut errors).into_iter().map(|x| x.1).collect(),
             structures: load_dir::<StructureDef>(&lib_dir.join("structures"), &mut errors).into_iter().map(|x| x.1).collect(),
             kits: load_dir::<crate::world::route::kit::KitDef>(&lib_dir.join("kits"), &mut errors).into_iter().map(|x| x.1).collect(),
             // City kits inherit (`"like": "modern"`), so a theme is a short file.
             cities: load_dir_inherit::<crate::world::city::Kit>(&lib_dir.join("cities"), &mut errors).into_iter().map(|x| x.1).collect(),
             creatures: load_dir_inherit::<CreatureDef>(&lib_dir.join("creatures"), &mut errors).into_iter().map(|x| x.1).collect(),
-            biomes: load_dir::<BiomeDef>(&lib_dir.join("biomes"), &mut errors).into_iter().map(|x| x.1).collect(),
+            // Biomes inherit too (`"like": "city_park"`), lists replaced whole.
+            biomes: load_dir_inherit::<BiomeDef>(&lib_dir.join("biomes"), &mut errors).into_iter().map(|x| x.1).collect(),
             collectibles: load_dir::<CollectibleDef>(&lib_dir.join("collectibles"), &mut errors).into_iter().map(|x| x.1).collect(),
             signs: load_dir::<crate::world::places::SignStyle>(&lib_dir.join("signs"), &mut errors).into_iter().map(|x| x.1).collect(),
             weapons: load_dir::<WeaponDef>(&lib_dir.join("weapons"), &mut errors).into_iter().map(|x| x.1).collect(),
@@ -217,7 +220,11 @@ impl Library {
     /// Returns the reached materials left without an id.
     pub fn assign_ids(&mut self, reach: Option<std::collections::HashSet<String>>) -> Vec<String> {
         let mut taken = [false; 256];
-        let reached: Vec<bool> = self.materials.iter().map(|m| reach.as_ref().is_none_or(|r| r.contains(&m.name))).collect();
+        let reached: Vec<bool> = self
+            .materials
+            .iter()
+            .map(|m| reach.as_ref().is_none_or(|r| r.contains(&m.name) || m.was.iter().any(|w| r.contains(w))))
+            .collect();
         let mut ids = vec![0u8; self.materials.len()];
         let own = |m: &MaterialDef| m.file_id.filter(|i| (17..255).contains(i)).map(|i| i as usize);
         // Reached: own ids, then free ones.
@@ -248,6 +255,13 @@ impl Library {
             m.id = id;
         }
         self.index.materials = self.materials.iter().rev().filter(|m| m.id != 0).map(|m| (m.name.clone(), m.id)).collect();
+        // A merged material answers to the names it had (`was`), behind any
+        // material that has that name now.
+        for m in self.materials.iter().filter(|m| m.id != 0) {
+            for w in &m.was {
+                self.index.materials.entry(w.clone()).or_insert(m.id);
+            }
+        }
         self.reach = reach;
         missing
     }
@@ -434,7 +448,6 @@ impl Library {
     pub fn weapon(&self, name: &str) -> Option<usize> {
         self.index.weapons.get(name).copied()
     }
-
 
     pub fn summary(&self) -> String {
         format!(

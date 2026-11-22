@@ -5,6 +5,7 @@
   "notes": "Silver-green sagebrush.",
   "id": 125,
   "smooth": false,
+  "sprites": "sage",
   "texture": {
     "pattern": "blotch",
     "base": [138, 146, 118],

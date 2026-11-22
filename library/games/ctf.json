@@ -1,0 +1,10 @@
+{
+  "name": "ctf",
+  "version": 1,
+  "introduced_by": "engine",
+  "kind": "ctf",
+  "title": "CAPTURE THE FLAG",
+  "notes": "Two sides and the map's two flag stands. Needs a map whose shooter block has a ctf block.",
+  "help": "Two sides and a flag each: take theirs off its stand and carry it home to score.",
+  "captures": 3
+}

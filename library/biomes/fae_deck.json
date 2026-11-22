@@ -27,6 +27,6 @@
       "placement": {"verb": "clustered", "params": {"size": 12, "min": 0.0, "max": 1.0}}
     }
   ],
-  "creatures": [{"creature": "lantern_moth", "count": 20}, {"creature": "dusk_wren", "count": 6}],
+  "creatures": [{"creature": "glassmoth", "morph": "lantern", "count": 20}, {"creature": "dusk_wren", "count": 6}],
   "collectibles": []
 }

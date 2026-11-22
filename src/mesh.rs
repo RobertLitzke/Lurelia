@@ -646,7 +646,9 @@ fn round_corner(v: &[u8; PAD3], f: &mut Option<TreeFields>, x: isize, y: isize, 
     let mut solid = [[[false; 2]; 2]; 2];
     let mut count = 0;
     let mut facet = true;
-    let mut steps = true;
+    // Bevelled where any of the eight is a built thing: where a faceted dome
+    // sits on a bevelled ring, the ring's straight edge wins, not a zigzag.
+    let mut steps = false;
     for (i, si) in solid.iter_mut().enumerate() {
         for (j, sj) in si.iter_mut().enumerate() {
             for (k, s) in sj.iter_mut().enumerate() {
@@ -656,7 +658,7 @@ fn round_corner(v: &[u8; PAD3], f: &mut Option<TreeFields>, x: isize, y: isize, 
                         return None;
                     }
                     facet &= crate::world::matlib::facets(m);
-                    steps &= crate::world::matlib::steps_only(m);
+                    steps |= crate::world::matlib::steps_only(m);
                     *s = true;
                     count += 1;
                 }
@@ -677,7 +679,11 @@ fn round_corner(v: &[u8; PAD3], f: &mut Option<TreeFields>, x: isize, y: isize, 
     // Ground in the 4x4x4 voxels around: stay square. The ground rules move a
     // corner by which face asks, which is only safe beside other vertical
     // moves; this keeps every corner next to a rounded one unmoved.
-    if f.ground[idx(x, y, z)] {
+    // Built things skip it: ground among their own eight voxels already kept
+    // the corner square (it doesn't round), and nearer than that no ground
+    // face shares the corner. Without this a wall on a slab one voxel thick
+    // kept its foot square and bevelled the row above, a row of teeth.
+    if !steps && f.ground[idx(x, y, z)] {
         return None;
     }
     let dens = |i: usize, j: usize, k: usize| f.dens[idx(x - 1 + i as isize, y - 1 + j as isize, z - 1 + k as isize)] as i32;
@@ -904,7 +910,7 @@ pub fn mesh_chunk(v: &[u8; PAD3], smooth: bool, out: &mut Mesh) {
 /// line is known (`models::Grid::rod`) are drawn as round tubes along them
 /// (mesh/lean.rs), the voxels under them hidden.
 pub fn mesh_model_t(v: &[u8; PAD3], threads: &[Thread], out: &mut Mesh) {
-    mesh_impl_t(v, false, true, None, None, false, threads, out);
+    mesh_impl_t(v, false, true, None, None, false, threads, &[], out);
 }
 
 /// `mesh_chunk` with each padded column's true ground height in voxels
@@ -912,23 +918,25 @@ pub fn mesh_model_t(v: &[u8; PAD3], threads: &[Thread], out: &mut Mesh) {
 /// `blocks`: mesh foliage as leaf blocks of 2x2x2 voxels (the two finest
 /// levels; see the module notes), when slopes are on.
 pub fn mesh_chunk_h(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, blocks: bool, out: &mut Mesh) {
-    mesh_chunk_t(v, smooth, colh, blocks, &[], out)
+    mesh_chunk_t(v, smooth, colh, blocks, &[], &[], out)
 }
 
 /// `mesh_chunk_h` with the threads (thin stems whose line is known, from
 /// `Generator::threads`) that pass through the chunk: they are drawn as
-/// tubes along their lines (mesh/lean.rs).
-pub fn mesh_chunk_t(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, blocks: bool, threads: &[Thread], out: &mut Mesh) {
+/// tubes along their lines (mesh/lean.rs). `own` marks the padded voxels
+/// that `owned` threads may hide (`Generator::chunk_threads`).
+#[allow(clippy::too_many_arguments)]
+pub fn mesh_chunk_t(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, blocks: bool, threads: &[Thread], own: &[bool], out: &mut Mesh) {
     let blocks = blocks && smooth && leaf_blocks_on() && v.iter().any(|&m| block_leaf(m));
     // Herb markers (one voxel at the foot of a fern or fireweed) are drawn
     // only as sprites: mesh as if they were air. So are leaves drawn as blocks.
     if blocks || v.iter().any(|&m| sprites::marker(m)) {
         let mut c = pooled(|p| &mut p.marked, 0, 0u8);
         c.extend(v.iter().map(|&m| if sprites::marker(m) || (blocks && block_leaf(m)) { AIR } else { m }));
-        mesh_impl_t(c.as_slice().try_into().unwrap(), smooth, true, colh, blocks.then_some(v), true, threads, out);
+        mesh_impl_t(c.as_slice().try_into().unwrap(), smooth, true, colh, blocks.then_some(v), true, threads, own, out);
         POOL.with(|p| p.borrow_mut().marked = c);
     } else {
-        mesh_impl_t(v, smooth, true, colh, None, true, threads, out);
+        mesh_impl_t(v, smooth, true, colh, None, true, threads, own, out);
     }
 }
 
@@ -1177,11 +1185,28 @@ fn mesh_impl(v: &[u8; PAD3], smooth: bool, merge: bool, out: &mut Mesh) {
 #[allow(clippy::too_many_arguments)]
 #[cfg(test)]
 fn mesh_impl_h(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, leaves: Option<&[u8; PAD3]>, slabs: bool, out: &mut Mesh) {
-    mesh_impl_t(v, smooth, merge, colh, leaves, slabs, &[], out)
+    mesh_impl_t(v, smooth, merge, colh, leaves, slabs, &[], &[], out)
+}
+
+/// Nanoseconds in each part of `mesh_impl_t`, summed over all threads: lean
+/// stems, corner setup, the six face sweeps, leaf blocks, regrouping. For the
+/// headless stats (`gen_stage_ms`).
+pub static MESH_NANOS: [std::sync::atomic::AtomicU64; 5] = [
+    std::sync::atomic::AtomicU64::new(0),
+    std::sync::atomic::AtomicU64::new(0),
+    std::sync::atomic::AtomicU64::new(0),
+    std::sync::atomic::AtomicU64::new(0),
+    std::sync::atomic::AtomicU64::new(0),
+];
+
+fn mesh_nanos(stage: usize, since: std::time::Instant) -> std::time::Instant {
+    MESH_NANOS[stage].fetch_add(since.elapsed().as_nanos() as u64, std::sync::atomic::Ordering::Relaxed);
+    std::time::Instant::now()
 }
 
 #[allow(clippy::too_many_arguments)]
-fn mesh_impl_t(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, leaves: Option<&[u8; PAD3]>, slabs: bool, threads: &[Thread], out: &mut Mesh) {
+fn mesh_impl_t(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, leaves: Option<&[u8; PAD3]>, slabs: bool, threads: &[Thread], own: &[bool], out: &mut Mesh) {
+    let tm = std::time::Instant::now();
     out.quads.clear();
     out.sprites.clear();
     out.sprite_fill = 0;
@@ -1194,10 +1219,16 @@ fn mesh_impl_t(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, 
     // Leaning stems are drawn as slanted tubes (mesh/lean.rs): their voxels
     // make no faces of their own and hide none beside them.
     // A model's threads (mesh_model_t) are drawn though it is not smoothed.
-    let lean = if tubes_on() && (smooth || !threads.is_empty()) { lean::leaning(v, threads, !smooth) } else { None };
+    let lean = if tubes_on() && (smooth || !threads.is_empty()) {
+        lean::leaning(v, threads, own, !smooth)
+    } else {
+        None
+    };
+    let tm = mesh_nanos(0, tm);
     let leaning = |i: isize| lean.as_ref().is_some_and(|l| l.flags[i as usize]);
     let solid = |i: isize| v[i as usize] != AIR && !leaning(i);
     let mut corners = if smooth { Some(Corners::new(v, colh)) } else { None };
+    let tm = mesh_nanos(1, tm);
     // Mask entries: 0 = no face; otherwise material | ao << 8 | 1 << 16 (present)
     // | 1 << 17 when the corners differ or the face is sloped or blended, which
     // blocks merging. `extra` holds word2.
@@ -1321,11 +1352,14 @@ fn mesh_impl_t(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, 
                                 edge[(c[along] - p[along]) as usize][(c[1] > p[1]) as usize] = c[1] as i32 * 4 + o;
                             }
                         }
-                        if any_round && crate::world::matlib::facets(m) && round.iter().all(|r| *r == [0; 3]) {
-                            // Rounded material in the middle of a flat face:
+                        if any_round && crate::world::matlib::steps_only(m) && round.iter().all(|r| *r == [0; 3]) {
+                            // Bevelled material in the middle of a flat face:
                             // no corner moved, so it stays a plain quad and can
                             // merge (a bevelled arena wall would otherwise be
-                            // one quad a voxel).
+                            // one quad a voxel). Not for material faceted all
+                            // over (a dome, a granite whaleback): a flat
+                            // stretch there drawn plain is lit unlike the
+                            // facets round it and shows as a stepped patch.
                         } else if any_round {
                             (word2, word3) = pack_round(&round);
                             rounded = true;
@@ -1413,12 +1447,14 @@ fn mesh_impl_t(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, 
         }
         let _ = start;
     }
+    let tm = mesh_nanos(2, tm);
     if let Some(l) = leaves {
         leaf_blocks(l, out);
     }
     if let Some(l) = &lean {
         out.quads.extend_from_slice(&l.quads);
     }
+    let tm = mesh_nanos(3, tm);
     // Regroup (see Mesh::tails), so the renderer can draw just the part of a
     // group that might show.
     // A stable counting sort by (group, kind, lean class).
@@ -1450,6 +1486,7 @@ fn mesh_impl_t(v: &[u8; PAD3], smooth: bool, merge: bool, colh: Option<&[f32]>, 
         p.keys = keys;
         p.quads = src;
     });
+    mesh_nanos(4, tm);
 }
 
 #[cfg(test)]
@@ -2002,7 +2039,10 @@ mod tests {
         }
         let mut m = Mesh::default();
         mesh_chunk_h(&v, true, None, true, &mut m);
-        let blocks = Mesh { quads: m.quads.iter().copied().filter(quad::block).collect(), ..Default::default() };
+        let blocks = Mesh {
+            quads: m.quads.iter().copied().filter(quad::block).collect(),
+            ..Default::default()
+        };
         let open = open_edges(&blocks);
         assert!(open.is_empty(), "{} open leaf-block edges round the shared cells, first: {:?}", open.len(), &open[..open.len().min(6)]);
     }

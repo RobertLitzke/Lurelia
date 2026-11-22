@@ -1,0 +1,15 @@
+{
+  "name": "blueberries",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "Wild blueberries: small dusty blue berries with a pale bloom, late summer.",
+  "smooth": false,
+  "texture": {
+    "pattern": "speckle",
+    "base": [70, 84, 138],
+    "alt": [108, 122, 168],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [76, 90, 142], "alt": [112, 126, 170]}
+  }
+}

@@ -9,15 +9,15 @@ Each layer uses the ones below it and never the ones above.
 
 | Layer | What | Where |
 |---|---|---|
-| App | window, screens (title, launch, settings, loading, playing, pause menu, help), what a run was launched with, key table, CLI, dev tools | `main.rs`, `menu.rs`, `launch.rs`, `input.rs`, `cli.rs`, `tools/` |
+| App | window, screens (title, launch, settings, loading, playing, pause menu, help), what a run was launched with, the games a world can be played as, key table, CLI, dev tools | `main.rs`, `menu.rs`, `launch.rs`, `games.rs`, `input.rs`, `cli.rs`, `tools/` |
 | Sound | the device, the mixer and its three buses, the ambient voices and the one-shot effects, all synthesised; what the ear gets from the world, worked out by `bed.rs` and `watch.rs`, the two files with game knowledge | `sound/`; see GUIDE.md, "Sound" |
 | Editing | the LOOK page (F7) and the EDIT page (F8): a creature or plant in a studio with its library entry beside it, written back to `library/`; both drawn as one form, with one kind of knob | `form.rs`, `lookpage.rs`, `editor/`; see `docs/LOOK.md`, `docs/EDITOR.md` |
 | On-screen type | distance-field text (Cinzel, Cormorant Garamond Italic, OFL) and the Lurelia logo, compiled in; rebake the atlas with `library/fonts/bake_atlas.py` | `render/font.rs`, `render/hud.rs`, `library/fonts/`, `library/logo/` |
-| Modes | walking, bike, glider, climbing, rope; the camera rig every mode hands the renderer; the camera (film, tasks, scrapbook); screenshot mode and the shooter's rules as activities | `modes.rs`, `ride.rs`, `ride/`, `rig.rs`, `camera/`, `screenshot.rs`, `shooter/`, `player.rs` |
+| Modes | walking, bike, glider, climbing, rope, kayak, four wheels (`vehicle/`); the camera rig every mode hands the renderer; the camera (film, tasks, scrapbook); screenshot mode, the shooter's rules and a race (`race.rs`) as activities | `modes.rs`, `ride.rs`, `ride/`, `vehicle/`, `race.rs`, `rig.rs`, `camera/`, `screenshot.rs`, `shooter/`, `player.rs` |
 | Combat | guns, shots, shells, bursts and damage, with no rules about why | `combat.rs`, `combat/`, `library/weapons/`; see `docs/SHOOTER.md` |
 | Game | the session: one world, its player, creatures and saves, a fixed 60 Hz step; the lifts and portals step through `WorldParts`, which the tournament drives too | `game.rs`, `world_parts.rs` |
 | Creatures | living things and how they move and act | `entities.rs` and friends; see `docs/CREATURES.md` |
-| Content | the shared library and the world builder | `library/`, `inherit.rs`, `variety.rs`, `worldload.rs`, `world/chronicle/`, `world/fields.rs`, `world/flora.rs`, `world/canopy.rs`, `world/city.rs`, `world/route/` |
+| Content | the shared library and the world builder | `library/`, `inherit.rs`, `variety.rs`, `worldload.rs`, `world/chronicle/`, `world/fields.rs`, `world/flora.rs`, `world/canopy.rs`, `world/city.rs`, `world/route/`, `world/seam.rs` |
 | Engine | voxels, meshing, streaming, physics, rendering | `world/store.rs`, `world/gen.rs`, `world/stamp.rs`, `world/material.rs`, `world/matlib.rs`, `mesh.rs`, `mesh/`, `stream.rs`, `physics.rs`, `models.rs`, `render/`, `shaders/` |
 | Shared | small helpers with no game knowledge | `util.rs` (Fx hash, blur, compass bearing), `world/clock.rs`, `world/weather.rs`, `world/season.rs`, `world/noise.rs` |
 
@@ -59,6 +59,16 @@ Each layer uses the ones below it and never the ones above.
   (`EventCtx::seat`), and later events build from those names (`Pos::Rel`,
   the `seat` event), so a village follows its fjord when the land changes.
   Worlds made before this (`landmass` and stamped landforms) are unchanged.
+
+- **Neighbours.** A world that names `neighbours` in its world.json is
+  built to meet them (`world/seam.rs`). `worldload::edges_for` builds each
+  neighbour first, with its own library, and takes a strip off its edge;
+  `build_world_with` then blends the land into the strip after the
+  chronicle, leans the coast and river distances toward the neighbour's
+  after `Fields::derive`, and drops trees that would stand in the
+  neighbour's crowns. The neighbour is built before the world's own
+  library is installed, since building one installs its material table.
+  The older world never changes. `notes/UBERWORLD_PLAN.md` has the rest.
 
 - **Seeds.** Everything a world generates is seeded by a key that stays put
   when the world is edited: an event by its kind, its year and which of that
@@ -229,6 +239,22 @@ Each layer uses the ones below it and never the ones above.
   per-mode tables are exhaustive matches, so the compiler lists every place
   to fill in. Add a `ModeId` so worlds can allow or forbid it, and check its
   entry with `Ride::can`.
+- **A vehicle:** a file in `library/vehicles/`. A subtype says
+  `"like": "sand_rail"` and the numbers it changes (`beach_buggy.json` is the
+  example); every key is in `vehicle/spec.rs`, with its default. A new body
+  shape is a builder in `vehicle/draw.rs` named by the spec's `model`. A new
+  way of handling (karts) is a `spec::Handling` variant and its tyre function
+  beside `grip::slip`. A world lists what it has in `"vehicles"`. Nothing in
+  `vehicle/` reads keys: `ride/drive.rs` turns them into `vehicle::Controls`,
+  and a bot or a race would fill the same struct. `vehicle/bot.rs` is one:
+  a `Driver` that follows a `Track` (a closed centreline and a width), aiming
+  at a point ahead and planning its speed from the bends; its `Style` is what
+  a race would vary per opponent.
+- **A race:** a `.course` file built by `tools/course/course_file.py`
+  (`tools/course/FORMAT.md`), which writes a `circuit` event in the chronicle
+  and a `race` block in world.json (`worlds/kestrel`). `race.rs` is the activity; it reaches the
+  player's car through `Activity::race_mut`, which `Game` hands the ride to
+  after each fixed step, since `ActivityCtx` carries no ride.
 - **An activity** (a race, another kind of shooter): implement
   `modes::Activity` (tick, camera, HUD, overlay lines, which actions it
   takes), add a `ModeId`, and start it from `Game::tick`. Screenshot mode is
@@ -249,6 +275,15 @@ Each layer uses the ones below it and never the ones above.
 - **A key:** a row in `input.rs` `BINDINGS`, and a `HELP` row if players
   should see it; the help screen is built from the table.
 - **A world's allowed modes:** `"modes"` in its `world.json`.
+- **The games a world offers:** `"games"` in its `world.json`, its own first
+  (`launch::games`). The launch screen offers those and no others.
+- **A game, or a variant of one:** a file in `library/games/` and its name in
+  a world's `"games"`. A variant says `"like": "deathmatch"` and the rules it
+  changes (`instagib.json`). `games.rs` holds every key and is the one place
+  the map's rules, the game's and the launch screen's choices are put
+  together (`GameDef::shooter_rules`, `race_rules`); `Game` starts the
+  activity from the result without knowing which game it is. A new kind of
+  game is a `launch::Mode` variant, an `Activity`, and its arm in `games.rs`.
 - **A dev tool or CLI flag:** `cli.rs` for the flag, `tools/` for the code.
 
 `docs/API.md` is the working guide to these seams: the signatures, the units

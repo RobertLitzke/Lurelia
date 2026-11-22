@@ -4,6 +4,7 @@
   "introduced_by": "ribshore",
   "notes": "A sunflower star's soft body, pink-orange and many-armed.",
   "smooth": false,
+  "sprites": "flower",
   "texture": {
     "pattern": "speckle",
     "base": [214, 128, 96],

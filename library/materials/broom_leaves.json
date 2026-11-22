@@ -4,6 +4,7 @@
   "introduced_by": "windbarrow",
   "notes": "Broom's few small leaves among the switches.",
   "smooth": false,
+  "sprites": "leaves",
   "texture": {
     "pattern": "speckle",
     "base": [96, 132, 58],

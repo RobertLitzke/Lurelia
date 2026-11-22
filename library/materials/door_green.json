@@ -3,14 +3,7 @@
   "version": 1,
   "introduced_by": "city",
   "notes": "A front door painted forest green.",
+  "like": "door_black",
   "id": 178,
-  "smooth": false,
-  "texture": {
-    "pattern": "noise",
-    "base": [42, 82, 56],
-    "alt": [38, 74, 50],
-    "scale": 1,
-    "contrast": 0.4,
-    "calm": {"base": [54, 94, 68], "alt": [50, 86, 62]}
-  }
+  "texture": {"alt": [38, 74, 50], "calm": {"alt": [50, 86, 62], "base": [54, 94, 68]}, "base": [42, 82, 56]}
 }

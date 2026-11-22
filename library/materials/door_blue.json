@@ -3,14 +3,7 @@
   "version": 1,
   "introduced_by": "city",
   "notes": "A front door painted navy.",
+  "like": "door_black",
   "id": 177,
-  "smooth": false,
-  "texture": {
-    "pattern": "noise",
-    "base": [40, 56, 92],
-    "alt": [36, 50, 84],
-    "scale": 1,
-    "contrast": 0.4,
-    "calm": {"base": [52, 68, 104], "alt": [48, 62, 96]}
-  }
+  "texture": {"alt": [36, 50, 84], "calm": {"alt": [48, 62, 96], "base": [52, 68, 104]}, "base": [40, 56, 92]}
 }

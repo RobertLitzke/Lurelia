@@ -795,7 +795,7 @@
    "spacing": 44,
    "height": 5.0,
    "wind_bearing": 45,
-   "mat": "gypsum_sand",
+   "mat": "white_sand",
    "name": "white_dunes"
   },
   {
@@ -810,7 +810,7 @@
    "spacing": 38,
    "height": 3.5,
    "wind_bearing": 50,
-   "mat": "gypsum_sand",
+   "mat": "white_sand",
    "name": "white_dunes"
   },
   {
@@ -1463,7 +1463,7 @@
    "setback": 4,
    "street": "dirt_lane",
    "lane": "footpath",
-   "houses": 11,
+   "houses": 14,
    "buildings": [
     "mess_hall",
     "aframe_cabin",
@@ -1475,7 +1475,10 @@
     "water_tank",
     "aframe_cabin",
     "prefab_bungalow",
-    "aframe_cabin"
+    "aframe_cabin",
+    "radio_shack",
+    "quonset_hut",
+    "lab_trailer"
    ],
    "walk": "path_dirt",
    "plot": 7

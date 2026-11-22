@@ -7,7 +7,7 @@
   "height": [2.5, 4.0],
   "trunk_radius": [0.05, 0.05],
   "crown_radius": [0.4, 0.8],
-  "bark": "reed_cane",
+  "bark": "straw_stem",
   "leaf": "reed_leaves",
   "canopy": "tufts",
   "max_slope": 0.6,

@@ -11,7 +11,7 @@
   "plants": [
     {"plant": "willow", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 8}}},
     {"plant": "alder", "density": 0.003, "placement": {"verb": "riparian", "params": {"width": 9}}},
-    {"plant": "reedmace", "density": 0.05, "placement": {"verb": "riparian", "params": {"width": 3}}},
+    {"plant": "cattail", "density": 0.05, "placement": {"verb": "riparian", "params": {"width": 3}}},
     {"plant": "cottage_rose", "density": 0.0015, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "rock_moss", "density": 0.08},
     {"plant": "osier", "density": 0.01, "placement": {"verb": "riparian", "params": {"width": 6}}}

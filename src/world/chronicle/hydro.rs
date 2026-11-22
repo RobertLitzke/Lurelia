@@ -153,16 +153,23 @@ pub fn route(g: &Grid, sea: f32, edges: bool, seed: u32, wander: f32, inflow: &[
     // inland that happens to lie below sea level is a lake like any other,
     // and a river does not end in it.
     let mut open = vec![false; nn];
-    let mut stack: Vec<usize> = (0..nn).filter(|&i| {
-        let (x, z) = (i % n, i / n);
-        (x == 0 || z == 0 || x == n - 1 || z == n - 1) && g.h[i] < sea
-    }).collect();
+    let mut stack: Vec<usize> = (0..nn)
+        .filter(|&i| {
+            let (x, z) = (i % n, i / n);
+            (x == 0 || z == 0 || x == n - 1 || z == n - 1) && g.h[i] < sea
+        })
+        .collect();
     for &i in &stack {
         open[i] = true;
     }
     while let Some(i) = stack.pop() {
         let (x, z) = (i % n, i / n);
-        for q in [if x > 0 { i - 1 } else { i }, if x + 1 < n { i + 1 } else { i }, if z > 0 { i - n } else { i }, if z + 1 < n { i + n } else { i }] {
+        for q in [
+            if x > 0 { i - 1 } else { i },
+            if x + 1 < n { i + 1 } else { i },
+            if z > 0 { i - n } else { i },
+            if z + 1 < n { i + n } else { i },
+        ] {
             if !open[q] && g.h[q] < sea {
                 open[q] = true;
                 stack.push(q);
@@ -378,7 +385,11 @@ pub fn reaches(g: &Grid, flow: &Flow, min_area: f32) -> Vec<Reach> {
         for _ in 0..3 {
             pts = eased(&pts, (16.0 / g.cell()) as usize);
         }
-        out.push(Reach { pts, area: cells.iter().map(|&c| flow.area[c]).collect(), level: cells.iter().map(|&c| flow.filled[c]).collect() });
+        out.push(Reach {
+            pts,
+            area: cells.iter().map(|&c| flow.area[c]).collect(),
+            level: cells.iter().map(|&c| flow.filled[c]).collect(),
+        });
     }
     out
 }
@@ -454,7 +465,22 @@ mod tests {
     fn cutting_lowers_and_stops_at_the_sea() {
         let mut g = slope(32);
         let before = g.h.clone();
-        cut(&mut g, 20.0, &Cut { iters: 8, strength: 0.5, exponent: 0.45, diffuse: 0.0, edges: false, wander: 0.5, source: 0.0, sinks: Vec::new() }, 3, &[]);
+        cut(
+            &mut g,
+            20.0,
+            &Cut {
+                iters: 8,
+                strength: 0.5,
+                exponent: 0.45,
+                diffuse: 0.0,
+                edges: false,
+                wander: 0.5,
+                source: 0.0,
+                sinks: Vec::new(),
+            },
+            3,
+            &[],
+        );
         for i in 0..32 * 32 {
             assert!(g.h[i] <= before[i] + 1e-4);
             if before[i] < 20.0 {

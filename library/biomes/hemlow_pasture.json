@@ -23,8 +23,9 @@
     {"creature": "sparrow", "count": 8},
     {"creature": "barn_owl", "count": 1},
     {"creature": "firefly", "count": 70},
-    {"creature": "lantern_moth", "count": 8},
-    {"creature": "hedgehog", "count": 2}
+    {"creature": "glassmoth", "morph": "lantern", "count": 8},
+    {"creature": "hedgehog", "count": 2},
+    {"creature": "lapwing", "count": 10}
   ],
   "collectibles": []
 }

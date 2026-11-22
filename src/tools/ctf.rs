@@ -175,7 +175,15 @@ fn play(f: &tourney::Field, coaches: [Coach; 2], tweaks: [u32; 2], skill: &str, 
             };
             let rel = at.map(|p| {
                 let d = |s: Vec3| Vec3::new(p.x - s.x, 0.0, p.z - s.z).length();
-                format!("  {:.0} m from stand 0, {:.0} m from stand 1, {:+.1} m over the stands, at ({:.1}, {:.1}, {:.1})", d(stands[0]), d(stands[1]), p.y - stands[0].y, p.x, p.y, p.z)
+                format!(
+                    "  {:.0} m from stand 0, {:.0} m from stand 1, {:+.1} m over the stands, at ({:.1}, {:.1}, {:.1})",
+                    d(stands[0]),
+                    d(stands[1]),
+                    p.y - stands[0].y,
+                    p.x,
+                    p.y,
+                    p.z
+                )
             });
             eprintln!("  {t:6.1}s {e:?}{}", rel.unwrap_or_default());
         }

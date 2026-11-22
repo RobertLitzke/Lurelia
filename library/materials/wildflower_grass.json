@@ -6,6 +6,7 @@
   "id": 64,
   "smooth": true,
   "tint": "meadow",
+  "sprites": "wildflower",
   "texture": {
     "pattern": "noise",
     "base": [96, 132, 58],

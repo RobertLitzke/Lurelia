@@ -32,7 +32,9 @@ const HEADROOM: f32 = 1.05;
 /// deeper than the search (40 m) reads as 40 m deep: launching a kayak
 /// offshore, from a swim, used to fail at 8 m.
 fn bed(store: &Store, x: f32, z: f32, level: f32) -> Option<f32> {
-    top_below(store, x, z, level + 0.6, 40.0).or(Some(level - 40.0)).filter(|_| store.loaded((x * 4.0).floor() as i32, (level * 4.0).floor() as i32, (z * 4.0).floor() as i32))
+    top_below(store, x, z, level + 0.6, 40.0)
+        .or(Some(level - 40.0))
+        .filter(|_| store.loaded((x * 4.0).floor() as i32, (level * 4.0).floor() as i32, (z * 4.0).floor() as i32))
 }
 
 impl Ride {
@@ -273,10 +275,17 @@ impl Ride {
         p.swimming = false;
 
         // Pose: lean into the turn, a little roll with each stroke, and a
-        // slow swell under the boat.
-        let lean = (self.speed * self.turn_rate * 0.06).clamp(-0.18, 0.18) + 0.025 * self.stroke;
+        // slow swell under the boat. On the sea's swell the hull pitches
+        // and rolls with the water's slope: nose up as a wave lifts the bow,
+        // the high side up as one runs under it from the side.
+        let fwd = dir_of(self.heading);
+        let right = Vec3::new(self.heading.cos(), 0.0, -self.heading.sin());
+        let ws = Vec3::new(self.water_slope.x, 0.0, self.water_slope.y);
+        let wave_pitch = ws.dot(fwd).atan().clamp(-0.35, 0.35);
+        let wave_roll = ws.dot(right).atan().clamp(-0.3, 0.3);
+        let lean = (self.speed * self.turn_rate * 0.06).clamp(-0.18, 0.18) + 0.025 * self.stroke + wave_roll;
         self.lean += (lean - self.lean) * (dt * 5.0).min(1.0);
-        self.body_pitch += (0.0 - self.body_pitch) * (dt * 5.0).min(1.0);
+        self.body_pitch += (wave_pitch - self.body_pitch) * (dt * 4.0).min(1.0);
         let swell = 0.025 * (self.t * 1.3).sin() + 0.012 * (self.t * 2.9 + 1.0).sin();
         let target = level + KAYAK_EYE + swell;
         let (x, v) = smooth_damp((self.eye_y - self.bob - target).clamp(-0.7, 0.7), self.eye_v, 0.12, dt);
@@ -342,6 +351,8 @@ impl Ride {
                 tint: [1.0, 1.0, 1.0, 0.0],
                 rot: [q.x, q.y, q.z, q.w],
                 shift: [0.0; 4],
+                flesh: [[0.0; 4]; 3],
+                glow: [0.0; 4],
             },
         ));
     }

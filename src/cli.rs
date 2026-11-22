@@ -27,6 +27,9 @@ pub struct Args {
     pub save_dir: PathBuf,
     pub fresh: bool,
     pub bench: bool,
+    /// Which benchmark route (`--bench-route`): the flight, or a walk round
+    /// a field.
+    pub bench_route: crate::tools::bench::Route,
     /// (headless) walk a loop round the island for this many seconds and
     /// report every creature met, by species.
     pub tour: Option<f32>,
@@ -37,6 +40,9 @@ pub struct Args {
     pub hud: bool,
     pub threads: usize,
     pub map: Option<PathBuf>,
+    /// `--seam out.png`: how the world meets its neighbours, with a map of
+    /// it and them side by side.
+    pub seam: Option<PathBuf>,
     pub profile_gen: bool,
     pub dig: u32,
     pub place: u32,
@@ -98,6 +104,8 @@ pub struct Args {
     pub boost: bool,
     /// (headless) hold Ctrl while riding: the bike's tuck.
     pub tuck: bool,
+    /// (headless) which of the world's vehicles `--ride drive` takes.
+    pub vehicle: Option<String>,
     /// (headless) the camera out with the viewfinder up.
     pub camera: bool,
     /// (headless) the camera out, viewfinder down.
@@ -125,7 +133,7 @@ pub struct Args {
     /// With --catalog: only entries whose name contains one of these (comma list).
     pub matching: Option<String>,
     /// `--mode`: the way of playing, when the command line names one.
-    pub mode: Option<crate::launch::Mode>,
+    pub mode: Option<String>,
     /// What the launch screen chose: the mode and its options (src/launch.rs).
     /// None on the command line and in the headless tools, where the world's
     /// own defaults stand (`launch::Chosen::for_world`).
@@ -151,6 +159,8 @@ into that world.
   --style NAME          classic or calm (default: the saved choice)
   --blocky              square voxel steps instead of slopes
   --bench               fly a fixed route and report frame times
+  --bench-route field   walk a loop at eye height instead, round the spawn (or
+                        --ground): in a field with animals, the work of playing
   --tour SECONDS        (headless) walk a loop round the island at walking pace, 2 m up,
                         and report how many of each creature turned up (stats key tour)
 
@@ -209,7 +219,7 @@ Headless (no window):
   --ctf-seconds S       how long each match lasts (default 300)
   --ctf-size K          bots a side, 1 to 4 (default 3)
   --ctf-skill NAME      the bots' difficulty (default average)
-  --ride bike|wing|launch|rope|climb|kayak  (headless) ride for --ride-secs (default 4) before
+  --ride bike|wing|launch|rope|climb|kayak|drive|park  (headless) ride for --ride-secs (default 4) before
                         the screenshot: the bike, gliding from --pos, a glide launched from
                         the ground, the rope thrown at the view, walking into a wall, or
                         paddling the kayak from the nearest water
@@ -226,6 +236,9 @@ Headless (no window):
   --boost               (headless) hold Shift while riding
   --tuck                (headless) hold Ctrl while riding: the bike tucks, which stores
                         a charge on a descent and floats the next jump
+  --vehicle NAME        (headless) with --ride drive or park, which of the world's
+                        vehicles to take (library/vehicles); park drives, stops and
+                        gets out, leaving it parked
 
 Editing (see GUIDE.md):
   --edit NAME[:PAGE[:world]]
@@ -267,6 +280,7 @@ pub fn parse_args() -> Args {
         save_dir: PathBuf::from("saves"),
         fresh: false,
         bench: false,
+        bench_route: crate::tools::bench::Route::Fly,
         tour: None,
         vsync: false,
         dx12: false,
@@ -274,6 +288,7 @@ pub fn parse_args() -> Args {
         hud: true,
         threads: std::thread::available_parallelism().map(|n| n.get()).unwrap_or(4).saturating_sub(4).clamp(1, 8),
         map: None,
+        seam: None,
         profile_gen: false,
         dig: 0,
         fire: 0,
@@ -312,6 +327,7 @@ pub fn parse_args() -> Args {
         chase: false,
         boost: false,
         tuck: false,
+        vehicle: None,
         camera: false,
         camera_out: false,
         lens: None,
@@ -416,6 +432,11 @@ pub fn parse_args() -> Args {
             "--save" => a.save_dir = val(&mut i).into(),
             "--fresh" => a.fresh = true,
             "--bench" => a.bench = true,
+            "--bench-route" => {
+                a.bench = true;
+                let v = val(&mut i);
+                a.bench_route = crate::tools::bench::Route::parse(&v).unwrap_or_else(|| bad(&format!("no route {v}: fly or field")));
+            }
             "--tour" => a.tour = Some(span(&mut i, 0.0, 36000.0)),
             "--vsync" => a.vsync = true,
             "--dx12" => a.dx12 = true,
@@ -440,10 +461,10 @@ pub fn parse_args() -> Args {
             // rest of its options keep their defaults.
             "--mode" => {
                 let name = val(&mut i);
-                match crate::launch::Mode::parse(&name) {
-                    Some(m) => a.mode = Some(m),
+                match crate::games::get(&name) {
+                    Some(g) => a.mode = Some(g.name.clone()),
                     None => {
-                        eprintln!("--mode: no game called {name} (explore or fps)");
+                        eprintln!("--mode: no game called {name} in library/games");
                         std::process::exit(2);
                     }
                 }
@@ -472,6 +493,7 @@ pub fn parse_args() -> Args {
             "--chase" => a.chase = true,
             "--boost" => a.boost = true,
             "--tuck" => a.tuck = true,
+            "--vehicle" => a.vehicle = Some(val(&mut i)),
             "--camera" => a.camera = true,
             "--camera-out" => a.camera_out = true,
             "--lens" => a.lens = Some(val(&mut i)),
@@ -484,6 +506,7 @@ pub fn parse_args() -> Args {
             "--only" => a.only = Some(val(&mut i)),
             "--match" => a.matching = Some(val(&mut i)),
             "--map" => a.map = Some(val(&mut i).into()),
+            "--seam" => a.seam = Some(val(&mut i).into()),
             "--profile-gen" => a.profile_gen = true,
             "--dig" => a.dig = count(&mut i),
             "--fire" => a.fire = count(&mut i),

@@ -3,13 +3,6 @@
   "version": 1,
   "introduced_by": "underwater",
   "notes": "Red sea fans on the deep wall.",
-  "smooth": false,
-  "texture": {
-    "pattern": "noise",
-    "base": [198, 74, 64],
-    "alt": [174, 60, 54],
-    "scale": 6,
-    "contrast": 0.6,
-    "calm": {"base": [204, 80, 70], "alt": [180, 66, 60]}
-  }
+  "like": "fan_purple",
+  "texture": {"alt": [174, 60, 54], "calm": {"alt": [180, 66, 60], "base": [204, 80, 70]}, "base": [198, 74, 64]}
 }

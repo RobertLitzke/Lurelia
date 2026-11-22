@@ -69,7 +69,19 @@ pub struct Bones {
 
 impl Bone {
     pub fn capsule(a: Vec3, b: Vec3, ra: f32, rb: f32, set: u16) -> Self {
-        Bone { a, b, ra, rb, flat: Vec3::ZERO, squash: 1.0, cut_a: false, cut_b: false, top: f32::INFINITY, set, carve: false }
+        Bone {
+            a,
+            b,
+            ra,
+            rb,
+            flat: Vec3::ZERO,
+            squash: 1.0,
+            cut_a: false,
+            cut_b: false,
+            top: f32::INFINITY,
+            set,
+            carve: false,
+        }
     }
 
     fn bounds(&self) -> (Vec3, Vec3) {
@@ -241,7 +253,9 @@ impl Bones {
                 if !col.iter().any(|&k| !self.list[k as usize].carve) {
                     continue;
                 }
-                let (cl, ch) = col.iter().fold((f32::MAX, f32::MIN), |(a, b), &k| (a.min(self.bounds[k as usize].0.y), b.max(self.bounds[k as usize].1.y)));
+                let (cl, ch) = col
+                    .iter()
+                    .fold((f32::MAX, f32::MIN), |(a, b), &k| (a.min(self.bounds[k as usize].0.y), b.max(self.bounds[k as usize].1.y)));
                 for py in span(cl, ch, o.y, pady) {
                     let y = o.y + (py as f32 + 0.5) * vsize;
                     let p = Vec3::new(x, y, z);

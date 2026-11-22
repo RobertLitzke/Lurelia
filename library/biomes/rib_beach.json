@@ -11,7 +11,10 @@
   "plants": [],
   "features": [
     {"structure": "bone_shard", "density": 0.00012, "placement": {"verb": "scatter", "params": {}}},
-    {"structure": "drift_log", "density": 3e-05, "placement": {"verb": "scatter", "params": {"along": 45}}},
+    {"structure": "drift_log", "density": 1.5e-05, "placement": {"verb": "scatter", "params": {"along": 45}}},
+    {"structure": "drift_log_b", "density": 6e-06, "placement": {"verb": "scatter", "params": {"along": 45}}},
+    {"structure": "drift_log_c", "density": 5.1e-06, "placement": {"verb": "scatter", "params": {"along": 45}}},
+    {"structure": "drift_log_d", "density": 3.9e-06, "placement": {"verb": "scatter", "params": {"along": 45}}},
     {"structure": "titan_tooth", "density": 3e-05, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
@@ -22,7 +25,9 @@
     {"creature": "walrus", "count": 8},
     {"creature": "bone_crab", "count": 3},
     {"creature": "black_oystercatcher", "count": 4},
-    {"creature": "albatross", "count": 4}
+    {"creature": "albatross", "count": 4},
+    {"creature": "sanderling", "count": 40},
+    {"creature": "snowy_plover", "count": 8}
   ],
   "collectibles": [{"item": "seashell", "density": 0.003, "placement": {"verb": "scatter", "params": {}}}]
 }

@@ -6,6 +6,7 @@
   "id": 186,
   "smooth": false,
   "passable": true,
+  "sprites": "wisteria",
   "texture": {
     "pattern": "blotch",
     "base": [168, 140, 214],

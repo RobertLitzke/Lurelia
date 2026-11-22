@@ -20,7 +20,9 @@
     {"creature": "jackrabbit", "count": 2},
     {"creature": "coyote", "count": 1},
     {"creature": "eagle", "count": 1},
-    {"creature": "canyon_bat", "count": 3}
+    {"creature": "canyon_bat", "count": 3},
+    {"creature": "roadrunner", "count": 1},
+    {"creature": "gambels_quail", "count": 10}
   ],
   "collectibles": [{"item": "arrowhead", "density": 2e-05, "placement": {"verb": "scatter", "params": {}}}]
 }

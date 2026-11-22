@@ -44,10 +44,22 @@ struct Entrant {
 /// long way, so the table says which direction each knob wants to move.
 const FIELD: &[Entrant] = &[
     Entrant { name: "house", tune: &[] },
-    Entrant { name: "calm", tune: &[("dodge", 0.5), ("weave", 3.2)] },
-    Entrant { name: "hunter", tune: &[("hunt", 6.0)] },
-    Entrant { name: "scavenger", tune: &[("greed", 2.0)] },
-    Entrant { name: "medic", tune: &[("nerve", 0.2)] },
+    Entrant {
+        name: "calm",
+        tune: &[("dodge", 0.5), ("weave", 3.2)],
+    },
+    Entrant {
+        name: "hunter",
+        tune: &[("hunt", 6.0)],
+    },
+    Entrant {
+        name: "scavenger",
+        tune: &[("greed", 2.0)],
+    },
+    Entrant {
+        name: "medic",
+        tune: &[("nerve", 0.2)],
+    },
 ];
 
 /// A player's limits, for comparison: running pace, the boost over it, and
@@ -81,6 +93,15 @@ struct Tally {
     alive_s: f32,
     kills: f32,
     deaths: f32,
+    /// Of the deaths, the ones its own round did.
+    own: f32,
+    /// Routes asked for, and the ones the graph refused.
+    routes: f32,
+    refused: f32,
+    /// Range to the foe summed over the seconds one is in sight, for the
+    /// average range a fight is fought at.
+    range_m: f32,
+    range_s: f32,
     dealt: f32,
     /// Guns it did not have, picked up; seconds from spawn to the first of
     /// them, summed over the lives that found one; lives in all.
@@ -96,6 +117,9 @@ struct Tally {
     hurt_mended: f32,
     hurt_died: f32,
     mend_s: f32,
+    /// Metres to the nearest health pad standing, summed over hurt spells
+    /// at the moment each began.
+    pack_m: f32,
     /// Lost sight of the enemy; found them again inside `CHASE_S`.
     lost_foe: f32,
     found_foe: f32,
@@ -157,7 +181,60 @@ impl Tally {
         macro_rules! sum {
             ($($f:ident),*) => { $(self.$f += o.$f;)* };
         }
-        sum!(nodes, nodes_of, areas, areas_of, pads, pads_of, wanted, stood, spots, spots_took, spots_stood, hp_s, armour_s, guns_s, bots, alive_s, kills, deaths, dealt, guns, arm_s, armed_lives, lives, mends, armour, hurt, hurt_mended, hurt_died, mend_s, lost_foe, found_foe, calm_s, calm_back_s, fight_s, fight_back_s, windows, lost_windows, dodges, meant, evades, shots, flips, idle_s, run_s, run_m, over_s);
+        sum!(
+            nodes,
+            nodes_of,
+            areas,
+            areas_of,
+            pads,
+            pads_of,
+            wanted,
+            stood,
+            spots,
+            spots_took,
+            spots_stood,
+            hp_s,
+            armour_s,
+            guns_s,
+            bots,
+            alive_s,
+            kills,
+            deaths,
+            own,
+            routes,
+            refused,
+            range_m,
+            range_s,
+            dealt,
+            guns,
+            arm_s,
+            armed_lives,
+            lives,
+            mends,
+            armour,
+            hurt,
+            hurt_mended,
+            hurt_died,
+            mend_s,
+            pack_m,
+            lost_foe,
+            found_foe,
+            calm_s,
+            calm_back_s,
+            fight_s,
+            fight_back_s,
+            windows,
+            lost_windows,
+            dodges,
+            meant,
+            evades,
+            shots,
+            flips,
+            idle_s,
+            run_s,
+            run_m,
+            over_s
+        );
         for (a, b) in self.acts.iter_mut().zip(o.acts) {
             *a += b;
         }
@@ -213,11 +290,7 @@ impl Tally {
     /// Moving like a person: each percent of the bad kinds of time costs,
     /// and dodges and reversals past what a player does cost per extra one.
     fn move_pts(&self) -> f32 {
-        -(0.4 * self.back() * 100.0
-            + 0.5 * self.lost() * 100.0
-            + 0.3 * self.idle() * 100.0
-            + 1.0 * (self.dodge_pm() - DODGE_PM_OK).max(0.0)
-            + 0.3 * (self.flip_pm() - FLIP_PM_OK).max(0.0))
+        -(0.4 * self.back() * 100.0 + 0.5 * self.lost() * 100.0 + 0.3 * self.idle() * 100.0 + 1.0 * (self.dodge_pm() - DODGE_PM_OK).max(0.0) + 0.3 * (self.flip_pm() - FLIP_PM_OK).max(0.0))
     }
     fn score(&self) -> f32 {
         self.fight_pts() + self.goal_pts() + self.move_pts()
@@ -256,7 +329,9 @@ fn bot_def(e: &Entrant, slot: usize) -> BotDef {
         // way to value one, since in a mirror match it moves the whole field.
         // LEAGUE_WITHOUT_FOR=house limits that to one entrant: the paired test.
         without: if std::env::var("LEAGUE_WITHOUT_FOR").map_or(true, |w| w == e.name) {
-            std::env::var("LEAGUE_WITHOUT").map(|v| v.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect()).unwrap_or_default()
+            std::env::var("LEAGUE_WITHOUT")
+                .map(|v| v.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect())
+                .unwrap_or_default()
         } else {
             Vec::new()
         },
@@ -328,7 +403,12 @@ fn play(f: &Field, base: &ShooterDef, store: &mut Store, order: &[usize], second
         if pad_was.len() == ready.len() {
             for (pi, p) in sh.pads().iter().enumerate() {
                 if pad_was[pi] && !ready[pi] {
-                    let by = sh.bots.iter().enumerate().filter(|(_, b)| b.fighter.alive()).min_by(|a, b| a.1.pos().distance(p.at).total_cmp(&b.1.pos().distance(p.at)));
+                    let by = sh
+                        .bots
+                        .iter()
+                        .enumerate()
+                        .filter(|(_, b)| b.fighter.alive())
+                        .min_by(|a, b| a.1.pos().distance(p.at).total_cmp(&b.1.pos().distance(p.at)));
                     if let Some((bi, b)) = by {
                         if b.pos().distance(p.at) < 3.0 {
                             took_pads[bi].insert(pi);
@@ -373,7 +453,7 @@ fn play(f: &Field, base: &ShooterDef, store: &mut Store, order: &[usize], second
             let health = b.fighter.health;
             let armour = b.fighter.armour;
             let guns = b.fighter.arsenal.guns.iter().filter(|g| g.have).count();
-            let (foe, _, _, seen_n) = b.brain.aiming_at();
+            let (foe, range, _, seen_n) = b.brain.aiming_at();
             let seen = seen_n > 0;
             let full = b.fighter.full_health.max(1.0);
             if alive && !k.alive {
@@ -426,12 +506,23 @@ fn play(f: &Field, base: &ShooterDef, store: &mut Store, order: &[usize], second
                 continue;
             }
             s.alive_s += step;
+            if seen && range.is_finite() && range < 200.0 {
+                s.range_m += range * step;
+                s.range_s += step;
+            }
             s.hp_s += health * step;
             s.armour_s += armour * step;
             s.guns_s += guns as f32 * step;
             if health < full * HURT && k.hurt_since.is_none() {
                 k.hurt_since = Some(t);
                 s.hurt += 1.0;
+                let near = sh
+                    .pads()
+                    .iter()
+                    .filter(|p| p.kind == crate::shooter::pickup::Kind::Health && p.ready())
+                    .map(|p| p.at.distance(b.pos()))
+                    .fold(f32::INFINITY, f32::min);
+                s.pack_m += near.min(100.0);
             }
             // Pursuit: sight of the enemy lost, then found again.
             if k.seen && !seen {
@@ -453,7 +544,17 @@ fn play(f: &Field, base: &ShooterDef, store: &mut Store, order: &[usize], second
                 s.acts[a] += step;
                 if k.hurt_since.is_some() && std::env::var("LEAGUE_HURT").is_ok() && !seen && ((t * 60.0) as u32) % 30 == 0 {
                     let sc = b.brain.scouting();
-                    eprintln!("hurt {} hp {:.0} want {:.2} blocked {} lures {} reach {}/{} {}", b.brain.doing(), health, sc.want, sc.blocked, sc.lures, sc.reach, sc.nodes, b.brain.note());
+                    eprintln!(
+                        "hurt {} hp {:.0} want {:.2} blocked {} lures {} reach {}/{} {}",
+                        b.brain.doing(),
+                        health,
+                        sc.want,
+                        sc.blocked,
+                        sc.lures,
+                        sc.reach,
+                        sc.nodes,
+                        b.brain.note()
+                    );
                 }
                 if k.hurt_since.is_some() && !seen {
                     let up = sh.pads().iter().filter(|p| p.kind == crate::shooter::pickup::Kind::Health && p.ready()).count();
@@ -470,6 +571,9 @@ fn play(f: &Field, base: &ShooterDef, store: &mut Store, order: &[usize], second
                     }
                 }
             }
+            if std::env::var("LEAGUE_TRACE").is_ok() && ((t * 60.0) as u32) % 15 == 0 {
+                eprintln!("trace {i} t{:.2} {} at {:.1},{:.1},{:.1} {}", t, b.brain.doing(), b.pos().x, b.pos().y, b.pos().z, b.brain.note());
+            }
             // Movement.
             let v = b.vel();
             let flat = Vec3::new(v.x, 0.0, v.z);
@@ -479,7 +583,7 @@ fn play(f: &Field, base: &ShooterDef, store: &mut Store, order: &[usize], second
             if !keys {
                 s.idle_s += step;
                 if std::env::var("LEAGUE_IDLE").is_ok() {
-                    eprintln!("idle {} seen{} ground{} spd {:.1} {}", b.brain.doing(), seen as u8, b.body.body.on_ground as u8, speed, b.brain.note());
+                    eprintln!("idle {} seen{} ground{} spd {:.1} at {:.1},{:.1},{:.1} {}", b.brain.doing(), seen as u8, b.body.body.on_ground as u8, speed, b.pos().x, b.pos().y, b.pos().z, b.brain.note());
                 }
             }
             let dodging = speed > DODGING_MS;
@@ -496,8 +600,16 @@ fn play(f: &Field, base: &ShooterDef, store: &mut Store, order: &[usize], second
                     let r = Vec3::new(-f.z, 0.0, f.x);
                     eprintln!(
                         "t {t:6.2} {:5} keys f{} b{} l{} r{} spr{} vel f{:+.1} r{:+.1} ground{} hp {:.0}",
-                        b.brain.doing(), mv.forward as u8, mv.back as u8, mv.left as u8, mv.right as u8, mv.sprint as u8,
-                        flat.dot(f), flat.dot(r), on_ground as u8, health
+                        b.brain.doing(),
+                        mv.forward as u8,
+                        mv.back as u8,
+                        mv.left as u8,
+                        mv.right as u8,
+                        mv.sprint as u8,
+                        flat.dot(f),
+                        flat.dot(r),
+                        on_ground as u8,
+                        health
                     );
                 }
                 if seen {
@@ -527,7 +639,18 @@ fn play(f: &Field, base: &ShooterDef, store: &mut Store, order: &[usize], second
                         eprintln!("gap {:.2} held {:.2}", t - k.side_up, t - k.side_from);
                     }
                     if std::env::var("LEAGUE_FLIP").is_ok() && i == 0 {
-                        eprintln!("flip {} seen{} f{} b{} hp{:.0} at {:.1},{:.1},{:.1} {}", b.brain.doing(), seen as u8, mv.forward as u8, mv.back as u8, health, b.pos().x, b.pos().y, b.pos().z, b.brain.note());
+                        eprintln!(
+                            "flip {} seen{} f{} b{} hp{:.0} at {:.1},{:.1},{:.1} {}",
+                            b.brain.doing(),
+                            seen as u8,
+                            mv.forward as u8,
+                            mv.back as u8,
+                            health,
+                            b.pos().x,
+                            b.pos().y,
+                            b.pos().z,
+                            b.brain.note()
+                        );
                     }
                 }
                 if side != k.side {
@@ -545,7 +668,17 @@ fn play(f: &Field, base: &ShooterDef, store: &mut Store, order: &[usize], second
                     if b.pos().distance(k.win_from) < LOST_M {
                         s.lost_windows += 1.0;
                         if std::env::var("LEAGUE_LOST").is_ok() {
-                            eprintln!("lost {} at {:.1},{:.1},{:.1} keys{} idle-ish speed {:.1} jams {} {}", b.brain.doing(), b.pos().x, b.pos().y, b.pos().z, keys as u8, speed, b.brain.jams(), b.brain.note());
+                            eprintln!(
+                                "lost {} at {:.1},{:.1},{:.1} keys{} idle-ish speed {:.1} jams {} {}",
+                                b.brain.doing(),
+                                b.pos().x,
+                                b.pos().y,
+                                b.pos().z,
+                                keys as u8,
+                                speed,
+                                b.brain.jams(),
+                                b.brain.note()
+                            );
                             if std::env::var("LEAGUE_NODES").is_ok() {
                                 for (j, nd) in sh.nav().nodes.iter().enumerate() {
                                     if Vec3::new(nd.at.x - b.pos().x, 0.0, nd.at.z - b.pos().z).length() < 4.0 {
@@ -565,8 +698,22 @@ fn play(f: &Field, base: &ShooterDef, store: &mut Store, order: &[usize], second
     if std::env::var("LEAGUE_PADS").is_ok() {
         for (pi, p) in sh.pads().iter().enumerate() {
             let by = stood.iter().filter(|s| s.contains(&pi)).count();
-            let near = sh.nav().nodes.iter().map(|nd| (nd.at.distance(p.at), nd.at.y)).min_by(|a, b| a.0.total_cmp(&b.0)).unwrap_or((f32::MAX, 0.0));
-            eprintln!("pad {pi} {:?} at {:.1},{:.1},{:.1} stood_by {by} node {:.1} m (dy {:.1})", p.kind, p.at.x, p.at.y, p.at.z, near.0, p.at.y - near.1);
+            let near = sh
+                .nav()
+                .nodes
+                .iter()
+                .map(|nd| (nd.at.distance(p.at), nd.at.y))
+                .min_by(|a, b| a.0.total_cmp(&b.0))
+                .unwrap_or((f32::MAX, 0.0));
+            eprintln!(
+                "pad {pi} {:?} at {:.1},{:.1},{:.1} stood_by {by} node {:.1} m (dy {:.1})",
+                p.kind,
+                p.at.x,
+                p.at.y,
+                p.at.z,
+                near.0,
+                p.at.y - near.1
+            );
         }
     }
     // Pads in a row are one place: join each to the first pad within reach.
@@ -601,9 +748,13 @@ fn play(f: &Field, base: &ShooterDef, store: &mut Store, order: &[usize], second
         let sc = scores.get(i + 1).map(|(_, s)| *s).unwrap_or_default();
         tally[i].kills = sc.kills as f32;
         tally[i].deaths = sc.deaths as f32;
+        tally[i].own = sc.own_deaths as f32;
         tally[i].dealt = b.fighter.score.dealt;
         tally[i].meant = b.brain.dodges() as f32;
         tally[i].evades = b.brain.evades() as f32;
+        let (asked, failed, _) = b.brain.wandering();
+        tally[i].routes = asked as f32;
+        tally[i].refused = failed as f32;
         tally[i].shots = sc.shots as f32;
     }
     // Back into entrant order.
@@ -657,8 +808,8 @@ fn by_gun(field: &Field, store: &mut Store, which: &str, seeds: u32, seconds: f3
         FIELD.len()
     );
     println!(
-        "{:<16}{:>7}{:>7}{:>8}{:>8}{:>8}{:>8}{:>7}{:>7}{:>8}",
-        "gun", "score", "K/m", "dmg/m", "self/m", "shots/m", "dmg/sh", "evd/m", "lost%", "flips/m"
+        "{:<16}{:>7}{:>7}{:>8}{:>8}{:>7}{:>8}{:>8}{:>7}{:>7}{:>8}",
+        "gun", "score", "K/m", "dmg/m", "self/m", "own/m", "shots/m", "dmg/sh", "evd/m", "lost%", "flips/m"
     );
     for g in &guns {
         let rules = one_gun(&field.rules, g);
@@ -666,19 +817,27 @@ fn by_gun(field: &Field, store: &mut Store, which: &str, seeds: u32, seconds: f3
         let rows = season(field, &rules, store, seeds, seconds);
         if guns.len() == 1 {
             for (e, t) in rows.iter().enumerate() {
-                println!("  {:<11} K/m {:.2}  D/m {:.2}  dmg/m {:.0}  evd/m {:.1}", FIELD[e].name, t.per_min(t.kills), t.per_min(t.deaths), t.per_min(t.dealt), t.per_min(t.evades));
+                println!(
+                    "  {:<11} K/m {:.2}  D/m {:.2}  dmg/m {:.0}  evd/m {:.1}",
+                    FIELD[e].name,
+                    t.per_min(t.kills),
+                    t.per_min(t.deaths),
+                    t.per_min(t.dealt),
+                    t.per_min(t.evades)
+                );
             }
         }
         for t in rows {
             all.add(&t);
         }
         println!(
-            "{:<16}{:>7.1}{:>7.2}{:>8.0}{:>8.2}{:>8.1}{:>8.1}{:>7.1}{:>6.1}%{:>8.1}",
+            "{:<16}{:>7.1}{:>7.2}{:>8.0}{:>8.2}{:>7.2}{:>8.1}{:>8.1}{:>7.1}{:>6.1}%{:>8.1}",
             g,
             all.score(),
             all.per_min(all.kills),
             all.per_min(all.dealt),
             all.per_min((all.deaths - all.kills).max(0.0)),
+            all.per_min(all.own),
             all.per_min(all.shots),
             Tally::share(all.dealt, all.shots),
             all.per_min(all.evades),
@@ -687,7 +846,7 @@ fn by_gun(field: &Field, store: &mut Store, which: &str, seeds: u32, seconds: f3
         );
     }
     println!(
-        "\nThe whole field summed: per bot-minute alive. self/m is deaths nobody was\ncredited with -- mostly a bot's own splash or the floor. dmg/sh is damage a\nround fired; evd/m shells seen coming and stepped off the line of."
+        "\nThe whole field summed: per bot-minute alive. self/m is deaths nobody was\ncredited with, and own/m the part of that its own round did. dmg/sh is damage a\nround fired; evd/m shells seen coming and stepped off the line of."
     );
 }
 
@@ -793,13 +952,13 @@ stock while alive: health {:.0}, armour {:.0}, guns carried {:.1}",
     }
     println!("\n-- movement (a player runs {RUN_MS} m/s, boosts to {BOOST_MS:.1}, dodges at 12.2) --\n");
     println!(
-        "{:<11}{:>7}{:>8}{:>7}{:>7}{:>8}{:>6}{:>8}{:>7}{:>7}   {}",
-        "entrant", "back%", "fback%", "lost%", "idle%", "dodge/m", "meant", "flips/m", "m/s", "over%", "roam/hunt/fight/close/break"
+        "{:<11}{:>7}{:>8}{:>7}{:>7}{:>8}{:>6}{:>8}{:>7}{:>7}{:>7}{:>7}{:>7}   {}",
+        "entrant", "back%", "fback%", "lost%", "idle%", "dodge/m", "meant", "flips/m", "m/s", "over%", "range", "rte/m", "ref/m", "roam/hunt/fight/close/break"
     );
     for (e, t) in &rows {
         let a = t.acts.map(|x| Tally::share(x, t.alive_s) * 100.0);
         println!(
-            "{:<11}{:>6.1}%{:>7.1}%{:>6.1}%{:>6.1}%{:>8.1}{:>6.1}{:>8.1}{:>7.2}{:>6.1}%   {:>2.0}/{:>2.0}/{:>2.0}/{:>2.0}/{:>2.0}",
+            "{:<11}{:>6.1}%{:>7.1}%{:>6.1}%{:>6.1}%{:>8.1}{:>6.1}{:>8.1}{:>7.2}{:>6.1}%{:>7.1}{:>7.1}{:>7.2}   {:>2.0}/{:>2.0}/{:>2.0}/{:>2.0}/{:>2.0}",
             FIELD[*e].name,
             t.back() * 100.0,
             Tally::share(t.fight_back_s, t.fight_s) * 100.0,
@@ -810,6 +969,9 @@ stock while alive: health {:.0}, armour {:.0}, guns carried {:.1}",
             t.flip_pm(),
             Tally::share(t.run_m, t.run_s),
             Tally::share(t.over_s, t.run_s) * 100.0,
+            Tally::share(t.range_m, t.range_s),
+            t.per_min(t.routes),
+            t.per_min(t.refused),
             a[0],
             a[1],
             a[2],
@@ -818,17 +980,19 @@ stock while alive: health {:.0}, armour {:.0}, guns carried {:.1}",
         );
     }
     println!("\n-- while hurt (under {:.0}%) --\n", HURT * 100.0);
-    println!("{:<11}{:>8}{:>8}{:>7}{:>8}   {}", "entrant", "hurt s", "seen%", "packs", "none%", "roam/hunt/fight/close/break");
+    println!("{:<11}{:>8}{:>8}{:>7}{:>8}{:>7}{:>8}   {}", "entrant", "hurt s", "seen%", "packs", "none%", "died%", "pack m", "roam/hunt/fight/close/break");
     for (e, t) in &rows {
         let all: f32 = t.hurt_acts.iter().sum();
         let a = t.hurt_acts.map(|x| Tally::share(x, all) * 100.0);
         println!(
-            "{:<11}{:>8.1}{:>7.0}%{:>7.1}{:>7.0}%   {:>2.0}/{:>2.0}/{:>2.0}/{:>2.0}/{:>2.0}",
+            "{:<11}{:>8.1}{:>7.0}%{:>7.1}{:>7.0}%{:>6.0}%{:>8.1}   {:>2.0}/{:>2.0}/{:>2.0}/{:>2.0}/{:>2.0}",
             FIELD[*e].name,
             Tally::share(all, t.hurt),
             Tally::share(t.hurt_seen_s, all) * 100.0,
             Tally::share(t.packs_up, t.hurt_calm_s),
             Tally::share(t.no_pack_s, t.hurt_calm_s) * 100.0,
+            Tally::share(t.hurt_died, t.hurt) * 100.0,
+            Tally::share(t.pack_m, t.hurt),
             a[0],
             a[1],
             a[2],

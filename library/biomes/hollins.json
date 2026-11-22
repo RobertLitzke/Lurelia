@@ -80,7 +80,7 @@
     {"creature": "boar", "count": 4},
     {"creature": "fox", "count": 3},
     {"creature": "sky_ray", "count": 7},
-    {"creature": "lantern_moth", "count": 50},
+    {"creature": "glassmoth", "morph": "lantern", "count": 50},
     {"creature": "firefly", "count": 90},
     {"creature": "dusk_wren", "count": 14},
     {"creature": "woodpecker", "count": 2},

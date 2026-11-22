@@ -1,7 +1,9 @@
 {
   "name": "dead_wood",
-  "version": 2,
+  "version": 3,
   "introduced_by": "glassfall",
+  "notes": "Dead wood weathered silver-grey and split along the grain: snags, driftwood, the spruce the salt killed. v3: drowned_wood merged in.",
+  "was": ["drowned_wood"],
   "id": 43,
   "smooth": false,
   "texture": {

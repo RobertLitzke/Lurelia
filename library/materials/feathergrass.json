@@ -4,6 +4,7 @@
   "introduced_by": "windbarrow",
   "notes": "Feathergrass: the steppe's cover, a tall bunchgrass with a silver-gold summer awn, tawny over bare chalk between the tussocks.",
   "smooth": true,
+  "sprites": "grass",
   "texture": {
     "pattern": "noise",
     "base": [126, 116, 86],

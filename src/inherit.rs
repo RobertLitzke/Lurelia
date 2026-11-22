@@ -1,5 +1,6 @@
 //! Library inheritance: an entry that names a parent with `"like"` starts from
-//! the parent's resolved JSON and overrides it. Used for creatures and plants.
+//! the parent's resolved JSON and overrides it. Used for creatures, plants,
+//! city kits, materials and biomes.
 //!
 //! - Every key the child gives replaces the parent's, except the objects in
 //!   `MERGED` (colours, behaviour, variation), which merge key by key, and
@@ -7,8 +8,15 @@
 //!   `"mat": "air"` carves, so a child can remove a part of the parent too).
 //! - `scale` multiplies the parent's sizes (`SCALED`); sizes the child gives
 //!   itself are taken as written.
+//! - A material's `texture`, `top` and `bottom` recipes merge key by key, and
+//!   so does each one's `calm` block. `shade` (a brightness multiple) and
+//!   `hue` (toward warm above 0, cool below, as a creature's `vary.hue`)
+//!   repaint every colour the child takes from its parent and leave the ones
+//!   it gives itself, so a darker bed of the same rock is three lines:
+//!   `"like": "quartzite", "shade": 0.78`.
 //! - Identity is never inherited: name, version, introduced_by, notes, rarity,
-//!   and nor are `morphs`, whose colours are absolute.
+//!   a material's legacy `id` and its old names (`was`), and nor are
+//!   `morphs`, whose colours are absolute.
 //! - Chains are allowed (a child of a child); cycles and unknown parents are
 //!   errors and the entry is skipped.
 
@@ -16,12 +24,16 @@ use serde_json::{Map, Value};
 use std::collections::HashMap;
 
 /// Keys merged key by key rather than replaced.
-const MERGED: [&str; 4] = ["colors", "behaviour", "in_water", "vary"];
+const MERGED: [&str; 7] = ["colors", "behaviour", "in_water", "vary", "texture", "top", "bottom"];
+/// Blocks inside a merged one that merge key by key too (a recipe's `calm`).
+const MERGED_INNER: [&str; 1] = ["calm"];
+/// A material's colour recipes, which `shade` and `hue` repaint.
+const RECIPES: [&str; 3] = ["texture", "top", "bottom"];
 /// Keys never inherited. `morphs` is among them because a morph's colours are
 /// absolute: a child is a different animal or plant, so its parent's coats
 /// would paint it the parent's colours. A child that comes in coats says so
 /// itself.
-const OWN: [&str; 7] = ["name", "version", "introduced_by", "notes", "rarity", "like", "morphs"];
+const OWN: [&str; 9] = ["name", "version", "introduced_by", "notes", "rarity", "like", "morphs", "id", "was"];
 /// Sizes `scale` multiplies: single numbers or [lo, hi] ranges.
 const SCALED: [&str; 6] = ["voxel", "half_w", "height", "trunk_radius", "crown_radius", "fly_height"];
 
@@ -57,6 +69,44 @@ fn scale_sizes(m: &mut Map<String, Value>, s: f64, skip: &Map<String, Value>) {
     }
 }
 
+/// Repaint the colours of a material's recipes the child does not give
+/// itself: `shade` multiplies them, `hue` warms them (red up, blue down) or,
+/// below 0, cools them. Colours stay in 0..255 and keep a fourth value.
+fn repaint(m: &mut Map<String, Value>, shade: f64, hue: f64, child: &Map<String, Value>) {
+    let mul = [shade * (1.0 + hue), shade, shade * (1.0 - hue)];
+    let paint = |v: &mut Value| {
+        if let Value::Array(a) = v {
+            for (i, x) in a.iter_mut().take(3).enumerate() {
+                if let Some(f) = x.as_f64() {
+                    *x = Value::from((f * mul[i]).round().clamp(0.0, 255.0) as i64);
+                }
+            }
+        }
+    };
+    let own = |block: Option<&Value>, key: &str| block.and_then(|b| b.as_object()).is_some_and(|b| b.contains_key(key));
+    for r in RECIPES {
+        let Some(Value::Object(rec)) = m.get_mut(r) else { continue };
+        let mine = child.get(r);
+        for key in ["base", "alt"] {
+            if !own(mine, key) {
+                if let Some(v) = rec.get_mut(key) {
+                    paint(v);
+                }
+            }
+        }
+        let mine_calm = mine.and_then(|b| b.get("calm"));
+        if let Some(Value::Object(calm)) = rec.get_mut("calm") {
+            for key in ["base", "alt"] {
+                if !own(mine_calm, key) {
+                    if let Some(v) = calm.get_mut(key) {
+                        paint(v);
+                    }
+                }
+            }
+        }
+    }
+}
+
 /// One entry laid over another, for a caller holding the two as values: the
 /// EDIT page resolves the entry it is showing the same way the loader does
 /// (src/editor).
@@ -73,9 +123,17 @@ fn merge(parent: &Map<String, Value>, child: &Map<String, Value>) -> Map<String,
     if let Some(s) = child.get("scale").and_then(|s| s.as_f64()) {
         scale_sizes(&mut out, s, child);
     }
+    let shade = child.get("shade").and_then(|s| s.as_f64());
+    let hue = child.get("hue").and_then(|s| s.as_f64());
+    if shade.is_some() || hue.is_some() {
+        repaint(&mut out, shade.unwrap_or(1.0), hue.unwrap_or(0.0), child);
+    }
     for (k, v) in child {
         match k.as_str() {
             "scale" => {}
+            // A material's repaint, applied above. Only a material has
+            // recipes to repaint; anywhere else the keys are the entry's own.
+            "shade" | "hue" if RECIPES.iter().any(|r| out.contains_key(*r)) => {}
             "extra_ops" => {
                 let ops = out.entry("ops").or_insert_with(|| Value::Array(Vec::new()));
                 if let (Value::Array(o), Value::Array(extra)) = (ops, v) {
@@ -85,7 +143,16 @@ fn merge(parent: &Map<String, Value>, child: &Map<String, Value>) -> Map<String,
             key if MERGED.contains(&key) => match (out.get_mut(key), v) {
                 (Some(Value::Object(o)), Value::Object(c)) => {
                     for (ck, cv) in c {
-                        o.insert(ck.clone(), cv.clone());
+                        match (o.get_mut(ck), cv) {
+                            (Some(Value::Object(oi)), Value::Object(ci)) if MERGED_INNER.contains(&ck.as_str()) => {
+                                for (ik, iv) in ci {
+                                    oi.insert(ik.clone(), iv.clone());
+                                }
+                            }
+                            _ => {
+                                o.insert(ck.clone(), cv.clone());
+                            }
+                        }
                     }
                 }
                 _ => {
@@ -237,6 +304,31 @@ mod tests {
         assert!((j["voxel"].as_f64().unwrap() - 0.09).abs() < 1e-9, "scales compound down a chain");
         assert!((j["height"].as_f64().unwrap() - 0.75).abs() < 1e-9);
         assert_eq!(j["like"], "hare");
+    }
+
+    #[test]
+    fn a_material_takes_its_parents_recipe_repainted() {
+        let parent = json!({"name": "rock", "smooth": true, "id": 40, "was": ["stone_old"],
+            "texture": {"pattern": "strata", "base": [100, 100, 100], "alt": [200, 200, 200], "scale": 3,
+                        "calm": {"base": [120, 120, 120], "alt": [160, 160, 160]}}});
+        let child = json!({"name": "dark_rock", "like": "rock", "shade": 0.5, "hue": 0.1,
+            "texture": {"alt": [10, 20, 30], "calm": {"alt": [1, 2, 3]}}});
+        let mut errors = Vec::new();
+        let out = resolve(vec![("p".into(), parent), ("c".into(), child)], &mut errors);
+        assert!(errors.is_empty(), "{errors:?}");
+        let c = &out[1].1;
+        let t = &c["texture"];
+        // Taken from the parent: repainted, warmer.
+        assert_eq!(t["base"], json!([55, 50, 45]));
+        assert_eq!(t["calm"]["base"], json!([66, 60, 54]));
+        // Given by the child: as written, and the rest of the recipe kept.
+        assert_eq!(t["alt"], json!([10, 20, 30]));
+        assert_eq!(t["calm"]["alt"], json!([1, 2, 3]));
+        assert_eq!(t["pattern"], json!("strata"));
+        assert_eq!(c["smooth"], json!(true));
+        // Never the parent's identity: no id, no old names, no repaint keys.
+        assert!(c.get("id").is_none() && c.get("was").is_none());
+        assert!(c.get("shade").is_none() && c.get("hue").is_none());
     }
 
     #[test]

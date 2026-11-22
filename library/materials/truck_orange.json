@@ -3,13 +3,6 @@
   "version": 1,
   "introduced_by": "saltmirror",
   "notes": "Harvest orange on a 1970s pickup, faded pale, rust coming through the bonnet.",
-  "smooth": false,
-  "texture": {
-    "pattern": "blotch",
-    "base": [190, 120, 66],
-    "alt": [130, 84, 56],
-    "scale": 4,
-    "contrast": 0.7,
-    "calm": {"base": [192, 128, 78], "alt": [140, 94, 66]}
-  }
+  "like": "truck_cream",
+  "texture": {"alt": [130, 84, 56], "calm": {"alt": [140, 94, 66], "base": [192, 128, 78]}, "base": [190, 120, 66]}
 }

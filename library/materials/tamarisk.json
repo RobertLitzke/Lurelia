@@ -5,6 +5,7 @@
   "notes": "Feathery grey-green tamarisk with pink flower plumes.",
   "id": 129,
   "smooth": false,
+  "sprites": "tamarisk",
   "texture": {
     "pattern": "speckle",
     "base": [108, 120, 92],

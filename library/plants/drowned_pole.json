@@ -7,7 +7,7 @@
   "height": [8.0, 18.0],
   "trunk_radius": [0.2, 0.3],
   "crown_radius": [0.8, 1.4],
-  "bark": "drowned_wood",
+  "bark": "dead_wood",
   "max_slope": 1.0,
   "lean": 0.06,
   "standing_water": [-2.5, 3.5],

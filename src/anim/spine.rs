@@ -388,6 +388,7 @@ mod tests {
             })
             .collect();
         let rig = Rig {
+            soft: None,
             plan: Some(Plan::Serpent),
             bones,
             activities: HashMap::new(),
@@ -444,12 +445,21 @@ mod tests {
             pair: 0,
         };
         let rig = Rig {
+            soft: None,
             plan: Some(Plan::Octopus),
             activities: HashMap::new(),
             floor: 0.0,
-            bones: vec![b("body", None, [16.0, 2.0, 16.0]), b("a0", Some(0), [18.0, 1.0, 16.0]), b("a1", Some(1), [21.0, 1.0, 16.0]), b("a2", Some(2), [24.0, 1.0, 16.0])],
+            bones: vec![
+                b("body", None, [16.0, 2.0, 16.0]),
+                b("a0", Some(0), [18.0, 1.0, 16.0]),
+                b("a1", Some(1), [21.0, 1.0, 16.0]),
+                b("a2", Some(2), [24.0, 1.0, 16.0]),
+            ],
         };
-        let ch = Chain { bones: vec![1, 2, 3], d: vec![3.0, 3.0, 3.0] };
+        let ch = Chain {
+            bones: vec![1, 2, 3],
+            d: vec![3.0, 3.0, 3.0],
+        };
         let (vox, pivot) = (0.1, Vec3::new(16.0, 0.0, 16.0));
         for &(pitch, yaw) in &[(0.0, 0.0), (0.4, 1.3), (-0.3, -2.6)] {
             let mut pose = Pose::rest(4);

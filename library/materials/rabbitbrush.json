@@ -6,6 +6,7 @@
   "id": 126,
   "smooth": false,
   "passable": true,
+  "sprites": "rabbitbrush",
   "texture": {
     "pattern": "speckle",
     "base": [138, 140, 92],

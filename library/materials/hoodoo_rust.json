@@ -2,15 +2,7 @@
   "name": "hoodoo_rust",
   "version": 1,
   "introduced_by": "glassfall",
+  "like": "hoodoo_pale",
   "id": 53,
-  "smooth": false,
-  "texture": {
-    "pattern": "strata",
-    "base": [196, 112, 72],
-    "scale": 3,
-    "contrast": 1.0,
-    "alt": [214, 136, 92],
-    "calm": {"base": [214, 120, 76], "alt": [226, 146, 98]}
-  },
-  "round": true
+  "texture": {"alt": [214, 136, 92], "calm": {"alt": [226, 146, 98], "base": [214, 120, 76]}, "base": [196, 112, 72]}
 }

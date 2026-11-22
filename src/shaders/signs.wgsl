@@ -18,6 +18,7 @@ const F_PAW: u32 = 1u;
 const F_BEAR: u32 = 2u;
 const F_BIRD: u32 = 3u;
 const F_BOOT: u32 = 4u;
+const F_TYRE: u32 = 5u;
 
 const SIGN_FADE_NEAR: f32 = 30.0;
 const SIGN_FADE_FAR: f32 = 45.0;
@@ -105,6 +106,17 @@ fn foot_shape(q: vec2<f32>, foot: u32, soft: f32, grow: f32) -> f32 {
         m = max(m, line(q, heel, vec2<f32>(0.0, 0.42), w, soft));
         m = max(m, line(q, heel, vec2<f32>(0.33, 0.3), w, soft));
         m = max(m, line(q, heel, vec2<f32>(0.0, -0.44), w, soft));
+        return m;
+    }
+    if (foot == F_TYRE) {
+        // A band half a tyre's width either side, with the knobs' chevrons
+        // pressed across it. Each piece is laid end to end with the last.
+        let band = 1.0 - smoothstep(0.25 * k - soft * 0.3, 0.25 * k + soft * 0.3, abs(q.x));
+        let ends = 1.0 - smoothstep(0.5 - soft * 0.2, 0.5 + soft * 0.2, abs(q.y));
+        var m = band * ends;
+        if (grow == 0.0) {
+            m *= mix(0.6, 1.0, step(0.5, fract(q.y * 6.0 + abs(q.x) * 3.0)));
+        }
         return m;
     }
     // The boot: heel and sole, with lugs across the sole.

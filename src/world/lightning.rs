@@ -62,7 +62,12 @@ impl Lightning {
             let f: Vec<f32> = v.split(',').filter_map(|s| s.trim().parse().ok()).collect();
             (f.len() >= 2).then(|| [f[0], f[1], 417.0, f.get(2).copied().unwrap_or(1.0)])
         });
-        Lightning { rng: Rng::new(seed ^ 0x6c69_6768), wait: 2.0, strike: None, held }
+        Lightning {
+            rng: Rng::new(seed ^ 0x6c69_6768),
+            wait: 2.0,
+            strike: None,
+            held,
+        }
     }
 
     /// Step by `dt` real seconds under `sky`, with the camera at `cam`.

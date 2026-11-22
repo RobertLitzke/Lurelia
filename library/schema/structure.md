@@ -8,11 +8,23 @@ authority when the two disagree.
 
 Run the checks a machine can do, so the review is spent on the rest:
 
-- Validate the file against `structure.schema.json` with any JSON Schema
-  (draft 2020-12) validator. It catches unknown keys, wrong types, unknown
-  ops, a bad `base` or `axis`, and arrays of the wrong length.
-- `lurelia --world NAME --validate` checks names: every slot's material and
-  every op's `mat` must be a slot, a material, `air` or `carve`.
+- `python tools/check_structure.py FILE` validates against the schema (when
+  `jsonschema` is installed) and checks materials, unused slots, ops drawn
+  outside `size`, the anchor, door materials and leaf heights, sizes in the
+  notes against what the file measures, and canonical form. Given a file
+  outside the library, it compares it with the library entry it would
+  replace and lists what changes.
+- `lurelia --world NAME --validate` checks names across the whole world.
+- `python tools/shoot_structure.py NAME` photographs every placement of the
+  structure in the worlds that use it, from three sides and above, into
+  `screenshots/structures/NAME/`. For a feature a biome scatters (rocks,
+  beds, logs) pass `--world`: the chronicle doesn't name it, but the
+  gazetteer's "Natural features" list says where it stands. The release binary reads the library at
+  load, so it shows an edited file without a rebuild.
+
+What no tool can judge: whether it looks right, whether its scale fits the
+player (1.75 m) and the buildings round it, and whether its place in the
+world suits it. That is what the pictures are for.
 
 If the file has `"_generated_by"`, it is written by that script: review the
 script, not the file, since an edit to the file is lost the next time the
@@ -57,16 +69,17 @@ an optional `part`.
 | `log` | `base` (centre of one end), `radius`, `length`, `axis`, `yaw` |
 | `disc` | `centre`, `radius`, `thick`, `axis`, `yaw` |
 | `set` | `at`: one voxel |
-| `segment` | `points` (two or more), `radius`: rods, ropes, braces at any angle |
+| `segment` | `points` (two or more), `radius`: rods, ropes, braces at any angle. Fills only air, so it never cuts what it touches, and its tube hides only the voxels it drew: a brace may share the pole's material |
 | `dish` | `vertex`, `radius`, `depth`, `thick` (1.5), `tilt`, `yaw` |
 | `repeat` | `count`, `step`, `ops`: run k is shifted by k * `step` |
 | `recolour`, `recolour_below` | creature models only |
 
 `mat` is a slot, a material, `air` (empties the structure's voxels, leaves
 the terrain) or `carve` (removes the terrain too). `part` decides decay:
-`roof`, `cloth`, `glass` fail in sections; `timber`, `frame`, `wall`,
-`stone`, `metal` crumble from the top; `floor` mostly stays. Any other part,
-or none, never decays.
+`roof`, `cloth`, `glass` fail in sections; `floor` never decays; everything
+else (`timber`, `frame`, `wall`, `stone`, `metal`, any other name, or none)
+crumbles from the top of each column, all at the same rate. So an op that
+must survive age whole (an iron kettle set in brick) needs `floor`.
 
 ## What to check
 

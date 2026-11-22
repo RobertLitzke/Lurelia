@@ -43,7 +43,9 @@
     {"creature": "cougar", "count": 1},
     {"creature": "badger", "count": 1},
     {"creature": "rattlesnake", "count": 2},
-    {"creature": "gopher_snake", "count": 3}
+    {"creature": "gopher_snake", "count": 3},
+    {"creature": "roadrunner", "count": 1},
+    {"creature": "gambels_quail", "count": 8}
   ],
   "collectibles": [
     {"item": "arrowhead", "density": 6e-05, "placement": {"verb": "scatter", "params": {}}},

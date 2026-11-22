@@ -17,5 +17,5 @@
       "placement": {"verb": "clustered", "params": {"size": 8, "min": 0.3, "max": 0.6}}
     }
   ],
-  "creatures": [{"creature": "gull", "count": 4}, {"creature": "sea_turtle", "count": 1}]
+  "creatures": [{"creature": "gull", "count": 4}, {"creature": "sea_turtle", "count": 1}, {"creature": "sanderling", "count": 10}]
 }

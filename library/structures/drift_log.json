@@ -1,17 +1,88 @@
 {
   "name": "drift_log",
-  "version": 1,
+  "version": 2,
   "introduced_by": "ribshore",
-  "notes": "A whole spruce trunk the winter storms threw up the beach, bleached silver, its root plate still on.",
-  "size": [72, 12, 20],
-  "anchor": [36, 0, 10],
+  "notes": "A whole storm-thrown spruce about 18 m long, bleached silver, butt (1.1 m thick) to the west with a ragged fan of root stubs, a few snapped branch stubs and a split along the grain; it lies along x and sinks 0.75 m into the sand.",
+  "size": [76, 14, 24],
+  "anchor": [38, 3, 12],
   "level": false,
   "decays": false,
   "tags": ["natural"],
-  "slots": {"wood": "silver_deadwood"},
+  "slots": {"wood": "silver_deadwood", "split": "stick_wood"},
   "ops": [
-    {"op": "log", "base": [4, 2.2, 10], "radius": 2.2, "length": 66, "axis": "x", "mat": "wood"},
-    {"op": "disc", "centre": [3, 4, 10], "radius": 6, "thick": 2, "axis": "x", "mat": "wood"},
-    {"op": "log", "base": [30, 2, 12], "radius": 0.8, "length": 6, "axis": "z", "mat": "wood"}
+    {"op": "log", "base": [12, 4.3, 12.0], "radius": 2.3, "length": 7, "axis": "x", "mat": "wood", "part": "wood"},
+    {"op": "log", "base": [18, 4.28, 12.53], "radius": 2.13, "length": 7, "axis": "x", "mat": "wood", "part": "wood"},
+    {"op": "log", "base": [24, 4.26, 13.02], "radius": 1.97, "length": 7, "axis": "x", "mat": "wood", "part": "wood"},
+    {"op": "log", "base": [30, 4.23, 13.43], "radius": 1.8, "length": 7, "axis": "x", "mat": "wood", "part": "wood"},
+    {"op": "log", "base": [36, 4.21, 13.75], "radius": 1.63, "length": 7, "axis": "x", "mat": "wood", "part": "wood"},
+    {"op": "log", "base": [42, 4.19, 13.94], "radius": 1.47, "length": 7, "axis": "x", "mat": "wood", "part": "wood"},
+    {"op": "log", "base": [48, 4.17, 14.0], "radius": 1.3, "length": 7, "axis": "x", "mat": "wood", "part": "wood"},
+    {"op": "log", "base": [54, 4.14, 13.91], "radius": 1.13, "length": 7, "axis": "x", "mat": "wood", "part": "wood"},
+    {"op": "log", "base": [60, 4.12, 13.69], "radius": 0.97, "length": 7, "axis": "x", "mat": "wood", "part": "wood"},
+    {"op": "log", "base": [66, 4.1, 13.35], "radius": 0.8, "length": 7, "axis": "x", "mat": "wood", "part": "wood"},
+    {"op": "ellipsoid", "centre": [12, 4.1, 12], "radius": [3.5, 3.0, 3.2], "mat": "wood", "part": "wood"},
+    {
+      "op": "segment",
+      "points": [[13, 4.5, 12], [11.7, 3.4, 13.03], [8.4, 1.31, 14.05]],
+      "radius": 2.27,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[13, 4.5, 12], [10.25, 3.46, 14.3], [5.5, 1.41, 16.6]],
+      "radius": 1.83,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[13, 4.5, 12], [10.0, 4.53, 14.95], [5.0, 3.56, 17.91]],
+      "radius": 1.39,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[13, 4.5, 12], [10.75, 5.94, 14.82], [6.5, 6.38, 17.64]],
+      "radius": 1.39,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[13, 4.5, 12], [10.1, 6.53, 13.93], [5.2, 7.56, 15.86]],
+      "radius": 1.72,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[13, 4.5, 12], [10.4, 6.18, 12.52], [5.8, 6.86, 13.04]],
+      "radius": 1.94,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[13, 4.5, 12], [10.5, 4.75, 11.48], [6.0, 4.01, 10.96]],
+      "radius": 1.5,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {"op": "box", "from": [4, 6, 16], "to": [8, 10, 20], "mat": "air", "part": "wood"},
+    {"op": "segment", "points": [[26, 4.45, 13.06], [27, 10.05, 7.46]], "radius": 0.55, "mat": "wood", "part": "wood"},
+    {
+      "op": "segment",
+      "points": [[36, 4.42, 13.64], [37, 10.18, 18.44]],
+      "radius": 0.55,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {"op": "segment", "points": [[47, 4.38, 13.97], [48, 8.38, 11.57]], "radius": 0.55, "mat": "wood", "part": "wood"},
+    {"op": "segment", "points": [[55, 4.36, 13.98], [56, 6.28, 21.18]], "radius": 0.55, "mat": "wood", "part": "wood"},
+    {"op": "segment", "points": [[62, 4.33, 13.82], [63, 7.53, 14.78]], "radius": 0.55, "mat": "wood", "part": "wood"},
+    {"op": "log", "base": [28, 5.59, 12.07], "radius": 0.5, "length": 18, "axis": "x", "mat": "split", "part": "wood"},
+    {"op": "log", "base": [50, 5.09, 13.23], "radius": 0.4, "length": 12, "axis": "x", "mat": "split", "part": "wood"}
   ]
 }

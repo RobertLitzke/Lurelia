@@ -3,6 +3,6 @@
   "version": 1,
   "introduced_by": "slagdeck",
   "notes": "The paler grey panel, for the walls that need to stand off the darker ones.",
-  "smooth": false,
-  "texture": {"pattern": "flat", "base": [116, 118, 118], "scale": 1, "contrast": 1.0, "calm": {"base": [128, 130, 130]}}
+  "like": "works_panel",
+  "texture": {"calm": {"base": [128, 130, 130]}, "base": [116, 118, 118]}
 }

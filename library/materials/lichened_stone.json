@@ -1,0 +1,16 @@
+{
+  "name": "lichened_stone",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "Grey stone underfoot speckled with yellow-green lichen. Renamed from lichen_rock, which was too easily taken for rock_lichen, the passable crust.",
+  "was": ["lichen_rock"],
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [124, 124, 120],
+    "scale": 5,
+    "contrast": 1.0,
+    "alt": [176, 170, 96],
+    "calm": {"base": [150, 146, 138], "alt": [180, 172, 110]}
+  }
+}

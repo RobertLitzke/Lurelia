@@ -43,7 +43,11 @@ pub struct State {
 
 impl Default for State {
     fn default() -> Self {
-        State { autumn: vec![false; 256], blossom: vec![false; 256], owed: 0.0 }
+        State {
+            autumn: vec![false; 256],
+            blossom: vec![false; 256],
+            owed: 0.0,
+        }
     }
 }
 

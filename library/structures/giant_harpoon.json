@@ -1,34 +1,208 @@
 {
   "name": "giant_harpoon",
-  "version": 1,
+  "version": 2,
   "introduced_by": "ribshore",
-  "notes": "A harpoon thirty metres long, an iron shaft as thick as a man, rusted through, a barbed head buried in the bone and a chain hanging from its butt. Nobody has said what fired it.",
-  "size": [132, 56, 26],
-  "anchor": [6, 0, 13],
+  "notes": "A harpoon about thirty metres long, an iron shaft 1.5 m thick leaning down from a butt 12 m up to a barbed head buried in the bone, rusted through in places, with an eye at the butt and a chain twelve metres long hanging to the sand. It lies along local +X with the butt end at the anchor.",
+  "size": [140, 64, 40],
+  "anchor": [14, 0, 20],
   "level": false,
   "decays": false,
   "tags": ["whaling", "anomaly"],
-  "slots": {"iron": "rust_iron", "chain": "rust_iron"},
+  "slots": {
+    "iron": "rust_iron",
+    "chain": "rust_iron",
+    "scale": "rust_iron",
+    "rope": "ship_rigging",
+    "bone": "titan_bone",
+    "crust": "bone_barnacles"
+  },
   "ops": [
-    {"op": "segment", "points": [[7, 49, 13], [116, 5.4, 13]], "radius": 3.0, "mat": "iron"},
-    {"op": "box", "from": [110, 4, 6], "to": [118, 10, 20], "mat": "iron"},
-    {"op": "box", "from": [116, 2, 8], "to": [128, 12, 18], "mat": "iron"},
-    {"op": "box", "from": [100, 6, 2], "to": [106, 14, 24], "mat": "iron"},
-    {"op": "ellipsoid", "centre": [4, 50, 13], "radius": [3, 3, 3], "mat": "iron"},
-    {"op": "ellipsoid", "centre": [4.0, 47.0, 13], "radius": [1.0, 1.6, 0.9], "mat": "chain"},
-    {"op": "ellipsoid", "centre": [3.85, 43.8, 14], "radius": [1.0, 1.6, 0.9], "mat": "chain"},
-    {"op": "ellipsoid", "centre": [3.7, 40.6, 13], "radius": [1.0, 1.6, 0.9], "mat": "chain"},
-    {"op": "ellipsoid", "centre": [3.55, 37.4, 14], "radius": [1.0, 1.6, 0.9], "mat": "chain"},
-    {"op": "ellipsoid", "centre": [3.4, 34.2, 13], "radius": [1.0, 1.6, 0.9], "mat": "chain"},
-    {"op": "ellipsoid", "centre": [3.25, 31.0, 14], "radius": [1.0, 1.6, 0.9], "mat": "chain"},
-    {"op": "ellipsoid", "centre": [3.1, 27.8, 13], "radius": [1.0, 1.6, 0.9], "mat": "chain"},
-    {"op": "ellipsoid", "centre": [2.95, 24.6, 14], "radius": [1.0, 1.6, 0.9], "mat": "chain"},
-    {"op": "ellipsoid", "centre": [2.8, 21.4, 13], "radius": [1.0, 1.6, 0.9], "mat": "chain"},
-    {"op": "ellipsoid", "centre": [2.65, 18.2, 14], "radius": [1.0, 1.6, 0.9], "mat": "chain"},
-    {"op": "ellipsoid", "centre": [2.5, 15.0, 13], "radius": [1.0, 1.6, 0.9], "mat": "chain"},
-    {"op": "ellipsoid", "centre": [2.35, 11.8, 14], "radius": [1.0, 1.6, 0.9], "mat": "chain"},
-    {"op": "ellipsoid", "centre": [2.2, 8.6, 13], "radius": [1.0, 1.6, 0.9], "mat": "chain"},
-    {"op": "ellipsoid", "centre": [2.05, 5.4, 14], "radius": [1.0, 1.6, 0.9], "mat": "chain"},
-    {"op": "ellipsoid", "centre": [1.9, 2.2, 13], "radius": [1.0, 1.6, 0.9], "mat": "chain"}
+    {
+      "op": "segment",
+      "points": [[15.0, 49.0, 20.0], [103.57, 13.57, 20.0]],
+      "radius": 3.0,
+      "mat": "iron",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[15.0, 49.0, 20.0], [17.79, 47.89, 20.0]],
+      "radius": 4.0,
+      "mat": "iron",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[23.36, 45.66, 20.0], [26.14, 44.54, 20.0]],
+      "radius": 4.0,
+      "mat": "iron",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[50.28, 34.89, 20.0], [53.07, 33.77, 20.0]],
+      "radius": 4.0,
+      "mat": "iron",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[79.99, 23.0, 20.0], [82.78, 21.89, 20.0]],
+      "radius": 4.0,
+      "mat": "iron",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[15.0, 49.0, 20.0], [22.43, 46.03, 20.0]],
+      "radius": 3.6,
+      "mat": "iron",
+      "part": "shaft"
+    },
+    {"op": "ellipsoid", "centre": [37.3, 40.1, 20], "radius": [2.0, 1.6, 6], "mat": "air", "part": "shaft"},
+    {"op": "ellipsoid", "centre": [63.3, 29.7, 20], "radius": [2.0, 2.0, 6], "mat": "air", "part": "shaft"},
+    {"op": "ellipsoid", "centre": [89.3, 19.3, 20], "radius": [2.0, 1.5, 6], "mat": "air", "part": "shaft"},
+    {
+      "op": "segment",
+      "points": [[29.86, 40.06, 20], [30.36, 38.56, 20]],
+      "radius": 1.2,
+      "mat": "scale",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[43.78, 34.49, 20], [44.28, 32.99, 20]],
+      "radius": 1.2,
+      "mat": "scale",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[56.78, 29.29, 20], [57.28, 27.79, 20]],
+      "radius": 1.2,
+      "mat": "scale",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[70.71, 23.72, 20], [71.21, 22.22, 20]],
+      "radius": 1.2,
+      "mat": "scale",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[84.64, 18.15, 20], [85.14, 16.65, 20]],
+      "radius": 1.2,
+      "mat": "scale",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[98.56, 12.57, 20], [99.06, 11.07, 20]],
+      "radius": 1.2,
+      "mat": "scale",
+      "part": "shaft"
+    },
+    {"op": "disc", "centre": [14, 52, 20], "radius": 6, "thick": 2, "axis": "z", "mat": "iron", "part": "shaft"},
+    {"op": "disc", "centre": [14, 52, 20], "radius": 3.4, "thick": 4, "axis": "z", "mat": "air", "part": "shaft"},
+    {"op": "segment", "points": [[16.0, 48, 23.5], [16.5, 47.8, 16.5]], "radius": 1.3, "mat": "rope", "part": "rope"},
+    {"op": "segment", "points": [[17.3, 48, 23.5], [17.8, 47.8, 16.5]], "radius": 1.3, "mat": "rope", "part": "rope"},
+    {"op": "segment", "points": [[18.6, 48, 23.5], [19.1, 47.8, 16.5]], "radius": 1.3, "mat": "rope", "part": "rope"},
+    {"op": "segment", "points": [[19.9, 48, 23.5], [20.4, 47.8, 16.5]], "radius": 1.3, "mat": "rope", "part": "rope"},
+    {"op": "segment", "points": [[17, 47, 24], [19, 37, 25]], "radius": 1.2, "mat": "rope", "part": "rope"},
+    {"op": "segment", "points": [[19, 37, 25], [18.2, 32, 26]], "radius": 1.0, "mat": "rope", "part": "rope"},
+    {"op": "ellipsoid", "centre": [14, 48.5, 20], "radius": [2.6, 4.2, 1.3], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [14, 48.5, 20], "radius": [1.2, 2.7, 1.8], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [13.75, 42.3, 20], "radius": [1.3, 4.2, 2.6], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [13.75, 42.3, 20], "radius": [1.8, 2.7, 1.2], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [13.5, 36.1, 20], "radius": [2.6, 4.2, 1.3], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [13.5, 36.1, 20], "radius": [1.2, 2.7, 1.8], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [13.25, 29.9, 20], "radius": [1.3, 4.2, 2.6], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [13.25, 29.9, 20], "radius": [1.8, 2.7, 1.2], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [13.0, 23.7, 20], "radius": [2.6, 4.2, 1.3], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [13.0, 23.7, 20], "radius": [1.2, 2.7, 1.8], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [12.75, 17.5, 20], "radius": [1.3, 4.2, 2.6], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [12.75, 17.5, 20], "radius": [1.8, 2.7, 1.2], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [12.5, 11.3, 20], "radius": [2.6, 4.2, 1.3], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [12.5, 11.3, 20], "radius": [1.2, 2.7, 1.8], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [17.05, 2, 20.0], "radius": [4.2, 1.3, 2.6], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [17.05, 2, 20.0], "radius": [2.7, 2.0, 1.2], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [20.71, 2, 23.11], "radius": [2.6, 1.3, 4.2], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [20.71, 2, 23.11], "radius": [1.2, 2.0, 2.7], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [23.78, 2, 26.8], "radius": [4.2, 1.3, 2.6], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [23.78, 2, 26.8], "radius": [2.7, 2.0, 1.2], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [28.23, 2, 28.6], "radius": [2.6, 1.3, 4.2], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [28.23, 2, 28.6], "radius": [1.2, 2.0, 2.7], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [32.65, 2, 26.74], "radius": [4.2, 1.3, 2.6], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [32.65, 2, 26.74], "radius": [2.7, 2.0, 1.2], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [35.71, 2, 23.04], "radius": [2.6, 1.3, 4.2], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [35.71, 2, 23.04], "radius": [1.2, 2.0, 2.7], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [39.4, 2, 19.96], "radius": [4.2, 1.3, 2.6], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [39.4, 2, 19.96], "radius": [2.7, 2.0, 1.2], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [44.19, 2, 20.04], "radius": [2.6, 1.3, 4.2], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [44.19, 2, 20.04], "radius": [1.2, 2.0, 2.7], "mat": "air", "part": "chain"},
+    {"op": "ellipsoid", "centre": [47.82, 2, 23.18], "radius": [4.2, 1.3, 2.6], "mat": "chain", "part": "chain"},
+    {"op": "ellipsoid", "centre": [47.82, 2, 23.18], "radius": [2.7, 2.0, 1.2], "mat": "air", "part": "chain"},
+    {
+      "op": "segment",
+      "points": [[101.72, 14.31, 20.0], [111.0, 10.6, 20.0]],
+      "radius": 4.4,
+      "mat": "iron",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[111.0, 10.6, 20.0], [121.21, 6.51, 20.0]],
+      "radius": 3.4,
+      "mat": "iron",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[121.21, 6.51, 20.0], [133.28, 1.69, 20.0]],
+      "radius": 1.6,
+      "mat": "iron",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[114.0, 9.6, 18.5], [102.0, 12.1, 10]],
+      "radius": 1.7,
+      "mat": "iron",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[102.0, 12.1, 10], [100.0, 12.6, 7.5]],
+      "radius": 0.9,
+      "mat": "iron",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[114.0, 9.6, 21.5], [102.0, 12.1, 30]],
+      "radius": 1.7,
+      "mat": "iron",
+      "part": "shaft"
+    },
+    {
+      "op": "segment",
+      "points": [[102.0, 12.1, 30], [100.0, 12.6, 32.5]],
+      "radius": 0.9,
+      "mat": "iron",
+      "part": "shaft"
+    },
+    {"op": "segment", "points": [[118.86, 2, 14], [118.76, 11, 15.2]], "radius": 1.5, "mat": "bone", "part": "bone"},
+    {"op": "segment", "points": [[122.86, 2, 28], [121.96, 9, 26.4]], "radius": 1.5, "mat": "bone", "part": "bone"},
+    {"op": "segment", "points": [[116.86, 2, 25], [117.16, 8, 24.0]], "radius": 1.5, "mat": "bone", "part": "bone"},
+    {"op": "segment", "points": [[128.86, 2, 11], [126.76, 10, 12.8]], "radius": 1.5, "mat": "bone", "part": "bone"},
+    {"op": "segment", "points": [[124.86, 2, 15], [123.56, 7, 16.0]], "radius": 1.5, "mat": "bone", "part": "bone"},
+    {"op": "segment", "points": [[114.86, 2, 18], [115.56, 9, 18.4]], "radius": 1.5, "mat": "bone", "part": "bone"},
+    {"op": "segment", "points": [[127.86, 2, 26], [125.96, 8, 24.8]], "radius": 1.5, "mat": "bone", "part": "bone"},
+    {"op": "ellipsoid", "centre": [103.61, 15.85, 20.18], "radius": [1.5, 1, 1.2], "mat": "crust", "part": "crust"},
+    {"op": "ellipsoid", "centre": [107.59, 14.36, 20.42], "radius": [1.5, 1, 1.2], "mat": "crust", "part": "crust"},
+    {"op": "ellipsoid", "centre": [111.81, 12.88, 18.26], "radius": [1.5, 1, 1.2], "mat": "crust", "part": "crust"},
+    {"op": "ellipsoid", "centre": [105.02, 15.1, 21.35], "radius": [1.5, 1, 1.2], "mat": "crust", "part": "crust"}
   ]
 }

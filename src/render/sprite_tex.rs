@@ -153,6 +153,305 @@ fn tuft(img: &mut Img, r: &mut Rng, n: usize, hs: (f32, f32), lean: f32, width: 
     }
 }
 
+/// The outline of one leaf on a canopy card. `Pointed` is the old `leaf`;
+/// the rest are drawn by `shaped`.
+#[derive(Clone, Copy, PartialEq)]
+enum Kind {
+    Pointed,
+    /// Ovate with a blunt tip (beech, tupelo, salal, mangrove).
+    Broad,
+    /// Five rounded palmate lobes on a short stalk (bramble, creeper).
+    Lobed,
+    /// A maple leaf: three long pointed lobes with teeth on their flanks, two
+    /// short ones at a notched base, on a long stalk.
+    Maple,
+    /// Long and thin, a little curved (willow, bamboo, reed).
+    Narrow,
+    /// Wide at a notched base, tapering to a point (ivy, vine, cottonwood).
+    Heart,
+}
+
+/// How a leaf shape is laid out on the cluster and rim cards: `len` scales
+/// leaf length, `ratio_a`/`ratio_b` give width over length on each card,
+/// `fill_ratio` that of the leaves over the cluster's middle, and `count` how
+/// many leaves there are against the pointed set (bigger leaves, fewer).
+struct Shape {
+    kind: Kind,
+    len: f32,
+    ratio_a: (f32, f32),
+    ratio_b: (f32, f32),
+    fill_ratio: f32,
+    count: f32,
+}
+
+const POINTED: Shape = Shape {
+    kind: Kind::Pointed,
+    len: 1.0,
+    ratio_a: (0.55, 0.7),
+    ratio_b: (0.56, 0.7),
+    fill_ratio: 0.65,
+    count: 1.0,
+};
+const BROAD: Shape = Shape {
+    kind: Kind::Broad,
+    len: 1.05,
+    ratio_a: (0.68, 0.82),
+    ratio_b: (0.66, 0.8),
+    fill_ratio: 0.75,
+    count: 0.8,
+};
+const LOBED: Shape = Shape {
+    kind: Kind::Lobed,
+    len: 1.15,
+    ratio_a: (1.0, 1.0),
+    ratio_b: (1.0, 1.0),
+    fill_ratio: 1.0,
+    count: 0.6,
+};
+const NARROW: Shape = Shape {
+    kind: Kind::Narrow,
+    len: 1.3,
+    ratio_a: (0.17, 0.23),
+    ratio_b: (0.17, 0.22),
+    fill_ratio: 0.2,
+    count: 1.35,
+};
+const MAPLE: Shape = Shape { kind: Kind::Maple, len: 1.35, ratio_a: (1.0, 1.0), ratio_b: (1.0, 1.0), fill_ratio: 1.0, count: 0.5 };
+const HEART: Shape = Shape {
+    kind: Kind::Heart,
+    len: 0.95,
+    ratio_a: (0.72, 0.85),
+    ratio_b: (0.7, 0.82),
+    fill_ratio: 0.78,
+    count: 0.7,
+};
+
+impl Shape {
+    fn draw(&self, img: &mut Img, p: [f32; 2], ang: f32, len: f32, w: f32, shade: f32) {
+        if self.kind == Kind::Pointed {
+            leaf(img, p, ang, len, w, shade, GREY);
+        } else {
+            shaped(img, self.kind, p, ang, len, w, shade);
+        }
+    }
+}
+
+/// Half-width of a blade `w` wide at its widest, `u` (0 to 1) along it:
+/// `a` sets how fast it widens from the base, `b` how it closes to the tip.
+fn profile(u: f32, w: f32, a: f32, b: f32) -> f32 {
+    if !(0.0..=1.0).contains(&u) {
+        return f32::MIN;
+    }
+    let peak = (a / (a + b)).powf(a) * (b / (a + b)).powf(b);
+    w * 0.5 * u.powf(a) * (1.0 - u).powf(b) / peak
+}
+
+/// A leaf of `kind` from `p` along `ang`, `len` long and `w` wide, shaded
+/// like `leaf`: darker midrib and edges, lighter toward the tip.
+fn shaped(img: &mut Img, kind: Kind, p: [f32; 2], ang: f32, len: f32, w: f32, shade: f32) {
+    let (dx, dy) = (ang.cos(), ang.sin());
+    // Which way a narrow leaf curls, fixed by where it sits.
+    let bend = if (p[0] * 7.1 + p[1] * 3.3).sin() < 0.0 { -0.1 } else { 0.1 };
+    let r = len + 2.0;
+    paint(img, p[0] - r, p[1] - r, p[0] + r, p[1] + r, |x, y| {
+        let (rx, ry) = (x - p[0], y - p[1]);
+        let s = rx * dx + ry * dy;
+        let t = -rx * dy + ry * dx;
+        // Margin inside the outline (pixels) and distance off the nearest vein.
+        let (m, vein) = match kind {
+            Kind::Pointed | Kind::Broad => (profile(s / len, w, 0.55, 0.35) - t.abs(), t.abs()),
+            Kind::Narrow => {
+                let u = s / len;
+                let tc = t - bend * len * u * u;
+                (profile(u, w, 0.6, 0.9) - tc.abs(), tc.abs())
+            }
+            Kind::Heart => {
+                // Two round lobes either side of a notch, under a pointed blade.
+                let body = profile((s - 0.2 * len) / (0.8 * len), w, 0.5, 1.1) - t.abs();
+                let lobe = |side: f32| 0.27 * len - ((s - 0.3 * len).powi(2) + (t - side * 0.2 * len).powi(2)).sqrt();
+                (body.max(lobe(1.0)).max(lobe(-1.0)), t.abs())
+            }
+            Kind::Maple => maple(s, t, len),
+            Kind::Lobed => {
+                // Five lobes fanned from the palm, the middle one longest.
+                let base = 0.18 * len;
+                let mut best = (0.2 * len - ((s - base - 0.1 * len).powi(2) + t * t).sqrt(), t.abs());
+                for (a, l) in [(0.0f32, 0.82f32), (0.8, 0.72), (-0.8, 0.72), (1.55, 0.45), (-1.55, 0.45)] {
+                    let (ca, sa) = (a.cos(), a.sin());
+                    let (ls, lt) = ((s - base) * ca + t * sa, -(s - base) * sa + t * ca);
+                    let ll = l * len;
+                    let lm = profile(ls / ll, ll * 0.5, 0.5, 0.9) - lt.abs();
+                    if lm > best.0 {
+                        best = (lm, lt.abs());
+                    }
+                }
+                // The stalk up to the palm.
+                if s >= 0.0 && s <= base + 1.0 {
+                    let st = 0.9 - t.abs();
+                    if st > best.0 {
+                        best = (st, 0.0);
+                    }
+                }
+                best
+            }
+        };
+        if m < -0.5 {
+            return None;
+        }
+        let cov = (m + 0.5).clamp(0.0, 1.0);
+        let rib = if vein < 0.7 { 0.85 } else { 1.0 };
+        let edge = 0.85 + 0.15 * (m / 2.0).clamp(0.0, 1.0);
+        let sh = shade * rib * edge * (0.9 + 0.15 * (s / len).clamp(0.0, 1.0));
+        Some((cov, [sh, sh, sh]))
+    });
+}
+
+/// Lobes of a maple leaf: angle off the midrib, reach (share of the main
+/// lobe's), angular half-width at the palm, and how the flanks curve (under 1
+/// full, over 1 hollow). Each main lobe has a tooth either side of its tip.
+const MAPLE_LOBES: [(f32, f32, f32, f32); 13] = [
+    (0.0, 1.0, 0.55, 0.8),
+    (0.26, 0.72, 0.14, 1.3),
+    (-0.26, 0.72, 0.14, 1.3),
+    (0.95, 0.9, 0.5, 0.8),
+    (-0.95, 0.9, 0.5, 0.8),
+    (1.2, 0.62, 0.13, 1.3),
+    (-1.2, 0.62, 0.13, 1.3),
+    (0.7, 0.62, 0.13, 1.3),
+    (-0.7, 0.62, 0.13, 1.3),
+    (1.95, 0.52, 0.4, 0.8),
+    (-1.95, 0.52, 0.4, 0.8),
+    (2.2, 0.42, 0.12, 1.3),
+    (-2.2, 0.42, 0.12, 1.3),
+];
+
+/// Radius of a maple leaf's outline round its palm at angle `phi` off the
+/// midrib, as a share of the main lobe's reach: the largest of a peak per
+/// lobe or tooth, so the sinuses between lobes cut deep and every tip comes
+/// to a point.
+fn maple_radius(phi: f32) -> f32 {
+    let mut r = 0.36f32;
+    for (a, l, w, k) in MAPLE_LOBES {
+        let off = (phi - a).abs();
+        if off < w {
+            r = r.max(l * (1.0 - off / w).powf(k));
+        }
+    }
+    r
+}
+
+/// Margin inside a maple leaf `len` long at (`s` along the midrib, `t`
+/// across it), and distance off the nearest vein.
+fn maple(s: f32, t: f32, len: f32) -> (f32, f32) {
+    let palm = 0.3 * len;
+    let reach = len - palm;
+    let (ps, pt) = (s - palm, t);
+    let d = (ps * ps + pt * pt).sqrt().max(1e-3);
+    let phi = pt.atan2(ps);
+    // Radial margin over the gradient's length, so it is in pixels and the
+    // edge antialiases evenly down the steep flank of a lobe.
+    let e = 0.01;
+    let r = maple_radius(phi) * reach;
+    let dr = (maple_radius(phi + e) - maple_radius(phi - e)) * reach / (2.0 * e);
+    let mut m = (r - d) / (1.0 + (dr / d).powi(2)).sqrt();
+    // Veins from the palm to the five lobe tips.
+    let mut vein = f32::MAX;
+    for (a, l, _, _) in MAPLE_LOBES.iter().filter(|v| v.2 > 0.2) {
+        let (ca, sa) = (a.cos(), a.sin());
+        let along = (ps * ca + pt * sa).clamp(0.0, l * reach);
+        vein = vein.min(((ps - ca * along).powi(2) + (pt - sa * along).powi(2)).sqrt());
+    }
+    // The long stalk from the twig to the palm.
+    if (0.0..=palm).contains(&s) {
+        let st = 0.9 - t.abs();
+        if st > m {
+            m = st;
+            vein = 0.0;
+        }
+    }
+    (m, vein)
+}
+
+/// The filler card: seven clusters of leaves round the middle, each on its
+/// own twig, their centres solid and a little sky left between them. Not a
+/// rosette of big leaves from one point, which stamps the same star over the
+/// whole crown.
+///
+/// Value is flat within a cluster and steps between them (back ones darker),
+/// so each leaf keeps a crisp silhouette at distance instead of smearing
+/// into a gradient.
+fn cluster(img: &mut Img, r: &mut Rng, shape: &Shape) {
+    let c = [S * 0.5, S * 0.5];
+    let groups = 7;
+    for g in 0..groups {
+        let a = (g as f32 + r.range(0.15, 0.85)) / groups as f32 * std::f32::consts::TAU;
+        let d = S * r.range(0.10, 0.21);
+        let anchor = [c[0] + a.cos() * d, c[1] + a.sin() * d];
+        let mid = [(c[0] + anchor[0]) * 0.5, (c[1] + anchor[1]) * 0.5];
+        blade(img, c, mid, anchor, 2.6, 1.5, 0.38, 0.48, GREY);
+        // Back clusters first and darker; the front ones overlap them.
+        let step = [0.56, 0.63, 0.70, 0.77, 0.84, 0.91, 0.98][g];
+        for _ in 0..(r.range(9.0, 12.99) * shape.count) as usize {
+            let p = [anchor[0] + r.range(-0.06, 0.06) * S, anchor[1] + r.range(-0.06, 0.06) * S];
+            let len = r.range(18.0, 28.0) * shape.len;
+            shape.draw(img, p, a + r.range(-0.7, 0.7), len, len * r.range(shape.ratio_a.0, shape.ratio_a.1), step * r.range(0.96, 1.04));
+        }
+    }
+    // A few over the middle so the crown behind never shows through it.
+    for _ in 0..(10.0 * shape.count.max(0.9)).round() as usize {
+        let a = r.range(0.0, std::f32::consts::TAU);
+        let len = r.range(16.0, 23.0) * shape.len;
+        shape.draw(img, [c[0] + r.range(-8.0, 8.0), c[1] + r.range(-8.0, 8.0)], a, len, len * shape.fill_ratio, r.range(0.7, 0.86));
+    }
+}
+
+/// The rim card: a sparser spray on a forking twig that leaves the card at
+/// the bottom edge, so where it sticks out past the crown it reads as a
+/// leafy branch tip rather than a second clump.
+fn rim(img: &mut Img, r: &mut Rng, shape: &Shape) {
+    let root = [S * 0.5, S * 0.96];
+    let bow = r.range(-0.18, 0.18) * S;
+    let tip = [S * 0.5 + bow, S * 0.2];
+    let ctrl = [S * 0.5 + bow * 0.3, S * 0.52];
+    let at = |t: f32| {
+        let u = 1.0 - t;
+        [u * u * root[0] + 2.0 * u * t * ctrl[0] + t * t * tip[0], u * u * root[1] + 2.0 * u * t * ctrl[1] + t * t * tip[1]]
+    };
+    blade(img, root, ctrl, tip, 3.0, 1.2, 0.36, 0.46, GREY);
+    // Leaves along the twig and its two forks, all pointing forward.
+    let spray = |img: &mut Img, r: &mut Rng, p0: [f32; 2], p1: [f32; 2], n: usize, shade: f32| {
+        let n = ((n as f32 * shape.count).round() as usize).max(2);
+        let ang = (p1[1] - p0[1]).atan2(p1[0] - p0[0]);
+        for k in 0..n {
+            // Uneven spacing, and now and then a gap where none grows.
+            let t = (k as f32 + r.range(0.1, 0.9)) / n as f32;
+            if r.f() < 0.08 {
+                continue;
+            }
+            let q = [p0[0] + (p1[0] - p0[0]) * t, p0[1] + (p1[1] - p0[1]) * t];
+            let side = if k % 2 == 0 { 1.0 } else { -1.0 };
+            let len = r.range(15.0, 23.0) * (1.0 - 0.22 * t) * shape.len;
+            shape.draw(
+                img,
+                q,
+                ang + side * r.range(0.45, 0.85),
+                len,
+                len * r.range(shape.ratio_b.0, shape.ratio_b.1),
+                shade * r.range(0.96, 1.04),
+            );
+        }
+    };
+    for (t0, side) in [(0.22f32, -1.0f32), (0.48, 1.0), (0.68, -1.0)] {
+        let p0 = at(t0);
+        let len = S * r.range(0.2, 0.28);
+        let a = -std::f32::consts::FRAC_PI_2 + side * r.range(0.6, 0.95);
+        let p1 = [p0[0] + a.cos() * len, p0[1] + a.sin() * len];
+        blade(img, p0, [(p0[0] + p1[0]) * 0.5, (p0[1] + p1[1]) * 0.5], p1, 2.2, 1.0, 0.36, 0.44, GREY);
+        spray(img, r, p0, p1, 7, if side < 0.0 { 0.66 } else { 0.8 });
+    }
+    spray(img, r, at(0.1), tip, 13, 0.94);
+}
+
 fn draw_layer(l: u32) -> Img {
     if !layer::small(l) {
         return super::sprite_plants::draw(l, SIZE);
@@ -395,6 +694,9 @@ fn draw_layer(l: u32) -> Img {
             }
         }
         layer::LILY_FLOWER => super::sprite_plants::lily_flower(&mut img, &mut r, S),
+        layer::KELP_STIPE => super::sprite_plants::kelp_stipe(&mut img, &mut r, S),
+        layer::KELP_BLADE => super::sprite_plants::kelp_blade(&mut img, &mut r, S),
+        layer::KELP_FLOAT => super::sprite_plants::kelp_float(&mut img, S),
         layer::ROSES => {
             // A rose sprig: a woody stem up from the bottom edge, forking twice,
             // leaves in opposite pairs along it and an open bloom at the end of
@@ -455,76 +757,18 @@ fn draw_layer(l: u32) -> Img {
                 dot(&mut img, c, pr * 0.16, [0.95, 0.80, 0.40]);
             }
         }
-        layer::LEAVES_A => {
-            // The filler: four clusters of small leaves round the middle, each on
-            // its own twig, their centres solid and a little sky left between
-            // them. Not a rosette of big leaves from one point, which stamps the
-            // same star over the whole crown.
-            //
-            // Value is flat within a cluster and steps between them (back ones
-            // darker), so each leaf keeps a crisp silhouette at distance instead
-            // of smearing into a gradient.
-            let c = [S * 0.5, S * 0.5];
-            let groups = 7;
-            for g in 0..groups {
-                let a = (g as f32 + r.range(0.15, 0.85)) / groups as f32 * std::f32::consts::TAU;
-                let d = S * r.range(0.10, 0.21);
-                let anchor = [c[0] + a.cos() * d, c[1] + a.sin() * d];
-                let mid = [(c[0] + anchor[0]) * 0.5, (c[1] + anchor[1]) * 0.5];
-                blade(&mut img, c, mid, anchor, 2.6, 1.5, 0.38, 0.48, GREY);
-                // Back clusters first and darker; the front ones overlap them.
-                let step = [0.56, 0.63, 0.70, 0.77, 0.84, 0.91, 0.98][g];
-                for _ in 0..r.range(9.0, 12.99) as usize {
-                    let p = [anchor[0] + r.range(-0.06, 0.06) * S, anchor[1] + r.range(-0.06, 0.06) * S];
-                    let len = r.range(18.0, 28.0);
-                    leaf(&mut img, p, a + r.range(-0.7, 0.7), len, len * r.range(0.55, 0.7), step * r.range(0.96, 1.04), GREY);
-                }
-            }
-            // A few over the middle so the crown behind never shows through it.
-            for _ in 0..10 {
-                let a = r.range(0.0, std::f32::consts::TAU);
-                let len = r.range(16.0, 23.0);
-                leaf(&mut img, [c[0] + r.range(-8.0, 8.0), c[1] + r.range(-8.0, 8.0)], a, len, len * 0.65, r.range(0.7, 0.86), GREY);
-            }
-        }
-        layer::LEAVES_B => {
-            // The rim: a sparser spray on a forking twig that leaves the card at
-            // the bottom edge, so where it sticks out past the crown it reads as
-            // a leafy branch tip rather than a second clump.
-            let root = [S * 0.5, S * 0.96];
-            let bow = r.range(-0.18, 0.18) * S;
-            let tip = [S * 0.5 + bow, S * 0.2];
-            let ctrl = [S * 0.5 + bow * 0.3, S * 0.52];
-            let at = |t: f32| {
-                let u = 1.0 - t;
-                [u * u * root[0] + 2.0 * u * t * ctrl[0] + t * t * tip[0], u * u * root[1] + 2.0 * u * t * ctrl[1] + t * t * tip[1]]
-            };
-            blade(&mut img, root, ctrl, tip, 3.0, 1.2, 0.36, 0.46, GREY);
-            // Leaves along the twig and its two forks, all pointing forward.
-            let spray = |img: &mut Img, r: &mut Rng, p0: [f32; 2], p1: [f32; 2], n: usize, shade: f32| {
-                let ang = (p1[1] - p0[1]).atan2(p1[0] - p0[0]);
-                for k in 0..n {
-                    // Uneven spacing, and now and then a gap where none grows.
-                    let t = (k as f32 + r.range(0.1, 0.9)) / n as f32;
-                    if r.f() < 0.08 {
-                        continue;
-                    }
-                    let q = [p0[0] + (p1[0] - p0[0]) * t, p0[1] + (p1[1] - p0[1]) * t];
-                    let side = if k % 2 == 0 { 1.0 } else { -1.0 };
-                    let len = r.range(15.0, 23.0) * (1.0 - 0.22 * t);
-                    leaf(img, q, ang + side * r.range(0.45, 0.85), len, len * r.range(0.56, 0.7), shade * r.range(0.96, 1.04), GREY);
-                }
-            };
-            for (t0, side) in [(0.22f32, -1.0f32), (0.48, 1.0), (0.68, -1.0)] {
-                let p0 = at(t0);
-                let len = S * r.range(0.2, 0.28);
-                let a = -std::f32::consts::FRAC_PI_2 + side * r.range(0.6, 0.95);
-                let p1 = [p0[0] + a.cos() * len, p0[1] + a.sin() * len];
-                blade(&mut img, p0, [(p0[0] + p1[0]) * 0.5, (p0[1] + p1[1]) * 0.5], p1, 2.2, 1.0, 0.36, 0.44, GREY);
-                spray(&mut img, &mut r, p0, p1, 7, if side < 0.0 { 0.66 } else { 0.8 });
-            }
-            spray(&mut img, &mut r, at(0.1), tip, 13, 0.94);
-        }
+        layer::LEAVES_A => cluster(&mut img, &mut r, &POINTED),
+        layer::LEAVES_B => rim(&mut img, &mut r, &POINTED),
+        layer::LEAVES_BROAD_A => cluster(&mut img, &mut r, &BROAD),
+        layer::LEAVES_BROAD_B => rim(&mut img, &mut r, &BROAD),
+        layer::LEAVES_LOBED_A => cluster(&mut img, &mut r, &LOBED),
+        layer::LEAVES_LOBED_B => rim(&mut img, &mut r, &LOBED),
+        layer::LEAVES_NARROW_A => cluster(&mut img, &mut r, &NARROW),
+        layer::LEAVES_NARROW_B => rim(&mut img, &mut r, &NARROW),
+        layer::LEAVES_HEART_A => cluster(&mut img, &mut r, &HEART),
+        layer::LEAVES_HEART_B => rim(&mut img, &mut r, &HEART),
+        layer::LEAVES_MAPLE_A => cluster(&mut img, &mut r, &MAPLE),
+        layer::LEAVES_MAPLE_B => rim(&mut img, &mut r, &MAPLE),
         layer::NEEDLES => {
             // A fir branch seen from above: a twig from the bottom centre (where
             // it leaves the crown) to the top edge, side shoots angled toward
@@ -621,6 +865,19 @@ pub const NAMES: [&str; layer::COUNT as usize] = [
     "lily_pad",
     "lily_flower",
     "lupine",
+    "leaves_broad_a",
+    "leaves_broad_b",
+    "leaves_lobed_a",
+    "leaves_lobed_b",
+    "leaves_narrow_a",
+    "leaves_narrow_b",
+    "leaves_heart_a",
+    "leaves_heart_b",
+    "leaves_maple_a",
+    "leaves_maple_b",
+    "kelp_stipe",
+    "kelp_blade",
+    "kelp_float",
 ];
 
 fn sprite_dir() -> std::path::PathBuf {
@@ -856,6 +1113,20 @@ const PREVIEW_TINT: [[f32; 3]; layer::COUNT as usize] = [
     [0.26, 0.42, 0.16],
     [1.0, 1.0, 1.0],
     [1.0, 1.0, 1.0],
+    [0.12, 0.30, 0.07],
+    [0.12, 0.30, 0.07],
+    [0.12, 0.30, 0.07],
+    [0.12, 0.30, 0.07],
+    [0.12, 0.30, 0.07],
+    [0.12, 0.30, 0.07],
+    [0.12, 0.30, 0.07],
+    [0.12, 0.30, 0.07],
+    [0.12, 0.30, 0.07],
+    [0.12, 0.30, 0.07],
+    // Kelp: stipe, blade, float.
+    [0.30, 0.26, 0.12],
+    [0.36, 0.32, 0.12],
+    [0.32, 0.26, 0.10],
 ];
 
 #[cfg(test)]

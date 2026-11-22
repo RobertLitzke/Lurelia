@@ -176,7 +176,7 @@ pub const ENGINE_MATERIALS: [&str; 19] = [
     "door_wood",
     "door_yellow",
     "fieldstone",
-    "pane_glass",
+    "window_glass",
     "pavement",
     "road_asphalt",
     "sludge",
@@ -253,6 +253,43 @@ pub fn reach(lib_dir: &std::path::Path, dir: &std::path::Path, lib: &Library) ->
     seen
 }
 
+/// The neighbours a world names in its world.json (`world/seam.rs`), each
+/// built on its own with its own library, so their edges can be taken. Call
+/// this before `library_for(name)`: building a neighbour installs the
+/// neighbour's material table, and the world's own must be installed last.
+/// A neighbour that fails to build is reported and left out.
+pub fn neighbours_of(name: &str) -> (Vec<(crate::world::seam::Side, f32, World)>, Vec<String>) {
+    let dir = world_dir(name);
+    let def = std::fs::read_to_string(dir.join("world.json"))
+        .ok()
+        .and_then(|t| serde_json::from_str::<serde_json::Value>(&t).ok())
+        .and_then(|v| v.get("neighbours").cloned())
+        .and_then(|v| serde_json::from_value::<crate::world::seam::Neighbours>(v).ok())
+        .unwrap_or_default();
+    let (mut out, mut problems) = (Vec::new(), Vec::new());
+    for (side, nb) in def.list() {
+        let ndir = world_dir(&nb.world);
+        let (lib, _) = library_for(&nb.world);
+        match chronicle::build_world(&ndir, lib) {
+            Ok(w) => out.push((side, nb.offset, w)),
+            Err(e) => problems.push(format!("neighbour {} ({}): {e}", nb.world, side.name())),
+        }
+    }
+    (out, problems)
+}
+
+/// The strips off each neighbour's edge that world `name` is built to meet.
+pub fn edges_for(name: &str) -> (Vec<crate::world::seam::Edge>, Vec<String>) {
+    let (near, problems) = neighbours_of(name);
+    let def = std::fs::read_to_string(world_dir(name).join("world.json"))
+        .ok()
+        .and_then(|t| serde_json::from_str::<serde_json::Value>(&t).ok());
+    let num = |k: &str| def.as_ref().and_then(|v| v.get(k)).and_then(|v| v.as_f64()).unwrap_or(0.0) as f32;
+    let (n, sea) = ((num("size_m") / crate::world::fields::CELL).round() as usize, num("sea_level_m"));
+    let edges = near.iter().map(|(side, off, w)| crate::world::seam::Edge::take(w, *side, *off, n, sea)).collect();
+    (edges, problems)
+}
+
 /// Build a world by name. Errors when the folder is missing or broken.
 pub fn load(name: &str) -> Result<Loaded, String> {
     if name == "random" {
@@ -262,12 +299,19 @@ pub fn load(name: &str) -> Result<Loaded, String> {
     if !dir.join("chronicle.json").exists() {
         return Err(format!("no world at {}", dir.display()));
     }
+    let (edges, seam_problems) = edges_for(name);
+    for e in &seam_problems {
+        eprintln!("world {name}: {e}");
+    }
     let (lib, errors) = library_for(name);
     for e in &errors {
         eprintln!("library: {e}");
     }
-    let world = chronicle::build_world(&dir, lib)?;
+    let world = chronicle::build_world_with(&dir, lib, &edges)?;
     for w in &world.warnings {
+        eprintln!("world {name}: {w}");
+    }
+    for w in crate::launch::games_problems(name) {
         eprintln!("world {name}: {w}");
     }
     let (mut models, species, items, mut colours, mut problems) = creatures(&world);
@@ -460,6 +504,8 @@ pub fn creatures(world: &World) -> (Vec<Model>, Vec<Species>, Vec<ItemModel>, Ve
             model.rig = Some(rig);
             if let Some(parts) = skeleton {
                 let mut srig = base;
+                // Bones do not sag.
+                srig.soft = None;
                 srig.offset_models(srcs.len() + parts_out.len());
                 parts_out.extend(parts.into_iter().map(|mut m| {
                     m.block = block;

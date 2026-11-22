@@ -9,7 +9,7 @@
   "buttress": 0.8,
   "crown_radius": [3.6, 4.8],
   "bark": "banyan_bark",
-  "leaf": "banyan_leaves",
+  "leaf": "glossy_leaves",
   "curve": "arch",
   "canopy": "cloud",
   "leader": 0.2,

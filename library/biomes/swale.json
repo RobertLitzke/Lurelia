@@ -40,7 +40,7 @@
     {"creature": "mammoth", "count": 3},
     {"creature": "deer", "count": 5},
     {"creature": "aurochs", "count": 14},
-    {"creature": "steppe_wolf", "count": 3},
+    {"creature": "wolf", "count": 3},
     {"creature": "wind_skate", "count": 6},
     {"creature": "rabbit", "count": 3},
     {"creature": "badger", "count": 2},

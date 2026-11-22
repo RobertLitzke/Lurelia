@@ -1,6 +1,7 @@
 //! Circlers (the `Circle` mover: circle, flutter): gulls round the coast,
 //! moths round a lamp. Each goes round a fixed centre; seabirds that `float`
-//! now and then glide down to sit on the sea, drift, and fly back up.
+//! now and then glide down to sit on the sea, drift, and fly back up, and
+//! the ones that `plunge` (gannets) fold their wings and drop into it.
 
 use super::terrain::Terrain;
 use super::{Creature, Look, Pathing, Species};
@@ -36,6 +37,12 @@ enum GullRest {
         from: Vec3,
         t: f32,
     },
+    /// Wings folded, falling from `from` into the sea after fish, `t`
+    /// seconds into the fall.
+    Plunge {
+        from: Vec3,
+        t: f32,
+    },
     /// Under the water after fish, `depth` metres at the bottom of the dive.
     Under {
         t: f32,
@@ -56,9 +63,9 @@ impl Gull {
         }
     }
 
-    /// On the water or under it: wings folded either way.
+    /// On the water, under it or plunging into it: wings folded each way.
     pub fn floating(&self) -> bool {
-        matches!(self.rest, GullRest::Float { .. } | GullRest::Under { .. })
+        matches!(self.rest, GullRest::Float { .. } | GullRest::Under { .. } | GullRest::Plunge { .. })
     }
 
     pub fn landing(&self) -> bool {
@@ -69,9 +76,32 @@ impl Gull {
 /// Over this height a circler holds its own level; under it the circle rides
 /// over the ground (see `update`).
 const LOW_FLY: f32 = 8.0;
+/// How fast a low flyer climbs and comes down, metres a second.
+const CLIMB: f32 = 8.0;
+const SINK: f32 = 2.5;
+/// How fast a plunging bird gathers speed, metres a second a second: more
+/// than falling, since it drives down with its last wingbeats.
+const PLUNGE_G: f32 = 14.0;
+/// How fast it keeps going forward as it drops, metres a second.
+const PLUNGE_ON: f32 = 3.0;
+/// Least water under a plunge, metres: it goes in at speed.
+const PLUNGE_ROOM: f32 = 2.5;
+
+/// Height of a plunging bird `t` seconds after it folded at `from_y`.
+fn plunge_y(from_y: f32, t: f32) -> f32 {
+    from_y - 0.5 * PLUNGE_G * t * t
+}
 
 /// Step every circler. Legacy gulls have no `Creature` and never float.
-pub fn update(world: &mut hecs::World, species: &[Species], terrain: &Terrain, dt: f32, threat: &super::startle::Threat, stats: &mut Pathing) {
+pub fn update(
+    world: &mut hecs::World,
+    species: &[Species],
+    terrain: &Terrain,
+    dt: f32,
+    threat: &super::startle::Threat,
+    stats: &mut Pathing,
+    cues: &mut Vec<crate::fx::Cue>,
+) {
     let player = threat.pos;
     let sea = terrain.sea;
     for (gull, look, me, morph) in world.query_mut::<(&mut Gull, &mut Look, Option<&Creature>, Option<&crate::variety::Morph>)>() {
@@ -84,6 +114,7 @@ pub fn update(world: &mut hecs::World, species: &[Species], terrain: &Terrain, d
         let circle_yaw = t.x.atan2(t.z) + std::f32::consts::PI;
         let sp = me.map(|c| &species[c.species]);
         let floats = sp.is_some_and(|s| s.beh.floats);
+        let plunges = floats && sp.is_some_and(|s| s.beh.plunge);
         let wary = match sp {
             Some(s) => super::startle::reach(&super::startle::Nerve::of(s, morph, super::age::Stage::Adult), threat, look.pos, 6.0),
             None => 8.0 * crate::variety::pace(morph).1,
@@ -93,23 +124,35 @@ pub fn update(world: &mut hecs::World, species: &[Species], terrain: &Terrain, d
         let h = gull.centre.x * 0.37 + gull.radius;
         match gull.rest {
             GullRest::Circling => {
+                let was = look.pos.y;
                 look.pos = on_circle;
                 // A low flyer (a skate over the grass, a moth, an owl
                 // quartering a meadow) keeps its height over the ground under
                 // it, not over the point it started from: otherwise a rise
                 // walks up into the circle and the creature disappears into
                 // the hill. Over water it keeps clear of the surface instead.
+                // It reads the ground a few seconds ahead so it climbs before
+                // a rise, and changes height at a bird's rate: set straight to
+                // the ground's height, a cormorant leaving a cliff top dropped
+                // the cliff in one step.
                 let low = sp.map_or(0.0, |s| s.beh.fly_height);
                 if (0.0..=LOW_FLY).contains(&low) && low > 0.0 {
                     let bob = (on_circle.y - gull.centre.y) * 0.4;
-                    match terrain.height(look.pos.x, look.pos.z) {
-                        Some(g) if g > sea => look.pos.y = g + low + bob,
-                        _ => look.pos.y = look.pos.y.max(sea + low),
-                    }
+                    let step = t * gull.speed.abs();
+                    look.pos.y = low_flight_y(was, look.pos, step, low, bob, on_circle.y, sea, |x, z| terrain.height(x, z), dt);
                 }
                 look.yaw = circle_yaw;
                 gull.next -= dt;
-                if floats && gull.next <= 0.0 {
+                if plunges && gull.next <= 0.0 {
+                    // Straight down from where it is, if there is the water
+                    // for it; otherwise look again in a few seconds.
+                    let room = sea - terrain.bed(look.pos.x, look.pos.z);
+                    if terrain.deep(look.pos.x, look.pos.z) && room > PLUNGE_ROOM && !near {
+                        gull.rest = GullRest::Plunge { from: look.pos, t: 0.0 };
+                    } else {
+                        gull.next = 3.0 + (h * 13.0).rem_euclid(5.0);
+                    }
+                } else if floats && gull.next <= 0.0 {
                     // Come down a little way ahead, if that is open water.
                     let ahead = gull.angle + gull.speed.signum() * 0.6;
                     let to = gull.centre + Vec3::new(ahead.cos() * gull.radius, 0.0, ahead.sin() * gull.radius);
@@ -134,6 +177,26 @@ pub fn update(world: &mut hecs::World, species: &[Species], terrain: &Terrain, d
                     }
                 } else {
                     GullRest::Down { from, to, t, dur }
+                };
+            }
+            GullRest::Plunge { from, t } => {
+                let t = t + dt;
+                let fwd = Vec3::new(-look.yaw.sin(), 0.0, -look.yaw.cos());
+                let y = plunge_y(from.y, t);
+                look.pos = Vec3::new(from.x, y, from.z) + fwd * PLUNGE_ON * t;
+                let surface = sea - 0.26;
+                gull.rest = if y <= surface {
+                    look.pos.y = surface;
+                    super::swim::splash_at(cues, Vec3::new(look.pos.x, sea, look.pos.z), 0.6);
+                    let room = sea - terrain.bed(look.pos.x, look.pos.z) - 0.6;
+                    let max = sp.and_then(|s| s.beh.dive_depth).unwrap_or(3.0);
+                    GullRest::Under {
+                        t: 0.0,
+                        dur: 3.0 + (h * 5.0).rem_euclid(3.0),
+                        depth: max.min(room).max(0.5),
+                    }
+                } else {
+                    GullRest::Plunge { from, t }
                 };
             }
             GullRest::Float { left } => {
@@ -175,7 +238,13 @@ pub fn update(world: &mut hecs::World, species: &[Species], terrain: &Terrain, d
                 }
                 let dive = (t * std::f32::consts::PI).sin().sqrt();
                 look.pos.y = (sea - 0.26 - depth * dive).max(terrain.bed(look.pos.x, look.pos.z) + 0.3);
-                gull.rest = if t >= 1.0 { GullRest::Float { left: 6.0 + (h * 3.0).rem_euclid(14.0) } } else { GullRest::Under { t, dur, depth } };
+                gull.rest = if t >= 1.0 {
+                    GullRest::Float {
+                        left: 6.0 + (h * 3.0).rem_euclid(14.0),
+                    }
+                } else {
+                    GullRest::Under { t, dur, depth }
+                };
             }
             GullRest::Up { from, t } => {
                 let t = (t + dt / 3.0).min(1.0);
@@ -185,7 +254,7 @@ pub fn update(world: &mut hecs::World, species: &[Species], terrain: &Terrain, d
                 look.yaw = if t > 0.8 { circle_yaw } else { d.x.atan2(d.z) + std::f32::consts::PI };
                 if t >= 1.0 {
                     gull.rest = GullRest::Circling;
-                    gull.next = 30.0 + (h * 11.0).rem_euclid(60.0);
+                    gull.next = if plunges { 12.0 + (h * 11.0).rem_euclid(20.0) } else { 30.0 + (h * 11.0).rem_euclid(60.0) };
                 } else {
                     gull.rest = GullRest::Up { from, t };
                 }
@@ -196,5 +265,74 @@ pub fn update(world: &mut hecs::World, species: &[Species], terrain: &Terrain, d
         }
         stats.gull_steps += 1;
         stats.gull_floating += gull.floating() as u32;
+    }
+}
+
+/// The height a low flyer at `pos` flies at this step, from the height it
+/// was at: `low` over the ground (or the sea), reading the ground up to five
+/// seconds ahead along `step` (its velocity) so it climbs before a rise, and
+/// moving at most `CLIMB` up or `SINK` down a second. Never under half a
+/// metre over the ground beneath it.
+#[allow(clippy::too_many_arguments)]
+fn low_flight_y(was: f32, pos: Vec3, step: Vec3, low: f32, bob: f32, circle_y: f32, sea: f32, ground: impl Fn(f32, f32) -> Option<f32>, dt: f32) -> f32 {
+    let over = |p: Vec3| match ground(p.x, p.z) {
+        Some(g) if g > sea => g + low,
+        _ => sea + low,
+    };
+    let ahead = (1..=5).map(|k| over(pos + step * k as f32)).fold(over(pos), f32::max);
+    let want = if ground(pos.x, pos.z).is_some_and(|g| g > sea) { ahead + bob } else { ahead.max(circle_y) };
+    let y = if want > was { (was + CLIMB * dt).min(want) } else { (was - SINK * dt).max(want) };
+    y.max(over(pos) - low + 0.5)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// A 30 m cliff top at x < 0 over the sea (level 0). Flying off it at
+    /// 10 m/s, a low flyer glides down, and flying in towards it, it has
+    /// climbed clear before it gets there.
+    #[test]
+    fn a_low_flyer_glides_off_a_cliff_and_climbs_before_one() {
+        let ground = |x: f32, _: f32| Some(if x < 0.0 { 30.0 } else { -5.0 });
+        let dt = 1.0 / 60.0;
+        let (low, sea) = (5.0, 0.0);
+        let mut pos = Vec3::new(-20.0, 35.0, 0.0);
+        let step = Vec3::new(10.0, 0.0, 0.0);
+        let mut worst_drop = 0.0f32;
+        for _ in 0..1200 {
+            let was = pos.y;
+            pos += step * dt;
+            pos.y = low_flight_y(was, pos, step, low, 0.0, 0.0, sea, ground, dt);
+            worst_drop = worst_drop.max(was - pos.y);
+        }
+        assert!(worst_drop <= SINK * dt + 1e-4, "dropped {worst_drop} m in one step");
+        assert!((pos.y - (sea + low)).abs() < 0.01, "should end {low} m over the sea, is at {}", pos.y);
+
+        let mut pos = Vec3::new(40.0, sea + low, 0.0);
+        let step = -step;
+        // Stop short of the edge: over the top the floor rule would lift it anyway.
+        while pos.x > 0.3 {
+            let was = pos.y;
+            pos += step * dt;
+            pos.y = low_flight_y(was, pos, step, low, 0.0, 0.0, sea, ground, dt);
+        }
+        assert!(pos.y >= 30.5, "reached the cliff edge at {} m, under its top", pos.y);
+    }
+
+    /// A gannet folding 25 m up hits the water in about two seconds, going
+    /// faster all the way down.
+    #[test]
+    fn a_plunge_gathers_speed_and_reaches_the_sea_quickly() {
+        let (top, sea) = (25.0, 0.0);
+        let dt = 1.0 / 60.0;
+        let (mut t, mut last_drop) = (0.0f32, 0.0f32);
+        while plunge_y(top, t) > sea {
+            let drop = plunge_y(top, t) - plunge_y(top, t + dt);
+            assert!(drop >= last_drop, "slowed down at {t:.2} s");
+            last_drop = drop;
+            t += dt;
+        }
+        assert!((1.5..2.5).contains(&t), "took {t:.2} s to fall {top} m");
     }
 }

@@ -17,22 +17,28 @@ pub enum ModeId {
     Climb,
     Rope,
     Kayak,
+    /// Four wheels (ride/drive.rs): only where the world lists `vehicles`.
+    Drive,
     Screenshot,
     Camera,
     /// Guns in hand: the shooter's rules (src/shooter.rs, src/combat).
     Shooter,
+    /// Laps of a circuit against bots (src/race.rs), where world.json has a `race`.
+    Race,
 }
 
-pub const ALL: [ModeId; 9] = [
+pub const ALL: [ModeId; 11] = [
     ModeId::Walk,
     ModeId::Bike,
     ModeId::Glide,
     ModeId::Climb,
     ModeId::Rope,
     ModeId::Kayak,
+    ModeId::Drive,
     ModeId::Screenshot,
     ModeId::Camera,
     ModeId::Shooter,
+    ModeId::Race,
 ];
 
 impl ModeId {
@@ -44,9 +50,11 @@ impl ModeId {
             ModeId::Climb => "climb",
             ModeId::Rope => "rope",
             ModeId::Kayak => "kayak",
+            ModeId::Drive => "drive",
             ModeId::Screenshot => "screenshot",
             ModeId::Camera => "camera",
             ModeId::Shooter => "shooter",
+            ModeId::Race => "race",
         }
     }
 
@@ -181,6 +189,11 @@ pub trait Activity: Send {
     /// The same, to change: `--no-player` has to take the player out of a
     /// headless match before it starts, and nothing else should.
     fn shooter_mut(&mut self) -> Option<&mut crate::shooter::Shooter> {
+        None
+    }
+    /// The race, when this is one: `Game` hands it the ride after each
+    /// fixed step, which the activity's context does not carry.
+    fn race_mut(&mut self) -> Option<&mut crate::race::Race> {
         None
     }
     /// Every body this activity moves itself (the bots), handed over whole

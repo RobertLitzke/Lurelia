@@ -736,6 +736,8 @@ impl Platforms {
                     tint: [1.0, 1.0, 1.0, 0.0],
                     rot: [0.0; 4],
                     shift: [0.0; 4],
+                    flesh: [[0.0; 4]; 3],
+                    glow: [0.0; 4],
                 },
             ));
         }
@@ -980,6 +982,7 @@ mod tests {
             roof: vec![0; 36],
             col_top: vec![4; 36],
             threads: Vec::new(),
+            ..Default::default()
         };
         for y in 0..3 {
             for x in 2..4 {

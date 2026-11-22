@@ -1,5 +1,5 @@
 {
-  "notes": "Chalk steppe: hot gold grass under a cold sky. The strip turns blue by about 300 m and the view is cut into five slabs, so the swell of the downs reads as layer behind layer and the sea beyond comes out cold.",
+  "notes": "Chalk steppe: hot gold grass under a cold sky. The strip turns blue by about 300 m, and the sea beyond comes out cold.",
   "ambient": [
     0.3,
     0.84,
@@ -49,7 +49,7 @@
     "haze_density": 2.4,
     "haze_height": 110.0,
     "haze_ramp": 0.95,
-    "ramp_bands": 1.0,
+    "ramp_bands": 0.0,
     "ramp_curve": 0.35,
     "ramp_reach": 500.0,
     "ramp_value": 0.5,

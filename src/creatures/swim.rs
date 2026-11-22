@@ -16,9 +16,9 @@
 //! sea level), so they are kept between the bed and the surface by hand.
 //! `Terrain::bed` is the height of the sea or lake bed.
 
-use crate::anim::{Plan, Role};
 use super::terrain::Terrain;
 use super::{Creature, Look, Species};
+use crate::anim::{Plan, Role};
 use crate::fx::Cue;
 use crate::world::noise::{hash32, Rng};
 use glam::Vec3;
@@ -130,9 +130,12 @@ pub struct Fish {
 
 /// The height a fish of species `sp` living as `habit` swims at, over bed `bed`
 /// under surface `top`, at `lane` (0 to 1) of its band.
-/// A swimmer as tall as a seal or more, which floats low and swims level.
-fn big_swimmer(m: &crate::models::Model) -> bool {
-    m.height > 0.6
+/// A swimmer that floats low and swims level: anything as tall as a seal
+/// or more, and the water form of any land animal whatever its size. (The
+/// harbour seal is 0.55 m: by height alone it pitched like a fish, and one
+/// left on a bar too shallow to sink in stood on its nose in the sand.)
+fn big_swimmer(sp: &Species, m: &crate::models::Model) -> bool {
+    sp.is_water_form || m.height > 0.6
 }
 
 fn band_y(sp: &Species, habit: Habit, bed: f32, top: f32, lane: f32) -> f32 {
@@ -304,7 +307,16 @@ pub fn splash_at(cues: &mut Vec<Cue>, at: Vec3, size: f32) {
 
 /// A burst of `name` thrown up from the surface at `at`.
 fn splash(cues: &mut Vec<Cue>, name: &'static str, at: Vec3, radius: f32, amount: f32) {
-    crate::fx::cue(cues, Cue { name, at, radius, dir: Vec3::Y, amount });
+    crate::fx::cue(
+        cues,
+        Cue {
+            name,
+            at,
+            radius,
+            dir: Vec3::Y,
+            amount,
+        },
+    );
 }
 
 /// Step every swimmer and every blob of spray.
@@ -323,8 +335,9 @@ pub fn update(
     let player = threat.pos;
     let (sea, size) = (terrain.sea, terrain.size());
     let bed = |x: f32, z: f32| terrain.bed(x, z);
-    // The water's surface: a river's where there is one, else the sea's.
-    let surf = |x: f32, z: f32| terrain.inland_water(x, z).map_or(sea, |w| w.0.max(sea));
+    // The water's surface: a river's where there is one, else the sea's,
+    // with the tide and the swell on it (`Terrain::sea_at`).
+    let surf = |x: f32, z: f32| terrain.inland_water(x, z).map_or_else(|| terrain.sea_at(x, z), |w| w.0.max(sea));
     let in_river = |x: f32, z: f32| terrain.inland_water(x, z).is_some_and(|w| w.0 > sea);
     // Beyond the world's edge counts as dry, so nothing swims off it.
     let depth = |x: f32, z: f32| {
@@ -351,7 +364,12 @@ pub fn update(
     let centres: crate::util::FxHashMap<hecs::Entity, Vec3> = by_school.iter().map(|(e, m)| (*e, m.iter().fold(Vec3::ZERO, |a, x| a + x.0) / m.len().max(1) as f32)).collect();
     let kinds: crate::util::FxHashMap<hecs::Entity, usize> = world.query::<(hecs::Entity, &School)>().iter().map(|(e, s)| (e, s.species)).collect();
     // Every fish whose species hunts, where it is: what the prey flees.
-    let hunters: Vec<(Vec3, usize)> = world.query::<(&Fish, &Look, &Creature)>().iter().filter(|(_, _, c)| !species[c.species].hunts.is_empty()).map(|(_, l, c)| (l.pos, c.species)).collect();
+    let hunters: Vec<(Vec3, usize)> = world
+        .query::<(&Fish, &Look, &Creature)>()
+        .iter()
+        .filter(|(_, _, c)| !species[c.species].hunts.is_empty())
+        .map(|(_, l, c)| (l.pos, c.species))
+        .collect();
     let hunted_near = |prey: usize, p: Vec3, r: f32| hunters.iter().filter(|(_, hs)| species[*hs].hunts.contains(&prey)).map(|(q, _)| *q).find(|q| q.distance(p) < r);
     for (se, sc) in world.query_mut::<(hecs::Entity, &mut School)>() {
         let Some(m) = by_school.get(&se) else {
@@ -472,7 +490,12 @@ pub fn update(
     let chasing: crate::util::FxHashSet<hecs::Entity> = world.query::<(hecs::Entity, &School)>().iter().filter(|(_, s)| s.chase.is_some()).map(|(e, _)| e).collect();
     stats.chases += chasing.len() as u32;
     // Prey within reach of a rushing hunter's jaws, to be caught.
-    let prey_fish: Vec<(hecs::Entity, Vec3, usize)> = world.query::<(hecs::Entity, &Fish, &Look, &Creature)>().iter().filter(|(_, f, _, _)| !chasing.contains(&f.school)).map(|(e, _, l, c)| (e, l.pos, c.species)).collect();
+    let prey_fish: Vec<(hecs::Entity, Vec3, usize)> = world
+        .query::<(hecs::Entity, &Fish, &Look, &Creature)>()
+        .iter()
+        .filter(|(_, f, _, _)| !chasing.contains(&f.school))
+        .map(|(e, _, l, c)| (e, l.pos, c.species))
+        .collect();
     let mut eaten: Vec<hecs::Entity> = Vec::new();
 
     // Swimmers that have a land form which hauls out (seals) climb out now and
@@ -632,7 +655,7 @@ pub fn update(
             // seal keeps most of itself under, back awash at most: kept only
             // under the surface by its belly, a walrus rode on top of the
             // water like a log.
-            let under = models[l.model].height * if big_swimmer(&models[l.model]) { 0.75 } else { 0.0 };
+            let under = models[l.model].height * if big_swimmer(sp, &models[l.model]) { 0.75 } else { 0.0 };
             l.pos.y = l.pos.y.clamp(b + 0.1, (top - 0.12 - under).max(b + 0.1));
             // The bed is the floor under the fish (`bed_under`), but the
             // rock beside it is not in that: a step into a solid voxel is
@@ -673,7 +696,7 @@ pub fn update(
             // down must not stand it on its nose. A big body (a seal, a
             // walrus, a shark) tips only a little: it pivots on its belly, so
             // a fish's tilt stood a walrus up on its tail.
-            let lim = if big_swimmer(&models[l.model]) { 0.3 } else { 1.0 };
+            let lim = if big_swimmer(sp, &models[l.model]) { 0.3 } else { 1.0 };
             let pitch = f.vel.y.atan2(flat.length().max(0.6)).clamp(-lim, lim);
             a.pose.bones[0] = Vec3::new(pitch, 0.0, 0.0);
             if rig.plan == Some(Plan::Ray) {
@@ -762,6 +785,8 @@ pub fn update(
             }
             w.heading += turn * dt;
         }
+        // The sea's surface over the whale, with the swell on it.
+        let sea = terrain.sea_at(p.x, p.z);
         // The water line for the back awash, from the model's height.
         let awash = sea - height * 0.75;
         // Pivot height for swimming `below` metres under the surface, kept a
@@ -859,7 +884,6 @@ pub fn update(
             }
         }
     }
-
 }
 
 #[cfg(test)]

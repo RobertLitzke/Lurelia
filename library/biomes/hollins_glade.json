@@ -26,7 +26,7 @@
     {"creature": "deer", "count": 3},
     {"creature": "fae_horse", "count": 1},
     {"creature": "firefly", "count": 120},
-    {"creature": "lantern_moth", "count": 26},
+    {"creature": "glassmoth", "morph": "lantern", "count": 26},
     {"creature": "bumblebee", "count": 6},
     {"creature": "glow_bee", "count": 8},
     {"creature": "sky_ray", "count": 2},

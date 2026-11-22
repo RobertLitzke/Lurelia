@@ -95,6 +95,11 @@ pub struct Grid {
     depth: Vec<f32>,
     cliff: Vec<f32>,
     taken: Vec<bool>,
+    /// How far a wet cell is from the nearest dry one, metres (0 when dry).
+    /// A crossing through a cell this far out is at least twice this long,
+    /// whichever shores it runs between, which is what lets the search
+    /// refuse a span longer than the kit's `max_span` one step at a time.
+    shore: Vec<f32>,
 }
 
 impl Grid {
@@ -108,6 +113,7 @@ impl Grid {
             depth: vec![0.0; n * n],
             cliff: vec![0.0; n * n],
             taken: vec![false; n * n],
+            shore: Vec::new(),
         };
         for z in 0..n {
             for x in 0..n {
@@ -121,6 +127,7 @@ impl Grid {
                 g.taken[k] = f.occupied[i];
             }
         }
+        g.shore = shore_distance(&g.wet, n, step);
         g
     }
 
@@ -159,6 +166,43 @@ impl Grid {
     }
 }
 
+/// Distance from each wet cell to the nearest dry one, metres: a two-pass
+/// chamfer transform (steps of 1 and 1.414 cells), at most 8% over the
+/// true distance. A grid with no dry cell at all leaves every cell far out.
+fn shore_distance(wet: &[bool], n: usize, step: f32) -> Vec<f32> {
+    let far = f32::MAX / 4.0;
+    let mut d: Vec<f32> = wet.iter().map(|&w| if w { far } else { 0.0 }).collect();
+    let diag = std::f32::consts::SQRT_2;
+    let relax = |d: &mut Vec<f32>, x: usize, z: usize, dx: i32, dz: i32, c: f32| {
+        let (nx, nz) = (x as i32 + dx, z as i32 + dz);
+        if nx < 0 || nz < 0 || nx as usize >= n || nz as usize >= n {
+            return;
+        }
+        let v = d[nz as usize * n + nx as usize] + c;
+        let k = z * n + x;
+        if v < d[k] {
+            d[k] = v;
+        }
+    };
+    for z in 0..n {
+        for x in 0..n {
+            for (dx, dz, c) in [(-1, 0, 1.0), (0, -1, 1.0), (-1, -1, diag), (1, -1, diag)] {
+                relax(&mut d, x, z, dx, dz, c);
+            }
+        }
+    }
+    for z in (0..n).rev() {
+        for x in (0..n).rev() {
+            for (dx, dz, c) in [(1, 0, 1.0), (0, 1, 1.0), (1, 1, diag), (-1, 1, diag)] {
+                relax(&mut d, x, z, dx, dz, c);
+            }
+        }
+    }
+    // Measured cell to cell: a cell next to the shore is half a step from
+    // the water's edge, not a whole one.
+    d.iter().map(|&v| if v >= far { far } else { (v - 0.5).max(0.0) * step }).collect()
+}
+
 /// What a step from one cell to the next costs, or none when it is refused.
 fn step_cost(g: &Grid, from: usize, to: usize, t: &Terms) -> Option<f32> {
     let d = g.centre(from).distance(g.centre(to));
@@ -174,7 +218,7 @@ fn step_cost(g: &Grid, from: usize, to: usize, t: &Terms) -> Option<f32> {
             return Some(d * 3.0);
         }
         let w = t.water?;
-        if g.step > t.max_span {
+        if g.step > t.max_span || g.shore[to] * 2.0 > t.max_span {
             return None;
         }
         return Some(d * w);
@@ -290,4 +334,48 @@ pub fn simplify(line: &[Vec2], tol: f32) -> Vec<Vec2> {
     out.pop();
     out.extend(simplify(&line[worst.1..], tol));
     out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// A grid with a band of water `wide` cells across the middle, running
+    /// the whole height, sampled at 4 m.
+    fn river(n: usize, wide: usize) -> Grid {
+        let step = 4.0;
+        let lo = (n - wide) / 2;
+        let wet: Vec<bool> = (0..n * n).map(|k| (lo..lo + wide).contains(&(k % n))).collect();
+        Grid {
+            step,
+            n,
+            h: vec![10.0; n * n],
+            depth: wet.iter().map(|&w| if w { 5.0 } else { 0.0 }).collect(),
+            cliff: vec![0.0; n * n],
+            taken: vec![false; n * n],
+            shore: shore_distance(&wet, n, step),
+            wet,
+        }
+    }
+
+    #[test]
+    fn shore_distance_counts_from_the_edge() {
+        let g = river(20, 6);
+        // Dry cells are on the shore; the first wet cell is half a step out,
+        // the middle of a six-cell band two and a half.
+        assert_eq!(g.shore[0], 0.0);
+        assert_eq!(g.shore[7], 2.0);
+        assert!((g.shore[9] - 10.0).abs() < 0.01);
+    }
+
+    #[test]
+    fn a_crossing_longer_than_the_span_is_refused() {
+        // 24 m of water: a 60 m span crosses, a 16 m one cannot.
+        let g = river(20, 6);
+        let (a, b) = (Vec2::new(10.0, 40.0), Vec2::new(70.0, 40.0));
+        let long = Terms { max_span: 60.0, ..Default::default() };
+        assert!(find(&g, a, b, &long).is_some());
+        let short = Terms { max_span: 16.0, ..Default::default() };
+        assert!(find(&g, a, b, &short).is_none());
+    }
 }

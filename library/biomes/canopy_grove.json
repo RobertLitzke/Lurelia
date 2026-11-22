@@ -1,0 +1,32 @@
+{
+  "name": "canopy_grove",
+  "version": 1,
+  "introduced_by": "canopy_test",
+  "notes": "Test bed for the canopy town: emergent kapoks and redwoods over strangler figs and a laurel canopy, lianas, ferns and moss.",
+  "priority": 1,
+  "rules": {},
+  "surface": "pine_duff",
+  "subsurface": "dirt",
+  "map_color": [40, 96, 52],
+  "plants": [
+    {"plant": "giant_redwood", "density": 0.0016, "placement": {"verb": "lone", "params": {"spacing": 13}}},
+    {"plant": "giant_douglas", "density": 0.0008, "placement": {"verb": "lone", "params": {"spacing": 16}}},
+    {"plant": "giant_kapok", "density": 0.0002, "placement": {"verb": "lone", "params": {"spacing": 40}}},
+    {"plant": "strangler_fig", "density": 0.0002, "placement": {"verb": "lone", "params": {"spacing": 30}}},
+    {
+      "plant": "canopy_laurel",
+      "density": 0.002,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.3, "max": 1.0}}
+    },
+    {"plant": "liana", "density": 0.15, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "fern",
+      "density": 0.2,
+      "placement": {"verb": "clustered", "params": {"size": 12, "min": 0.0, "max": 1.0}}
+    },
+    {"plant": "tree_moss", "density": 0.7},
+    {"plant": "shelf_fungus", "density": 0.2}
+  ],
+  "creatures": [],
+  "mist": 0.15
+}

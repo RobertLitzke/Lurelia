@@ -4,6 +4,7 @@
   "introduced_by": "windbarrow",
   "notes": "A small walled barley plot: thin ranks of pale ears over worked chalk soil.",
   "smooth": true,
+  "sprites": "grass",
   "texture": {
     "pattern": "noise",
     "base": [142, 132, 94],

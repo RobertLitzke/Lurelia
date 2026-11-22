@@ -88,7 +88,11 @@ fn drive(f: &mut Figure, body: &avatar::Body, state: &str, yaw: f32) {
     }
     if state == "jump" {
         // Off the ground and still rising.
-        let up = Drive { vel: fwd * 3.0 + Vec3::Y * 4.0, on_ground: false, ..base };
+        let up = Drive {
+            vel: fwd * 3.0 + Vec3::Y * 4.0,
+            on_ground: false,
+            ..base
+        };
         for _ in 0..5 {
             f.step(&body.rig, body.voxel, &up);
         }

@@ -1,0 +1,1426 @@
+{
+  "$defs": {
+    "ActDef": {
+      "description": "One row of a species' activity table, as written in a rig's `activities`.",
+      "properties": {
+        "next": {
+          "additionalProperties": {
+            "format": "float",
+            "type": "number"
+          },
+          "default": {},
+          "description": "Activity name -> weight.",
+          "type": "object"
+        },
+        "time": {
+          "description": "Seconds, low and high.",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        }
+      },
+      "required": [
+        "time"
+      ],
+      "type": "object"
+    },
+    "Ages": {
+      "description": "Which ages of a creature turn up, and what they look like. Every field is\noptional: left out, it follows from the creature's `height`\n(creatures::age::Stages::resolve), so most entries need no block at all.",
+      "properties": {
+        "aged": {
+          "default": null,
+          "description": "Whether old individuals turn up, greyer and slower.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "bones": {
+          "default": null,
+          "description": "\"full\": it leaves a skeleton when it dies. \"none\": nothing remains,\nbecause the bones are too small to read (sparrows, lizards, frogs).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "juvenile": {
+          "default": null,
+          "description": "Body scale of a juvenile. 0 means this creature has no juvenile stage\n(starlings, insects, fish): every one spawns full-grown.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Axis": {
+      "description": "A horizontal axis.",
+      "enum": [
+        "x",
+        "z"
+      ],
+      "type": "string"
+    },
+    "Behaviour": {
+      "properties": {
+        "above_bed": {
+          "default": null,
+          "description": "Swimmers: the band of height over the bed it keeps to, metres (reef\nfish keep over the coral); wins over `depth`.",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "active": {
+          "default": null,
+          "description": "The part of the day it keeps: \"diurnal\" (the default), \"nocturnal\",\n\"crepuscular\" or \"any\". Outside those hours few of it are abroad and\nthe ones that are, if they sleep where they stand, are bedded down\n(creatures/diel.rs).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "awash": {
+          "default": false,
+          "description": "Swimmers (`school`): cruise at the surface with the back and eyes out\nof the water instead of under it (crocodiles).",
+          "type": "boolean"
+        },
+        "blink": {
+          "default": 0.0,
+          "description": "Flashes of its glowing colours per second (fireflies); 0 glows steady.\nEach one keeps its own rhythm and is dark between flashes.",
+          "format": "float",
+          "type": "number"
+        },
+        "depth": {
+          "default": null,
+          "description": "Swimmers: the band of depth below the surface it keeps to, metres.",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "dive_depth": {
+          "default": null,
+          "description": "Floating seabirds that dive after fish (cormorants, puffins): how\ndeep they go, metres. They swim a weaving way under for a quarter of\na minute and come up a little further on.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "flee_speed": {
+          "default": 6.0,
+          "format": "float",
+          "type": "number"
+        },
+        "flees_from": {
+          "default": [],
+          "description": "Creature names (or \"player\") this one runs from.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "flight": {
+          "default": null,
+          "description": "Wingbeat pattern for rigged birds (anim/flight.rs): flap, flap_glide,\nbound, soar, hover. Defaults from the movement.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "flightiness": {
+          "default": 1.0,
+          "description": "How readily it bolts from the player once inside `wary`, where 0 is a\nmanta ray that carries on as if nobody were there, about 0.2 a\ncrocodile, 1 an ordinary wild animal and 2 a hare. `wary` is the flee\ndistance; this is the likelihood of running (creatures::startle).",
+          "format": "float",
+          "type": "number"
+        },
+        "floats": {
+          "default": false,
+          "description": "Seabirds: now and then come down off the circle and float on the sea.",
+          "type": "boolean"
+        },
+        "fly_height": {
+          "default": 0.0,
+          "description": "Flying height above the ground or sea, metres (circle, flutter, flock, soar).",
+          "format": "float",
+          "type": "number"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Group"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Moving as a group: a flock (movement \"flock\") or a family group of\nwalkers. See flock.rs."
+        },
+        "habit": {
+          "default": null,
+          "description": "Swimmers (`school`): how it lives (creatures/swim.rs `Habit`): \"open\"\n(the default: a school wandering open water), \"cloud\" (a tight cloud\nover one coral head that drops into it when startled), \"hover\" (one\nor two hanging near a home, pausing, turning to look), \"patrol\" (long\nslow passes, minding nobody), \"rest\" (lying on the sand, gliding off\nwhen disturbed), \"bait\" (a bait ball that swirls and parts round the\ndiver), \"pulse\" (a jellyfish drifting), \"burrow\" (garden eels risen\nout of the sand, sinking back as the diver comes) or \"cruise\" (one\nhuge, slow, fearless animal you can hold on to).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "heat": {
+          "default": null,
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "hunts": {
+          "default": [],
+          "description": "Creature names this one chases.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "juvenile_flightiness": {
+          "default": 1.0,
+          "description": "A juvenile's flightiness relative to an adult's: below 1 where the\nyoung stand and stare (fawns, bear cubs), above 1 where they are\njumpier than their parents. The aged are always a little warier.",
+          "format": "float",
+          "type": "number"
+        },
+        "leap": {
+          "default": 0.0,
+          "description": "How often it leaps clear of the water: for `school`, leaps per fish\nper minute; for `breach`, the chance that a dive ends in a breach.",
+          "format": "float",
+          "type": "number"
+        },
+        "movement": {
+          "description": "Movement verb, one of creatures::locomotion::MOVEMENTS.",
+          "type": "string"
+        },
+        "off_hours": {
+          "default": null,
+          "description": "The share of it still abroad outside its hours, 0 to 1. Unset:\n`diel::OFF_HOURS`. 0 means it is only ever seen in its own hours (a\nfirefly by day), and a higher number suits an animal that keeps loose\nhours (a bear).",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "plunge": {
+          "default": false,
+          "description": "Floating seabirds that come down by plunging (gannets): from the\ncircle it folds its wings and drops straight into deep water under\nit, goes under for a few seconds after fish (as deep as `dive_depth`)\nand comes up to float, then climbs back and does it again before\nlong. Over shallows or land it waits.",
+          "type": "boolean"
+        },
+        "rain": {
+          "default": null,
+          "description": "What it minds about the weather (world/weather.rs `Taste`): the share\nof it still abroad in a downpour, in falling snow, in the full heat of\nthe day, and in a gale. Each is 0 (gone) to 1 (doesn't notice it), and\neach left out follows from the way it moves -- birds and insects keep\nout of rain and wind, walkers mind it less, fish not at all -- so most\nentries need none of them. A lizard sets `heat: 1`, a seabird\n`wind: 1`, a duck `rain: 1`.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "shallows": {
+          "default": null,
+          "description": "Swimmers (`school`): the least water, metres, they keep to and are\nfound in. Default 2 at sea and 1.2 in rivers; a marsh swimmer 0.6.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "sleeps_on_side": {
+          "default": false,
+          "description": "Lies down on its side rather than upright, and tips over to get there\n(anim/ragdoll.rs). Dogs, cats and seals do; deer and cattle don't.",
+          "type": "boolean"
+        },
+        "snow": {
+          "default": null,
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "spawn_chance": {
+          "default": 1.0,
+          "description": "Chance, each half-second check while its biome wants one, that a\nmissing one turns up. Below 1 makes a creature rare (whales).",
+          "format": "float",
+          "type": "number"
+        },
+        "swims": {
+          "default": false,
+          "description": "Walkers: crosses rivers too deep to wade by swimming (head up,\ncarried by the current) instead of turning back at the water.",
+          "type": "boolean"
+        },
+        "walk_speed": {
+          "default": 1.2000000476837158,
+          "format": "float",
+          "type": "number"
+        },
+        "warns": {
+          "default": false,
+          "description": "Snakes: holds its ground and warns — coiled, head up, tail buzzing —\nwhile anything presses on it, instead of leaving (a rattlesnake).",
+          "type": "boolean"
+        },
+        "wary": {
+          "default": 8.0,
+          "description": "Distance at which the player (or a predator) is noticed, metres.",
+          "format": "float",
+          "type": "number"
+        },
+        "wind": {
+          "default": null,
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "wingbeat": {
+          "default": null,
+          "description": "Wingbeats per second; defaults from the wingspan.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "winter": {
+          "default": null,
+          "description": "The share of it still about at the depth of winter, 0 to 1\n(world/season.rs). Unset, the way it moves decides: most of the\nwalkers are still out, half the birds, almost none of the insects.\nA bear that sleeps through it sets 0; a bird that stays all year\nsets 1. Between winter and summer the year walks from this to all\nof it, so one number covers migrating and hibernating both.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "movement"
+      ],
+      "type": "object"
+    },
+    "BoneDef": {
+      "properties": {
+        "claims": {
+          "default": [],
+          "description": "Boxes (`from` inclusive, `to` exclusive) whose voxels this bone takes\nfrom the root or from its parent.",
+          "items": {
+            "items": {
+              "items": {
+                "format": "int32",
+                "type": "integer"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "flesh": {
+          "default": 0.0,
+          "description": "How soft the part is, 0 rigid (the default) to 1 all flesh: it sags\nwhere the animal lies and lags as it moves (flesh.rs).",
+          "format": "float",
+          "type": "number"
+        },
+        "joint": {
+          "default": null,
+          "description": "Joint position in model voxel units. The root's defaults to the centre\nof its voxels.",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "overlap": {
+          "default": 0,
+          "description": "Layers of the parent's voxels next to this part drawn with it too, to\nhide gaps when the joint bends.",
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "pair": {
+          "default": null,
+          "description": "Leg pair, front to back (0 = front).",
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "parent": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "role": {
+          "$ref": "#/$defs/Role"
+        },
+        "side": {
+          "default": null,
+          "description": "\"l\" or \"r\".",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "role"
+      ],
+      "type": "object"
+    },
+    "Group": {
+      "description": "How a species groups up, from its library behaviour.",
+      "properties": {
+        "alignment": {
+          "default": 1.0,
+          "format": "float",
+          "type": "number"
+        },
+        "cohesion": {
+          "default": 1.0,
+          "format": "float",
+          "type": "number"
+        },
+        "range": {
+          "default": 8.0,
+          "description": "How far a member sees its neighbours, metres.",
+          "format": "float",
+          "type": "number"
+        },
+        "separation": {
+          "default": 1.0,
+          "format": "float",
+          "type": "number"
+        },
+        "size": {
+          "default": [
+            1,
+            1
+          ],
+          "description": "Smallest and largest group spawned.",
+          "items": {
+            "format": "uint32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "spacing": {
+          "default": 1.5,
+          "description": "Distance kept between neighbours, metres.",
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "MatRef": {
+      "description": "What an op draws with: a slot named in the entry's `slots`, a library\nmaterial by name, `\"air\"` (empties the structure's own voxels and leaves\nthe terrain there) or `\"carve\"` (removes the terrain too: alcoves, adits,\narches worn through rock). In a creature or collectible model, a colour\nnamed in its palette.",
+      "type": "string"
+    },
+    "MorphDef": {
+      "additionalProperties": false,
+      "description": "One named coat a species or plant comes in: the purple wisteria, the pale\nhare, the white humpback. A morph says only what colour it changes, so\neverything else about the individual is the entry's own. `shades` is how\nmany distinct draws it takes from inside its range, so one cluster of\npurple wisteria is not quite the colour of the next.\n\nA morph is not a species: it carries no shape, which is what separates it\nfrom a `like` child. See docs/CREATURES.md, \"Coats\".",
+      "properties": {
+        "colors": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Paint"
+          },
+          "description": "Slot name -> what fills it. A creature's slots are the keys of its own\n`colors`; a plant's are bark, leaf, flower, autumn and stalk.",
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        },
+        "notes": {
+          "default": "",
+          "type": "string"
+        },
+        "shades": {
+          "default": 1,
+          "description": "How many distinct draws the coat is built from. 1, the default, is a\ncontinuous draw where the renderer can manage one and a single colour\nwhere it cannot: a creature's coat is a per-instance tint and costs\nnothing, while a plant's is a material and each shade is an atlas\nlayer, so ask for more only where it will be seen.",
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "weight": {
+          "default": 1.0,
+          "description": "Relative, not a share: the entry's weights are normalised at load, so\n`9` and `1` give nine in ten and one in ten.",
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "Op": {
+      "description": "One step of a shape program, in voxel units with y up. Later steps override\nearlier ones; `mat: \"air\"` carves.\n\nAn op is internally tagged, which `parse_known` cannot see inside, so a key\nan op does not have is refused here instead: the entry fails to load,\nnaming the key, rather than drawing without it.\n\nThese doc comments are also the descriptions in\n`library/schema/structure.schema.json`; see `structure_schema_is_current`.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "description": "Solid box, `from` inclusive, `to` exclusive.",
+          "properties": {
+            "from": {
+              "items": {
+                "format": "int32",
+                "type": "integer"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "const": "box",
+              "type": "string"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "to": {
+              "items": {
+                "format": "int32",
+                "type": "integer"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            }
+          },
+          "required": [
+            "op",
+            "from",
+            "to",
+            "mat"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Four walls of a box (no floor or ceiling), `thick` voxels.",
+          "properties": {
+            "from": {
+              "items": {
+                "format": "int32",
+                "type": "integer"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "const": "walls",
+              "type": "string"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "thick": {
+              "default": 1,
+              "format": "int32",
+              "type": "integer"
+            },
+            "to": {
+              "items": {
+                "format": "int32",
+                "type": "integer"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            }
+          },
+          "required": [
+            "op",
+            "from",
+            "to",
+            "mat"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Pitched roof over the rectangle `from`..`to` (y of `from` is the eaves),\nridge along `axis` (\"x\" or \"z\"), stepping in one voxel per `rise` layers.",
+          "properties": {
+            "axis": {
+              "$ref": "#/$defs/Axis"
+            },
+            "from": {
+              "items": {
+                "format": "int32",
+                "type": "integer"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "const": "gable",
+              "type": "string"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "rise": {
+              "default": 1,
+              "format": "int32",
+              "type": "integer"
+            },
+            "to": {
+              "items": {
+                "format": "int32",
+                "type": "integer"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            }
+          },
+          "required": [
+            "op",
+            "from",
+            "to",
+            "axis",
+            "mat"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Solid ellipsoid: every voxel whose centre (+0.5) lies within the\nsemi-axes `radius` (x, y, z) of `centre`. Boulders, mounds, cairn stones.",
+          "properties": {
+            "centre": {
+              "items": {
+                "format": "float",
+                "type": "number"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "const": "ellipsoid",
+              "type": "string"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "radius": {
+              "items": {
+                "format": "float",
+                "type": "number"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            }
+          },
+          "required": [
+            "op",
+            "centre",
+            "radius",
+            "mat"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Upright cylinder: `base` is the centre of its bottom face, `height`\nvoxels tall. One thinner than 0.75 always fills the voxel its axis runs\nthrough, so thin posts never vanish.",
+          "properties": {
+            "base": {
+              "items": {
+                "format": "float",
+                "type": "number"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            },
+            "height": {
+              "format": "float",
+              "type": "number"
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "const": "cylinder",
+              "type": "string"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "radius": {
+              "format": "float",
+              "type": "number"
+            }
+          },
+          "required": [
+            "op",
+            "base",
+            "radius",
+            "height",
+            "mat"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Horizontal cylinder along \"x\" or \"z\" (logs, wheels' axles), turned\n`yaw` degrees about its `base` (from +x toward +z), so a log can lie\nat any bearing. `base` is the centre of one end; the log runs `length`\nvoxels from it along `axis`.",
+          "properties": {
+            "axis": {
+              "$ref": "#/$defs/Axis"
+            },
+            "base": {
+              "items": {
+                "format": "float",
+                "type": "number"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            },
+            "length": {
+              "format": "float",
+              "type": "number"
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "const": "log",
+              "type": "string"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "radius": {
+              "format": "float",
+              "type": "number"
+            },
+            "yaw": {
+              "default": 0.0,
+              "format": "float",
+              "type": "number"
+            }
+          },
+          "required": [
+            "op",
+            "base",
+            "radius",
+            "length",
+            "axis",
+            "mat"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Disc standing upright, its axis along \"x\" or \"z\" (wheels), turned\n`yaw` degrees about its centre like a log.",
+          "properties": {
+            "axis": {
+              "$ref": "#/$defs/Axis"
+            },
+            "centre": {
+              "items": {
+                "format": "float",
+                "type": "number"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "const": "disc",
+              "type": "string"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "radius": {
+              "format": "float",
+              "type": "number"
+            },
+            "thick": {
+              "format": "float",
+              "type": "number"
+            },
+            "yaw": {
+              "default": 0.0,
+              "format": "float",
+              "type": "number"
+            }
+          },
+          "required": [
+            "op",
+            "centre",
+            "radius",
+            "thick",
+            "axis",
+            "mat"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "One voxel.",
+          "properties": {
+            "at": {
+              "items": {
+                "format": "int32",
+                "type": "integer"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "const": "set",
+              "type": "string"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "mat"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "A rod, rope or spar through `points` (two or more, voxel units, the\ncentre of a voxel is +0.5), `radius` voxels thick: rigging, stays,\nspokes, diagonal legs and braces. Drawn as one thin line of voxels,\nand where it leans the mesher draws it as a smooth tube along its own\nline (a thread, mesh/lean.rs) instead of a staircase. A radius under\nabout 0.6 is still one voxel of line, drawn as a tube that thin. It\nfills only air, and its tube hides only the voxels it drew\n(`Shape::thread_vox`), so it can join a post or lie on a shell of\nits own material.",
+          "properties": {
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "const": "segment",
+              "type": "string"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "points": {
+              "items": {
+                "items": {
+                  "format": "float",
+                  "type": "number"
+                },
+                "maxItems": 3,
+                "minItems": 3,
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "radius": {
+              "format": "float",
+              "type": "number"
+            }
+          },
+          "required": [
+            "op",
+            "points",
+            "radius",
+            "mat"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "A paraboloid shell: a radio dish or a reflector. `vertex` is the\nbottom of the bowl, `radius` the rim's radius and `depth` how far the\nrim stands above the vertex along the dish's axis, `thick` the\nshell's thickness (voxels). The axis points straight up, then leans\n`tilt` degrees toward `yaw` (degrees from +x toward +z), so a dish\ncan face the zenith, the horizon or the ground.",
+          "properties": {
+            "depth": {
+              "format": "float",
+              "type": "number"
+            },
+            "mat": {
+              "$ref": "#/$defs/MatRef"
+            },
+            "op": {
+              "const": "dish",
+              "type": "string"
+            },
+            "part": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PartRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "radius": {
+              "format": "float",
+              "type": "number"
+            },
+            "thick": {
+              "default": 1.5,
+              "format": "float",
+              "type": "number"
+            },
+            "tilt": {
+              "default": 0.0,
+              "format": "float",
+              "type": "number"
+            },
+            "vertex": {
+              "items": {
+                "format": "float",
+                "type": "number"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            },
+            "yaw": {
+              "default": 0.0,
+              "format": "float",
+              "type": "number"
+            }
+          },
+          "required": [
+            "op",
+            "vertex",
+            "radius",
+            "depth",
+            "mat"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Recolour solid voxels below a height (creature bellies, socks).",
+          "properties": {
+            "from": {
+              "type": "string"
+            },
+            "op": {
+              "const": "recolour_below",
+              "type": "string"
+            },
+            "to": {
+              "type": "string"
+            },
+            "y": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "op",
+            "y",
+            "from",
+            "to"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Recolour solid voxels of colour `from` inside a box (`at` inclusive,\n`until` exclusive): stripes, patches and bands that follow the body.",
+          "properties": {
+            "at": {
+              "items": {
+                "format": "int32",
+                "type": "integer"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            },
+            "from": {
+              "type": "string"
+            },
+            "op": {
+              "const": "recolour",
+              "type": "string"
+            },
+            "to": {
+              "type": "string"
+            },
+            "until": {
+              "items": {
+                "format": "int32",
+                "type": "integer"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "until",
+            "from",
+            "to"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Runs `ops` `count` times, run k (from 0) shifted by k * `step`\nvoxels: rows of windows, fence posts, stair treads.",
+          "properties": {
+            "count": {
+              "format": "int32",
+              "type": "integer"
+            },
+            "op": {
+              "const": "repeat",
+              "type": "string"
+            },
+            "ops": {
+              "items": {
+                "$ref": "#/$defs/Op"
+              },
+              "type": "array"
+            },
+            "step": {
+              "items": {
+                "format": "int32",
+                "type": "integer"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            }
+          },
+          "required": [
+            "op",
+            "count",
+            "step",
+            "ops"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Paint": {
+      "anyOf": [
+        {
+          "description": "A material by name. Plants only: a creature's colours are its own.",
+          "type": "string"
+        },
+        {
+          "description": "Two ends of a range.",
+          "items": {
+            "items": {
+              "format": "float",
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        {
+          "description": "One colour.",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "type": "array"
+        }
+      ],
+      "description": "What a morph puts in one of an entry's colour slots: another material by\nname (a plant's leaf, where the material already exists), or the range of\ncolour the slot is drawn in, as two ends in sRGB bytes with an optional\nfourth emissive value. One colour is a range with both ends the same."
+    },
+    "PartRef": {
+      "description": "What the voxels are for. In a structure, how they decay with age: `roof`,\n`cloth` and `glass` fail in whole sections; `floor` never decays; every\nother part (`timber`, `frame`, `wall`, `stone`, `metal`, any other name,\nor none) crumbles from the top of each column at the same rate\n(`gen::crumbled`). `stone` and `wall` grow moss.\nIn a creature, the body part the voxels move with (`head`, `tail`, ...).",
+      "type": "string"
+    },
+    "Plan": {
+      "description": "Body plans: posture tables and default activities. A rig that names\nnone moves as a quadruped.",
+      "oneOf": [
+        {
+          "enum": [
+            "quadruped",
+            "hopper",
+            "biped",
+            "bird",
+            "serpent",
+            "fish",
+            "cetacean",
+            "sprawler",
+            "ray"
+          ],
+          "type": "string"
+        },
+        {
+          "const": "flutterer",
+          "description": "Named in ANIMATION.md, with no motors yet: it moves as a quadruped.",
+          "type": "string"
+        },
+        {
+          "const": "crab",
+          "description": "Eight legs out to the sides and two claws, walking sideways.",
+          "type": "string"
+        },
+        {
+          "const": "octopus",
+          "description": "A body and eight arms, each posed along a path of its own.",
+          "type": "string"
+        }
+      ]
+    },
+    "RigDef": {
+      "properties": {
+        "activities": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ActDef"
+          },
+          "description": "Rows of the activity table that differ from the plan's defaults\n(life.rs): activity name -> { time: [lo, hi], next: { name: weight } }.",
+          "type": "object"
+        },
+        "bones": {
+          "description": "Parents before children; the first bone is the root.",
+          "items": {
+            "$ref": "#/$defs/BoneDef"
+          },
+          "type": "array"
+        },
+        "plan": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Plan"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "bones"
+      ],
+      "type": "object"
+    },
+    "Role": {
+      "description": "What a bone is, which decides how the motors move it (ANIMATION.md).",
+      "enum": [
+        "root",
+        "spine",
+        "neck",
+        "head",
+        "jaw",
+        "tail",
+        "leg",
+        "arm",
+        "wing",
+        "ear"
+      ],
+      "type": "string"
+    },
+    "Vary": {
+      "description": "Spreads, each a fraction either side of the species' own value.",
+      "properties": {
+        "habits": {
+          "default": 0.4000000059604645,
+          "description": "Taste for each activity (life.rs weights): at 0.4 one deer may graze\nhalf again as often as another and lie down half as often.",
+          "format": "float",
+          "type": "number"
+        },
+        "hue": {
+          "default": 0.03999999910593033,
+          "description": "Warmer (redder) or cooler (bluer) coat.",
+          "format": "float",
+          "type": "number"
+        },
+        "shade": {
+          "default": 0.07000000029802322,
+          "description": "Brightness of the coat.",
+          "format": "float",
+          "type": "number"
+        },
+        "size": {
+          "default": 0.05999999865889549,
+          "description": "Body size.",
+          "format": "float",
+          "type": "number"
+        },
+        "speed": {
+          "default": 0.07999999821186066,
+          "description": "Walking and running speed.",
+          "format": "float",
+          "type": "number"
+        },
+        "wary": {
+          "default": 0.20000000298023224,
+          "description": "Distance at which it notices the player or a predator.",
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "if": {
+    "not": {
+      "required": [
+        "like"
+      ]
+    }
+  },
+  "patternProperties": {
+    "^_": {}
+  },
+  "properties": {
+    "ages": {
+      "$ref": "#/$defs/Ages",
+      "description": "Which ages turn up (src/creatures/age.rs); defaults from `height`."
+    },
+    "behaviour": {
+      "$ref": "#/$defs/Behaviour"
+    },
+    "colors": {
+      "additionalProperties": {
+        "items": {
+          "format": "float",
+          "type": "number"
+        },
+        "type": "array"
+      },
+      "description": "Colour name -> sRGB, with optional emissive strength as a fourth value.",
+      "type": "object"
+    },
+    "extra_ops": {
+      "description": "With `like`: ops appended to the parent's (later ops win; `\"mat\": \"air\"` carves).",
+      "items": {
+        "$ref": "#/$defs/Op"
+      },
+      "type": "array"
+    },
+    "half_w": {
+      "format": "float",
+      "type": "number"
+    },
+    "height": {
+      "format": "float",
+      "type": "number"
+    },
+    "in_water": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Behaviour"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "How it moves once it is in the water, for a species that crosses\nbetween the two: an alligator on the bank and awash among the knees, a\nseal hauled out and at sea. The engine builds a second form of the\nspecies from this (`worldload::creatures`), so one entry and one name\ncovers both and a biome lists it once. Merged key by key over\n`behaviour`, so it need only give what differs."
+    },
+    "introduced_by": {
+      "default": "",
+      "type": "string"
+    },
+    "like": {
+      "description": "The entry this one is a variant of (src/inherit.rs): it starts from that entry and overrides what it gives.",
+      "type": "string"
+    },
+    "morphs": {
+      "description": "The coats this species comes in (see `MorphDef`): the pale hare, the\nwhite humpback, the albino fox. Never inherited through `like`, since a\nmorph's colours are absolute and a child is a different animal.",
+      "items": {
+        "$ref": "#/$defs/MorphDef"
+      },
+      "type": "array"
+    },
+    "name": {
+      "type": "string"
+    },
+    "notes": {
+      "default": "",
+      "type": "string"
+    },
+    "ops": {
+      "items": {
+        "$ref": "#/$defs/Op"
+      },
+      "type": "array"
+    },
+    "rarity": {
+      "default": 0.0,
+      "description": "Above 0: a rare morph of its parent. Where the parent spawns, this\nfraction of individuals are this creature instead. `rarity` makes a\nrare *species*, which may differ in any way including its shape (the\nunicorn's horn); `morphs` below are coats of one species.",
+      "format": "float",
+      "type": "number"
+    },
+    "rig": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RigDef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Bones for animation (ANIMATION.md); ops tagged `part` name the bone."
+    },
+    "scale": {
+      "description": "With `like`: multiplies the parent's sizes; sizes this entry gives are taken as written.",
+      "type": "number"
+    },
+    "vary": {
+      "$ref": "#/$defs/Vary",
+      "description": "How much individuals differ (src/variety.rs)."
+    },
+    "version": {
+      "default": 1,
+      "format": "uint32",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "voxel": {
+      "description": "Model voxel edge, metres (the model grid is 32 voxels on a side).",
+      "format": "float",
+      "type": "number"
+    }
+  },
+  "then": {
+    "required": [
+      "name",
+      "voxel",
+      "half_w",
+      "height",
+      "colors",
+      "ops",
+      "behaviour"
+    ]
+  },
+  "title": "CreatureDef",
+  "type": "object"
+}

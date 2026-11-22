@@ -8,6 +8,6 @@
   "level": false,
   "decays": false,
   "tags": ["natural"],
-  "slots": {"rock": "lichen_rock"},
+  "slots": {"rock": "lichened_stone"},
   "ops": [{"op": "ellipsoid", "centre": [11, 2.5, 8], "radius": [10, 3, 7], "mat": "rock"}]
 }

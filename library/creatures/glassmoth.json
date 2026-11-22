@@ -1,12 +1,21 @@
 {
   "name": "glassmoth",
-  "version": 2,
+  "version": 3,
   "introduced_by": "glassfall",
-  "notes": "A large moth with faintly glowing violet wings, seen near skystone.",
+  "notes": "A large moth with glowing wings. Comes in two coats: `violet`, seen near skystone, and `lantern`, warm gold and brighter, drifting low over lawns and under trees in the faerie wood. A biome picks one (`morph`). v3: lantern_moth merged in as the `lantern` coat, whose fourth number burns the wings a third brighter (a coat's glow gain); it is now the glassmoth's size, where the lantern moth was a fifth bigger.",
   "voxel": 0.025,
   "half_w": 0.1,
   "height": 0.1,
   "colors": {"mothbody": [60, 40, 90], "wing": [170, 120, 255, 1.8]},
+  "morphs": [
+    {"name": "violet", "weight": 1, "notes": "Violet wings, the glassmoth of the skystone."},
+    {
+      "name": "lantern",
+      "weight": 1,
+      "notes": "The lantern moth: gold wings, burning brighter.",
+      "colors": {"mothbody": [36, 28, 24], "wing": [255, 210, 120, 2.4]}
+    }
+  ],
   "behaviour": {"movement": "flutter", "fly_height": 1.2, "flightiness": 0.35, "active": "nocturnal", "off_hours": 0.03},
   "ops": [
     {"op": "ellipsoid", "centre": [16, 16, 16.5], "radius": [0.9, 0.9, 3.0], "mat": "mothbody"},

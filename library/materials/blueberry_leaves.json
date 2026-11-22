@@ -1,0 +1,16 @@
+{
+  "name": "blueberry_leaves",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "Lowbush blueberry leaves: small, glossy, blue-green.",
+  "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "pointed"},
+  "texture": {
+    "pattern": "speckle",
+    "base": [70, 104, 66],
+    "alt": [56, 88, 64],
+    "scale": 6,
+    "contrast": 0.9,
+    "calm": {"base": [76, 110, 72], "alt": [62, 94, 70]}
+  }
+}

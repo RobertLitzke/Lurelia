@@ -30,11 +30,11 @@ use serde::{Deserialize, Serialize};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
-use voice::{Brook, Falls, Mix, Now, Rain, Rustle, Rustling, Surf, Under, Wind};
+use voice::{Brook, Falls, Mix, Motor, Now, Rain, Rustle, Rustling, Surf, Under, Wind};
 
 /// What the ground under the listener is, for what a raindrop sounds like
 /// landing on it.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize, schemars::JsonSchema)]
 #[serde(rename_all = "lowercase")]
 pub enum Ground {
     /// Earth, sand, snow, mud: a dull pat.
@@ -106,6 +106,11 @@ pub struct Heard {
     pub spray: f32,
     /// Waves on a shore.
     pub surf: Emitter,
+    /// The nearest wave breaking where the surf is drawn (world/surf.rs):
+    /// its phase (0 as the crest passes), period in seconds and size (0.2
+    /// to 1). Period 0 where the world has no surf, and the voice keeps its
+    /// own time.
+    pub surf_wave: [f32; 3],
     /// The ear is under water.
     pub under: f32,
     /// How far the top of the whole mix is rolled off, 0 to 1: fog, snow
@@ -115,6 +120,12 @@ pub struct Heard {
     /// to 1 (a canyon or a cave).
     pub room: f32,
     pub room_size: f32,
+    /// The car being driven: how loud its engine is (0 off), the firing rate
+    /// in Hz, how open the throttle is, and how hard the tyres slide, 0 to 1.
+    pub motor: f32,
+    pub motor_hz: f32,
+    pub motor_load: f32,
+    pub scrub: f32,
 }
 
 /// The player's levels, kept with the other settings (`menu::Prefs`). Each
@@ -133,7 +144,13 @@ pub struct Levels {
 
 impl Default for Levels {
     fn default() -> Self {
-        Levels { on: true, volume: 70, ambience: 100, effects: 100, music: 60 }
+        Levels {
+            on: true,
+            volume: 70,
+            ambience: 100,
+            effects: 100,
+            music: 60,
+        }
     }
 }
 
@@ -176,9 +193,17 @@ pub struct Cue {
 
 impl Default for Cue {
     fn default() -> Self {
-        Cue { heard: Heard::default(), facing: [0.0, -1.0], levels: Levels::default(), duck: 0.0 }
+        Cue {
+            heard: Heard::default(),
+            facing: [0.0, -1.0],
+            levels: Levels::default(),
+            duck: 0.0,
+        }
     }
 }
+
+/// The engine against the effects: about -22 dBFS at full throttle.
+const MOTOR_LEVEL: f32 = 0.18;
 
 /// One-shots waiting for the callback, at most.
 const SHOTS_KEPT: usize = 128;
@@ -257,6 +282,10 @@ struct Glides {
     facing: [Glide; 2],
     ambience: Glide,
     effects: Glide,
+    motor: Glide,
+    motor_hz: Glide,
+    motor_load: Glide,
+    scrub: Glide,
 }
 
 impl Glides {
@@ -290,6 +319,10 @@ impl Glides {
             facing: [Glide::new(0.0, 0.04, br), Glide::new(-1.0, 0.04, br)],
             ambience: g(0.6),
             effects: Glide::new(0.0, 0.05, br),
+            motor: g(0.15),
+            motor_hz: Glide::new(30.0, 0.06, br),
+            motor_load: g(0.08),
+            scrub: g(0.1),
         }
     }
 
@@ -323,6 +356,12 @@ impl Glides {
         self.muffle.to = h.muffle;
         self.room.to = h.room;
         self.room_size.to = h.room_size;
+        self.motor.to = h.motor;
+        if h.motor > 0.0 {
+            self.motor_hz.to = h.motor_hz;
+        }
+        self.motor_load.to = h.motor_load;
+        self.scrub.to = h.scrub;
         self.facing[0].to = c.facing[0];
         self.facing[1].to = c.facing[1];
         self.ambience.to = c.levels.gain(Bus::Ambience) * c.duck.clamp(0.0, 1.0);
@@ -363,6 +402,7 @@ pub struct Engine {
     falls: Falls,
     surf: Surf,
     under: Under,
+    motor: Motor,
     room: Room,
     fx: Fx,
     muffle: [[OnePole; 2]; 2],
@@ -389,6 +429,7 @@ impl Engine {
             falls: Falls::new(600),
             surf: Surf::new(700),
             under: Under::new(800),
+            motor: Motor::new(900),
             room: Room::new(sr),
             fx: Fx::new(),
             muffle: Default::default(),
@@ -441,6 +482,7 @@ impl Engine {
             spray: g.spray.step() * up,
             surf: g.surf.step(),
             surf_pan: place(sd, g.surf_spread.step(), facing),
+            surf_wave: self.cue.heard.surf_wave,
             under,
         };
         let muffle = g.muffle.step();
@@ -450,7 +492,11 @@ impl Engine {
         let eff = g.effects.step();
         self.l = [0.0; BLOCK];
         self.r = [0.0; BLOCK];
-        let mut m = Mix { l: &mut self.l, r: &mut self.r, sr: self.sr };
+        let mut m = Mix {
+            l: &mut self.l,
+            r: &mut self.r,
+            sr: self.sr,
+        };
         self.wind.run(&n, &mut m);
         self.leaves.run(&n, &mut m);
         self.grass.run(&n, &mut m);
@@ -471,6 +517,14 @@ impl Engine {
         }
         let (mut fl, mut fr, mut fs) = ([0.0f32; BLOCK], [0.0f32; BLOCK], [0.0f32; BLOCK]);
         self.fx.run(&mut fl, &mut fr, &mut fs, self.sr);
+        // The car's engine rides the effects bus, under the guns.
+        let (mut ml, mut mr) = ([0.0f32; BLOCK], [0.0f32; BLOCK]);
+        let (mg, mh, mload, ms) = (g.motor.step(), g.motor_hz.step(), g.motor_load.step(), g.scrub.step());
+        self.motor.run(mg, mh, mload, ms, &mut Mix { l: &mut ml, r: &mut mr, sr: self.sr });
+        for i in 0..BLOCK {
+            fl[i] += ml[i] * MOTOR_LEVEL;
+            fr[i] += mr[i] * MOTOR_LEVEL;
+        }
         let amb = AMBIENCE_LEVEL * amb;
         let eff = EFFECTS_LEVEL * eff;
         // Outdoors a shot still wants a little of the land answering it.
@@ -654,7 +708,12 @@ impl Sound {
     /// (headphones pulled out) is opened again, at most every two seconds.
     pub fn update(&mut self, heard: Heard, facing: [f32; 2], duck: f32) {
         if let Ok(mut c) = self.slot.lock() {
-            *c = Cue { heard, facing, levels: self.levels, duck };
+            *c = Cue {
+                heard,
+                facing,
+                levels: self.levels,
+                duck,
+            };
         }
         if !self.levels.on {
             return;
@@ -709,7 +768,17 @@ mod tests {
     }
 
     fn full(h: Heard) -> Cue {
-        Cue { heard: h, facing: [0.0, -1.0], levels: Levels { on: true, volume: 100, ambience: 100, ..Levels::default() }, duck: 1.0 }
+        Cue {
+            heard: h,
+            facing: [0.0, -1.0],
+            levels: Levels {
+                on: true,
+                volume: 100,
+                ambience: 100,
+                ..Levels::default()
+            },
+            duck: 1.0,
+        }
     }
 
     /// Nothing in the place, nothing in the weather: not one sample off zero.
@@ -718,7 +787,12 @@ mod tests {
         let out = render(full(Heard::default()), 2.0);
         assert!(out.iter().all(|x| *x == 0.0), "a quiet place made a sound");
         // And sound off is silence whatever the place.
-        let mut c = full(Heard { wind: 1.0, gust: 1.0, rain: 1.0, ..Heard::default() });
+        let mut c = full(Heard {
+            wind: 1.0,
+            gust: 1.0,
+            rain: 1.0,
+            ..Heard::default()
+        });
         c.levels.on = false;
         let out = render(c, 2.0);
         assert!(out.iter().skip(1000).all(|x| *x == 0.0));
@@ -729,17 +803,71 @@ mod tests {
     /// is tuned against.
     #[test]
     fn every_voice_is_about_as_loud() {
-        let e = Emitter { gain: 1.0, dir: [1.0, 0.0], spread: 0.3 };
+        let e = Emitter {
+            gain: 1.0,
+            dir: [1.0, 0.0],
+            spread: 0.3,
+        };
         let voices: Vec<(&str, Heard)> = vec![
-            ("wind", Heard { wind: 1.0, gust: 0.7, ..Heard::default() }),
-            ("whistle", Heard { whistle: 1.0, gust: 0.9, ..Heard::default() }),
-            ("leaves", Heard { leaves: 1.0, gust: 0.7, ..Heard::default() }),
-            ("grass", Heard { grass: 1.0, gust: 0.7, ..Heard::default() }),
+            (
+                "wind",
+                Heard {
+                    wind: 1.0,
+                    gust: 0.7,
+                    ..Heard::default()
+                },
+            ),
+            (
+                "whistle",
+                Heard {
+                    whistle: 1.0,
+                    gust: 0.9,
+                    ..Heard::default()
+                },
+            ),
+            (
+                "leaves",
+                Heard {
+                    leaves: 1.0,
+                    gust: 0.7,
+                    ..Heard::default()
+                },
+            ),
+            (
+                "grass",
+                Heard {
+                    grass: 1.0,
+                    gust: 0.7,
+                    ..Heard::default()
+                },
+            ),
             ("rain", Heard { rain: 1.0, ..Heard::default() }),
             ("drip", Heard { drip: 1.0, ..Heard::default() }),
-            ("brook", Heard { water: e, flow: 0.8, ..Heard::default() }),
-            ("river", Heard { water: e, flow: 0.2, ..Heard::default() }),
-            ("falls", Heard { falls: e, falls_size: 1.0, spray: 1.0, ..Heard::default() }),
+            (
+                "brook",
+                Heard {
+                    water: e,
+                    flow: 0.8,
+                    ..Heard::default()
+                },
+            ),
+            (
+                "river",
+                Heard {
+                    water: e,
+                    flow: 0.2,
+                    ..Heard::default()
+                },
+            ),
+            (
+                "falls",
+                Heard {
+                    falls: e,
+                    falls_size: 1.0,
+                    spray: 1.0,
+                    ..Heard::default()
+                },
+            ),
             ("surf", Heard { surf: e, ..Heard::default() }),
             ("under", Heard { under: 1.0, ..Heard::default() }),
         ];
@@ -768,7 +896,11 @@ mod tests {
     /// Everything at once, at its worst: still finite and never clipping.
     #[test]
     fn everything_at_once_stays_in_bounds() {
-        let e = Emitter { gain: 1.0, dir: [0.0, 1.0], spread: 0.0 };
+        let e = Emitter {
+            gain: 1.0,
+            dir: [0.0, 1.0],
+            spread: 0.0,
+        };
         let h = Heard {
             wind: 1.0,
             gust: 1.0,
@@ -795,7 +927,15 @@ mod tests {
     /// it is in the left.
     #[test]
     fn a_river_is_where_it_is() {
-        let h = Heard { water: Emitter { gain: 1.0, dir: [1.0, 0.0], spread: 0.1 }, flow: 0.6, ..Heard::default() };
+        let h = Heard {
+            water: Emitter {
+                gain: 1.0,
+                dir: [1.0, 0.0],
+                spread: 0.1,
+            },
+            flow: 0.6,
+            ..Heard::default()
+        };
         // Facing -z, +x is to the right.
         let ears = |facing: [f32; 2]| {
             let mut c = full(h);
@@ -897,7 +1037,15 @@ mod tests {
         let Ok(dir) = std::env::var("LURELIA_FX_WAVS") else { return };
         let mut out = vec![];
         for (wind, gust) in [(0.0, 0.35), (0.0, 0.9), (0.6, 0.35), (0.6, 0.9)] {
-            let o = render(full(Heard { grass: 1.0, wind, gust, ..Heard::default() }), 8.0);
+            let o = render(
+                full(Heard {
+                    grass: 1.0,
+                    wind,
+                    gust,
+                    ..Heard::default()
+                }),
+                8.0,
+            );
             // The glides arriving are not the sound.
             out.extend_from_slice(&o[o.len() / 4..]);
         }
@@ -910,12 +1058,25 @@ mod tests {
     #[test]
     #[ignore]
     fn bake_the_creek() {
-        let (Ok(dir), Ok(at)) = (std::env::var("LURELIA_FX_WAVS"), std::env::var("LURELIA_CREEK")) else { return };
+        let (Ok(dir), Ok(at)) = (std::env::var("LURELIA_FX_WAVS"), std::env::var("LURELIA_CREEK")) else {
+            return;
+        };
         let mut out = vec![];
         for p in at.split(';') {
             let v: Vec<f32> = p.split(',').map(|x| x.trim().parse().unwrap()).collect();
-            let water = Emitter { gain: v[0], dir: [1.0, 0.0], spread: 0.5 };
-            let o = render(full(Heard { water, flow: v[1], ..Heard::default() }), 8.0);
+            let water = Emitter {
+                gain: v[0],
+                dir: [1.0, 0.0],
+                spread: 0.5,
+            };
+            let o = render(
+                full(Heard {
+                    water,
+                    flow: v[1],
+                    ..Heard::default()
+                }),
+                8.0,
+            );
             out.extend_from_slice(&o[o.len() / 4..]);
         }
         bake::write_wav(&std::path::PathBuf::from(dir).join("creek.wav"), 48_000, &out).unwrap();
@@ -929,7 +1090,16 @@ mod tests {
         use fx::{Kind as K, Report as R};
         let Ok(dir) = std::env::var("LURELIA_FX_WAVS") else { return };
         let dir = std::path::PathBuf::from(dir);
-        let guns = [("pistol", K::Shot(R::Pistol)), ("minigun", K::Shot(R::Minigun)), ("sniper", K::Shot(R::Sniper)), ("scatter", K::Shot(R::Scatter)), ("slug", K::Shot(R::Slug)), ("rocket", K::Shot(R::Rocket)), ("burst", K::Burst(5.0)), ("lob", K::Shot(R::Lob))];
+        let guns = [
+            ("pistol", K::Shot(R::Pistol)),
+            ("minigun", K::Shot(R::Minigun)),
+            ("sniper", K::Shot(R::Sniper)),
+            ("scatter", K::Shot(R::Scatter)),
+            ("slug", K::Shot(R::Slug)),
+            ("rocket", K::Shot(R::Rocket)),
+            ("burst", K::Burst(5.0)),
+            ("lob", K::Shot(R::Lob)),
+        ];
         for (name, k) in guns {
             let sr = 48_000.0;
             let mut e = Engine::new(sr);
@@ -1030,7 +1200,16 @@ mod tests {
             let mut warm = vec![0.0; 4800 * 2];
             e.fill(&mut warm, 2);
             let mut out = vec![0.0; (sr * 2.0) as usize * 2];
-            let s = fx::place(&fx::Noise { key: 1, ..fx::Noise::ear(K::Beam(R::Bore), 0.45) }, glam::Vec3::ZERO, [0.0, -1.0], 1.0).unwrap();
+            let s = fx::place(
+                &fx::Noise {
+                    key: 1,
+                    ..fx::Noise::ear(K::Beam(R::Bore), 0.45)
+                },
+                glam::Vec3::ZERO,
+                [0.0, -1.0],
+                1.0,
+            )
+            .unwrap();
             for (i, chunk) in out.chunks_mut(960).enumerate() {
                 if i < 150 {
                     e.start(s);
@@ -1041,8 +1220,10 @@ mod tests {
         }
         // A rocket fired from the ear down a 60 m hall, and one flying past
         // from left to right three metres out, each bursting where it ends.
-        let flights: [(&str, glam::Vec3, glam::Vec3); 2] =
-            [("rocket_away", glam::Vec3::ZERO, glam::Vec3::new(0.0, 0.0, -37.4)), ("rocket_past", glam::Vec3::new(-50.0, 0.0, -3.0), glam::Vec3::new(37.4, 0.0, 0.0))];
+        let flights: [(&str, glam::Vec3, glam::Vec3); 2] = [
+            ("rocket_away", glam::Vec3::ZERO, glam::Vec3::new(0.0, 0.0, -37.4)),
+            ("rocket_past", glam::Vec3::new(-50.0, 0.0, -3.0), glam::Vec3::new(37.4, 0.0, 0.0)),
+        ];
         for (name, from, vel) in flights {
             let sr = 48_000.0;
             let mut e = Engine::new(sr);
@@ -1094,13 +1275,31 @@ mod tests {
     #[test]
     fn distance_is_quieter_later_and_duller() {
         let n = fx::Noise::at(fx::Kind::Shot(fx::Report::Pistol), glam::Vec3::new(0.0, 0.0, -100.0), 1.0);
-        let near = fx::place(&fx::Noise { at: Some(glam::Vec3::new(0.0, 0.0, -2.0)), ..n }, glam::Vec3::ZERO, [0.0, -1.0], 1.0).unwrap();
+        let near = fx::place(
+            &fx::Noise {
+                at: Some(glam::Vec3::new(0.0, 0.0, -2.0)),
+                ..n
+            },
+            glam::Vec3::ZERO,
+            [0.0, -1.0],
+            1.0,
+        )
+        .unwrap();
         let far = fx::place(&n, glam::Vec3::ZERO, [0.0, -1.0], 1.0).unwrap();
         assert!(far.gain < near.gain * 0.1 && far.delay > 0.25 && far.cut < near.cut * 0.7, "{near:?} {far:?}");
         // Something a long way off and quiet is not worth a voice.
         assert!(fx::place(&fx::Noise { gain: 0.05, ..n }, glam::Vec3::ZERO, [0.0, -1.0], 1.0).is_none());
         // To the right is to the right.
-        let right = fx::place(&fx::Noise { at: Some(glam::Vec3::new(20.0, 0.0, 0.0)), ..n }, glam::Vec3::ZERO, [0.0, -1.0], 1.0).unwrap();
+        let right = fx::place(
+            &fx::Noise {
+                at: Some(glam::Vec3::new(20.0, 0.0, 0.0)),
+                ..n
+            },
+            glam::Vec3::ZERO,
+            [0.0, -1.0],
+            1.0,
+        )
+        .unwrap();
         assert!(right.pan > 0.8, "{right:?}");
     }
 

@@ -28,7 +28,22 @@
   "features": [
     {
       "structure": "drift_log",
-      "density": 0.0012,
+      "density": 0.0006,
+      "placement": {"verb": "edge", "params": {"width": 5, "inner": 0.0, "along": 30}, "field": "rib_wrack,rib_beach"}
+    },
+    {
+      "structure": "drift_log_b",
+      "density": 0.00024,
+      "placement": {"verb": "edge", "params": {"width": 5, "inner": 0.0, "along": 30}, "field": "rib_wrack,rib_beach"}
+    },
+    {
+      "structure": "drift_log_c",
+      "density": 0.000204,
+      "placement": {"verb": "edge", "params": {"width": 5, "inner": 0.0, "along": 30}, "field": "rib_wrack,rib_beach"}
+    },
+    {
+      "structure": "drift_log_d",
+      "density": 0.000156,
       "placement": {"verb": "edge", "params": {"width": 5, "inner": 0.0, "along": 30}, "field": "rib_wrack,rib_beach"}
     }
   ],
@@ -37,7 +52,8 @@
     {"creature": "raven", "count": 2},
     {"creature": "gull", "count": 2},
     {"creature": "jackrabbit", "count": 3},
-    {"creature": "sparrow", "count": 4}
+    {"creature": "sparrow", "count": 4},
+    {"creature": "annas_hummingbird", "count": 3}
   ],
   "collectibles": []
 }

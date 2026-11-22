@@ -3,14 +3,12 @@
   "version": 1,
   "introduced_by": "redrock",
   "notes": "The bleached cream top of the dune sandstone (the White Cliffs).",
+  "like": "navajo_sandstone",
   "id": 104,
-  "smooth": true,
   "texture": {
-    "pattern": "ripples",
-    "base": [222, 200, 166],
     "alt": [234, 216, 184],
-    "scale": 3,
+    "calm": {"alt": [234, 218, 188], "base": [226, 206, 172]},
     "contrast": 0.7,
-    "calm": {"base": [226, 206, 172], "alt": [234, 218, 188]}
+    "base": [222, 200, 166]
   }
 }

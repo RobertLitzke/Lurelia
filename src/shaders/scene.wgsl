@@ -201,7 +201,7 @@ fn under_land(world: vec3<f32>) -> f32 {
     }
     // The EDIT page's platform is cut down into the land with the sky open
     // over it, and the land's texels laid the sun across it in blocky
-    // patches (backlog #356).
+    // patches.
     if (g.studio.w > 0.5 && all(abs(world.xz - g.studio.xy) <= vec2<f32>(g.studio.z))) {
         return 1.0;
     }
@@ -247,28 +247,38 @@ fn cascade_shadow(world: vec3<f32>, n: vec3<f32>) -> f32 {
     if (depth > g.splits.y) { ci = 2u; }
     if (depth > g.splits.z) { return 1.0; }
     let texel = g.shadow_texel[ci];
-    let p = world + n * texel * 1.2;
     // The calm style spreads the filter wider for softer shadow edges.
     // A world may spread it wider still (world.json sun.shadow_soft).
-    let inv = select(1.0, 1.8, g.style.x > 0.5) * max(g.shadow_texel.w, 1.0) / SHADOW_SIZE;
-    // Depth bias along the light; the map spans 600 m, so 0.0004 is 0.24 m.
-    // One- and two-voxel steps and leaf overhangs sit right at that gap, and
-    // the parts that survive show as slivers and sawtooth triangles. The calm
-    // style biases past it (0.54 m) so voxel-scale relief casts no shadow and
-    // only trees, cliffs and creatures do.
-    // Plus a slope term: where the sun grazes a surface (a dune's lee, a
-    // canyon wall) its depth changes by texel * tan(angle) across one shadow
-    // texel, more than the flat bias, so the filter taps land behind the
-    // surface and it shadows itself in stripes that crawl as the cascades
-    // follow the camera. Cover the filter's reach (about 2.5 texels) at
-    // that slope, capped so contact shadows under overhangs survive.
-    // One texel of reach and a cap of 4 are enough: at 2.5 texels and 8 the
-    // bias reached most of a metre on flat ground under a low sun, and every
-    // log, bone and plank lying on it cast a shadow parted from it by a lit
-    // gap, the flat ones none at all (2026-11-20, Ribshore).
+    let spread = select(1.0, 1.8, g.style.x > 0.5) * max(g.shadow_texel.w, 1.0);
+    let inv = spread / SHADOW_SIZE;
     let ndl = clamp(dot(n, g.sun_dir.xyz), 0.02, 1.0);
     let tanl = min(sqrt(1.0 - ndl * ndl) / ndl, 4.0);
-    let bias = select(0.0004, 0.0009, g.style.x > 0.5) + texel * tanl * 1.0 * max(g.shadow_texel.w, 1.0) / 600.0;
+    // The legacy bias (VOXEL_SHADOW_BIAS=legacy): 0.24 m along the light,
+    // 0.54 m saturated so voxel-scale relief cast no shadow, plus a texel
+    // of slope (the map spans 600 m of depth). Surfaces that are in the map
+    // themselves or cast from other geometry (SHADOW_VOXEL) keep the 0.24 m
+    // in both styles: a voxel of clearance.
+    var p = world + n * texel * 1.2;
+    let flat_bias = select(select(0.0004, 0.0009, g.style.x > 0.5), 0.0004, shadow_kind == SHADOW_VOXEL && !SHADOW_BIAS_LEGACY);
+    var bias = flat_bias + texel * tanl * max(g.shadow_texel.w, 1.0) / 600.0;
+    if (shadow_kind == SHADOW_TIGHT && !SHADOW_BIAS_LEGACY) {
+        // The map holds only faces turned from the sun (render back_dirs),
+        // so a sunlit face is compared against the far side of its own
+        // solid, at least a voxel behind it, and needs next to no bias to
+        // stay out of its own shadow. A fixed bias along the light is
+        // instead a slab of light under every caster: with 0.54 m of it the
+        // top half metre of a post under a canopy, the foot of a wall under
+        // its eaves and the ground beside a log all came out lit
+        // (2026-11-21, Redrock). So the bias is a texel and a half of
+        // depth, and the reach a grazing sun needs comes from pushing the
+        // sample out along the normal instead, as far as the filter spreads
+        // (sin of the angle off the sun times the filter's texels). Off the
+        // normal, a point beside a caster moves away from the surface, not
+        // toward the light, so contact shadows stay shut.
+        let sinl = sqrt(1.0 - ndl * ndl);
+        p = world + n * texel * (1.0 + 1.5 * spread * sinl);
+        bias = texel * (1.5 + 0.5 * tanl) * spread / 600.0;
+    }
     var s = 1.0;
     if (ci == 0u) {
         let sp = shadow_pos(g.shadow_mats[0], p);
@@ -320,6 +330,25 @@ fn shadow_pcf4(m: mat4x4<f32>, layer: i32, p: vec3<f32>, spread: f32, bias: f32)
 
 // Set by fs_terrain for foliage voxels before it calls light().
 var<private> leafy: bool = false;
+// How much shadow bias the surface being lit needs (cascade_shadow), set
+// by fs_terrain and fs_entity before they call light().
+// SHADOW_TIGHT: a voxel face turned toward the sun, or an entity's face:
+// the shadow maps hold only faces turned from the sun (render back_dirs,
+// and p_shadow_entity culls front faces), so it is compared against the
+// far side of its own solid and needs almost no bias.
+// SHADOW_VOXEL: a voxel of clearance (0.24 m) for terrain that is in the map
+// itself or casts from other geometry: a face turned away that a smoothed
+// normal still lights sits at its own depth in the map; rounded trees cast
+// from their square voxels and faceted rock from facets that lean off them
+// (both striped a cliff with the tight bias, 2026-11-21); a sloped quad
+// where the sun grazes it leans off its voxel face; tubes are drawn along
+// their own line, off their voxels.
+// SHADOW_LEGACY: leaves, and everything not drawn as terrain or entities
+// (foliage cards, particles, water, signs).
+const SHADOW_LEGACY: u32 = 0u;
+const SHADOW_TIGHT: u32 = 1u;
+const SHADOW_VOXEL: u32 = 2u;
+var<private> shadow_kind: u32 = SHADOW_LEGACY;
 
 fn light(albedo: vec3<f32>, world: vec3<f32>, n: vec3<f32>, ao: f32, emissive: f32) -> vec3<f32> {
     let sun = g.sun_dir.xyz;
@@ -388,6 +417,11 @@ struct TerrainOut {
     // A sloped ground quad's own normal: the cross of its diagonals, the
     // average of its two triangles (zero for other quads).
     @location(8) @interpolate(flat) patch_n: vec3<f32>,
+    // 1 for a quad drawn off its voxel face: a tube (mesh/lean.rs), drawn
+    // along its stem's own line, or a rounded one (trees, faceted rock),
+    // whose corners move. Its voxel face direction says little about which
+    // way it faces, or where it casts from (shadow.wgsl).
+    @location(9) @interpolate(flat) moved: u32,
 };
 
 @vertex
@@ -407,6 +441,7 @@ fn vs_terrain(@builtin(vertex_index) vi: u32) -> TerrainOut {
     out.blend = qv.blend;
     out.blend_mat = qv.blend_mat;
     out.patch_n = vec3<f32>(0.0);
+    out.moved = ((q.x >> Q_TUBE_BIT) & 1u) | qv.rounded;
     let o = q.z & 65535u;
     let smooth_n = quad_normal(q);
     if (dot(smooth_n, smooth_n) > 0.5) {
@@ -655,7 +690,18 @@ fn damp_ground(albedo: vec3<f32>, world: vec3<f32>, n: vec3<f32>, plant: bool, g
         return d;
     }
     let up = smoothstep(-0.2, 0.9, n.y);
-    let wet = g.damp.x * open * mix(0.4, 1.0, up);
+    // Rain runs down a rock face or a trunk and wets it nearly as much as
+    // the ground, in streaks; an overhang's underside stays drier. Leaves
+    // and grass shed it, so their sides stay as they were.
+    var wet = g.damp.x * open * mix(select(0.85, 0.4, plant), 1.0, up);
+    // What the tide has left wet on its way out (world/tide.rs): every face,
+    // a harbour wall's as much as the sand, up to the high-water line.
+    wet = max(wet, tide_wet(world.y) * open * select(1.0, 0.6, plant));
+    wet *= 1.0 - 0.6 * smoothstep(-0.2, -0.8, n.y);
+    if (!plant && up < 0.99) {
+        let streak = vnoise2(vec2<f32>((world.x + world.z) * 2.5, world.y * 0.35));
+        wet = min(wet * mix(1.0, 0.7 + 0.55 * streak, 1.0 - up), 1.0);
+    }
     if (wet > 0.005) {
         // A film of water stops the surface scattering white light back, so
         // it goes darker and deeper in colour, the darks most of all.
@@ -888,6 +934,18 @@ fn fs_terrain(in: TerrainOut) -> @location(0) vec4<f32> {
         albedo *= mix(0.3, 1.0, lit);
     }
     leafy = (m.w & M_FOLIAGE_FW) != 0u;
+    // A sloped quad leans off its voxel face, by up to about a voxel on a
+    // curved shell, and is lit by its own normal: where the sun grazes it
+    // the tight bias striped a dome along its shadow line (2026-11-21,
+    // Saltmirror). It takes the tight bias only where the sun meets it
+    // squarely.
+    let squarely = in.sloped == 0u || dot(n_light, g.sun_dir.xyz) > 0.35;
+    // Leaves keep the legacy bias: they cast from 0.5 m leaf cells, not the
+    // voxels drawn, and a crown's underside streaked even at a voxel's.
+    shadow_kind = select(SHADOW_VOXEL, SHADOW_TIGHT, dot(n0, g.sun_dir.xyz) > 0.0 && in.moved == 0u && squarely);
+    if (leafy) {
+        shadow_kind = SHADOW_LEGACY;
+    }
     if (leafy) {
         albedo = albedo * canopy_dapple(in.world);
     }
@@ -904,9 +962,20 @@ fn fs_terrain(in: TerrainOut) -> @location(0) vec4<f32> {
     // less and never hold a puddle.
     let plant = leafy || (m.w & (M_GROWS | M_CALM_LEAF | M_UNDERSTORY | M_CALM_MEADOW)) != 0u;
     var dmp = Damp(albedo, 0.0, 0.0, 0.0, 0.0);
-    if (glow == 0.0 && (g.damp.x > 0.005 || g.damp.y > 0.003 || g.damp.z > 0.01)) {
+    let tidal = g.tide.w > 0.5 && in.world.y < g.tide.z + 0.15 && in.world.y > g.fog.y - 0.3;
+    if (glow == 0.0 && (g.damp.x > 0.005 || g.damp.y > 0.003 || g.damp.z > 0.01 || tidal)) {
         dmp = damp_ground(albedo, in.world, n_light, plant, (m.w & (M_UNDERSTORY | M_CALM_MEADOW)) != 0u, (m.w & M_FLOODS) != 0u);
         albedo = dmp.albedo;
+    }
+    // The swash of the surf running up the beach (world/surf.rs): a sheet of
+    // water over the sand, and the sand it leaves dark behind it.
+    if (g.surf.w > 0.5 && glow == 0.0 && !plant && in.world.y > g.fog.y - 0.1 && in.world.y < g.fog.y + g.surf.x * 1.2 + 0.1) {
+        let sw = swash(in.world, g.cam_pos.w);
+        let soak = smoothstep(g.fog.y + g.surf.x * 0.5, g.fog.y, in.world.y);
+        albedo = pow(max(albedo, vec3<f32>(0.0)), vec3<f32>(1.0 + 0.5 * soak)) * (1.0 - 0.25 * soak);
+        dmp.sheen = max(dmp.sheen, max(soak * 0.6, sw.x));
+        dmp.pool = max(dmp.pool, sw.x * 0.6 * step(0.9, n_light.y));
+        albedo = mix(albedo, vec3<f32>(0.88, 0.91, 0.92), sw.y * 0.85);
     }
     // Snow lying on whatever faces up: the tops of the leaf blocks in a
     // spruce, ledges, roofs, a log. Patchy, thickest on the flattest faces,
@@ -954,7 +1023,8 @@ struct EntityOut {
 
 fn entity_transform(qv: QuadVert, inst: EntityInst) -> mat2x3<f32> {
     let s = inst.info.x;
-    let l = qrot(inst.rot, (qv.local - inst.info.yzw) * s);
+    let r = qrot(inst.rot, (qv.local - inst.info.yzw) * s);
+    let l = r + flesh_offset(r, inst.flesh);
     let c = cos(inst.pos_yaw.w);
     let sn = sin(inst.pos_yaw.w);
     let world = inst.pos_yaw.xyz + vec3<f32>(l.x * c + l.z * sn, l.y, -l.x * sn + l.z * c);
@@ -1009,11 +1079,37 @@ fn entity_colour(in: EntityOut) -> vec3<f32> {
     let inst = einst[in.inst];
     let h = hash3u(vec3<i32>(floor(in.local)));
     let j = f32(h & 255u) / 255.0 - 0.5;
-    let albedo = max(p.rgb * (1.0 + j * select(0.12, 0.03, g.style.x > 0.5)) * inst.tint.rgb + inst.shift.rgb, vec3<f32>(0.0));
+    var albedo = max(p.rgb * (1.0 + j * select(0.12, 0.03, g.style.x > 0.5)) * inst.tint.rgb + inst.shift.rgb, vec3<f32>(0.0));
     let n = normalize(in.normal);
     // tint.w above 0 flashes white; below 0 dims the glow (blinking fireflies).
-    let glow = p.w * (1.0 + min(inst.tint.w, 0.0));
+    // glow.x: a coat's gain on the glow, less one (models.rs `Instance::glow`).
+    let glow = max(p.w, 0.0) * (1.0 + min(inst.tint.w, 0.0)) * max(1.0 + inst.glow.x, 0.0);
+    // Below 0 the palette's fourth value is iridescence (a hummingbird's
+    // gorget): dusky until the sun's reflection lines up with the eye, then
+    // a flash of its own colour, brighter than lit paint can be.
+    let irid = max(-p.w, 0.0);
+    var flash = 0.0;
+    shadow_kind = SHADOW_TIGHT;
+    if (irid > 0.0) {
+        let sun = g.sun_dir.xyz;
+        let ndl = dot(n, sun);
+        if (ndl > 0.0) {
+            let v = normalize(g.cam_pos.xyz - in.world);
+            let hv = normalize(sun + v);
+            flash = pow(max(dot(n, hv), 0.0), 10.0) * shadow_factor(in.world, n) * g.sun_color.w;
+        }
+        albedo = albedo * mix(0.12, 1.0, min(flash, 1.0));
+    }
+    // Out in the wet (world/damp.rs), fur, feathers and anything else left
+    // outside go darker like the ground, less so underneath. Not under the
+    // sea, and not anything under the land.
+    if (glow == 0.0 && g.damp.x > 0.005 && in.world.y > g.fog.y) {
+        let wet = g.damp.x * under_land(in.world) * mix(0.5, 1.0, smoothstep(-0.2, 0.9, n.y));
+        albedo = pow(albedo, vec3<f32>(1.0 + 0.4 * wet)) * (1.0 - 0.2 * wet);
+    }
+    shadow_kind = SHADOW_TIGHT;
     var col = light(albedo, in.world, n, in.ao, glow);
+    col += albedo * g.sun_color.rgb * flash * irid;
     col = mix(col, vec3<f32>(1.0, 1.0, 1.0), max(inst.tint.w, 0.0));
     return apply_fog(col, in.world);
 }
@@ -1243,6 +1339,9 @@ struct WaterOut {
     @location(1) river: vec4<f32>,
     // The spray record (index + 1) of a waterfall landing near; 0 for none.
     @location(2) @interpolate(flat) fall: u32,
+    // The sea's second plane, at high water over the hollows the open sea
+    // cannot reach (with a tide only); 0 for the open sea and rivers.
+    @location(3) @interpolate(flat) basin: u32,
 };
 
 // River surface cells (world/rivers.rs, render::RiverQuad).
@@ -1252,6 +1351,7 @@ struct RiverQuad {
     bed: vec4<f32>,
     flow_x: vec4<f32>,
     flow_z: vec4<f32>,
+    ebb: vec4<f32>,
 };
 @group(0) @binding(12) var<storage, read> rivers: array<RiverQuad>;
 
@@ -1271,20 +1371,24 @@ fn vs_river(@builtin(vertex_index) vi: u32) -> WaterOut {
     var dx = array<f32, 4>(0.0, 1.0, 1.0, 0.0);
     var dz = array<f32, 4>(0.0, 0.0, 1.0, 1.0);
     let c = order[vi % 6u];
-    let world = vec3<f32>(q.at.x + dx[c], q.level[c] - 0.03, q.at.y + dz[c]);
+    // Near the sea a river falls with the tide (world/tide.rs).
+    let level = q.level[c] - river_fall(q.level[c], q.ebb[c]);
+    let world = vec3<f32>(q.at.x + dx[c], level - 0.03, q.at.y + dz[c]);
     var out: WaterOut;
     out.clip = g.view_proj * vec4<f32>(world, 1.0);
     out.world = world;
-    out.river = vec4<f32>(q.bed[c], q.flow_x[c], q.flow_z[c], 1.0 + q.at.z);
+    // A cell at the sea's level draws only foam over the sea's own surface,
+    // unless the tide has gone out below it and left a stream running there
+    // (a channel on past the river's mouth).
+    let over_sea = q.at.z > 0.5 && level < g.fog.y + 0.03;
+    out.river = vec4<f32>(q.bed[c], q.flow_x[c], q.flow_z[c], select(1.0, 2.0, over_sea));
     out.fall = u32(q.at.w + 0.5);
+    out.basin = 0u;
     return out;
 }
 
 @vertex
-fn vs_water(@builtin(vertex_index) vi: u32) -> WaterOut {
-    var corners = array<vec2<f32>, 6>(
-        vec2<f32>(-1.0, -1.0), vec2<f32>(1.0, -1.0), vec2<f32>(1.0, 1.0),
-        vec2<f32>(-1.0, -1.0), vec2<f32>(1.0, 1.0), vec2<f32>(-1.0, 1.0));
+fn vs_water(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -> WaterOut {
     let c = quad_corner(vi);
     let r = 4000.0;
     // Sea level falls on a voxel boundary, so shoreline top faces would share the
@@ -1293,8 +1397,31 @@ fn vs_water(@builtin(vertex_index) vi: u32) -> WaterOut {
     // at sea level has corners at 0 and -6.25 cm: at -5 cm the water lay a
     // centimetre from those and flickered through the sand at a distance
     // (Ribshore's beach). Midway between the first and second step keeps every
-    // corner at least 3 cm clear of it.
-    let world = vec3<f32>(g.cam_pos.x + c.x * r, g.fog.y - 0.094, g.cam_pos.z + c.y * r);
+    // corner at least 3 cm clear of it. A tide moves the sea between steps,
+    // so the plane is kept on that midway lattice and goes down a step at a
+    // time. Instance 1 is the plane at high water over the hollows the open
+    // sea cannot reach (drawn with a tide only).
+    let top = select(g.fog.y, g.tide.z, ii == 1u);
+    var y = (round((top - 0.09375) / 0.0625 - 0.5) + 0.5) * 0.0625;
+    var xz = g.cam_pos.xz + c * r;
+    if (ii == 0u && g.swell.z > 0.0) {
+        // With a swell the open sea is a mesh of SEA_GRID x SEA_GRID round
+        // the camera, fine near it and coarse toward the horizon (a cubic in
+        // the grid coordinate), lifted by the swell. Its middle sits on whole
+        // metres so it does not crawl over the waves as the camera moves.
+        let cells = SEA_GRID - 1u;
+        let cell = vi / 6u;
+        let gp = vec2<f32>(f32(cell % cells), f32(cell / cells)) + c * 0.5 + 0.5;
+        let u = gp / f32(cells) * 2.0 - 1.0;
+        let a = 0.025;
+        xz = floor(g.cam_pos.xz) + r * (a * u + (1.0 - a) * u * u * u);
+        let step = r * (a + 3.0 * (1.0 - a) * u * u) * (2.0 / f32(cells));
+        let spacing = max(step.x, step.y);
+        if (spacing < g.swell.w * 0.25) {
+            y += swell(xz, g.cam_pos.w, top - ground_height(xz), spacing, shore_at(xz).y).x;
+        }
+    }
+    let world = vec3<f32>(xz.x, y, xz.y);
     var out: WaterOut;
     out.clip = g.view_proj * vec4<f32>(world, 1.0);
     // A map in space has no sea, however far down: draw nothing.
@@ -1304,6 +1431,7 @@ fn vs_water(@builtin(vertex_index) vi: u32) -> WaterOut {
     out.world = world;
     out.river = vec4<f32>(0.0);
     out.fall = 0u;
+    out.basin = ii;
     return out;
 }
 
@@ -1321,6 +1449,124 @@ fn ground_height(xz: vec2<f32>) -> f32 {
     let c = textureLoad(heightmap, i + vec2<i32>(0, 1), 0).r;
     let d = textureLoad(heightmap, i + vec2<i32>(1, 1), 0).r;
     return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+
+// A hollow below sea level the open sea cannot reach (heightmap g, from
+// `Fields::basin_grid`): with a tide its water stays at high water.
+fn basin_at(xz: vec2<f32>) -> bool {
+    let dims = vec2<i32>(textureDimensions(heightmap));
+    let p = vec2<i32>(floor(xz / g.fog.w * vec2<f32>(dims)));
+    if (any(p < vec2<i32>(0)) || any(p >= dims)) {
+        return false;
+    }
+    return textureLoad(heightmap, p, 0).g > 0.5;
+}
+
+// ---- surf (world/surf.rs) --------------------------------------------------
+
+// Metres seaward of the high-water coast (x) and how open the sea is there
+// (y, 0 in a lagoon to 1 off an open coast): heightmap b and a, bilinear.
+fn shore_at(xz: vec2<f32>) -> vec2<f32> {
+    let dims = vec2<f32>(textureDimensions(heightmap));
+    let p = clamp(xz / g.fog.w * dims - 0.5, vec2<f32>(0.0), dims - 1.001);
+    let i = vec2<i32>(floor(p));
+    let f = p - floor(p);
+    let a = textureLoad(heightmap, i, 0).ba;
+    let b = textureLoad(heightmap, i + vec2<i32>(1, 0), 0).ba;
+    let c = textureLoad(heightmap, i + vec2<i32>(0, 1), 0).ba;
+    let d = textureLoad(heightmap, i + vec2<i32>(1, 1), 0).ba;
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+
+// The waves at a point whose `shore_at` is `sh`: how high they are here (x,
+// metres) and where in its cycle the wave is (y: 0 as a crest passes, rising
+// to 1 as the next one comes). Crests follow the coast and travel in toward
+// it. Some waves come bigger than others, in sets, and the size changes
+// along the shore too, so the lines break in sections rather than all at
+// once.
+fn surf_at(xz: vec2<f32>, t: f32, sh: vec2<f32>) -> vec2<f32> {
+    let len = g.surf.y;
+    let period = g.surf.z;
+    // The crests' wobble is baked into the grid (surf::shore_grid).
+    let s = sh.x;
+    let phase = fract(s / len + t / period);
+    // Which wave this is: sets of bigger ones every seven or so.
+    let wave = floor(s / len + t / period);
+    let big = 0.6 + 0.4 * sin(wave * 0.9);
+    let section = 0.55 + 0.75 * vnoise2(xz * 0.018 + vec2<f32>(wave * 1.7, wave * 0.6));
+    let wind = clamp(g.weather.w, 0.5, 2.0);
+    let h = g.surf.x * wind * big * section * sh.y;
+    return vec2<f32>(h, phase);
+}
+
+// Vertices along a side of the open sea's mesh with a swell (render
+// SEA_GRID, the same).
+const SEA_GRID: u32 = 192u;
+
+// The swell at `xz` (world/surf.rs `swell`, the same): x = how far it lifts
+// the sea, yz = its slope (d/dx, d/dz). A few long waves running in from the
+// open sea, gone in shallow water and in sheltered water (`open`, from
+// `shore_at`); a wave shorter than a few `spacing`s (the mesh's, or a
+// pixel's) is left out, not aliased.
+fn swell(xz: vec2<f32>, t: f32, depth: f32, spacing: f32, open: f32) -> vec3<f32> {
+    // Most of the mesh is too coarse to hold even the longest wave: nothing
+    // to read there.
+    if (spacing >= g.swell.w * 0.25) {
+        return vec3<f32>(0.0);
+    }
+    let a = g.swell.z * 0.5 * clamp(g.weather.w, 0.5, 2.0) * open * smoothstep(0.4, 4.0, depth);
+    if (a <= 0.0) {
+        return vec3<f32>(0.0);
+    }
+    var ls = array<f32, 3>(1.0, 0.63, 0.41);
+    var turn = array<f32, 3>(0.0, 0.47, -0.66);
+    var share = array<f32, 3>(0.5, 0.3, 0.2);
+    var y = 0.0;
+    var slope = vec2<f32>(0.0);
+    for (var i = 0; i < 3; i++) {
+        let len = g.swell.w * ls[i];
+        let keep = 1.0 - smoothstep(len * 0.12, len * 0.25, spacing);
+        if (keep <= 0.0) {
+            continue;
+        }
+        let k = 6.2831853 / len;
+        let w = sqrt(9.81 * k);
+        let sn = sin(turn[i]);
+        let cs = cos(turn[i]);
+        let d = vec2<f32>(g.swell.x * cs - g.swell.y * sn, g.swell.x * sn + g.swell.y * cs);
+        let phase = k * dot(d, xz) - w * t + f32(i) * 1.7;
+        let amp = a * share[i] * keep;
+        y += amp * cos(phase);
+        slope -= d * (amp * k * sin(phase));
+    }
+    return vec3<f32>(y, slope);
+}
+
+// Lacy foam: the noise's ridges, broken up, drifting in with the swell
+// (which runs toward the land).
+fn surf_lace(xz: vec2<f32>, t: f32) -> f32 {
+    let p = xz - g.swell.xy * t * 0.6;
+    let a = vnoise2(p * 0.55) * 0.55 + vnoise2(p * 1.7 + vec2<f32>(3.1, 7.7)) * 0.3 + vnoise2(p * 4.3) * 0.15;
+    return a;
+}
+
+// The swash on the beach after a wave breaks: the water runs up the sand
+// fast, then slides back slowly. x = how much a thin sheet of water covers
+// ground at `world`, y = the foam along its leading edge.
+fn swash(world: vec3<f32>, t: f32) -> vec2<f32> {
+    let sf = surf_at(world.xz, t, shore_at(world.xz));
+    if (sf.x < 0.02) {
+        return vec2<f32>(0.0);
+    }
+    let f = sf.y;
+    let up = smoothstep(0.0, 0.16, f) * (1.0 - smoothstep(0.22, 0.8, f));
+    let reach = sf.x * 0.4 * up * (0.75 + 0.5 * vnoise2(world.xz * 0.12));
+    let above = world.y - g.fog.y;
+    let cover = smoothstep(reach + 0.015, reach - 0.025, above) * step(0.005, reach);
+    // Froth rides the front while it climbs, then thins as it drains.
+    let lace = surf_lace(world.xz, t);
+    let edge = cover * smoothstep(reach - 0.09, reach - 0.01, above) * smoothstep(0.35, 0.6, lace) * (1.0 - 0.6 * smoothstep(0.2, 0.5, f));
+    return vec2<f32>(cover, edge);
 }
 
 // Ripples from scrolling value noise at three scales; each layer fades out once
@@ -1349,13 +1595,28 @@ fn wave_normal(p: vec2<f32>, t: f32, footprint: f32) -> vec3<f32> {
 
 @fragment
 fn fs_water(in: WaterOut, @builtin(front_facing) front: bool) -> @location(0) vec4<f32> {
+    let river = in.river.w > 0.5;
+    // With a tide the open sea's plane leaves out the hollows the sea cannot
+    // reach (heightmap g), and the high-water plane draws only those.
+    if (!river && g.tide.w > 0.5 && (in.basin == 1u) != basin_at(in.world.xz)) {
+        discard;
+    }
     let t = g.cam_pos.w;
     let view = normalize(in.world - g.cam_pos.xyz);
     let dist = length(in.world - g.cam_pos.xyz);
     // World size of one pixel here, from the screen-space rate of change.
     let footprint = max(length(dpdx(in.world)), length(dpdy(in.world)));
+    // The shore grid (surf, swell), read once, and the way out to sea from
+    // its rate of change across the screen (derivatives want this outside
+    // any branch).
+    let sh = shore_at(in.world.xz);
+    let dxz = dpdx(in.world.xz);
+    let dyz = dpdy(in.world.xz);
+    let ds = vec2<f32>(dpdx(sh.x), dpdy(sh.x));
+    let det = dxz.x * dyz.y - dxz.y * dyz.x;
+    let sgrad = select(vec2<f32>(0.0), vec2<f32>(dyz.y * ds.x - dxz.y * ds.y, dxz.x * ds.y - dyz.x * ds.x) / det, abs(det) > 1e-10);
+    let seaward = select(vec2<f32>(0.0), normalize(sgrad), dot(sgrad, sgrad) > 1e-8);
     let calm = g.style.x > 0.5;
-    let river = in.river.w > 0.5;
     var n = wave_normal(in.world.xz, t, footprint);
     if (river) {
         // Ripples carried by the current: two copies of the pattern slide
@@ -1395,7 +1656,36 @@ fn fs_water(in: WaterOut, @builtin(front_facing) front: bool) -> @location(0) ve
         c = mix(c, vec3<f32>(0.86, 0.93, 0.95) * lit, froth * 0.85);
         return vec4<f32>(apply_fog(c, in.world), max(mix(0.95, 0.85, window), froth));
     }
-    let depth = select(max(g.fog.y - ground_height(in.world.xz), 0.0), max(in.world.y - in.river.x, 0.0), river);
+    let top = select(g.fog.y, g.tide.z, in.basin == 1u);
+    let depth = select(max(top - ground_height(in.world.xz), 0.0), max(in.world.y - in.river.x, 0.0), river);
+    // Surf (world/surf.rs): the swell shows as moving bands of slope that
+    // steepen over the shallows; where the water is about as shallow as the
+    // wave is high it breaks, white on its face and crest, with foam left
+    // behind it that fades before the next one comes.
+    // The swell's own slope, smooth at every distance whatever the mesh holds.
+    if (!river && in.basin == 0u && g.swell.z > 0.0) {
+        let sw = swell(in.world.xz, t, depth, footprint * 2.0, sh.y);
+        n = normalize(n + vec3<f32>(-sw.y, 0.0, -sw.z));
+    }
+    var surf_foam = 0.0;
+    if (!river && in.basin == 0u && g.surf.w > 0.5 && g.water[1].w < 1.5) {
+        let sf = surf_at(in.world.xz, t, sh);
+        let h = sf.x;
+        if (h > 0.01) {
+            let ang = sf.y * 6.2831853;
+            let shoal = smoothstep(h * 6.0, h * 1.2, depth);
+            let slope = h * 3.14159 / g.surf.y * sin(ang) * (0.12 + 1.6 * shoal) * (1.0 - smoothstep(0.6, 3.0, footprint));
+            n = normalize(n + vec3<f32>(seaward.x, 0.0, seaward.y) * slope);
+            let breaking = smoothstep(h * 1.5, h * 0.8, depth) * smoothstep(0.0, 0.12, depth);
+            let bore = max(smoothstep(0.78, 0.985, sf.y), exp(-sf.y * 6.0));
+            let lace = surf_lace(in.world.xz, t);
+            // Solid white on the breaking face, opening into lace behind it.
+            let white = smoothstep(0.62 - 0.35 * bore, 0.72 - 0.3 * bore, lace);
+            // Inside the break the whole inner zone stays churned a little.
+            let churn = smoothstep(h * 0.9, h * 0.3, depth) * smoothstep(0.5, 0.7, lace) * 0.4;
+            surf_foam = breaking * max(white * (0.35 + 0.65 * bore), churn);
+        }
+    }
     let cosv = max(dot(-view, n), 0.0);
     // Still, murky water (world water `still`): less sky, no shore foam.
     let still = g.water[1].w > 1.5;
@@ -1482,12 +1772,13 @@ fn fs_water(in: WaterOut, @builtin(front_facing) front: bool) -> @location(0) ve
             foam_all = max(foam_all, churn * (boil * 0.75 + churn * 0.45));
         }
     }
+    foam_all = max(foam_all, surf_foam);
     col = mix(col, vec3<f32>(0.92, 0.95, 0.96) * lightk * 1.6, foam_all * 0.8);
     alpha = max(alpha, foam_all * 0.85);
     if (in.river.w > 1.5) {
-        // Over the sea's own surface: only the foam.
+        // Over the sea's own surface: only a fall's churn.
         col = vec3<f32>(0.92, 0.95, 0.96) * lightk * 1.6;
-        alpha = foam_all * 0.85;
+        alpha = select(0.0, foam_all * 0.85, in.fall > 0u);
     }
     return vec4<f32>(apply_fog(col, in.world), alpha);
 }
@@ -1518,6 +1809,11 @@ fn vs_fall(@builtin(vertex_index) vi: u32) -> FallOut {
         p = q.bed;
     } else if (c == 3u) {
         p = q.flow_x;
+    }
+    // A fall into the sea reaches down to it as the tide goes out: its foot
+    // is the only point at high water.
+    if (g.tide.w > 0.5 && p.y < g.tide.z + 0.05) {
+        p.y -= g.tide.x;
     }
     var out: FallOut;
     out.clip = g.view_proj * vec4<f32>(p.xyz, 1.0);
@@ -1580,7 +1876,11 @@ fn vs_spray(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) ->
     let q = sprays[ii / SPRAY];
     let k = ii % SPRAY;
     let corner = quad_corner(vi);
-    let foot = q.at.xyz;
+    var foot = q.at.xyz;
+    // A fall into the sea lands on it wherever the tide has it.
+    if (g.tide.w > 0.5 && foot.y < g.tide.z + 0.05) {
+        foot.y -= g.tide.x;
+    }
     let width = q.at.w;
     let fwd = vec3<f32>(q.dir.x, 0.0, q.dir.y);
     let across = vec3<f32>(-q.dir.y, 0.0, q.dir.x);

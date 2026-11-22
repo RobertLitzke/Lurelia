@@ -2,8 +2,9 @@
   "name": "rabbitbrush_flowers",
   "version": 1,
   "introduced_by": "redrock",
-  "notes": "Rabbitbrush flower heads: dense mustard yellow, late summer into autumn.",
+  "notes": "Rabbitbrush flower heads: dense mustard yellow, late summer into autumn. A herb marker (mesh/sprites.rs): its voxels at the cane tips draw no faces, only fine yellow sprays (SAGE cards tinted this colour).",
   "smooth": false,
+  "sprites": "rabbitbrush flowers",
   "texture": {
     "pattern": "speckle",
     "base": [220, 186, 54],

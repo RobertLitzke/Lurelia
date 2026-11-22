@@ -63,6 +63,7 @@ Voxels nothing assigns belong to the root (the first bone).
 - Chains (neck, wing) are consecutive bones with the same role.
 - `"overlap": n` on a bone grows its part n voxel layers into its parent's voxels at the
   joint, which hides gaps when the joint bends. Off by default.
+- `"flesh": f` on a bone (0 to 1, default 0) makes the part soft: see **Soft bodies** below.
 - The root's joint defaults to the body's centre; every other bone needs one. Parents must be
   listed before their children.
 
@@ -72,6 +73,27 @@ grid per bone and meshes each, so each part is its own `Model` with its pivot at
 The unsliced whole model is kept too. `--validate` checks the rig (`anim::validate`): known
 roles and plans, unique bone names, parents before children, joints inside the grid, and every
 op `part` naming a bone.
+
+### Soft bodies
+
+A walrus or a seal drawn as rigid parts looks like a potato. Bones with `flesh` above 0 are soft,
+and the entity vertex shader moves every vertex of them by one field over the whole body
+(`src/anim/flesh.rs`, `flesh_field` in `common.wgsl`, the same in `shadow.wgsl`):
+
+- Sag: the top settles toward the ground and the low flanks bulge out, by up to `SQUASH` (a
+  third) of the body's height. How far is the pose's `sag`, which `Life::compose` sets from the
+  posture: 0.6 standing (the belly still carries the weight), 1 lying.
+- Jiggle: a damped spring per animal (`Jiggle`, in `Anim`), thrown by how the body accelerates,
+  from its travel over the ground and from its own pose (the gait's bob and pitch), moves the upper
+  flesh against the frame. It rings at 2.6 Hz and is held to 5% of the body's height, so it reads
+  as weight rather than wobble.
+
+The field has its origin at the bottom centre of the soft bones' voxels and acts in the creature
+frame after the bones are posed, so parts that met before it meet after it. A part with less flesh
+than its parent takes its parent's movement at its joint and its own past it, so a rigid flipper
+rides on a sagging flank and a half-soft head stays on its neck. Ragdolls, swimmers and skeletons
+have no sag or jiggle. The walrus has `flesh` 1 on its body and 0.6 on its head; the harbour seal
+(and the sea lion, which inherits it) 0.7 and 0.4.
 
 ### Body plans
 
@@ -187,9 +209,9 @@ block overrides rows by name; the marmot uses it to sit up.
 ### Birds
 
 Flight paths stay in the movers (`flock.rs`, `circle.rs`, `flit.rs`, `fowl.rs`,
-`woodpecker.rs`); `src/anim/flight.rs` only reads the bird's velocity, whether it is perched,
+`woodpecker.rs`, `runner.rs`, `hummer.rs`); `src/anim/flight.rs` only reads the bird's velocity, whether it is perched,
 whether it is landing and whether it is clinging. `creatures::birds::animate` gives every
-rigged `Flyer`, `Gull`, `Flit`, `Paddler` and `Clinger` a flight `Anim` and steps it each tick
+rigged `Flyer`, `Gull`, `Flit`, `Paddler`, `Clinger`, `Runner` and `Hummer` a flight `Anim` and steps it each tick
 from the position change.
 
 - Wings are two-bone chains each side (inner and tip). A beat is a shoulder roll plus a
@@ -215,6 +237,11 @@ from the position change.
 - Clinging (woodpeckers): the body pitched upright and bursts of quick drumming pecks.
 - Walking or paddling (geese ashore or afloat): wings folded, legs striding with the pace and
   the body rolling onto each foot in turn.
+- Running birds (`scurry`, `patter`, `dash`: runner.rs) are animated as birds standing on
+  the ground: `Flight::stride_m` (about the bird's height, from 6 cm) sets the stride, so a
+  sanderling's legs turn over up to eight times a second, and `peck_every` keeps the surf birds
+  and plovers probing every half second or so. Hummingbirds (`hum`) set `Flight::upright`: hovering
+  slowly the body hangs tilted up to 0.75 rad, standing nearly upright climbing straight up.
 - Birds that walk (`wade` with a bird rig: heron, crane) run `Life` on the ground with
   `fold_wings`, and switch to `Flight` for the short flight when flushed (`Air` in `walk.rs`).
 - Rays that fly (`undulate`) ripple their wings instead of beating them; rays at sea are

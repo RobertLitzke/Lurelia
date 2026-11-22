@@ -1,5 +1,5 @@
 //! Speed tokens: a thin trail of rare boost pads that only shows while the
-//! bike is out.
+//! bike or a car is out.
 //!
 //! Each 384 m cell of the world may hold one trail, and about half do: a
 //! chain of eight to fourteen tokens stepping 26 m at a time along a heading
@@ -30,8 +30,9 @@ const RETURN: f32 = 60.0;
 /// The token's middle above the ground, metres (the model's own centre is
 /// half a metre up, so this is how far its base is lifted).
 pub const LIFT: f32 = 0.45;
-/// Reach of a pickup, metres across and up.
-const GRAB: (f32, f32) = (1.6, 1.5);
+/// Reach of a pickup, metres across and up, for a rider; a car reaches
+/// across its own width.
+pub const GRAB: (f32, f32) = (1.6, 1.5);
 
 /// One token's place on the map, before the ground under it is known.
 struct Spot {
@@ -67,7 +68,7 @@ pub struct Trail {
 
 impl Trail {
     /// Plan the trails around the rider, give heights to the ones in reach,
-    /// and let taken ones come back. Call only while the bike is out.
+    /// and let taken ones come back. Call only while the bike or a car is out.
     pub fn step(&mut self, store: &Store, at: Vec3, sea: f32, slopes: bool, dt: f32) {
         self.t += dt;
         self.plan(at);
@@ -85,15 +86,16 @@ impl Trail {
         });
     }
 
-    /// Take the token the rider has reached, if any.
-    pub fn take(&mut self, at: Vec3) -> bool {
+    /// Take the token a body `reach` metres across from its middle has
+    /// reached, if any.
+    pub fn take(&mut self, at: Vec3, reach: f32) -> bool {
         let mut hit = None;
         for (i, tk) in self.live.iter().enumerate() {
             if tk.taken > 0.0 {
                 continue;
             }
             let d = Vec3::new(tk.pos.x - at.x, 0.0, tk.pos.z - at.z).length();
-            if d < GRAB.0 && (tk.pos.y + 0.5 - (at.y + 0.8)).abs() < GRAB.1 {
+            if d < reach && (tk.pos.y + 0.5 - (at.y + 0.8)).abs() < GRAB.1 {
                 hit = Some(i);
                 break;
             }
@@ -124,6 +126,8 @@ impl Trail {
                     tint: [1.0, 1.0, 1.0, 0.0],
                     rot: [q.x, q.y, q.z, q.w],
                     shift: [0.0; 4],
+                    flesh: [[0.0; 4]; 3],
+                    glow: [0.0; 4],
                 },
             ));
         }
@@ -246,7 +250,7 @@ mod tests {
         let at = Vec3::new(40.0, 20.0, 0.0);
         t.step(&s, at, -100.0, true, 1.0 / 60.0);
         assert_eq!(t.standing(), 1, "should have stood up on the flat");
-        assert!(t.take(at), "riding into it should take it");
+        assert!(t.take(at, GRAB.0), "riding into it should take it");
         assert_eq!(t.standing(), 0);
         for _ in 0..61 {
             t.step(&s, at, -100.0, true, 1.0);

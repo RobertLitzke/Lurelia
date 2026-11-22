@@ -1,0 +1,8 @@
+{
+  "name": "dome_paint",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "The array's chalky aluminium paint on a curved shell (the Varga Dome), drawn in facets so a hemisphere reads as a dome, not a stack of rings. Same colours as dish_paint.",
+  "like": "dish_paint",
+  "facet": true
+}

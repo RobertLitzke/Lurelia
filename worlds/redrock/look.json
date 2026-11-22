@@ -1,5 +1,15 @@
 {
-  "notes": "Dust and red rock, graded like a Western: bleached gold at your feet, salmon through the middle distance, the mesas going dusty violet, six slabs so each line of cliffs takes its own colour, and a little gradient map for the warm midtones. Warm sun, cool shadow.",
+  "notes": "Dust and red rock, graded like a Western: bleached gold at your feet, salmon through the middle distance, the mesas going dusty violet, and a little gradient map for the warm midtones. Warm sun, cool shadow.",
+  "ambient": [
+    0.32,
+    0.72,
+    1.12
+  ],
+  "sun_tint": [
+    1.18,
+    0.9,
+    0.54
+  ],
   "ramp": [
     {
       "at": 0.0,
@@ -68,30 +78,19 @@
       ]
     }
   ],
-  "ambient": [
-    0.32,
-    0.72,
-    1.12
-  ],
-  "sun_tint": [
-    1.18,
-    0.9,
-    0.54
-  ],
   "knobs": {
-    "ramp_reach": 700.0,
-    "ramp_curve": 0.35,
-    "ramp_bands": 6.0,
-    "ramp_value": 0.6,
-    "haze_ramp": 0.95,
-    "haze_density": 1.5,
+    "contrast": 0.36,
     "haze_height": 160.0,
+    "haze_ramp": 0.95,
+    "map_amount": 0.16,
+    "ramp_bands": 0.0,
+    "ramp_curve": 0.35,
+    "ramp_reach": 700.0,
+    "ramp_value": 0.6,
+    "saturation": 1.1,
+    "shade_ramp": 0.8,
     "sky_ramp": 0.3,
     "sky_reach": 0.3,
-    "shade_ramp": 0.8,
-    "sun_side": 0.4,
-    "map_amount": 0.16,
-    "saturation": 1.1,
-    "contrast": 0.36
+    "sun_side": 0.4
   }
 }

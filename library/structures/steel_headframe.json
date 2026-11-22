@@ -1,32 +1,269 @@
 {
   "name": "steel_headframe",
-  "version": 1,
+  "version": 2,
   "introduced_by": "redrock",
-  "notes": "A 1950s steel headframe the uranium men put up over an old shaft, rusting. Over an old shaft 1.5 m square and 27 m deep, lined in concrete, with a concrete collar.",
+  "notes": "A 1950s steel headframe the uranium men put up over an old shaft: four leaning legs rising 13 m, X-braced in bays, with a grated work platform at 6 m, a ladder on the front and a spoked 1.75 m sheave wheel on top. Faces -Z (the ladder side). Carves a concrete-lined shaft 27 m deep with a concrete collar; the bore is 6 voxels across.",
   "size": [20, 172, 20],
   "anchor": [10, 112, 10],
   "foundation": 4,
   "tags": ["harlow", "industry"],
-  "slots": {"iron": "rust_iron", "slab": "concrete"},
+  "slots": {"iron": "rust_iron", "slab": "concrete", "grate": "works_grate"},
   "ops": [
     {"op": "box", "from": [2, 112, 2], "to": [18, 113, 18], "mat": "slab", "part": "floor"},
-    {"op": "box", "from": [3, 113, 3], "to": [5, 164, 5], "mat": "iron", "part": "metal"},
-    {"op": "box", "from": [15, 113, 3], "to": [17, 164, 5], "mat": "iron", "part": "metal"},
-    {"op": "box", "from": [3, 113, 15], "to": [5, 164, 17], "mat": "iron", "part": "metal"},
-    {"op": "box", "from": [15, 113, 15], "to": [17, 164, 17], "mat": "iron", "part": "metal"},
+    {"op": "segment", "points": [[3.5, 113, 3.5], [7.5, 164, 7.5]], "radius": 1.2, "mat": "iron", "part": "metal"},
+    {"op": "segment", "points": [[16.5, 113, 3.5], [12.5, 164, 7.5]], "radius": 1.2, "mat": "iron", "part": "metal"},
+    {"op": "segment", "points": [[3.5, 113, 16.5], [7.5, 164, 12.5]], "radius": 1.2, "mat": "iron", "part": "metal"},
+    {"op": "segment", "points": [[16.5, 113, 16.5], [12.5, 164, 12.5]], "radius": 1.2, "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [3, 125, 3], "to": [17, 126, 5], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [3, 125, 15], "to": [17, 126, 17], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [3, 125, 3], "to": [5, 126, 17], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [15, 125, 3], "to": [17, 126, 17], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [4, 137, 4], "to": [16, 138, 6], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [4, 137, 14], "to": [16, 138, 16], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [4, 137, 4], "to": [6, 138, 16], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [14, 137, 4], "to": [16, 138, 16], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [5, 149, 5], "to": [15, 150, 7], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [5, 149, 13], "to": [15, 150, 15], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [5, 149, 5], "to": [7, 150, 15], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [13, 149, 5], "to": [15, 150, 15], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [6, 161, 6], "to": [14, 162, 8], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [6, 161, 12], "to": [14, 162, 14], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [6, 161, 6], "to": [8, 162, 14], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [12, 161, 6], "to": [14, 162, 14], "mat": "iron", "part": "metal"},
+    {"op": "segment", "points": [[3.5, 113, 4.0], [15.56, 125, 4.94]], "radius": 0.6, "mat": "iron", "part": "metal"},
+    {
+      "op": "segment",
+      "points": [[3.5, 113, 16.0], [15.56, 125, 15.06]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {"op": "segment", "points": [[4.0, 113, 3.5], [4.94, 125, 15.56]], "radius": 0.6, "mat": "iron", "part": "metal"},
+    {
+      "op": "segment",
+      "points": [[16.0, 113, 3.5], [15.06, 125, 15.56]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {"op": "segment", "points": [[16.5, 113, 4.0], [4.44, 125, 4.94]], "radius": 0.6, "mat": "iron", "part": "metal"},
+    {
+      "op": "segment",
+      "points": [[16.5, 113, 16.0], [4.44, 125, 15.06]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {"op": "segment", "points": [[4.0, 113, 16.5], [4.94, 125, 4.44]], "radius": 0.6, "mat": "iron", "part": "metal"},
+    {
+      "op": "segment",
+      "points": [[16.0, 113, 16.5], [15.06, 125, 4.44]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[4.44, 125, 4.94], [14.62, 137, 5.88]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[4.44, 125, 15.06], [14.62, 137, 14.12]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[4.94, 125, 4.44], [5.88, 137, 14.62]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[15.06, 125, 4.44], [14.12, 137, 14.62]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[15.56, 125, 4.94], [5.38, 137, 5.88]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[15.56, 125, 15.06], [5.38, 137, 14.12]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[4.94, 125, 15.56], [5.88, 137, 5.38]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[15.06, 125, 15.56], [14.12, 137, 5.38]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[5.38, 137, 5.88], [13.68, 149, 6.82]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[5.38, 137, 14.12], [13.68, 149, 13.18]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[5.88, 137, 5.38], [6.82, 149, 13.68]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[14.12, 137, 5.38], [13.18, 149, 13.68]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[14.62, 137, 5.88], [6.32, 149, 6.82]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[14.62, 137, 14.12], [6.32, 149, 13.18]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[5.88, 137, 14.62], [6.82, 149, 6.32]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[14.12, 137, 14.62], [13.18, 149, 6.32]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[6.32, 149, 6.82], [12.74, 161, 7.76]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[6.32, 149, 13.18], [12.74, 161, 12.24]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[6.82, 149, 6.32], [7.76, 161, 12.74]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[13.18, 149, 6.32], [12.24, 161, 12.74]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[13.68, 149, 6.82], [7.26, 161, 7.76]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[13.68, 149, 13.18], [7.26, 161, 12.24]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[6.82, 149, 13.68], [7.76, 161, 7.26]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[13.18, 149, 13.68], [12.24, 161, 7.26]],
+      "radius": 0.6,
+      "mat": "iron",
+      "part": "metal"
+    },
+    {"op": "box", "from": [4, 137, 4], "to": [16, 138, 16], "mat": "grate", "part": "metal"},
+    {"op": "box", "from": [7, 137, 7], "to": [13, 138, 13], "mat": "air"},
+    {"op": "box", "from": [4, 139, 4], "to": [16, 140, 5], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [4, 139, 15], "to": [16, 140, 16], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [4, 139, 5], "to": [5, 140, 15], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [15, 139, 5], "to": [16, 140, 15], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [4, 141, 4], "to": [16, 142, 5], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [4, 141, 15], "to": [16, 142, 16], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [4, 141, 5], "to": [5, 142, 15], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [15, 141, 5], "to": [16, 142, 15], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [5, 164, 5], "to": [15, 166, 7], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [5, 164, 13], "to": [15, 166, 15], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [5, 164, 7], "to": [7, 166, 13], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [13, 164, 7], "to": [15, 166, 13], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [8, 166, 9], "to": [9, 170, 11], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [11, 166, 9], "to": [12, 170, 11], "mat": "iron", "part": "metal"},
+    {"op": "disc", "centre": [10, 168, 10], "radius": 3.5, "thick": 1, "axis": "x", "mat": "iron", "part": "metal"},
+    {"op": "disc", "centre": [10, 168, 10], "radius": 2.5, "thick": 1, "axis": "x", "mat": "air"},
+    {"op": "segment", "points": [[10, 168.5, 10.5], [10, 168.5, 13.5]], "radius": 0.5, "mat": "iron", "part": "metal"},
+    {"op": "segment", "points": [[10, 168.5, 10.5], [10, 171.1, 12.0]], "radius": 0.5, "mat": "iron", "part": "metal"},
+    {"op": "segment", "points": [[10, 168.5, 10.5], [10, 171.1, 9.0]], "radius": 0.5, "mat": "iron", "part": "metal"},
+    {"op": "segment", "points": [[10, 168.5, 10.5], [10, 168.5, 7.5]], "radius": 0.5, "mat": "iron", "part": "metal"},
+    {"op": "segment", "points": [[10, 168.5, 10.5], [10, 165.9, 9.0]], "radius": 0.5, "mat": "iron", "part": "metal"},
+    {"op": "segment", "points": [[10, 168.5, 10.5], [10, 165.9, 12.0]], "radius": 0.5, "mat": "iron", "part": "metal"},
+    {"op": "segment", "points": [[8, 168.5, 10.5], [12, 168.5, 10.5]], "radius": 0.7, "mat": "iron", "part": "metal"},
+    {"op": "segment", "points": [[10, 166, 9], [10, 118, 9]], "radius": 0.4, "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [7, 113, 2], "to": [8, 138, 3], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [10, 113, 2], "to": [11, 138, 3], "mat": "iron", "part": "metal"},
     {
       "op": "repeat",
-      "count": 6,
-      "step": [0, 8, 0],
-      "ops": [
-        {"op": "box", "from": [3, 120, 3], "to": [17, 121, 5], "mat": "iron", "part": "metal"},
-        {"op": "box", "from": [3, 120, 15], "to": [17, 121, 17], "mat": "iron", "part": "metal"},
-        {"op": "box", "from": [3, 120, 3], "to": [5, 121, 17], "mat": "iron", "part": "metal"},
-        {"op": "box", "from": [15, 120, 3], "to": [17, 121, 17], "mat": "iron", "part": "metal"}
-      ]
+      "count": 12,
+      "step": [0, 2, 0],
+      "ops": [{"op": "box", "from": [8, 114, 2], "to": [10, 115, 3], "mat": "iron", "part": "metal"}]
     },
-    {"op": "box", "from": [2, 164, 2], "to": [18, 166, 18], "mat": "iron", "part": "metal"},
-    {"op": "disc", "centre": [10, 168, 10], "radius": 3.5, "thick": 1, "axis": "x", "mat": "iron", "part": "metal"},
     {"op": "box", "from": [6, 0, 6], "to": [14, 112, 14], "mat": "slab", "part": "stone"},
     {
       "op": "repeat",

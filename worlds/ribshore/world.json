@@ -4,6 +4,8 @@
   "size_m": 1536,
   "height_m": 256,
   "sea_level_m": 34,
+  "tide": {"range": 3.0},
+  "surf": {"height": 1.2},
   "seed": 4410,
   "underwater": {
     "visibility": 20,
@@ -24,6 +26,8 @@
     600
   ],
   "spawn_bearing": 172,
+  "modes": ["walk", "drive", "glide", "climb", "rope", "kayak", "screenshot", "camera"],
+  "vehicles": ["sand_rail", "beach_buggy"],
   "seasons": [
     "spring",
     "summer",

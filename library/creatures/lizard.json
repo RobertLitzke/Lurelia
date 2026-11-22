@@ -13,7 +13,7 @@
     "flee_speed": 4,
     "wary": 3.5,
     "flightiness": 1.7,
-    "flees_from": ["player", "coyote"]
+    "flees_from": ["player", "coyote", "roadrunner"]
   },
   "ops": [
     {"op": "ellipsoid", "centre": [16, 2.5, 15], "radius": [2.6, 1.6, 6], "mat": "rabbit"},

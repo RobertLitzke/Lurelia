@@ -1,31 +1,93 @@
 {
   "name": "aframe_cabin",
-  "version": 1,
+  "version": 2,
   "introduced_by": "saltmirror",
-  "notes": "A staff A-frame (1968): a steep shingle roof down to a plank deck, the front gable (local -Z) all glass, a stove pipe through the back of the roof. Half the camp lived in these.",
+  "notes": "A staff A-frame (1968), 7.5 m wide and 10 m long: a steep shingle roof down to a plank deck, the front gable (local -Z) glazed with a 1.5 m by 2.5 m doorway and a deck rail under the overhang, a sleeping loft at the back and a brick-based stove whose pipe goes through the ridge.",
   "size": [30, 32, 40],
   "anchor": [15, 0, 20],
   "foundation": 4,
   "decays": true,
   "tags": ["array", "camp", "house"],
-  "slots": {"roof": "shingle_dark"},
+  "slots": {
+    "roof": "shingle_dark",
+    "wood": "planks",
+    "glass": "window_glass",
+    "iron": "rust_iron",
+    "brick": "brick_brown",
+    "bedding": "canvas",
+    "firewood": "dead_wood"
+  },
   "ops": [
-    {"op": "box", "from": [0, 0, 0], "to": [30, 2, 40], "mat": "planks", "part": "floor"},
-    {"op": "gable", "from": [2, 2, 6], "to": [28, 2, 38], "axis": "z", "rise": 2, "mat": "roof", "part": "roof"},
-    {
-      "op": "gable",
-      "from": [3, 2, 6],
-      "to": [27, 2, 7],
-      "axis": "z",
-      "rise": 2,
-      "mat": "window_glass",
-      "part": "glass"
-    },
-    {"op": "gable", "from": [3, 2, 37], "to": [27, 2, 38], "axis": "z", "rise": 2, "mat": "planks", "part": "timber"},
+    {"op": "box", "from": [0, 0, 0], "to": [30, 2, 40], "mat": "wood", "part": "floor"},
+    {"op": "gable", "from": [2, 2, 2], "to": [28, 2, 38], "axis": "z", "rise": 2, "mat": "roof", "part": "roof"},
+    {"op": "gable", "from": [4, 2, 2], "to": [26, 2, 38], "axis": "z", "rise": 2, "mat": "air"},
+    {"op": "gable", "from": [4, 2, 6], "to": [26, 2, 7], "axis": "z", "rise": 2, "mat": "glass", "part": "glass"},
+    {"op": "gable", "from": [4, 2, 36], "to": [26, 2, 38], "axis": "z", "rise": 2, "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [11, 8, 36], "to": [19, 13, 38], "mat": "glass", "part": "glass"},
     {"op": "box", "from": [12, 2, 6], "to": [18, 11, 7], "mat": "air"},
-    {"op": "box", "from": [12, 2, 6], "to": [18, 3, 7], "mat": "planks", "part": "floor"},
-    {"op": "box", "from": [4, 2, 0], "to": [26, 6, 1], "mat": "planks", "part": "timber"},
-    {"op": "box", "from": [4, 2, 24], "to": [6, 6, 26], "mat": "rust_iron", "part": "metal"},
-    {"op": "box", "from": [20, 22, 30], "to": [22, 30, 32], "mat": "brick_brown", "part": "stone"}
+    {"op": "box", "from": [11, 2, 6], "to": [12, 11, 7], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [18, 2, 6], "to": [19, 11, 7], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [10, 11, 6], "to": [20, 12, 7], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [8, 2, 6], "to": [9, 10, 7], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [21, 2, 6], "to": [22, 10, 7], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [14, 12, 6], "to": [16, 23, 7], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [8, 6, 6], "to": [12, 7, 7], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [18, 6, 6], "to": [22, 7, 7], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [0, 5, 0], "to": [12, 6, 1], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [18, 5, 0], "to": [30, 6, 1], "mat": "wood", "part": "timber"},
+    {
+      "op": "repeat",
+      "count": 3,
+      "step": [4, 0, 0],
+      "ops": [{"op": "box", "from": [0, 2, 0], "to": [1, 6, 1], "mat": "wood", "part": "timber"}]
+    },
+    {
+      "op": "repeat",
+      "count": 3,
+      "step": [4, 0, 0],
+      "ops": [{"op": "box", "from": [18, 2, 0], "to": [19, 6, 1], "mat": "wood", "part": "timber"}]
+    },
+    {"op": "box", "from": [29, 2, 0], "to": [30, 6, 1], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [0, 5, 1], "to": [1, 6, 6], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [29, 5, 1], "to": [30, 6, 6], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [0, 2, 3], "to": [1, 6, 4], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [29, 2, 3], "to": [30, 6, 4], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [0, 2, 5], "to": [1, 6, 6], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [29, 2, 5], "to": [30, 6, 6], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [0, 2, 12], "to": [2, 6, 22], "mat": "firewood", "part": "timber"},
+    {"op": "box", "from": [17, 5, 10], "to": [22, 6, 14], "mat": "wood", "part": "timber"},
+    {
+      "op": "repeat",
+      "count": 2,
+      "step": [4, 0, 0],
+      "ops": [{"op": "box", "from": [17, 2, 10], "to": [18, 5, 11], "mat": "wood", "part": "timber"}]
+    },
+    {
+      "op": "repeat",
+      "count": 2,
+      "step": [4, 0, 0],
+      "ops": [{"op": "box", "from": [17, 2, 13], "to": [18, 5, 14], "mat": "wood", "part": "timber"}]
+    },
+    {"op": "box", "from": [9, 11, 24], "to": [21, 12, 36], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [10, 2, 23], "to": [11, 13, 24], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [14, 2, 23], "to": [15, 13, 24], "mat": "wood", "part": "timber"},
+    {
+      "op": "repeat",
+      "count": 5,
+      "step": [0, 2, 0],
+      "ops": [{"op": "box", "from": [10, 4, 23], "to": [15, 5, 24], "mat": "wood", "part": "timber"}]
+    },
+    {
+      "op": "repeat",
+      "count": 3,
+      "step": [2, 0, 0],
+      "ops": [{"op": "box", "from": [15, 12, 24], "to": [16, 16, 25], "mat": "wood", "part": "timber"}]
+    },
+    {"op": "box", "from": [15, 15, 24], "to": [20, 16, 25], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [10, 12, 30], "to": [17, 13, 36], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [10, 13, 30], "to": [17, 14, 36], "mat": "bedding", "part": "cloth"},
+    {"op": "box", "from": [11, 2, 25], "to": [18, 3, 31], "mat": "brick", "part": "stone"},
+    {"op": "box", "from": [12, 3, 26], "to": [17, 7, 30], "mat": "iron", "part": "metal"},
+    {"op": "cylinder", "base": [15, 7, 28], "radius": 1.5, "height": 24, "mat": "iron", "part": "metal"}
   ]
 }

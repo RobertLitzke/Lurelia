@@ -1,0 +1,17 @@
+{
+  "name": "fan_sand",
+  "version": 1,
+  "introduced_by": "saltmirror",
+  "notes": "Pale sand on the fans at the foot of the range, the finer stuff the flash floods carry past the gravel, with dry grass tufts scattered over it.",
+  "smooth": true,
+  "surface": "sand_soft",
+  "texture": {
+    "pattern": "ripples",
+    "base": [158, 152, 138],
+    "alt": [142, 136, 124],
+    "scale": 5,
+    "contrast": 0.7,
+    "calm": {"base": [156, 150, 138], "alt": [142, 138, 126]}
+  },
+  "grass": {"sparse": 0.04, "dense": 0.22, "short": 1.2}
+}

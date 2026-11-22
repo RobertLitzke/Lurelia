@@ -1,0 +1,22 @@
+{
+  "name": "lowbush_blueberry",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "Lowbush blueberry: an ankle-to-knee mat of thin red-brown twigs and small blue-green leaves on poor sandy ground, dusty blue berries in late summer, and in autumn the whole barren goes crimson. You walk through it.",
+  "form": "canes",
+  "height": [0.25, 0.5],
+  "trunk_radius": [0.04, 0.04],
+  "crown_radius": [0.5, 0.8],
+  "bark": "blueberry_stem",
+  "leaf": "blueberry_leaves",
+  "canopy": "tufts",
+  "max_slope": 0.9,
+  "stems": [7, 12],
+  "cane_lean": 0.6,
+  "cane_bend": 0.05,
+  "cane_spurs": 0.7,
+  "flower": "blueberries",
+  "flower_seasons": ["summer"],
+  "autumn": "blueberry_red",
+  "affords": ["nectar", "cover"]
+}

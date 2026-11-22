@@ -3,18 +3,15 @@
   "version": 1,
   "introduced_by": "faerie",
   "notes": "A maple whose leaves stay gold all year: the first sign of the change.",
-  "form": "branching",
   "height": [10, 15],
   "trunk_radius": [0.45, 0.65],
   "buttress": 0.5,
   "crown_radius": [3.4, 4.6],
-  "bark": "bark",
   "leaf": "gold_leaves",
-  "leaf_alt": ["leaves", 0.3],
-  "curve": "sweep",
-  "canopy": "lobes",
+  "leaf_alt": ["maple_leaves", 0.3],
   "leader": 0.5,
   "fill": 0.55,
   "max_slope": 0.6,
-  "thin_limbs": 0.12
+  "like": "maple",
+  "autumn": null
 }

@@ -4,6 +4,7 @@
   "introduced_by": "redrock",
   "notes": "Tamarisk flower plumes: soft pink.",
   "smooth": false,
+  "sprites": "flower",
   "texture": {
     "pattern": "speckle",
     "base": [218, 146, 166],

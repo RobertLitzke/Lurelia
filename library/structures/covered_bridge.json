@@ -1,0 +1,142 @@
+{
+  "name": "covered_bridge",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "A red-sided New England covered bridge, 30 m span on stone abutments with 4.5 m between the trusses, with timber lattice-truss walls, small windows, a gable roof and a trimmed gabled portal at each end. Long axis along local Z; base rim with the anchor on the deck row, carves nothing.",
+  "size": [26, 48, 144],
+  "anchor": [13, 16, 72],
+  "level": false,
+  "decays": true,
+  "base": "rim",
+  "tags": ["gannet", "bridge"],
+  "slots": {
+    "wall": "falu_red",
+    "roof": "shingle_dark",
+    "trim": "trim_white",
+    "floor": "weathered_planks",
+    "glass": "window_glass",
+    "stone": "fieldstone",
+    "post": "oak_post"
+  },
+  "ops": [
+    {"op": "box", "from": [0, 0, 0], "to": [26, 16, 12], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [0, 16, 0], "to": [2, 19, 12], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [24, 16, 0], "to": [26, 19, 12], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [0, 19, 0], "to": [3, 20, 12], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [23, 19, 0], "to": [26, 20, 12], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [0, 0, 132], "to": [26, 16, 144], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [0, 16, 132], "to": [2, 19, 144], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [24, 16, 132], "to": [26, 19, 144], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [0, 19, 132], "to": [3, 20, 144], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [23, 19, 132], "to": [26, 20, 144], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [2, 16, 0], "to": [24, 17, 4], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [2, 16, 140], "to": [24, 17, 144], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [2, 11, 4], "to": [4, 16, 140], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [6, 11, 4], "to": [8, 16, 140], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [12, 11, 4], "to": [14, 16, 140], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [18, 11, 4], "to": [20, 16, 140], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [22, 11, 4], "to": [24, 16, 140], "mat": "post", "part": "timber"},
+    {
+      "op": "repeat",
+      "count": 9,
+      "step": [0, 0, 15],
+      "ops": [{"op": "box", "from": [2, 10, 12], "to": [24, 11, 13], "mat": "post", "part": "timber"}]
+    },
+    {"op": "box", "from": [2, 16, 4], "to": [24, 17, 140], "mat": "floor", "part": "floor"},
+    {"op": "box", "from": [2, 17, 4], "to": [3, 33, 140], "mat": "wall", "part": "wall"},
+    {"op": "box", "from": [23, 17, 4], "to": [24, 33, 140], "mat": "wall", "part": "wall"},
+    {"op": "box", "from": [3, 17, 4], "to": [4, 19, 140], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [3, 31, 4], "to": [4, 33, 140], "mat": "post", "part": "timber"},
+    {
+      "op": "repeat",
+      "count": 8,
+      "step": [0, 0, 15],
+      "ops": [
+        {"op": "segment", "points": [[3.5, 18, 12.5], [3.5, 32, 27]], "radius": 0.8, "mat": "post", "part": "timber"},
+        {"op": "segment", "points": [[3.5, 32, 12.5], [3.5, 18, 27]], "radius": 0.8, "mat": "post", "part": "timber"}
+      ]
+    },
+    {
+      "op": "repeat",
+      "count": 9,
+      "step": [0, 0, 15],
+      "ops": [{"op": "box", "from": [3, 17, 12], "to": [4, 33, 13], "mat": "post", "part": "timber"}]
+    },
+    {"op": "box", "from": [22, 17, 4], "to": [23, 19, 140], "mat": "post", "part": "timber"},
+    {"op": "box", "from": [22, 31, 4], "to": [23, 33, 140], "mat": "post", "part": "timber"},
+    {
+      "op": "repeat",
+      "count": 8,
+      "step": [0, 0, 15],
+      "ops": [
+        {
+          "op": "segment",
+          "points": [[22.5, 18, 12.5], [22.5, 32, 27]],
+          "radius": 0.8,
+          "mat": "post",
+          "part": "timber"
+        },
+        {
+          "op": "segment",
+          "points": [[22.5, 32, 12.5], [22.5, 18, 27]],
+          "radius": 0.8,
+          "mat": "post",
+          "part": "timber"
+        }
+      ]
+    },
+    {
+      "op": "repeat",
+      "count": 9,
+      "step": [0, 0, 15],
+      "ops": [{"op": "box", "from": [22, 17, 12], "to": [23, 33, 13], "mat": "post", "part": "timber"}]
+    },
+    {
+      "op": "repeat",
+      "count": 9,
+      "step": [0, 0, 15],
+      "ops": [{"op": "box", "from": [3, 32, 12], "to": [23, 33, 13], "mat": "post", "part": "timber"}]
+    },
+    {"op": "box", "from": [2, 24, 34], "to": [3, 28, 40], "mat": "glass", "part": "glass"},
+    {"op": "box", "from": [23, 24, 34], "to": [24, 28, 40], "mat": "glass", "part": "glass"},
+    {"op": "box", "from": [1, 23, 33], "to": [2, 24, 41], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [1, 28, 33], "to": [2, 29, 41], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [1, 24, 33], "to": [2, 28, 34], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [1, 24, 40], "to": [2, 28, 41], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [24, 23, 33], "to": [25, 24, 41], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [24, 28, 33], "to": [25, 29, 41], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [24, 24, 33], "to": [25, 28, 34], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [24, 24, 40], "to": [25, 28, 41], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [2, 24, 70], "to": [3, 28, 76], "mat": "glass", "part": "glass"},
+    {"op": "box", "from": [23, 24, 70], "to": [24, 28, 76], "mat": "glass", "part": "glass"},
+    {"op": "box", "from": [1, 23, 69], "to": [2, 24, 77], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [1, 28, 69], "to": [2, 29, 77], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [1, 24, 69], "to": [2, 28, 70], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [1, 24, 76], "to": [2, 28, 77], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [24, 23, 69], "to": [25, 24, 77], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [24, 28, 69], "to": [25, 29, 77], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [24, 24, 69], "to": [25, 28, 70], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [24, 24, 76], "to": [25, 28, 77], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [2, 24, 106], "to": [3, 28, 112], "mat": "glass", "part": "glass"},
+    {"op": "box", "from": [23, 24, 106], "to": [24, 28, 112], "mat": "glass", "part": "glass"},
+    {"op": "box", "from": [1, 23, 105], "to": [2, 24, 113], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [1, 28, 105], "to": [2, 29, 113], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [1, 24, 105], "to": [2, 28, 106], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [1, 24, 112], "to": [2, 28, 113], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [24, 23, 105], "to": [25, 24, 113], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [24, 28, 105], "to": [25, 29, 113], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [24, 24, 105], "to": [25, 28, 106], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [24, 24, 112], "to": [25, 28, 113], "mat": "trim", "part": "timber"},
+    {"op": "gable", "from": [0, 33, 4], "to": [26, 33, 140], "axis": "z", "rise": 1, "mat": "roof", "part": "roof"},
+    {"op": "gable", "from": [1, 33, 4], "to": [25, 33, 5], "axis": "z", "rise": 1, "mat": "wall", "part": "wall"},
+    {"op": "box", "from": [11, 37, 4], "to": [15, 40, 5], "mat": "glass", "part": "glass"},
+    {"op": "gable", "from": [1, 33, 139], "to": [25, 33, 140], "axis": "z", "rise": 1, "mat": "wall", "part": "wall"},
+    {"op": "box", "from": [11, 37, 139], "to": [15, 40, 140], "mat": "glass", "part": "glass"},
+    {"op": "box", "from": [2, 30, 4], "to": [24, 33, 6], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [2, 17, 4], "to": [4, 30, 6], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [22, 17, 4], "to": [24, 30, 6], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [2, 30, 138], "to": [24, 33, 140], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [2, 17, 138], "to": [4, 30, 140], "mat": "trim", "part": "timber"},
+    {"op": "box", "from": [22, 17, 138], "to": [24, 30, 140], "mat": "trim", "part": "timber"}
+  ]
+}

@@ -4,6 +4,7 @@
   "introduced_by": "lowmouth",
   "notes": "Live oak leaves: small, leathery and dark olive, evergreen.",
   "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "broad"},
   "texture": {
     "pattern": "blotch",
     "base": [58, 78, 44],

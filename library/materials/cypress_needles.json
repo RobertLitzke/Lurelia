@@ -4,6 +4,7 @@
   "introduced_by": "lowmouth",
   "notes": "Bald cypress foliage: soft feathery sprays of needles, a light olive green.",
   "smooth": false,
+  "sprites": "needles",
   "texture": {
     "pattern": "blotch",
     "base": [92, 114, 58],

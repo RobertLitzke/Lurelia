@@ -15,7 +15,8 @@
     {"creature": "harbor_seal", "count": 3},
     {"creature": "cormorant", "count": 2},
     {"creature": "puffin", "count": 4},
-    {"creature": "sea_lion", "count": 3}
+    {"creature": "sea_lion", "count": 3},
+    {"creature": "sanderling", "count": 16}
   ],
   "collectibles": [{"item": "seashell", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}],
   "mist": 0.55

@@ -5,6 +5,7 @@
   "id": 51,
   "smooth": false,
   "foliage": true,
+  "sprites": {"rule": "leaves", "shape": "maple"},
   "texture": {
     "pattern": "blotch",
     "base": [170, 50, 30],

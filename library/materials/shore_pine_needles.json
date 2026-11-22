@@ -4,6 +4,7 @@
   "introduced_by": "ribshore",
   "notes": "Shore pine: short yellow-green needles in tufts at the branch ends.",
   "smooth": false,
+  "sprites": "needles",
   "texture": {
     "pattern": "speckle",
     "base": [70, 88, 54],

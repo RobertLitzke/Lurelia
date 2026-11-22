@@ -1,8 +1,9 @@
 {
   "name": "lake_mud",
-  "version": 1,
+  "version": 2,
   "introduced_by": "redrock",
-  "notes": "Grey-tan mud the falling lake left, cracked into plates.",
+  "notes": "Grey-tan mud a falling lake or a dried-up bed left, cracked into plates. v2: dry_bed merged in.",
+  "was": ["dry_bed"],
   "id": 114,
   "smooth": true,
   "texture": {

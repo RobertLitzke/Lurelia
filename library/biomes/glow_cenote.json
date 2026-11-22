@@ -22,10 +22,10 @@
   "creatures": [
     {"creature": "kite_ray", "count": 12},
     {"creature": "dragonfly", "count": 8},
-    {"creature": "lantern_moth", "count": 10},
+    {"creature": "glassmoth", "morph": "lantern", "count": 10},
     {"creature": "crystal_bat", "count": 5},
     {"creature": "anaconda", "count": 1},
-    {"creature": "jewel_kingfisher", "count": 3}
+    {"creature": "kingfisher", "count": 3}
   ],
   "mist": 0.15,
   "water": {"shallow": [46, 150, 104], "deep": [10, 52, 40]}

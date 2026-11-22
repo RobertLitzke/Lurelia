@@ -3,15 +3,13 @@
   "version": 2,
   "introduced_by": "jadewater",
   "notes": "A dark grey limestone, almost slate: some towers are cut from it. v2: drawn in flat facets (surface nets lit like sloped ground) instead of smoothed into slopes, so tower walls and the Old Wall's cliffs read as smooth rock, not one-voxel steps.",
+  "like": "karst_limestone",
   "id": 226,
-  "smooth": false,
   "texture": {
-    "pattern": "strata",
-    "base": [84, 90, 96],
     "alt": [100, 106, 112],
-    "scale": 3,
+    "calm": {"alt": [104, 110, 116], "base": [88, 94, 100]},
     "contrast": 0.7,
-    "calm": {"base": [88, 94, 100], "alt": [104, 110, 116]}
-  },
-  "facet": true
+    "scale": 3,
+    "base": [84, 90, 96]
+  }
 }

@@ -1,8 +1,8 @@
 {
   "name": "village_inn",
-  "version": 1,
+  "version": 2,
   "introduced_by": "hemlow",
-  "notes": "The Hob and Lantern, Hemlow's inn: two storeys of honey stone, lit bay windows either side of the door, lanterns, a painted sign hanging from a post on its bracket. Door on local -Z.",
+  "notes": "The Hob and Lantern, Hemlow's inn: 13 x 7.5 m, two storeys with a timber upper floor and an open stair, lit bay windows either side of a 1.25 m x 2.25 m black door with a flagstone step, lanterns, and a painted sign on a bracket post at the front right. Faces local -Z; carves nothing.",
   "size": [54, 66, 37],
   "anchor": [27, 0, 20],
   "foundation": 8,
@@ -15,7 +15,8 @@
     "door": "door_black",
     "pot": "brick_brown",
     "timber": "timber_frame",
-    "sign": "door_green"
+    "sign": "sign_yellow",
+    "floor2": "weathered_planks"
   },
   "ops": [
     {"op": "box", "from": [1, 0, 5], "to": [53, 1, 35], "mat": "floor", "part": "floor"},
@@ -25,7 +26,10 @@
     {"op": "gable", "from": [51, 27, 5], "to": [53, 27, 35], "axis": "x", "mat": "wall", "rise": 2, "part": "wall"},
     {"op": "box", "from": [24, 1, 5], "to": [29, 10, 7], "mat": "air"},
     {"op": "box", "from": [24, 1, 6], "to": [29, 10, 7], "mat": "door", "part": "timber"},
+    {"op": "box", "from": [23, 1, 5], "to": [24, 11, 7], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [29, 1, 5], "to": [30, 11, 7], "mat": "timber", "part": "timber"},
     {"op": "box", "from": [23, 10, 5], "to": [30, 11, 7], "mat": "wall", "part": "wall"},
+    {"op": "box", "from": [22, 0, 2], "to": [31, 1, 5], "mat": "floor", "part": "floor"},
     {"op": "box", "from": [6, 1, 2], "to": [17, 4, 5], "mat": "wall", "part": "stone"},
     {"op": "box", "from": [6, 4, 2], "to": [17, 11, 7], "mat": "glass", "part": "glass"},
     {"op": "box", "from": [11, 4, 2], "to": [12, 11, 5], "mat": "wall", "part": "wall"},
@@ -58,6 +62,21 @@
     {"op": "box", "from": [3, 63, 18], "to": [4, 65, 19], "mat": "pot", "part": "stone"},
     {"op": "box", "from": [50, 26, 15], "to": [53, 63, 20], "mat": "wall", "part": "stone"},
     {"op": "box", "from": [50, 63, 16], "to": [51, 65, 17], "mat": "pot", "part": "stone"},
-    {"op": "box", "from": [52, 63, 18], "to": [53, 65, 19], "mat": "pot", "part": "stone"}
+    {"op": "box", "from": [52, 63, 18], "to": [53, 65, 19], "mat": "pot", "part": "stone"},
+    {"op": "box", "from": [1, 12, 5], "to": [53, 13, 35], "mat": "floor2", "part": "timber"},
+    {"op": "box", "from": [3, 13, 7], "to": [51, 14, 35], "mat": "floor2", "part": "floor"},
+    {"op": "box", "from": [3, 13, 7], "to": [7, 14, 20], "mat": "air"},
+    {"op": "box", "from": [3, 1, 8], "to": [7, 2, 9], "mat": "floor2", "part": "timber"},
+    {"op": "box", "from": [3, 1, 9], "to": [7, 3, 10], "mat": "floor2", "part": "timber"},
+    {"op": "box", "from": [3, 1, 10], "to": [7, 4, 11], "mat": "floor2", "part": "timber"},
+    {"op": "box", "from": [3, 1, 11], "to": [7, 5, 12], "mat": "floor2", "part": "timber"},
+    {"op": "box", "from": [3, 1, 12], "to": [7, 6, 13], "mat": "floor2", "part": "timber"},
+    {"op": "box", "from": [3, 1, 13], "to": [7, 7, 14], "mat": "floor2", "part": "timber"},
+    {"op": "box", "from": [3, 1, 14], "to": [7, 8, 15], "mat": "floor2", "part": "timber"},
+    {"op": "box", "from": [3, 1, 15], "to": [7, 9, 16], "mat": "floor2", "part": "timber"},
+    {"op": "box", "from": [3, 1, 16], "to": [7, 10, 17], "mat": "floor2", "part": "timber"},
+    {"op": "box", "from": [3, 1, 17], "to": [7, 11, 18], "mat": "floor2", "part": "timber"},
+    {"op": "box", "from": [3, 1, 18], "to": [7, 12, 19], "mat": "floor2", "part": "timber"},
+    {"op": "box", "from": [3, 1, 19], "to": [7, 13, 20], "mat": "floor2", "part": "timber"}
   ]
 }

@@ -1,19 +1,28 @@
 {
   "name": "market_cross",
-  "version": 1,
+  "version": 2,
   "introduced_by": "hemlow",
-  "notes": "The market cross on Hemlow green: three worn steps, a tall shaft and a weathered cross head.",
+  "notes": "The market cross on Hemlow green, a 4 x 4 m base rising 7 m: three 0.25 m steps, a square plinth, a shaft with a collar, and a ringed cross head. No front; it reads the same from every side.",
   "size": [16, 28, 16],
   "anchor": [8, 0, 8],
   "foundation": 4,
   "tags": ["hemlow"],
-  "slots": {"wall": "lichen_rock"},
+  "slots": {"wall": "lichened_stone", "step": "fieldstone"},
   "ops": [
-    {"op": "box", "from": [0, 0, 0], "to": [16, 2, 16], "mat": "wall", "part": "stone"},
-    {"op": "box", "from": [2, 2, 2], "to": [14, 4, 14], "mat": "wall", "part": "stone"},
-    {"op": "box", "from": [4, 4, 4], "to": [12, 6, 12], "mat": "wall", "part": "stone"},
-    {"op": "box", "from": [7, 6, 7], "to": [9, 26, 9], "mat": "wall", "part": "stone"},
-    {"op": "box", "from": [4, 21, 7], "to": [12, 23, 9], "mat": "wall", "part": "stone"},
-    {"op": "box", "from": [7, 26, 7], "to": [9, 28, 9], "mat": "wall", "part": "stone"}
+    {"op": "box", "from": [0, 0, 0], "to": [16, 1, 16], "mat": "step", "part": "stone"},
+    {"op": "box", "from": [1, 1, 1], "to": [15, 2, 15], "mat": "step", "part": "stone"},
+    {"op": "box", "from": [2, 2, 2], "to": [14, 3, 14], "mat": "step", "part": "stone"},
+    {"op": "box", "from": [4, 3, 4], "to": [12, 5, 12], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [5, 5, 5], "to": [11, 6, 11], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [6, 6, 6], "to": [10, 14, 10], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [5, 14, 5], "to": [11, 15, 11], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [7, 15, 7], "to": [9, 21, 9], "mat": "wall", "part": "stone"},
+    {"op": "disc", "centre": [8, 22, 8], "radius": 3.4, "thick": 2, "axis": "z", "mat": "wall", "part": "stone"},
+    {"op": "disc", "centre": [8, 22, 8], "radius": 2.0, "thick": 2, "axis": "z", "mat": "air"},
+    {"op": "box", "from": [7, 18, 7], "to": [9, 27, 9], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [3, 21, 7], "to": [13, 23, 9], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [2, 20, 7], "to": [3, 24, 9], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [13, 20, 7], "to": [14, 24, 9], "mat": "wall", "part": "stone"},
+    {"op": "box", "from": [6, 27, 7], "to": [10, 28, 9], "mat": "wall", "part": "stone"}
   ]
 }

@@ -176,7 +176,11 @@ pub struct Glide {
 
 impl Glide {
     pub fn new(v: f32, secs: f32, block_rate: f32) -> Glide {
-        Glide { v, to: v, k: 1.0 - (-1.0 / (secs.max(1e-3) * block_rate)).exp() }
+        Glide {
+            v,
+            to: v,
+            k: 1.0 - (-1.0 / (secs.max(1e-3) * block_rate)).exp(),
+        }
     }
 
     #[inline]
@@ -206,7 +210,13 @@ impl Wander {
         let mut rng = Rng::new(seed);
         let a = rng.unit();
         let b = rng.unit();
-        Wander { rng, a, b, t: 0.0, dt: hz / block_rate }
+        Wander {
+            rng,
+            a,
+            b,
+            t: 0.0,
+            dt: hz / block_rate,
+        }
     }
 
     /// Advance one block.
@@ -360,7 +370,12 @@ impl Bubbles {
     pub const MAX: usize = 128;
 
     pub fn new(seed: u32) -> Bubbles {
-        Bubbles { rng: Rng::new(seed), live: [[0.0; 8]; Bubbles::MAX], n: 0, rate: 0.0 }
+        Bubbles {
+            rng: Rng::new(seed),
+            live: [[0.0; 8]; Bubbles::MAX],
+            n: 0,
+            rate: 0.0,
+        }
     }
 
     pub fn run(&mut self, s: &BubbleShape, sr: f32, gain: f32, l: &mut [f32], r: &mut [f32]) {
@@ -558,7 +573,12 @@ mod tests {
     fn bubbles_ring_and_stop() {
         let sr = 48_000.0;
         let mut b = Bubbles::new(3);
-        let s = BubbleShape { r: [0.5, 5.0], rise: 0.2, centre: 0.0, width: 0.5 };
+        let s = BubbleShape {
+            r: [0.5, 5.0],
+            rise: 0.2,
+            centre: 0.0,
+            width: 0.5,
+        };
         b.rate = 200.0 / sr;
         let (mut l, mut r) = (vec![0.0; 48_000], vec![0.0; 48_000]);
         b.run(&s, sr, 1.0, &mut l, &mut r);

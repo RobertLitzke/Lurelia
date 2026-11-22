@@ -29,7 +29,8 @@
     {"creature": "bat", "count": 3},
     {"creature": "tawny_owl", "count": 1},
     {"creature": "hedgehog", "count": 2},
-    {"creature": "barn_owl", "count": 1}
+    {"creature": "barn_owl", "count": 1},
+    {"creature": "lapwing", "count": 6}
   ],
   "collectibles": [
     {"item": "pottery_shard", "density": 0.005, "placement": {"verb": "scatter", "params": {}}},

@@ -1,10 +1,12 @@
 {
   "name": "lawn_grass",
-  "version": 1,
+  "version": 2,
   "introduced_by": "city",
-  "notes": "Mown city lawn and verge grass.",
+  "notes": "Mown lawn and verge grass, and a roof gone to meadow. v2: rooftop_grass merged in.",
+  "was": ["rooftop_grass"],
   "id": 152,
   "smooth": true,
+  "sprites": "grass",
   "texture": {
     "pattern": "noise",
     "base": [96, 128, 58],

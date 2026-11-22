@@ -5,7 +5,7 @@
   "notes": "The city as the importer means it: asphalt roads, concrete, tar and shingle. What a `city` event uses when it names no kit.",
   "road": "road_asphalt",
   "pavement": "pavement",
-  "glass": "pane_glass",
+  "glass": "window_glass",
   "metal": "roof_vent",
   "deck": "concrete",
   "deck_top": "road_asphalt",

@@ -1,0 +1,30 @@
+{
+  "name": "gh_island",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "Hake and Hogback islands above the shore: granite, wind-cut turf, bent shore pines, heather and lichen.",
+  "priority": 5,
+  "rules": {"region": "island", "elev": [1.5, 200]},
+  "surface": "shore_grass",
+  "subsurface": "dirt",
+  "map_color": [110, 128, 96],
+  "plants": [
+    {"plant": "shore_pine", "density": 0.003, "placement": {"verb": "clustered", "params": {"size": 24}}},
+    {"plant": "heather", "density": 0.05, "placement": {"verb": "clustered", "params": {"size": 12}}},
+    {"plant": "salal", "density": 0.02, "placement": {"verb": "clustered", "params": {"size": 12}}},
+    {"plant": "sea_buckthorn", "density": 0.004, "placement": {"verb": "clustered", "params": {"size": 10}}},
+    {"plant": "rock_lichen", "density": 0.05, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [
+    {"structure": "rock_outcrop", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "boulder", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "gull", "count": 8},
+    {"creature": "eider", "count": 6},
+    {"creature": "black_oystercatcher", "count": 3},
+    {"creature": "harbor_seal", "count": 6},
+    {"creature": "cormorant", "count": 3}
+  ],
+  "collectibles": []
+}

@@ -4,6 +4,7 @@
   "introduced_by": "saltmirror",
   "notes": "Silver tree leaves: long and covered in silky hairs, so the whole crown flashes silver when the wind turns them.",
   "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "narrow"},
   "texture": {
     "pattern": "blotch",
     "base": [150, 166, 148],

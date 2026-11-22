@@ -44,6 +44,7 @@
     "shooter",
     "screenshot"
   ],
+  "games": ["deathmatch"],
   "biomes": [
     "works_yard",
     "arena_seabed"

@@ -1,0 +1,607 @@
+{
+  "$defs": {
+    "Canopy": {
+      "description": "How a branching plant's foliage is massed (`canopy`).",
+      "oneOf": [
+        {
+          "enum": [
+            "layers",
+            "tufts",
+            "cloud",
+            "vase"
+          ],
+          "type": "string"
+        },
+        {
+          "const": "lobes",
+          "description": "One lobe over each big limb: the default.",
+          "type": "string"
+        }
+      ]
+    },
+    "Curve": {
+      "description": "The shape a branching plant's limb takes (`curve`).",
+      "oneOf": [
+        {
+          "enum": [
+            "straight",
+            "sweep",
+            "droop",
+            "kinked"
+          ],
+          "type": "string"
+        },
+        {
+          "const": "arch",
+          "description": "Bows out and levels off: the default.",
+          "type": "string"
+        }
+      ]
+    },
+    "Form": {
+      "description": "The growth form a library plant names (`form`): the verb that draws it.",
+      "enum": [
+        "broad",
+        "birch",
+        "conifer",
+        "columnar",
+        "spiral",
+        "shrub",
+        "snag",
+        "umbrella",
+        "weeping",
+        "sapling",
+        "branching",
+        "herb",
+        "vine",
+        "crust",
+        "canes",
+        "cactus",
+        "kelp",
+        "pads",
+        "bamboo",
+        "gnarled",
+        "mangrove",
+        "coral_branch",
+        "coral_antler",
+        "coral_table",
+        "coral_mound",
+        "coral_plate",
+        "coral_finger",
+        "sea_fan",
+        "sponge"
+      ],
+      "type": "string"
+    },
+    "MorphDef": {
+      "additionalProperties": false,
+      "description": "One named coat a species or plant comes in: the purple wisteria, the pale\nhare, the white humpback. A morph says only what colour it changes, so\neverything else about the individual is the entry's own. `shades` is how\nmany distinct draws it takes from inside its range, so one cluster of\npurple wisteria is not quite the colour of the next.\n\nA morph is not a species: it carries no shape, which is what separates it\nfrom a `like` child. See docs/CREATURES.md, \"Coats\".",
+      "properties": {
+        "colors": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Paint"
+          },
+          "description": "Slot name -> what fills it. A creature's slots are the keys of its own\n`colors`; a plant's are bark, leaf, flower, autumn and stalk.",
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        },
+        "notes": {
+          "default": "",
+          "type": "string"
+        },
+        "shades": {
+          "default": 1,
+          "description": "How many distinct draws the coat is built from. 1, the default, is a\ncontinuous draw where the renderer can manage one and a single colour\nwhere it cannot: a creature's coat is a per-instance tint and costs\nnothing, while a plant's is a material and each shade is an atlas\nlayer, so ask for more only where it will be seen.",
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "weight": {
+          "default": 1.0,
+          "description": "Relative, not a share: the entry's weights are normalised at load, so\n`9` and `1` give nine in ten and one in ten.",
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "Paint": {
+      "anyOf": [
+        {
+          "description": "A material by name. Plants only: a creature's colours are its own.",
+          "type": "string"
+        },
+        {
+          "description": "Two ends of a range.",
+          "items": {
+            "items": {
+              "format": "float",
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        {
+          "description": "One colour.",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "type": "array"
+        }
+      ],
+      "description": "What a morph puts in one of an entry's colour slots: another material by\nname (a plant's leaf, where the material already exists), or the range of\ncolour the slot is drawn in, as two ends in sRGB bytes with an optional\nfourth emissive value. One colour is a range with both ends the same."
+    },
+    "Sweep": {
+      "description": "How a conifer's whorl branches sit (`sweep`).",
+      "oneOf": [
+        {
+          "enum": [
+            "droop",
+            "up",
+            "ragged"
+          ],
+          "type": "string"
+        },
+        {
+          "const": "level",
+          "description": "A fir: the default.",
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "if": {
+    "not": {
+      "required": [
+        "like"
+      ]
+    }
+  },
+  "patternProperties": {
+    "^_": {}
+  },
+  "properties": {
+    "affords": {
+      "default": [],
+      "description": "What it offers animals: browse, perch, nest, cover\n(creatures::affordance::AFFORDANCES).",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "autumn": {
+      "default": null,
+      "description": "Leaf material in a world whose season is autumn (world.json `season`).",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "bark": {
+      "type": "string"
+    },
+    "buttress": {
+      "default": 0.0,
+      "description": "Root flare for big old trees: extra trunk radius at the ground in\nmetres, in lobes like buttress roots, fading over about four times that\nheight. 0 for none.",
+      "format": "float",
+      "type": "number"
+    },
+    "cane_bend": {
+      "default": null,
+      "description": "Form \"canes\" with canopy \"tufts\": how far a cane arches over toward\nits tip (default about 0.04-0.11, a buckthorn's arch); 0 for canes\nthat stand straight (sugar cane, hazel).",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "cane_lean": {
+      "default": null,
+      "description": "Form \"canes\": the most a cane leans from upright at its root, radians\n(default about 0.54, an ocotillo's fan); 0.1 for cane standing straight.",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "cane_leaves": {
+      "default": null,
+      "description": "Form \"canes\" with canopy \"tufts\": the chance of a leaf tuft at each\njoint on the upper half of a cane and at a spur's tip (default 1, a\nleafy shrub); low for near-leafless switches (broom, ephedra, reeds).",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "cane_spurs": {
+      "default": null,
+      "description": "Form \"canes\" with canopy \"tufts\": the chance of a short side spur on\neach cane segment (default 0.4, thorny); 0 for clean stems.",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "cane_umbel": {
+      "default": null,
+      "description": "Form \"canes\" with canopy \"tufts\": an umbel at each cane tip, a mop of\nthin rays this long, metres (papyrus).",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "canopy": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Canopy"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Form \"branching\": how the foliage is massed (`flora::CANOPIES`) —\n\"lobes\" (one lobe over each big limb, notches between, the default),\n\"layers\" (flat tiers, an elder), \"tufts\" (leaves on the twigs only, an\nopen crown), \"cloud\" (one soft mass) or \"vase\" (tall lobes leaning in,\na beech). Form \"canes\" with \"tufts\": a thorny shrub of arching canes\nwith spurs, leaf tufts and berries along the stems (sea buckthorn)."
+    },
+    "crown_base": {
+      "default": null,
+      "description": "Conifer forms: where the needles start, as a fraction of the height\n(default 0.2; ponderosa pines carry theirs high on a bare trunk).",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "crown_radius": {
+      "default": [
+        1.5,
+        2.5
+      ],
+      "items": {
+        "format": "float",
+        "type": "number"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "crust": {
+      "default": null,
+      "description": "Form \"crust\": how it sits on its host. \"bracket\" stands out from a\ntrunk in shelves (bracket fungus); \"patch\" (the default) is a skin\nhugging the surface (moss, lichen). `crown_radius` is one patch's\nradius and `height` the band of the host, metres above the ground,\na colony keeps to.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "curve": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Curve"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Form \"branching\": the shape a limb takes (`flora::CURVES`) —\n\"straight\", \"arch\" (bows out and levels off, the default), \"sweep\"\n(out then up, a maple's S), \"droop\" (over and down) or \"kinked\"."
+    },
+    "dome": {
+      "default": null,
+      "description": "Form \"branching\": 0 to 1, how far the leaf clusters at the limb tips\nare filled out into one domed crown, a shell of foliage over the limbs\nthat stays hollow underneath (great oaks). 0: separate clumps. Default\n`flora::DOME` (the separate clumps read as too fragmented).",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "fill": {
+      "default": null,
+      "description": "Form \"branching\", canopy \"lobes\": 0 to 1, how often the gap between\ntwo neighbouring lobes is bridged. 0 leaves every notch open (default\n0.55).",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "flower": {
+      "default": null,
+      "description": "Flowers at the tips of canes and arms (forms \"canes\", \"cactus\"): a\nmaterial, drawn as small blobs.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "flower_seasons": {
+      "default": [],
+      "description": "Seasons the `flower` shows in (world.json `season`); empty means all.",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "flower_tips": {
+      "default": false,
+      "description": "Form \"canes\" with canopy \"tufts\": `flower` sits in clusters at the\ncane tips (rabbitbrush, roses) instead of packed along the stems.",
+      "type": "boolean"
+    },
+    "form": {
+      "$ref": "#/$defs/Form",
+      "description": "Growth form verb: broad, birch, conifer, columnar, spiral, shrub, snag,\numbrella, weeping, sapling."
+    },
+    "height": {
+      "items": {
+        "format": "float",
+        "type": "number"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "hosts": {
+      "default": [],
+      "description": "Form \"vine\": what it hangs from, \"tree\" (crowns of broadleaf trees,\nand swags between them), \"cliff\" (the lip of a drop) and/or \"wall\"\n(the outer walls of placed structures). Empty means all three.\nForm \"crust\": what it grows on, \"tree\" (trunks) and/or \"rock\" (steep\nfaces of bare ground). Empty means both.",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "introduced_by": {
+      "default": "",
+      "type": "string"
+    },
+    "leader": {
+      "default": null,
+      "description": "Form \"branching\": 0 to 1, how much of the trunk carries on up through\nthe crown as a leader instead of being spent in the lowest fork. 0 is\nan oak's open vase, 1 a cottonwood's single spar (default 0.35).",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "leaf": {
+      "default": null,
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "leaf_alt": {
+      "default": null,
+      "description": "A second leaf material some individuals take (cherry trees not yet in\nblossom). Not for autumn colour: that is `autumn`, so a forest turns\ntogether instead of mixing seasons tree by tree. The older way of\nsaying what `morphs` says: it compiles into two coats.",
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "type": "string"
+        },
+        {
+          "format": "float",
+          "type": "number"
+        }
+      ],
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "lean": {
+      "default": 0.0,
+      "description": "Largest lean of the trunk, radians.",
+      "format": "float",
+      "type": "number"
+    },
+    "like": {
+      "description": "The entry this one is a variant of (src/inherit.rs): it starts from that entry and overrides what it gives.",
+      "type": "string"
+    },
+    "limb": {
+      "default": null,
+      "description": "Form \"branching\": a first limb's radius as a share of the trunk's\n(default `flora::LIMB`); more for thick-limbed trees like cottonwoods.",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "max_slope": {
+      "default": 0.6000000238418579,
+      "format": "float",
+      "type": "number"
+    },
+    "morph_blob_m": {
+      "default": 60.0,
+      "description": "How wide a patch of one coat is, in metres. The coat is drawn per\npatch, not per plant, so a cluster of wisteria is one colour and the\nnext along is another, and a meadow's grasses lie in blobs rather than\nspeckling colour over each other.",
+      "format": "float",
+      "type": "number"
+    },
+    "morphs": {
+      "description": "The coats this plant comes in (see `MorphDef`): the purple, lilac and\nwhite wisteria. Never inherited through `like`, since a morph's colours\nare absolute and a child is a different plant.",
+      "items": {
+        "$ref": "#/$defs/MorphDef"
+      },
+      "type": "array"
+    },
+    "name": {
+      "type": "string"
+    },
+    "notes": {
+      "default": "",
+      "type": "string"
+    },
+    "rarity": {
+      "default": 0.0,
+      "description": "Above 0: a rare morph of its parent. Where the parent is placed, this\nfraction of them grow as this plant instead.",
+      "format": "float",
+      "type": "number"
+    },
+    "scale": {
+      "description": "With `like`: multiplies the parent's sizes; sizes this entry gives are taken as written.",
+      "type": "number"
+    },
+    "shaded": {
+      "default": null,
+      "description": "Form \"crust\": keeps to the side of its host that faces away from the\nmidday sun, which is north. Defaults to true for patches (moss grows\non the shaded face) and false for brackets.",
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "spread": {
+      "default": 0.0,
+      "description": "Form \"branching\": 0 to 1, how far the first limbs reach out sideways\nand how many there are; 1 gives a wide old crown.",
+      "format": "float",
+      "type": "number"
+    },
+    "squash": {
+      "default": 1.0,
+      "description": "Vertical scale of leaf blobs (below 1 flattens crowns).",
+      "format": "float",
+      "type": "number"
+    },
+    "stalk": {
+      "default": null,
+      "description": "A flower stalk some plants send up from the heart of the rosette:\n[marker material, share of plants]. The marker is a herb voxel the\nsprite pass draws as the stalk (mesh/sprites.rs `Herb::Stalk`).",
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "type": "string"
+        },
+        {
+          "format": "float",
+          "type": "number"
+        }
+      ],
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "standing_water": {
+      "default": null,
+      "description": "Land plants that stand in the sea's shallows (cypress, mangrove): the\ndepth of water, metres, the ground may lie under, from negative (that\nfar above the sea) to positive. Default: only ground at least 0.6 m\nabove the sea. The plant grows at full height from the bed.",
+      "items": {
+        "format": "float",
+        "type": "number"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "stems": {
+      "default": null,
+      "description": "Forms \"canes\", \"kelp\" and \"bamboo\": how many canes, fronds or culms, [lo, hi].",
+      "items": {
+        "format": "float",
+        "type": "number"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "sweep": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Sweep"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Conifer forms: how the whorl branches sit (`flora::SWEEPS`) — \"level\"\n(a fir, the default), \"droop\" (a spruce), \"up\" (a young pine) or\n\"ragged\" (all three down one tree, a wind-beaten hemlock)."
+    },
+    "taper": {
+      "default": null,
+      "description": "Conifer forms: how fast the cone narrows. Under 1 swells out low and\ntapers late (a spruce), over 1 is a straight-sided spire (default 0.9).",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "thin_limbs": {
+      "default": null,
+      "description": "Limbs thinner than this radius, metres, are drawn as sticks: one thin\nline of voxels meshed as a smooth tube along the limb (a thread),\ninstead of a lumpy chain two or three voxels thick. For twiggy and\ngnarled trees, mangrove prop roots, bare winter crowns. Leave unset\non dense forests: each stick costs about 15-20 quads a metre.",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "trunk_radius": {
+      "default": [
+        0.20000000298023224,
+        0.30000001192092896
+      ],
+      "items": {
+        "format": "float",
+        "type": "number"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "version": {
+      "default": 1,
+      "format": "uint32",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "water_depth": {
+      "default": null,
+      "description": "Water plants (kelp): the depth of water, metres, it grows in. It is\nplaced only on the bed under that much sea, and `height` is then a\nfraction of the depth (the fronds reach the surface).",
+      "items": {
+        "format": "float",
+        "type": "number"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "whorls": {
+      "default": null,
+      "description": "Conifer forms: how many whorls of branches, [lo, hi]. The default is\none every metre and a quarter of crown, which is a few years' growth.",
+      "items": {
+        "format": "float",
+        "type": "number"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": [
+        "array",
+        "null"
+      ]
+    }
+  },
+  "then": {
+    "required": [
+      "name",
+      "form",
+      "height",
+      "bark"
+    ]
+  },
+  "title": "PlantDef",
+  "type": "object"
+}

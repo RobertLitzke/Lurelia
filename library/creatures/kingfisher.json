@@ -1,8 +1,8 @@
 {
   "name": "kingfisher",
-  "version": 1,
+  "version": 2,
   "introduced_by": "hemlow",
-  "notes": "Kingfisher: a flash of electric blue with an orange breast, flitting between the willows and reeds along the Hem.",
+  "notes": "Kingfisher: a flash of electric blue with an orange breast, flitting between the willows and reeds along a river or round a cenote rim. v2: jewel_kingfisher merged in.",
   "colors": {
     "body": [40, 130, 190],
     "head": [40, 110, 170],

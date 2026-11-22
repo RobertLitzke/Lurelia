@@ -1,0 +1,9 @@
+{
+  "name": "explore",
+  "version": 1,
+  "introduced_by": "engine",
+  "kind": "explore",
+  "title": "EXPLORE",
+  "notes": "The world as a place: walking, riding, climbing, the camera. No rules of its own.",
+  "help": "The world to walk, ride, climb and photograph: the game as it has always been."
+}

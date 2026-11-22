@@ -1,14 +1,23 @@
 {
   "name": "marsh_light",
-  "version": 2,
+  "version": 3,
   "introduced_by": "hemlow",
-  "notes": "A will-o'-the-wisp of the Wisp Moss: a pale blue-white ball of light the size of a fist with a fainter halo, drifting low over the bog pools and slowly pulsing. Nobody knows what it is.",
+  "notes": "A will-o'-the-wisp of the Wisp Moss: a pale blue-white ball of light the size of a fist with a fainter halo, drifting low over the bog pools and slowly pulsing. Nobody knows what it is. Comes in two lights: the cold `wisp` of the Wisp Moss, and the yellow `corpse` candle that drifts between the barrows after dark, which the villages say is the breath going by. A biome picks one (`morph`). v3: corpse_candle merged in as the `corpse` coat; it moves as the candle did (`drift`, a wider and lazier circle than `flutter`), and the halo's blue came down a little so one tint reaches the candle's yellow.",
   "voxel": 0.03,
   "half_w": 0.1,
   "height": 0.1,
-  "colors": {"wisp": [220, 236, 255, 3.0], "halo": [150, 190, 255, 1.4]},
+  "colors": {"wisp": [220, 236, 255, 3.0], "halo": [150, 190, 235, 1.4]},
+  "morphs": [
+    {"name": "wisp", "weight": 3, "notes": "The cold blue-white wisp of the Wisp Moss."},
+    {
+      "name": "corpse",
+      "weight": 1,
+      "notes": "The corpse candle of the barrow field: a cold yellow flame with a dim halo.",
+      "colors": {"wisp": [252, 240, 168, 3.0], "halo": [214, 186, 96, 1.4]}
+    }
+  ],
   "behaviour": {
-    "movement": "flutter",
+    "movement": "drift",
     "fly_height": 1.1,
     "blink": 0.12,
     "flightiness": 0.35,

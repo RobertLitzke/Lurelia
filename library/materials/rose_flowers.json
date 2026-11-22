@@ -4,6 +4,7 @@
   "introduced_by": "hemlow",
   "notes": "Rose flowers: pink, in clusters at the cane tips, summer.",
   "smooth": false,
+  "sprites": "flower",
   "texture": {
     "pattern": "speckle",
     "base": [232, 132, 158],

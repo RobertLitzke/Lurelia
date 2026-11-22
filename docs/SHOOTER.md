@@ -264,8 +264,12 @@ that case is handled.
 
 ## Two sides
 
-The launch screen offers TEAM DEATHMATCH on any arena and CAPTURE THE FLAG on
-a world whose `shooter` block has a `ctf` block (`launch::Mode`). Either one sets
+The launch screen offers the games a world lists in `"games"` in its
+world.json, its own first: `["ctf", "team"]` on a flag map, `["deathmatch",
+"team"]` on any other arena (`launch::games`). Each is a file in
+`library/games/`, which may state rules of its own over the map's (Slagdeck
+also lists `instagib`: one rifle, one hit, a bare floor). A world with no list
+is offered whatever its blocks allow. TEAM DEATHMATCH and CAPTURE THE FLAG both set
 `ShooterDef::teams`, and `shooter/teams.rs` deals the sides: a bot the world put
 on a side stays there (`BotDef::team`), the rest go to the shorter side, and
 the player joins the side the launch screen named or the shorter one. Side 0 is

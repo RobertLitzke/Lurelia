@@ -5,6 +5,7 @@
   "notes": "Marker voxel at the foot of a fireweed clump; the stems and flowers are sprites (layer fireweed).",
   "id": 55,
   "smooth": false,
+  "sprites": "fireweed",
   "texture": {
     "pattern": "blotch",
     "base": [52, 74, 34],

@@ -2,10 +2,10 @@
   "name": "gravel_fan",
   "version": 1,
   "introduced_by": "saltmirror",
-  "notes": "The gravel fans at the foot of the range: grey stones and sand washed out of the ravines, and the cactus forest on them, cardon and saguaro over ocotillo, cholla, prickly pear and agave, with lizards everywhere.",
+  "notes": "The gravel fans at the foot of the range: sand washed out of the ravines over grey gravel, dry grass tufts on it, and the cactus forest on them, cardon and saguaro over ocotillo, cholla, prickly pear and agave, with lizards everywhere.",
   "priority": 7,
   "rules": {"elev": [1.0, 20]},
-  "surface": "fan_gravel",
+  "surface": "fan_sand",
   "subsurface": "fan_gravel",
   "map_color": [176, 170, 150],
   "plants": [
@@ -50,6 +50,9 @@
     {"creature": "desert_tortoise", "count": 4},
     {"creature": "desert_toad", "count": 3},
     {"creature": "canyon_bat", "count": 4},
-    {"creature": "raven", "count": 2}
+    {"creature": "raven", "count": 2},
+    {"creature": "roadrunner", "count": 2},
+    {"creature": "annas_hummingbird", "count": 2},
+    {"creature": "gambels_quail", "count": 16}
   ]
 }

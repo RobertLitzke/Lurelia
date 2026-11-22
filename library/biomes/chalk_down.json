@@ -39,7 +39,7 @@
     {"creature": "saiga", "count": 2},
     {"creature": "steppe_sheep", "count": 7},
     {"creature": "eagle", "count": 2},
-    {"creature": "steppe_wolf", "count": 2},
+    {"creature": "wolf", "count": 2},
     {"creature": "marmot", "count": 6},
     {"creature": "rabbit", "count": 3},
     {"creature": "wind_skate", "count": 2},

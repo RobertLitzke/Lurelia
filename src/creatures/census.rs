@@ -34,7 +34,11 @@ pub fn quota(world: &hecs::World) -> crate::util::FxHashMap<usize, u32> {
 
 /// Walkers, flocking birds and flitting birds (legacy animals included).
 pub fn critter_count(world: &hecs::World) -> usize {
-    world.query::<&Critter>().iter().count() + world.query::<&Flyer>().iter().count() + world.query::<&Flit>().iter().count()
+    world.query::<&Critter>().iter().count()
+        + world.query::<&Flyer>().iter().count()
+        + world.query::<&Flit>().iter().count()
+        + world.query::<&super::runner::Runner>().iter().count()
+        + world.query::<&super::hummer::Hummer>().iter().count()
 }
 
 /// Rigged creatures by current activity, and flitting birds by where they are.
@@ -61,6 +65,14 @@ pub fn activities(world: &hecs::World, land: Option<&crate::world::fields::World
             };
             *out.entry(what.to_string()).or_insert(0) += 1;
         }
+    }
+    // Running birds and hummingbirds: what each is doing.
+    for (r, look) in world.query::<(&super::runner::Runner, &Look)>().iter() {
+        let moving = (look.pos - look.prev_pos).length() > 1e-3;
+        *out.entry(format!("runner {}", r.doing(moving))).or_insert(0) += 1;
+    }
+    for h in world.query::<&super::hummer::Hummer>().iter() {
+        *out.entry(format!("hummingbird {}", h.doing())).or_insert(0) += 1;
     }
     // Snakes: what each is doing (creatures/snake.rs).
     for s in world.query::<&super::snake::Serpent>().iter() {

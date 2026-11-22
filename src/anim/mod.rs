@@ -11,6 +11,7 @@
 
 pub mod bones;
 pub mod figure;
+pub mod flesh;
 pub mod flight;
 pub mod life;
 pub mod motors;
@@ -63,7 +64,7 @@ crate::util::named! {
     }
 }
 
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct RigDef {
     #[serde(default)]
     pub plan: Option<Plan>,
@@ -75,7 +76,7 @@ pub struct RigDef {
     pub activities: HashMap<String, life::ActDef>,
 }
 
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct BoneDef {
     pub name: String,
     pub role: Role,
@@ -99,6 +100,10 @@ pub struct BoneDef {
     /// hide gaps when the joint bends.
     #[serde(default)]
     pub overlap: u32,
+    /// How soft the part is, 0 rigid (the default) to 1 all flesh: it sags
+    /// where the animal lies and lags as it moves (flesh.rs).
+    #[serde(default)]
+    pub flesh: f32,
 }
 
 #[derive(Clone, Debug)]
@@ -123,6 +128,8 @@ pub struct Rig {
     /// Height of the lowest voxel, in model voxels: a perched bird stands
     /// on feet that hang this far above the model's floor.
     pub floor: f32,
+    /// The soft body, if any bone has flesh (flesh.rs).
+    pub soft: Option<flesh::Soft>,
 }
 
 impl Rig {
@@ -150,6 +157,10 @@ pub struct Pose {
     /// 1 all the way): a tortoise drawing its head and legs into the shell.
     /// Empty means none.
     pub tuck: Vec<f32>,
+    /// A soft body's flesh (flesh.rs): how far it has settled, 0 to 1, and
+    /// how far the jiggle has thrown it, creature frame, metres.
+    pub sag: f32,
+    pub jiggle: Vec3,
 }
 
 impl Pose {
@@ -158,6 +169,8 @@ impl Pose {
             root: Vec3::ZERO,
             bones: vec![Vec3::ZERO; n],
             tuck: Vec::new(),
+            sag: 0.0,
+            jiggle: Vec3::ZERO,
         }
     }
 
@@ -174,6 +187,8 @@ impl Pose {
             root: self.root.lerp(other.root, t),
             bones: (0..n).map(|i| at(self, i).lerp(at(other, i), t)).collect(),
             tuck,
+            sag: self.sag + (other.sag - self.sag) * t,
+            jiggle: self.jiggle.lerp(other.jiggle, t),
         }
     }
 }
@@ -188,6 +203,8 @@ pub struct Anim {
     pub flight: Option<Box<flight::Flight>>,
     /// The dead and the carried: a body with nothing holding it up.
     pub ragdoll: Option<Box<ragdoll::Ragdoll>>,
+    /// A soft body's jiggle spring (flesh.rs).
+    pub jiggle: flesh::Jiggle,
 }
 
 impl Anim {
@@ -198,6 +215,7 @@ impl Anim {
             life: None,
             flight: None,
             ragdoll: None,
+            jiggle: flesh::Jiggle::default(),
         }
     }
 
@@ -251,6 +269,9 @@ impl Anim {
         l.step(rig, voxel, inp);
         self.prev = std::mem::take(&mut self.pose);
         self.pose = l.compose(rig, voxel);
+        if let Some(soft) = &rig.soft {
+            self.pose.jiggle = self.jiggle.step(&self.pose, inp.pos, inp.yaw, soft.height * voxel, inp.dt);
+        }
         if self.prev.bones.len() != self.pose.bones.len() {
             self.prev = self.pose.clone();
         }
@@ -332,7 +353,7 @@ pub fn push_parts_at(
 ) {
     forward(rig, pose, voxel * scale, pivot, fk);
     let yq = Quat::from_rotation_y(yaw);
-    for (b, &(jp, q)) in rig.bones.iter().zip(fk.iter()) {
+    for (bi, (b, &(jp, q))) in rig.bones.iter().zip(fk.iter()).enumerate() {
         let model = b.model + base;
         let Some(pm) = models.get(model) else {
             continue;
@@ -340,7 +361,11 @@ pub fn push_parts_at(
         if pm.mesh.quads.is_empty() {
             continue;
         }
-        let s = if head != 1.0 && matches!(b.role, Role::Head | Role::Jaw | Role::Ear) { scale * head } else { scale };
+        let s = if head != 1.0 && matches!(b.role, Role::Head | Role::Jaw | Role::Ear) {
+            scale * head
+        } else {
+            scale
+        };
         let w = at + yq * jp;
         out.push((
             model,
@@ -350,6 +375,8 @@ pub fn push_parts_at(
                 tint,
                 rot: [q.x, q.y, q.z, q.w],
                 shift: [shift[0], shift[1], shift[2], 0.0],
+                flesh: rig.soft.as_ref().map_or([[0.0; 4]; 3], |s| s.instance(rig, pose, &fk[..], voxel * scale, bi)),
+                glow: [0.0; 4],
             },
         ));
     }
@@ -467,6 +494,7 @@ mod tests {
             plan: None,
             activities: HashMap::new(),
             floor: 0.0,
+            soft: None,
             bones: vec![b("body", None, [16.0, 10.0, 16.0]), b("neck", Some(0), [16.0, 12.0, 10.0]), b("head", Some(1), [16.0, 18.0, 10.0])],
         }
     }

@@ -1,0 +1,63 @@
+{
+  "name": "peregrine",
+  "title": "PEREGRINE RIDGE",
+  "blurb": "A fast, flowing circuit across the chalk downs: a long drafting straight, a banked climb up Falcon Crest, a tight ridge hairpin, a plunge into the Chalk Bowl, and technical S-bends over West Knoll.",
+  "size_m": 512.0,
+  "height_m": 96,
+  "sea_level_m": 4,
+  "seed": 6738,
+  "sun": {
+    "latitude": 50
+  },
+  "rock": [
+    [
+      "chalk_white",
+      0.75
+    ],
+    [
+      "chalk_grey",
+      0.25
+    ]
+  ],
+  "spawn": [
+    118.0,
+    448.0
+  ],
+  "spawn_bearing": 92,
+  "modes": [
+    "walk",
+    "drive",
+    "race",
+    "screenshot",
+    "camera"
+  ],
+  "games": ["race"],
+  "vehicles": [
+    "kart"
+  ],
+  "race": {
+    "circuit": "peregrine_ring",
+    "laps": 3,
+    "rivals": 3,
+    "vehicle": "kart"
+  },
+  "seasons": [
+    "summer"
+  ],
+  "start_season": "summer",
+  "weather": {
+    "sun": 1.0,
+    "clouds": 0.6
+  },
+  "start_weather": "sun",
+  "start_hour": 16.5,
+  "default_biome": "chalk_down",
+  "seabed_biome": "seabed",
+  "weathering": 0.4,
+  "moss": 0.2,
+  "biomes": [
+    "chalk_down",
+    "feathergrass_sea",
+    "seabed"
+  ]
+}

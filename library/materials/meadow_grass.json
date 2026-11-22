@@ -1,9 +1,12 @@
 {
   "name": "meadow_grass",
-  "version": 1,
+  "version": 2,
   "introduced_by": "glassfall",
+  "notes": "Green meadow grass, also the long grass between bamboo culms. v2: bamboo_grass merged in.",
+  "was": ["bamboo_grass"],
   "id": 44,
   "smooth": true,
+  "sprites": "grass",
   "texture": {
     "pattern": "noise",
     "base": [86, 122, 56],

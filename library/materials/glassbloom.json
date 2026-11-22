@@ -5,6 +5,7 @@
   "notes": "Marker voxel at the foot of a glassbloom; the blades are sprites (layer glassbloom).",
   "id": 56,
   "smooth": false,
+  "sprites": "glassbloom",
   "texture": {
     "pattern": "glass",
     "base": [120, 96, 170],

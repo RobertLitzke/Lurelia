@@ -286,7 +286,7 @@ pub fn title_items(prefs: &Prefs) -> Vec<Item> {
             ..Item::new("RETURN", Choice::Continue)
         },
         Item {
-            help: "Pick a world, a way of playing it, and what is in it.",
+            help: "Pick a game, a world to play it in, and what is in it.",
             ..Item::new("OPEN WORLD", Choice::Open)
         },
         Item {
@@ -312,22 +312,24 @@ pub fn pause_items() -> Vec<Item> {
     ]
 }
 
-/// The launch screen: the world, the way of playing it, the options those
-/// two put on offer, and GO. `here` is the world on screen now, if any, so a
+/// The launch screen: the game, a world that offers it, the options those
+/// two put on offer, and GO. The game comes first because it decides which
+/// worlds are on the list. `here` is the world on screen now, if any, so a
 /// line can say so.
 pub fn launch_items(l: &crate::launch::Launch, here: Option<&str>) -> Vec<Item> {
+    let game = l.def();
     let mut out = vec![
+        Item {
+            help: game.help.as_str(),
+            ..Item::drop("GAME", Choice::LaunchMode, game.title.clone())
+        },
         Item {
             note: (here == Some(l.world.as_str())).then(|| "here now".to_string()),
             help: Some(crate::launch::info(&l.world).foot).filter(|f| !f.is_empty()).unwrap_or("Which world to open."),
             ..Item::drop("WORLD", Choice::LaunchWorld, world_title(&l.world))
         },
-        Item {
-            help: mode_help(l.mode),
-            ..Item::drop("GAME", Choice::LaunchMode, l.mode.title().to_string())
-        },
     ];
-    for (i, o) in crate::launch::options(&l.world, l.mode).iter().enumerate() {
+    for (i, o) in crate::launch::options(&l.world, game).iter().enumerate() {
         out.push(Item {
             help: o.help,
             changed: l.changed(o),
@@ -346,10 +348,11 @@ pub fn launch_items(l: &crate::launch::Launch, here: Option<&str>) -> Vec<Item> 
     out
 }
 
-/// The lines of an open dropdown: every world, or every game this world
-/// offers. `which` is 0 for the world and 1 for the game.
+/// The lines of an open dropdown: every game some world offers, or every
+/// world that offers the game in force. `which` is the row it hangs from:
+/// 0 for the game and 1 for the world.
 pub fn drop_items(l: &crate::launch::Launch, which: u8) -> Vec<Item> {
-    if which == 0 {
+    if which == 1 {
         l.world_rows()
             .iter()
             .enumerate()
@@ -360,10 +363,13 @@ pub fn drop_items(l: &crate::launch::Launch, which: u8) -> Vec<Item> {
             })
             .collect()
     } else {
-        crate::launch::modes(&l.world)
+        crate::launch::all_games()
             .iter()
             .enumerate()
-            .map(|(i, m)| Item::new(m.title(), Choice::ChooseMode(i as u8)))
+            .map(|(i, g)| Item {
+                help: g.help.as_str(),
+                ..Item::new(&g.title, Choice::ChooseMode(i as u8))
+            })
             .collect()
     }
 }
@@ -371,25 +377,17 @@ pub fn drop_items(l: &crate::launch::Launch, which: u8) -> Vec<Item> {
 /// Where a dropdown's list stands open now: the row it hangs under and the
 /// line of that row that is picked.
 pub fn drop_at(l: &crate::launch::Launch, which: u8) -> usize {
-    if which == 0 {
+    if which == 1 {
         l.world_rows().iter().position(|r| r.world == l.world).unwrap_or(0)
     } else {
-        crate::launch::modes(&l.world).iter().position(|m| *m == l.mode).unwrap_or(0)
-    }
-}
-
-fn mode_help(m: crate::launch::Mode) -> &'static str {
-    match m {
-        crate::launch::Mode::Explore => "The world to walk, ride, climb and photograph: the game as it has always been.",
-        crate::launch::Mode::Fps => "An arena match: guns, respawns, and whoever gets the most kills.",
-        crate::launch::Mode::Team => "The same arena in two sides, cyan and magenta: a side's kills between them win it.",
-        crate::launch::Mode::Ctf => "Two sides and a flag each: take theirs off its stand and carry it home to score.",
+        let now = l.def();
+        crate::launch::all_games().iter().position(|g| g.name == now.name).unwrap_or(0)
     }
 }
 
 /// "Glassfall, explore" for the note under RETURN.
 pub fn launch_words(l: &crate::launch::Launch) -> String {
-    format!("{}, {}", world_words(&l.world), l.mode.title().to_lowercase())
+    format!("{}, {}", world_words(&l.world), l.def().title.to_lowercase())
 }
 
 /// The antialiasing line's value. The renderer reads it when it is made, so a
@@ -1389,12 +1387,16 @@ mod settings_tests {
         let path = dir.join("settings.json");
         let bad = dir.join("settings.json.bad");
 
-        std::fs::write(&path, r#"{"view":256.0,"vsync":true,"style":"sepia","last":{"world":"hemlow","mode":"capture the flag","kept":{"hemlow/explore":{"hour":"dawn"}}}}"#).unwrap();
+        std::fs::write(
+            &path,
+            r#"{"view":256.0,"vsync":true,"style":"sepia","last":{"world":"hemlow","mode":"capture the flag","kept":{"hemlow/explore":{"hour":"dawn"}}}}"#,
+        )
+        .unwrap();
         let p = Prefs::load(&dir);
         assert_eq!((p.view, p.vsync), (256.0, true), "an unknown style took the other settings with it");
         assert!(p.settings.style == crate::render::Style::default());
         assert_eq!(p.last.world, "hemlow");
-        assert!(p.last.mode == crate::launch::Mode::Explore);
+        assert!(p.last.def().kind == crate::launch::Mode::Explore);
         assert_eq!(p.last.kept.len(), 1, "an unknown mode took the kept choices with it");
         assert!(!bad.exists());
 

@@ -385,7 +385,11 @@ pub fn open(args: &Args) -> Result<Field, String> {
     let gen = crate::world::gen::Generator::with_world(world.clone());
     let (spawn, yaw) = gen.spawn_point();
     let height_vox = gen.height_vox;
-    let mut store = Store { height_vox, gravity: world.def.gravity, ..Store::default() };
+    let mut store = Store {
+        height_vox,
+        gravity: world.def.gravity,
+        ..Store::default()
+    };
     let mut streamer = crate::stream::Streamer::new(gen, Default::default(), args.view.max(128.0), 4);
     streamer.set_smooth(false, Vec3::ZERO);
     // The whole arena, as `Game` streams it: from the spawn alone the far
@@ -654,7 +658,7 @@ pub fn run(args: &Args) {
 /// detail: a duel keeps a contact alive nearly all the time, so a bot in one
 /// is rarely in the state where roaming, fetching and hearing decide
 /// anything. Three bots spend most of a match not knowing where anybody is,
-/// which is exactly where this session's changes live.
+/// which is the state this bracket exists to test.
 ///
 /// Scored per entrant by substituting it for one of the three and reporting
 /// what that bot did, against the shipping bot in the same slot on the same

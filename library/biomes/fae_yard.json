@@ -3,11 +3,7 @@
   "version": 2,
   "introduced_by": "faerie",
   "notes": "The enchanted city's yards and verges: woodland coming back between the houses.",
-  "priority": 1,
-  "rules": {},
   "surface": "moss_grass",
-  "subsurface": "dirt",
-  "fringe": 0,
   "map_color": [96, 150, 80],
   "plants": [
     {
@@ -55,10 +51,11 @@
     {"creature": "dusk_wren", "count": 16},
     {"creature": "starling", "count": 50},
     {"creature": "crow", "count": 3},
-    {"creature": "lantern_moth", "count": 50},
+    {"creature": "glassmoth", "morph": "lantern", "count": 50},
     {"creature": "heron", "count": 2},
     {"creature": "eagle", "count": 1},
     {"creature": "bumblebee", "count": 4},
     {"creature": "woodpecker", "count": 1}
-  ]
+  ],
+  "like": "city_yard"
 }

@@ -124,6 +124,20 @@ impl Blob {
         }
     }
 
+    /// The most `dist` can change per metre moved in any direction: one over
+    /// the clump's narrowest semi-axis once `squash` is on the vertical. A
+    /// rasteriser uses it to settle whole blocks of voxels from one sample.
+    pub fn max_rate(&self, squash: f32) -> f32 {
+        let s = squash.max(0.05).min(1.0);
+        let r = self.r.max(1e-3);
+        let narrow = match self.shape {
+            Shape::Ball | Shape::Sleeve { .. } => 1.0,
+            Shape::Dome { rise } => (rise * BELOW).min(1.0),
+            Shape::Plate { thick, .. } => thick.min(1.0),
+        };
+        1.0 / (r * s * narrow.max(1e-3))
+    }
+
     /// How far the clump reaches out from `base` on the flat, and how high.
     pub fn reach(&self, base: Vec3, squash: f32, outer: f32) -> (f32, f32) {
         let (lo, hi) = self.bounds(squash, outer);
@@ -164,6 +178,15 @@ impl Lumps {
         };
         let s2 = super::noise::hash32(seed ^ 0x9e37_79b9);
         Lumps { a: dir(seed), b: dir(s2), amp }
+    }
+
+    /// The nearest the lumps can bring the surface in, as a multiple of the
+    /// nominal 1, for a `q` up to `stretch` times the `len` it is given.
+    /// `at` divides by `len`, which is the true length of `q` only for an
+    /// unsquashed ball; along a sleeve or a squashed clump the "direction"
+    /// is longer than 1 and the lumps cut deeper than `amp`.
+    pub fn least(amp: f32, stretch: f32) -> f32 {
+        1.0 - 2.0 * amp * stretch * stretch
     }
 
     /// The surface's distance in the direction of `q` (whose length is

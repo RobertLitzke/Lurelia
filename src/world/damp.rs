@@ -181,7 +181,12 @@ mod tests {
     use crate::world::weather::Kind;
 
     fn run(d: &mut Damp, kind: Kind, hours: f32, sun_y: f32, cold: f32) {
-        let c = Conditions { sky: kind.sky(), sun_y, cold, melt: 0.0 };
+        let c = Conditions {
+            sky: kind.sky(),
+            sun_y,
+            cold,
+            melt: 0.0,
+        };
         for _ in 0..(hours * 60.0) as usize {
             d.advance(1.0 / 60.0, &c);
         }

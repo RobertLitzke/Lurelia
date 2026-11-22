@@ -4,6 +4,7 @@
   "introduced_by": "glassfall",
   "id": 24,
   "smooth": true,
+  "sprites": "prairie",
   "texture": {
     "pattern": "noise",
     "base": [120, 102, 56],

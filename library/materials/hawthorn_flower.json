@@ -4,6 +4,7 @@
   "introduced_by": "base",
   "notes": "Hawthorn blossom: dense white heads with a pink flush, lying over the crown in May.",
   "smooth": false,
+  "sprites": "flower",
   "texture": {
     "pattern": "blotch",
     "base": [242, 238, 232],

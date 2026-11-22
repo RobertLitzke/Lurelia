@@ -29,6 +29,17 @@ pub fn ride_demo(game: &mut Game, renderer: &mut Renderer, kind: &str, args: &Ar
     } else if kind == "kayak" {
         let level = game.water_at(game.player.pos).0;
         r.toggle_kayak(&mut game.player, &game.store, level);
+    } else if kind == "drive" || kind == "park" {
+        game.player.body.on_ground = true;
+        if let Some(v) = &args.vehicle {
+            match r.vehicles.iter().position(|n| n == v) {
+                Some(k) => r.vehicle_pick = k,
+                None => eprintln!("--vehicle {v}: this world has {:?}", r.vehicles),
+            }
+        }
+        r.vehicle_key(&mut game.player, &game.store);
+    } else if kind == "race" {
+        // The race starts itself on the first tick, and drives the player.
     } else if kind == "rope" || kind == "climb" {
         // The rope is thrown on the first ticks, at whatever the view is on;
         // climbing just walks (W) into whatever is ahead.
@@ -39,7 +50,7 @@ pub fn ride_demo(game: &mut Game, renderer: &mut Renderer, kind: &str, args: &Ar
     r.set_chase(args.chase);
     game.ride = r;
     let input = MoveInput {
-        forward: !wing,
+        forward: !wing && kind != "race",
         sprint: args.boost,
         down: args.tuck,
         ..Default::default()
@@ -52,18 +63,37 @@ pub fn ride_demo(game: &mut Game, renderer: &mut Renderer, kind: &str, args: &Ar
     let (mut ys, mut jolts) = (Vec::new(), Vec::new());
     for i in 0..ticks {
         // Z gets the rope out, Z again throws it.
-        let inp = MoveInput {
+        let mut inp = MoveInput {
             hook: kind == "rope" && (i == 0 || i == 2),
             ..input
         };
+        // Park: brake to a stop over the last four seconds, then
+        // tap U to get out and stand a moment beside it.
+        if kind == "park" && i > ticks - 240 {
+            inp.forward = false;
+            inp.back = i < ticks - 90;
+            if i == ticks - 80 {
+                game.ride.vehicle_key(&mut game.player, &game.store);
+            }
+        }
         game.tick(game::STEP, &inp, &mut actions);
+        if kind == "race" {
+            if let Some(rc) = game.activity.as_mut().and_then(|a| a.race_mut()) {
+                if i == 0 {
+                    rc.autopilot();
+                }
+                if i % 60 == 0 {
+                    println!("race {}", rc.status());
+                }
+            }
+        }
         game.stream(&mut renderer.terrain, Duration::from_millis(3));
         ys.push(game.player.pos.y);
         if ys.len() >= 3 && game.player.body.on_ground && i > 30 {
             let n = ys.len();
             jolts.push((ys[n - 1] - 2.0 * ys[n - 2] + ys[n - 3]) / game::STEP);
         }
-        if i % 30 == 0 {
+        if i % 60 == 0 {
             let p = &game.player;
             let r = &game.ride;
             let mode = match r.mode {
@@ -73,6 +103,7 @@ pub fn ride_demo(game: &mut Game, renderer: &mut Renderer, kind: &str, args: &Ar
                 Mode::Swing => "rope",
                 Mode::Foot => "foot",
                 Mode::Kayak => "kayak",
+                Mode::Drive => "drive",
             };
             let soar = &r.soar;
             let score = match soar.hud(r.mode) {
@@ -139,7 +170,7 @@ pub fn run_headless(args: Args) {
     let mut hud = Hud::default();
     let input = MoveInput::default();
     let mut actions = Actions::default();
-    let mut bench = if args.bench { Some(Bench::new(game.player.pos + Vec3::Y * 2.0)) } else { None };
+    let mut bench = if args.bench { Some(Bench::new(game.player.pos + Vec3::Y * 2.0, args.bench_route)) } else { None };
 
     // Load until the streamer has nothing left to do for this view. The benchmark
     // loads its starting view the same way, then flies with streaming live.
@@ -524,7 +555,7 @@ pub fn run_headless(args: Args) {
                 let here = worldload::selected();
                 let mut l = crate::launch::Launch::default();
                 l.world = here.clone();
-                l.mode = crate::launch::modes(&here).last().copied().unwrap_or_default();
+                l.game = crate::launch::default_game(&here).name.clone();
                 let items = menu::launch_items(&l, Some(&here));
                 menu::draw_menu(
                     &mut hud,
@@ -630,12 +661,15 @@ pub fn run_headless(args: Args) {
         gpu.device.poll(wgpu::PollType::Wait).expect("poll");
         let ms = ft.elapsed().as_secs_f32() * 1000.0;
         let split = [t1 * 1000.0, (t2 - t1) * 1000.0, (t3 - t2) * 1000.0, ms - t3 * 1000.0];
+        // The tick's own parts (`trace`), drained every frame.
+        let tick_parts = crate::trace::take();
         if ms > 16.0 && std::env::var("VOXEL_TRACE").is_ok() {
             let st = &game.streamer.stats;
             eprintln!(
-                "slow frame {:.1} ms: tick {:.1} stream {:.1} (accept {:.1} x{} plan {:.1} vis {:.1} unload {:.1} x{}) submit {:.1} gpu {:.1} | shadow quads {} main quads {} | queued {} busy {}",
+                "slow frame {:.1} ms: tick {:.1} [{}] stream {:.1} (accept {:.1} x{} plan {:.1} vis {:.1} unload {:.1} x{}) submit {:.1} gpu {:.1} | shadow quads {} main quads {} | queued {} busy {}",
                 ms,
                 split[0],
+                crate::trace::line(&tick_parts),
                 split[1],
                 st.accept_ms,
                 st.accepted,
@@ -733,6 +767,18 @@ pub fn run_headless(args: Args) {
         "split_max_ms": { "tick": parts_max[0], "stream": parts_max[1], "render_submit": parts_max[2], "gpu_wait": parts_max[3] },
     });
     report["memory"] = memory;
+    {
+        use std::sync::atomic::Ordering::Relaxed;
+        let per = |n: &std::sync::atomic::AtomicU64| if st.gen_jobs > 0 { n.load(Relaxed) as f64 / 1e6 / st.gen_jobs as f64 } else { 0.0 };
+        let (g, w, m) = (&crate::world::gen::GEN_NANOS, &crate::stream::WORK_NANOS, &crate::mesh::MESH_NANOS);
+        report["gen_stage_ms"] = serde_json::json!({
+            "samples": per(&g[0]), "tree_lookup": per(&g[1]), "fill": per(&g[2]), "tree_drawing": per(&g[3]),
+            "tubes": per(&w[0]), "mesh": per(&w[1]), "scatter": per(&w[2]), "copy": per(&w[3]),
+            "mesh_parts": {
+                "lean": per(&m[0]), "corners": per(&m[1]), "faces": per(&m[2]), "leaf_blocks": per(&m[3]), "regroup": per(&m[4]),
+            },
+        });
+    }
     // Outside json!: one more key there passes its recursion limit.
     report["drawlist_ms"] = serde_json::json!(last.stats.drawlist_ms);
     report["sprites_drawn"] = last.stats.sprites.into();
@@ -915,14 +961,16 @@ fn menu_shot(gpu: &Gpu, target: &wgpu::Texture, view: &wgpu::TextureView, format
         "worlds" | "launch" | "launch-open" => {
             let mut l = crate::launch::Launch::default();
             l.world = world.clone();
-            l.mode = crate::launch::modes(&world).last().copied().unwrap_or_default();
+            l.game = crate::launch::default_game(&world).name.clone();
             let items = menu::launch_items(&l, None);
-            let foot = items.first().map(|i| i.help).unwrap_or("");
+            let foot = items.get(1).map(|i| i.help).unwrap_or("");
+            m.at = 1;
             menu::draw_menu(&mut hud, &mut m, "OPEN WORLD", &items, foot, Place::Left, wf, hf);
             if which == "launch-open" {
-                let anchor = m.drops.first().copied().unwrap_or([0.0; 4]);
-                let at = menu::drop_at(&l, 0);
-                let list = menu::drop_items(&l, 0);
+                // The world list: the second row, under the game.
+                let anchor = m.drops.get(1).copied().unwrap_or([0.0; 4]);
+                let at = menu::drop_at(&l, 1);
+                let list = menu::drop_items(&l, 1);
                 let mut dm = Menu { at, ..Menu::default() };
                 menu::dim(&mut hud, wf, hf);
                 menu::draw_dropdown(&mut hud, &mut dm, &list, anchor, at, wf, hf);

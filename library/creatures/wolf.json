@@ -1,18 +1,18 @@
 {
   "name": "wolf",
-  "version": 1,
+  "version": 2,
   "introduced_by": "base",
-  "notes": "Grey wolf: a quarter bigger than a coyote and heavier in the shoulder, hunting deer and elk in twos and threes. Keeps its distance and watches.",
+  "notes": "Grey wolf: a quarter bigger than a coyote and heavier in the shoulder, hunting in packs of two to six: deer and elk in the forests, horses and saiga on the steppe. Keeps its distance and watches. v2: steppe_wolf merged in (its prey and its larger packs).",
   "colors": {"coyote": [124, 118, 112], "rabbit_light": [210, 196, 176], "dark": [36, 28, 24]},
   "behaviour": {
     "walk_speed": 1.5,
     "flee_speed": 8.5,
     "wary": 20,
     "flightiness": 0.45,
-    "hunts": ["deer", "elk", "mule_deer", "rabbit", "jackrabbit"],
+    "hunts": ["deer", "elk", "mule_deer", "rabbit", "jackrabbit", "przewalski_horse", "saiga"],
     "spawn_chance": 0.1,
     "swims": true,
-    "group": {"size": [2, 5], "spacing": 2.6, "range": 16, "alignment": 1.0, "cohesion": 1.2}
+    "group": {"size": [2, 6], "spacing": 2.6, "range": 16, "alignment": 1.0, "cohesion": 1.2}
   },
   "like": "coyote",
   "scale": 1.3,

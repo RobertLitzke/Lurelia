@@ -1,0 +1,17 @@
+{
+  "name": "ice_track",
+  "version": 1,
+  "introduced_by": "kestrel",
+  "notes": "A racing surface of packed, scraped ice: blue-grey and darker than the snow beside it, faintly streaked, and gripping like rock under a kart (surface rock), unlike the snow.",
+  "smooth": true,
+  "crisp": true,
+  "surface": "rock",
+  "texture": {
+    "pattern": "speckle",
+    "base": [92, 112, 134],
+    "alt": [108, 128, 150],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [100, 120, 142], "alt": [116, 136, 158]}
+  }
+}

@@ -5,7 +5,7 @@
 //! swimmers, pickups, circlers, then bird wing animation.
 
 use crate::creatures::terrain::{voxel_ground, Terrain};
-use crate::creatures::{birds, carry, census, circle, flit, flock, fowl, herd, insects, octopus, snake, spawn, swim, walk, woodpecker};
+use crate::creatures::{birds, carry, census, circle, flit, flock, fowl, herd, hummer, insects, octopus, runner, snake, spawn, swim, walk, woodpecker};
 use crate::models::{self, Instance, Model};
 use crate::util::{FxHashMap as HashMap, FxHashSet as HashSet};
 use crate::world::fields::World as Land;
@@ -53,6 +53,8 @@ pub struct Entities {
     /// What part of the year it is (world/season.rs), set by the game each
     /// step: less is abroad in winter, as in the small hours.
     pub phase: crate::world::season::Phase,
+    /// The season's name, for which plants are in flower (`set_season`).
+    pub season: String,
     /// Where the player is looking (horizontal), set by the game each step:
     /// newcomers turn up out of view, not in front of you.
     pub facing: Vec3,
@@ -85,14 +87,29 @@ impl Entities {
             hour: crate::world::clock::START,
             sky: Default::default(),
             phase: Default::default(),
+            season: String::new(),
             facing: Vec3::ZERO,
             clock: 0.0,
             met: None,
         }
     }
 
+    /// Tell the creatures the season, so hummingbirds go only to what is in
+    /// flower (an ocotillo blooms in spring).
+    pub fn set_season(&mut self, season: &str) {
+        if self.season != season {
+            self.season = season.to_string();
+            if let Some(land) = &self.land {
+                self.plants.set_season(&land.lib, season);
+            }
+        }
+    }
+
     pub fn set_world(&mut self, land: Arc<Land>, species: Vec<Species>, items: Vec<crate::worldload::ItemModel>) {
         self.plants = crate::creatures::plants::Flora::build(&land);
+        if !self.season.is_empty() {
+            self.plants.set_season(&land.lib, &self.season);
+        }
         crate::items::upgrade_found(&mut self.gems_collected, &land);
         self.land = Some(land);
         self.species = species;
@@ -161,7 +178,22 @@ impl Entities {
         spawn::roll_morphs(world, species, models, &self.rng);
         walk::attach_life(world, species, models);
         let mut stats = self.pathing;
-        walk::update(world, species, &self.plants, &terrain, dt, threat, slopes, models, self.hour, &self.sky, self.clock, &mut stats, &mut self.cues, &mut self.steps);
+        walk::update(
+            world,
+            species,
+            &self.plants,
+            &terrain,
+            dt,
+            threat,
+            slopes,
+            models,
+            self.hour,
+            &self.sky,
+            self.clock,
+            &mut stats,
+            &mut self.cues,
+            &mut self.steps,
+        );
         herd::update(world, species, dt);
         let groups: Vec<flock::Group> = species.iter().map(|s| s.beh.group.clone().unwrap_or_default()).collect();
         let kills = flock::update(world, species, &groups, &self.plants, dt, threat, &terrain);
@@ -172,6 +204,13 @@ impl Entities {
         snake::update(world, species, &self.plants, models, dt, threat, &terrain, &mut stats);
         octopus::update(world, species, models, dt, threat, &terrain);
         insects::update(world, species, &self.plants, dt, threat, &terrain);
+        let mut caught = Vec::new();
+        runner::update(world, species, dt, threat, &terrain, &mut caught);
+        carry::take(world, species, models, &caught, self.clock);
+        for &(hunter, _) in &caught {
+            let _ = world.insert_one(hunter, carry::Beak { until: self.clock + carry::CARRY_S });
+        }
+        hummer::update(world, species, &self.plants, &self.plants.blooming, dt, threat, &terrain);
         census::count_sitting(world, &terrain, &mut stats);
         let mut swim = swim::Stats {
             leaps: self.swim.leaps,
@@ -193,7 +232,7 @@ impl Entities {
         // The carcasses still in the air or still sliding, which is every
         // body a shot made until it has come to rest.
         crate::creatures::flung::update(world, models, store, dt);
-        circle::update(world, species, &terrain, dt, threat, &mut stats);
+        circle::update(world, species, &terrain, dt, threat, &mut stats, &mut self.cues);
         self.pathing = stats;
         birds::animate(world, species, dt, models);
     }
@@ -277,6 +316,8 @@ impl Entities {
             .iter()
         {
             let (scale, tint, shift) = morph.map_or((1.0, [1.0; 3], [0.0; 3]), |m| (m.scale, m.tint, m.shift));
+            // A coat's gain on the glow, less one (models.rs `Instance::glow`).
+            let gain = morph.map_or(0.0, |m| m.glow - 1.0);
             let head = morph.map_or(1.0, |m| m.head);
             // The deceased are drawn with the bones inside them, in the bones'
             // own colours, once the body has gone.
@@ -314,6 +355,7 @@ impl Entities {
                 if fade < 1.0 {
                     out[first..].iter_mut().for_each(|(_, i)| i.shift[3] = -fade);
                 }
+                out[first..].iter_mut().for_each(|(_, i)| i.glow[0] = gain);
                 continue;
             }
             out.push((
@@ -324,6 +366,8 @@ impl Entities {
                     tint: [tint[0], tint[1], tint[2], flash],
                     rot: [0.0; 4],
                     shift: [shift[0], shift[1], shift[2], if fade < 1.0 { -fade } else { 0.0 }],
+                    flesh: [[0.0; 4]; 3],
+                    glow: [gain, 0.0, 0.0, 0.0],
                 },
             ));
         }

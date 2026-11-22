@@ -139,6 +139,20 @@ Optional fields:
   Saltmirror's salt pan is 1.
 - `snow_line_m` (72): ground above this height turns to snow. A warm world
   with tall towers sets it out of reach (Jadewater: 1000).
+- `tide` (none): `{"range": 2.5}` for a sea that goes out 2.5 m and back
+  in 18 game hours; `high` (6) is the hour of the first high water and
+  `period_h` (18) the hours from one high to the next.
+  `sea_level_m` is high water, so the tide only uncovers seabed and never
+  floods the land. Only open sea reaching the map's edge moves, plus the
+  lower reaches of rivers running into it; lakes and sealed hollows stay
+  still (GUIDE.md, "Tides"). Leave it out for a lake, an arena or a
+  sheltered sea.
+- `surf` (none): `{"height": 1.2}` for breakers about a metre high on a fair
+  day; `length_m` (16) and `period_s` (7) set the wave spacing. Lagoons and
+  coves are calmer by themselves. 1.2 is an open beach, 0.3 a sheltered
+  bay; leave it out for a still sea (GUIDE.md, "Surf"). It also brings a
+  swell on the open sea, half the breaker height unless `swell` says
+  otherwise (0 for none), its longest wave `swell_length_m` (40) long.
 
 The sea is the only water, so a world is always an island in it; a dry world
 can call it a lake or a reservoir (Redrock).
@@ -185,7 +199,7 @@ the land that is already there.
 | `avulsion` | river, breach, path [...], old_bed (mat), silt (mat), silt_thick | river breaks out at `breach` on a new course; old bed below dries and half fills |
 | `subside` | at, radius, drop [lo, hi] or level [lo, hi], grain (60), edge (40), ragged (0.25), stretch (1), bearing, islands (0), island_size (28), island_rise (0.7), floor | land that sinks (a lobe starved of silt, a settling marsh): inside a ragged region the ground drops by `drop` m, or down to `level` m under the sea (deeper ground, an old channel, stays), varying in patches `grain` m across and easing out over `edge` m. Under the sea it floods. `islands` (0-0.6) keeps that share standing as low knolls `island_rise` m over the sea (hammocks, keys); `floor` caps the water's depth. Lowmouth's swamp, bay, flats and mouth |
 | `bayou` | path [...], width, depth, bank (5), meander (8) | a slow channel of sea water `depth` m deep through low ground, from one stretch of water to another (a crevasse, a slough). No source and no current; floods end to end. A `vale` can't do this: its floor stays above the sea |
-| `earthwork` | parts [{from, to, width, top}], arcs [{centre, radius, from, to, width, top}], slope (1.8), relative, poi | earth heaped up by people: ridges along segments and arcs (bearings `from` to `to`, clockwise) with flat crests `width` m across standing `top` m over the sea (over the ground with `relative`), sides at `slope` run per rise; overlapping pieces join, the higher wins. Lowmouth's bird effigy mound (body, head, wings, tail as parts) and the Poverty Point half rings (arcs) |
+| `earthwork` | parts [{from, to, width, top}], arcs [{centre, radius, from, to, width, top}], slope (1.8), relative, mat, poi | earth heaped up by people: ridges along segments and arcs (bearings `from` to `to`, clockwise) with flat crests `width` m across standing `top` m over the sea (over the ground with `relative`), sides at `slope` run per rise; overlapping pieces join, the higher wins. Lowmouth's bird effigy mound (body, head, wings, tail as parts) and the Poverty Point half rings (arcs). `mat` lays everything it raises in that material instead of the biome's ground: Gannet Harbor's breakwater is a granite earthwork with the `breakwater` kit along its crest |
 | `deposit` | at, radius, thickness, mat, shape, depth (1) | raises the ground with a layer, burying what was there (walls too). `shape: "dome"` eases it out to nothing at the rim with no step: a knoll, a low hill, an islet in a lake (run after the lake). `depth` is the deepest water it may build up out of, so a bank can stand out of a lagoon floor three metres down (Jadewater's bay hills) instead of stopping at the shore |
 | `settlement` | name, at, radius, houses, buildings [structure...], extras [{structure, count, near: centre/river/edge}], slots {slot: material}, path (mat) | picks flat dry sites, levels pads, faces buildings to the centre, paths to the centre; paints region `name` |
 | `place` | structure, at, bearing or face (pos), slots, age, poi, height, when (hours, far, near, moon) | one structure (landing, shrine, anomaly). `height` hangs it with its anchor voxel at that height above sea, whatever the ground: a rope bridge strung between two rock walls at mid-height, its ends buried in the rock (run a `passage` along the same line for the tunnels it lands in). On a passage floor, use the floor's height, not the passage's (see `passage`). `when` makes it stand only some of the time, the rest of the time its plot empty: `{"hours": [from, to]}` (wrapping past midnight, [23, 3]), `"far": m` (seen only from further than that: gone when you get there), `"near": m` (only within that), `"moon": true` (only while the moon is out, the sun more than 5 degrees down, so it follows dusk and dawn through the year; false: only while it is not); all given must hold. The game flips it and redraws the ground under it (Lowmouth's juke joint, the man at the crossroads, the ghost steamer, the light in Ribshore's titan's eye). Give a hung structure `base: "rim"` too, or it is dropped onto the ground with the logs and boulders |
@@ -293,7 +307,7 @@ Biomes may also set `water` (see world.json above) for their water's colour.
 `tube: true` draws a material as thin stems: the mesher bevels the edges
 along a one-voxel stem into an octagon instead of rounding it, so a slim
 straight pole stays one piece where rounding would break it into floating
-blobs. The leaf of a vine and the bark of `bamboo`, `canes` and `kelp` are
+blobs. The leaf of a vine and the bark of `bamboo` and `canes` are
 tubes unless the material says `tube: false`. It suits straight, upright
 stems (Lowmouth's `silver_deadwood` snags, bottle-tree branches, the
 crossroads figure's cane); on leaning or arching ones (mangrove prop roots,
@@ -324,8 +338,40 @@ they ask for (17..254, unique, 255 is `carve`) or take a free one, and a
 material the world cannot reach gets no id and no texture layer, so the
 library costs a world only what it draws. Saves name materials, not ids.
 
+`was` (a list of names) is what a material was called before others were
+merged into it: `cattail_head` has `"was": ["reedmace_head"]`. A save, a
+local world or a city file that still names an old one gets this material,
+and a world that reaches an old name reaches it. When you merge two
+near-identical materials, keep the one the engine names or more files use,
+delete the other's file, rewrite the references and list the old name here,
+and keep the survivor's `sprites` the one both drew with.
+
+`sprites` says what grows on a material as sprites, whatever it is called:
+`"grass"`, `"needles"`, `"fern"`, `"cattail head"`, `"vine"`, `"flower"`,
+`"leaves"` (plain leaves shared by many species, one shape per grove) or
+leaves of a shape, `{"rule": "leaves", "shape": "broad"}` (pointed, broad,
+lobed, narrow, heart, maple). The rules are `SPRITE_RULES` in
+`mesh/sprites.rs`; `"none"` grows nothing. Leave it out and nothing grows
+(ground with a `grass` block still grows short dry tufts), and `--validate`
+asks for one wherever the name reads like a rule (`_leaves`, `_grass`,
+`_needles`), since that is usually forgotten rather than meant. Names used to
+decide this; they no longer do.
+
+`like` makes a material a variant of another, as for creatures and plants:
+it starts from the parent and overrides what it gives. Its `texture`, `top`
+and `bottom` merge key by key, and so does each one's `calm`, so a recolour
+gives only `base`, `alt` and the calm pair, and a same-texture copy with a
+flag of its own gives only the flag (`"like": "dish_paint", "facet": true`).
+`shade` (a brightness multiple) and `hue` (warmer above 0, cooler below)
+repaint every colour the child takes from its parent and leave the ones it
+gives itself: `"like": "quartzite", "shade": 0.78` is a darker bed of the
+same rock. The legacy `id` and `was` are never inherited; `sprites` is, so a
+variant that should grow nothing says `"none"`. Use it for families (the
+`ice_panel_*` colours, `door_*`, `siding_*`, the karst beds) rather than for
+two materials that merely look alike.
+
 `grass` ({"sparse": 0.1, "dense": 0.85, "short": 1.0}): how grass grows on a
-ground material whose name holds GRASS. `sparse` and `dense` are the share of
+ground material that grows grass (`sprites` a grass rule). `sparse` and `dense` are the share of
 columns carrying a tuft where the meadow noise is lowest and highest (0.04 and
 0.3 is a thin steppe, 0.5 and 0.95 a crop); `short` is the height of the
 shortest grass, 1.0 being the default, so 3.0 makes short grass three
@@ -431,19 +477,21 @@ with `stems` splits its trunk into that many forked limbs under the crown
 cactus
 (saguaro: a ribbed column with arms that turn up, more with height; optional
 `flower`), kelp (a water plant: give `water_depth` [lo, hi] metres of sea it
-grows under; `height` is then a share of the depth, ~1 so the canopy floats at
-the surface; `stems` stipes per holdfast), bamboo (a clump of `stems` culms
+grows under; `height` is then a share of the high-water depth, ~1 so the strand
+reaches the surface; `stems` stipes per holdfast; drawn as loose strands that
+ride the tide, not voxels, so `trunk_radius` is the stipe's width and
+`crown_radius` the blade size), bamboo (a clump of `stems` culms
 spread over `crown_radius`, each one straight vertical stalk of even
 thickness with a short nod at the tip, leaf sprays above `crown_base` (0.55);
 `trunk_radius` is one culm's, 0.17 or more or the rounding makes it wobble; give the
-culm material `passable` for a thicket you push through). Herbs whose leaf material is named
-like a sprite plant (fern, fireweed, heather, glassbloom, rabbitbrush,
-cattail_leaves, sawgrass_blades, palmetto_fronds, cane_leaves) are drawn
+culm material `passable` for a thicket you push through). Herbs whose leaf material's
+`sprites` is a sprite plant (fern, fireweed, heather, glassbloom, rabbitbrush,
+cattail leaves, sawgrass, palmetto, cane) are drawn
 entirely as sprites, and a `stalk` of `cattail_head` stands a cattail's brown
 head over them. Sprite plants have no collision, so the kayak slides through
 them, and with `standing_water` they grow up out of the water (grass doesn't
-grow under the sea). A plant whose leaf is `palm_frond` gets fan sprites round
-its crown.
+grow under the sea). A plant whose leaf is `palm_frond` (`sprites` "palm
+frond") gets fan sprites round its crown.
 
 `crust` (form "crust"): a plant that grows on something else rather than in
 the ground. `hosts` is "tree" (trunks) and/or "rock" (steep faces of bare
@@ -630,9 +678,12 @@ that: name two or more colours for a real repaint (one colour gives a plain
 multiply, so the silver fox names `fox` dark *and* `white` unchanged to keep
 its tail tip); a coat may take every colour lighter, darker or warmer together
 but cannot send two of them different ways (no blue body to red while a green
-thorax goes brown -- that is a species); it cannot add or take away a glow, so
-the faerie wood's glowing recolours stay species; and it carries no size and
-no temperament. One draw per group, so a herd is of a piece. `--validate`
+thorax goes brown -- that is a species); it recolours a glow with the rest, and
+a fourth number on a glowing colour sets how bright it burns (one gain over
+every glowing colour: the glassmoth's `lantern` coat, `[255, 210, 120, 2.4]`
+over wings of 1.8), but it cannot light a colour that does not glow, so the
+faerie wood's recolours that glow where their parent does not stay species;
+and it carries no size and no temperament. One draw per group, so a herd is of a piece. `--validate`
 reports a coat that cannot reach a colour it declared or that drives an
 undeclared colour past white; `VG_COATS=1` prints what each group got. The
 worked creatures are fox (red/silver), trout (rainbow/golden) and humpback
@@ -715,6 +766,14 @@ fire; never-burned cells fail it), strange (0..1); plus `region` (name) and
 `amphibious: true`: then the sea's shallows in its region match too (a swamp
 standing in water). Features whose structure has `base: "sea"` (cypress knees,
 a floating mat) are placed in 0.2 to 2.5 m of water instead of on land. Boundaries are warped by noise automatically.
+
+`like` makes a biome a variant of another: it keeps the parent's rules,
+priority and everything else it does not give. Lists (`plants`, `features`,
+`creatures`, `collectibles`) are replaced whole, so a child that changes one
+gives all of it. The faerie city's biomes are the city's with other ground,
+plants and creatures (`"like": "city_park"`), and Kaldvik's fjord is the
+seabed with its own whales. A parent still competes only where a world lists
+it.
 
 Edges also feather: a biome's ground reaches `fringe` metres (default 3) across
 its boundary, so two shades of grass break into interlocking patches instead of

@@ -1,6 +1,11 @@
 //! Voxel materials and which texture layer each face uses.
 
 pub const AIR: u8 = 0;
+/// Air a ribbon cleared for headroom (a tunnel, a walkway through a crown)
+/// while a chunk is being drawn. Trees fill only true air, so they leave it
+/// alone, and the generator turns it back into air once they are in. Never
+/// stored: 255 is past every library id (17..=254).
+pub const KEEP_AIR: u8 = 255;
 pub const GRASS: u8 = 1;
 pub const DIRT: u8 = 2;
 pub const SAND: u8 = 3;

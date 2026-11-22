@@ -31,6 +31,7 @@
   "snow_line_m": 1000,
   "weathering": 0.3,
   "moss": 0.0,
+  "round_edges": ["dish_paint", "concrete", "trim_white", "shingle_dark"],
   "water": {"shallow": [214, 182, 178], "deep": [170, 128, 128]},
   "modes": ["walk", "glide", "climb", "rope", "screenshot", "camera"],
   "biomes": [

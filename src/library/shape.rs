@@ -124,7 +124,10 @@ pub enum Op {
     /// spokes, diagonal legs and braces. Drawn as one thin line of voxels,
     /// and where it leans the mesher draws it as a smooth tube along its own
     /// line (a thread, mesh/lean.rs) instead of a staircase. A radius under
-    /// about 0.6 is still one voxel of line, drawn as a tube that thin.
+    /// about 0.6 is still one voxel of line, drawn as a tube that thin. It
+    /// fills only air, and its tube hides only the voxels it drew
+    /// (`Shape::thread_vox`), so it can join a post or lie on a shell of
+    /// its own material.
     Segment {
         points: Vec<[f32; 3]>,
         radius: f32,
@@ -157,26 +160,13 @@ pub enum Op {
         part: Option<String>,
     },
     /// Recolour solid voxels below a height (creature bellies, socks).
-    RecolourBelow {
-        y: i32,
-        from: String,
-        to: String,
-    },
+    RecolourBelow { y: i32, from: String, to: String },
     /// Recolour solid voxels of colour `from` inside a box (`at` inclusive,
     /// `until` exclusive): stripes, patches and bands that follow the body.
-    Recolour {
-        at: [i32; 3],
-        until: [i32; 3],
-        from: String,
-        to: String,
-    },
+    Recolour { at: [i32; 3], until: [i32; 3], from: String, to: String },
     /// Runs `ops` `count` times, run k (from 0) shifted by k * `step`
     /// voxels: rows of windows, fence posts, stair treads.
-    Repeat {
-        count: i32,
-        step: [i32; 3],
-        ops: Vec<Op>,
-    },
+    Repeat { count: i32, step: [i32; 3], ops: Vec<Op> },
 }
 
 // Schema-only types: what some of the strings in a shape program mean. The
@@ -193,9 +183,10 @@ pub enum Op {
 struct MatRef(String);
 
 /// What the voxels are for. In a structure, how they decay with age: `roof`,
-/// `cloth` and `glass` fail in whole sections; `timber`, `frame`, `wall`,
-/// `stone` and `metal` crumble from the top of each column; `floor` mostly
-/// stays. Any other name, or none, never decays. `stone` and `wall` grow moss.
+/// `cloth` and `glass` fail in whole sections; `floor` never decays; every
+/// other part (`timber`, `frame`, `wall`, `stone`, `metal`, any other name,
+/// or none) crumbles from the top of each column at the same rate
+/// (`gen::crumbled`). `stone` and `wall` grow moss.
 /// In a creature, the body part the voxels move with (`head`, `tail`, ...).
 #[derive(schemars::JsonSchema)]
 #[allow(dead_code)]

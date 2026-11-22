@@ -1,0 +1,65 @@
+{
+  "notes": "An ice ring on a bright day: white snow, turquoise ice, a clean cyan distance. Kaldvik's blue kept, its dusk taken out.",
+  "ramp": [
+    {
+      "at": 0,
+      "color": [
+        0.78,
+        0.98,
+        1.0
+      ]
+    },
+    {
+      "at": 0.4,
+      "color": [
+        0.56,
+        0.9,
+        1.06
+      ]
+    },
+    {
+      "at": 1,
+      "color": [
+        0.4,
+        0.72,
+        1.12
+      ]
+    }
+  ],
+  "knobs": {
+    "ramp_reach": 420.0,
+    "ramp_value": 0.6,
+    "haze_density": 1.0,
+    "haze_height": 80.0,
+    "sky_ramp": 0.5,
+    "sky_reach": 0.4,
+    "shade_ramp": 0.8,
+    "sun_side": 0.1,
+    "sun_glow": 0.3,
+    "saturation": 1.18,
+    "contrast": 0.3,
+    "exposure": 0.96,
+    "time_tint": 0.6,
+    "vignette": 0.12
+  },
+  "ambient": [
+    0.3,
+    0.92,
+    1.2
+  ],
+  "sun_tint": [
+    1.02,
+    1.0,
+    0.96
+  ],
+  "zenith": [
+    0.06,
+    0.42,
+    1.1
+  ],
+  "horizon": [
+    0.5,
+    0.88,
+    1.12
+  ]
+}

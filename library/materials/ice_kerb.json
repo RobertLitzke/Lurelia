@@ -1,0 +1,9 @@
+{
+  "name": "ice_kerb",
+  "version": 1,
+  "introduced_by": "kestrel",
+  "notes": "Blue and white racing kerb for an ice circuit (event circuit's kerb).",
+  "like": "track_kerb",
+  "surface": "rock",
+  "texture": {"alt": [230, 236, 244], "calm": {"alt": [226, 232, 240], "base": [56, 104, 196]}, "base": [40, 92, 196]}
+}

@@ -11,7 +11,7 @@
   "plants": [
     {"plant": "sawgrass", "density": 0.05, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "cattail", "density": 0.03, "placement": {"verb": "riparian", "params": {"width": 24}}},
-    {"plant": "reedmace", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "cattail", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
     {
       "plant": "cabbage_palm",
       "density": 0.0012,

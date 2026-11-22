@@ -6,6 +6,7 @@
   "id": 240,
   "smooth": false,
   "glow": 1.6,
+  "sprites": "glow threads",
   "texture": {
     "pattern": "noise",
     "base": [112, 122, 128],

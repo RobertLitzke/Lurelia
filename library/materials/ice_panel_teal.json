@@ -3,14 +3,6 @@
   "version": 1,
   "introduced_by": "transmission",
   "notes": "Composite wall panelling in a frozen base, painted the deep teal of the coolant plant: the colour of a base's core rooms.",
-  "smooth": false,
-  "crisp": true,
-  "texture": {
-    "pattern": "coursed",
-    "base": [62, 118, 124],
-    "alt": [52, 104, 112],
-    "scale": 1,
-    "contrast": 1.0,
-    "calm": {"base": [70, 126, 132], "alt": [60, 112, 120]}
-  }
+  "like": "ice_panel",
+  "texture": {"alt": [52, 104, 112], "calm": {"alt": [60, 112, 120], "base": [70, 126, 132]}, "base": [62, 118, 124]}
 }

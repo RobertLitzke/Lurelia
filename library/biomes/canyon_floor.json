@@ -29,7 +29,10 @@
     {"creature": "otter", "count": 1},
     {"creature": "canyon_bat", "count": 5},
     {"creature": "rattlesnake", "count": 2},
-    {"creature": "bighorn", "count": 3}
+    {"creature": "bighorn", "count": 3},
+    {"creature": "killdeer", "count": 3},
+    {"creature": "annas_hummingbird", "count": 3},
+    {"creature": "gambels_quail", "count": 8}
   ],
   "collectibles": [
     {"item": "arrowhead", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}},

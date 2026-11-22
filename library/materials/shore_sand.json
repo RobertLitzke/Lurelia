@@ -5,6 +5,7 @@
   "notes": "Pale lake-shore sand above the waterline.",
   "id": 119,
   "smooth": true,
+  "surface": "sand_soft",
   "texture": {
     "pattern": "noise",
     "base": [214, 190, 152],

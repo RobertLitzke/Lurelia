@@ -1,8 +1,9 @@
 {
   "name": "trim_white",
-  "version": 1,
+  "version": 2,
   "introduced_by": "city",
-  "notes": "White painted trim boards.",
+  "notes": "White paint: trim boards and sign boards. v2: sign_white merged in.",
+  "was": ["sign_white"],
   "id": 168,
   "smooth": false,
   "texture": {

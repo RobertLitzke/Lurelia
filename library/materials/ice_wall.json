@@ -3,14 +3,7 @@
   "version": 1,
   "introduced_by": "transmission",
   "notes": "The glacier a frozen base is cut into, where it is left as wall: blue-grey ice with darker blue in the blotches. Darker than glacier_ice, which is written for a fjord under open sky; indoors that one glares and every corner disappears.",
+  "like": "glacier_ice",
   "smooth": false,
-  "glints": true,
-  "texture": {
-    "pattern": "blotch",
-    "base": [104, 126, 146],
-    "alt": [80, 106, 132],
-    "scale": 6,
-    "contrast": 0.7,
-    "calm": {"base": [112, 134, 154], "alt": [88, 114, 140]}
-  }
+  "texture": {"alt": [80, 106, 132], "calm": {"alt": [88, 114, 140], "base": [112, 134, 154]}, "base": [104, 126, 146]}
 }

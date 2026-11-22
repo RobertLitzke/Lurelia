@@ -7,7 +7,7 @@
   "trunk_radius": [0.14, 0.22],
   "crown_radius": [1.2, 2.0],
   "bark": "banyan_bark",
-  "leaf": "banyan_leaves",
+  "leaf": "glossy_leaves",
   "max_slope": 2.0,
   "like": "oak"
 }

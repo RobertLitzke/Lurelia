@@ -19,9 +19,9 @@
 //! weapon hold, the strafe, the jump and landing, the recoil, the turn -- is
 //! here, because none of it means anything to an animal.
 
-use crate::anim::{Plan, Role};
 use super::motors::{self, Gait};
 use super::{ragdoll::Ragdoll, Pose, Rig};
+use crate::anim::{Plan, Role};
 use glam::{Quat, Vec2, Vec3};
 use std::f32::consts::TAU;
 
@@ -771,7 +771,10 @@ mod tests {
         let feet = |p: &Pose| -> Vec<Vec3> {
             let mut fk = Vec::new();
             crate::anim::forward(&rig, p, voxel, Vec3::new(16.0, 0.0, 16.0), &mut fk);
-            (0..rig.bones.len()).filter(|&i| rig.bones[i].role == Role::Leg && motors::depth(&rig, i) == 2).map(|i| fk[i].0).collect()
+            (0..rig.bones.len())
+                .filter(|&i| rig.bones[i].role == Role::Leg && motors::depth(&rig, i) == 2)
+                .map(|i| fk[i].0)
+                .collect()
         };
         // How far across the body each foot travels over the cycle. Not the
         // mean distance from the middle, which a cross-over actually lowers:
@@ -940,7 +943,13 @@ mod tests {
         let head = rig.bones.iter().position(|b| b.role == Role::Head).expect("a head");
         let pivot = Vec3::new(16.0, 0.0, 16.0);
         for (what, d) in [
-            ("running", Drive { vel: Vec3::new(0.0, 0.0, -6.0), ..Default::default() }),
+            (
+                "running",
+                Drive {
+                    vel: Vec3::new(0.0, 0.0, -6.0),
+                    ..Default::default()
+                },
+            ),
             ("crouching", Drive { crouch: 1.0, ..Default::default() }),
         ] {
             let mut f = Figure::new(&rig, 1);
@@ -959,7 +968,10 @@ mod tests {
         let (rig, voxel) = robot();
         let pivot = Vec3::new(16.0, 0.0, 16.0);
         let arm = |right: bool| {
-            (0..rig.bones.len()).filter(|&i| rig.bones[i].role == Role::Arm && (rig.bones[i].side > 0.0) == right).max_by_key(|&i| motors::depth(&rig, i)).expect("a hand")
+            (0..rig.bones.len())
+                .filter(|&i| rig.bones[i].role == Role::Arm && (rig.bones[i].side > 0.0) == right)
+                .max_by_key(|&i| motors::depth(&rig, i))
+                .expect("a hand")
         };
         for pitch in [-0.5f32, 0.0, 0.6] {
             let mut f = Figure::new(&rig, 3);
@@ -971,7 +983,10 @@ mod tests {
             let want = grip + rot * Vec3::new(0.0, WRIST_UP, 0.0);
             assert!(wrist.distance(want) < 0.03, "pitch {pitch}: the right wrist is {} m off the grip", wrist.distance(want));
             let left = fk[arm(false)].0;
-            assert!(left.distance(grip) < 0.45 && (left - grip).dot(rot * Vec3::NEG_Z) > 0.08, "pitch {pitch}: the left hand is not out along the barrel: {left:?} vs grip {grip:?}");
+            assert!(
+                left.distance(grip) < 0.45 && (left - grip).dot(rot * Vec3::NEG_Z) > 0.08,
+                "pitch {pitch}: the left hand is not out along the barrel: {left:?} vs grip {grip:?}"
+            );
             let muzzle = rot * Vec3::NEG_Z;
             assert!((muzzle.y.asin() - pitch).abs() < 0.05, "pitch {pitch}: the gun points at {}", muzzle.y.asin());
         }

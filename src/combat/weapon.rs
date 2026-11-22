@@ -746,7 +746,10 @@ mod tests {
         mini.slot = 7;
         mini.ammo_start = 0;
         mini.ammo_type = Some("bullets".into());
-        let mut a = Arsenal { guns: vec![Held::new(Arc::new(side), false), Held::new(Arc::new(mini), false)], held: 0 };
+        let mut a = Arsenal {
+            guns: vec![Held::new(Arc::new(side), false), Held::new(Arc::new(mini), false)],
+            held: 0,
+        };
         for i in 0..2 {
             a.guns[i].pooled = true;
         }

@@ -194,7 +194,7 @@ pub fn save_png(path: impl AsRef<std::path::Path>, w: u32, h: u32, px: &[u8]) ->
 macro_rules! named {
     ($(#[$m:meta])* $vis:vis enum $T:ident { $($(#[$vm:meta])* $V:ident = $s:literal),+ $(,)? }) => {
         $(#[$m])*
-        #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, serde::Serialize, serde::Deserialize)]
+        #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
         $vis enum $T {
             $($(#[$vm])* #[serde(rename = $s)] $V),+
         }

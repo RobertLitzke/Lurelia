@@ -3,15 +3,9 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "Leaded window panes with lamplight behind them: Hemlow leaves a lamp in every window on Midsummer Eve.",
+  "like": "window_warm",
   "id": 69,
-  "smooth": false,
   "glow": 0.8,
-  "texture": {
-    "pattern": "glass",
-    "base": [236, 180, 96],
-    "alt": [250, 210, 130],
-    "scale": 4,
-    "contrast": 0.6,
-    "calm": {"base": [236, 182, 100], "alt": [250, 212, 134]}
-  }
+  "texture": {"alt": [250, 210, 130], "calm": {"alt": [250, 212, 134], "base": [236, 182, 100]}, "base": [236, 180, 96]},
+  "night_glow": false
 }

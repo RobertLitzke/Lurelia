@@ -241,7 +241,11 @@ pub fn drop_far(world: &mut hecs::World, species: &[Species], player: Vec3, faci
             if l.pos.y < 0.0 {
                 return true;
             }
-            let (near, seen) = if species[c.species].verb().mover == Mover::Breach { (DROP_WHALE_M, DROP_WHALE_SEEN_M) } else { (DROP_M, DROP_SEEN_M) };
+            let (near, seen) = if species[c.species].verb().mover == Mover::Breach {
+                (DROP_WHALE_M, DROP_WHALE_SEEN_M)
+            } else {
+                (DROP_M, DROP_SEEN_M)
+            };
             let d = Vec3::new(l.pos.x - player.x, 0.0, l.pos.z - player.z).length();
             d > seen || d > near && !in_view(l.pos, player, facing)
         })
@@ -439,10 +443,11 @@ fn taste(sp: &Species) -> crate::world::weather::Taste {
 fn build(sp: &Species) -> crate::world::weather::Build {
     use crate::world::weather::Build;
     match sp.verb().mover {
-        Mover::Walk { .. } | Mover::Slither { .. } => Build::Ground,
+        // A shorebird or a roadrunner makes its living on its feet.
+        Mover::Walk { .. } | Mover::Slither { .. } | Mover::Run { .. } => Build::Ground,
         Mover::Buzz { .. } => Build::Insect,
         Mover::School | Mover::Breach | Mover::Creep => Build::Swimmer,
-        Mover::Circle { .. } | Mover::Flock { .. } | Mover::Flit | Mover::Paddle | Mover::Cling => Build::Flier,
+        Mover::Circle { .. } | Mover::Flock { .. } | Mover::Flit | Mover::Paddle | Mover::Cling | Mover::Hum => Build::Flier,
     }
 }
 
@@ -451,16 +456,7 @@ fn build(sp: &Species) -> crate::world::weather::Build {
 /// the fireflies go out over the next field rather than in your face. Only
 /// species a biome round the player still lists are thinned, so an animal
 /// left behind by walking out of its biome wanders off as it always has.
-fn cull_off_hours(
-    world: &mut hecs::World,
-    species: &[Species],
-    player: Vec3,
-    facing: Vec3,
-    want: &[(usize, u32)],
-    hour: f32,
-    sky: &crate::world::weather::Sky,
-    phase: &crate::world::season::Phase,
-) {
+fn cull_off_hours(world: &mut hecs::World, species: &[Species], player: Vec3, facing: Vec3, want: &[(usize, u32)], hour: f32, sky: &crate::world::weather::Sky, phase: &crate::world::season::Phase) {
     /// Nothing is taken away nearer than this.
     const KEEP_M: f32 = 45.0;
     let have = census::quota(world);
@@ -676,6 +672,16 @@ pub(crate) fn place(
             let ter = super::terrain::Terrain { store, land: Some(land), sea };
             super::octopus::spawn(world, s, sp, models, &ter, (x, z), size.max(1), hash32(rng.state ^ s as u32 ^ 0x0c70))
         }
+        Mover::Run { style } => {
+            let ter = super::terrain::Terrain { store, land: Some(land), sea };
+            let gy = voxel_ground(store, x, z, store.top_m()).map_or(f.height(x, z), |g| g.0);
+            super::runner::spawn(world, s, sp, style, &ter, Vec3::new(x, gy, z), size.max(1), hash32(rng.state ^ s as u32 ^ 0x5a4d))
+        }
+        Mover::Hum => {
+            let ter = super::terrain::Terrain { store, land: Some(land), sea };
+            let gy = voxel_ground(store, x, z, store.top_m()).map_or(f.height(x, z), |g| g.0).max(sea);
+            super::hummer::spawn(world, s, sp, plants, &plants.blooming, &ter, Vec3::new(x, gy, z), size.max(1), hash32(rng.state ^ s as u32 ^ 0x4a11))
+        }
     }
 }
 
@@ -708,7 +714,20 @@ const FAMILY_JUVENILE: f32 = 0.3;
 /// A walker, or a family group standing together a few spacings apart, at
 /// (x, z). False when the spot won't do.
 #[allow(clippy::too_many_arguments)]
-fn walkers(world: &mut hecs::World, species: &[Species], s: usize, rng: &mut Rng, land: &Land, store: &Store, models: &[Model], (x, z): (f32, f32), size: u32, wades: bool, now: f32, room: Option<Vec3>) -> bool {
+fn walkers(
+    world: &mut hecs::World,
+    species: &[Species],
+    s: usize,
+    rng: &mut Rng,
+    land: &Land,
+    store: &Store,
+    models: &[Model],
+    (x, z): (f32, f32),
+    size: u32,
+    wades: bool,
+    now: f32,
+    room: Option<Vec3>,
+) -> bool {
     let f = &land.f;
     let sea = f.sea;
     let sp = &species[s];

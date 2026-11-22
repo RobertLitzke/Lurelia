@@ -1,0 +1,16 @@
+{
+  "name": "apple_leaves_autumn",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "Apple leaves in October: still mostly green, going dull yellow, so the red fruit on the crown shows against them.",
+  "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "broad"},
+  "texture": {
+    "pattern": "blotch",
+    "base": [118, 128, 54],
+    "alt": [168, 156, 64],
+    "scale": 5,
+    "contrast": 0.9,
+    "calm": {"base": [126, 134, 62], "alt": [170, 158, 74]}
+  }
+}

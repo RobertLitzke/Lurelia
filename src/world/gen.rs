@@ -220,7 +220,6 @@ impl StudioFloor {
         self.block != 0 && (x - self.block_x).abs() <= self.block_m && (z - self.block_z).abs() <= self.block_m
     }
 
-
     /// How far (x, z) is outside the platform's square, metres; 0 on it.
     pub fn outside(&self, x: f32, z: f32) -> f32 {
         let dx = ((x - self.x).abs() - self.half_m).max(0.0);
@@ -729,25 +728,37 @@ impl Generator {
                 if d.abs().max_element() > 0.995 {
                     continue;
                 }
-                out.push(crate::mesh::Thread { a: pa, b: pb, r: rv, hull, mat: if tube { 0 } else { t.bark }, lone: !tube });
+                out.push(crate::mesh::Thread {
+                    a: pa,
+                    b: pb,
+                    r: rv,
+                    hull,
+                    mat: if tube { 0 } else { t.bark },
+                    lone: !tube,
+                    owned: false,
+                });
             }
         }
         out
     }
 
     /// All the threads of chunk `cy` of column `key`: thin plant stems (from
-    /// `tube_trees`) and thin route rails.
-    pub fn chunk_threads(&self, trees: &[Tree], key: ColKey, cy: i32) -> Vec<crate::mesh::Thread> {
+    /// `tube_trees`), thin route rails and structures' segments. With them,
+    /// one flag per padded voxel for the voxels the segments drew
+    /// (`Shape::thread_vox`), the only ones an `owned` thread may hide; empty
+    /// when no structure segment reaches the chunk.
+    pub fn chunk_threads(&self, trees: &[Tree], key: ColKey, cy: i32) -> (Vec<crate::mesh::Thread>, Vec<bool>) {
         let mut out = Self::threads(trees, key, cy);
         self.rail_threads(key, cy, &mut out);
-        self.structure_threads(key, cy, &mut out);
-        out
+        let mut own = Vec::new();
+        self.structure_threads(key, cy, &mut out, &mut own);
+        (out, own)
     }
 
     /// The `segment` pieces of the structures placed near chunk `cy` of
     /// column `key` (rigging, spokes, braces), turned and moved as the
     /// structure is (`draw_structures`), as threads.
-    fn structure_threads(&self, key: ColKey, cy: i32, out: &mut Vec<crate::mesh::Thread>) {
+    fn structure_threads(&self, key: ColKey, cy: i32, out: &mut Vec<crate::mesh::Thread>, own: &mut Vec<bool>) {
         let Some(w) = &self.world else { return };
         let step = 1i32 << key.lod;
         let vsize = VOXEL * step as f32;
@@ -777,6 +788,7 @@ impl Generator {
                 world / vsize - base
             };
             let scale = 1.0 / step as f32;
+            let mut marked = false;
             for t in &s.threads {
                 let (a, b) = (to(t.a), to(t.b));
                 let hull = t.hull * scale + if step > 1 { 0.5 } else { 0.0 };
@@ -790,7 +802,29 @@ impl Generator {
                 if r > crate::mesh::THREAD_MAX_R || d.abs().max_element() > 0.9999 {
                     continue;
                 }
-                out.push(crate::mesh::Thread { a, b, r, hull, mat: t.mat, lone: false });
+                out.push(crate::mesh::Thread {
+                    a,
+                    b,
+                    r,
+                    hull,
+                    mat: t.mat,
+                    lone: false,
+                    owned: true,
+                });
+                if !marked {
+                    marked = true;
+                    if own.is_empty() {
+                        *own = vec![false; PAD3];
+                    }
+                    let (w, d) = (s.size[0] as u32, s.size[2] as u32);
+                    for &i in &s.thread_vox {
+                        let (x, z, y) = (i % w, (i / w) % d, i / (w * d));
+                        let c = to([x as f32 + 0.5, y as f32 + 0.5, z as f32 + 0.5]).floor();
+                        if c.x >= 0.0 && c.y >= 0.0 && c.z >= 0.0 && (c.x as usize) < PAD && (c.y as usize) < PADY && (c.z as usize) < PAD {
+                            own[c.x as usize + c.y as usize * PAD * PAD + c.z as usize * PAD] = true;
+                        }
+                    }
+                }
             }
         }
     }
@@ -862,7 +896,15 @@ impl Generator {
                         // Dead straight along an axis: its voxels are already a
                         // clean bar. Anything off it, however slightly, steps.
                         if inside && d.abs().max_element() <= 0.9999 {
-                            out.push(crate::mesh::Thread { a: prev, b: next, r: rv, hull, mat: r.mat, lone: false });
+                            out.push(crate::mesh::Thread {
+                                a: prev,
+                                b: next,
+                                r: rv,
+                                hull,
+                                mat: r.mat,
+                                lone: false,
+                                owned: false,
+                            });
                         }
                         prev = next;
                     }
@@ -1442,6 +1484,14 @@ impl Generator {
                 };
                 if t.press(&mut press) {
                     any_solid = true;
+                }
+            }
+            // Headroom the ribbons kept clear of the trees is plain air again.
+            if !route_items.is_empty() {
+                for m in v.iter_mut() {
+                    if *m == super::material::KEEP_AIR {
+                        *m = AIR;
+                    }
                 }
             }
             add_nanos(3, t_draw);
@@ -2257,8 +2307,12 @@ fn draw_structures(w: &super::fields::World, list: &[u32], v: &mut [u8; PAD3], o
     let mossy = w.lib.material("mossy_stone");
     // Under the water a sunk structure crusts over with reef rock and coral
     // instead of moss (docs/UNDERWATER.md): whichever of these the world has.
-    let crusts: Vec<u8> = ["reef_lime", "coral_rose", "coral_violet", "coral_gold", "coral_white"].iter().filter_map(|n| w.lib.material(n)).collect();
+    let crusts: Vec<u8> = ["reef_lime", "coral_rose", "coral_violet", "coral_gold", "coral_white"]
+        .iter()
+        .filter_map(|n| w.lib.material(n))
+        .collect();
     let sea = w.f.sea;
+    let step = (vsize * VPM).round().max(1.0) as i32;
     // Padded cells whose centres may fall in voxels lo..hi along one axis
     // (one cell of slack each way; the exact test is per cell below).
     let span = |lo: i32, hi: i32, o: f32, n: usize| {
@@ -2291,12 +2345,15 @@ fn draw_structures(w: &super::fields::World, list: &[u32], v: &mut [u8; PAD3], o
                 if wx < x0 || wx >= x1 || wz < z0 || wz >= z1 {
                     continue;
                 }
+                let cell_x = ((o.x + px as f32 * vsize) * VPM).round() as i32;
+                let cell_z = ((o.z + pz as f32 * vsize) * VPM).round() as i32;
                 let (lx, lz) = unrotate(wx - x0, wz - z0, s.size, p.rot);
                 let ground = info[pz * PAD + px].h;
                 for py in ys.clone() {
                     let ym = o.y + (py as f32 + 0.5) * vsize;
                     let wy = (ym * VPM).floor() as i32;
                     let ly = wy - p.origin[1];
+                    let cell_y = ((o.y + py as f32 * vsize) * VPM).round() as i32;
                     if ly >= s.top || ly < -found {
                         continue;
                     }
@@ -2310,7 +2367,21 @@ fn draw_structures(w: &super::fields::World, list: &[u32], v: &mut [u8; PAD3], o
                         }
                         continue;
                     }
-                    let (mut m, part) = s.get(lx, ly, lz);
+                    let (mut m, mut part) = s.get(lx, ly, lz);
+                    // A coarse cell (0.5 m and up) whose centre falls in air
+                    // takes the commonest solid material among the 0.25 m
+                    // voxels it covers, so thin shells survive at distance:
+                    // a steep roof two voxels thick, sampled once a cell,
+                    // came out as rows with the loft showing between them.
+                    let (mut lx, mut ly, mut lz, mut wx, mut wy, mut wz) = (lx, ly, lz, wx, wy, wz);
+                    if m == AIR && step > 1 {
+                        if let Some(c) = coarse_fill(s, p.rot, [x0, z0, x1, z1], p.origin[1], [cell_x, cell_y, cell_z], step, |m| p.age > 0.0 || !w.doors.contains(&m)) {
+                            (wx, wy, wz) = (c[0], c[1], c[2]);
+                            (lx, lz) = unrotate(wx - x0, wz - z0, s.size, p.rot);
+                            ly = wy - p.origin[1];
+                            (m, part) = s.get(lx, ly, lz);
+                        }
+                    }
                     // A door on a structure that is kept up is a platform,
                     // not terrain (`platforms::doors_in`): the leaf stands
                     // in the opening and slides out of it, so the voxels
@@ -2377,6 +2448,45 @@ fn draw_structures(w: &super::fields::World, list: &[u32], v: &mut [u8; PAD3], o
         }
     }
     any
+}
+
+/// For a coarse cell of `step` 0.25 m voxels a side whose lowest corner is
+/// world voxel `cell`: a voxel of the structure's commonest solid material
+/// in it (`keep` says which materials count), or None when it is all air.
+/// Looks at up to four voxels along each axis.
+fn coarse_fill(s: &super::shape::Shape, rot: u8, foot: [i32; 4], oy: i32, cell: [i32; 3], step: i32, keep: impl Fn(u8) -> bool) -> Option<[i32; 3]> {
+    use super::shape::{unrotate, CARVE};
+    let stride = (step / 4).max(1);
+    let first = stride / 2;
+    // (material, count, a voxel of it); a cell rarely holds more than three.
+    let mut seen: [(u8, u32, [i32; 3]); 6] = [(AIR, 0, [0; 3]); 6];
+    for dy in (first..step).step_by(stride as usize) {
+        let wy = cell[1] + dy;
+        let ly = wy - oy;
+        if ly < 0 || ly >= s.size[1] {
+            continue;
+        }
+        for dz in (first..step).step_by(stride as usize) {
+            let wz = cell[2] + dz;
+            for dx in (first..step).step_by(stride as usize) {
+                let wx = cell[0] + dx;
+                if wx < foot[0] || wx >= foot[2] || wz < foot[1] || wz >= foot[3] {
+                    continue;
+                }
+                let (lx, lz) = unrotate(wx - foot[0], wz - foot[1], s.size, rot);
+                let m = s.get(lx, ly, lz).0;
+                if m == AIR || m == CARVE || !keep(m) {
+                    continue;
+                }
+                if let Some(e) = seen.iter_mut().find(|e| e.1 > 0 && e.0 == m) {
+                    e.1 += 1;
+                } else if let Some(e) = seen.iter_mut().find(|e| e.1 == 0) {
+                    *e = (m, 1, [wx, wy, wz]);
+                }
+            }
+        }
+    }
+    seen.iter().filter(|e| e.1 > 0).max_by_key(|e| e.1).map(|e| e.2)
 }
 
 /// The largest axis distance (L-infinity) from `p` to the nearest point of

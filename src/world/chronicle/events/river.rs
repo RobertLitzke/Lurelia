@@ -255,7 +255,7 @@ pub fn settle_water(f: &mut Fields, lakes: &super::lake::Lakes, rivers: &Rivers)
             // only, for the churn and the push away from the fall.
             each_near(f, at, r, |f: &mut Fields, i, _, _| {
                 if f.h[i] < fall.foot {
-                    f.inland.entry(i as u32).or_insert(Wet { level: fall.foot, flow: [0.0, 0.0] });
+                    f.inland.entry(i as u32).or_insert(Wet { level: fall.foot, flow: [0.0, 0.0], ebb: 1.0e4 });
                 }
             });
         }
@@ -270,6 +270,37 @@ pub fn settle_water(f: &mut Fields, lakes: &super::lake::Lakes, rivers: &Rivers)
     }
 }
 
+/// Carry a river's line on past its end, a metre at a time, down to low water
+/// (`low`): straight on at first, leaning downhill as the flats fall. Only a
+/// river that ends at the sea: one ending in a lake, or still up on the land,
+/// is left alone.
+fn extend_to_low(f: &Fields, line: &mut Vec<Vec2>, low: f32, owner: &HashMap<u32, f32>) {
+    let m = line.len();
+    if m < 2 {
+        return;
+    }
+    let end = line[m - 1];
+    let in_lake = owner.get(&(f.idx(end.x, end.y) as u32)).is_some_and(|o| *o == f32::NEG_INFINITY);
+    if in_lake || f.height(end.x, end.y) > f.sea + 1.0 {
+        return;
+    }
+    let mut dir = (end - line[m - 2]).normalize_or(Vec2::X);
+    let mut p = end;
+    for _ in 0..800 {
+        if f.height(p.x, p.y) < low - 0.3 {
+            break;
+        }
+        let e = 2.0;
+        let g = Vec2::new(f.height(p.x + e, p.y) - f.height(p.x - e, p.y), f.height(p.x, p.y + e) - f.height(p.x, p.y - e));
+        dir = (dir * 0.85 - g.normalize_or_zero() * 0.15).normalize_or(dir);
+        p += dir;
+        if p.x < 1.0 || p.y < 1.0 || p.x > f.size - 1.0 || p.y > f.size - 1.0 {
+            break;
+        }
+        line.push(p);
+    }
+}
+
 /// How far past the water's edge the river's water entries reach, metres:
 /// the drawn surface runs this far under the bank so the shore is wherever
 /// the ground rises through it.
@@ -279,11 +310,17 @@ fn settle_one(f: &mut Fields, rec: &RiverRec, owner: &mut HashMap<u32, f32>) {
     if rec.line.len() < 2 {
         return;
     }
-    let line = resample(&rec.line);
+    let mut line = resample(&rec.line);
+    let sea = f.sea;
+    let low = f.low_water;
+    // With a tide, a river that reaches the sea runs on down to low water.
+    if low < sea - 0.01 {
+        extend_to_low(f, &mut line, low, owner);
+    }
+    let line = line;
     let m = line.len();
     let half = rec.width * 0.5;
     let deep = mid_depth(rec.depth);
-    let sea = f.sea;
     let dirs: Vec<Vec2> = (0..m).map(|k| (line[(k + 1).min(m - 1)] - line[k.saturating_sub(1)]).normalize_or_zero()).collect();
 
     // Lowest ground in the channel and on the banks just outside it, in a
@@ -322,9 +359,9 @@ fn settle_one(f: &mut Fields, rec: &RiverRec, owner: &mut HashMap<u32, f32>) {
     };
     let source = lake_at(0);
     let start = if source.is_some() { (0..m).find(|&k| lake_at(k).is_none()).unwrap_or(m) } else { 0 };
-    let (mouth, floor) = match (start..m).find_map(|k| lake_at(k).map(|l| (k, l))) {
-        Some((k, l)) => (k, l),
-        None => ((start..m).find(|&k| rim[k] < sea + 0.3).unwrap_or(m), sea),
+    let ((mouth, floor), to_sea) = match (start..m).find_map(|k| lake_at(k).map(|l| (k, l))) {
+        Some((k, l)) => ((k, l), false),
+        None => (((start..m).find(|&k| rim[k] < sea + 0.3).unwrap_or(m), sea), true),
     };
     for (k, l) in level.iter_mut().enumerate() {
         if let Some(src) = source {
@@ -432,6 +469,20 @@ fn settle_one(f: &mut Fields, rec: &RiverRec, owner: &mut HashMap<u32, f32>) {
             deep_at[a - j] = deep_at[a - j].min(deep * (0.25 + 0.75 * j as f32 / 5.0));
         }
     }
+    // With a tide, the channel past the mouth runs on across the flats it
+    // uncovers, cut a little into them and falling with them, down to low
+    // water: at high water the sea covers it, and as the tide goes out the
+    // river follows it down instead of stopping at the old mouth. Without a
+    // tide nothing past the mouth changes.
+    let tidal = to_sea && low < sea - 0.01;
+    if tidal {
+        for k in mouth..m {
+            level[k] = floor.min(rim[k] - 0.3 + deep_at[k]);
+            if k > mouth {
+                level[k] = level[k].min(level[k - 1]);
+            }
+        }
+    }
     // Current along the line: faster where the water falls faster.
     let flow: Vec<Vec2> = (0..m)
         .map(|k| {
@@ -452,6 +503,23 @@ fn settle_one(f: &mut Fields, rec: &RiverRec, owner: &mut HashMap<u32, f32>) {
             splash: Vec3::new(line[b].x, level[b], line[b].y),
         });
     }
+
+    // How far the tide may draw the water down at each station
+    // (`Wet::ebb`): a river that runs to the sea, below its last waterfall,
+    // down to a hand over its bed. A river ending in a lake, and the water
+    // above a fall, keep their level.
+    // Past the mouth the water stands at the sea's level and drains to a hand
+    // over the channel's bed (`level` there is the bed plus `deep_at`).
+    let tidal_from = falls.iter().filter(|f| f.1 <= mouth).map(|f| f.1).max().unwrap_or(0);
+    let ebb = |k: usize| {
+        if tidal && k >= mouth {
+            (floor - level[k] + deep_at[k] - 0.1).max(0.0)
+        } else if to_sea && k >= tidal_from {
+            (deep_at[k] - 0.1).max(0.0)
+        } else {
+            0.0
+        }
+    };
 
     // Nearest station of every cell within reach.
     let reach = half + 6.0;
@@ -526,7 +594,17 @@ fn settle_one(f: &mut Fields, rec: &RiverRec, owner: &mut HashMap<u32, f32>) {
             if owner.get(&key).is_none_or(|&o| d < o) {
                 owner.insert(key, d);
                 let v = if s < 1.0 { flow[k] * (1.0 - 0.6 * s * s) } else { Vec2::ZERO };
-                f.inland.insert(key, Wet { level: l, flow: [v.x, v.y] });
+                f.inland.insert(key, Wet { level: l, flow: [v.x, v.y], ebb: ebb(k) });
+            }
+        } else if tidal && k >= mouth && d < half + MARGIN && rim[k] > low {
+            // The channel on past the mouth, down to low water. At high water
+            // the sea covers it and these entries, at the sea's level, draw
+            // nothing (rivers.rs marks them); as the tide goes out they drain
+            // to a hand over the bed and the river runs on down them.
+            let key = i as u32;
+            if owner.get(&key).is_none_or(|&o| d < o) {
+                owner.insert(key, d);
+                f.inland.insert(key, Wet { level: floor, flow: [0.0, 0.0], ebb: ebb(k) });
             }
         }
     }

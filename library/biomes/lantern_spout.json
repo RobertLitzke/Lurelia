@@ -22,7 +22,7 @@
     {"creature": "firefly", "count": 40},
     {"creature": "glass_dragonfly", "count": 6},
     {"creature": "dragonfly", "count": 4},
-    {"creature": "lantern_moth", "count": 10},
+    {"creature": "glassmoth", "morph": "lantern", "count": 10},
     {"creature": "crystal_bat", "count": 4}
   ],
   "mist": 0.35

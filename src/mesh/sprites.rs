@@ -36,6 +36,25 @@ pub const ARCH: u32 = 3;
 /// a sprite cannot read the fields: `scatter`'s `water` looks the level up
 /// once per patch, so a lake or a river carries pads as the sea does.
 pub const FLOAT: u32 = 4;
+/// Kelp: a strand from a holdfast on the bed, loose in the water, which the
+/// shader shapes to the sea as it stands now (foliage.wgsl `kelp_at`): it
+/// stands up through deep water, and what is longer than the water is deep
+/// lies along the surface, so it rides the tide. Every sprite of a strand
+/// carries the holdfast as its root, the strand's heading as `angle` and its
+/// length in eighths of a metre as `height`; word3 is texture layer:8
+/// part:2 index:8 blade length:6 (quarter metres). Part STIPE is segment
+/// `index` of the stipe, BLADE a blade at `index`/255 along it turned by
+/// `seed`, BULB the float at its end.
+pub const STRAND: u32 = 5;
+pub const STIPE: u32 = 0;
+pub const BLADE: u32 = 1;
+pub const BULB: u32 = 2;
+
+/// Stipe segments in a strand `len` metres long (as stored: eighths). The
+/// shader works the same number out from the stored length (`kelp_segs`).
+pub fn kelp_segs(len: f32) -> u32 {
+    ((len / 0.8).ceil() as u32).clamp(2, 40)
+}
 
 /// Sprite texture layers, in the order foliage textures are built.
 pub mod layer {
@@ -104,11 +123,31 @@ pub mod layer {
     /// Lupine: a clump of dense violet flower spikes over fans of leaves
     /// (Ribshore's dunes), in its own colours like fireweed.
     pub const LUPINE: u32 = 34;
-    pub const COUNT: u32 = 35;
+    /// Other leaf shapes, each a filler (A) and a rim (B) card drawn like
+    /// LEAVES_A and LEAVES_B (sprite_tex.rs `cluster` and `rim`): broad ovate
+    /// leaves, rounded five-lobed bramble leaves, long narrow willow leaves and
+    /// heart-shaped ivy leaves.
+    pub const LEAVES_BROAD_A: u32 = 35;
+    pub const LEAVES_BROAD_B: u32 = 36;
+    pub const LEAVES_LOBED_A: u32 = 37;
+    pub const LEAVES_LOBED_B: u32 = 38;
+    pub const LEAVES_NARROW_A: u32 = 39;
+    pub const LEAVES_NARROW_B: u32 = 40;
+    pub const LEAVES_HEART_A: u32 = 41;
+    pub const LEAVES_HEART_B: u32 = 42;
+    /// Maple leaves: three long toothed lobes and two short ones.
+    pub const LEAVES_MAPLE_A: u32 = 43;
+    pub const LEAVES_MAPLE_B: u32 = 44;
+    /// Kelp (kind STRAND): a length of stipe, a blade, and a bull kelp's
+    /// float, painted grey and tinted by the plant's own materials.
+    pub const KELP_STIPE: u32 = 45;
+    pub const KELP_BLADE: u32 = 46;
+    pub const KELP_FLOAT: u32 = 47;
+    pub const COUNT: u32 = 48;
 
     /// Layers numbered after FROND that are still drawn small (sprite_tex.rs).
     pub fn small(l: u32) -> bool {
-        l < FROND || l == FLOWERS_YELLOW || l == FLOWERS_RED || l == ROSES || l == VINE_FLOWERS || l == WISTERIA || l == GLOW_THREADS || l == LILY_FLOWER
+        l < FROND || l >= LEAVES_BROAD_A || l == FLOWERS_YELLOW || l == FLOWERS_RED || l == ROSES || l == VINE_FLOWERS || l == WISTERIA || l == GLOW_THREADS || l == LILY_FLOWER
     }
 
     /// Blooms drawn in their own colour on a canopy, not the block's.
@@ -137,7 +176,7 @@ pub const STILL: u32 = 1 << 20;
 /// foliage.wgsl doesn't hide it at the waterline (eelgrass).
 pub const WET: u32 = 1 << 21;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 enum Rule {
     /// Tufts on the top face. In a meadow, a noise field decides how much grows
     /// tall (density runs from `sparse` to `dense` with it); elsewhere `tall` is fixed.
@@ -160,7 +199,16 @@ enum Rule {
     /// Clusters on open faces of a canopy.
     /// `tint` is the material whose colour the leaf cards take; 0 is the
     /// block's own. An autumn vine is a brown stem with red leaves on it.
-    Canopy { layers: &'static [u32], chance: f32, size: (f32, f32), tint: u8 },
+    /// `mix`: a leaf material shared by many species (plain LEAVES grows on
+    /// oaks, maples, alders and hazels alike) takes one of `MIXED` per grove
+    /// instead of `layers`, so neighbouring woods differ in leaf shape.
+    Canopy {
+        layers: &'static [u32],
+        chance: f32,
+        size: (f32, f32),
+        tint: u8,
+        mix: bool,
+    },
     /// Branch sprays out of the open sides of a conifer, `size` long.
     Branches { chance: f32, size: (f32, f32) },
     /// A whole small plant drawn as sprites from the one voxel that marks it
@@ -168,7 +216,177 @@ enum Rule {
     Herb(Herb),
 }
 
-#[derive(Clone, Copy)]
+/// Leaf-card pairs, one per leaf shape (render/sprite_tex.rs).
+const POINTED: &[u32] = &[layer::LEAVES_A, layer::LEAVES_B];
+const BROAD: &[u32] = &[layer::LEAVES_BROAD_A, layer::LEAVES_BROAD_B];
+const LOBED: &[u32] = &[layer::LEAVES_LOBED_A, layer::LEAVES_LOBED_B];
+const NARROW: &[u32] = &[layer::LEAVES_NARROW_A, layer::LEAVES_NARROW_B];
+const HEART: &[u32] = &[layer::LEAVES_HEART_A, layer::LEAVES_HEART_B];
+const MAPLE: &[u32] = &[layer::LEAVES_MAPLE_A, layer::LEAVES_MAPLE_B];
+/// The shapes a `mix` canopy picks from, one per grove. Narrow leaves are
+/// left out: they read as willow, which plain LEAVES never is.
+const MIXED: [&[u32]; 4] = [POINTED, BROAD, LOBED, HEART];
+/// Side of a grove (voxels, 16 m): the trees in one share a leaf shape.
+const GROVE: i32 = 64;
+
+/// The leaf shape a `mix` canopy takes at voxel column (`wx`, `wz`): one per
+/// GROVE cell, the cell edges warped by noise so the border between two
+/// shapes wanders through a wood instead of running straight.
+fn grove(wx: i32, wz: i32) -> &'static [u32] {
+    let (fx, fz) = (wx as f32, wz as f32);
+    let k = 1.0 / GROVE as f32;
+    let gx = (fx + perlin2(fx * k * 0.5, fz * k * 0.5, 611) * GROVE as f32 * 0.6).div_euclid(GROVE as f32) as i32;
+    let gz = (fz + perlin2(fx * k * 0.5, fz * k * 0.5, 612) * GROVE as f32 * 0.6).div_euclid(GROVE as f32) as i32;
+    MIXED[hash3(gx, 0, gz, 77) as usize % MIXED.len()]
+}
+
+/// The leaf shapes a `"leaves"` rule may name (render/sprite_tex.rs draws
+/// each); a leaves rule with none takes one of `MIXED` per grove.
+pub const LEAF_SHAPES: [(&str, &[u32]); 6] = [("pointed", POINTED), ("broad", BROAD), ("lobed", LOBED), ("narrow", NARROW), ("heart", HEART), ("maple", MAPLE)];
+
+/// The rules a material's `sprites` entry may name (`library_rule`).
+pub const SPRITE_RULES: [&str; 40] = [
+    "agave stalk",
+    "yucca stalk",
+    "cattail leaves",
+    "cattail head",
+    "sawgrass",
+    "cane",
+    "palmetto",
+    "fern",
+    "lupine",
+    "fireweed",
+    "heather",
+    "glassbloom",
+    "huckleberry",
+    "thimbleberry",
+    "rabbitbrush",
+    "rabbitbrush flowers",
+    "ocotillo flower",
+    "ocotillo cane",
+    "tamarisk",
+    "pine duff",
+    "juniper",
+    "palm frond",
+    "rose bush",
+    "sage",
+    "wildflower",
+    "steppe grass",
+    "shore grass",
+    "prairie",
+    "grass",
+    "forest floor",
+    "needles",
+    "glow threads",
+    "karst moss",
+    "wisteria",
+    "vine leaves",
+    "autumn vine",
+    "vine",
+    "flower",
+    "leaves",
+    "none",
+];
+
+/// The rule a material's name would once have chosen: what grew on library
+/// materials before each said so in its `sprites` entry. `--validate` uses it
+/// to point at a material whose name says LEAVES or GRASS but which declares
+/// nothing, since that is usually a forgotten entry rather than a choice.
+/// `name` is the table's form, upper case with spaces (matlib::name).
+pub fn guess(name: &str) -> Option<(&'static str, Option<&'static str>)> {
+    let has = |words: &[&str]| words.iter().any(|w| name.contains(w));
+    let exact: [(&str, &'static str); 21] = [
+        ("AGAVE STALK", "agave stalk"),
+        ("YUCCA STALK", "yucca stalk"),
+        ("CATTAIL LEAVES", "cattail leaves"),
+        ("CATTAIL HEAD", "cattail head"),
+        ("SAWGRASS BLADES", "sawgrass"),
+        ("CANE LEAVES", "cane"),
+        ("PALMETTO FRONDS", "palmetto"),
+        ("HEATHER", "heather"),
+        ("GLASSBLOOM", "glassbloom"),
+        ("HUCKLEBERRY", "huckleberry"),
+        ("THIMBLEBERRY", "thimbleberry"),
+        ("RABBITBRUSH", "rabbitbrush"),
+        ("RABBITBRUSH FLOWERS", "rabbitbrush flowers"),
+        ("OCOTILLO FLOWER", "ocotillo flower"),
+        ("OCOTILLO CANE", "ocotillo cane"),
+        ("TAMARISK", "tamarisk"),
+        ("PINE DUFF", "pine duff"),
+        ("JUNIPER FOLIAGE", "juniper"),
+        ("PALM FROND", "palm frond"),
+        ("ROSE BUSH", "rose bush"),
+        ("SAGE", "sage"),
+    ];
+    // FERN, LUPINE and FIREWEED came before the exact names below them in the
+    // old order, but no exact name holds them, so the order is the same.
+    if name == "FERN" || name.contains("FERN ") {
+        return Some(("fern", None));
+    }
+    if name.contains("LUPINE") {
+        return Some(("lupine", None));
+    }
+    if name.contains("FIREWEED") {
+        return Some(("fireweed", None));
+    }
+    if let Some((_, k)) = exact.iter().find(|(n, _)| *n == name) {
+        return Some((k, None));
+    }
+    let key = if name.starts_with("WILDFLOWER") {
+        "wildflower"
+    } else if name == "STEPPE GRASS" {
+        "steppe grass"
+    } else if name.contains("SHORE GRASS") {
+        "shore grass"
+    } else if name == "PRAIRIE GRASS" {
+        "prairie"
+    } else if name.contains("GRASS") {
+        "grass"
+    } else if name.contains("FOREST FLOOR") {
+        "forest floor"
+    } else if name.contains("NEEDLES") {
+        "needles"
+    } else if name == "LANTERN FILM" || name == "GLOWWORM CEILING" {
+        "glow threads"
+    } else if name == "KARST MOSS" {
+        "karst moss"
+    } else if name.contains("WISTERIA") {
+        "wisteria"
+    } else if name == "VINE LEAVES" {
+        "vine leaves"
+    } else if name == "AUTUMN VINE" {
+        "autumn vine"
+    } else if name.contains("VINE") {
+        "vine"
+    } else if name.contains("FLOWER") && !name.contains("GRASS") {
+        "flower"
+    } else if name.contains("LEAVES") || name.contains("MAPLE") {
+        let shape = if has(&["WILLOW", "BAMBOO", "REED", "SILVER"]) {
+            Some("narrow")
+        } else if has(&["MAPLE", "GOLD LEAVES"]) {
+            Some("maple")
+        } else if has(&["BRAMBLE"]) {
+            Some("lobed")
+        } else if has(&["IVY", "COTTONWOOD", "HYACINTH"]) {
+            Some("heart")
+        } else if has(&["BEECH", "TUPELO", "GLOSSY", "LIVE OAK", "BUCKTHORN", "PROTEA"]) {
+            Some("broad")
+        } else {
+            None
+        };
+        // A MAPLE name without LEAVES and no shape: nothing (it had a shape,
+        // maple, so this does not happen, but the old rule said so).
+        if shape.is_none() && !name.contains("LEAVES") {
+            return None;
+        }
+        return Some(("leaves", shape));
+    } else {
+        return None;
+    };
+    Some((key, None))
+}
+
+#[derive(Clone, Copy, Debug)]
 enum Herb {
     /// 8 to 12 arching fronds round the root.
     Fern,
@@ -197,6 +415,8 @@ enum Herb {
         size: (f32, f32),
         bloom: f32,
     },
+    /// Kelp (kind STRAND) from its marker voxel on the bed: matlib `Kelp`.
+    Kelp(crate::world::matlib::Kelp),
 }
 
 fn rule(m: u8) -> Option<Rule> {
@@ -222,9 +442,17 @@ fn rule(m: u8) -> Option<Rule> {
             wild: false,
             short: 1.0,
         }),
-        LEAVES | BIRCH_LEAVES | LEAVES_AUTUMN => Some(Rule::Canopy {
+        LEAVES | LEAVES_AUTUMN => Some(Rule::Canopy {
+            mix: true,
             tint: 0,
-            layers: &[layer::LEAVES_A, layer::LEAVES_B],
+            layers: POINTED,
+            chance: 0.5,
+            size: (2.2, 3.2),
+        }),
+        BIRCH_LEAVES => Some(Rule::Canopy {
+            mix: false,
+            tint: 0,
+            layers: POINTED,
             chance: 0.5,
             size: (2.2, 3.2),
         }),
@@ -233,16 +461,37 @@ fn rule(m: u8) -> Option<Rule> {
     }
 }
 
-/// Library materials (ids 17 and up) go by name for now. Better would be a
-/// "sprites" entry in each material's JSON, so a new material can say what
-/// grows on it.
+/// Library materials (ids 17 and up) grow what their `sprites` entry names
+/// (matlib::sprites). A material that names nothing grows nothing, except
+/// that ground with a `grass` block grows short dry tufts, and a `floating`
+/// material its pads.
 fn library_rule(m: u8) -> Option<Rule> {
-    let name = crate::world::matlib::name(m)?;
+    rule_for(m, crate::world::matlib::sprites(m))
+}
+
+/// The rule for material `m` growing `spec` (a rule and a leaf shape).
+fn rule_for(m: u8, spec: Option<(&str, Option<&str>)>) -> Option<Rule> {
+    let own = crate::world::matlib::grass(m);
+    // Floating leaves, whatever the material is called: its marker voxel sits
+    // on the bed and the pads lie on the water over it.
+    if let Some(k) = crate::world::matlib::kelp(m) {
+        return Some(Rule::Herb(Herb::Kelp(k)));
+    }
+    if crate::world::matlib::has(m, crate::world::matlib::flag::FLOATING) {
+        return Some(Rule::Herb(Herb::Pads {
+            layer: layer::LILY_PAD,
+            flower: layer::LILY_FLOWER,
+            count: (4, 9),
+            spread: 3.8,
+            size: (2.2, 4.4),
+            bloom: 0.13,
+        }));
+    }
+    let (key, shape) = spec.unwrap_or(("", None));
     // Prairie grass grows the four-colour flower fields; wildflower grass (a
     // hay meadow) grows them thicker, short grass included.
-    let wild = name.starts_with("WILDFLOWER");
-    let prairie = name == "PRAIRIE GRASS" || wild;
-    let own = crate::world::matlib::grass(m);
+    let wild = key == "wildflower";
+    let prairie = key == "prairie" || wild;
     let ground = |sparse: f32, dense: f32, meadow, tall| {
         let [sparse, dense, short] = own.unwrap_or([sparse, dense, 1.0]);
         Some(Rule::Ground {
@@ -257,91 +506,75 @@ fn library_rule(m: u8) -> Option<Rule> {
         })
     };
     let clumps = |layer, count, spread, height, aspect| Some(Rule::Herb(Herb::Clumps { layer, count, spread, height, aspect }));
-    // Floating leaves, whatever the material is called: its marker voxel sits
-    // on the bed and the pads lie on the water over it.
-    if crate::world::matlib::has(m, crate::world::matlib::flag::FLOATING) {
-        return Some(Rule::Herb(Herb::Pads {
-            layer: layer::LILY_PAD,
-            flower: layer::LILY_FLOWER,
-            count: (4, 9),
-            spread: 3.8,
-            size: (2.2, 4.4),
-            bloom: 0.13,
-        }));
-    }
-    if name == "AGAVE STALK" {
-        return Some(Rule::Herb(Herb::Stalk {
+    let canopy = |layers: &'static [u32], chance, size| {
+        Some(Rule::Canopy {
+            mix: false,
+            tint: 0,
+            layers,
+            chance,
+            size,
+        })
+    };
+    match key {
+        "agave stalk" => Some(Rule::Herb(Herb::Stalk {
             layer: layer::AGAVE_STALK,
             dry: layer::AGAVE_STALK_DRY,
             dry_share: 0.35,
             height: (8.4, 14.0),
             aspect: 0.6,
-        }));
-    }
-    if name == "YUCCA STALK" {
-        return Some(Rule::Herb(Herb::Stalk {
+        })),
+        "yucca stalk" => Some(Rule::Herb(Herb::Stalk {
             layer: layer::YUCCA_STALK,
             dry: layer::YUCCA_STALK,
             dry_share: 0.0,
             height: (4.5, 8.0),
             aspect: 0.32,
-        }));
-    }
-    // Marsh plants, before anything that matches on GRASS.
-    if name == "CATTAIL LEAVES" {
-        return clumps(layer::CATTAIL, (2, 3), 0.8, (6.0, 8.5), 0.5);
-    }
-    if name == "CATTAIL HEAD" {
-        return Some(Rule::Herb(Herb::Stalk {
+        })),
+        "cattail leaves" => clumps(layer::CATTAIL, (2, 3), 0.8, (6.0, 8.5), 0.5),
+        "cattail head" => Some(Rule::Herb(Herb::Stalk {
             layer: layer::CATTAIL_HEAD,
             dry: layer::CATTAIL_HEAD,
             dry_share: 0.0,
             height: (7.0, 9.6),
             aspect: 0.14,
-        }));
-    }
-    if name == "SAWGRASS BLADES" {
-        return clumps(layer::SAWGRASS, (2, 4), 1.4, (5.0, 6.8), 0.85);
-    }
-    if name == "CANE LEAVES" {
-        return clumps(layer::CANE, (3, 5), 1.1, (11.0, 15.0), 0.45);
-    }
-    if name == "PALMETTO FRONDS" {
-        return clumps(layer::PALMETTO, (2, 3), 1.3, (3.0, 4.6), 1.3);
-    }
-    if name == "FERN" || name.contains("FERN ") {
-        Some(Rule::Herb(Herb::Fern))
-    } else if name.contains("LUPINE") {
-        clumps(layer::LUPINE, (3, 4), 1.4, (2.6, 4.2), 0.75)
-    } else if name.contains("FIREWEED") {
-        clumps(layer::FIREWEED, (2, 3), 1.2, (4.0, 6.6), 0.6)
-    } else if name == "HEATHER" {
+        })),
+        "sawgrass" => clumps(layer::SAWGRASS, (2, 4), 1.4, (5.0, 6.8), 0.85),
+        "cane" => clumps(layer::CANE, (3, 5), 1.1, (11.0, 15.0), 0.45),
+        "palmetto" => clumps(layer::PALMETTO, (2, 3), 1.3, (3.0, 4.6), 1.3),
+        "fern" => Some(Rule::Herb(Herb::Fern)),
+        "lupine" => clumps(layer::LUPINE, (3, 4), 1.4, (2.6, 4.2), 0.75),
+        "fireweed" => clumps(layer::FIREWEED, (2, 3), 1.2, (4.0, 6.6), 0.6),
         // A low mat: several wide, short clumps run together.
-        clumps(layer::HEATHER, (4, 6), 2.4, (1.4, 2.6), 1.4)
-    } else if name == "GLASSBLOOM" {
-        clumps(layer::GLASSBLOOM, (2, 3), 1.0, (3.6, 5.6), 0.9)
-    } else if name == "HUCKLEBERRY" {
+        "heather" => clumps(layer::HEATHER, (4, 6), 2.4, (1.4, 2.6), 1.4),
+        "glassbloom" => clumps(layer::GLASSBLOOM, (2, 3), 1.0, (3.6, 5.6), 0.9),
         // A loose, knee-to-waist-high bush: several clumps run together.
-        clumps(layer::HUCKLEBERRY, (3, 5), 2.2, (3.0, 4.6), 1.25)
-    } else if name == "THIMBLEBERRY" {
-        clumps(layer::THIMBLEBERRY, (3, 4), 2.0, (3.2, 5.0), 1.2)
-    } else if name == "RABBITBRUSH" {
+        "huckleberry" => clumps(layer::HUCKLEBERRY, (3, 5), 2.2, (3.0, 4.6), 1.25),
+        "thimbleberry" => clumps(layer::THIMBLEBERRY, (3, 4), 2.0, (3.2, 5.0), 1.2),
         // A rounded bush of upright stems: a few wide clumps run together.
-        clumps(layer::RABBITBRUSH, (3, 4), 1.4, (2.6, 4.0), 1.15)
-    } else if name == "TAMARISK" {
+        "rabbitbrush" => clumps(layer::RABBITBRUSH, (3, 4), 1.4, (2.6, 4.0), 1.15),
+        // The flower heads at a rabbitbrush's cane tips: the marker voxels
+        // there draw no faces, only a fine spray in the flowers' mustard
+        // yellow (SAGE, tinted by the material), so a head is sprites rather
+        // than a 0.25 m cube.
+        "rabbitbrush flowers" => clumps(layer::SAGE, (1, 2), 0.8, (1.0, 1.5), 1.2),
+        // The scarlet flame at an ocotillo's cane tip: a narrow feathery
+        // spike (NEEDLES, tinted by the material).
+        "ocotillo flower" => clumps(layer::NEEDLES, (1, 2), 0.4, (1.6, 2.4), 0.4),
+        // Small leaves set along the canes, in the leaf green of
+        // ocotillo_leaves (a tint only; no voxel is made of it).
+        "ocotillo cane" => Some(Rule::Canopy {
+            mix: false,
+            tint: crate::world::matlib::id_of("ocotillo_leaves").unwrap_or(m),
+            layers: NARROW,
+            chance: 0.45,
+            size: (0.7, 1.1),
+        }),
         // Feathery scale-leaved sprays round the tamarisk's crown.
-        Some(Rule::Canopy {
-            tint: 0,
-            layers: &[layer::SAGE],
-            chance: 0.75,
-            size: (2.0, 3.0),
-        })
-    } else if name == "PINE DUFF" {
+        "tamarisk" => canopy(&[layer::SAGE], 0.75, (2.0, 3.0)),
         // Ponderosa parkland: brown needle litter between tan bunchgrass. The
         // tufts take their colour from dry_bunchgrass, not from the duff.
-        let tint = crate::world::matlib::id_of("dry_bunchgrass").unwrap_or(m);
-        Some(Rule::Ground {
-            tint,
+        "pine duff" => Some(Rule::Ground {
+            tint: crate::world::matlib::id_of("dry_bunchgrass").unwrap_or(m),
             sparse: 0.3,
             dense: 0.85,
             meadow: true,
@@ -349,123 +582,70 @@ fn library_rule(m: u8) -> Option<Rule> {
             prairie: false,
             wild: false,
             short: 1.0,
-        })
-    } else if name == "JUNIPER FOLIAGE" {
+        }),
         // Scale-leaved sprays feathering the juniper's clumps, in its own colour.
-        Some(Rule::Canopy {
-            tint: 0,
-            layers: &[layer::SAGE],
-            chance: 0.7,
-            size: (1.6, 2.4),
-        })
-    } else if name == "PALM FROND" {
+        "juniper" => canopy(&[layer::SAGE], 0.7, (1.6, 2.4)),
         // Stiff fans sticking out all round a cabbage palm's head.
-        Some(Rule::Canopy {
-            tint: 0,
-            layers: &[layer::PALMETTO],
-            chance: 0.85,
-            size: (1.8, 2.6),
-        })
-    } else if name == "ROSE BUSH" {
+        "palm frond" => canopy(&[layer::PALMETTO], 0.85, (1.8, 2.6)),
         // Leaves with roses among them, the roses in their own colour.
-        Some(Rule::Canopy {
-            tint: 0,
-            layers: &[layer::LEAVES_B, layer::ROSES, layer::ROSES],
-            chance: 0.8,
-            size: (1.0, 1.6),
-        })
-    } else if name == "SAGE" {
+        "rose bush" => canopy(&[layer::LEAVES_B, layer::ROSES, layer::ROSES], 0.8, (1.0, 1.6)),
         // Small grey leaves feathering the sagebrush's rounded crown.
-        Some(Rule::Canopy {
-            tint: 0,
-            layers: &[layer::SAGE],
-            chance: 0.6,
-            size: (1.8, 2.6),
-        })
-    } else if wild {
-        ground(0.3, 0.9, true, 0.0)
-    } else if name == "STEPPE GRASS" {
+        "sage" => canopy(&[layer::SAGE], 0.6, (1.8, 2.6)),
+        "wildflower" => ground(0.3, 0.9, true, 0.0),
         // Grazed turf in an open arena: low tufts everywhere and no meadow
         // stands of long grass, which in a fight are a wall. `tall` 0.4 picks
         // the tall and seeding cards, whose colour the straw turns gold, over
         // the short card's dark green, and still stands only knee-high.
-        ground(0.3, 0.3, false, 0.4)
-    } else if name.contains("SHORE GRASS") {
-        ground(0.04, 0.35, true, 0.0)
-    } else if name.contains("GRASS") {
-        ground(0.10, 0.85, true, 0.0)
-    } else if name.contains("FOREST FLOOR") {
-        ground(0.12, 0.12, false, 0.2)
-    } else if name.contains("NEEDLES") {
-        Some(Rule::Branches { chance: 0.75, size: (1.7, 2.6) })
-    } else if name == "LANTERN FILM" || name == "GLOWWORM CEILING" {
+        "steppe grass" => ground(0.3, 0.3, false, 0.4),
+        "shore grass" => ground(0.04, 0.35, true, 0.0),
+        "grass" | "prairie" => ground(0.10, 0.85, true, 0.0),
+        "forest floor" => ground(0.12, 0.12, false, 0.2),
+        "needles" => Some(Rule::Branches { chance: 0.75, size: (1.7, 2.6) }),
         // Threads hanging from a glowing cave roof.
-        Some(Rule::Canopy {
-            tint: 0,
-            layers: &[layer::GLOW_THREADS],
-            chance: 0.1,
-            size: (1.0, 2.0),
-        })
-    } else if name == "KARST MOSS" {
+        "glow threads" => canopy(&[layer::GLOW_THREADS], 0.1, (1.0, 2.0)),
         // Now and then a fern sticking out of the moss on a wall.
-        Some(Rule::Canopy {
-            tint: 0,
-            layers: &[layer::FROND],
-            chance: 0.06,
-            size: (1.4, 2.4),
-        })
-    } else if name.contains("WISTERIA") {
+        "karst moss" => canopy(&[layer::FROND], 0.06, (1.4, 2.4)),
         // Wisteria strands: leaves, and racemes hanging all down them.
-        Some(Rule::Canopy {
-            tint: 0,
-            layers: &[layer::LEAVES_B, layer::WISTERIA, layer::WISTERIA, layer::WISTERIA],
-            chance: 0.75,
-            size: (1.7, 2.6),
-        })
-    } else if name == "VINE LEAVES" {
+        "wisteria" => canopy(&[layer::LEAVES_B, layer::WISTERIA, layer::WISTERIA, layer::WISTERIA], 0.75, (1.7, 2.6)),
         // The common vine: small leaves, so a strand stays a strand, and now
         // and then a spray of pale yellow flowers.
-        Some(Rule::Canopy {
-            tint: 0,
-            layers: &[layer::LEAVES_A, layer::LEAVES_B, layer::LEAVES_A, layer::LEAVES_B, layer::VINE_FLOWERS],
-            chance: 0.45,
-            size: (1.2, 1.9),
-        })
-    } else if name == "AUTUMN VINE" {
+        "vine leaves" => canopy(
+            &[layer::LEAVES_HEART_A, layer::LEAVES_HEART_B, layer::LEAVES_HEART_A, layer::LEAVES_HEART_B, layer::VINE_FLOWERS],
+            0.45,
+            (1.2, 1.9),
+        ),
         // A vine in autumn: the stem goes brown and keeps its small leaves,
         // which turn red (maple_red's colour) rather than the stem's.
-        Some(Rule::Canopy {
+        "autumn vine" => Some(Rule::Canopy {
+            mix: false,
             tint: crate::world::matlib::id_of("maple_red").unwrap_or(0),
-            layers: &[layer::LEAVES_A, layer::LEAVES_B],
+            layers: LOBED,
             chance: 0.6,
             size: (1.2, 1.9),
-        })
-    } else if name.contains("VINE") {
+        }),
         // Hanging strands: small leaves, so a strand stays a strand.
-        Some(Rule::Canopy {
-            tint: 0,
-            layers: &[layer::LEAVES_A, layer::LEAVES_B],
-            chance: 0.4,
-            size: (1.2, 1.9),
-        })
-    } else if name.contains("FLOWER") && !name.contains("GRASS") {
+        "vine" => canopy(HEART, 0.4, (1.2, 1.9)),
         // Flower heads on a crown (an elder's corymbs): leaf cards in the
         // block's own cream, so the heads read as blossom and not as slabs.
-        Some(Rule::Canopy {
-            tint: 0,
-            layers: &[layer::LEAVES_B, layer::LEAVES_A],
-            chance: 0.7,
-            size: (1.3, 2.0),
-        })
-    } else if name.contains("LEAVES") {
-        Some(Rule::Canopy {
-            tint: 0,
-            layers: &[layer::LEAVES_A, layer::LEAVES_B],
-            chance: 0.5,
-            size: (2.2, 3.2),
-        })
-    } else {
-        None
+        "flower" => canopy(&[layer::LEAVES_B, layer::LEAVES_A], 0.7, (1.3, 2.0)),
+        // A species whose leaves have a shape of their own (willow, maple,
+        // ivy...), or plain leaves shared by many species, which take one
+        // shape per grove.
+        "leaves" => match shape.and_then(|s| LEAF_SHAPES.iter().find(|(n, _)| *n == s)) {
+            Some((_, layers)) => canopy(layers, 0.5, (2.2, 3.2)),
+            None => Some(Rule::Canopy {
+                mix: true,
+                tint: 0,
+                layers: POINTED,
+                chance: 0.5,
+                size: (2.2, 3.2),
+            }),
+        },
+        "none" => None,
+        // Any other ground with a `grass` block in its file (Saltmirror's
+        // fan sand): short dry tufts in the ground's own colour, no meadow.
+        _ if own.is_some() => ground(0.05, 0.2, false, 0.0),
+        _ => None,
     }
 }
 
@@ -505,8 +685,7 @@ fn rules() -> &'static [Option<Rule>; 256] {
 /// something standing on it sits on the sprites, not the voxel top
 /// (flit.rs perches).
 pub fn leafy(m: u8) -> bool {
-    matches!(rules()[m as usize], Some(Rule::Canopy {
-            tint: 0, .. }) | Some(Rule::Branches { .. }))
+    matches!(rules()[m as usize], Some(Rule::Canopy { mix: false, tint: 0, .. }) | Some(Rule::Branches { .. }))
 }
 
 /// Fill tufts and long grass, on unless VOXEL_GRASS_FILL=0 (for measuring
@@ -593,12 +772,85 @@ fn flower(fx: f32, fz: f32, tall: f32, pick: f32, prairie: bool) -> Option<u32> 
     Some(COLOURS[(lead + 1 + other.min(2)) % 4])
 }
 
+/// How thick the wildflowers drawn on ground material `m` stand at (x, z)
+/// metres: the chance a tuft there is a flower, by the same fields `flower`
+/// and the meadow's tall-grass patches use, so it is high in the drifts of
+/// bloom a meadow shows and 0 on ground that grows none. Hummingbirds
+/// (creatures/hummer.rs) look for flowers with it.
+pub fn bloom_at(m: u8, x: f32, z: f32) -> f32 {
+    let Some(Rule::Ground { meadow: true, prairie, wild, .. }) = rules()[m as usize] else {
+        return 0.0;
+    };
+    let (fx, fz) = ((x * 4.0).floor(), (z * 4.0).floor());
+    let n = perlin2(fx * 0.018, fz * 0.018, 501) * 0.7 + perlin2(fx * 0.07, fz * 0.07, 502) * 0.3;
+    let tall = smoothstep(-0.15, 0.3, n);
+    let drift = smoothstep(0.1, 0.45, perlin2(fx * 0.05, fz * 0.05, 503));
+    let (tall, prairie, scale) = if wild { (tall.max(0.7), true, 2.5) } else { (tall, prairie, 1.0) };
+    let p = if prairie {
+        let field = smoothstep(FIELD.0, FIELD.1, perlin2(fx * 0.009, fz * 0.009, 507));
+        0.12 * tall * drift * (1.0 - field) + field * FIELD.2 * (0.5 + 0.5 * tall)
+    } else {
+        0.12 * tall * drift
+    };
+    (p * scale).min(1.0)
+}
+
 /// Flower fields on prairie grass: the noise band where they fade in, and
 /// their flower share at full height.
 const FIELD: (f32, f32, f32) = (0.62, 0.74, 0.3);
 
 /// Face normals in mesh.rs direction order.
 const NORMALS: [[isize; 3]; 6] = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
+
+/// One kelp plant from its holdfast at `p` (the chunk's voxels; `bed` is the
+/// same height in metres) under water standing at `surface` metres at high
+/// water: a few strands, each its stipe in segments, its blades and, for bull
+/// kelp, its float (kind STRAND). A strand is as long as its share of the
+/// water plus a canopy of about two crowns, which lies on the surface at high
+/// water and gets longer there as the tide goes out.
+fn kelp(k: &crate::world::matlib::Kelp, p: [f32; 3], bed: f32, surface: f32, scale: f32, rnd: &mut impl FnMut() -> f32, out: &mut Vec<Quad>) {
+    let depth = surface - bed;
+    if depth < 0.6 {
+        return;
+    }
+    let n = (k.stems[0] + rnd() * (k.stems[1] - k.stems[0] + 0.99)).floor().max(1.0) as u32;
+    let word = |layer: u32, part: u32, index: u32, blade: f32| layer | part << 8 | (index & 255) << 10 | ((blade * 4.0).round().clamp(0.0, 63.0) as u32) << 18;
+    for _ in 0..n {
+        let share = k.reach[0] + (k.reach[1] - k.reach[0]) * rnd();
+        let len = depth * share + k.size * (1.5 + 1.5 * rnd());
+        // As stored, so the shader cuts the stipe at the same joints.
+        let len = (len * 8.0).round().clamp(8.0, 255.0) / 8.0;
+        let heading = (rnd() * 256.0) as u32;
+        let jitter = 0.3 / scale;
+        let root = [p[0] + (rnd() - 0.5) * jitter, p[1], p[2] + (rnd() - 0.5) * jitter];
+        let segs = kelp_segs(len);
+        let w = k.width / scale;
+        for i in 0..segs {
+            out.push(pack_ext(root, k.stipe, STRAND, heading, w, len, 0, word(layer::KELP_STIPE, STIPE, i, 0.0)));
+        }
+        if k.float != 0 {
+            // Bull kelp: a bare stipe, the float on its end, and long
+            // blades streaming from the float.
+            out.push(pack_ext(root, k.float, STRAND, heading, 0.34 / scale, len, 0, word(layer::KELP_FLOAT, BULB, 255, 0.0)));
+            let blades = 6 + (rnd() * 5.0) as u32;
+            for _ in 0..blades {
+                let bl = k.size * (1.6 + 1.4 * rnd());
+                let sd = (rnd() * 255.0) as u32;
+                out.push(pack_ext(root, k.blade, STRAND, heading, (0.3 + 0.16 * rnd()) / scale, len, sd, word(layer::KELP_BLADE, BLADE, 255, bl)));
+            }
+        } else {
+            // Giant kelp: a blade about every metre up the stipe and on
+            // along the canopy, each on its own side.
+            let blades = (len / 0.9).round().max(2.0) as u32;
+            for j in 0..blades {
+                let t = (0.12 + 0.88 * (j as f32 + rnd() * 0.6) / blades as f32).min(1.0);
+                let bl = k.size * (0.6 + 0.4 * rnd());
+                let sd = (rnd() * 255.0) as u32;
+                out.push(pack_ext(root, k.blade, STRAND, heading, (0.28 + 0.12 * rnd()) / scale, len, sd, word(layer::KELP_BLADE, BLADE, (t * 255.0) as u32, bl)));
+            }
+        }
+    }
+}
 
 fn pack(p: [f32; 3], tint: u8, kind: u32, angle: u32, w: f32, h: f32, seed: u32, layer: u32, dir: u32) -> Quad {
     pack_ext(p, tint, kind, angle, w, h, seed, layer | dir << 8)
@@ -690,7 +942,10 @@ pub fn scatter(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, origin: [i32;
                     // The top of this voxel, in metres, and the cell round it.
                     let (rx, ry, rz) = ((wx as f32 + 0.5) * scale, (wy + 1) as f32 * scale, (wz as f32 + 0.5) * scale);
                     let h = scale * 0.5;
-                    if keep_out.iter().any(|b| rx + h > b[0] && rx - h < b[3] && rz + h > b[2] && rz - h < b[5] && ry > b[1] - KEEP_BELOW && ry <= b[4]) {
+                    if keep_out
+                        .iter()
+                        .any(|b| rx + h > b[0] && rx - h < b[3] && rz + h > b[2] && rz - h < b[5] && ry > b[1] - KEEP_BELOW && ry <= b[4])
+                    {
                         continue;
                     }
                 }
@@ -837,7 +1092,14 @@ pub fn scatter(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, origin: [i32;
                             }
                         }
                     }
-                    Rule::Canopy { layers, chance, size, tint: leaf_tint } => {
+                    Rule::Canopy {
+                        layers,
+                        chance,
+                        size,
+                        tint: leaf_tint,
+                        mix,
+                    } => {
+                        let layers = if mix { grove(wx, wz) } else { layers };
                         for (d, n) in NORMALS.iter().enumerate() {
                             if at(px + n[0], py + n[1], pz + n[2]) != AIR {
                                 continue;
@@ -861,15 +1123,36 @@ pub fn scatter(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, origin: [i32;
                             let s = size.0 + (size.1 - size.0) * unit(h2);
                             let layer = layers[(h2 >> 4) as usize % layers.len()];
                             // Flowers keep their own colour; leaves take the block's.
-                            let tint = if layer::untinted(layer) { 0 } else if leaf_tint != 0 { leaf_tint } else { m };
+                            let tint = if layer::untinted(layer) {
+                                0
+                            } else if leaf_tint != 0 {
+                                leaf_tint
+                            } else {
+                                m
+                            };
                             let roll = if layer::upright(layer) { 0 } else { h >> 24 };
                             out.push(pack(p, tint, BILLBOARD, roll, s, s, h >> 16, layer, d as u32));
                         }
                     }
                     Rule::Herb(herb) => {
                         // Only the marker voxel standing on something grows the plant.
-                        if at(px, py - 1, pz) == AIR || at(px, py - 1, pz) == m {
+                        // A marker up in a plant (a flower head at a leaning
+                        // cane's tip) may have air below it: it grows if it
+                        // touches the plant anywhere in the 3x3x3 round it
+                        // instead (a cane of tube bark is a corner-joined line,
+                        // so its tip meets the head only at an edge or corner).
+                        let below = at(px, py - 1, pz);
+                        if below == m {
                             continue;
+                        }
+                        if below == AIR {
+                            let held = (0..27).filter(|&k| k != 13).any(|k: isize| {
+                                let o = at(px + k % 3 - 1, py + k / 3 % 3 - 1, pz + k / 9 - 1);
+                                o != AIR && o != m && !marker(o)
+                            });
+                            if !held {
+                                continue;
+                            }
                         }
                         let h = hash3(wx, wy, wz, 41);
                         let mut rng = h;
@@ -877,7 +1160,11 @@ pub fn scatter(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, origin: [i32;
                             rng = crate::world::noise::hash32(rng.wrapping_add(0x9e37_79b9));
                             unit(rng)
                         };
-                        let ground = if smooth {
+                        // Up in a plant, the root is the marker voxel's own
+                        // floor: the ground search would find the terrain a
+                        // voxel or two down and drop the sprites onto it.
+                        let aloft = below == AIR || crate::world::material::tubes(below) || crate::world::material::rounds(below);
+                        let ground = if smooth && !aloft {
                             ground_height_h(at, ch, px as f32 + 0.5, pz as f32 + 0.5, py as f32).unwrap_or(py as f32)
                         } else {
                             py as f32
@@ -931,6 +1218,8 @@ pub fn scatter(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, origin: [i32;
                                     out.push(pack(p, 0, FLOAT, a + 37, s * 0.45, s * 0.45, sd ^ 91, flower | FADE_LEAF, 7));
                                 }
                             }
+                        } else if let Herb::Kelp(k) = herb {
+                            kelp(&k, [x as f32 + 0.5, gy, z as f32 + 0.5], (origin[1] as f32 + gy) * scale, water((wx as f32 + 0.5) * scale, (wz as f32 + 0.5) * scale), scale, &mut rnd, out);
                         } else if let Herb::Clumps { layer, count, spread, height, aspect } = herb {
                             // Clumps of stems, each on a crossed pair of cards.
                             let n = count.0 + (rnd() * (count.1 - count.0 + 1) as f32) as u32;
@@ -941,8 +1230,12 @@ pub fn scatter(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, origin: [i32;
                                 let hgt = height.0 + (height.1 - height.0) * rnd();
                                 let a = (rnd() * 256.0) as u32;
                                 let sd = (rnd() * 255.0) as u32;
+                                // Herb layers are painted in their own colours;
+                                // the grey leaf sprays (a flower head up in a
+                                // shrub) take the marker material's.
+                                let tint = if layer == layer::SAGE || layer == layer::NEEDLES { m } else { 0 };
                                 for turn in [0, 64] {
-                                    out.push(pack(p, 0, CARD, a + turn, hgt * aspect, hgt, sd, layer | FADE_LEAF, 7));
+                                    out.push(pack(p, tint, CARD, a + turn, hgt * aspect, hgt, sd, layer | FADE_LEAF, 7));
                                 }
                             }
                         } else {
@@ -1016,6 +1309,51 @@ pub fn scatter(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, origin: [i32;
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Every library material that grew sprites by its name still grows the
+    /// same ones by its `sprites` entry. Run once when the entries were
+    /// written; kept ignored, since a material may now choose differently
+    /// from what its name would have said (`guess`), which is the point.
+    /// `SPRITES_GUESS=out.tsv` also writes name, rule and shape per material.
+    #[test]
+    #[ignore]
+    fn sprites_entries_match_what_names_chose() {
+        let _table = crate::world::matlib::table_lock();
+        let (lib, _) = crate::library::Library::load(&crate::library::data_root());
+        let upper = |n: &str| n.to_uppercase().replace('_', " ");
+        if let Ok(p) = std::env::var("SPRITES_GUESS") {
+            let mut out = String::new();
+            for m in lib.materials.iter().filter(|m| m.coat_of.is_none()) {
+                let g = guess(&upper(&m.name));
+                out += &format!(
+                    "{}	{}	{}
+",
+                    m.name,
+                    g.map_or("", |g| g.0),
+                    g.and_then(|g| g.1).unwrap_or("")
+                );
+            }
+            std::fs::write(p, out).unwrap();
+            return;
+        }
+        // A material has a voxel id only in a world that reaches it, so go
+        // world by world; between them they reach every material in use.
+        let mut wrong = Vec::new();
+        let mut seen = 0;
+        for w in crate::worldload::available().into_iter().filter(|w| w != "random") {
+            let (lib, _) = crate::worldload::library_for(&w);
+            for m in lib.materials.iter().filter(|m| m.id != 0) {
+                let name = crate::world::matlib::name(m.id).unwrap();
+                let (was, now) = (format!("{:?}", rule_for(m.id, guess(name))), format!("{:?}", library_rule(m.id)));
+                if was != now {
+                    wrong.push(format!("{w} {}: by name {was}, by entry {now}", m.name));
+                }
+                seen += 1;
+            }
+        }
+        assert!(seen > 0);
+        assert!(wrong.is_empty(), "{wrong:#?}");
+    }
 
     /// A pad lies on the water the world has at that spot, not on the sea:
     /// the surface goes into the sprite's root (foliage.wgsl kind FLOAT
@@ -1165,6 +1503,17 @@ mod flower_tests {
 
     /// Prairie grass should flower about 15% more than a plain meadow, counted
     /// over a big square with the meadow's own tall-grass noise.
+    #[test]
+    fn bloom_is_only_on_meadows() {
+        // Sand grows no flowers; a meadow grass grows them somewhere.
+        assert_eq!((0..50).map(|i| bloom_at(SAND, i as f32 * 3.1, 7.0)).fold(0.0f32, f32::max), 0.0);
+        let meadow = (1..=255u8).find(|&m| matches!(rules()[m as usize], Some(Rule::Ground { meadow: true, .. })));
+        if let Some(m) = meadow {
+            let most = (0..400).map(|i| bloom_at(m, (i % 20) as f32 * 9.0, (i / 20) as f32 * 9.0)).fold(0.0f32, f32::max);
+            assert!(most > 0.02 && most <= 1.0, "{most}");
+        }
+    }
+
     #[test]
     fn prairie_flower_share() {
         let (mut plain, mut prairie, mut n, mut fields) = (0u32, 0u32, 0u32, 0u32);

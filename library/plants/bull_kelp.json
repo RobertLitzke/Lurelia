@@ -2,16 +2,9 @@
   "name": "bull_kelp",
   "version": 1,
   "introduced_by": "ribshore",
-  "notes": "Bull kelp: one bare whip of a stipe from the rock to the surface, a round float on top and long blades streaming from it along the surface. Grows only under 3 to 16 m of sea; height is the share of that depth it reaches.",
-  "form": "kelp",
-  "height": [0.95, 1.0],
+  "notes": "Bull kelp: one bare whip of a stipe from the rock to the surface, a round float on top and long blades streaming from it along the surface. Grows only under 3 to 16 m of sea; height is the share of that depth (at high water) the stipe reaches; the rest of its length lies along the surface and gets longer as the tide goes out. Loose strands, not voxels, so swimmers pass through.",
   "trunk_radius": [0.1, 0.12],
-  "crown_radius": [0.9, 1.3],
-  "bark": "kelp_stipe",
-  "leaf": "kelp_blade",
-  "squash": 0.5,
-  "max_slope": 1.5,
-  "flower": "bull_kelp_float",
+  "like": "kelp",
   "stems": [1, 2],
-  "water_depth": [3.0, 16.0]
+  "flower": "bull_kelp_float"
 }

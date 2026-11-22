@@ -4,6 +4,7 @@
   "introduced_by": "ribshore",
   "notes": "The wet beach below the last tide line: grey-brown and dark, holding the sky.",
   "smooth": true,
+  "surface": "sand_wet",
   "texture": {
     "pattern": "noise",
     "base": [110, 110, 106],

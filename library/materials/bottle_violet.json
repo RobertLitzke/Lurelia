@@ -3,14 +3,7 @@
   "version": 1,
   "introduced_by": "lowmouth",
   "notes": "Violet bottle glass on the bottle trees.",
-  "smooth": false,
+  "like": "bottle_blue",
   "glow": 0.9,
-  "texture": {
-    "pattern": "glass",
-    "base": [104, 62, 152],
-    "alt": [146, 104, 196],
-    "scale": 6,
-    "contrast": 0.7,
-    "calm": {"base": [104, 62, 152], "alt": [146, 104, 196]}
-  }
+  "texture": {"alt": [146, 104, 196], "calm": {"alt": [146, 104, 196], "base": [104, 62, 152]}, "base": [104, 62, 152]}
 }

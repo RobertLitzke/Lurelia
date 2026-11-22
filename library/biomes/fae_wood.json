@@ -3,11 +3,6 @@
   "version": 1,
   "introduced_by": "faerie",
   "notes": "Green belts grown to deep wood.",
-  "priority": 9,
-  "rules": {"region": "city_wood"},
-  "surface": "forest_floor",
-  "subsurface": "dirt",
-  "fringe": 0,
   "map_color": [50, 110, 66],
   "plants": [
     {"plant": "blossom_vine", "density": 0.2, "placement": {"verb": "scatter", "params": {}}},
@@ -23,5 +18,6 @@
     {"creature": "pileated_woodpecker", "count": 1},
     {"creature": "fae_badger", "count": 1}
   ],
-  "sound": {"wind": 0.6}
+  "sound": {"wind": 0.6},
+  "like": "city_wood"
 }

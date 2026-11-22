@@ -24,6 +24,7 @@
   ],
   "spawn": [486, 519],
   "spawn_bearing": 70,
+  "vehicles": ["beach_buggy"],
   "seasons": ["spring", "summer", "autumn", "winter"],
   "start_season": "summer",
   "weather": {

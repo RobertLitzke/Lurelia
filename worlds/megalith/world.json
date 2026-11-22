@@ -37,6 +37,7 @@
     "shooter",
     "screenshot"
   ],
+  "games": ["ctf", "team"],
   "biomes": [
     "seabed",
     "steppe_deck"

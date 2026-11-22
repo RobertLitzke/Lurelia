@@ -1,0 +1,26 @@
+{
+  "name": "gh_barrens",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "The low barrens behind the beach south of the bay: lowbush blueberry carpeting sandy ground, crimson in autumn, with heather and a bent pine or two.",
+  "priority": 4,
+  "rules": {"region": "barrens", "elev": [2, 40]},
+  "surface": "shore_grass",
+  "subsurface": "dirt",
+  "map_color": [150, 120, 96],
+  "plants": [
+    {"plant": "lowbush_blueberry", "density": 0.3, "placement": {"verb": "clustered", "params": {"size": 16}}},
+    {"plant": "heather", "density": 0.03, "placement": {"verb": "clustered", "params": {"size": 12}}},
+    {"plant": "lupine", "density": 0.006, "placement": {"verb": "clustered", "params": {"size": 10}}},
+    {"plant": "shore_pine", "density": 0.0015, "placement": {"verb": "lone", "params": {"spacing": 40}}},
+    {"plant": "sea_buckthorn", "density": 0.003, "placement": {"verb": "clustered", "params": {"size": 12}}}
+  ],
+  "features": [{"structure": "boulder", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "rabbit", "count": 4},
+    {"creature": "sparrow", "count": 6},
+    {"creature": "crow", "count": 2},
+    {"creature": "annas_hummingbird", "count": 2}
+  ],
+  "collectibles": []
+}

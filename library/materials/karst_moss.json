@@ -4,6 +4,7 @@
   "introduced_by": "jadewater",
   "notes": "Thick green moss streaking down the karst walls where water runs, and on the shady sides of ledges. Faceted with the rock.",
   "smooth": false,
+  "sprites": "karst moss",
   "texture": {
     "pattern": "blotch",
     "base": [62, 100, 50],

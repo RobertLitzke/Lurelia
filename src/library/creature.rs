@@ -3,7 +3,7 @@
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct Behaviour {
     /// Movement verb, one of creatures::locomotion::MOVEMENTS.
     pub movement: String,
@@ -57,6 +57,13 @@ pub struct Behaviour {
     /// a minute and come up a little further on.
     #[serde(default)]
     pub dive_depth: Option<f32>,
+    /// Floating seabirds that come down by plunging (gannets): from the
+    /// circle it folds its wings and drops straight into deep water under
+    /// it, goes under for a few seconds after fish (as deep as `dive_depth`)
+    /// and comes up to float, then climbs back and does it again before
+    /// long. Over shallows or land it waits.
+    #[serde(default)]
+    pub plunge: bool,
     /// How often it leaps clear of the water: for `school`, leaps per fish
     /// per minute; for `breach`, the chance that a dive ends in a breach.
     #[serde(default)]
@@ -156,7 +163,7 @@ impl Behaviour {
 /// Which ages of a creature turn up, and what they look like. Every field is
 /// optional: left out, it follows from the creature's `height`
 /// (creatures::age::Stages::resolve), so most entries need no block at all.
-#[derive(Deserialize, Clone, Debug, Default)]
+#[derive(Deserialize, Clone, Debug, Default, schemars::JsonSchema)]
 pub struct Ages {
     /// Body scale of a juvenile. 0 means this creature has no juvenile stage
     /// (starlings, insects, fish): every one spawns full-grown.
@@ -183,7 +190,7 @@ pub(super) fn one_u() -> u32 {
 /// name (a plant's leaf, where the material already exists), or the range of
 /// colour the slot is drawn in, as two ends in sRGB bytes with an optional
 /// fourth emissive value. One colour is a range with both ends the same.
-#[derive(Deserialize, Clone, Debug, PartialEq)]
+#[derive(Deserialize, Clone, Debug, PartialEq, schemars::JsonSchema)]
 #[serde(untagged)]
 pub enum Paint {
     /// A material by name. Plants only: a creature's colours are its own.
@@ -213,7 +220,7 @@ impl Paint {
 ///
 /// A morph is not a species: it carries no shape, which is what separates it
 /// from a `like` child. See docs/CREATURES.md, "Coats".
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct MorphDef {
     pub name: String,
@@ -335,7 +342,7 @@ pub(super) fn default_wary() -> f32 {
     8.0
 }
 
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct CreatureDef {
     pub name: String,
     #[serde(default = "default_version")]
@@ -540,6 +547,36 @@ pub(super) fn check_fit(coats: &[Coat], colors: &HashMap<String, Vec<f32>>, what
                 }
             }
         }
+        // A glow: one gain over the whole model, so it can make the glowing
+        // colours burn brighter or dimmer together, but cannot light a colour
+        // that does not glow, and cannot send two glows different ways.
+        for (slot, paint) in &coat.paint {
+            let (Some(base), Some((a, b))) = (colors.get(slot), paint.ends()) else {
+                continue;
+            };
+            for (t, want) in [(0.0f32, a), (1.0, b)] {
+                let Some(&w) = want.get(3) else { continue };
+                let g = base.get(3).copied().unwrap_or(0.0);
+                if g <= 0.0 && w > 0.0 {
+                    out.push(format!(
+                        "{what}: morph {}: {slot} does not glow, and a coat can only make a glow brighter or dimmer, not light a colour",
+                        coat.name
+                    ));
+                    break;
+                }
+                if g > 0.0 && w > 0.0 {
+                    let gain = wear.at(t).glow;
+                    if (gain * g / w - 1.0).abs() > GLOW_REACH {
+                        out.push(format!(
+                            "{what}: morph {}: {slot} glows at {:.2}, not the {w} it asked for: one gain brightens every glowing colour at once",
+                            coat.name,
+                            gain * g
+                        ));
+                        break;
+                    }
+                }
+            }
+        }
         // And where does it leave the colours it said nothing about?
         for (slot, rgb) in colors {
             if rgb.len() < 3 || coat.paint.iter().any(|(s, _)| s == slot) {
@@ -565,6 +602,8 @@ pub(super) const BLOWN: f32 = 1.35;
 /// few counts off is invisible, and the point is to catch a coat asking for
 /// something one tint cannot do at all.
 pub(super) const REACH: f32 = 24.0;
+/// How far, as a fraction, a coat's glow may land from the one it asked for.
+pub(super) const GLOW_REACH: f32 = 0.2;
 
 /// The rarest coat worth declaring: below about one in five hundred an
 /// individual wearing it is never met, and the morph is dead weight.

@@ -31,7 +31,7 @@
       "placement": {"verb": "clustered", "params": {"size": 9, "min": 0.25, "max": 1.0}}
     },
     {
-      "plant": "reedmace",
+      "plant": "cattail",
       "density": 0.03,
       "placement": {"verb": "clustered", "params": {"size": 6, "min": 0.55, "max": 1.0}}
     },
@@ -55,9 +55,9 @@
     {"creature": "fae_toad", "count": 4},
     {"creature": "dragonfly", "count": 8},
     {"creature": "glass_dragonfly", "count": 8},
-    {"creature": "marsh_light", "count": 7},
+    {"creature": "marsh_light", "morph": "wisp", "count": 7},
     {"creature": "firefly", "count": 110},
-    {"creature": "lantern_moth", "count": 24},
+    {"creature": "glassmoth", "morph": "lantern", "count": 24},
     {"creature": "kingfisher", "count": 2},
     {"creature": "heron", "count": 1},
     {"creature": "mossback_deer", "count": 3},

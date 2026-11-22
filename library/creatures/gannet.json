@@ -1,0 +1,40 @@
+{
+  "name": "gannet",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "circle with floats and plunge: Northern gannet: a big white seabird with a buff-yellow head, a dagger of a blue-grey bill and black wingtips, 1.8 m across. Circles twenty-odd metres over deep water on long stiff wings, a few quick beats and a long glide, then folds and drops straight in after fish with a splash, comes up a few seconds later, floats a while and climbs back to do it again. Built on the albatross's shape at 0.4 of its size.",
+  "colors": {
+    "body": [246, 246, 242],
+    "head": [228, 208, 150],
+    "beak": [150, 164, 176],
+    "wing": [244, 244, 240],
+    "tail": [240, 240, 236],
+    "legs": [52, 56, 60],
+    "brow": [214, 194, 138],
+    "tip": [26, 26, 30]
+  },
+  "behaviour": {
+    "movement": "circle",
+    "walk_speed": 9,
+    "flee_speed": 12,
+    "wary": 14,
+    "flightiness": 0.7,
+    "fly_height": 22,
+    "flight": "flap_glide",
+    "wingbeat": 3.0,
+    "wind": 1,
+    "rain": 0.7,
+    "active": "diurnal",
+    "winter": 0.3,
+    "floats": true,
+    "plunge": true,
+    "dive_depth": 5
+  },
+  "like": "albatross",
+  "scale": 0.4,
+  "extra_ops": [
+    {"op": "recolour", "at": [2, 4, 14], "until": [7, 5, 18], "from": "wing", "to": "tip"},
+    {"op": "recolour", "at": [25, 4, 14], "until": [30, 5, 18], "from": "wing", "to": "tip"},
+    {"op": "box", "from": [16, 4, 8], "to": [17, 5, 11], "mat": "beak", "part": "head"}
+  ]
+}

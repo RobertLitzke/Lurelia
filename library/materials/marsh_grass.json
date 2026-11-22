@@ -5,6 +5,7 @@
   "notes": "Coarse tawny-green marsh grass on the levee toes, the chenier and the hammock edges (grass sprites grow on it).",
   "smooth": true,
   "tint": "meadow",
+  "sprites": "grass",
   "texture": {
     "pattern": "noise",
     "base": [116, 126, 66],

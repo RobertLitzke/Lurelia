@@ -1,0 +1,20 @@
+{
+  "name": "instagib",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "like": "deathmatch",
+  "title": "INSTAGIB",
+  "notes": "The first variant: a deathmatch on any map with a sniper rifle, where one hit is a kill. Health is under the rifle's 55 a shot, there is no armour, and the floor is bare, so the map is only its sight lines.",
+  "help": "One rifle, one hit, nothing to pick up: whoever sees the other first.",
+  "weapons": [
+    "sniper_rifle"
+  ],
+  "give_all": true,
+  "pickups": false,
+  "health": 50,
+  "health_max": 50,
+  "armour": 0,
+  "armour_max": 0,
+  "respawn_s": 2.0,
+  "target": 20
+}

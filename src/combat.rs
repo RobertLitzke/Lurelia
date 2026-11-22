@@ -188,8 +188,13 @@ fn lay_block(scene: &Scene, at: Vec3, vel: Vec3, size: f32, mat: u8, edits: &mut
                 if scene.store.get(v[0], v[1], v[2]) != Some(AIR) {
                     continue;
                 }
-                let (a, b) = (Vec3::new(v[0] as f32, v[1] as f32, v[2] as f32) / 4.0, Vec3::new(v[0] as f32 + 1.0, v[1] as f32 + 1.0, v[2] as f32 + 1.0) / 4.0);
-                let buries = scene.fighters.iter().any(|m| m.alive && b.x > m.foot.x - m.half_w && a.x < m.foot.x + m.half_w && b.z > m.foot.z - m.half_w && a.z < m.foot.z + m.half_w && b.y > m.foot.y && a.y < m.foot.y + m.height);
+                let (a, b) = (
+                    Vec3::new(v[0] as f32, v[1] as f32, v[2] as f32) / 4.0,
+                    Vec3::new(v[0] as f32 + 1.0, v[1] as f32 + 1.0, v[2] as f32 + 1.0) / 4.0,
+                );
+                let buries = scene.fighters.iter().any(|m| {
+                    m.alive && b.x > m.foot.x - m.half_w && a.x < m.foot.x + m.half_w && b.z > m.foot.z - m.half_w && a.z < m.foot.z + m.half_w && b.y > m.foot.y && a.y < m.foot.y + m.height
+                });
                 if !buries {
                     edits.push((v, mat));
                 }
@@ -955,110 +960,116 @@ impl Combat {
         // because the shells are out of `self` while they are being flown.
         let mut thrown: Vec<shot::Shell> = Vec::new();
         let aims = std::mem::take(&mut self.aims);
-        shells.retain_mut(|s| match {
-            if s.guide > 0.0 && !s.stuck {
-                steer_shell(s, scene.store, &aims, dt);
-            }
-            let flight = s.step(scene, dt);
-            // A plain round in flight (a scrap shard, a disc) is a strike
-            // like a bullet is, for whatever the rules shoot at that is not
-            // a hitbox: the stretch it flew this step, and what it carries.
-            if s.splash.is_none() && s.goo_r <= 0.0 && s.spoil <= 0.0 && !s.stuck && self.strikes.len() < STRIKES_KEPT {
-                self.strikes.push((s.prev, s.pos, s.damage));
-            }
-            flight
-        } {
-            shot::Flight::Flying => true,
-            shot::Flight::Hit { at, beast, man } => {
-                if let Some(e) = beast {
-                    if shot::hurt(scene, e, s.damage, fling(s.vel, s.damage)) {
-                        self.kills += 1;
+        shells.retain_mut(|s| {
+            match {
+                if s.guide > 0.0 && !s.stuck {
+                    steer_shell(s, scene.store, &aims, dt);
+                }
+                let flight = s.step(scene, dt);
+                // A plain round in flight (a scrap shard, a disc) is a strike
+                // like a bullet is, for whatever the rules shoot at that is not
+                // a hitbox: the stretch it flew this step, and what it carries.
+                if s.splash.is_none() && s.goo_r <= 0.0 && s.spoil <= 0.0 && !s.stuck && self.strikes.len() < STRIKES_KEPT {
+                    self.strikes.push((s.prev, s.pos, s.damage));
+                }
+                flight
+            } {
+                shot::Flight::Flying => true,
+                shot::Flight::Hit { at, beast, man } => {
+                    if let Some(e) = beast {
+                        if shot::hurt(scene, e, s.damage, fling(s.vel, s.damage)) {
+                            self.kills += 1;
+                        }
+                        self.dealt += s.damage;
                     }
-                    self.dealt += s.damage;
-                }
-                // Struck a fighter: the shell's own damage, on top of the
-                // burst below. Without this a shell with no burst -- a
-                // scrap shard, a plasma bolt, a skipjack disc -- flies
-                // through a body and does nothing at all.
-                if let Some(who) = man {
-                    // Its owner takes their own share of it (`self_hit`).
-                    let damage = if who == s.by { s.damage * s.self_hit } else { s.damage };
-                    self.taken.push(Hit {
-                        who,
-                        by: s.by,
-                        damage,
-                        // A body stops a shell dead rather than being shoved
-                        // by it; what moves anybody is the burst. Except a
-                        // block of stone, which is what it is for.
-                        push: if s.spoil > 0.0 { s.vel.normalize_or_zero() * BLOCK_KNOCK + Vec3::Y * BLOCK_LIFT } else { Vec3::ZERO },
-                        fling: fling(s.vel, s.damage),
-                        head: false,
-                        blast: s.splash.is_some(),
-                        risky: s.self_hit > 0.0 || s.splash.is_some_and(|sp| sp.self_damage > 0.0),
-                    });
-                }
-                // A glob of sludge that found a wall or the floor, or
-                // that ran its fuse out in the air, becomes matter rather
-                // than bursting: what this gun does is what it leaves
-                // behind. One that found a body bursts on it, which is what
-                // its file says and what the damage above has paid for.
-                // A shell with no burst that found the world: chips off it.
-                if beast.is_none() && man.is_none() && s.splash.is_none() && s.goo_r <= 0.0 {
-                    self.cues.push(Cue::Impact { at, dir: s.vel });
-                    if self.cues.len() > CUES_KEPT {
-                        self.cues.remove(0);
-                    }
-                }
-                // A block of spoil that found the world becomes part of it.
-                if s.spoil > 0.0 && beast.is_none() && man.is_none() {
-                    lay_block(scene, at, s.vel, s.spoil, self.spoil_mat, &mut self.edits);
-                }
-                match (s.goo_r > 0.0 && beast.is_none() && man.is_none(), s.splash) {
-                    (true, Some(sp)) => {
-                        let fuse = if s.stick_s > 0.0 { s.stick_s } else { 1.0 };
-                        landed.push((at, s.goo_r, fuse, sp, s.by));
-                    }
-                    (_, Some(sp)) => went_off.push((at, sp, s.by)),
-                    (_, None) => {}
-                }
-                if let Some(c) = s.cluster {
-                    let back = -s.vel.normalize_or(Vec3::Y);
-                    for _ in 0..c.count {
-                        let (a, b) = (self.roll(), self.roll());
-                        // Thrown back out of the impact rather than on into
-                        // it, or half of them are inside the wall the shell
-                        // just hit and go off there.
-                        let dir = shot::spread(back, c.cone_deg.to_radians(), a, b);
-                        let speed = c.speed * (0.7 + 0.6 * self.roll());
-                        thrown.push(shot::Shell {
-                            pos: at + dir * 0.2,
-                            prev: at + dir * 0.2,
-                            vel: dir * speed,
-                            gravity: c.gravity,
-                            bounces: c.bounces,
-                            keep: 0.45,
-                            self_hit: 0.0,
-                            bounced: false,
-                            fuse: c.fuse_s,
-                            flown: 0.0,
-                            damage: c.damage,
-                            splash: c.splash,
-                            tint: s.tint,
-                            look: c.look,
-                            spin: self.roll() * std::f32::consts::TAU,
-                            stick_s: 0.0,
-                            guide: 0.0,
-                            stuck: false,
-                            goo_r: 0.0,
-                            spoil: 0.0,
-                            cluster: None,
+                    // Struck a fighter: the shell's own damage, on top of the
+                    // burst below. Without this a shell with no burst -- a
+                    // scrap shard, a plasma bolt, a skipjack disc -- flies
+                    // through a body and does nothing at all.
+                    if let Some(who) = man {
+                        // Its owner takes their own share of it (`self_hit`).
+                        let damage = if who == s.by { s.damage * s.self_hit } else { s.damage };
+                        self.taken.push(Hit {
+                            who,
                             by: s.by,
+                            damage,
+                            // A body stops a shell dead rather than being shoved
+                            // by it; what moves anybody is the burst. Except a
+                            // block of stone, which is what it is for.
+                            push: if s.spoil > 0.0 {
+                                s.vel.normalize_or_zero() * BLOCK_KNOCK + Vec3::Y * BLOCK_LIFT
+                            } else {
+                                Vec3::ZERO
+                            },
+                            fling: fling(s.vel, s.damage),
+                            head: false,
+                            blast: s.splash.is_some(),
+                            risky: s.self_hit > 0.0 || s.splash.is_some_and(|sp| sp.self_damage > 0.0),
                         });
                     }
+                    // A glob of sludge that found a wall or the floor, or
+                    // that ran its fuse out in the air, becomes matter rather
+                    // than bursting: what this gun does is what it leaves
+                    // behind. One that found a body bursts on it, which is what
+                    // its file says and what the damage above has paid for.
+                    // A shell with no burst that found the world: chips off it.
+                    if beast.is_none() && man.is_none() && s.splash.is_none() && s.goo_r <= 0.0 {
+                        self.cues.push(Cue::Impact { at, dir: s.vel });
+                        if self.cues.len() > CUES_KEPT {
+                            self.cues.remove(0);
+                        }
+                    }
+                    // A block of spoil that found the world becomes part of it.
+                    if s.spoil > 0.0 && beast.is_none() && man.is_none() {
+                        lay_block(scene, at, s.vel, s.spoil, self.spoil_mat, &mut self.edits);
+                    }
+                    match (s.goo_r > 0.0 && beast.is_none() && man.is_none(), s.splash) {
+                        (true, Some(sp)) => {
+                            let fuse = if s.stick_s > 0.0 { s.stick_s } else { 1.0 };
+                            landed.push((at, s.goo_r, fuse, sp, s.by));
+                        }
+                        (_, Some(sp)) => went_off.push((at, sp, s.by)),
+                        (_, None) => {}
+                    }
+                    if let Some(c) = s.cluster {
+                        let back = -s.vel.normalize_or(Vec3::Y);
+                        for _ in 0..c.count {
+                            let (a, b) = (self.roll(), self.roll());
+                            // Thrown back out of the impact rather than on into
+                            // it, or half of them are inside the wall the shell
+                            // just hit and go off there.
+                            let dir = shot::spread(back, c.cone_deg.to_radians(), a, b);
+                            let speed = c.speed * (0.7 + 0.6 * self.roll());
+                            thrown.push(shot::Shell {
+                                pos: at + dir * 0.2,
+                                prev: at + dir * 0.2,
+                                vel: dir * speed,
+                                gravity: c.gravity,
+                                bounces: c.bounces,
+                                keep: 0.45,
+                                self_hit: 0.0,
+                                bounced: false,
+                                fuse: c.fuse_s,
+                                flown: 0.0,
+                                damage: c.damage,
+                                splash: c.splash,
+                                tint: s.tint,
+                                look: c.look,
+                                spin: self.roll() * std::f32::consts::TAU,
+                                stick_s: 0.0,
+                                guide: 0.0,
+                                stuck: false,
+                                goo_r: 0.0,
+                                spoil: 0.0,
+                                cluster: None,
+                                by: s.by,
+                            });
+                        }
+                    }
+                    false
                 }
-                false
+                shot::Flight::Spent => false,
             }
-            shot::Flight::Spent => false,
         });
         shells.extend(thrown);
         self.shells = shells;
@@ -1491,7 +1502,12 @@ mod tests {
         assert!(speed > 15.0, "it was down to {speed:.1} m/s by its last wall");
         // It chipped the wall it ended on, and the room's walls are at
         // +-5.5 m: it ended against one of them, not in the air.
-        let at = c.cues.iter().rev().find_map(|q| if let Cue::Impact { at, .. } = q { Some(*at) } else { None }).expect("it never struck anything");
+        let at = c
+            .cues
+            .iter()
+            .rev()
+            .find_map(|q| if let Cue::Impact { at, .. } = q { Some(*at) } else { None })
+            .expect("it never struck anything");
         assert!(at.x.abs() > 5.0 || at.z.abs() > 5.0, "it ended in mid-air at {at:?}");
     }
 
@@ -2193,7 +2209,11 @@ mod tests {
         let (hits, cuts) = shoot(4, full);
         assert_eq!(hits.len(), 1, "a full charge did not reach him through a metre of wall");
         assert!((hits[0].damage - f.damage * full).abs() < 0.5, "it did {} not {}", hits[0].damage, f.damage * full);
-        assert!(cuts.len() >= 8 && cuts.iter().all(|(v, m)| *m == AIR && v[0] >= 4 && v[0] < 8), "the wall was not hollowed along the shot: {} cuts", cuts.len());
+        assert!(
+            cuts.len() >= 8 && cuts.iter().all(|(v, m)| *m == AIR && v[0] >= 4 && v[0] < 8),
+            "the wall was not hollowed along the shot: {} cuts",
+            cuts.len()
+        );
         let (hits, cuts) = shoot(8, full);
         assert!(hits.is_empty(), "it went through two metres of wall");
         assert!(!cuts.is_empty() && cuts.iter().all(|(v, _)| v[0] < 11), "it did not stop a metre and a quarter in, plus the channel");

@@ -128,7 +128,9 @@ the plate's own node (the one the link leaves from, not the landing it
 arrives at, which can be beside the plate), presses nothing until it has
 been carried to the landing's height, then walks off. A wait looks like being
 stuck, so the ride has its own clock: after `RIDE_PATIENCE_S` (12 s) the bot
-gives up and refuses lifts for `NO_LIFTS_S` (25 s).
+gives up and refuses lifts for `NO_LIFTS_S` (25 s). Going down a lift it does
+not wait at the top: a plate that starts when stood on rests at the bottom, so
+the bot walks into the shaft as it would take a drop (`Duel::down_shaft`).
 
 A route that starts behind the bot (it is already past the first node toward
 the second, on a walk link) starts from the second node.
@@ -290,6 +292,10 @@ at that range, a shell's reach (fuse times speed), flight time and drop.
   carried forward, and `Duel::find_bank` tries twelve headings either side,
   taking the nearest pass under 0.7 m. It needs `leads`, a contact under 2 s
   old and over 35% of the magazine left, and halves the aim error.
+- A mode with `bounces` and a `self_hit` is not fired when `shot::comes_back`
+  (the same flight, counted from the first bounce) brings the round back
+  within the bot's half-width plus `DISC_BACK_M` (2.5 m) of where it stands
+  (`CTF_OFF=comeback` turns that off).
 
 ## Aim and difficulty
 
@@ -472,7 +478,11 @@ It counts what reads as aimless from the other end of a gun:
   is the same in a fight, where it is fair), two-second stretches with nobody
   in sight that covered under 1.5 m (`lost%`), time pressing nothing, dodges
   a minute taken against those asked for (`meant`), sidestep reversals a
-  minute, and time faster than a boosting player;
+  minute, time faster than a boosting player, the average range to a foe in
+  sight (`range`), and routes asked for and refused a minute (`rte/m`,
+  `ref/m`);
+- while hurt: the share of hurt spells that end in a death (`died%`) and the
+  metres to the nearest health pad standing when each began (`pack m`);
 - a score a minute alive: 8 a kill, -6 a death, damage over 25, 3 a gun, 4 a
   pack taken while hurt, 1.5 armour, 2 a lost enemy found, less 0.4 a percent
   of `back%`, 0.5 of `lost%`, 0.3 of idle, 1 a dodge over six a minute and
@@ -481,8 +491,9 @@ It counts what reads as aimless from the other end of a gun:
 `--league-weapon NAME` (or `all`, each gun in turn) plays the league with one
 gun: everybody spawns holding it and every gun or ammunition pad hands out
 rounds for it. It prints the field's kills, damage, deaths nobody was
-credited with (mostly a bot's own blast), rounds and damage a round, and
-shells evaded, a bot-minute. `LEAGUE_WITHOUT=evade` switches a `Style` part
+credited with, the part of those its own round did (`own/m`, from
+`Score::own_deaths`), rounds and damage a round, and shells evaded, a
+bot-minute. `LEAGUE_WITHOUT=evade` switches a `Style` part
 off for every entrant, and `LEAGUE_WITHOUT_FOR=house` for one only, which is
 the paired test: in a mirror match a change moves the whole field.
 
@@ -497,7 +508,15 @@ share their seeds once the code under it has changed, so compare the
 movement and objective columns, and the field's average, more than the
 order of the rows. `LEAGUE_FLIP`, `LEAGUE_LOST`, `LEAGUE_IDLE` and
 `LEAGUE_HURT` print a line per event with `Brain::note`, which says what a
-bot is walking toward and why.
+bot is walking toward and why; `LEAGUE_TRACE` prints every bot's act,
+position and note four times a second, and `LEAGUE_SELF` a line per death by
+a fighter's own round.
+
+Running with nobody to aim at, a bot will not put the other side key down
+within `RUN_FLIP_S` (1.2 s) of one going down; it holds W and lets the head
+turn instead (`CTF_OFF=runflip` turns that off). Changes the league kept
+behind a name can be switched off with `CTF_OFF` in the deathmatch too
+(`brain::team::trying`).
 
 ## The weapon bench
 

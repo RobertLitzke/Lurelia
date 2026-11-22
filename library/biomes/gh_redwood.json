@@ -1,0 +1,35 @@
+{
+  "name": "gh_redwood",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "Coast redwood along the north edge: tall trunks with young redwoods coming up round them, fern and huckleberry under, fog in the crowns.",
+  "priority": 4,
+  "rules": {"region": "redwood", "elev": [1.5, 200]},
+  "surface": "pine_duff",
+  "subsurface": "dirt",
+  "map_color": [52, 74, 50],
+  "plants": [
+    {"plant": "redwood", "density": 0.012, "placement": {"verb": "clustered", "params": {"size": 30}}},
+    {"plant": "young_redwood", "density": 0.008, "placement": {"verb": "clustered", "params": {"size": 12}}},
+    {"plant": "giant_redwood", "density": 0.0012, "placement": {"verb": "lone", "params": {"spacing": 40}}},
+    {"plant": "fern", "density": 0.08, "placement": {"verb": "clustered", "params": {"size": 12}}},
+    {"plant": "salal", "density": 0.03, "placement": {"verb": "clustered", "params": {"size": 14}}},
+    {"plant": "huckleberry", "density": 0.02, "placement": {"verb": "clustered", "params": {"size": 12}}},
+    {"plant": "sitka_spruce", "density": 0.002, "placement": {"verb": "clustered", "params": {"size": 30}}},
+    {"plant": "tree_moss", "density": 0.4, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [
+    {"structure": "fallen_trunk", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "mossy_log", "density": 0.0007, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "elk", "count": 4},
+    {"creature": "deer", "count": 3},
+    {"creature": "douglas_squirrel", "count": 4},
+    {"creature": "pileated_woodpecker", "count": 2},
+    {"creature": "great_horned_owl", "count": 1},
+    {"creature": "raven", "count": 2},
+    {"creature": "banana_slug", "count": 6}
+  ],
+  "collectibles": []
+}

@@ -29,7 +29,9 @@
     {"creature": "bison", "count": 4},
     {"creature": "badger", "count": 1},
     {"creature": "gopher_snake", "count": 2},
-    {"creature": "garter_snake", "count": 2}
+    {"creature": "garter_snake", "count": 2},
+    {"creature": "killdeer", "count": 2},
+    {"creature": "annas_hummingbird", "count": 2}
   ],
   "collectibles": [{"item": "pine_cone", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}}],
   "sound": {"wind": 1.2}

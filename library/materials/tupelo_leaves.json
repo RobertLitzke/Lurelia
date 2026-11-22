@@ -4,6 +4,7 @@
   "introduced_by": "lowmouth",
   "notes": "Water tupelo leaves: broad, a dull mid green.",
   "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "broad"},
   "texture": {
     "pattern": "blotch",
     "base": [74, 100, 52],

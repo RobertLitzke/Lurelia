@@ -4,6 +4,7 @@
   "introduced_by": "ribshore",
   "notes": "Sitka spruce: stiff blue-green needles, silvery underneath.",
   "smooth": false,
+  "sprites": "needles",
   "texture": {
     "pattern": "speckle",
     "base": [56, 78, 70],

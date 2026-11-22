@@ -6,6 +6,7 @@
   "id": 71,
   "smooth": false,
   "tint": "leaves",
+  "sprites": {"rule": "leaves", "shape": "broad"},
   "texture": {
     "pattern": "blotch",
     "base": [92, 136, 52],

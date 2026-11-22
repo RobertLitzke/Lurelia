@@ -3,11 +3,7 @@
   "version": 2,
   "introduced_by": "faerie",
   "notes": "Parks gone to glades: great oaks on moss.",
-  "priority": 9,
-  "rules": {"region": "city_park"},
   "surface": "moss_grass",
-  "subsurface": "dirt",
-  "fringe": 0,
   "map_color": [86, 170, 90],
   "plants": [
     {"plant": "blossom_vine", "density": 0.3, "placement": {"verb": "scatter", "params": {}}},
@@ -39,7 +35,7 @@
   "creatures": [
     {"creature": "moss_bear", "count": 1},
     {"creature": "mossback_deer", "count": 3},
-    {"creature": "lantern_moth", "count": 20},
+    {"creature": "glassmoth", "morph": "lantern", "count": 20},
     {"creature": "fae_horse", "count": 3},
     {"creature": "sky_ray", "count": 5},
     {"creature": "faerie_heron", "count": 1},
@@ -48,5 +44,6 @@
     {"creature": "fae_badger", "count": 1},
     {"creature": "fae_toad", "count": 2},
     {"creature": "fae_elephant", "count": 2}
-  ]
+  ],
+  "like": "city_park"
 }

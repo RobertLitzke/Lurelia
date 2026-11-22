@@ -137,13 +137,70 @@ pub enum Foot {
     Bird,
     /// The player's boot.
     Boot,
+    /// A stretch of a car's tyre track, laid end to end (ride/drive.rs).
+    Tyre,
 }
 
 const HOOVED: [&str; 35] = [
-    "deer", "elk", "moose", "cattle", "cow", "bull", "ox", "bison", "buffalo", "goat", "sheep", "ram", "pig", "boar", "hog", "horse", "pony", "zebra", "donkey", "antelope", "gazelle", "impala", "kudu", "oryx", "ibex", "chamois", "wildebeest", "reindeer", "caribou", "yak", "aurochs", "camel", "giraffe", "tapir", "bighorn",
+    "deer",
+    "elk",
+    "moose",
+    "cattle",
+    "cow",
+    "bull",
+    "ox",
+    "bison",
+    "buffalo",
+    "goat",
+    "sheep",
+    "ram",
+    "pig",
+    "boar",
+    "hog",
+    "horse",
+    "pony",
+    "zebra",
+    "donkey",
+    "antelope",
+    "gazelle",
+    "impala",
+    "kudu",
+    "oryx",
+    "ibex",
+    "chamois",
+    "wildebeest",
+    "reindeer",
+    "caribou",
+    "yak",
+    "aurochs",
+    "camel",
+    "giraffe",
+    "tapir",
+    "bighorn",
 ];
 const BIRDS: [&str; 22] = [
-    "duck", "goose", "swan", "heron", "egret", "crane", "stork", "ibis", "turkey", "grouse", "pheasant", "quail", "partridge", "ostrich", "emu", "rhea", "chicken", "hen", "peafowl", "bustard", "plover", "gull",
+    "duck",
+    "goose",
+    "swan",
+    "heron",
+    "egret",
+    "crane",
+    "stork",
+    "ibis",
+    "turkey",
+    "grouse",
+    "pheasant",
+    "quail",
+    "partridge",
+    "ostrich",
+    "emu",
+    "rhea",
+    "chicken",
+    "hen",
+    "peafowl",
+    "bustard",
+    "plover",
+    "gull",
 ];
 
 impl Foot {
@@ -175,6 +232,7 @@ impl Foot {
             Foot::Bear => 0.15,
             Foot::Bird => 0.1,
             Foot::Boot => return 0.29,
+            Foot::Tyre => return 0.6,
         };
         (height * k).clamp(0.035, 0.32)
     }
@@ -186,6 +244,7 @@ impl Foot {
             Foot::Bear => 2,
             Foot::Bird => 3,
             Foot::Boot => 4,
+            Foot::Tyre => 5,
         }
     }
 }
@@ -330,7 +389,6 @@ impl Marks {
             self.version += 1;
         }
     }
-
 }
 
 #[cfg(test)]
@@ -381,7 +439,14 @@ mod tests {
     }
 
     fn sign(bed: Bed, kind: Kind) -> Sign {
-        Sign { pos: Vec3::ZERO, yaw: 0.0, kind, bed, size: 0.1, wear: 0.0 }
+        Sign {
+            pos: Vec3::ZERO,
+            yaw: 0.0,
+            kind,
+            bed,
+            size: 0.1,
+            wear: 0.0,
+        }
     }
 
     #[test]
@@ -407,7 +472,12 @@ mod tests {
         for i in 0..40 {
             // Ten deer each crossing the same four metres of line.
             let x = (i % 4) as f32;
-            m.trample(&Step { pos: Vec3::new(x, 0.0, 0.0), yaw: 0.0, foot: Foot::Hoof, height: 1.4 });
+            m.trample(&Step {
+                pos: Vec3::new(x, 0.0, 0.0),
+                yaw: 0.0,
+                foot: Foot::Hoof,
+                height: 1.4,
+            });
         }
         assert!(m.signs.len() <= 5, "{} patches", m.signs.len());
     }
@@ -416,7 +486,10 @@ mod tests {
     fn the_oldest_go_first_when_full() {
         let mut m = Marks::default();
         for i in 0..MAX_MARKS + 10 {
-            m.push(Sign { pos: Vec3::new(i as f32, 0.0, 0.0), ..sign(Bed::Snow, Kind::Print(Foot::Boot)) });
+            m.push(Sign {
+                pos: Vec3::new(i as f32, 0.0, 0.0),
+                ..sign(Bed::Snow, Kind::Print(Foot::Boot))
+            });
         }
         assert_eq!(m.signs.len(), MAX_MARKS);
         assert!(m.signs.iter().all(|s| s.pos.x >= 10.0));

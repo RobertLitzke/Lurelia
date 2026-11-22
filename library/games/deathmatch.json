@@ -1,0 +1,10 @@
+{
+  "name": "deathmatch",
+  "version": 1,
+  "introduced_by": "engine",
+  "kind": "deathmatch",
+  "title": "DEATHMATCH",
+  "notes": "Every fighter for themself, played by the map's own rules: its guns, its health, its pads.",
+  "help": "An arena match: guns, respawns, and whoever gets the most kills.",
+  "target": 15
+}

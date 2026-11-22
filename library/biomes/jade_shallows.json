@@ -5,8 +5,8 @@
   "notes": "The lagoon floor: white lime sand under one to four metres of green water, turquoise from above.",
   "priority": 0,
   "rules": {"underwater": true},
-  "surface": "lime_sand",
-  "subsurface": "lime_sand",
+  "surface": "white_sand",
+  "subsurface": "white_sand",
   "map_color": [96, 186, 176],
   "creatures": [
     {"creature": "herring", "count": 40},
@@ -18,6 +18,6 @@
     {"creature": "yellow_tang", "count": 6},
     {"creature": "stingray", "count": 1},
     {"creature": "moon_jelly", "count": 4},
-    {"creature": "jewel_kingfisher", "count": 3}
+    {"creature": "kingfisher", "count": 3}
   ]
 }

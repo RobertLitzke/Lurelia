@@ -96,7 +96,11 @@ pub fn run(args: &Args) {
     let mut ear = Ear::default();
     let mut watch = Watch::default();
     let mut engine = Engine::new(RATE as f32);
-    let levels = Levels { on: true, volume: 100, ..Levels::default() };
+    let levels = Levels {
+        on: true,
+        volume: 100,
+        ..Levels::default()
+    };
     super::listen();
     // The world runs at its own 60 Hz, one frame per sixtieth of audio.
     let step = 1.0 / 60.0;

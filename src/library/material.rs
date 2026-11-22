@@ -3,7 +3,7 @@
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct Recipe {
     /// Texture pattern verb: noise, speckle, strata, columns, cracks, blotch,
     /// planks, coursed, glass, ripples, grain, rings, thatch, flat.
@@ -30,7 +30,7 @@ pub(super) fn default_blob() -> f32 {
     60.0
 }
 
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct CalmColours {
     pub base: [f32; 3],
     #[serde(default)]
@@ -49,7 +49,7 @@ pub struct CalmColours {
 /// How grass grows on a ground material (`grass` in its file). The defaults
 /// are what every grass material had before: thin cover in the bare patches,
 /// thick in the lush ones, and tufts from about a hand to knee high.
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct GrassDef {
     /// Share of columns with a tuft where the meadow noise is at its lowest.
@@ -73,7 +73,33 @@ pub(super) fn grass_dense() -> f32 {
     0.85
 }
 
-#[derive(Deserialize, Clone, Debug)]
+/// A material's `sprites`: a rule by name, or a rule with a leaf shape.
+#[derive(Deserialize, Clone, Debug, PartialEq, schemars::JsonSchema)]
+#[serde(untagged)]
+pub enum Sprites {
+    Rule(String),
+    Full {
+        rule: String,
+        #[serde(default)]
+        shape: Option<String>,
+    },
+}
+
+impl Sprites {
+    pub fn rule(&self) -> &str {
+        match self {
+            Sprites::Rule(r) | Sprites::Full { rule: r, .. } => r,
+        }
+    }
+    pub fn shape(&self) -> Option<&str> {
+        match self {
+            Sprites::Rule(_) => None,
+            Sprites::Full { shape, .. } => shape.as_deref(),
+        }
+    }
+}
+
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct MaterialDef {
     /// The id the entry asks for in its file (`"id"`), 17..254, or none.
     /// Each world keeps the ids its materials ask for where it can; entries
@@ -92,6 +118,26 @@ pub struct MaterialDef {
     #[serde(skip, default)]
     pub coat_plant: Option<String>,
     pub name: String,
+    /// Names this material had before others were merged into it
+    /// (`reedmace_head` into `cattail_head`). Anything that still names one,
+    /// a save above all, gets this material: a world that reaches an old name
+    /// reaches it, and `Library::material` and `matlib::id_of` answer to it.
+    #[serde(default)]
+    pub was: Vec<String>,
+    /// The material this one is a variant of (src/inherit.rs), already merged
+    /// in: its recipes merge key by key, and `shade` and `hue` repaint what it
+    /// takes from the parent. A darker bed of the same rock, the same paint in
+    /// another colour, the same texture with a flag of its own.
+    #[serde(default)]
+    #[allow(dead_code)] // read by the catalogue and people
+    pub like: Option<String>,
+    /// What grows on the material as sprites (mesh/sprites.rs `SPRITE_RULES`):
+    /// `"grass"`, `"fern"`, `"needles"`, `"cattail head"`, or for leaves a
+    /// shape as well, `{"rule": "leaves", "shape": "broad"}`. Left out, nothing
+    /// grows on it, whatever it is called; a world's ground with a `grass`
+    /// block still grows short dry tufts.
+    #[serde(default)]
+    pub sprites: Option<Sprites>,
     #[serde(default = "default_version")]
     #[allow(dead_code)] // read by tools/libfmt.py
     pub version: u32,
@@ -102,6 +148,11 @@ pub struct MaterialDef {
     /// natural forms such as hoodoos. Never for ground the land is made of.
     #[serde(default)]
     pub round: bool,
+    /// What it is like to drive on (world/surface.rs: hardpack, rock,
+    /// sand_wet, sand_soft, grass, mud, snow). Guessed from the name if
+    /// left out.
+    #[serde(default)]
+    pub surface: Option<String>,
     /// Rounded rock drawn in flat facets like sloped ground, not soft blobs:
     /// the corners sit on the plain voxel surface (no blur) and the light
     /// is softened toward the face as on hillsides. Implies `round`.
@@ -162,7 +213,8 @@ pub struct MaterialDef {
     pub drift: Option<Drift>,
     /// How thick and how long the grass tufts on this ground grow
     /// (mesh/sprites.rs). Without it a material whose name holds GRASS takes
-    /// the defaults below: a thin steppe and a hay meadow grew alike.
+    /// the defaults below: a thin steppe and a hay meadow grew alike. Any
+    /// other ground that has one grows short dry tufts in its own colour.
     #[serde(default)]
     pub grass: Option<GrassDef>,
     /// Leaves or needles: the bike brushes through and a rope won't hold.
@@ -208,7 +260,7 @@ pub struct MaterialDef {
 /// The ends of a material's broad colour field (`drift`), in sRGB bytes: one
 /// pair for both styles, or a pair for each. A style with no pair of its own
 /// falls back to the ramp its `tint` class gives it.
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 #[serde(untagged)]
 pub enum Drift {
     Both([[f32; 3]; 2]),
@@ -232,7 +284,7 @@ impl Drift {
 
 /// The colour of water: sRGB bytes where it is shallow (over sand, a metre
 /// or two) and where it is deep.
-#[derive(Deserialize, Clone, Copy, Debug, PartialEq)]
+#[derive(Deserialize, Clone, Copy, Debug, PartialEq, schemars::JsonSchema)]
 pub struct WaterColour {
     pub shallow: [f32; 3],
     pub deep: [f32; 3],

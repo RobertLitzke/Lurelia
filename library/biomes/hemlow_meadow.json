@@ -33,7 +33,7 @@
     {"creature": "sparrow", "count": 10},
     {"creature": "barn_owl", "count": 2},
     {"creature": "firefly", "count": 160},
-    {"creature": "lantern_moth", "count": 20},
+    {"creature": "glassmoth", "morph": "lantern", "count": 20},
     {"creature": "bumblebee", "count": 8},
     {"creature": "bee", "count": 8},
     {"creature": "glow_bee", "count": 6},
@@ -43,6 +43,7 @@
     {"creature": "sheep", "count": 8},
     {"creature": "badger", "count": 1},
     {"creature": "toad", "count": 3},
-    {"creature": "garter_snake", "count": 3}
+    {"creature": "garter_snake", "count": 3},
+    {"creature": "lapwing", "count": 4}
   ]
 }

@@ -3,13 +3,6 @@
   "version": 1,
   "introduced_by": "megalith",
   "notes": "Limewash with red ochre through it, pale and worn: the red team's colour on Megalith's carved stone, as `woad` is the blue team's. Paler than the ochre in the Tepe's grooves, so a whole wall of it does not read as brick.",
-  "smooth": false,
-  "texture": {
-    "pattern": "noise",
-    "base": [180, 128, 108],
-    "alt": [166, 116, 96],
-    "scale": 6,
-    "contrast": 0.5,
-    "calm": {"base": [184, 134, 114], "alt": [170, 122, 102]}
-  }
+  "like": "woad",
+  "texture": {"alt": [166, 116, 96], "calm": {"alt": [170, 122, 102], "base": [184, 134, 114]}, "base": [180, 128, 108]}
 }

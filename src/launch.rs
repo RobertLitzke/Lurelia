@@ -23,11 +23,14 @@ use std::sync::Mutex;
 #[serde(rename_all = "lowercase")]
 pub enum Mode {
     Explore,
+    #[serde(alias = "deathmatch")]
     Fps,
     /// Team deathmatch: the same arena, two sides.
     Team,
     /// Capture the flag, on a world whose shooter rules have a `ctf` block.
     Ctf,
+    /// Laps against bots, on a world with a `race` block (src/race.rs).
+    Race,
 }
 
 impl Default for Mode {
@@ -43,11 +46,18 @@ impl Mode {
             Mode::Fps => "fps",
             Mode::Team => "team",
             Mode::Ctf => "ctf",
+            Mode::Race => "race",
         }
     }
 
     /// A match of some kind: the gun is out and the shooter's rules run.
     pub fn is_match(self) -> bool {
+        matches!(self, Mode::Fps | Mode::Team | Mode::Ctf)
+    }
+
+    /// Opens on the world as built and its spawn, not where the last visit
+    /// left off: a match, or a race.
+    pub fn fresh_start(self) -> bool {
         self != Mode::Explore
     }
 
@@ -58,16 +68,26 @@ impl Mode {
             Mode::Fps => "DEATHMATCH",
             Mode::Team => "TEAM DEATHMATCH",
             Mode::Ctf => "CAPTURE THE FLAG",
+            Mode::Race => "RACE",
         }
     }
 
-    pub fn parse(s: &str) -> Option<Mode> {
-        match s {
-            "explore" => Some(Mode::Explore),
-            "fps" | "deathmatch" => Some(Mode::Fps),
-            "team" | "tdm" => Some(Mode::Team),
-            "ctf" => Some(Mode::Ctf),
-            _ => None,
+    /// The plain game of this kind in `library/games/` (src/games.rs).
+    pub fn game_name(self) -> &'static str {
+        match self {
+            Mode::Fps => "deathmatch",
+            m => m.name(),
+        }
+    }
+
+    /// What a world.json has to have for this game to be played there, in
+    /// words, for the complaint when it has not.
+    pub fn needs(self) -> &'static str {
+        match self {
+            Mode::Explore => "nothing",
+            Mode::Fps | Mode::Team => "a shooter block",
+            Mode::Ctf => "a shooter block with a ctf block",
+            Mode::Race => "a race block",
         }
     }
 }
@@ -106,7 +126,7 @@ impl Opt {
 
 /// The travel modes the launch screen can switch off, in the order it shows
 /// them. Walking is not one of them: every other mode starts and ends on foot.
-pub const TRAVEL: [ModeId; 5] = [ModeId::Bike, ModeId::Glide, ModeId::Climb, ModeId::Rope, ModeId::Kayak];
+pub const TRAVEL: [ModeId; 6] = [ModeId::Bike, ModeId::Drive, ModeId::Glide, ModeId::Climb, ModeId::Rope, ModeId::Kayak];
 
 /// The most bots the launch screen offers on a world that does not say
 /// (`ShooterDef::max_bots`): about what a small arena holds.
@@ -135,23 +155,35 @@ fn travel_help(m: ModeId) -> &'static str {
         ModeId::Climb => "Whether sheer rock can be climbed.",
         ModeId::Rope => "Whether the rope can be thrown.",
         ModeId::Kayak => "Whether the kayak is in this world.",
+        ModeId::Drive => "Whether this world's vehicle is in it.",
         _ => "",
     }
 }
 
 /// The options a world and a mode put on offer, in the order they are shown:
 /// the world's own first, then the mode's.
-pub fn options(world: &str, mode: Mode) -> Vec<Opt> {
+pub fn options(world: &str, game: &crate::games::GameDef) -> Vec<Opt> {
+    let mode = game.kind;
     let info = info(world);
     // A line that could change nothing is not offered: animals where no
     // biome of the world has any, the clock on a map in space (held at the
     // hour it opens on), the weather where the climate has one kind of day.
     let mut out = Vec::new();
     if info.species > 0 {
-        out.push(Opt::switch("animals", "ANIMALS", "Whether the world's creatures are in it. Off leaves the plants and the land alone.", true));
+        out.push(Opt::switch(
+            "animals",
+            "ANIMALS",
+            "Whether the world's creatures are in it. Off leaves the plants and the land alone.",
+            true,
+        ));
     }
     if !info.space {
-        out.push(Opt::switch("day_night", "DAY AND NIGHT", "Off holds the world at the hour it opens on, so the light never changes.", true));
+        out.push(Opt::switch(
+            "day_night",
+            "DAY AND NIGHT",
+            "Off holds the world at the hour it opens on, so the light never changes.",
+            true,
+        ));
     }
     if !info.space && info.weathers != 1 {
         out.push(Opt::switch(
@@ -188,6 +220,12 @@ pub fn options(world: &str, mode: Mode) -> Vec<Opt> {
             out.push(Opt::switch(&format!("travel.{}", m.name()), &m.name().to_uppercase(), travel_help(m), true));
         }
     }
+    // Which vehicle U brings, where the world has more than one.
+    if info.allowed.has(ModeId::Drive) && info.vehicles.len() > 1 {
+        let names: Vec<String> = info.vehicles.iter().map(|v| capitalise(&v.replace('_', " "))).collect();
+        let names: Vec<&str> = names.iter().map(|s| s.as_str()).collect();
+        out.push(Opt::pick("vehicle", "VEHICLE", "Which of this world's vehicles U brings.", &names, 0));
+    }
     if mode.is_match() {
         // The levels are shown in the menu's own voice (one capital), and
         // lowercased again on the way back to `brain::person::level`.
@@ -211,7 +249,7 @@ pub fn options(world: &str, mode: Mode) -> Vec<Opt> {
         let bots = if info.bots > 0 { info.bots.min(most) } else { 3.min(most) };
         out.push(Opt::pick("bots", "BOTS", "How many of them are in the match.", &counts, bots));
         if mode == Mode::Ctf {
-            out.push(Opt::pick("captures", "CAPTURES", "Flags carried home that win the match.", &CAPTURES, 1));
+            out.push(Opt::pick("captures", "CAPTURES", "Flags carried home that win the match.", &CAPTURES, game.captures.and_then(|c| CAPTURES.iter().position(|v| *v == c.to_string())).unwrap_or(1)));
             out.push(Opt::pick("minutes", "TIME LIMIT", "Minutes a match lasts; the side ahead when it runs out wins.", &MINUTES, 2));
         } else {
             out.push(Opt::pick(
@@ -223,7 +261,7 @@ pub fn options(world: &str, mode: Mode) -> Vec<Opt> {
                     "Kills that win the match. The scoreboard comes up when someone gets there."
                 },
                 &TARGETS,
-                if mode == Mode::Team { 3 } else { 2 },
+                game.target.and_then(|t| TARGETS.iter().position(|v| *v == t.to_string())).unwrap_or(if mode == Mode::Team { 3 } else { 2 }),
             ));
         }
         if mode != Mode::Fps {
@@ -233,17 +271,73 @@ pub fn options(world: &str, mode: Mode) -> Vec<Opt> {
     out
 }
 
-/// The modes a world offers: every world can be explored, and one whose
-/// world.json carries a `"shooter"` block can be fought over.
-pub fn modes(world: &str) -> Vec<Mode> {
-    let mut out = vec![Mode::Explore];
+/// The games a world offers, the one it is built for first.
+///
+/// A world says so itself: `"games": ["ctf", "team"]` in its world.json,
+/// each a name in `library/games/` (src/games.rs). A game it names and
+/// cannot host (capture the flag with no flags) is left out;
+/// `games_problems` is what reports that. A world that says nothing is one
+/// to explore, and is offered the plain game of every kind its world.json
+/// has the blocks for, as every world was before the list existed.
+pub fn games(world: &str) -> Vec<&'static crate::games::GameDef> {
     let i = info(world);
-    if i.shooter {
-        out.push(Mode::Fps);
-        out.push(Mode::Team);
+    let listed: Vec<_> = i.games.iter().filter_map(|n| crate::games::get(n)).filter(|g| i.hosts(g.kind)).collect();
+    if !listed.is_empty() {
+        return listed;
     }
-    if i.ctf {
-        out.push(Mode::Ctf);
+    crate::games::KINDS.into_iter().filter(|m| i.hosts(*m)).map(crate::games::base).collect()
+}
+
+/// Every game some world on the list offers: what the launch screen's GAME
+/// line picks from. The plain games in the order of their kinds, each
+/// followed by its variants.
+pub fn all_games() -> Vec<&'static crate::games::GameDef> {
+    let mut out: Vec<&'static crate::games::GameDef> = Vec::new();
+    for w in crate::worldload::available() {
+        for g in games(&w) {
+            if !out.iter().any(|o| o.name == g.name) {
+                out.push(g);
+            }
+        }
+    }
+    out.sort_by_key(|g| (crate::games::KINDS.iter().position(|k| *k == g.kind), g.name != g.kind.game_name(), g.name.clone()));
+    out
+}
+
+/// The worlds on the list that offer a game, in the list's order: what the
+/// launch screen's WORLD line picks from once the game is chosen.
+pub fn worlds_for(game: &str) -> Vec<String> {
+    crate::worldload::available().into_iter().filter(|w| games(w).iter().any(|g| g.name == game)).collect()
+}
+
+/// The kinds of game a world offers, in the order `games` has them.
+#[cfg(test)]
+pub fn modes(world: &str) -> Vec<Mode> {
+    let mut out = Vec::new();
+    for g in games(world) {
+        if !out.contains(&g.kind) {
+            out.push(g.kind);
+        }
+    }
+    out
+}
+
+/// The game a world opens in when nobody has said: the first it offers.
+pub fn default_game(world: &str) -> &'static crate::games::GameDef {
+    games(world).first().copied().unwrap_or_else(|| crate::games::base(Mode::Explore))
+}
+
+/// What is wrong with a world.json's `games` list: a name that is no game,
+/// or a game the world has no block for.
+pub fn games_problems(world: &str) -> Vec<String> {
+    let i = info(world);
+    let mut out = Vec::new();
+    for n in &i.games {
+        match crate::games::get(n) {
+            None => out.push(format!("world.json games: no game called {n} in library/games")),
+            Some(g) if !i.hosts(g.kind) => out.push(format!("world.json games: {n} needs {}", g.kind.needs())),
+            Some(_) => {}
+        }
     }
     out
 }
@@ -254,23 +348,29 @@ pub fn modes(world: &str) -> Vec<Mode> {
 #[serde(default)]
 pub struct Launch {
     pub world: String,
-    /// A mode this build does not know is Explore, not a reason to lose the
+    /// The game, by its name in `library/games/`. Older settings called it
+    /// `mode`. One this build does not know, or this world does not offer,
+    /// is read as the world's own (`Launch::def`), not a reason to lose the
     /// rest of settings.json.
-    #[serde(deserialize_with = "crate::util::or_default")]
-    pub mode: Mode,
-    /// Choices by `"<world>/<mode>"`, then by option id.
+    #[serde(alias = "mode", deserialize_with = "crate::util::or_default")]
+    pub game: String,
+    /// Choices by `"<world>/<game>"`, then by option id.
     pub kept: BTreeMap<String, BTreeMap<String, String>>,
     /// The worlds last opened, newest first: the top of the world list.
     pub recent: Vec<String>,
+    /// The world each game was last played in, by the game's name: where
+    /// picking that game goes back to.
+    pub maps: BTreeMap<String, String>,
 }
 
 impl Default for Launch {
     fn default() -> Self {
         Launch {
             world: crate::worldload::DEFAULT_WORLD.to_string(),
-            mode: Mode::Explore,
+            game: Mode::Explore.game_name().to_string(),
             kept: BTreeMap::new(),
             recent: Vec::new(),
+            maps: BTreeMap::new(),
         }
     }
 }
@@ -291,13 +391,15 @@ impl Launch {
         self.recent.retain(|w| w != world);
         self.recent.insert(0, world.to_string());
         self.recent.truncate(RECENT);
+        self.maps.insert(self.def().name.clone(), world.to_string());
     }
 
-    /// The world list as the dropdown shows it: the last few opened, where
-    /// the list is long enough for that to save a search, then every world
-    /// under its kind. A recent world is in the list twice.
+    /// The world list as the dropdown shows it: the worlds that offer the
+    /// game in force, and no others. The last few opened first, where the
+    /// list is long enough for that to save a search, then each under its
+    /// kind. A recent world is in the list twice.
     pub fn world_rows(&self) -> Vec<WorldRow> {
-        let all = crate::worldload::available();
+        let all = worlds_for(&self.def().name);
         let mut out = Vec::new();
         let recent: Vec<&String> = self.recent.iter().filter(|w| all.contains(w)).collect();
         if all.len() > 8 && recent.len() > 1 {
@@ -332,7 +434,7 @@ impl Launch {
     }
 
     fn key(&self) -> String {
-        format!("{}/{}", self.world, self.mode.name())
+        format!("{}/{}", self.world, self.def().name)
     }
 
     /// Where an option's value is now: what was kept, or its default.
@@ -359,32 +461,74 @@ impl Launch {
         self.kept.entry(key).or_default().insert(o.id.clone(), o.values[at].clone());
     }
 
-    /// Step the world, wrapping round the worlds there are. The mode follows
-    /// if the world it lands on does not offer the one that was picked.
+    /// Step the world, wrapping round the worlds that offer the game in
+    /// force.
     pub fn step_world(&mut self, dir: i32) {
-        let list = crate::worldload::available();
+        let list = worlds_for(&self.def().name);
         if list.is_empty() {
             return;
         }
         let n = list.len() as i32;
         let at = list.iter().position(|w| *w == self.world).unwrap_or(0) as i32;
-        self.world = list[(at + if dir == 0 { 1 } else { dir }).rem_euclid(n) as usize].clone();
-        if !modes(&self.world).contains(&self.mode) {
-            self.mode = Mode::Explore;
-        }
+        let next = list[(at + if dir == 0 { 1 } else { dir }).rem_euclid(n) as usize].clone();
+        self.set_world(&next);
     }
 
+    /// Pick a world. The game stays if this world offers it, and is the
+    /// world's own first choice if not, so an arena never opens as a place
+    /// to explore because the last world was one.
+    pub fn set_world(&mut self, world: &str) {
+        self.world = world.to_string();
+        self.settle();
+    }
+
+    /// Put the game on one this world offers. settings.json may name a game
+    /// the world has stopped offering since it was written.
+    pub fn settle(&mut self) {
+        self.game = self.def().name.clone();
+    }
+
+    /// The game in force: the one named, where this world offers it, and
+    /// the world's own first where it does not.
+    pub fn def(&self) -> &'static crate::games::GameDef {
+        let named = crate::games::get(&self.game).map(|g| g.name.as_str());
+        games(&self.world).into_iter().find(|g| Some(g.name.as_str()) == named).unwrap_or_else(|| default_game(&self.world))
+    }
+
+    /// Pick a game. The world stays if it offers the game; if not, it is
+    /// the world this game was last played in, or the first that offers it.
+    pub fn set_game(&mut self, name: &str) {
+        self.game = name.to_string();
+        if !games(&self.world).iter().any(|g| g.name == name) {
+            let list = worlds_for(name);
+            let last = self.maps.get(name).filter(|w| list.contains(w)).cloned();
+            if let Some(w) = last.or_else(|| list.first().cloned()) {
+                self.world = w;
+            }
+        }
+        self.settle();
+    }
+
+    /// Step the game, wrapping round every game some world offers. The
+    /// world follows where it has to (`set_game`).
     pub fn step_mode(&mut self, dir: i32) {
-        let list = modes(&self.world);
+        let list = all_games();
         let n = list.len() as i32;
-        let at = list.iter().position(|m| *m == self.mode).unwrap_or(0) as i32;
-        self.mode = list[(at + if dir == 0 { 1 } else { dir }).rem_euclid(n) as usize];
+        if n == 0 {
+            return;
+        }
+        let now = self.def();
+        let at = list.iter().position(|g| g.name == now.name).unwrap_or(0) as i32;
+        let next = list[(at + if dir == 0 { 1 } else { dir }).rem_euclid(n) as usize].name.clone();
+        self.set_game(&next);
     }
 
     /// Everything the loader and the game need, read off the options this
     /// world and mode offer now.
     pub fn resolve(&self) -> Chosen {
-        let opts = options(&self.world, self.mode);
+        // A game the world offers, whatever settings.json kept.
+        let game = self.def();
+        let opts = options(&self.world, game);
         let on = |id: &str| opts.iter().find(|o| o.id == id).is_some_and(|o| self.value(o) == "On");
         // A line that was not offered has nothing to switch off, except the
         // clock of a map in space, which is held.
@@ -398,7 +542,8 @@ impl Launch {
             .collect();
         Chosen {
             world: self.world.clone(),
-            mode: self.mode,
+            mode: game.kind,
+            game: game.name.clone(),
             animals: on_or("animals", true),
             day_night: on_or("day_night", false),
             weather: on_or("weather", true),
@@ -408,9 +553,15 @@ impl Launch {
             target: num("target", 15),
             captures: num("captures", 3),
             minutes: num("minutes", 0),
-            side: opts.iter().find(|o| o.id == "side").and_then(|o| SIDES.iter().position(|v| *v == self.value(o))).and_then(|k| k.checked_sub(1)).map(|k| k as u8),
+            side: opts
+                .iter()
+                .find(|o| o.id == "side")
+                .and_then(|o| SIDES.iter().position(|v| *v == self.value(o)))
+                .and_then(|k| k.checked_sub(1))
+                .map(|k| k as u8),
             season: pick("season").and_then(|v| crate::world::season::Season::parse(&v.to_lowercase())).map(|s| s.name().to_string()),
             hour: pick("hour").and_then(|v| crate::world::clock::PRESETS.iter().find(|(_, n)| n.eq_ignore_ascii_case(&v)).map(|(h, _)| *h)),
+            vehicle: opts.iter().find(|o| o.id == "vehicle").map(|o| self.value(o).to_lowercase().replace(' ', "_")),
         }
     }
 }
@@ -421,7 +572,10 @@ impl Launch {
 #[derive(Clone, Debug, PartialEq)]
 pub struct Chosen {
     pub world: String,
+    /// The kind of game: which code runs it.
     pub mode: Mode,
+    /// The game, by its name in `library/games/`: whose rules these are.
+    pub game: String,
     pub animals: bool,
     pub day_night: bool,
     /// Whether the weather drifts (world/weather.rs). Off holds fair weather.
@@ -442,6 +596,8 @@ pub struct Chosen {
     pub season: Option<String>,
     /// The hour to open at. None takes the world's own.
     pub hour: Option<f32>,
+    /// The vehicle U brings, by library name. None takes the world's first.
+    pub vehicle: Option<String>,
 }
 
 /// Names and shell colours for the bots a match is asked for, in the order
@@ -478,17 +634,26 @@ impl Chosen {
     /// built for, so `--world slagdeck` still arrives holding a gun.
     pub fn for_world(world: &str) -> Chosen {
         let info = info(world);
-        Chosen {
-            world: world.to_string(),
-            // The match the world is built for: capture the flag on a world
-            // that has flags, a deathmatch on any other arena.
-            mode: if info.ctf {
+        // The game the world is built for: the first of its `games`. A world
+        // with no list is one made before there was one, where the blocks
+        // it has say what it is for.
+        let game = if !info.games.is_empty() {
+            default_game(world)
+        } else {
+            crate::games::base(if info.race {
+                Mode::Race
+            } else if info.ctf {
                 Mode::Ctf
             } else if info.shooter {
                 Mode::Fps
             } else {
                 Mode::Explore
-            },
+            })
+        };
+        Chosen {
+            world: world.to_string(),
+            mode: game.kind,
+            game: game.name.clone(),
             animals: true,
             day_night: true,
             weather: true,
@@ -497,14 +662,26 @@ impl Chosen {
             // line is the one the world was written for.
             difficulty: info.skill.clone().unwrap_or_else(|| "average".to_string()),
             bots: if info.bots > 0 { info.bots } else { 3 },
-            target: 15,
+            target: game.target.unwrap_or(15),
             // Nothing: the world's own capture count and clock.
             captures: 0,
             minutes: 0,
             side: None,
             season: None,
             hour: None,
+            vehicle: None,
         }
+    }
+
+    /// Play this run as another game.
+    pub fn set_game(&mut self, g: &crate::games::GameDef) {
+        self.mode = g.kind;
+        self.game = g.name.clone();
+    }
+
+    /// The game this run is played as.
+    pub fn def(&self) -> &'static crate::games::GameDef {
+        crate::games::get(&self.game).filter(|g| g.kind == self.mode).unwrap_or_else(|| crate::games::base(self.mode))
     }
 
     /// Two launches that would open the same run: the same world, the same
@@ -549,6 +726,9 @@ impl Chosen {
         }
         if !self.mode.is_match() {
             a = a.without(ModeId::Shooter);
+        }
+        if self.mode != Mode::Race {
+            a = a.without(ModeId::Race);
         }
         a
     }
@@ -616,9 +796,26 @@ pub struct Info {
     pub start_hour: Option<f32>,
     /// The season a new game opens in.
     pub start_season: crate::world::season::Season,
+    /// Its vehicles (world.json `vehicles`).
+    pub vehicles: Vec<String>,
+    /// Whether it has a race (world.json `race`).
+    pub race: bool,
+    /// The games it says it is for (world.json `games`), by their names in
+    /// `library/games/`, its own first. Empty where it does not say.
+    pub games: Vec<String>,
 }
 
 impl Info {
+    /// Whether this world has what a game needs (`Mode::needs`).
+    pub fn hosts(&self, m: Mode) -> bool {
+        match m {
+            Mode::Explore => true,
+            Mode::Fps | Mode::Team => self.shooter,
+            Mode::Ctf => self.ctf,
+            Mode::Race => self.race,
+        }
+    }
+
     pub fn kind(&self) -> Kind {
         if self.shooter {
             Kind::Arena
@@ -635,7 +832,13 @@ struct Peek {
     #[serde(default)]
     modes: Option<Vec<String>>,
     #[serde(default)]
+    games: Vec<String>,
+    #[serde(default)]
+    vehicles: Vec<String>,
+    #[serde(default)]
     shooter: Option<PeekShooter>,
+    #[serde(default)]
+    race: Option<serde_json::Value>,
     #[serde(default)]
     seasons: Vec<String>,
     #[serde(default)]
@@ -793,21 +996,34 @@ pub fn info(world: &str) -> Info {
                 start_hour: p.start_hour,
                 start_season,
                 max_bots,
-            allowed: match &p.modes {
-                Some(names) => Allowed::from_names(names, |_| {}),
-                None => Allowed::all(),
-            },
-            shooter: p.shooter.is_some(),
-            seasons,
-            bots: p.shooter.as_ref().map_or(0, |sh| sh.bots.len()),
-            skill: p.shooter.as_ref().and_then(|sh| sh.bots.first().and_then(|b| b.skill.clone())),
-            ctf: p.shooter.as_ref().is_some_and(|sh| sh.ctf.is_some()),
+                allowed: {
+                    let a = match &p.modes {
+                        Some(names) => Allowed::from_names(names, |_| {}),
+                        None => Allowed::all(),
+                    };
+                    if p.vehicles.is_empty() {
+                        a.without(ModeId::Drive)
+                    } else {
+                        a
+                    }
+                },
+                vehicles: p.vehicles.clone(),
+                race: p.race.is_some(),
+                games: p.games.clone(),
+                shooter: p.shooter.is_some(),
+                seasons,
+                bots: p.shooter.as_ref().map_or(0, |sh| sh.bots.len()),
+                skill: p.shooter.as_ref().and_then(|sh| sh.bots.first().and_then(|b| b.skill.clone())),
+                ctf: p.shooter.as_ref().is_some_and(|sh| sh.ctf.is_some()),
             }
         }
         // The random island, and a world whose world.json will not parse: the
         // loader is the one that reports that, so offer the usual game.
         None => Info {
-            allowed: Allowed::all(),
+            allowed: Allowed::all().without(ModeId::Drive),
+            vehicles: Vec::new(),
+            race: false,
+            games: Vec::new(),
             shooter: false,
             seasons: vec![crate::world::season::Season::Summer],
             bots: 0,
@@ -815,7 +1031,11 @@ pub fn info(world: &str) -> Info {
             max_bots: DEFAULT_MAX_BOTS,
             ctf: false,
             title: None,
-            foot: if world == "random" { "An island made from a seed: different every time one is asked for." } else { "" },
+            foot: if world == "random" {
+                "An island made from a seed: different every time one is asked for."
+            } else {
+                ""
+            },
             listed: true,
             local: true,
             // Not counted, and not none: the island has its own animals.
@@ -834,12 +1054,18 @@ pub fn info(world: &str) -> Info {
 mod tests {
     use super::*;
 
+    /// The options of a kind's plain game.
+    fn options(world: &str, mode: Mode) -> Vec<Opt> {
+        super::options(world, crate::games::base(mode))
+    }
+
     fn launch(world: &str, mode: Mode) -> Launch {
         Launch {
             world: world.to_string(),
-            mode,
+            game: mode.game_name().to_string(),
             kept: BTreeMap::new(),
             recent: Vec::new(),
+            maps: BTreeMap::new(),
         }
     }
 
@@ -940,6 +1166,95 @@ mod tests {
         assert!(modes("sluice").contains(&Mode::Team));
         assert!(!modes("porch").contains(&Mode::Ctf), "an arena with no flags offered capture the flag");
         assert_eq!(Chosen::for_world("sluice").mode, Mode::Ctf);
+    }
+
+    /// A world offers the games it lists and no others, its own first: a
+    /// capture the flag map has no free-for-all, and an arena is not a place
+    /// to explore.
+    #[test]
+    fn a_world_offers_the_games_it_lists() {
+        assert_eq!(modes("sluice"), [Mode::Ctf, Mode::Team]);
+        assert_eq!(modes("porch"), [Mode::Fps, Mode::Team]);
+        assert_eq!(modes("kestrel"), [Mode::Race]);
+        assert_eq!(modes("glassfall"), [Mode::Explore], "a world with no list and no blocks is one to explore");
+    }
+
+    /// Picking a world keeps the game where the world offers it and takes
+    /// the world's own where it does not, and a game settings.json kept that
+    /// the world has since dropped is not played.
+    #[test]
+    fn the_game_follows_the_world() {
+        let mut l = launch("glassfall", Mode::Explore);
+        l.set_world("sluice");
+        assert_eq!(l.game, "ctf", "an arena opened as a place to explore");
+        l.game = "team".to_string();
+        l.set_world("porch");
+        assert_eq!(l.game, "team", "a game both worlds offer was dropped");
+        l.set_world("glassfall");
+        assert_eq!(l.game, "explore");
+        assert_eq!(launch("sluice", Mode::Fps).resolve().mode, Mode::Ctf);
+        // What older settings called the game still names it.
+        let mut old = launch("porch", Mode::Explore);
+        old.game = "fps".to_string();
+        assert_eq!(old.resolve().game, "deathmatch");
+    }
+
+    /// The game is picked first: the world list is then the worlds that
+    /// offer it, and picking a game the world on screen does not offer
+    /// moves to one that does, the last played in if there is one.
+    #[test]
+    fn the_world_list_follows_the_game() {
+        let has = |game: &str, w: &str| worlds_for(game).contains(&w.to_string());
+        assert!(has("ctf", "megalith") && has("deathmatch", "porch") && has("race", "kestrel") && has("explore", "glassfall"));
+        assert!(worlds_for("ctf").iter().all(|w| info(w).ctf), "a world with no flags is on the capture the flag list");
+        assert!(!has("explore", "porch") && !has("explore", "kestrel"), "an arena or a circuit is on the explore list");
+        assert!(!has("deathmatch", "megalith"), "a flag map is on the deathmatch list");
+        let mut l = launch("glassfall", Mode::Explore);
+        l.set_game("ctf");
+        assert_eq!(l.def().name, "ctf");
+        assert!(info(&l.world).ctf, "capture the flag was left on {}", l.world);
+        assert!(l.world_rows().iter().all(|r| info(&r.world).ctf));
+        // From a flag map that lists its games, so deathmatch is not one.
+        l.world = "megalith".to_string();
+        l.maps.insert("deathmatch".to_string(), "transmission".to_string());
+        l.set_game("deathmatch");
+        assert_eq!(l.world, "transmission", "the world this game was last played in was forgotten");
+        l.set_game("team");
+        assert_eq!(l.world, "transmission", "a world that offers the game was left");
+        // The plain games in the order of their kinds, a variant after its own.
+        let names: Vec<&str> = all_games().iter().map(|g| g.name.as_str()).collect();
+        let at = |n: &str| names.iter().position(|x| *x == n).unwrap_or_else(|| panic!("no {n} in {names:?}"));
+        assert!(at("explore") < at("deathmatch") && at("deathmatch") < at("instagib") && at("instagib") < at("team") && at("team") < at("ctf"));
+    }
+
+    /// A variant is offered beside the game it is like, keeps its own
+    /// choices, and is what the run is played as.
+    #[test]
+    fn a_map_offers_two_deathmatches() {
+        let names: Vec<&str> = games("slagdeck").iter().map(|g| g.name.as_str()).collect();
+        assert_eq!(names, ["deathmatch", "team", "instagib"]);
+        assert_eq!(modes("slagdeck"), [Mode::Fps, Mode::Team]);
+        let mut l = launch("slagdeck", Mode::Fps);
+        l.game = "instagib".to_string();
+        let c = l.resolve();
+        assert_eq!((c.mode, c.game.as_str()), (Mode::Fps, "instagib"));
+        assert_eq!(c.def().name, "instagib");
+        let bots = super::options("slagdeck", l.def()).into_iter().find(|o| o.id == "bots").expect("bots");
+        l.step(&bots, 1);
+        assert!(l.kept.contains_key("slagdeck/instagib"));
+        assert!(!l.kept.contains_key("slagdeck/deathmatch"));
+    }
+
+    /// Every world's `games` list names games, and games the world can host.
+    #[test]
+    fn every_listed_game_can_be_played() {
+        let root = crate::library::data_root();
+        for d in crate::worldload::WORLD_DIRS {
+            let Ok(rd) = std::fs::read_dir(root.join(d)) else { continue };
+            for w in rd.filter_map(|e| e.ok()).filter(|e| e.path().join("world.json").exists()).filter_map(|e| e.file_name().into_string().ok()) {
+                assert_eq!(games_problems(&w), Vec::<String>::new(), "{w}");
+            }
+        }
     }
 }
 

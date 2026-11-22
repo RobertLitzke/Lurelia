@@ -8,7 +8,6 @@
 //! `--match` re-renders only some entries and keeps the rest of an existing
 //! catalogue, so one fix can be checked without waiting for the whole world.
 
-use crate::world::flora::Form;
 use crate::anim::Plan;
 use crate::cli::Args;
 use crate::creatures::locomotion::Mover;
@@ -19,6 +18,7 @@ use crate::player::MoveInput;
 use crate::render::hud::Hud;
 use crate::render::{Gpu, Renderer};
 use crate::world::fields::World;
+use crate::world::flora::Form;
 use crate::world::gen::NO_PLANT;
 use crate::{new_game, render, show_world, worldload};
 use glam::Vec3;
@@ -668,7 +668,7 @@ pub fn run(args: &Args) {
         let gy = ground(&game, x, z);
         let level = game.water_at(Vec3::new(x, gy, z)).0;
         let lift = match mover {
-            Mover::Buzz { .. } => 0.5,
+            Mover::Buzz { .. } | Mover::Hum => 0.5,
             Mover::Circle { .. } | Mover::Flock { soar: true, .. } => size,
             _ => 0.0,
         };

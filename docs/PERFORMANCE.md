@@ -199,7 +199,7 @@ Three things make a measurement a lie, all of them easy to miss:
   1920x1080 at 256 m with shadows off, which is a different workload. Pass
   the settings you mean to measure.
 
-`--threads 1` shows how generation scales, and `VOXEL_OCCLUSION=0`,
+`--threads 1` shows how generation scales, and `VOXEL_PACING=0`, `VOXEL_OCCLUSION=0`,
 `VOXEL_FRINGE=0`, `VOXEL_GRAIN=0` and `VOXEL_COLUMN_CULL=0` turn individual
 features off for comparisons. `VOXEL_BUILD_THREADS=1` runs the world build's
 per-cell stages as a single pass.
@@ -211,6 +211,90 @@ overlaps the two, so it is about `max(CPU, GPU)`. A headless 8 ms frame made
 of 3 ms CPU and 5 ms GPU is a 5 ms frame on screen, not an 8 ms one -- which
 is why the two stages are worth reading separately (`render_cpu_ms` and
 `drawlist_ms` in the stats file, `VOXEL_GPU_PROFILE=1` for the GPU).
+
+A windowed frame under vsync has one more catch: **the loop's intervals are
+not the display's.** On a 60 Hz screen with the frame queue two deep, the loop
+runs a couple of frames ahead in 7 ms each and then waits 30-50 ms for a
+buffer, while the display still shows one frame every 16.7 ms. A `--bench`
+run's `p95_ms` of 45 ms there is that bunching, not a slow frame. The world
+used to move by those raw intervals, so motion juddered at a steady 60 fps,
+and a faster build juddered more because it got further ahead before each
+wait. `pacing.rs` now averages the last twelve intervals and snaps the step
+to the refresh. The windowed bench reports the steps too: `step_jump_ms` is
+the mean change in step from one frame to the next, and `VOXEL_PACING=0`
+turns the smoothing off. On redrock at 1080p it went from 22 ms to 0.3 ms,
+with every step between 16.5 and 17.2 ms.
+
+Under vsync the swapchain now queues one frame, not two (`frame_latency` in
+main.rs; `VOXEL_FRAME_LATENCY=N` overrides it). Each queued frame is another
+refresh between moving the mouse and seeing it, and with the GPU frame at 3-6
+ms nothing is gained by queueing more. On redrock the worst loop waits went
+from 47 ms to 34 ms and the average stayed 60 fps. Without vsync it is still
+two.
+
+## Finding hitches in play
+
+The headless runs miss what only happens in a window: sound, real input, a
+vehicle, animals up close. The window keeps its own account of each frame:
+the frame loop and the tick time their parts (`trace.rs`: tick, and inside it
+creatures, player, platforms, activity, aim; then stream, models, hud, sound,
+render), and the wait for the display is kept apart from the work. A frame
+with over 16 ms of work, or a wait over 50 ms (the GPU still busy, not
+vsync), is a hitch. The stats panel (F3) shows the worst of the last five
+seconds as `HITCH 21 MS  STREAM`, naming its biggest part, or GPU for a long
+wait. With `VOXEL_TRACE=1` every hitch is printed with its parts and the
+streamer's own (accept, plan, visibility, unload, queue). Headless
+`VOXEL_TRACE=1` lines carry the tick's parts too, in brackets.
+
+The flight (`--bench`) is fast and high: up to 100 m/s, which no one plays at,
+and it never sees an animal close. `--bench-route field` walks once round a
+loop 50 m across at eye height instead, looking from side to side, from the
+spawn or `--ground`. On Hemlow's spawn (the West Field, about a hundred
+animals in view, sheep, horses and cattle among them) that is the work of
+playing on foot:
+
+```bash
+target/release/lurelia --world hemlow --bench-route field --view 256 --no-shadows
+```
+
+At 1080p with no MSAA, headless frames there are 5.0 ms at p50 and 7.7 ms at
+p99; the window caught one hitch a run, a GPU wait of about 130 ms on the
+first frame after loading.
+
+What shadows and antialiasing cost, from `VOXEL_GPU_PROFILE=1` at 1920x1080,
+256 m view (GPU ms a frame, average over each run):
+
+| | Redrock flight | Hemlow field |
+|---|---|---|
+| no shadows, no MSAA | 3.5 | 3.1 |
+| shadows | 3.7 | |
+| 4x MSAA | 5.8 | |
+| both | 6.1 | 4.8 |
+
+Shadows are about 0.2 ms; 4x MSAA is about 2.3 ms, nearly all of it terrain.
+
+## What a column costs
+
+Headless stats report `gen_stage_ms`: the milliseconds a column spends in
+each stage, averaged over the run's columns, from timers summed across the
+workers (`gen::GEN_NANOS`, `stream::WORK_NANOS`, `mesh::MESH_NANOS`). On the
+redrock flight a column took 11.1 ms, and 7.4 ms of it was meshing; of that,
+4.4 ms was the leaning stems (`mesh/lean.rs`), where a column hands the
+mesher about 300 threads (juniper and pinyon sticks). Two things were
+quadratic or wasted there: each thread looked for the threads joined to its
+ends by checking every other thread, and every piece of every face was
+worked out in every chunk the thread crossed, only for `owned` to drop the
+ones another chunk draws. Thread ends are now found through a small grid of
+cells (`Ends`), and a piece whose line misses the chunk is skipped. A column
+is 9.0 ms, the leaning stems 2.8 ms; the meshes are the same, quad for quad,
+and so are the pictures.
+
+What is left of a redrock column: voxel fill 2.4 ms, the six face sweeps
+2.0 ms, leaning stems 2.8 ms (of which about 0.9 ms is each chunk refining
+the same thread's pieces again), the rest under 0.6 ms together. Eight
+workers is about right on a 14-core i5-13500: sixteen generated 24% more
+columns, each a third slower, since past six they share the hyperthreads
+and the efficiency cores.
 
 ## Building a world
 

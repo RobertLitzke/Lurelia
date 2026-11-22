@@ -286,7 +286,15 @@ pub struct Order {
 
 impl Order {
     pub fn new(role: Role, goal: Goal, urgency: f32) -> Order {
-        Order { role, goal, urgency, via: None, mark: None, reach: None, tweaks: 0 }
+        Order {
+            role,
+            goal,
+            urgency,
+            via: None,
+            mark: None,
+            reach: None,
+            tweaks: 0,
+        }
     }
 
     /// Whether the role change `name` (one of `TWEAKS`) is on for this job.
@@ -299,7 +307,34 @@ impl Order {
 /// (docs/BOTS.md "What the bench found"): four tries at each role, and three ways a team
 /// brain sets its side's stance (`team::TeamBrain::tweaks`).
 pub const TWEAKS: [&str; 28] = [
-    "stance", "reset", "group", "lane", "attack1", "attack2", "attack3", "attack4", "carry1", "carry2", "carry3", "carry4", "escort1", "escort2", "escort3", "escort4", "defend1", "defend2", "defend3", "defend4", "retrieve1", "retrieve2", "retrieve3", "retrieve4", "return1", "return2", "return3", "return4",
+    "stance",
+    "reset",
+    "group",
+    "lane",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "carry1",
+    "carry2",
+    "carry3",
+    "carry4",
+    "escort1",
+    "escort2",
+    "escort3",
+    "escort4",
+    "defend1",
+    "defend2",
+    "defend3",
+    "defend4",
+    "retrieve1",
+    "retrieve2",
+    "retrieve3",
+    "retrieve4",
+    "return1",
+    "return2",
+    "return3",
+    "return4",
 ];
 
 pub fn tweak_bit(name: &str) -> Option<u32> {
@@ -446,6 +481,9 @@ pub struct Score {
     /// and lives the floor ended. What says whether bots keep out of it.
     pub scalded: f32,
     pub scald_deaths: u32,
+    /// Lives ended by the fighter's own round: a blast, or a disc coming
+    /// back off a wall.
+    pub own_deaths: u32,
     /// Capture the flag: flags taken from a stand or off the floor, carried
     /// home, and own flags walked back onto.
     pub grabs: u32,
@@ -775,7 +813,10 @@ mod tweak_tests {
     fn a_side_s_role_changes_reach_its_orders_by_name() {
         let (mask, bad) = tweak_mask("attack1, carry2,nonsense");
         assert_eq!(bad, vec!["nonsense".to_string()]);
-        let o = Order { tweaks: mask, ..Order::new(Role::Attack, Goal::Point(glam::Vec3::ZERO), 0.7) };
+        let o = Order {
+            tweaks: mask,
+            ..Order::new(Role::Attack, Goal::Point(glam::Vec3::ZERO), 0.7)
+        };
         assert!(o.has("attack1") && o.has("carry2"));
         assert!(!o.has("attack2") && !o.has("nonsense"));
         assert!(!Order::new(Role::Carry, Goal::Point(glam::Vec3::ZERO), 1.0).has("carry2"));

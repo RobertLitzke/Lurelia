@@ -71,7 +71,9 @@ pub fn hard(m: u8) -> bool {
     if matlib::has(m, flag::FOLIAGE) || matlib::has(m, flag::GROWS) || matlib::has(m, flag::WATER) {
         return false;
     }
-    let soft = ["wood", "log", "plank", "bark", "dirt", "soil", "mud", "sand", "grass", "moss", "snow", "leaf", "peat", "loam", "straw", "thatch", "cloth", "clay", "ash"];
+    let soft = [
+        "wood", "log", "plank", "bark", "dirt", "soil", "mud", "sand", "grass", "moss", "snow", "leaf", "peat", "loam", "straw", "thatch", "cloth", "clay", "ash",
+    ];
     !matlib::name(m).is_some_and(|n| soft.iter().any(|s| n.contains(s)))
 }
 
@@ -150,6 +152,60 @@ pub fn step(fx: &mut Fx, b: &Body, store: &Store, dt: f32) {
     }
 }
 
+/// A car's wheels: a roost off each driven wheel that is spinning or
+/// sliding, the colour of what it is on, spray where they run through
+/// water, and dust off every wheel when it lands hard.
+pub fn vehicle(fx: &mut Fx, car: &crate::vehicle::Vehicle, ev: &crate::vehicle::Events, dt: f32) {
+    use crate::world::surface::Surface;
+    if !fx.on {
+        return;
+    }
+    let up = car.up();
+    let fwd = car.forward();
+    let r = car.spec.wheel_radius;
+    let speed = car.b.vel.length();
+    for w in &car.wheels {
+        let Some(c) = w.contact.filter(|_| w.down) else { continue };
+        let patch = car.pos() + car.b.rot * w.mount - up * w.t - c.n * r;
+        let back = -fwd * if car.v_fwd() >= 0.0 { 1.0 } else { -1.0 };
+        if c.depth > 0.05 {
+            // Through the shallows: a sheet of spray off each tyre.
+            let rate = 30.0 * (speed / 10.0).min(2.0) * (c.depth / r).min(1.0);
+            if speed > 2.0 {
+                fx.trickle("paddle_spray", patch + up * 0.2, back * 0.6 + Vec3::Y * 1.2, 0, rate, dt);
+            }
+            continue;
+        }
+        if !c.surface.loose() && c.surface != Surface::Hardpack {
+            continue;
+        }
+        // How hard the tyre is working the ground: spinning under power,
+        // sliding across, or just rolling fast over loose sand.
+        let roll = if c.surface.loose() { (speed / 12.0).min(1.5) * if w.rear { 0.6 } else { 0.25 } } else { 0.0 };
+        let work = w.spin * 2.5 + (w.slide / 4.0).min(1.5) + roll;
+        if work < 0.15 {
+            continue;
+        }
+        let kind = if c.surface == Surface::Snow { "snow_kick" } else { "wheel_dust" };
+        let throw = back * (0.8 + w.spin) + Vec3::Y * 0.9;
+        fx.trickle(kind, patch + Vec3::Y * 0.08, throw, c.mat, 18.0 * work, dt);
+        if w.spin > 0.3 && c.surface != Surface::Snow {
+            // The roost: grit thrown well back off a spinning tyre.
+            fx.trickle("landing_grit", patch + Vec3::Y * 0.1, throw * 1.6, c.mat, 14.0 * w.spin, dt);
+        }
+    }
+    if ev.thump > 4.0 {
+        for w in car.wheels.iter().filter(|w| w.down) {
+            let Some(c) = w.contact else { continue };
+            if c.depth > 0.05 || !c.surface.loose() {
+                continue;
+            }
+            let at = car.pos() + car.b.rot * w.mount - up * w.t - c.n * r;
+            fx.burst("landing_dust", at, Vec3::Y, c.mat, ((ev.thump - 4.0) / 5.0 + 0.5).min(2.0));
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -209,7 +265,15 @@ mod tests {
         step(&mut fx, &body(), &store, 1.0 / 60.0);
         assert!(fx.len() >= 10, "a 7 m/s landing threw {}", fx.len());
         let mut fx = Fx::with_defs(defs());
-        step(&mut fx, &Body { vel_before: Vec3::new(0.0, -2.0, 0.0), ..body() }, &store, 1.0 / 60.0);
+        step(
+            &mut fx,
+            &Body {
+                vel_before: Vec3::new(0.0, -2.0, 0.0),
+                ..body()
+            },
+            &store,
+            1.0 / 60.0,
+        );
         assert_eq!(fx.len(), 0, "a step down threw dust");
         let mut fx = Fx::with_defs(defs());
         step(&mut fx, &Body { fly: true, ..body() }, &store, 1.0 / 60.0);
@@ -235,7 +299,12 @@ mod tests {
     fn breath_comes_every_few_seconds_while_cold() {
         let store = floor();
         let mut fx = Fx::with_defs(defs());
-        let b = Body { cold: true, was_ground: true, vel_before: Vec3::ZERO, ..body() };
+        let b = Body {
+            cold: true,
+            was_ground: true,
+            vel_before: Vec3::ZERO,
+            ..body()
+        };
         for _ in 0..600 {
             step(&mut fx, &b, &store, 1.0 / 60.0);
             fx.step(1.0 / 60.0, &store);

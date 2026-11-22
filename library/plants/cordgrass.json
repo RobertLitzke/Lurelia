@@ -1,0 +1,13 @@
+{
+  "name": "cordgrass",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "Smooth cordgrass (spartina): stiff upright blades in dense stands along the low salt marsh, standing in the tide to its knees at high water. Drawn with the sawgrass blades, which keep their own tawny green in every season. You and a kayak go through it.",
+  "form": "herb",
+  "height": [0.7, 1.3],
+  "crown_radius": [0.5, 0.8],
+  "bark": "dead_wood",
+  "leaf": "sawgrass_blades",
+  "max_slope": 0.4,
+  "standing_water": [-0.8, 0.6]
+}

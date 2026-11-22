@@ -3,14 +3,13 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "A paler, creamier bed of the oolite that makes a level band along the Edge.",
+  "like": "oolite",
   "id": 61,
-  "smooth": true,
   "texture": {
-    "pattern": "strata",
-    "base": [206, 192, 156],
     "alt": [220, 206, 170],
-    "scale": 3,
+    "calm": {"alt": [222, 210, 176], "base": [210, 196, 162]},
     "contrast": 0.5,
-    "calm": {"base": [210, 196, 162], "alt": [222, 210, 176]}
+    "scale": 3,
+    "base": [206, 192, 156]
   }
 }

@@ -6,6 +6,7 @@
   "id": 189,
   "smooth": false,
   "passable": true,
+  "sprites": "vine",
   "texture": {
     "pattern": "blotch",
     "base": [196, 150, 206],

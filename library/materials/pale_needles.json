@@ -4,6 +4,7 @@
   "introduced_by": "glassfall",
   "id": 39,
   "smooth": false,
+  "sprites": "needles",
   "texture": {
     "pattern": "blotch",
     "base": [92, 118, 112],

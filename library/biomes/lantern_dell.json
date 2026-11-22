@@ -23,13 +23,13 @@
   ],
   "features": [{"structure": "mossy_log", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}],
   "creatures": [
-    {"creature": "lantern_moth", "count": 34},
+    {"creature": "glassmoth", "morph": "lantern", "count": 34},
     {"creature": "firefly", "count": 70},
     {"creature": "sky_ray", "count": 3},
     {"creature": "fae_toad", "count": 3},
     {"creature": "glass_dragonfly", "count": 6},
     {"creature": "crystal_bat", "count": 5},
-    {"creature": "marsh_light", "count": 4},
+    {"creature": "marsh_light", "morph": "wisp", "count": 4},
     {"creature": "glow_bee", "count": 5}
   ],
   "collectibles": [{"item": "hag_stone", "density": 0.004, "placement": {"verb": "scatter", "params": {}}}],

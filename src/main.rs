@@ -12,6 +12,7 @@ mod entities;
 mod form;
 mod fx;
 mod game;
+mod games;
 mod inherit;
 mod input;
 mod items;
@@ -22,10 +23,12 @@ mod menu;
 mod mesh;
 mod models;
 mod modes;
+mod pacing;
 mod physics;
 mod platforms;
 mod player;
 mod portals;
+mod race;
 mod render;
 mod ride;
 mod rig;
@@ -34,8 +37,10 @@ mod shooter;
 mod sound;
 mod stream;
 mod tools;
+mod trace;
 mod util;
 mod variety;
+mod vehicle;
 mod world;
 mod world_parts;
 mod worldload;
@@ -45,6 +50,7 @@ use game::{Actions, Game};
 use glam::Vec3;
 use input::Action;
 use menu::{Choice, Menu, Place, Prefs, Setting, Slides};
+use pacing::Pacer;
 use player::MoveInput;
 use render::hud::Hud;
 use render::{Gpu, Renderer};
@@ -68,9 +74,15 @@ fn main() {
     if args.gazetteer || args.validate {
         std::process::exit(check_world(&args));
     }
+    if let Some(path) = &args.seam {
+        std::process::exit(tools::inspect::seam(path));
+    }
     if let Some(path) = &args.map {
         if let Ok(l) = worldload::load(&worldload::selected()) {
-            world::atlas::write(&l.world, path, 1024).expect("map file");
+            // VG_MAP_PX sets the image width; the fields are 1 m a cell, so the
+            // world's size in metres is full resolution.
+            let px = std::env::var("VG_MAP_PX").ok().and_then(|v| v.parse().ok()).unwrap_or(1024);
+            world::atlas::write(&l.world, path, px).expect("map file");
             println!("{}", world::chronicle::gazetteer(&l.world).lines().last().unwrap_or(""));
             return;
         }
@@ -119,8 +131,8 @@ pub(crate) fn new_game(args: &Args) -> Result<Game, String> {
     // The launch screen's choices, or the world's own defaults when a world
     // is opened from the command line.
     let mut chosen = args.launch.clone().unwrap_or_else(|| launch::Chosen::for_world(&worldload::selected()));
-    if let Some(m) = args.mode {
-        chosen.mode = m;
+    if let Some(g) = args.mode.as_deref().and_then(games::get) {
+        chosen.set_game(g);
     }
     // A season asked for on the command line is part of the launch, not
     // something done to the world afterwards: the first columns are then
@@ -181,6 +193,10 @@ struct Running {
     /// Screenshots and camera photos being written to disk.
     writing: Vec<std::thread::JoinHandle<Result<PathBuf, String>>>,
     last: Instant,
+    /// Turns the loop's intervals into the world's step (`pacing`).
+    pacer: Pacer,
+    /// `VOXEL_TRACE=1`: print each hitch's parts (`trace`).
+    trace: bool,
     /// The clock for the menus' pictures and the loading bar.
     t0: Instant,
     grabbed: bool,
@@ -203,6 +219,9 @@ struct Running {
     drag: Option<u8>,
     /// True while the mouse is holding an open dropdown's scrollbar thumb.
     scrolling: bool,
+    /// A tuning panel line being dragged on the pause screen: the line, the
+    /// cursor's x when it was pressed, and the tune then.
+    tune_drag: Option<(usize, f32, crate::vehicle::Spec)>,
     /// Open the EDIT page as soon as the world being loaded is in: what
     /// CREATURES AND PLANTS does from the title screen, where there is no
     /// world to stand a creature in yet.
@@ -327,6 +346,30 @@ struct App {
     run: Option<Running>,
 }
 
+/// The window's monitor's refresh interval in seconds, if it reports one.
+fn refresh_interval(window: &Window) -> Option<f32> {
+    let mhz = window.current_monitor()?.refresh_rate_millihertz()?;
+    (mhz > 0).then(|| 1000.0 / mhz as f32)
+}
+
+/// How many frames the swapchain may queue ahead of the display. Under vsync
+/// each queued frame is another refresh between moving the mouse and seeing
+/// it, and the GPU frame is a few milliseconds, so one is enough. Without
+/// vsync it needs three: with two, mailbox frames on the RTX 3060 at 60 Hz
+/// came in uneven pairs and averaged 120 to 190 fps; with three they ran an
+/// even 260 (field route, 1080p, shadows on).
+/// `VOXEL_FRAME_LATENCY=N` overrides it for comparisons.
+fn frame_latency(mode: wgpu::PresentMode) -> u32 {
+    if let Some(n) = std::env::var("VOXEL_FRAME_LATENCY").ok().and_then(|v| v.parse().ok()) {
+        return n;
+    }
+    if mode == wgpu::PresentMode::Fifo {
+        1
+    } else {
+        3
+    }
+}
+
 fn present_mode(modes: &[wgpu::PresentMode], vsync: bool) -> wgpu::PresentMode {
     if vsync {
         wgpu::PresentMode::Fifo
@@ -398,6 +441,7 @@ impl Running {
             Setting::Fullscreen => self.set_fullscreen(p.fullscreen),
             Setting::Vsync => {
                 self.config.present_mode = present_mode(&self.present_modes, p.vsync);
+                self.config.desired_maximum_frame_latency = frame_latency(self.config.present_mode);
                 self.surface.configure(&self.gpu.device, &self.config);
             }
             Setting::View | Setting::Msaa => {}
@@ -427,7 +471,7 @@ impl Running {
         self.load_error = None;
         worldload::select(name);
         self.prefs.last.world = name.to_string();
-        self.prefs.last.mode = chosen.mode;
+        self.prefs.last.game = chosen.game.clone();
         self.prefs.last.opened(name);
         self.save_prefs(args);
         let mut a = args.clone();
@@ -500,7 +544,7 @@ impl Running {
             let l = self.loading.take().unwrap();
             let game = l.game.unwrap();
             if args.bench {
-                self.bench = Some(Bench::new(game.player.pos + Vec3::Y * 2.0));
+                self.bench = Some(Bench::new(game.player.pos + Vec3::Y * 2.0, args.bench_route));
             }
             self.game = Some(game);
             self.last = Instant::now();
@@ -808,13 +852,18 @@ impl Running {
                 let chosen = self.prefs.last.resolve();
                 self.start_load(args, chosen, false);
             }
-            Choice::Open => self.set_screen(Screen::Launch { back, open: None }),
+            Choice::Open => {
+                // settings.json may name a game this world no longer offers.
+                self.prefs.last.settle();
+                self.set_screen(Screen::Launch { back, open: None })
+            }
             // A click or Enter opens the list; the arrow keys still step the
             // value without it, which is quicker once you know the worlds.
             Choice::LaunchWorld | Choice::LaunchMode => {
                 let world = c == Choice::LaunchWorld;
                 if dir == 0 {
-                    let which = u8::from(!world);
+                    // The row the list hangs from: the game is the first.
+                    let which = u8::from(world);
                     self.launch_at = self.menu.at;
                     self.launch_top = self.menu.top;
                     if let Screen::Launch { back, .. } = self.screen {
@@ -833,23 +882,20 @@ impl Running {
             Choice::LaunchReset => self.prefs.last.reset(),
             Choice::ChooseWorld(i) => {
                 let list = self.prefs.last.world_rows();
-                if let Some(name) = list.get(i as usize).map(|r| &r.world) {
-                    self.prefs.last.world = name.clone();
-                    if !launch::modes(&self.prefs.last.world).contains(&self.prefs.last.mode) {
-                        self.prefs.last.mode = launch::Mode::Explore;
-                    }
+                if let Some(name) = list.get(i as usize).map(|r| r.world.clone()) {
+                    self.prefs.last.set_world(&name);
                 }
                 self.close_drop();
             }
             Choice::ChooseMode(i) => {
-                let list = launch::modes(&self.prefs.last.world);
-                if let Some(m) = list.get(i as usize) {
-                    self.prefs.last.mode = *m;
+                let list = launch::all_games();
+                if let Some(g) = list.get(i as usize) {
+                    self.prefs.last.set_game(&g.name);
                 }
                 self.close_drop();
             }
             Choice::LaunchOpt(i) => {
-                let opts = launch::options(&self.prefs.last.world, self.prefs.last.mode);
+                let opts = launch::options(&self.prefs.last.world, self.prefs.last.def());
                 if let Some(o) = opts.get(i as usize) {
                     self.prefs.last.step(o, dir);
                 }
@@ -998,7 +1044,7 @@ impl Running {
                     // the page opened in the middle of a deathmatch, with
                     // bots shooting at the studio.
                     let mut chosen = self.prefs.last.resolve();
-                    chosen.mode = launch::Mode::Explore;
+                    chosen.set_game(games::base(launch::Mode::Explore));
                     self.edit_on_load = true;
                     self.start_load(args, chosen, false);
                 }
@@ -1335,6 +1381,43 @@ impl Running {
         }
     }
 
+    /// What on the tuning panel the cursor is over, on the pause screen.
+    fn tune_hover(&self) -> Option<game::TuneHit> {
+        let g = self.game.as_ref()?;
+        g.tune_hit(self.config.width as f32, self.config.height as f32, self.cursor.0, self.cursor.1)
+    }
+
+    /// A mouse press on the pause screen's tuning panel: left on a line
+    /// starts a drag (a choice flips), right puts the line back to the
+    /// file's value, a click on the bottom line saves. False when the press
+    /// was not on the panel.
+    fn tune_press(&mut self, button: MouseButton) -> bool {
+        let Some(hit) = self.tune_hover() else { return false };
+        let t = self.t0.elapsed().as_secs_f32();
+        let x = self.cursor.0;
+        let Some(g) = self.game.as_mut() else { return false };
+        match (hit, button) {
+            (game::TuneHit::Line(i), MouseButton::Left) => {
+                let choice = matches!(crate::vehicle::tune::KNOBS[i].key, "steering" | "driven");
+                if choice {
+                    g.ride.tune_step(i, 1.0);
+                } else if let Some(base) = g.ride.tune_spec() {
+                    g.ride.tune_apply(i, &base, 0.0);
+                    self.tune_drag = Some((i, x, base));
+                }
+            }
+            (game::TuneHit::Line(i), MouseButton::Right) => g.ride.tune_reset(i),
+            (game::TuneHit::Save, MouseButton::Left) => {
+                g.ride.tune_save();
+                if let Some(m) = g.ride.note.take() {
+                    self.flash = Some((m, t));
+                }
+            }
+            _ => return false,
+        }
+        true
+    }
+
     fn key(&mut self, args: &Args, code: KeyCode, down: bool) {
         if down && code == KeyCode::F9 {
             self.hearing = !self.hearing;
@@ -1354,6 +1437,14 @@ impl Running {
                     self.menu_key(args, code);
                 }
                 return;
+            }
+        }
+        // The vehicle tuning panel, open with the stats while driving.
+        if down {
+            if let Some(g) = self.game.as_mut().filter(|g| g.settings.show_stats) {
+                if g.ride.tune_key(code) {
+                    return;
+                }
             }
         }
         // Enter is not a binding: it is "go on" wherever something is
@@ -1397,6 +1488,7 @@ impl Running {
             Action::TiltLeft => self.actions.tilt_left = true,
             Action::Bike => self.actions.bike_toggle = true,
             Action::Kayak => self.actions.kayak_toggle = true,
+            Action::Vehicle => self.actions.vehicle_toggle = true,
             Action::Camera => self.actions.cam_toggle = true,
             Action::Select(n) => self.actions.select = Some(n as usize),
             Action::Shadows => {
@@ -1600,6 +1692,9 @@ impl Running {
                     _ => "Esc to resume",
                 };
                 menu::draw_menu(&mut self.hud, &mut self.menu, "PAUSED", &items, foot, place, w, h);
+                if let Some(g) = &self.game {
+                    g.build_tune(&mut self.hud, w, h, true);
+                }
             }
             Screen::Launch { open, .. } => {
                 let open = *open;
@@ -1612,7 +1707,7 @@ impl Running {
                 // The world list open: the line under the highlight says
                 // what that world is, so the list can be read down.
                 let foot = match open {
-                    Some(0) => items.get(self.menu.at).map(|i| i.help),
+                    Some(1) => items.get(self.menu.at).map(|i| i.help),
                     _ => base_items.get(at).map(|i| i.help),
                 }
                 .filter(|h| !h.is_empty())
@@ -1706,9 +1801,14 @@ impl Running {
         // back) from throwing the simulation forward in a single step. The
         // benchmark reports `raw`, not the clamped step: clamping it reported
         // a 300 ms hitch as 100 ms, so max_ms and p99 were capped at the
-        // clamp and the worst frames of a run were invisible.
+        // clamp and the worst frames of a run were invisible. Under vsync the
+        // step is evened out to the refresh (`pacing`), because the loop's own
+        // intervals bunch up while the display still shows one frame a refresh.
+        // Parts left from a frame that ended early belong to no frame.
+        trace::take();
+        let loading = self.screen == Screen::Loading;
         let raw = (now - self.last).as_secs_f32();
-        let dt = raw.min(0.1);
+        let dt = self.pacer.step(raw, self.config.present_mode == wgpu::PresentMode::Fifo);
         self.last = now;
         if self.screen == Screen::Loading {
             self.loading_step(args);
@@ -1723,6 +1823,12 @@ impl Running {
                 g.set_camera(p, yaw, pitch, true);
                 b.t += dt;
                 b.times.push(raw * 1000.0);
+                b.steps.push(dt * 1000.0);
+                let st = &g.streamer.stats;
+                if st.queued + st.busy > 0 {
+                    b.loading_frames += 1;
+                }
+                b.max_queue = b.max_queue.max(st.queued + st.busy);
             }
             // Only Playing runs the world, so the bike and glider don't carry on
             // behind a menu. A benchmark flight keeps the world running.
@@ -1735,13 +1841,21 @@ impl Running {
                     self.actions.dig |= self.held.0;
                     self.actions.place |= self.held.1;
                 }
+                let tr = trace::start();
                 g.tick(dt, &self.input, &mut self.actions);
+                trace::end("tick", tr);
             }
+            let tr = trace::start();
             g.stream(&mut self.renderer.terrain, Duration::from_millis(3));
+            trace::end("stream", tr);
             // The EDIT page rebuilds its subject's models as it is edited.
+            let tr = trace::start();
             upload_models(&mut self.renderer, g);
+            trace::end("models", tr);
             if self.screen == Screen::Playing {
+                let tr = trace::start();
                 g.build_hud(&mut self.hud, w as f32, h as f32);
+                trace::end("hud", tr);
             }
             if let Some(img) = g.take_map_image() {
                 self.renderer.upload_map(&img);
@@ -1750,9 +1864,16 @@ impl Running {
         if matches!(self.screen, Screen::Edit { .. }) {
             self.edit_tick(dt);
         }
+        let tr = trace::start();
         self.hear(dt, w as f32, h as f32);
+        trace::end("sound", tr);
         self.draw_screen(w as f32, h as f32);
-        let frame = match self.surface.get_current_texture() {
+        // Waiting here and in `present` is the display, not work: under vsync
+        // it is most of a quick frame.
+        let acquire = Instant::now();
+        let surface = self.surface.get_current_texture();
+        let mut wait = acquire.elapsed().as_secs_f32();
+        let frame = match surface {
             Ok(f) => f,
             Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
                 self.config.width = wsize.width;
@@ -1770,6 +1891,7 @@ impl Running {
             format: Some(self.config.format.add_srgb_suffix()),
             ..Default::default()
         });
+        let tr = trace::start();
         match (&mut self.game, in_world) {
             (Some(g), true) => {
                 let aspect = w as f32 / h.max(1) as f32;
@@ -1791,6 +1913,7 @@ impl Running {
             }
             _ => self.renderer.render_ui(&self.hud, &view),
         }
+        trace::end("render", tr);
         let mut i = 0;
         while i < self.writing.len() {
             if self.writing[i].is_finished() {
@@ -1804,7 +1927,26 @@ impl Running {
             }
         }
         self.window.pre_present_notify();
+        let presenting = Instant::now();
         frame.present();
+        wait += presenting.elapsed().as_secs_f32();
+        let work = now.elapsed().as_secs_f32() - wait;
+        // A loading frame is slow on purpose.
+        if loading {
+            trace::take();
+        } else if let Some(line) = trace::frame_done(work * 1000.0, wait * 1000.0) {
+            if self.trace {
+                if let Some(g) = &self.game {
+                    let st = &g.streamer.stats;
+                    eprintln!(
+                        "{line} | stream: accept {:.1} x{} plan {:.1} vis {:.1} unload {:.1} x{} | queued {} busy {}",
+                        st.accept_ms, st.accepted, st.plan_ms, st.vis_ms, st.unload_ms, st.unloaded, st.queued, st.busy
+                    );
+                } else {
+                    eprintln!("{line}");
+                }
+            }
+        }
     }
 }
 
@@ -1834,7 +1976,15 @@ impl Running {
                 if duck >= 1.0 {
                     self.sound.play(&noises, eye, [fwd.x, fwd.z]);
                 }
-                (self.ear.hear(g, dt), [fwd.x, fwd.z])
+                let mut heard = self.ear.hear(g, dt);
+                if let Some(car) = g.ride.car() {
+                    let s = &car.spec;
+                    heard.motor = if car.stalled { 0.0 } else { 0.45 + 0.55 * car.load };
+                    heard.motor_hz = s.idle_hz + (s.top_hz - s.idle_hz) * car.rpm;
+                    heard.motor_load = car.load;
+                    heard.scrub = car.wheels.iter().filter(|w| w.down).map(|w| (w.slide / 6.0 + w.spin * 0.4).min(1.0)).fold(0.0, f32::max);
+                }
+                (heard, [fwd.x, fwd.z])
             }
             _ => {
                 self.ear.reset();
@@ -1847,7 +1997,11 @@ impl Running {
             let s = (h / 1080.0).max(0.6) * 15.0;
             let mut y = h * 0.18;
             let ink = [0.92, 0.95, 1.0, 0.95];
-            let head = if self.sound.playing() { format!("SOUND {} AT {} HZ", self.sound.device.to_uppercase(), self.sound.rate) } else { "SOUND OFF".to_string() };
+            let head = if self.sound.playing() {
+                format!("SOUND {} AT {} HZ", self.sound.device.to_uppercase(), self.sound.rate)
+            } else {
+                "SOUND OFF".to_string()
+            };
             self.hud.rect(w - s * 34.0, y - s * 1.2, s * 33.0, s * 1.5 * 11.0 + s, [0.0, 0.0, 0.0, 0.55]);
             for line in std::iter::once(head).chain(self.ear.lines(&heard)) {
                 self.hud.text(w - s * 33.0, y, s, ink, &line);
@@ -1876,7 +2030,16 @@ pub(crate) fn upload_models(renderer: &mut Renderer, game: &mut Game) {
 pub(crate) fn show_world(renderer: &mut Renderer, game: &Game) {
     let gen = game.generator();
     let heights = gen.height_grid(render::HEIGHTS_N as usize);
-    renderer.set_world(&heights, gen.spec.size_m, gen.spec.sea_level_m);
+    let shore = gen.world.as_ref().map_or_else(Vec::new, |w| world::surf::shore_texels(&w.f, render::HEIGHTS_N as usize));
+    renderer.set_world(&heights, &shore, gen.spec.size_m, gen.spec.sea_level_m);
+    if let Some(w) = gen.world.as_ref().filter(|w| w.f.tide.on()) {
+        renderer.set_tide(w.f.tide.range);
+    }
+    if let Some(w) = gen.world.as_ref() {
+        if let Some(s) = w.def.surf {
+            renderer.set_surf(s.uniform(), w.f.shore.uniform());
+        }
+    }
     renderer.set_mist(&gen.mist_grid(256), 256, gen.water_grid(256));
     renderer.set_underwater(gen.world.as_ref().map(|w| w.def.underwater).unwrap_or_default());
     if let Some(w) = gen.world.as_ref() {
@@ -1948,7 +2111,7 @@ impl ApplicationHandler for App {
             width: size.width.max(1),
             height: size.height.max(1),
             present_mode: present,
-            desired_maximum_frame_latency: 2,
+            desired_maximum_frame_latency: frame_latency(present),
             alpha_mode: caps.alpha_modes[0],
             view_formats: vec![format.add_srgb_suffix()],
         };
@@ -1960,6 +2123,7 @@ impl ApplicationHandler for App {
         let renderer = Renderer::new(&gpu, config.format.add_srgb_suffix(), config.width, config.height, self.args.msaa.unwrap_or(prefs.msaa));
         let seed = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(1, |d| d.as_nanos() as u64);
         let sound = sound::Sound::new(prefs.sound);
+        let refresh = refresh_interval(&window);
         let mut run = Running {
             window,
             surface,
@@ -1975,6 +2139,8 @@ impl ApplicationHandler for App {
             actions: Actions::default(),
             held: (false, false),
             last: Instant::now(),
+            pacer: Pacer::new(refresh, std::env::var("VOXEL_PACING").is_ok_and(|v| v == "0")),
+            trace: std::env::var("VOXEL_TRACE").is_ok(),
             t0: Instant::now(),
             grabbed: false,
             bench: None,
@@ -1989,6 +2155,7 @@ impl ApplicationHandler for App {
             look_at: 0,
             drag: None,
             scrolling: false,
+            tune_drag: None,
             edit_on_load: false,
             probe: None,
             load_error: None,
@@ -2041,6 +2208,8 @@ impl ApplicationHandler for App {
                 }
             }
             WindowEvent::Occluded(o) => r.hidden = o,
+            // It may be on another monitor now, at another refresh rate.
+            WindowEvent::Moved(_) => r.pacer.refresh = refresh_interval(&r.window),
             WindowEvent::Focused(on) => {
                 r.focused = on;
                 if !on && r.screen == Screen::Playing {
@@ -2061,12 +2230,21 @@ impl ApplicationHandler for App {
                         // Held arrows keep moving through a menu, and keep
                         // winding a value up or down.
                         r.key(args, code, true);
+                    } else if r.screen == Screen::Playing && crate::vehicle::tune::is_key(code) && code != KeyCode::KeyP {
+                        r.key(args, code, true);
                     }
                 }
             }
             WindowEvent::CursorMoved { position, .. } => {
                 r.cursor = (position.x as f32, position.y as f32);
-                if let Some(orbit) = r.cam_drag {
+                if let Some((i, x0, base)) = &r.tune_drag {
+                    // A step for every 8 pixels across.
+                    let steps = ((r.cursor.0 - x0) / 8.0).round();
+                    let (i, base) = (*i, base.clone());
+                    if let Some(g) = r.game.as_mut() {
+                        g.ride.tune_apply(i, &base, steps);
+                    }
+                } else if let Some(orbit) = r.cam_drag {
                     let (dx, dy) = (r.cursor.0 - r.cam_last.0, r.cursor.1 - r.cam_last.1);
                     r.cam_last = r.cursor;
                     let h = r.config.height as f32;
@@ -2110,6 +2288,8 @@ impl ApplicationHandler for App {
                             r.drag = None;
                             r.scrolling = false;
                             r.cam_drag = None;
+                            r.tune_drag = None;
+                        } else if r.screen == Screen::Paused && r.tune_press(button) {
                         } else if r.on_studio() && matches!(button, MouseButton::Left | MouseButton::Right | MouseButton::Middle) {
                             // Out over the studio the mouse turns the camera:
                             // left drags it round the subject, the others
@@ -2139,7 +2319,12 @@ impl ApplicationHandler for App {
                     MouseScrollDelta::LineDelta(_, y) => y,
                     MouseScrollDelta::PixelDelta(p) => p.y as f32,
                 };
-                if d != 0.0 && r.screen == Screen::Playing {
+                let tune = if r.screen == Screen::Paused { r.tune_hover() } else { None };
+                if let (Some(game::TuneHit::Line(i)), true) = (tune, d != 0.0) {
+                    if let Some(g) = r.game.as_mut() {
+                        g.ride.tune_step(i, d.signum());
+                    }
+                } else if d != 0.0 && r.screen == Screen::Playing {
                     r.actions.brush_delta = if d > 0.0 { 1 } else { -1 };
                 } else if d != 0.0 && matches!(r.screen, Screen::Edit { open: None, pick: None, .. }) && !r.on_studio() {
                     if let Some(e) = r.edit.as_mut() {

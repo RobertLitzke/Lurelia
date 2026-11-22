@@ -23,6 +23,6 @@
     }
   ],
   "features": [{"structure": "bone_shard", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}],
-  "creatures": [{"creature": "elk", "count": 3}, {"creature": "raven", "count": 1}],
+  "creatures": [{"creature": "elk", "count": 3}, {"creature": "raven", "count": 1}, {"creature": "annas_hummingbird", "count": 2}],
   "collectibles": []
 }

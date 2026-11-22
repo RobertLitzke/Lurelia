@@ -1,9 +1,11 @@
 {
   "name": "cattail_leaves",
-  "version": 1,
+  "version": 2,
   "introduced_by": "lowmouth",
-  "notes": "Cattail leaves: tall dark green straps standing out of the shallows (drawn as sprites).",
+  "notes": "Cattail leaves: tall dark green straps standing out of the shallows (drawn as sprites). v2: reed_green, reedmace's leaves, merged in.",
+  "was": ["reed_green"],
   "smooth": false,
+  "sprites": "cattail leaves",
   "texture": {
     "pattern": "grain",
     "base": [70, 104, 50],

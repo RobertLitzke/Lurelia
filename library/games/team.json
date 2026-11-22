@@ -1,0 +1,10 @@
+{
+  "name": "team",
+  "version": 1,
+  "introduced_by": "engine",
+  "kind": "team",
+  "title": "TEAM DEATHMATCH",
+  "notes": "The map's deathmatch in two sides. The map's rules stand; only the scoring changes.",
+  "help": "The same arena in two sides, cyan and magenta: a side's kills between them win it.",
+  "target": 20
+}

@@ -140,6 +140,8 @@ pub fn creature(def: &CreatureDef, lib: &Library, model_base: usize, block: u32,
         model.rig = Some(rig);
         if let Some(bones) = skeleton {
             let mut srig = base;
+            // Bones do not sag.
+            srig.soft = None;
             srig.offset_models(model_base + 1 + parts.len());
             parts.extend(bones);
             model.skeleton = Some(srig);

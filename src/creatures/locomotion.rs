@@ -67,6 +67,11 @@ pub enum Mover {
     /// An octopus on the sea floor, its arms let down over what is under
     /// them (octopus.rs).
     Creep,
+    /// Birds that live on their feet and fly low only when they must:
+    /// shorebirds at the surf's edge, plovers, roadrunners (runner.rs).
+    Run { style: super::runner::Style },
+    /// Hummingbirds hovering at flowers (hummer.rs).
+    Hum,
 }
 
 pub struct Verb {
@@ -103,7 +108,7 @@ const fn other(name: &'static str, mover: Mover, flight: Pattern) -> Verb {
 }
 
 /// Every verb. The first is what an unknown name falls back to.
-pub const VERBS: [Verb; 27] = [
+pub const VERBS: [Verb; 32] = [
     walk("graze", Routine::Graze, false, false, false),
     walk("hop", Routine::Hop, true, false, false),
     // Hops, and keeps to the water edge: frogs and toads.
@@ -204,6 +209,16 @@ pub const VERBS: [Verb; 27] = [
     other("climb", Mover::Slither { habit: Habit::Tree }, Pattern::Flap),
     other("swim", Mover::Slither { habit: Habit::Water }, Pattern::Flap),
     other("creep", Mover::Creep, Pattern::Flap),
+    // Running birds (runner.rs): a flock keeping to the edge of the surf
+    // (sanderlings), run-stop-peck on open sand (plovers), and long runs
+    // alone that hunt (roadrunners); coveys after them.
+    other("scurry", Mover::Run { style: super::runner::Style::Surf }, Pattern::Flap),
+    other("patter", Mover::Run { style: super::runner::Style::Patter }, Pattern::Flap),
+    other("dash", Mover::Run { style: super::runner::Style::Dash }, Pattern::Bound),
+    // Quail: a covey that runs first and bursts up last.
+    other("covey", Mover::Run { style: super::runner::Style::Covey }, Pattern::FlapGlide),
+    // Hummingbirds (hummer.rs).
+    other("hum", Mover::Hum, Pattern::Hover),
 ];
 
 /// The verb names, for validation.
@@ -243,9 +258,9 @@ impl Verb {
     pub fn slithers(&self) -> bool {
         matches!(self.mover, Mover::Slither { .. })
     }
-    /// Moved by flock.rs, circle.rs or flit.rs: animated as a bird if rigged.
+    /// Moved by one of the bird movers: animated as a bird if rigged.
     pub fn flies(&self) -> bool {
-        matches!(self.mover, Mover::Flock { .. } | Mover::Circle { .. } | Mover::Flit | Mover::Paddle | Mover::Cling)
+        matches!(self.mover, Mover::Flock { .. } | Mover::Circle { .. } | Mover::Flit | Mover::Paddle | Mover::Cling | Mover::Run { .. } | Mover::Hum)
     }
 }
 

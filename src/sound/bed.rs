@@ -110,7 +110,13 @@ impl Ear {
         let day = (sky.wind / 1.5).clamp(0.0, 1.0);
 
         // The biome, on rings round the listener.
-        let mut bed = Place { name: String::new(), wind: 1.0, leaves: 1.0, grass: 0.0, ground: Ground::Soft };
+        let mut bed = Place {
+            name: String::new(),
+            wind: 1.0,
+            leaves: 1.0,
+            grass: 0.0,
+            ground: Ground::Soft,
+        };
         let mut ground_here = eye.y - 1.6;
         let mut rise = 0.0;
         if let Some(w) = &world {
@@ -200,13 +206,13 @@ impl Ear {
         };
 
         // The loud things.
-        let (water, flow, surf) = world.as_ref().map_or((Emitter::default(), 0.0, Emitter::default()), |w| waters(&w.f, eye));
+        let (water, flow, surf, surf_wave) = world.as_ref().map_or((Emitter::default(), 0.0, Emitter::default(), [0.0; 3]), |w| waters(&w.f, eye));
         let (falls, falls_size, spray) = world.as_ref().map_or((Emitter::default(), 0.0, 0.0), |w| fall(&w.f, eye));
 
         // The room: walls round the ear and sky over it.
         let room = (0.1 + 0.65 * walled * (1.0 - 0.5 * open) + 0.15 * near).clamp(0.0, 1.0);
         // In the open there is only a little air to ring, and it is short.
-    let room_size = (0.15 * (1.0 - walled) + walled * ((probe.wall_m / 30.0) * 0.6 + 0.4 * (1.0 - open))).clamp(0.0, 1.0);
+        let room_size = (0.15 * (1.0 - walled) + walled * ((probe.wall_m / 30.0) * 0.6 + 0.4 * (1.0 - open))).clamp(0.0, 1.0);
         let muffle = (0.45 * sky.snow + 0.5 * sky.mist.min(0.8) + 0.25 * snow + 0.15 * (1.0 - open) * walled).clamp(0.0, 1.0);
 
         self.why = Why {
@@ -235,10 +241,13 @@ impl Ear {
             falls_size,
             spray,
             surf,
+            surf_wave,
             under,
             muffle,
             room,
             room_size,
+            // The engine is laid on by the window, from the car (main.rs).
+            ..Heard::default()
         }
     }
 
@@ -257,7 +266,14 @@ impl Ear {
             format!("SKY OPEN {:.2}  WALLED {:.2} AT {:.0} M  RISE {:.0} M", w.open, w.walled, w.wall_m, w.rise),
             format!("WIND {:.2}  GUST {:.2}  WHISTLE {:.2}", h.wind, h.gust, h.whistle),
             format!("LEAVES {:.2} ({} CELLS, {} OVER)  GRASS {:.2}", h.leaves, w.leaf_cells, w.leaf_over, h.grass),
-            format!("RAIN {:.2} ON {}  SHELTER {:.2}  DRIP {:.2}  WET {:.2}", h.rain, h.ground.name().to_uppercase(), h.shelter, h.drip, w.wet),
+            format!(
+                "RAIN {:.2} ON {}  SHELTER {:.2}  DRIP {:.2}  WET {:.2}",
+                h.rain,
+                h.ground.name().to_uppercase(),
+                h.shelter,
+                h.drip,
+                w.wet
+            ),
             format!("WATER {}  FLOW {:.2}", em(&h.water), h.flow),
             format!("FALLS {}  SIZE {:.2}  SPRAY {:.2}", em(&h.falls), h.falls_size, h.spray),
             format!("SURF {}", em(&h.surf)),
@@ -291,7 +307,24 @@ fn place(b: &crate::library::BiomeDef, lib: &crate::library::Library) -> Place {
 /// What rain lands on, from the name of a surface material: grass where
 /// grass grows, stone where the name says rock, soft everywhere else.
 pub fn ground_of(surface: &str, grassy: bool) -> Ground {
-    const STONE: [&str; 16] = ["rock", "stone", "basalt", "granite", "slab", "paving", "cobble", "brick", "concrete", "tile", "slate", "marble", "chalk", "limestone", "flint", "lava"];
+    const STONE: [&str; 16] = [
+        "rock",
+        "stone",
+        "basalt",
+        "granite",
+        "slab",
+        "paving",
+        "cobble",
+        "brick",
+        "concrete",
+        "tile",
+        "slate",
+        "marble",
+        "chalk",
+        "limestone",
+        "flint",
+        "lava",
+    ];
     let s = surface.to_lowercase();
     if grassy {
         Ground::Grass
@@ -351,7 +384,13 @@ impl Probe {
         // Leaves let some of it through; anything solid shuts it.
         let lean = 35f32.to_radians();
         let mut seen = 0.0;
-        let ups = [Vec3::Y, Vec3::new(lean.sin(), lean.cos(), 0.0), Vec3::new(-lean.sin(), lean.cos(), 0.0), Vec3::new(0.0, lean.cos(), lean.sin()), Vec3::new(0.0, lean.cos(), -lean.sin())];
+        let ups = [
+            Vec3::Y,
+            Vec3::new(lean.sin(), lean.cos(), 0.0),
+            Vec3::new(-lean.sin(), lean.cos(), 0.0),
+            Vec3::new(0.0, lean.cos(), lean.sin()),
+            Vec3::new(0.0, lean.cos(), -lean.sin()),
+        ];
         for d in ups {
             let mut shut = 0.0f32;
             for s in 1..=32 {
@@ -391,7 +430,7 @@ impl Probe {
 
 /// Running water and the sea, each summed over rings of samples into one
 /// emitter: how loud, from which way, how widely spread.
-fn waters(f: &crate::world::fields::Fields, eye: Vec3) -> (Emitter, f32, Emitter) {
+fn waters(f: &crate::world::fields::Fields, eye: Vec3) -> (Emitter, f32, Emitter, [f32; 3]) {
     let here = Vec2::new(eye.x, eye.z);
     let mut river = Sum::default();
     let mut flow = 0.0;
@@ -401,6 +440,10 @@ fn waters(f: &crate::world::fields::Fields, eye: Vec3) -> (Emitter, f32, Emitter
     // metres, not hundreds.
     let mut sample = |p: Vec2, r: f32| {
         if !inside(p) {
+            return;
+        }
+        // Water at the sea's level (a channel past a mouth) is the sea's.
+        if f.wet(p.x, p.y).is_some_and(|w| w.level <= f.sea + 0.02) {
             return;
         }
         let depth = f.river_depth(p.x, p.y);
@@ -422,26 +465,37 @@ fn waters(f: &crate::world::fields::Fields, eye: Vec3) -> (Emitter, f32, Emitter
         }
     }
     // The sea: heard a long way inland, loudest where it breaks in the
-    // shallows rather than out in deep water.
+    // shallows rather than out in deep water. The sea's level now, with
+    // the tide (world/tide.rs).
+    let level = f.sea_now();
+    let mut breaks: Option<(f32, Vec2)> = None;
     for r in [5.0, 15.0, 30.0, 60.0, 100.0, 160.0, 250.0] {
         for i in 0..16 {
             let a = i as f32 * std::f32::consts::TAU / 16.0;
             let p = here + r * Vec2::new(a.cos(), a.sin());
             // Off the map is open sea.
-            let depth = if inside(p) { f.sea - f.height(p.x, p.y) } else { 10.0 };
-            if depth <= 0.0 || (inside(p) && f.wet(p.x, p.y).is_some()) {
+            let depth = if inside(p) { level - f.height(p.x, p.y) } else { 10.0 };
+            if depth <= 0.0 || (inside(p) && f.wet(p.x, p.y).is_some_and(|w| w.level > f.sea + 0.02)) {
                 continue;
             }
             // Deep water hardly counts: the sound is where it breaks.
             let w = if depth < 2.5 { 1.0 } else { 0.03 };
             sea.add(p - here, w / (1.0 + (r / 40.0).powi(2)) * (1.0 + r / 40.0));
+            if depth < 2.5 && inside(p) && breaks.is_none_or(|b| r < b.0) {
+                breaks = Some((r, p));
+            }
         }
     }
+    // The nearest wave breaking, for the surf to keep time with what shows
+    // (world/surf.rs `Shore::breaker`): its phase, period and size.
+    let surf_wave = breaks
+        .and_then(|(_, p)| f.shore.breaker(p.x, p.y, f.size))
+        .map_or([0.0; 3], |(phase, big)| [phase, f.shore.surf_period, big]);
     let flow = if river.w > 0.0 { flow / river.w } else { 0.0 };
     // A creek a few metres wide fills half of the near rings, which at 2.5
     // was already all but full loudness: as loud as a river. At 6 a creek
     // on its bank comes out near half, and it takes a broad river to fill it.
-    (river.emitter(6.0), flow, sea.emitter(3.0))
+    (river.emitter(6.0), flow, sea.emitter(3.0), surf_wave)
 }
 
 /// A sum of samples, each a direction and a weight.
@@ -464,7 +518,11 @@ impl Sum {
         }
         let len = self.v.length();
         let dir = if len > 1e-4 { self.v / len } else { Vec2::ZERO };
-        Emitter { gain: 1.0 - (-self.w / k).exp(), dir: dir.into(), spread: (1.0 - len / self.w).clamp(0.0, 1.0) }
+        Emitter {
+            gain: 1.0 - (-self.w / k).exp(),
+            dir: dir.into(),
+            spread: (1.0 - len / self.w).clamp(0.0, 1.0),
+        }
     }
 }
 
@@ -545,7 +603,7 @@ mod probe {
                     print!("at {x:5.0},{z:5.0} depth {d:4.2} speed {s:4.2} |");
                     for off in [0.0, 6.0, 15.0, 30.0] {
                         let eye = Vec3::new(x + off, f.height(x, z) + 1.6, z);
-                        let (e, flow, _) = waters(f, eye);
+                        let (e, flow, _, _) = waters(f, eye);
                         print!(" {off:2.0}m g {:.2} fl {:.2} |", e.gain, flow);
                     }
                     println!();

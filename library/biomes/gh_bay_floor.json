@@ -1,0 +1,20 @@
+{
+  "name": "gh_bay_floor",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "The floor of Mercy Bay: sand under eelgrass, sheltered and shallow.",
+  "priority": 4,
+  "rules": {"underwater": true, "region": "bay"},
+  "surface": "eelgrass",
+  "subsurface": "dirt",
+  "map_color": [70, 110, 120],
+  "plants": [],
+  "features": [],
+  "creatures": [
+    {"creature": "kelp_perch", "count": 10},
+    {"creature": "moon_jelly", "count": 6},
+    {"creature": "lobster", "count": 6},
+    {"creature": "gannet", "count": 8}
+  ],
+  "collectibles": []
+}

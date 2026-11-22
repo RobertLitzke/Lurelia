@@ -1,0 +1,18 @@
+{
+  "name": "glossy_leaves",
+  "version": 1,
+  "introduced_by": "jadewater",
+  "notes": "Thick, glossy, dark green broad leaves: banyan, red mangrove, salal. Replaces banyan_leaves, mangrove_leaves and salal_leaves.",
+  "was": ["banyan_leaves", "mangrove_leaves", "salal_leaves"],
+  "smooth": false,
+  "tint": "leaves",
+  "sprites": {"rule": "leaves", "shape": "broad"},
+  "texture": {
+    "pattern": "blotch",
+    "base": [56, 92, 46],
+    "alt": [72, 110, 54],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [66, 102, 52], "alt": [80, 116, 60]}
+  }
+}

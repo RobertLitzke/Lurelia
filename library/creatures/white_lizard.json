@@ -10,7 +10,7 @@
     "flee_speed": 4,
     "wary": 3.5,
     "flightiness": 1.7,
-    "flees_from": ["player", "coyote"]
+    "flees_from": ["player", "coyote", "roadrunner"]
   },
   "like": "lizard"
 }

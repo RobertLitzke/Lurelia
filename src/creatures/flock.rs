@@ -30,7 +30,7 @@ use glam::Vec3;
 use serde::Deserialize;
 
 /// How a species groups up, from its library behaviour.
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct Group {
     /// Smallest and largest group spawned.
     #[serde(default = "one_one")]
@@ -210,7 +210,15 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, at: Vec3, n: u32, 
 /// Step every flock. Birds keep above `terrain.surface` (trees included, so
 /// they can perch in them) and never come down where `terrain.wet`.
 /// Returns the kills made this step, (hunter, prey), for carry::take.
-pub fn update(world: &mut hecs::World, species: &[Species], groups: &[Group], flora: &super::plants::Flora, dt: f32, threat: &super::startle::Threat, terrain: &Terrain) -> Vec<(hecs::Entity, hecs::Entity)> {
+pub fn update(
+    world: &mut hecs::World,
+    species: &[Species],
+    groups: &[Group],
+    flora: &super::plants::Flora,
+    dt: f32,
+    threat: &super::startle::Threat,
+    terrain: &Terrain,
+) -> Vec<(hecs::Entity, hecs::Entity)> {
     let player = threat.pos;
     let ground = |x: f32, z: f32| terrain.surface(x, z);
     let wet = |x: f32, z: f32| terrain.wet(x, z);

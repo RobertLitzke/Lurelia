@@ -40,12 +40,13 @@
   "snow_line_m": 400,
   "weathering": 0.0,
   "moss": 0.0,
-  "round_edges": ["deck_ramp", "works_beam", "works_grate", "hazard_stripe", "works_panel", "corrugated_tin", "rust_iron", "works_panel_pale", "deck_floor", "concrete"],
+  "round_edges": ["deck_ramp", "works_panel", "works_grate", "hazard_stripe", "works_panel", "corrugated_tin", "rust_iron", "works_panel_pale", "deck_floor", "concrete"],
   "modes": [
     "walk",
     "shooter",
     "screenshot"
   ],
+  "games": ["deathmatch", "team", "instagib"],
   "biomes": [
     "works_yard",
     "arena_seabed"

@@ -4,6 +4,7 @@
   "introduced_by": "saltmirror",
   "notes": "A protea's flower head: a cup of pink bracts round a silver-white crown.",
   "smooth": false,
+  "sprites": "flower",
   "texture": {
     "pattern": "blotch",
     "base": [214, 132, 144],

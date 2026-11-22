@@ -13,7 +13,7 @@
     {"plant": "rock_lichen", "density": 0.08}
   ],
   "features": [{"structure": "petrified_log", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}],
-  "creatures": [{"creature": "lizard", "count": 4}],
+  "creatures": [{"creature": "lizard", "count": 4}, {"creature": "roadrunner", "count": 1}],
   "collectibles": [{"item": "petrified_wood", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}],
   "sound": {"ground": "stone"}
 }

@@ -20,6 +20,7 @@
 
 mod boost;
 mod climb;
+mod drive;
 mod glide;
 pub use glide::GlideAir;
 mod kayak;
@@ -49,6 +50,8 @@ pub enum Mode {
     Swing,
     /// Sitting in the kayak (kayak.rs).
     Kayak,
+    /// Driving a four-wheeler (drive.rs, src/vehicle).
+    Drive,
 }
 
 /// Gravity for the bike in the air (rising; falling is a little stronger and
@@ -85,9 +88,9 @@ pub const WING_CLEARANCE: f32 = 6.0;
 /// The prevailing wind blows toward +X, a little south.
 const WIND: Vec3 = Vec3::new(crate::world::WIND.x, 0.0, crate::world::WIND.y);
 
-/// Whether the chase camera starts on, per mode (V flips it). All modes
-/// start in first person.
-const CHASE_DEFAULT: [bool; 6] = [false; 6];
+/// Whether the chase camera starts on, per mode (V flips it). Every mode
+/// starts in first person but driving, where the car is the thing to see.
+const CHASE_DEFAULT: [bool; 7] = [false, false, false, false, false, false, true];
 
 /// A climb over a top edge, played out over a fraction of a second.
 #[derive(Clone, Copy)]
@@ -107,6 +110,7 @@ impl Mode {
             Mode::Climb => "CLIMB",
             Mode::Swing => "ROPE",
             Mode::Kayak => "KAYAK",
+            Mode::Drive => "DRIVE",
         }
     }
 
@@ -119,6 +123,7 @@ impl Mode {
             Mode::Climb => (1.2, 0.1, 0.1, 4.0),
             Mode::Swing => (1.2, 0.1, 0.16, 4.6),
             Mode::Kayak => (0.9, 0.1, 0.1, 4.4),
+            Mode::Drive => (1.7, 0.06, if air { 0.18 } else { 0.1 }, 6.4),
         };
         ChaseSpec { height, across, upwards, dist }
     }
@@ -126,11 +131,16 @@ impl Mode {
 
 #[derive(Default)]
 pub struct Ride {
+    /// Held on a race's grid (or after its finish): the car takes no keys.
+    pub hold: bool,
+    /// Controls a bot chose for the player's car this step, in place of the
+    /// keys (a race's autopilot, for headless runs). Taken each step.
+    pub auto: Option<crate::vehicle::Controls>,
     pub mode: Mode,
     /// The modes this world allows (world.json `modes`).
     pub allowed: Allowed,
     /// Chase camera flipped from its default, per mode.
-    chase_flip: [bool; 6],
+    chase_flip: [bool; 7],
     from_bike: bool,
     // Bike state.
     heading: f32,
@@ -188,6 +198,10 @@ pub struct Ride {
     pub calm_air: bool,
     /// This world's thermals and ridge wind (world.json `glide`).
     pub glide_air: glide::GlideAir,
+    /// How the water's surface slopes under the boat (rise per metre in x
+    /// and z): the swell (world/surf.rs), set by the game each step. The
+    /// kayak pitches and rolls with it.
+    pub water_slope: glam::Vec2,
     /// Bank the body is flying at, radians; positive is right wing down.
     /// It has mass (`ROLL_ACCEL`, `ROLL_W`, `ROLL_ZETA` in glide.rs), so the
     /// keys push it rather than setting it.
@@ -272,6 +286,24 @@ pub struct Ride {
     /// The kayak left floating where its paddler rolled over the side
     /// (where, heading), to climb back into from the water (kayak.rs).
     pub moored: Option<(Vec3, f32)>,
+    // Driving (drive.rs).
+    /// The car being driven, and the one left parked.
+    car: Option<crate::vehicle::Vehicle>,
+    pub parked: Option<crate::vehicle::Vehicle>,
+    /// The vehicles this world has (world.json `vehicles`), and which of
+    /// them U brings.
+    pub vehicles: Vec<String>,
+    pub vehicle_pick: usize,
+    /// Every vehicle tune in the library.
+    pub catalogue: crate::vehicle::Catalogue,
+    /// U held since it was pressed in the car: a tap gets out, a hold resets.
+    out_t: Option<f32>,
+    /// What the car did this step, for the sound and the dust.
+    pub drive_events: crate::vehicle::Events,
+    /// Seconds to the next look at the tune files.
+    retune_t: f32,
+    /// The tuning panel's line (vehicle/tune.rs).
+    tune_pick: usize,
 }
 
 fn wrap(a: f32) -> f32 {
@@ -443,6 +475,9 @@ impl Ride {
         self.launch_t = 0.0;
         self.from_bike = false;
         self.mantle = None;
+        if let Some(car) = self.car.take() {
+            self.parked = Some(car);
+        }
     }
 
     /// Whether this world allows mode `m`; when it doesn't, say so on screen.
@@ -464,6 +499,9 @@ impl Ride {
         match self.mode {
             Mode::Bike => 2.0,
             Mode::Kayak => 1.5,
+            // A/D steer: with a direct tune, and always in the driver's seat.
+            Mode::Drive if !self.chase_on() || self.car.as_ref().is_some_and(|c| c.spec.steering == crate::vehicle::Steering::Direct) => 0.0,
+            Mode::Drive => 2.0,
             Mode::Foot | Mode::Wing | Mode::Climb | Mode::Swing => 0.0,
         }
     }
@@ -487,6 +525,7 @@ impl Ride {
             Mode::Wing | Mode::Swing | Mode::Climb => p.body.vel.length(),
             Mode::Kayak => Vec3::new(p.body.vel.x, 0.0, p.body.vel.z).length(),
             Mode::Foot => Vec3::new(p.body.vel.x, 0.0, p.body.vel.z).length(),
+            Mode::Drive => p.body.vel.length(),
         }
     }
 
@@ -524,6 +563,7 @@ impl Ride {
             }
             Mode::Wing | Mode::Swing | Mode::Climb => self.note = Some("LAND FIRST".into()),
             Mode::Kayak => self.note = Some("IN THE KAYAK: K TO GET OUT".into()),
+            Mode::Drive => self.note = Some("DRIVING: U TO GET OUT".into()),
         }
     }
 
@@ -572,6 +612,7 @@ impl Ride {
         }
         let traction = match self.mode {
             Mode::Bike => !self.air,
+            Mode::Drive => self.car.as_ref().is_some_and(|c| c.grounded > 0),
             Mode::Wing => self.launch_t <= 0.0,
             Mode::Kayak => input.forward,
             _ => false,
@@ -585,7 +626,7 @@ impl Ride {
                 self.boost_lock = true;
                 self.boosting = false;
             }
-        } else if !input.sprint || !matches!(self.mode, Mode::Bike | Mode::Wing | Mode::Kayak) {
+        } else if !input.sprint || !matches!(self.mode, Mode::Bike | Mode::Wing | Mode::Kayak | Mode::Drive) {
             let refill = if self.mode == Mode::Wing { BOOST_REFILL_WING } else { BOOST_REFILL };
             self.spent = (self.spent - dt / refill).max(0.0);
         }
@@ -638,14 +679,31 @@ impl Ride {
                 self.kayak(p, input, store, sea, dt);
                 true
             }
+            Mode::Drive => {
+                self.drive(p, input, store, sea, slopes, dt);
+                self.mode == Mode::Drive
+            }
         };
-        // Boost tokens: planned, drawn and taken only while the bike is out.
-        if self.mode == Mode::Bike {
+        self.step_parked(p, store, sea, slopes, dt);
+        self.retune_t -= dt;
+        if self.retune_t <= 0.0 {
+            self.retune_t = 1.0;
+            self.retune();
+        }
+        // Boost tokens: planned, drawn and taken only while the bike or a
+        // car is out. A car takes one anywhere across its width.
+        if matches!(self.mode, Mode::Bike | Mode::Drive) {
             self.trail.step(store, p.pos, sea, slopes, dt);
-            if self.trail.take(p.pos) {
+            let reach = self.car.as_ref().map_or(boost::GRAB.0, |c| c.spec.track * 0.5 + 0.6);
+            if self.trail.take(p.pos, reach) {
                 self.spent = 0.0;
                 self.boost_lock = false;
-                self.speed += 3.2;
+                if let Some(car) = self.car.as_mut().filter(|_| self.mode == Mode::Drive) {
+                    let f = car.forward();
+                    car.b.vel += f * 3.2;
+                } else {
+                    self.speed += 3.2;
+                }
                 self.boost_glow = 1.0;
                 self.token_t = 1.6;
                 self.note = Some("BOOST".into());
@@ -1022,11 +1080,22 @@ impl Ride {
 
         // The chase camera aims at a point that trails the body: a little
         // across, more up and down, most of all in the air.
-        self.chase.follow(p.pos, self.mode.cam(self.air), self.mode as u8, dt);
+        let mut cam = self.mode.cam(self.air);
+        if let Some(car) = self.car() {
+            // Each vehicle says how far back and how high the chase sits.
+            cam.dist = car.spec.cam_dist;
+            cam.height = car.spec.cam_height;
+        }
+        self.chase.follow(p.pos, cam, self.mode as u8, dt);
     }
 
     /// The rider's head, for aiming and sighting.
     pub fn head(&self, p: &Player, alpha: f32) -> Vec3 {
+        if let Some(car) = self.car() {
+            let (pos, rot) = car.pose(alpha);
+            let eye = pos + rot * Vec3::from(car.spec.eye);
+            return Vec3::new(eye.x, self.prev_eye_y + (self.eye_y - self.prev_eye_y) * alpha, eye.z);
+        }
         let mut xz = p.prev_pos.lerp(p.pos, alpha);
         if self.mode == Mode::Bike {
             let h = self.prev_heading + wrap(self.heading - self.prev_heading) * alpha;
@@ -1047,8 +1116,21 @@ impl Ride {
         let jitter = Vec3::new(((t * 37.0).sin() + (t * 23.3).sin() * 0.6) * sh * 0.05, ((t * 41.0).sin() + (t * 17.9).cos() * 0.6) * sh * 0.05, 0.0);
         let chase = self.chase_on() && self.mode != Mode::Foot;
         // On the bike the view tips with the slope, and more with the flight.
-        let tip = if self.mode == Mode::Bike && !chase { body_pitch * if self.air { 0.5 } else { 0.3 } } else { 0.0 };
-        let yaw = p.yaw + jitter.x;
+        let tip = match self.mode {
+            Mode::Bike if !chase => body_pitch * if self.air { 0.5 } else { 0.3 },
+            Mode::Drive if !chase => body_pitch * 0.6,
+            Mode::Kayak if !chase => body_pitch * 0.5,
+            _ => 0.0,
+        };
+        // In the driver's seat p.yaw turns with the car a whole step at a
+        // time (drive.rs); the car drawn this frame is part way through that
+        // step, so the view is put back by the part it has not turned yet.
+        let behind = if self.mode == Mode::Drive && !chase {
+            wrap(self.prev_heading + wrap(self.heading - self.prev_heading) * alpha - self.heading)
+        } else {
+            0.0
+        };
+        let yaw = p.yaw + behind + jitter.x;
         let pitch = (p.pitch + tip + jitter.y).clamp(-1.55, 1.55);
         let (sy, cy) = yaw.sin_cos();
         let (sp, cp) = pitch.sin_cos();
@@ -1060,6 +1142,7 @@ impl Ride {
             Mode::Wing => lean * if chase { 0.35 } else { 0.6 } + spin,
             Mode::Climb | Mode::Swing => lean * 0.3,
             Mode::Kayak => lean * if chase { 0.4 } else { 0.7 },
+            Mode::Drive => lean * if chase { 0.15 } else { 0.7 },
         };
         let up = (Vec3::Y * roll.cos() - right * roll.sin()).normalize();
         let speed_fx = self.fx;
@@ -1150,6 +1233,8 @@ impl Ride {
                 tint: [1.0, 1.0, 1.0, 0.0],
                 rot: [q.x, q.y, q.z, q.w],
                 shift: [0.0; 4],
+                flesh: [[0.0; 4]; 3],
+                glow: [0.0; 4],
             },
         ))
     }
@@ -1175,6 +1260,8 @@ impl Ride {
                         tint: [1.0, 1.0, 1.0, 0.0],
                         rot: [q.x, q.y, q.z, q.w],
                         shift: [0.0; 4],
+                        flesh: [[0.0; 4]; 3],
+                        glow: [0.0; 4],
                     },
                 ));
             }
@@ -1259,6 +1346,8 @@ impl Ride {
                     tint: [1.0, 1.0, 1.0, 0.0],
                     rot: [q.x, q.y, q.z, q.w],
                     shift: [0.0; 4],
+                    flesh: [[0.0; 4]; 3],
+                    glow: [0.0; 4],
                 },
             ));
         }
@@ -1281,12 +1370,14 @@ impl Ride {
                 tint: [1.0, 1.0, 1.0, 0.0],
                 rot: [q.x, q.y, q.z, q.w],
                 shift: [0.0; 4],
+                flesh: [[0.0; 4]; 3],
+                glow: [0.0; 4],
             },
         ));
     }
 
     pub fn tokens(&self, first: usize, models: &[Model], out: &mut Vec<(usize, Instance)>) {
-        if self.mode != Mode::Bike {
+        if !matches!(self.mode, Mode::Bike | Mode::Drive) {
             return;
         }
         if let Some(md) = models.get(first + TOKEN) {
@@ -1301,7 +1392,7 @@ impl Ride {
 
     /// Boost left, 0 to 1, and whether it is firing; None unless biking or gliding.
     pub fn boost_meter(&self) -> Option<(f32, bool)> {
-        matches!(self.mode, Mode::Bike | Mode::Wing | Mode::Kayak).then_some((1.0 - self.spent, self.boosting))
+        matches!(self.mode, Mode::Bike | Mode::Wing | Mode::Kayak | Mode::Drive).then_some((1.0 - self.spent, self.boosting))
     }
 
     /// One line for the HUD while riding.
@@ -1328,6 +1419,20 @@ impl Ride {
             }
             Mode::Climb => Some(format!("CLIMBING   {:.0} M UP", self.clearance.unwrap_or(0.0))),
             Mode::Swing => Some(format!("ROPE   {:.0} M OUT   {kmh:.0} KM/H", self.rope_len)),
+            Mode::Drive => {
+                let car = self.car()?;
+                let mut line = format!("{}   {kmh:.0} KM/H", car.spec.title);
+                if car.waiting {
+                    line += "   WAITING FOR THE WORLD";
+                } else if car.stalled {
+                    line += "   STALLED";
+                } else if car.wade > 0.2 {
+                    line += "   WADING";
+                } else if car.air_time > 0.25 {
+                    line += &format!("   AIR {:.1} S", car.air_time);
+                }
+                Some(line)
+            }
             Mode::Kayak => Some(if self.aground {
                 format!("KAYAK   {kmh:.0} KM/H   AGROUND")
             } else {
@@ -1362,17 +1467,17 @@ pub const KAYAK_EMPTY: usize = 13;
 const ROPE_SEG: f32 = 0.5;
 
 // Palette slots 48-63 belong to the ride models.
-const FRAME: u8 = 48;
-const TYRE: u8 = 49;
-const METAL: u8 = 50;
-const JACKET: u8 = 51;
-const TROUSERS: u8 = 52;
-const SKIN: u8 = 53;
-const HELMET: u8 = 54;
+pub(crate) const FRAME: u8 = 48;
+pub(crate) const TYRE: u8 = 49;
+pub(crate) const METAL: u8 = 50;
+pub(crate) const JACKET: u8 = 51;
+pub(crate) const TROUSERS: u8 = 52;
+pub(crate) const SKIN: u8 = 53;
+pub(crate) const HELMET: u8 = 54;
 const SUIT: u8 = 55;
-const SUIT_DARK: u8 = 56;
-const PACK: u8 = 57;
-const BOOT: u8 = 58;
+pub(crate) const SUIT_DARK: u8 = 56;
+pub(crate) const PACK: u8 = 57;
+pub(crate) const BOOT: u8 = 58;
 const CORD: u8 = 59;
 const HULL: u8 = 60;
 const BLADE: u8 = 61;

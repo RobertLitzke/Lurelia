@@ -1,0 +1,10 @@
+{
+  "name": "gh_faewood",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "The north-east corner, where the redwoods give way to a wood that is plainly somebody else's: the edge of the faerie wood north of here.",
+  "priority": 7,
+  "rules": {"region": "faewood", "elev": [1.5, 200]},
+  "map_color": [92, 130, 120],
+  "like": "hollins"
+}

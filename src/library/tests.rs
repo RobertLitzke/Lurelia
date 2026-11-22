@@ -44,6 +44,100 @@ fn structure_schema_is_current() {
     assert!(have == want, "{} is out of date: run WRITE_SCHEMA=1 cargo test structure_schema", path.display());
 }
 
+/// The schemas of the other kinds, generated the same way from their loader
+/// types: `library/schema/<kind>.schema.json`. Each allows `notes` and keys
+/// starting with `_` at the top, as the loader does, and for a kind that
+/// inherits, the keys `src/inherit.rs` reads (`like`, and `scale`,
+/// `extra_ops`, `shade`, `hue` where they apply), and asks for the required
+/// keys only of an entry with no `like`, since a child takes them from its
+/// parent. Rewrite with `WRITE_SCHEMA=1 cargo test kind_schemas`.
+#[test]
+fn kind_schemas_are_current() {
+    use serde_json::{json, Value};
+    fn shape(mut s: Value, extra: &[(&str, Value)], inherits: bool) -> Value {
+        let o = s.as_object_mut().unwrap();
+        let props = o.entry("properties").or_insert_with(|| json!({})).as_object_mut().unwrap();
+        props
+            .entry("notes")
+            .or_insert(json!({"description": "One sentence on what the entry is, for people and the catalogue.", "type": "string"}));
+        for (k, v) in extra {
+            props.insert(k.to_string(), v.clone());
+        }
+        o.insert("additionalProperties".into(), json!(false));
+        o.insert("patternProperties".into(), json!({"^_": {}}));
+        if inherits {
+            if let Some(req) = o.remove("required") {
+                o.insert("if".into(), json!({"not": {"required": ["like"]}}));
+                o.insert("then".into(), json!({"required": req}));
+            }
+        }
+        s
+    }
+    let like = || {
+        (
+            "like",
+            json!({"description": "The entry this one is a variant of (src/inherit.rs): it starts from that entry and overrides what it gives.", "type": "string"}),
+        )
+    };
+    let scale = || {
+        (
+            "scale",
+            json!({"description": "With `like`: multiplies the parent's sizes; sizes this entry gives are taken as written.", "type": "number"}),
+        )
+    };
+    let kinds: Vec<(&str, Value)> = vec![
+        (
+            "material",
+            shape(
+                serde_json::to_value(schemars::schema_for!(MaterialDef)).unwrap(),
+                &[
+                    like(),
+                    (
+                        "shade",
+                        json!({"description": "With `like`: a brightness multiple on every colour taken from the parent.", "type": "number"}),
+                    ),
+                    (
+                        "hue",
+                        json!({"description": "With `like`: warms (above 0) or cools (below) every colour taken from the parent.", "type": "number"}),
+                    ),
+                ],
+                true,
+            ),
+        ),
+        ("plant", shape(serde_json::to_value(schemars::schema_for!(PlantDef)).unwrap(), &[like(), scale()], true)),
+        (
+            "creature",
+            shape(
+                serde_json::to_value(schemars::schema_for!(CreatureDef)).unwrap(),
+                &[
+                    like(),
+                    scale(),
+                    (
+                        "extra_ops",
+                        json!({"description": "With `like`: ops appended to the parent's (later ops win; `\"mat\": \"air\"` carves).", "type": "array", "items": {"$ref": "#/$defs/Op"}}),
+                    ),
+                ],
+                true,
+            ),
+        ),
+        ("biome", shape(serde_json::to_value(schemars::schema_for!(BiomeDef)).unwrap(), &[like()], true)),
+        ("kit", shape(serde_json::to_value(schemars::schema_for!(crate::world::route::kit::KitDef)).unwrap(), &[], false)),
+    ];
+    let mut stale = Vec::new();
+    for (kind, schema) in kinds {
+        let want = serde_json::to_string_pretty(&schema).unwrap() + "\n";
+        let path = data_root().join(format!("library/schema/{kind}.schema.json"));
+        if std::env::var_os("WRITE_SCHEMA").is_some() {
+            std::fs::write(&path, &want).unwrap();
+            continue;
+        }
+        if std::fs::read_to_string(&path).unwrap_or_default().replace("\r\n", "\n") != want {
+            stale.push(path.display().to_string());
+        }
+    }
+    assert!(stale.is_empty(), "out of date, run WRITE_SCHEMA=1 cargo test kind_schemas: {stale:?}");
+}
+
 /// A material this world cannot reach gets no id and no texture layer,
 /// so a material the engine names in code must be listed in
 /// `worldload::ENGINE_MATERIALS` or it would quietly draw as air.
@@ -379,4 +473,80 @@ fn small_worlds_build_cleanly() {
         let world = crate::world::chronicle::build_world(&dir, lib).unwrap_or_else(|e| panic!("{}: {e}", dir.display()));
         assert!(world.warnings.is_empty(), "{}: {:#?}", dir.display(), world.warnings);
     }
+}
+
+/// A coat's fourth number sets how bright a glow burns: the glassmoth's
+/// lantern coat asks its wings for 2.4 over the model's 1.8.
+#[test]
+fn a_coat_can_brighten_a_glow() {
+    let (lib, errs) = Library::load(&data_root());
+    assert!(errs.is_empty(), "{errs:#?}");
+    let ci = lib.creature("glassmoth").expect("glassmoth");
+    let coats = lib.creature_coats(ci);
+    let wears = crate::variety::wears(&coats, &lib.creatures[ci].colors);
+    let glow = |n: &str| wears.iter().find(|w| w.name == n).expect(n).at(0.5).glow;
+    assert!((glow("lantern") - 2.4 / 1.8).abs() < 1e-3, "{}", glow("lantern"));
+    assert!((glow("violet") - 1.0).abs() < 1e-6, "a coat that names no glow leaves it alone");
+    // And nothing can light a colour that has no glow at all.
+    let mut bad = lib.creatures[ci].clone();
+    bad.morphs[1].colors.insert("mothbody".into(), Paint::One(vec![36.0, 28.0, 24.0, 1.0]));
+    let mut out = Vec::new();
+    super::creature::check_fit(&super::creature::coats_of(&bad.morphs), &bad.colors, "glassmoth", &mut out);
+    assert!(out.iter().any(|e| e.contains("does not glow")), "{out:#?}");
+}
+
+/// A material merged into another (`was`) still answers to its old name, so
+/// a save or a local file that names it loads the material it became.
+#[test]
+fn a_merged_material_answers_to_its_old_name() {
+    let (mut lib, errs) = Library::load(&data_root());
+    assert!(errs.is_empty(), "{errs:#?}");
+    let reach: std::collections::HashSet<String> = ["reedmace_head".to_string()].into_iter().collect();
+    lib.assign_ids(Some(reach));
+    // Through variables: a quoted name in `.material(` reads as an engine
+    // material to `materials_named_in_code_are_reached_by_every_world`.
+    let (now, was) = ("cattail_head", "reedmace_head");
+    let id = lib.material(now).expect("an old name reaches the material it became");
+    assert_eq!(lib.material(was), Some(id));
+}
+
+/// Every material as the loader resolves it, less what does not draw (name
+/// aside): `DUMP_MATERIALS=out.txt cargo test dump_materials -- --ignored`.
+/// Run before and after turning entries into `like` children and diff the
+/// two files: a conversion that changes nothing on screen changes nothing here.
+#[test]
+#[ignore]
+fn dump_materials() {
+    let Ok(path) = std::env::var("DUMP_MATERIALS") else { return };
+    let (lib, errs) = Library::load(&data_root());
+    assert!(errs.is_empty(), "{errs:#?}");
+    let mut rows: Vec<String> = lib
+        .materials
+        .iter()
+        .filter(|m| m.coat_of.is_none())
+        .map(|m| {
+            let mut m = m.clone();
+            (m.version, m.introduced_by, m.like, m.was, m.file_id) = (0, String::new(), None, Vec::new(), None);
+            format!("{m:?}")
+        })
+        .collect();
+    // Plants, biomes and creatures as resolved JSON (sorted keys, so the
+    // dump is the same from run to run, which a HashMap's Debug is not),
+    // without identity and without nulls, which read as a missing key does.
+    fn bare(v: &mut serde_json::Value) {
+        if let serde_json::Value::Object(m) = v {
+            m.retain(|k, x| !x.is_null() && !["like", "version", "introduced_by", "notes"].contains(&k.as_str()));
+        }
+    }
+    for kind in ["plants", "biomes", "creatures"] {
+        let mut e = Vec::new();
+        let raw: Vec<(String, serde_json::Value)> = super::load_dir(&data_root().join("library").join(kind), &mut e);
+        for (_, mut v) in crate::inherit::resolve(raw, &mut e) {
+            bare(&mut v);
+            rows.push(format!("{kind} {v}"));
+        }
+        assert!(e.is_empty(), "{e:#?}");
+    }
+    rows.sort();
+    std::fs::write(path, rows.join("\n")).unwrap();
 }

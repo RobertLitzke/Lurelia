@@ -148,7 +148,11 @@ pub struct GlideAir {
 
 impl Default for GlideAir {
     fn default() -> Self {
-        GlideAir { thermals: 1.0, ridge: glam::Vec2::new(WIND.x, WIND.z), ridge_speed: WIND_SPEED }
+        GlideAir {
+            thermals: 1.0,
+            ridge: glam::Vec2::new(WIND.x, WIND.z),
+            ridge_speed: WIND_SPEED,
+        }
     }
 }
 
@@ -227,6 +231,7 @@ impl Ride {
             }
             Mode::Swing => self.start_wing(p, false, false),
             Mode::Kayak => self.note = Some("NOT FROM THE KAYAK".into()),
+            Mode::Drive => self.note = Some("NOT FROM THE CAR".into()),
         }
     }
 

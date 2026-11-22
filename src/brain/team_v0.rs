@@ -253,4 +253,3 @@ impl TeamBrain {
         out
     }
 }
-

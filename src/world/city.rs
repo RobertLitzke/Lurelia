@@ -143,7 +143,7 @@ fn d_pavement() -> String {
     "pavement".into()
 }
 fn d_glass() -> String {
-    "pane_glass".into()
+    "window_glass".into()
 }
 fn d_metal() -> String {
     "roof_vent".into()

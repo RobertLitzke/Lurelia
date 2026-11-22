@@ -1234,6 +1234,66 @@
   },
   {
    "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the general store and post office",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     34,
+     -30
+    ],
+    "as_if": 90
+   },
+   "structure": "landhandel",
+   "bearing": 180
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the sea house",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     15,
+     42
+    ],
+    "as_if": 90
+   },
+   "structure": "sjohus",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the school",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     62,
+     -12
+    ],
+    "as_if": 90
+   },
+   "structure": "kaldvik_school",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
+   "event": "place",
+   "cause": "HAMLET: the smithy",
+   "at": {
+    "from": "fjord_head",
+    "by": [
+     50,
+     -52
+    ],
+    "as_if": 90
+   },
+   "structure": "kaldvik_smithy",
+   "bearing": 270
+  },
+  {
+   "year": 1700,
    "event": "vent",
    "cause": "HAMLET: smoke from every chimney in the hamlet",
    "at": {

@@ -1,0 +1,31 @@
+{
+  "name": "gh_pasture",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "Gannet Harbor's sheep pasture inside dry-stone walls: turf grazed short, a thorn left for shade, an oak or maple to a field.",
+  "priority": 9,
+  "rules": {"region": "pasture"},
+  "surface": "lawn_grass",
+  "subsurface": "dirt",
+  "fringe": 0,
+  "map_color": [138, 190, 96],
+  "plants": [
+    {"plant": "hawthorn", "density": 0.0006, "placement": {"verb": "lone", "params": {"spacing": 36}}},
+    {"plant": "great_oak", "density": 0.0001, "placement": {"verb": "lone", "params": {"spacing": 90}}},
+    {"plant": "maple", "density": 8e-05, "placement": {"verb": "lone", "params": {"spacing": 90}}}
+  ],
+  "features": [{"structure": "boulder", "density": 0.00015, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "sheep", "count": 30},
+    {"creature": "cow", "count": 5},
+    {"creature": "horse", "count": 2},
+    {"creature": "starling", "count": 20},
+    {"creature": "crow", "count": 4},
+    {"creature": "sparrow", "count": 8},
+    {"creature": "barn_owl", "count": 1},
+    {"creature": "rabbit", "count": 6},
+    {"creature": "fox", "count": 1},
+    {"creature": "killdeer", "count": 2}
+  ],
+  "collectibles": []
+}

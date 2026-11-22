@@ -1,9 +1,11 @@
 {
   "name": "cattail_head",
-  "version": 1,
+  "version": 2,
   "introduced_by": "lowmouth",
-  "notes": "A cattail's stem and brown velvet head (drawn as a stalk sprite).",
+  "notes": "The stem and brown velvet seed head of a cattail, which Hemlow calls reedmace (drawn as a stalk sprite). v2: reedmace_head merged in, since cattail and reedmace are one plant, Typha.",
+  "was": ["reedmace_head"],
   "smooth": false,
+  "sprites": "cattail head",
   "texture": {
     "pattern": "noise",
     "base": [92, 60, 36],

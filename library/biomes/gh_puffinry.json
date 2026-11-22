@@ -1,0 +1,20 @@
+{
+  "name": "gh_puffinry",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "The puffin colony on Hake Island's west cliff tops: turf slopes riddled with burrows, greener round them for the guano.",
+  "priority": 9,
+  "rules": {"region": "puffinry", "elev": [4, 200]},
+  "surface": "shore_grass",
+  "subsurface": "dirt",
+  "map_color": [118, 168, 92],
+  "plants": [{"plant": "heather", "density": 0.01, "placement": {"verb": "clustered", "params": {"size": 8}}}],
+  "features": [{"structure": "boulder", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "puffin", "count": 40},
+    {"creature": "razorbill", "count": 10},
+    {"creature": "gull", "count": 8},
+    {"creature": "cormorant", "count": 4}
+  ],
+  "collectibles": []
+}

@@ -12,11 +12,13 @@ one item per line. Formatting only trims floats to six significant digits (float
 scripts); the file is parsed and compared before it is written.
 
 The catalogue lists every entry by kind with who introduced it, its notes, and
-which worlds use it (found by reading each world's world.json and
-chronicle.json and following biomes to their plants, features, creatures and
-collectibles). It reads `worlds/` and `local/worlds/` alike, and counts the
-materials `worldload::ENGINE_MATERIALS` names in Rust as reached by every
-world, so "unused" means no world can get at the entry and it is safe to
+which worlds use it, by the engine's own rule (`worldload::reach`): any
+string in a world's world.json, chronicle.json and the data files they name
+that is an entry's name reaches it, and so does any string in the files of the
+biomes, plants, structures, signs, kits and cities reached. It reads `worlds/`
+and `local/worlds/` alike, and counts the materials
+`worldload::ENGINE_MATERIALS` names in Rust and the shooter's pad platforms
+as reached, so "unused" means no world can get at the entry and it is safe to
 delete.
 """
 
@@ -32,10 +34,10 @@ WIDTH = 118
 
 FIRST = ["name", "version", "introduced_by", "_generated_by", "notes"]
 ORDER = {
-    "materials": ["id", "smooth", "crisp", "passable", "slab", "water", "glow", "glints", "foliage", "tint", "drift", "texture", "top", "bottom"],
+    "materials": ["like", "shade", "hue", "was", "id", "smooth", "crisp", "passable", "slab", "water", "glow", "glints", "foliage", "surface", "tint", "drift", "sprites", "texture", "top", "bottom"],
     "plants": ["form", "height", "trunk_radius", "buttress", "crown_radius", "bark", "leaf", "leaf_alt", "morphs", "morph_blob_m", "squash", "curve", "canopy", "leader", "fill", "spread", "dome", "limb", "max_slope"],
     "structures": ["size", "anchor", "foundation", "level", "decays", "base", "vines", "tags", "slots", "ops"],
-    "kits": ["ground", "width", "mat", "shoulder", "margin", "lift", "sag", "clear", "max_span", "walk", "deck", "rails", "posts", "piers", "span"],
+    "kits": ["ground", "width", "mat", "shoulder", "margin", "lift", "sag", "clear", "max_span", "walk", "deck", "rails", "posts", "piers", "braces", "span"],
     "cities": ["like", "road", "pavement", "glass", "metal", "deck", "deck_top", "rail", "chimney", "porch_floor", "doors", "plinths", "ivy", "ivy_mat", "tree_boost", "remap"],
     "creatures": ["voxel", "half_w", "height", "colors", "morphs", "behaviour", "in_water", "ops"],
     "collectibles": ["display", "voxel", "spin", "colors", "ops"],
@@ -153,34 +155,16 @@ def engine_materials():
             src = fh.read()
     except OSError:
         return []
-    i = src.find("ENGINE_MATERIALS")
+    # The definition, not the first mention (a comment above it names it too).
+    i = src.find("const ENGINE_MATERIALS")
     if i < 0:
         return []
-    start, end = src.find("[", src.find("=", i)), src.find("]", src.find("=", i))
+    # After the `=`: the type, `[&str; 19]`, has brackets of its own.
+    eq = src.find("=", i)
+    start, end = src.find("[", eq), src.find("]", eq)
     if start < 0 or end < 0:
         return []
     return [s.strip().strip('"') for s in src[start + 1 : end].split(",") if s.strip()]
-
-
-def plant_mats(plant, lib, hit):
-    """Add every material a plant file names. Reading every string beats a list
-    of keys to keep in step with the schema: bark, leaf, leaf_alt, flower,
-    autumn, stalk and whatever comes next. The Rust side (`worldload::reach`)
-    reads them the same way."""
-
-    def walk(v):
-        if isinstance(v, str):
-            if v in lib["materials"]:
-                hit.add(("materials", v))
-        elif isinstance(v, list):
-            for x in v:
-                walk(x)
-        elif isinstance(v, dict):
-            for k, x in v.items():
-                if k not in ("name", "notes", "introduced_by"):
-                    walk(x)
-
-    walk(plant)
 
 
 def world_dirs():
@@ -197,132 +181,102 @@ def world_dirs():
     return out
 
 
+def strings(v, out):
+    """Every string in a JSON value but its notes, as `worldload::reach` reads
+    them (it reads notes too; prose here never names an entry exactly)."""
+    if isinstance(v, str):
+        out.append(v)
+    elif isinstance(v, list):
+        for x in v:
+            strings(x, out)
+    elif isinstance(v, dict):
+        for k, x in v.items():
+            if k != "notes":
+                strings(x, out)
+
+
+def read_json(path):
+    try:
+        with open(path, encoding="utf-8") as fh:
+            return json.load(fh)
+    except (OSError, ValueError):
+        return None
+
+
+def pad_material(p):
+    """The platform the shooter stamps under a pickup (`PickupDef::pad_material`)."""
+    kind = p.get("kind", "")
+    if kind == "health":
+        return "pickup_pad_health"
+    if kind in ("armour", "armor"):
+        return "pickup_pad_armour"
+    if kind in ("ammo", "weapon") and p.get("weapon"):
+        return "weapon_pad_" + p["weapon"]
+    return None
+
+
+# The kinds whose files can name materials or other entries, as in
+# `worldload::reach`. Creatures are left out on purpose: a creature's `hunts`
+# names prey that only matters where it already lives.
+WALKED = ["biomes", "plants", "structures", "signs", "kits", "cities"]
+
+
 def world_uses(lib):
-    """{(kind, name): [world, ...]} for every entry a world reaches."""
+    """{(kind, name): [world, ...]} for every entry a world reaches. The rule
+    is the engine's (`worldload::reach`): any string in the world's
+    world.json and chronicle.json, and in any .json data file they name, that
+    is the name of a library entry reaches it, and so does any string in the
+    files of the entries reached, and so on. A list of keys to look under
+    would drift from the engine every time an event takes a new param."""
     uses = {}
     engine = engine_materials()
+    by_name = {}
+    for kind in KINDS:
+        for n in lib[kind]:
+            by_name.setdefault(n, []).append(kind)
     for wname, wpath in world_dirs():
-        try:
-            with open(os.path.join(wpath, "world.json"), encoding="utf-8") as fh:
-                wd = json.load(fh)
-            with open(os.path.join(wpath, "chronicle.json"), encoding="utf-8") as fh:
-                ch = json.load(fh)
-        except (OSError, ValueError):
+        wd = read_json(os.path.join(wpath, "world.json"))
+        ch = read_json(os.path.join(wpath, "chronicle.json"))
+        if wd is None or ch is None:
             continue
-        hit = {("materials", m) for m in engine if m in lib["materials"]}
-        # Particle effects are the engine's, thrown by events every world has.
-        hit |= {("fx", n) for n in lib["fx"]}
-        biomes = wd.get("biomes") or list(lib["biomes"])
-        for b in biomes + [wd.get("default_biome"), wd.get("seabed_biome")]:
-            bd = lib["biomes"].get(b)
-            if not bd:
+        todo = list(engine)
+        strings(wd, todo)
+        strings(ch, todo)
+        for p in (wd.get("shooter") or {}).get("pickups", []):
+            m = pad_material(p)
+            if m:
+                todo.append(m)
+        if "biomes" not in wd:
+            todo.extend(lib["biomes"])
+        for f in list(todo):
+            if f.endswith(".json"):
+                d = read_json(os.path.join(wpath, f))
+                if d is not None:
+                    strings(d, todo)
+        seen = set()
+        hit = {("fx", n) for n in lib["fx"]}
+        while todo:
+            n = todo.pop()
+            if n in seen:
                 continue
-            hit.add(("biomes", b))
-            for m in [bd.get("surface"), bd.get("subsurface"), bd.get("rock")]:
-                if m:
+            seen.add(n)
+            for kind in by_name.get(n, []):
+                hit.add((kind, n))
+                if kind in WALKED:
+                    strings(lib[kind][n], todo)
+                elif kind == "collectibles":
+                    todo.append(n + "_mother")
+            # A merged material answers to its old names (`was`).
+            for m, d in lib["materials"].items():
+                if n in d.get("was", []):
                     hit.add(("materials", m))
-            for p in bd.get("plants", []):
-                hit.add(("plants", p["plant"]))
-            for p in bd.get("features", []):
-                hit.add(("structures", p["structure"]))
-            for p in bd.get("creatures", []):
-                hit.add(("creatures", p["creature"]))
-            for p in bd.get("collectibles", []):
-                hit.add(("collectibles", p["item"]))
-        for m, _ in wd.get("rock", []) + wd.get("strata", []):
-            hit.add(("materials", m))
-        for gun in (wd.get("shooter") or {}).get("weapons", []):
-            hit.add(("weapons", gun))
-
-        def scan(v):
-            if isinstance(v, dict):
-                for k, x in v.items():
-                    if k in ("structure",) and isinstance(x, str):
-                        hit.add(("structures", x))
-                    elif k == "structures" and isinstance(x, list):
-                        for s in x:
-                            hit.add(("structures", s))
-                    elif k == "buildings" and isinstance(x, list):
-                        for s in x:
-                            hit.add(("structures", s))
-                    elif k in ("mat", "bed", "water", "old_bed", "silt", "floor", "char", "cap", "shoulder", "tell", "path", "rock", "mantle", "lining", "wall", "bank", "apron") and isinstance(x, str):
-                        hit.add(("materials", x))
-                    elif k in ("kit", "street", "lane", "edge", "span") and isinstance(x, str) and x in lib["kits"]:
-                        hit.add(("kits", x))
-                    elif k == "kit" and isinstance(x, str) and x in lib["cities"]:
-                        hit.add(("cities", x))
-                    elif k == "style" and isinstance(x, str) and x in lib["signs"]:
-                        hit.add(("signs", x))
-                    elif k == "item" and isinstance(x, str):
-                        hit.add(("collectibles", x))
-                        hit.add(("collectibles", x + "_mother"))
-                    elif k == "slots" and isinstance(x, dict):
-                        for m in x.values():
-                            hit.add(("materials", m))
-                    else:
-                        scan(x)
-            elif isinstance(v, list):
-                for x in v:
-                    scan(x)
-
-        scan(ch.get("events", []))
-        # Structures pull in their slot materials and the materials their ops
-        # name, plants their bark and leaves (a parent's too, by `like`).
-        def op_mats(ops):
-            for op in ops:
-                m = op.get("mat")
-                if isinstance(m, str) and m in lib["materials"]:
-                    hit.add(("materials", m))
-                op_mats(op.get("ops", []))
-
-        for kind, name in list(hit):
-            # A sign style brings in the post it stands on.
-            if kind == "signs" and name in lib["signs"]:
-                post = lib["signs"][name].get("post")
-                if post:
-                    hit.add(("structures", post))
-        # A kit brings in every material it names and the kit it spans with.
-        for _ in range(3):
-            for kind, name in list(hit):
-                if kind != "kits" or name not in lib["kits"]:
-                    continue
-                kd = lib["kits"][name]
-                if kd.get("span"):
-                    hit.add(("kits", kd["span"]))
-                for key in ("mat", "shoulder"):
-                    if isinstance(kd.get(key), str):
-                        hit.add(("materials", kd[key]))
-                for grp in ("rails", "posts"):
-                    for r in kd.get(grp, []):
-                        hit.add(("materials", r["mat"]))
-                for key in ("deck", "walk", "piers"):
-                    d = kd.get(key) or {}
-                    for m in (d.get("mat"), d.get("under"), d.get("kerb")):
-                        if m:
-                            hit.add(("materials", m))
-        for kind, name in list(hit):
-            if kind == "structures" and name in lib["structures"]:
-                for m in lib["structures"][name].get("slots", {}).values():
-                    hit.add(("materials", m))
-                op_mats(lib["structures"][name].get("ops", []))
-            # A plant brings in its own materials and its parents', so walk the
-            # `like` chain and read every link, not just the root: a child that
-            # overrides `leaf` (blossom_vine) names a material no parent does.
-            chain = []
-            n = name
-            while kind == "plants" and n in lib["plants"]:
-                chain.append(n)
-                n = lib["plants"][n].get("like")
-                if n is None or n in chain:
-                    break
-                hit.add(("plants", n))
-            for link in chain:
-                plant_mats(lib["plants"][link], lib, hit)
-        # A rare morph comes with its parent, as worldload::used_entries does
-        # (a morph of a morph too), so the catalogue does not call it unused.
-        for _ in range(3):
+        # A creature brings in its parents by `like`, and a rare morph comes
+        # with its parent (a morph of a morph too), as worldload does.
+        for _ in range(4):
             for name, c in lib["creatures"].items():
                 parent = c.get("like")
+                if ("creatures", name) in hit and parent in lib["creatures"]:
+                    hit.add(("creatures", parent))
                 if c.get("rarity", 0) > 0 and parent and ("creatures", parent) in hit:
                     hit.add(("creatures", name))
         for key in hit:

@@ -3,17 +3,10 @@
   "version": 1,
   "introduced_by": "glassfall",
   "notes": "Pioneer of burn edges; half of them turn gold.",
-  "form": "branching",
   "height": [6, 9],
   "trunk_radius": [0.12, 0.18],
   "crown_radius": [1.1, 1.5],
-  "bark": "birch_bark",
-  "leaf": "birch_leaves",
   "curve": "sweep",
-  "canopy": "cloud",
-  "leader": 0.9,
-  "fill": 0.5,
   "spread": 0.15,
-  "autumn": "leaves_autumn",
-  "thin_limbs": 0.12
+  "like": "birch"
 }

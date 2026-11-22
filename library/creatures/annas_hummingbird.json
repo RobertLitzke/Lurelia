@@ -1,0 +1,69 @@
+{
+  "name": "annas_hummingbird",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "hum: Anna's hummingbird, a male: bronze-green back, grey belly, and a gorget and crown of rose-magenta that look near black until the sun catches them, when they flash (the gorget's fourth colour value below zero is iridescence, scene.wgsl). Sits on a bare twig at the top of a shrub, darts out to hover at flowers -- lupine, ocotillo in spring, desert willow, meadow wildflowers -- and now and then climbs high and dives in a narrow U, again and again, the way it courts. Year round on the Pacific coast and in the desert. The base of the hummingbirds. Drawn on 5 mm voxels, about half again life size, so it shows.",
+  "voxel": 0.005,
+  "half_w": 0.04,
+  "height": 0.055,
+  "colors": {
+    "back": [86, 120, 64],
+    "belly": [178, 180, 168],
+    "gorget": [214, 36, 120, -1.6],
+    "eye": [16, 14, 16],
+    "white": [230, 230, 226],
+    "bill": [24, 22, 22],
+    "wing": [64, 60, 58],
+    "tail": [56, 66, 50],
+    "legs": [30, 28, 28]
+  },
+  "behaviour": {
+    "movement": "hum",
+    "walk_speed": 7,
+    "flee_speed": 14,
+    "wary": 3,
+    "flightiness": 0.8,
+    "fly_height": 0,
+    "flight": "hover",
+    "wingbeat": 13,
+    "flees_from": ["player"],
+    "group": {"size": [1, 2], "spacing": 4, "range": 20},
+    "rain": 0.3,
+    "winter": 0.8
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [16.5, 12, 15], "radius": [2.5, 2.5, 4.5], "mat": "back"},
+    {"op": "recolour_below", "y": 11, "from": "back", "to": "belly"},
+    {"op": "ellipsoid", "centre": [16.5, 14, 9.8], "radius": [2.2, 2.2, 2.2], "mat": "back", "part": "head"},
+    {"op": "recolour", "at": [13, 11, 7], "until": [21, 14, 11], "from": "back", "to": "gorget"},
+    {"op": "recolour", "at": [13, 15, 7], "until": [21, 17, 12], "from": "back", "to": "gorget"},
+    {"op": "set", "at": [15, 15, 8], "mat": "eye", "part": "head"},
+    {"op": "set", "at": [18, 15, 8], "mat": "eye", "part": "head"},
+    {"op": "set", "at": [15, 15, 9], "mat": "white", "part": "head"},
+    {"op": "set", "at": [18, 15, 9], "mat": "white", "part": "head"},
+    {"op": "box", "from": [16, 14, 1], "to": [17, 15, 8], "mat": "bill", "part": "head"},
+    {"op": "box", "from": [13, 14, 13], "to": [15, 15, 16], "mat": "wing", "part": "wing_l"},
+    {"op": "box", "from": [7, 14, 13], "to": [13, 15, 15], "mat": "wing", "part": "wing_l_tip"},
+    {"op": "box", "from": [18, 14, 13], "to": [20, 15, 16], "mat": "wing", "part": "wing_r"},
+    {"op": "box", "from": [20, 14, 13], "to": [26, 15, 15], "mat": "wing", "part": "wing_r_tip"},
+    {"op": "box", "from": [16, 11, 19], "to": [17, 12, 24], "mat": "tail", "part": "tail"},
+    {"op": "box", "from": [15, 11, 20], "to": [18, 12, 23], "mat": "tail", "part": "tail"},
+    {"op": "box", "from": [15, 8, 14], "to": [16, 10, 15], "mat": "legs", "part": "leg_l"},
+    {"op": "box", "from": [17, 8, 14], "to": [18, 10, 15], "mat": "legs", "part": "leg_r"}
+  ],
+  "rig": {
+    "plan": "bird",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "head", "role": "head", "parent": "body", "joint": [16.5, 13.5, 11.5]},
+      {"name": "wing_l", "role": "wing", "parent": "body", "joint": [15, 14.5, 14.5], "side": "l"},
+      {"name": "wing_l_tip", "role": "wing", "parent": "wing_l", "joint": [13, 14.5, 14], "side": "l"},
+      {"name": "wing_r", "role": "wing", "parent": "body", "joint": [18, 14.5, 14.5], "side": "r"},
+      {"name": "wing_r_tip", "role": "wing", "parent": "wing_r", "joint": [20, 14.5, 14], "side": "r"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 11.5, 19]},
+      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [15.5, 10, 14.5], "side": "l", "pair": 0},
+      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [17.5, 10, 14.5], "side": "r", "pair": 0}
+    ]
+  },
+  "vary": {"size": 0.06}
+}

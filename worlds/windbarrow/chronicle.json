@@ -2554,6 +2554,21 @@
      "near": "centre"
     },
     {
+     "structure": "forge_hut",
+     "count": 1,
+     "near": "edge"
+    },
+    {
+     "structure": "weaving_hut",
+     "count": 1,
+     "near": "centre"
+    },
+    {
+     "structure": "byre",
+     "count": 1,
+     "near": "edge"
+    },
+    {
      "structure": "granary",
      "count": 2,
      "near": "centre"
@@ -2656,6 +2671,11 @@
      "structure": "longhouse",
      "count": 1,
      "near": "centre"
+    },
+    {
+     "structure": "byre",
+     "count": 1,
+     "near": "edge"
     },
     {
      "structure": "granary",

@@ -358,6 +358,21 @@ const PREDICT_STEP: f32 = 1.0 / 20.0;
 ///
 /// `f32::MAX` if it never comes near at all.
 pub fn bank(store: &Store, from: Vec3, dir: Vec3, f: &FireDef, at: Vec3, going: Vec3) -> f32 {
+    fly(store, from, dir, f, at, going, 0)
+}
+
+/// How near a round of `f` fired from `from` along `dir` comes back past
+/// `at` once it has come off a wall: the same walk as `bank`, counting only
+/// the flight after the first bounce. What a bot asks before throwing a disc
+/// it would walk into; the single-gun league found every skipjack death
+/// nobody was credited with was the thrower's own disc.
+pub fn comes_back(store: &Store, from: Vec3, dir: Vec3, f: &FireDef, at: Vec3, going: Vec3) -> f32 {
+    fly(store, from, dir, f, at, going, 1)
+}
+
+/// `bank` and `comes_back`: nearest pass at `at`, from the `after`th bounce on.
+fn fly(store: &Store, from: Vec3, dir: Vec3, f: &FireDef, at: Vec3, going: Vec3, after: u32) -> f32 {
+    let mut came_off = 0u32;
     let mut pos = from;
     let mut vel = dir.normalize_or(Vec3::NEG_Z) * f.speed.max(0.01);
     let mut bounces = f.bounces;
@@ -380,14 +395,19 @@ pub fn bank(store: &Store, from: Vec3, dir: Vec3, f: &FireDef, at: Vec3, going: 
         let dir = delta / d;
         match store.ray(pos, dir, d, |m| m != AIR) {
             None => {
-                best = best.min(point_to_segment(at, pos, pos + delta));
+                if came_off >= after {
+                    best = best.min(point_to_segment(at, pos, pos + delta));
+                }
                 pos += delta;
                 flown += d;
             }
             Some(h) => {
                 let to_face = (h.t - 0.06).max(0.0);
                 let face = pos + dir * to_face;
-                best = best.min(point_to_segment(at, pos, face));
+                if came_off >= after {
+                    best = best.min(point_to_segment(at, pos, face));
+                }
+                came_off += 1;
                 pos = face;
                 flown += to_face;
                 if bounces == 0 {

@@ -1,0 +1,19 @@
+{
+  "name": "giant_douglas",
+  "version": 1,
+  "introduced_by": "canopy_test",
+  "notes": "conifer: An old Douglas fir: a straight furrowed column bare for more than half its height, then ragged tiers of dark limbs to a broken top. Beside the redwoods, the other host tree for the treehouses.",
+  "form": "conifer",
+  "height": [58, 72],
+  "trunk_radius": [1.4, 1.9],
+  "buttress": 1.1,
+  "crown_radius": [7, 9],
+  "bark": "redwood_bark",
+  "leaf": "dark_needles",
+  "max_slope": 0.6,
+  "crown_base": 0.55,
+  "sweep": "ragged",
+  "taper": 1.1,
+  "whorls": [12, 18],
+  "affords": ["perch"]
+}

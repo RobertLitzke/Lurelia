@@ -12,13 +12,15 @@
 use super::{emit, Ground, Kind, Noise, Pick};
 use crate::fx::hooks::{ground_under, hard};
 use crate::game::Game;
-use crate::world::matlib::{self, flag};
 use crate::world::material::AIR;
+use crate::world::matlib::{self, flag};
 use glam::Vec3;
 
 /// What a material sounds like underfoot, from what the engine already
-/// knows about it.
+/// knows about it: the driving surface it declares (world/surface.rs), the
+/// same table the wheels and their dust read, else a guess from its name.
 pub fn ground_of(m: u8) -> Ground {
+    use crate::world::surface::Surface;
     if m == AIR {
         Ground::Soft
     } else if matlib::has(m, flag::WATER) {
@@ -27,6 +29,12 @@ pub fn ground_of(m: u8) -> Ground {
         Ground::Leaves
     } else if matlib::has(m, flag::UNDERSTORY) {
         Ground::Grass
+    } else if let Some(s) = matlib::surface(m) {
+        match s {
+            Surface::Rock => Ground::Stone,
+            Surface::Grass => Ground::Grass,
+            Surface::Hardpack | Surface::SandWet | Surface::SandSoft | Surface::Mud | Surface::Snow => Ground::Soft,
+        }
     } else if hard(m) {
         Ground::Stone
     } else {
@@ -222,7 +230,17 @@ impl Watch {
         self.me = Some(now);
 
         if self.bots.len() != sh.bots.len() {
-            self.bots = sh.bots.iter().map(|b| Bot { health: b.fighter.health, alive: b.fighter.alive(), picked: b.fighter.picked, gait: Gait::default(), hurt_cd: 0.0 }).collect();
+            self.bots = sh
+                .bots
+                .iter()
+                .map(|b| Bot {
+                    health: b.fighter.health,
+                    alive: b.fighter.alive(),
+                    picked: b.fighter.picked,
+                    gait: Gait::default(),
+                    hurt_cd: 0.0,
+                })
+                .collect();
         }
         for (b, was) in sh.bots.iter().zip(self.bots.iter_mut()) {
             let chest = b.body.pos + Vec3::Y * 1.2;

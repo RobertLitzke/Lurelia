@@ -131,7 +131,6 @@ impl Memory {
         self.of.retain(|c| now - c.seen < REMEMBER_S);
         true
     }
-
 }
 
 #[cfg(test)]

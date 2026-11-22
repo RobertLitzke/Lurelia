@@ -4,6 +4,7 @@
   "introduced_by": "windbarrow",
   "notes": "Broom flowers: bright yellow pea flowers crowded along the switches, late spring.",
   "smooth": false,
+  "sprites": "flower",
   "texture": {
     "pattern": "speckle",
     "base": [236, 200, 40],

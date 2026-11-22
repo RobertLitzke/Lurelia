@@ -1,0 +1,123 @@
+{
+  "name": "gannet",
+  "title": "Gannet Harbor",
+  "blurb": "A New England whaling town on a grey bay, swept and painted and empty, with farmland behind it, redwoods to the north and two islands offshore.",
+  "size_m": 1536,
+  "height_m": 256,
+  "sea_level_m": 34,
+  "tide": {
+    "range": 3.0
+  },
+  "surf": {
+    "height": 1.2
+  },
+  "seed": 5120,
+  "neighbours": {
+    "south": {
+      "world": "ribshore",
+      "offset": 0
+    }
+  },
+  "underwater": {
+    "visibility": 20,
+    "light": 0.35
+  },
+  "rock": [
+    [
+      "granite",
+      0.6
+    ],
+    [
+      "stone_dark",
+      0.4
+    ]
+  ],
+  "spawn_at": {
+    "from": "harbor",
+    "by": [
+      26,
+      0
+    ]
+  },
+  "spawn_bearing": 250,
+  "modes": [
+    "walk",
+    "drive",
+    "glide",
+    "climb",
+    "rope",
+    "kayak",
+    "screenshot",
+    "camera"
+  ],
+  "vehicles": [
+    "sand_rail",
+    "beach_buggy"
+  ],
+  "seasons": [
+    "spring",
+    "summer",
+    "autumn",
+    "winter"
+  ],
+  "start_season": "autumn",
+  "weather": {
+    "fog": 1.4,
+    "clouds": 1.4,
+    "sun": 0.5,
+    "rain": 1.1
+  },
+  "start_weather": "fog",
+  "start_hour": 10.5,
+  "sun": {
+    "latitude": 46
+  },
+  "moss": 0.7,
+  "weathering": 1.0,
+  "default_biome": "rib_spruce",
+  "seabed_biome": "rib_shelf",
+  "biomes": [
+    "rib_spruce",
+    "rib_oldgrowth",
+    "rib_plain",
+    "rib_dunes",
+    "rib_blowout",
+    "rib_wrack",
+    "rib_beach",
+    "rib_shoals",
+    "rib_kelp",
+    "rib_shelf",
+    "gh_pasture",
+    "gh_hayfield",
+    "gh_orchard",
+    "gh_barrens",
+    "gh_salt_marsh",
+    "gh_clam_flats",
+    "gh_bay_floor",
+    "gh_river",
+    "gh_redwood",
+    "gh_redwood_grove",
+    "gh_puffinry",
+    "gh_island",
+    "gh_town",
+    "gh_faewood",
+    "gh_spruce"
+  ],
+  "water": {
+    "shallow": [
+      84,
+      112,
+      110
+    ],
+    "deep": [
+      30,
+      54,
+      62
+    ]
+  },
+  "glide": {
+    "thermals": 0.4,
+    "ridge_from": 300,
+    "ridge_speed": 8
+  }
+}

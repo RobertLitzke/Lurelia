@@ -5,6 +5,7 @@
   "notes": "Short dark pinyon needles.",
   "id": 124,
   "smooth": false,
+  "sprites": "needles",
   "texture": {
     "pattern": "blotch",
     "base": [70, 92, 64],

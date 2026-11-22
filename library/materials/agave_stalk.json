@@ -5,6 +5,7 @@
   "notes": "Marker voxel at the heart of a flowering agave; the stalk and its yellow flower clusters are sprites (layers agave_stalk, agave_stalk_dry).",
   "id": 143,
   "smooth": false,
+  "sprites": "agave stalk",
   "texture": {
     "pattern": "blotch",
     "base": [92, 100, 60],

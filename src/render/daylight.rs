@@ -49,10 +49,22 @@ const HALF_DAY_RANGE: (f32, f32) = (1.0, 11.0);
 
 impl SunPath {
     /// A summer sun at the default latitude.
-    pub const DEFAULT: SunPath = SunPath { latitude: 42.0, declination: 14.0, lift_deg: 3.44, shadow_soft: 1.0, cold: 0.0 };
+    pub const DEFAULT: SunPath = SunPath {
+        latitude: 42.0,
+        declination: 14.0,
+        lift_deg: 3.44,
+        shadow_soft: 1.0,
+        cold: 0.0,
+    };
     /// The day the clock's rates were fitted to (world/clock.rs): the equinox
     /// at latitude 28, up at 6 due east, 62 degrees at noon, down at 18.
-    pub const REFERENCE: SunPath = SunPath { latitude: 28.0, declination: 0.0, lift_deg: 3.44, shadow_soft: 1.0, cold: 0.0 };
+    pub const REFERENCE: SunPath = SunPath {
+        latitude: 28.0,
+        declination: 0.0,
+        lift_deg: 3.44,
+        shadow_soft: 1.0,
+        cold: 0.0,
+    };
 
     /// Direction toward the sun at `hour` on this path.
     pub fn dir(&self, hour: f32) -> Vec3 {
@@ -112,7 +124,11 @@ impl SunPath {
         let hd = self.half_day();
         let x = hour.rem_euclid(24.0) - 12.0;
         let d = x.abs();
-        let (r, slope) = if d <= hd { (d * 6.0 / hd, hd / 6.0) } else { (6.0 + (d - hd) * 6.0 / (12.0 - hd), (12.0 - hd) / 6.0) };
+        let (r, slope) = if d <= hd {
+            (d * 6.0 / hd, hd / 6.0)
+        } else {
+            (6.0 + (d - hd) * 6.0 / (12.0 - hd), (12.0 - hd) / 6.0)
+        };
         ((12.0 + r * x.signum()).rem_euclid(24.0), slope)
     }
 }
@@ -577,7 +593,15 @@ mod tests {
         assert!((winter.noon_deg() - 34.0).abs() < 1e-3);
         assert!(winter.half_day() < 5.5 && summer.half_day() > 6.5);
         // Sunrise on each path is where the reference sunrise maps to.
-        for p in [summer, winter, SunPath { latitude: 64.0, declination: -14.0, ..summer }] {
+        for p in [
+            summer,
+            winter,
+            SunPath {
+                latitude: 64.0,
+                declination: -14.0,
+                ..summer
+            },
+        ] {
             let rise = p.solar(6.0);
             assert!(p.dir(rise).y.abs() < 0.01, "{p:?}: {}", p.dir(rise).y);
             for h in [0.5, 5.0, 9.0, 12.0, 15.5, 19.0, 23.9] {

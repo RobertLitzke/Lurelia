@@ -7,7 +7,7 @@
   "height": [3.0, 5.5],
   "trunk_radius": [0.07, 0.1],
   "crown_radius": [1.4, 2.2],
-  "bark": "desert_willow_bark",
+  "bark": "grey_brown_bark",
   "leaf": "desert_willow_leaves",
   "canopy": "tufts",
   "max_slope": 0.9,

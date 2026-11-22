@@ -9,7 +9,7 @@
   "level": false,
   "decays": false,
   "tags": ["crossroads"],
-  "slots": {"coat": "door_black", "face": "trim_dark", "cane": "silver_deadwood"},
+  "slots": {"coat": "coat_black", "face": "trim_dark", "cane": "silver_deadwood"},
   "ops": [
     {"op": "box", "from": [6, 0, 7], "to": [8, 9, 9], "mat": "coat", "part": "cloth"},
     {"op": "box", "from": [9, 0, 7], "to": [11, 9, 9], "mat": "coat", "part": "cloth"},

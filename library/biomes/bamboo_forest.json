@@ -5,7 +5,7 @@
   "notes": "Wetter ground east of the Old Wall: giant bamboo in dense patches over long green grass, among small broadleaf trees and ferns, misty.",
   "priority": 4,
   "rules": {"moist": [0.62, 1.0], "elev": [2.5, 20]},
-  "surface": "bamboo_grass",
+  "surface": "meadow_grass",
   "subsurface": "dirt",
   "map_color": [150, 168, 70],
   "plants": [

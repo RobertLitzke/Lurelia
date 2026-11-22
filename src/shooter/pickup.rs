@@ -557,7 +557,12 @@ impl Pickups {
                     Kind::Weapon => p.weapon.as_deref().and_then(|n| f.arsenal.guns.iter().position(|g| g.def.name == n && !g.have)),
                     _ => None,
                 };
-                out.push(Lure { at: p.at, good, gun, mends: p.kind == Kind::Health });
+                out.push(Lure {
+                    at: p.at,
+                    good,
+                    gun,
+                    mends: p.kind == Kind::Health,
+                });
             }
         }
     }

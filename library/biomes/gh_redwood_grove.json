@@ -1,0 +1,24 @@
+{
+  "name": "gh_redwood_grove",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "The old groves in the redwoods: the giants alone, bare trunks over a floor of fern, nothing else growing in their shade.",
+  "priority": 6,
+  "rules": {"region": "grove", "elev": [1.5, 200]},
+  "surface": "pine_duff",
+  "subsurface": "dirt",
+  "map_color": [40, 60, 42],
+  "plants": [
+    {"plant": "giant_redwood", "density": 0.003, "placement": {"verb": "lone", "params": {"spacing": 22}}},
+    {"plant": "young_redwood", "density": 0.003, "placement": {"verb": "clustered", "params": {"size": 10}}},
+    {"plant": "fern", "density": 0.14, "placement": {"verb": "clustered", "params": {"size": 14}}},
+    {"plant": "tree_moss", "density": 0.5, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [{"structure": "fallen_trunk", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "elk", "count": 2},
+    {"creature": "great_horned_owl", "count": 1},
+    {"creature": "douglas_squirrel", "count": 2}
+  ],
+  "collectibles": []
+}

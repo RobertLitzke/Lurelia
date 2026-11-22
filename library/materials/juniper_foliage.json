@@ -5,6 +5,7 @@
   "notes": "Blue-green juniper scale leaves.",
   "id": 123,
   "smooth": false,
+  "sprites": "juniper",
   "texture": {
     "pattern": "blotch",
     "base": [100, 114, 96],

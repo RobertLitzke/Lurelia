@@ -1,8 +1,8 @@
 {
   "name": "lamp_tower",
-  "version": 1,
+  "version": 2,
   "introduced_by": "thornpan",
-  "notes": "The Lamp: a round stone tower on the highest kopje, built to carry a light, twelve metres of it still standing with the lantern floor gone and six window slots round the head. Its door faces the way you climb; the tower looks over the pans.",
+  "notes": "The Lamp: a round stone tower on the highest kopje, 7 m across and 10 m of it still standing, with a 1.5 m by 2.75 m door facing -Z, a broken spiral stair up the inside, six window slits round the head, a limestone band under the rim where the lantern floor sat, and the top broken in three places.",
   "size": [29, 40, 29],
   "anchor": [14, 0, 14],
   "foundation": 10,
@@ -11,16 +11,184 @@
   "tags": ["ruin", "tower"],
   "slots": {"stone": "fieldstone", "sill": "carved_limestone"},
   "ops": [
+    {"op": "cylinder", "base": [14, 0, 14], "radius": 14, "height": 3, "mat": "stone", "part": "stone"},
     {"op": "cylinder", "base": [14, 0, 14], "radius": 13, "height": 40, "mat": "stone", "part": "stone"},
-    {"op": "cylinder", "base": [14, 1, 14], "radius": 9, "height": 40, "mat": "air"},
-    {"op": "box", "from": [11, 1, 0], "to": [17, 12, 14], "mat": "air"},
+    {"op": "cylinder", "base": [14, 15, 14], "radius": 13, "height": 1, "mat": "sill", "part": "stone"},
     {"op": "cylinder", "base": [14, 34, 14], "radius": 13, "height": 2, "mat": "sill", "part": "stone"},
+    {"op": "cylinder", "base": [14, 1, 14], "radius": 9, "height": 40, "mat": "air"},
     {"op": "cylinder", "base": [14, 34, 14], "radius": 10, "height": 2, "mat": "air"},
-    {"op": "box", "from": [23, 20, 13], "to": [26, 25, 16], "mat": "air"},
-    {"op": "box", "from": [18, 20, 22], "to": [21, 25, 25], "mat": "air"},
-    {"op": "box", "from": [8, 20, 22], "to": [11, 25, 25], "mat": "air"},
-    {"op": "box", "from": [3, 20, 13], "to": [6, 25, 16], "mat": "air"},
-    {"op": "box", "from": [8, 20, 4], "to": [11, 25, 7], "mat": "air"},
-    {"op": "box", "from": [18, 20, 4], "to": [21, 25, 7], "mat": "air"}
+    {
+      "op": "segment",
+      "points": [[17.75, 1.5, 8.87], [19.25, 1.5, 6.27]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[19.66, 2.5, 10.54], [22.04, 2.5, 8.72]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[20.78, 3.5, 12.82], [23.68, 3.5, 12.04]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[20.94, 4.5, 15.35], [23.92, 4.5, 15.74]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[20.13, 5.5, 17.75], [22.73, 5.5, 19.25]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[18.46, 6.5, 19.66], [20.28, 6.5, 22.04]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[16.18, 7.5, 20.78], [16.96, 7.5, 23.68]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[13.65, 8.5, 20.94], [13.26, 8.5, 23.92]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[11.25, 9.5, 20.13], [9.75, 9.5, 22.73]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[9.34, 10.5, 18.46], [6.96, 10.5, 20.28]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[8.22, 11.5, 16.18], [5.32, 11.5, 16.96]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[8.06, 12.5, 13.65], [5.08, 12.5, 13.26]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[8.87, 13.5, 11.25], [6.27, 13.5, 9.75]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[10.54, 14.5, 9.34], [8.72, 14.5, 6.96]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[12.82, 15.5, 8.22], [12.04, 15.5, 5.32]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[15.35, 16.5, 8.06], [15.74, 16.5, 5.08]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[17.75, 17.5, 8.87], [19.25, 17.5, 6.27]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[19.66, 18.5, 10.54], [22.04, 18.5, 8.72]],
+      "radius": 0.9,
+      "mat": "stone",
+      "part": "stone"
+    },
+    {"op": "box", "from": [11, 1, 0], "to": [17, 12, 14], "mat": "air"},
+    {"op": "box", "from": [10, 1, 2], "to": [11, 12, 6], "mat": "sill", "part": "stone"},
+    {"op": "box", "from": [17, 1, 2], "to": [18, 12, 6], "mat": "sill", "part": "stone"},
+    {"op": "box", "from": [10, 12, 2], "to": [18, 13, 6], "mat": "sill", "part": "stone"},
+    {"op": "box", "from": [10, 0, 0], "to": [18, 1, 2], "mat": "sill", "part": "stone"},
+    {
+      "op": "repeat",
+      "count": 3,
+      "step": [0, 1, 0],
+      "ops": [{"op": "segment", "points": [[22.0, 21.5, 14.5], [30.0, 21.5, 14.5]], "radius": 1.0, "mat": "air"}]
+    },
+    {
+      "op": "repeat",
+      "count": 3,
+      "step": [0, 1, 0],
+      "ops": [{"op": "segment", "points": [[18.25, 21.5, 21.0], [22.25, 21.5, 27.92]], "radius": 1.0, "mat": "air"}]
+    },
+    {
+      "op": "repeat",
+      "count": 3,
+      "step": [0, 1, 0],
+      "ops": [{"op": "segment", "points": [[10.75, 21.5, 21.0], [6.75, 21.5, 27.92]], "radius": 1.0, "mat": "air"}]
+    },
+    {
+      "op": "repeat",
+      "count": 3,
+      "step": [0, 1, 0],
+      "ops": [{"op": "segment", "points": [[7.0, 21.5, 14.5], [-1.0, 21.5, 14.5]], "radius": 1.0, "mat": "air"}]
+    },
+    {
+      "op": "repeat",
+      "count": 3,
+      "step": [0, 1, 0],
+      "ops": [{"op": "segment", "points": [[10.75, 21.5, 8.0], [6.75, 21.5, 1.08]], "radius": 1.0, "mat": "air"}]
+    },
+    {
+      "op": "repeat",
+      "count": 3,
+      "step": [0, 1, 0],
+      "ops": [{"op": "segment", "points": [[18.25, 21.5, 8.0], [22.25, 21.5, 1.08]], "radius": 1.0, "mat": "air"}]
+    },
+    {"op": "box", "from": [2, 37, 10], "to": [8, 40, 14], "mat": "air"},
+    {"op": "box", "from": [20, 38, 22], "to": [26, 40, 27], "mat": "air"},
+    {"op": "box", "from": [12, 39, 24], "to": [17, 40, 28], "mat": "air"},
+    {"op": "ellipsoid", "centre": [2.5, 1, 2.5], "radius": [2.2, 1.3, 2.2], "mat": "stone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [26.5, 1, 3], "radius": [2.2, 1.3, 2.2], "mat": "stone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [3, 1, 26.5], "radius": [2.2, 1.3, 2.2], "mat": "stone", "part": "stone"}
   ]
 }

@@ -106,7 +106,12 @@ pub fn check(rules: &ShooterDef) -> Vec<String> {
     let mut trip = [0.0f32; 2];
     for t in 0..2u8 {
         let (own, theirs) = if t == 0 { (s0, s1) } else { (s1, s0) };
-        let starts: Vec<u16> = rules.spawns.iter().filter(|s| s.team == Some(t)).filter_map(|s| node_at(s.at[0], s.at[1], spawn_up(s)).map(|(i, _)| i)).collect();
+        let starts: Vec<u16> = rules
+            .spawns
+            .iter()
+            .filter(|s| s.team == Some(t))
+            .filter_map(|s| node_at(s.at[0], s.at[1], spawn_up(s)).map(|(i, _)| i))
+            .collect();
         for &from in &starts {
             match graph.route(from, theirs, Able::default()) {
                 Some(r) => trip[t as usize] = trip[t as usize].max(length(&r)),

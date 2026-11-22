@@ -4,6 +4,7 @@
   "introduced_by": "saltmirror",
   "notes": "Pincushion protea: round heads of orange styles, each tipped with a yellow pin.",
   "smooth": false,
+  "sprites": "flower",
   "texture": {
     "pattern": "speckle",
     "base": [222, 122, 52],

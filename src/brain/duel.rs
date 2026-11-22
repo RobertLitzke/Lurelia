@@ -89,7 +89,7 @@ const HUNT_S: f32 = 3.0;
 /// One reaction per noise was not enough. Three bots firing put a fresh
 /// noise in the list several times a second, each with a new timestamp, so
 /// a bot that reacts to every new one re-routes forty times a minute and
-/// arrives nowhere -- which is the same aimlessness this session set out to
+/// arrives nowhere -- the same aimlessness the hearing rules exist to
 /// remove, arrived at from the opposite direction. A player who hears a gun
 /// commits to going and looking; they do not pivot on every shot.
 const HEARD_HOLD_S: f32 = 2.0;
@@ -205,6 +205,9 @@ const MINE_KEEP_M: f32 = 2.0;
 const PASS_M: f32 = 5.0;
 /// Metres of open air a bot wants in front of a disc that can come back.
 const DISC_CLEAR_M: f32 = 4.0;
+/// How near its own body, past its half-width, a disc coming back off the
+/// walls may pass before a bot will not throw it.
+const DISC_BACK_M: f32 = 2.5;
 const STUCK_S: f32 = 0.8;
 const STUCK_M: f32 = 0.6;
 /// How long it shoves sideways once it has decided it is wedged.
@@ -236,7 +239,10 @@ const FETCH_GIVE_UP_S: f32 = 5.0;
 const FETCH_PACE: f32 = 2.5;
 const AVOID_S: f32 = 20.0;
 /// How often a bot works out afresh what it can reach. A lift arriving
-/// changes the answer, so this cannot be done once.
+/// changes the answer, so this cannot be done once. Working it out again
+/// whenever the feet had moved 1.5 m up or 10 m across was tried in the
+/// league (journal section 22) and refused more routes, not fewer: a flood
+/// begun mid-fall or halfway up a ramp starts from the wrong node.
 const REACH_EVERY_S: f32 = 4.0;
 /// And the soonest it will work it out again after a route it believed in
 /// was refused: often enough to correct a stale answer, not so often that a
@@ -282,6 +288,11 @@ const GLANCE_S: f32 = 1.0;
 /// Running with nobody to aim at, a side key goes down only past this far
 /// off the facing (a sine: about 35 degrees).
 const RUN_SIDE: f32 = 0.7;
+/// Running with nobody to aim at, the other side key may not go down this
+/// soon after one did: it holds W and lets the head bring it round instead.
+/// The league found two thirds of sidestep reversals were roaming bots, and
+/// most of those came under 0.7 s after the first key.
+const RUN_FLIP_S: f32 = 1.2;
 /// Somewhere it is already standing is not somewhere to go.
 const TOO_CLOSE_M: f32 = 5.0;
 /// How far a bot breaking off with nowhere on the graph to go backs away
@@ -449,7 +460,13 @@ pub struct Tuning {
 
 impl Default for Tuning {
     fn default() -> Self {
-        Tuning { dodge: 1.0, weave: WEAVE_S, hunt: HUNT_S, greed: 1.0, nerve: 0.0 }
+        Tuning {
+            dodge: 1.0,
+            weave: WEAVE_S,
+            hunt: HUNT_S,
+            greed: 1.0,
+            nerve: 0.0,
+        }
     }
 }
 
@@ -661,6 +678,10 @@ pub struct Duel {
     /// Which side of a wall it last slid along, and seconds that holds for.
     slide: f32,
     slide_s: f32,
+    /// The side key it last put down (-1 left, +1 right, 0 none) and when,
+    /// for `RUN_FLIP_S`.
+    side_key: i8,
+    side_at: f32,
     /// The sighting it has already been to look at: who, and when they were
     /// seen. A hunt ends on arriving there, not on a clock.
     searched: Option<(usize, f32)>,
@@ -763,6 +784,8 @@ impl Duel {
             bent: 0,
             slide: 0.0,
             slide_s: 0.0,
+            side_key: 0,
+            side_at: f32::NEG_INFINITY,
             searched: None,
             running: false,
             went: Vec3::ZERO,
@@ -924,14 +947,24 @@ impl Duel {
                 let side = Vec3::new(-ahead.z, 0.0, ahead.x) * if self.seed % 2 == 0 { 1.0 } else { -1.0 };
                 // Ahead of the carrier, toward where it is going, so whoever
                 // is in the way meets the escort first; or a step behind.
-                let threat = self.mem.of.iter().filter(|c| cx.now - c.seen < DANGER_S).map(|c| c.pos).min_by(|a, b| a.distance(f.foot).total_cmp(&b.distance(f.foot)));
+                let threat = self
+                    .mem
+                    .of
+                    .iter()
+                    .filter(|c| cx.now - c.seen < DANGER_S)
+                    .map(|c| c.pos)
+                    .min_by(|a, b| a.distance(f.foot).total_cmp(&b.distance(f.foot)));
                 let spot = match threat {
                     // Between the carrier and the nearest enemy it knows of.
                     Some(t) if o.has("escort1") => f.foot + Vec3::new(t.x - f.foot.x, 0.0, t.z - f.foot.z).normalize_or(ahead) * 3.0,
                     _ if super::team::trying("lead") => f.foot + ahead * 3.5 + side * 2.0,
                     _ => f.foot - ahead * 2.5 + side * FOLLOW_SIDE_M,
                 };
-                let (spot, far) = if o.has("escort4") { (f.foot + (spot - f.foot) * 0.5, FOLLOW_FAR_M * 0.6) } else { (spot, FOLLOW_FAR_M) };
+                let (spot, far) = if o.has("escort4") {
+                    (f.foot + (spot - f.foot) * 0.5, FOLLOW_FAR_M * 0.6)
+                } else {
+                    (spot, FOLLOW_FAR_M)
+                };
                 if f.foot.distance(me.foot) > far {
                     self.go_toward(me, cx, spot, true);
                 } else {
@@ -1004,19 +1037,25 @@ impl Duel {
                 }
                 // A defender wants whoever is nearest what it guards.
                 // An escort wants whoever is near its carrier.
-                Some(super::Order { role: super::Role::Escort, goal: super::Goal::Follow(who), .. }) if me.order.is_some_and(|o| o.has("escort2")) => {
-                    match cx.fighters.iter().find(|f| f.who == who) {
-                        Some(f) => (1.0 - c.guess(cx.now).distance(f.foot) / GUARD_M).max(0.0) * 1.5,
-                        None => 0.0,
-                    }
-                }
+                Some(super::Order {
+                    role: super::Role::Escort,
+                    goal: super::Goal::Follow(who),
+                    ..
+                }) if me.order.is_some_and(|o| o.has("escort2")) => match cx.fighters.iter().find(|f| f.who == who) {
+                    Some(f) => (1.0 - c.guess(cx.now).distance(f.foot) / GUARD_M).max(0.0) * 1.5,
+                    None => 0.0,
+                },
                 // A returner wants whoever is near its flag.
-                Some(super::Order { role: super::Role::Return, goal: super::Goal::Point(p), .. }) if me.order.is_some_and(|o| o.has("return2")) => {
-                    (1.0 - c.guess(cx.now).distance(p) / GUARD_M).max(0.0) * 1.5
-                }
-                Some(super::Order { role: super::Role::Defend, goal: super::Goal::Hold { post, .. }, .. }) if me.order.is_some_and(|o| o.has("defend1")) => {
-                    (1.0 - c.guess(cx.now).distance(post) / 25.0).max(0.0) * 1.5
-                }
+                Some(super::Order {
+                    role: super::Role::Return,
+                    goal: super::Goal::Point(p),
+                    ..
+                }) if me.order.is_some_and(|o| o.has("return2")) => (1.0 - c.guess(cx.now).distance(p) / GUARD_M).max(0.0) * 1.5,
+                Some(super::Order {
+                    role: super::Role::Defend,
+                    goal: super::Goal::Hold { post, .. },
+                    ..
+                }) if me.order.is_some_and(|o| o.has("defend1")) => (1.0 - c.guess(cx.now).distance(post) / 25.0).max(0.0) * 1.5,
                 _ => 0.0,
             };
             if best.is_none_or(|(_, bv)| v > bv) {
@@ -1060,11 +1099,12 @@ impl Duel {
         // Carrying a flag home it routes wide of everybody it knows about:
         // a link that ends near one costs as much as a long way round.
         let danger: Vec<Vec3> = match me.order {
-            Some(super::Order { role: super::Role::Carry, goal: super::Goal::Point(p), tweaks, .. })
-                if tweaks != 0 && me.order.is_some_and(|o| o.has("carry4")) && p.distance(me.foot) < HOME_RUN_M =>
-            {
-                Vec::new()
-            }
+            Some(super::Order {
+                role: super::Role::Carry,
+                goal: super::Goal::Point(p),
+                tweaks,
+                ..
+            }) if tweaks != 0 && me.order.is_some_and(|o| o.has("carry4")) && p.distance(me.foot) < HOME_RUN_M => Vec::new(),
             Some(o) if o.role == super::Role::Carry => {
                 let s = if o.has("carry1") { DANGER_S * 2.0 } else { DANGER_S };
                 self.mem.of.iter().filter(|c| cx.now - c.seen < s).map(|c| c.pos).collect()
@@ -1074,9 +1114,7 @@ impl Duel {
         let wide = me.order.is_some_and(|o| o.has("carry1"));
         let (dm, dc) = if wide { (DANGER_M * 1.4, DANGER_COST_M * 2.0) } else { (DANGER_M, DANGER_COST_M) };
         let near_danger = |b: u16| cx.nav.at(b).is_some_and(|n| danger.iter().any(|d| d.distance(n.at) < dm));
-        let extra = |a: u16, b: u16| {
-            (if bad.iter().any(|&(x, y, _)| x == a && y == b) { BAD_LINK_M } else { 0.0 }) + if near_danger(b) { dc } else { 0.0 }
-        };
+        let extra = |a: u16, b: u16| (if bad.iter().any(|&(x, y, _)| x == a && y == b) { BAD_LINK_M } else { 0.0 }) + if near_danger(b) { dc } else { 0.0 };
         match cx.nav.route_with(from, to, able, extra) {
             Some(steps) => {
                 for w in steps.windows(2) {
@@ -1195,7 +1233,13 @@ impl Duel {
             let top = r.iter().cloned().fold(0.0f32, f32::max).max(1e-3);
             self.likes = r.iter().map(|x| x / top).collect();
             if std::env::var("LEAGUE_LIKES").is_ok() {
-                let names: Vec<String> = me.guns.guns.iter().zip(&self.likes).map(|(g, l)| format!("{}{} {:.2}", g.def.name, if g.have { "*" } else { "" }, l)).collect();
+                let names: Vec<String> = me
+                    .guns
+                    .guns
+                    .iter()
+                    .zip(&self.likes)
+                    .map(|(g, l)| format!("{}{} {:.2}", g.def.name, if g.have { "*" } else { "" }, l))
+                    .collect();
                 eprintln!("likes {names:?}");
             }
         }
@@ -1594,9 +1638,7 @@ impl Duel {
                 // empty route is asked for again at once (`move_feet`). On
                 // one arena a bot asked sixty times a second for twenty
                 // seconds (#420).
-                let open = |i: u16| {
-                    cx.nav.safe(i) && self.reaches(i) && !self.avoid.get(i as usize).is_some_and(|&t| cx.now < t) && cx.nav.at(i).is_some_and(|n| n.at.distance(me.foot) > TOO_CLOSE_M)
-                };
+                let open = |i: u16| cx.nav.safe(i) && self.reaches(i) && !self.avoid.get(i as usize).is_some_and(|&t| cx.now < t) && cx.nav.at(i).is_some_and(|n| n.at.distance(me.foot) > TOO_CLOSE_M);
                 let away = (0..cx.nav.len() as u16).filter(|&i| open(i)).max_by(|&a, &b| {
                     let da = cx.nav.at(a).map_or(0.0, |n| n.at.distance(from) + n.cover * 8.0);
                     let db = cx.nav.at(b).map_or(0.0, |n| n.at.distance(from) + n.cover * 8.0);
@@ -1749,9 +1791,16 @@ impl Duel {
         // and the minigun did the least damage of the ten in the single-gun
         // league.)
         let disc_in_my_face = mode.bounces > 0 && mode.self_hit > 0.0 && !shot::sees(cx.store, me.eye, me.eye + self.want_dir * DISC_CLEAR_M.min(self.range));
-        let splash_in_my_face = mode.splash.as_ref().is_some_and(|s| {
-            s.self_damage > 0.0 && !shot::sees(cx.store, me.eye, me.eye + self.want_dir * (s.radius * 1.2).min(self.range))
-        });
+        // Nor a disc that will come off the walls back through where it is
+        // standing: flown through the world as a bank shot is, from the
+        // first bounce on. Asked last and only when it would otherwise fire.
+        let disc_comes_back = |dir: Vec3| {
+            mode.bounces > 0 && mode.self_hit > 0.0 && super::team::trying("comeback") && shot::comes_back(cx.store, me.eye, dir, mode, me.foot + Vec3::Y * me.height * 0.5, me.vel) < me.half_w + DISC_BACK_M
+        };
+        let splash_in_my_face = mode
+            .splash
+            .as_ref()
+            .is_some_and(|s| s.self_damage > 0.0 && !shot::sees(cx.store, me.eye, me.eye + self.want_dir * (s.radius * 1.2).min(self.range)));
         // A mode worth nothing at this range cannot land, whatever the aim
         // is: out of reach, or out of rounds. The bench caught bots swinging
         // the Digger at a man twelve metres off, which is noise in
@@ -1763,7 +1812,16 @@ impl Duel {
         // as broken besides.
         let blast = mode.splash.as_ref().map_or(0.0, |s| s.radius);
         let friend_in_way = friend_in_line(me, cx, self.want_dir, self.range, at, blast);
-        out.trigger = if (c.in_sight || bank.is_some()) && on_target && worth && !friend_in_way && !splash_at_my_feet && !splash_in_my_face && !disc_in_my_face && (mode.spin_up > 0.0 || self.roll() < me.person.cadence) {
+        out.trigger = if (c.in_sight || bank.is_some())
+            && on_target
+            && worth
+            && !friend_in_way
+            && !splash_at_my_feet
+            && !splash_in_my_face
+            && !disc_in_my_face
+            && (mode.spin_up > 0.0 || self.roll() < me.person.cadence)
+            && !disc_comes_back(self.want_dir)
+        {
             want
         } else {
             Trigger::Off
@@ -1779,7 +1837,14 @@ impl Duel {
         self.running = true;
         // Standing a post with nobody about: look out the way trouble comes
         // from, sweeping either side of it, not along a path it is not on.
-        if let (Act::Errand, Some(super::Order { goal: super::Goal::Hold { watch, post, .. }, .. })) = (self.act, self.order) {
+        if let (
+            Act::Errand,
+            Some(super::Order {
+                goal: super::Goal::Hold { watch, post, .. },
+                ..
+            }),
+        ) = (self.act, self.order)
+        {
             if self.path.target(cx.nav).is_none() && Vec3::new(post.x - me.foot.x, 0.0, post.z - me.foot.z).length() < HOLD_NEAR_M {
                 let base = Vec3::new(watch.x - me.foot.x, 0.0, watch.z - me.foot.z).normalize_or(Vec3::NEG_Z);
                 let sweep = (cx.now * SWEEP_HZ + self.lean).sin() * SWEEP_RAD;
@@ -1980,9 +2045,19 @@ impl Duel {
             let side = Vec3::new(-dir.z, 0.0, dir.x);
             let s = if to.dot(side) > 0.0 { -1.0 } else { 1.0 };
             // Away from it if already inside the keep, round it otherwise.
-            return Some(if d < MINE_KEEP_M { (-to.normalize_or_zero() + side * s).normalize_or_zero() } else { (dir * 0.5 + side * s).normalize_or_zero() });
+            return Some(if d < MINE_KEEP_M {
+                (-to.normalize_or_zero() + side * s).normalize_or_zero()
+            } else {
+                (dir * 0.5 + side * s).normalize_or_zero()
+            });
         }
         None
+    }
+
+    /// Riding a lift down: the link it is on is a lift and the step it walks
+    /// to is well below its feet. Walked like a drop, into the shaft.
+    fn down_shaft(&self, me: &Me, cx: &Ctx) -> bool {
+        self.path.reach(cx.nav) == Reach::Lift && self.path.target(cx.nav).is_some_and(|t| t.y < me.foot.y - 1.0)
     }
 
     /// Where the plate of the lift it is about to ride stands: the node the
@@ -2022,6 +2097,14 @@ impl Duel {
         if me.foot.y > n.y + 1.0 {
             return None;
         }
+        // Going down: nothing to wait for. A plate that starts when stood on
+        // rests at the bottom and never comes up to fetch anybody, and on
+        // Zeto's second lift bots stood at the top landing for the whole of
+        // `RIDE_PATIENCE_S`, which was most of the league's idle time. It
+        // steps into the shaft instead (`down_shaft`), as a player does.
+        if cx.nav.at(*s.get(k + 1)?).is_some_and(|b| b.at.y < n.y - 1.0) {
+            return None;
+        }
         let slab = cx.store.platforms.iter().find(|p| n.x >= p.lo_m.x && n.x <= p.hi_m.x && n.z >= p.lo_m.z && n.z <= p.hi_m.z)?;
         if (slab.hi_m.y - n.y).abs() <= PLATE_HOME_M {
             return None;
@@ -2036,7 +2119,12 @@ impl Duel {
         }
         // Where it will come down: back the way it came, or straight out.
         let mid = (slab.lo_m + slab.hi_m) * 0.5;
-        let to = k.checked_sub(1).and_then(|j| cx.nav.at(s[j])).map(|b| b.at).filter(|&b| !inside(b, me.half_w)).unwrap_or(me.foot + (me.foot - mid) * 4.0);
+        let to = k
+            .checked_sub(1)
+            .and_then(|j| cx.nav.at(s[j]))
+            .map(|b| b.at)
+            .filter(|&b| !inside(b, me.half_w))
+            .unwrap_or(me.foot + (me.foot - mid) * 4.0);
         Some(Vec3::new(to.x - me.foot.x, 0.0, to.z - me.foot.z))
     }
 
@@ -2254,7 +2342,9 @@ impl Duel {
                     // free and whoever is shooting has to lead it -- and
                     // the one a player watching reads straight away.
                     let carrying_shot_at = self.act == Act::Errand
-                        && me.order.is_some_and(|o| (o.role == super::Role::Carry && o.has("carry2")) || (o.role == super::Role::Return && o.has("return3")))
+                        && me
+                            .order
+                            .is_some_and(|o| (o.role == super::Role::Carry && o.has("carry2")) || (o.role == super::Role::Return && o.has("return3")))
                         && foe.is_some_and(|c| c.in_sight);
                     if self.act == Act::Break || carrying_shot_at {
                         if let Some(way) = steer::Dodge::toward(out.yaw, want.go) {
@@ -2289,7 +2379,12 @@ impl Duel {
                         // -- and a lift that starts when stood on never
                         // came: 70% of all the time the league's bots spent
                         // pressing nothing was this, twelve seconds at a time.
-                        Reach::Lift if want.go.length() < PLATE_M || self.plate(cx).is_some_and(|p| me.foot.y < p.y + 1.0 && Vec3::new(p.x - me.foot.x, 0.0, p.z - me.foot.z).length() < PLATE_M * 2.0) => {
+                        Reach::Lift
+                            if want.go.length() < PLATE_M
+                                || self
+                                    .plate(cx)
+                                    .is_some_and(|p| me.foot.y < p.y + 1.0 && Vec3::new(p.x - me.foot.x, 0.0, p.z - me.foot.z).length() < PLATE_M * 2.0) =>
+                        {
                             let on = self.plate(cx).map(|p| Vec3::new(p.x - me.foot.x, 0.0, p.z - me.foot.z));
                             let up = me.foot.y >= t.y - 1.0;
                             want.go = match on {
@@ -2386,7 +2481,13 @@ impl Duel {
                     want.strafe = lap * me.person.tactics;
                     // Fighting on the way to its own flag: the feet keep
                     // going there, the gun stays on the foe.
-                    if let Some(super::Order { role: super::Role::Return, goal: super::Goal::Point(p), tweaks, .. }) = me.order {
+                    if let Some(super::Order {
+                        role: super::Role::Return,
+                        goal: super::Goal::Point(p),
+                        tweaks,
+                        ..
+                    }) = me.order
+                    {
                         if tweaks != 0 && me.order.is_some_and(|o| o.has("return4")) {
                             want.go = Vec3::new(p.x - me.foot.x, 0.0, p.z - me.foot.z).normalize_or_zero() + round * lap * 0.4;
                             want.sprint = true;
@@ -2498,7 +2599,7 @@ impl Duel {
         // body on a four-metre gantry, pressed at the lip above the floor
         // node it was routed to, shuffling until the shove threw it
         // somewhere else.
-        let dropping = self.path.target(cx.nav).is_some() && self.path.reach(cx.nav) == Reach::Drop;
+        let dropping = self.path.target(cx.nav).is_some() && (self.path.reach(cx.nav) == Reach::Drop || self.down_shaft(me, cx));
         // Never walk off a ledge it did not choose: this is the commonest
         // way a bot looks stupid, so steering checks for itself.
         // Into the slag counts as off a ledge, and further off than a ledge:
@@ -2538,7 +2639,20 @@ impl Duel {
             }
         }
         self.went = Vec3::new(want.go.x, 0.0, want.go.z);
-        out.mv = if self.running && !shoving { steer::drive_running(out.yaw, &want, RUN_SIDE) } else { steer::drive(out.yaw, &want) };
+        out.mv = if self.running && !shoving {
+            steer::drive_running(out.yaw, &want, RUN_SIDE)
+        } else {
+            steer::drive(out.yaw, &want)
+        };
+        let side = out.mv.right as i8 - out.mv.left as i8;
+        if self.running && !shoving && super::team::trying("runflip") && side != 0 && self.side_key != 0 && side != self.side_key && cx.now - self.side_at < RUN_FLIP_S {
+            out.mv.left = false;
+            out.mv.right = false;
+            out.mv.forward |= !out.mv.back;
+        } else if side != 0 && side != self.side_key {
+            self.side_key = side;
+            self.side_at = cx.now;
+        }
         // Being shot at beats the habit: a dodge on the timer is a bot
         // keeping itself moving, and this one is a bot answering something
         // that just happened to it.
@@ -2669,7 +2783,9 @@ impl Brain for Duel {
         // Not giving itself away: a shot is the only thing anybody hears,
         // so an attacker on its way in, or a defender waiting for one, keeps
         // its finger off until they are close or it has been hit.
-        let quiet = me.order.is_some_and(|o| (o.role == super::Role::Attack && o.has("attack4")) || (o.role == super::Role::Defend && o.has("defend4")));
+        let quiet = me
+            .order
+            .is_some_and(|o| (o.role == super::Role::Attack && o.has("attack4")) || (o.role == super::Role::Defend && o.has("defend4")));
         if quiet && me.struck.is_none() && self.range > HOLD_FIRE_M {
             out.trigger = Trigger::Off;
         }
@@ -2944,7 +3060,12 @@ mod tests {
             store: &r.store,
             nav: &r.nav,
             now: 1.0,
-            lures: &[crate::brain::Lure { at: pad, good: 1.5, gun: None, mends: false }],
+            lures: &[crate::brain::Lure {
+                at: pad,
+                good: 1.5,
+                gun: None,
+                mends: false,
+            }],
             noises: &[],
             threats: &[],
             mines: &[],
@@ -2977,7 +3098,16 @@ mod tests {
     }
 
     fn bare(r: &Rig) -> Ctx<'_> {
-        Ctx { store: &r.store, nav: &r.nav, now: 1.0, lures: &[], noises: &[], threats: &[], mines: &[], fighters: &[] }
+        Ctx {
+            store: &r.store,
+            nav: &r.nav,
+            now: 1.0,
+            lures: &[],
+            noises: &[],
+            threats: &[],
+            mines: &[],
+            fighters: &[],
+        }
     }
 
     /// A lift's plate that is up the shaft is waited for beside it, not
@@ -2986,9 +3116,24 @@ mod tests {
     #[test]
     fn it_waits_beside_a_shaft_for_the_plate() {
         let mut r = rig();
-        let link = |a: u16, b: u16, reach: &str| NavLink { a, b, reach: reach.into(), cost: 0.0, platform: None, portal: None };
-        let node = |x: f32| NavNode { at: [x, 0.0], up: 0.0, cover: 0.0, poi: None };
-        let def = NavDef { nodes: vec![node(0.0), node(6.0), node(12.0)], links: vec![link(0, 1, "walk"), link(1, 2, "lift")] };
+        let link = |a: u16, b: u16, reach: &str| NavLink {
+            a,
+            b,
+            reach: reach.into(),
+            cost: 0.0,
+            platform: None,
+            portal: None,
+        };
+        let node = |x: f32| NavNode {
+            at: [x, 0.0],
+            up: 0.0,
+            cover: 0.0,
+            poi: None,
+        };
+        let def = NavDef {
+            nodes: vec![node(0.0), node(6.0), node(12.0)],
+            links: vec![link(0, 1, "walk"), link(1, 2, "lift")],
+        };
         r.nav = Graph::build(&def, 2.0, |_, _, _| Some(2.0), |_| false, |w| panic!("{w}"));
         let slab = |deck: f32| crate::world::store::Slab {
             lo: [0; 3],
@@ -3265,18 +3410,49 @@ mod tests {
     #[test]
     fn breaking_off_with_nowhere_to_go_backs_away() {
         let mut r = rig();
-        let def = NavDef { nodes: vec![NavNode { at: [0.0, 0.0], up: 0.0, cover: 0.0, poi: None }], links: Vec::new() };
+        let def = NavDef {
+            nodes: vec![NavNode {
+                at: [0.0, 0.0],
+                up: 0.0,
+                cover: 0.0,
+                poi: None,
+            }],
+            links: Vec::new(),
+        };
         r.nav = Graph::build(&def, 2.0, |_, _, _| Some(2.0), |_| false, |w| panic!("{w}"));
         let p = person::level("skilled").unwrap();
         let mut b = Duel::new(11);
         let mut out = Pilot::default();
         let foot = Vec3::new(0.0, 2.0, 0.0);
         let fighters = [
-            Foe { who: 0, foot, vel: Vec3::ZERO, height: 1.75, alive: true, team: None },
-            Foe { who: 1, foot: Vec3::new(0.0, 2.0, -12.0), vel: Vec3::ZERO, height: 1.75, alive: true, team: None },
+            Foe {
+                who: 0,
+                foot,
+                vel: Vec3::ZERO,
+                height: 1.75,
+                alive: true,
+                team: None,
+            },
+            Foe {
+                who: 1,
+                foot: Vec3::new(0.0, 2.0, -12.0),
+                vel: Vec3::ZERO,
+                height: 1.75,
+                alive: true,
+                team: None,
+            },
         ];
         for i in 0..120 {
-            let cx = Ctx { store: &r.store, nav: &r.nav, now: 1.0 + i as f32 / 60.0, lures: &[], noises: &[], threats: &[], mines: &[], fighters: &fighters };
+            let cx = Ctx {
+                store: &r.store,
+                nav: &r.nav,
+                now: 1.0 + i as f32 / 60.0,
+                lures: &[],
+                noises: &[],
+                threats: &[],
+                mines: &[],
+                fighters: &fighters,
+            };
             let mut m = me(&r, &p, foot);
             m.health = 10.0;
             b.think(&m, &cx, &mut out, 1.0 / 60.0);
@@ -3303,4 +3479,3 @@ mod tests {
         assert!(d.wall_slide && d.unjam && d.circle && d.fetch);
     }
 }
-

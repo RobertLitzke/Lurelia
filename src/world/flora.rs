@@ -190,7 +190,7 @@ pub fn grow(lib: &Library, p: &PlantDef, base: Vec3, seed: u32, worn: Worn) -> T
     let height = lerp(p.height, rnd());
     // Herbs (ferns, fireweed) are drawn as sprites from one marker voxel of the
     // leaf material (gen.rs draw_tree, mesh/sprites.rs Rule::Herb): no trunk.
-    let trunk_r = if p.form == Form::Herb { 0.0 } else { thicker(lerp(p.trunk_radius, rnd())) };
+    let trunk_r = if matches!(p.form, Form::Herb | Form::Kelp) { 0.0 } else { thicker(lerp(p.trunk_radius, rnd())) };
     let crown = lerp(p.crown_radius, rnd());
     let mut blobs: Vec<Blob> = Vec::new();
     let mut branches: Vec<(Vec3, Vec3, f32)> = Vec::new();
@@ -287,42 +287,54 @@ pub fn grow(lib: &Library, p: &PlantDef, base: Vec3, seed: u32, worn: Worn) -> T
                     }
                     // Flowers in a cluster at the tip.
                     if let (Some(fl), true) = (flower, p.flower_tips) {
-                        blobs.push(Blob::ball(at, (0.24 + 0.1 * rnd()) * sz.max(0.7)).of(fl));
+                        let r = (0.24 + 0.1 * rnd()) * sz.max(0.7);
+                        // Flowers drawn as sprites (rabbitbrush) grow from the
+                        // marker voxels touching the cane, and a ball under a
+                        // voxel across often rasterizes to none at all.
+                        let r = if crate::mesh::sprites::marker(fl) { r.max(0.34) } else { r };
+                        blobs.push(Blob::ball(at, r).of(fl));
                     }
                 }
                 (TreeKind::Broad, 0.3, 0.0)
             } else {
-            for k in 0..n {
-                let az = a0 + k as f32 * TAU / n as f32 + (rnd() - 0.5) * 0.9;
-                // Inner canes nearly upright, outer ones leaning well out;
-                // `spread` lays them over (an agave's rosette at 1).
-                let tilt0 = match p.cane_lean {
-                    Some(l) => rnd() * l + p.spread.clamp(0.0, 1.0) * 0.75,
-                    None => 0.12 + rnd() * 0.42 + p.spread.clamp(0.0, 1.0) * 0.75,
-                };
-                let bend = if p.cane_lean.is_some() { 0.005 + rnd() * 0.02 } else { 0.02 + rnd() * 0.06 };
-                let len = height * (0.7 + 0.3 * rnd());
-                let horiz = Vec3::new(az.cos(), 0.0, az.sin());
-                let segs = 6;
-                let mut at = base + horiz * 0.12 + Vec3::Y * 0.15;
-                for s in 0..segs {
-                    let tilt = tilt0 + bend * s as f32;
-                    let d = (Vec3::Y * tilt.cos() + horiz * tilt.sin()) * (len / segs as f32);
-                    let end = at + d;
-                    // Thinner toward the tip.
-                    branches.push((at, end, r * (1.0 - 0.25 * s as f32 / segs as f32)));
-                    at = end;
+                for k in 0..n {
+                    let az = a0 + k as f32 * TAU / n as f32 + (rnd() - 0.5) * 0.9;
+                    // Inner canes nearly upright, outer ones leaning well out;
+                    // `spread` lays them over (an agave's rosette at 1).
+                    let tilt0 = match p.cane_lean {
+                        Some(l) => rnd() * l + p.spread.clamp(0.0, 1.0) * 0.75,
+                        None => 0.12 + rnd() * 0.42 + p.spread.clamp(0.0, 1.0) * 0.75,
+                    };
+                    let bend = if p.cane_lean.is_some() { 0.005 + rnd() * 0.02 } else { 0.02 + rnd() * 0.06 };
+                    let len = height * (0.7 + 0.3 * rnd());
+                    let horiz = Vec3::new(az.cos(), 0.0, az.sin());
+                    let segs = 6;
+                    let mut at = base + horiz * 0.12 + Vec3::Y * 0.15;
+                    for s in 0..segs {
+                        let tilt = tilt0 + bend * s as f32;
+                        let d = (Vec3::Y * tilt.cos() + horiz * tilt.sin()) * (len / segs as f32);
+                        let end = at + d;
+                        // Thinner toward the tip.
+                        branches.push((at, end, r * (1.0 - 0.25 * s as f32 / segs as f32)));
+                        at = end;
+                    }
+                    if let Some(fl) = flower {
+                        let up = Vec3::Y * 0.9 + horiz * 0.1;
+                        if crate::mesh::sprites::marker(fl) {
+                            // Flowers drawn as sprites (ocotillo) grow from
+                            // the marker voxels touching the cane tip: one
+                            // ball round it, big enough to rasterize.
+                            blobs.push(Blob::ball(at + up * 0.05, 0.34));
+                        } else {
+                            blobs.push(Blob::ball(at + up * 0.12, 0.17));
+                            blobs.push(Blob::ball(at + up * 0.4, 0.13));
+                        }
+                    }
                 }
-                if flower.is_some() {
-                    let up = Vec3::Y * 0.9 + horiz * 0.1;
-                    blobs.push(Blob::ball(at + up * 0.12, 0.17));
-                    blobs.push(Blob::ball(at + up * 0.4, 0.13));
+                if let Some(fl) = flower {
+                    leaf = fl;
                 }
-            }
-            if let Some(fl) = flower {
-                leaf = fl;
-            }
-            (TreeKind::Broad, 0.3, 0.0)
+                (TreeKind::Broad, 0.3, 0.0)
             }
         }
         Form::Bamboo => {
@@ -446,46 +458,16 @@ pub fn grow(lib: &Library, p: &PlantDef, base: Vec3, seed: u32, worn: Worn) -> T
         }
         f if f.is_coral() => coral(f, &mut rnd, base, height, trunk_r, crown, p.stems, flower, &mut blobs, &mut branches),
         Form::Kelp => {
-            // Giant kelp: a few stipes rising from a holdfast on the bed to
-            // the surface, swaying, with blades along them, spreading in a
-            // floating mat at the top. `height` is the depth of water here
-            // (set at placement).
-            let n = lerp(stems, rnd()).round().max(1.0) as usize;
-            for k in 0..n {
-                let az = rnd() * TAU;
-                let lean = Vec3::new(az.cos(), 0.0, az.sin());
-                let sway = 0.6 + rnd() * 1.4;
-                let phase = rnd() * TAU;
-                let h = height * (0.88 + 0.12 * rnd());
-                let segs = ((h / 1.2).ceil() as usize).max(2);
-                let mut at = base + lean * (0.2 * k as f32) + Vec3::Y * 0.2;
-                for s in 0..segs {
-                    let t = (s + 1) as f32 / segs as f32;
-                    let off = lean * (sway * (t * 2.6 + phase).sin() * t + 0.6 * t);
-                    let end = base + Vec3::Y * (0.2 + h * t) + off;
-                    branches.push((at, end, 0.14));
-                    // Blades on alternate sides, one per segment; a bull kelp's
-                    // stipe (`flower`, its float) is bare.
-                    if t < 0.92 && flower.is_none() {
-                        let side = Vec3::new(-lean.z, 0.0, lean.x) * if s % 2 == 0 { 1.0 } else { -1.0 };
-                        blobs.push(Blob::ball(end + side * 0.35 - Vec3::Y * 0.3, 0.32 + 0.12 * rnd()));
-                    }
-                    at = end;
-                }
-                // The canopy: blades lying out along the surface, from the
-                // stipe's top out to where the surface is (`height`).
-                let surface = base.y + height;
-                if let Some(fl) = flower {
-                    blobs.push(Blob::ball(at, 0.28 + 0.06 * rnd()).of(fl));
-                }
-                for j in 0..5 {
-                    let a = az + (j as f32 - 2.0) * 0.6;
-                    let d = 0.5 + j as f32 * 0.6 + rnd() * 0.4;
-                    let y = (at.y + (surface - at.y) * (0.4 + 0.15 * j as f32)).min(surface);
-                    blobs.push(Blob::ball(Vec3::new(at.x + a.cos() * d, y, at.z + a.sin() * d), crown * (0.35 + 0.15 * rnd())));
-                }
-            }
-            (TreeKind::Broad, 0.3, 0.0)
+            // Kelp is loose in the water and rides the tide, so it is not
+            // voxels: one marker voxel on the bed (the float, or the blade
+            // for kelp with none: matlib `Kelp`), which the sprite pass
+            // draws as stipes reaching up to the surface and streaming
+            // along it (mesh/sprites.rs `Herb::Kelp`, foliage.wgsl). Divers
+            // and big swimmers pass through it.
+            // Its height is still the stipe's reach (the water over it, set at
+            // placement), so the catalogue and the gazetteer can find it.
+            leaf = flower.unwrap_or(leaf);
+            (TreeKind::Broad, height, 0.0)
         }
         Form::Gnarled => {
             // A desert juniper: a short trunk leaning off true, splitting low
@@ -772,7 +754,7 @@ pub fn grow(lib: &Library, p: &PlantDef, base: Vec3, seed: u32, worn: Worn) -> T
         blobs,
         canopy_lo: canopy_lo.max(0.0),
         top,
-        radius: radius.max(trunk_r + flare + 0.3),
+        radius: radius.max(trunk_r + flare * if flare >= super::stamp::PLANK_FLARE { super::stamp::PLANK_REACH } else { 1.0 } + 0.3),
         leaf,
         bark,
         seed,
@@ -1408,7 +1390,10 @@ fn weight(w: &World, pl: &Placement, p: Vec2, biome: u8, seed: u32) -> f32 {
             // the biomes it names, comma-separated ("rib_dunes,rib_plain":
             // a beach's edge where the grass starts).
             let width = par("width", 14.0);
-            let only = pl.field.as_deref().map(|names| names.split(',').filter_map(|n| w.lib.biomes.iter().position(|b| b.name == n.trim())).collect::<Vec<_>>());
+            let only = pl
+                .field
+                .as_deref()
+                .map(|names| names.split(',').filter_map(|n| w.lib.biomes.iter().position(|b| b.name == n.trim())).collect::<Vec<_>>());
             let mut near = false;
             for k in 0..8 {
                 let a = k as f32 * TAU / 8.0;
@@ -1517,11 +1502,27 @@ pub fn place_plants(w: &mut World) {
     // planks.
     // Water plants may grow in a lake or a cenote deeper than a couple of
     // metres; everything else keeps out of open water.
-    let inland_depth = |i: usize| w.f.inland.get(&(i as u32)).map(|wet| wet.level - w.f.h[i]);
+    // Water at the sea's own level is the sea's (a river's channel on past
+    // its mouth, for the tide), as `Generator::water_m` has it.
+    let inland_depth = |i: usize| w.f.inland.get(&(i as u32)).filter(|wet| wet.level > w.f.sea).map(|wet| wet.level - w.f.h[i]);
+    // Under a high deck (a canopy walk) the ground still grows, but only
+    // what stays under the planks: the room there, per cell, metres.
+    let mut room = vec![f32::MAX; n * n];
     for i in 0..n * n {
         let deep_inland = w.f.water[i] == 1 && inland_depth(i).is_some_and(|d| d > 2.0);
-        if w.f.occupied[i] || (w.f.water[i] != 0 && !deep_inland) || (!w.ribbons.is_empty() && w.ribbons.under_deck(w.f.centre(i), 2.0)) {
+        if w.f.occupied[i] || (w.f.water[i] != 0 && !deep_inland) {
             taken[i] = true;
+        }
+        if w.ribbons.is_empty() {
+            continue;
+        }
+        if let Some(y) = w.ribbons.deck_over(w.f.centre(i), 2.0) {
+            let up = y - w.f.h[i];
+            if up < super::route::HIGH_DECK {
+                taken[i] = true;
+            } else {
+                room[i] = up;
+            }
         }
     }
     let size = w.f.size;
@@ -1570,8 +1571,18 @@ pub fn place_plants(w: &mut World) {
                         continue;
                     }
                     let i = w.f.idx(p.x, p.y);
-                    if w.f.biome[i] as usize != bi || taken[i] {
+                    if w.f.biome[i] as usize != bi || taken[i] || room[i] < plant.height[1] + 1.0 {
                         continue;
+                    }
+                    // A tree whose crown would stand round a high deck (a
+                    // canopy platform, a walkway) grows somewhere else: from
+                    // the deck you would see nothing but its leaves.
+                    if plant.height[1] > super::route::HIGH_DECK && plant.form != Form::Herb && !w.ribbons.is_empty() {
+                        let g = w.f.h[i];
+                        let crown = (g + plant.crown_base.unwrap_or(0.35) * plant.height[0] - 2.0, g + plant.height[1] + 2.0);
+                        if w.ribbons.deck_in(p, plant.crown_radius[1] + 1.5, g + super::route::HIGH_DECK, crown.0, crown.1) {
+                            continue;
+                        }
                     }
                     if w.f.slope[i] > plant.max_slope {
                         continue;
@@ -1674,7 +1685,7 @@ fn place_growths(w: &World) -> Vec<super::gen::Tree> {
             continue;
         };
         let p = &w.lib.plants[pi];
-        let seed = hash32(w.def.seed ^ 0x6c65_6467 ^ (k as u32).wrapping_mul(0x9e37_79b9));
+        let seed = g.seed.unwrap_or_else(|| hash32(w.def.seed ^ 0x6c65_6467 ^ (k as u32).wrapping_mul(0x9e37_79b9)));
         let mut rng = seed;
         let mut rnd = || {
             rng = hash32(rng.wrapping_add(0x6d2b_79f5));
@@ -2527,7 +2538,11 @@ pub fn place_features(w: &mut World) {
         }
         let (sh, anchor) = *shape_of.entry((si, turn)).or_insert_with(|| {
             let sd = &w.lib.structures[si];
-            let turned = if turn > 0 { super::shape::turn_logs(&sd.ops, sd.size, sd.anchor, turn as f32 * 15.0) } else { None };
+            let turned = if turn > 0 {
+                super::shape::turn_logs(&sd.ops, sd.size, sd.anchor, turn as f32 * 15.0)
+            } else {
+                None
+            };
             let (shape, anchor) = match turned {
                 Some((ops, size, anchor)) => {
                     let resolve = |n: &str| w.lib.material(sd.slots.get(n).map(|s| s.as_str()).unwrap_or(n));

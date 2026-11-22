@@ -5,6 +5,7 @@
   "notes": "Ivy climbing the walls: glossy dark green.",
   "id": 182,
   "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "heart"},
   "texture": {
     "pattern": "blotch",
     "base": [46, 88, 40],

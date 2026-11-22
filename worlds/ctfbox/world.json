@@ -52,6 +52,7 @@
     "shooter",
     "screenshot"
   ],
+  "games": ["ctf"],
   "biomes": [
     "works_yard",
     "arena_seabed"

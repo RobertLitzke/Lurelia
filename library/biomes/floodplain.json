@@ -39,7 +39,9 @@
     {"creature": "garter_snake", "count": 3},
     {"creature": "great_egret", "count": 3},
     {"creature": "bullfrog", "count": 4},
-    {"creature": "water_snake", "count": 2}
+    {"creature": "water_snake", "count": 2},
+    {"creature": "killdeer", "count": 4},
+    {"creature": "lapwing", "count": 10}
   ],
   "collectibles": [],
   "mist": 0.75

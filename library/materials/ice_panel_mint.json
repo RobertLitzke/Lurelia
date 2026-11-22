@@ -3,14 +3,6 @@
   "version": 1,
   "introduced_by": "transmission",
   "notes": "Composite wall panelling in a frozen base, a pale laboratory green: the cryo-labs, clean and a little clinical.",
-  "smooth": false,
-  "crisp": true,
-  "texture": {
-    "pattern": "coursed",
-    "base": [116, 150, 128],
-    "alt": [102, 136, 116],
-    "scale": 1,
-    "contrast": 1.0,
-    "calm": {"base": [124, 158, 136], "alt": [110, 144, 124]}
-  }
+  "like": "ice_panel",
+  "texture": {"alt": [102, 136, 116], "calm": {"alt": [110, 144, 124], "base": [124, 158, 136]}, "base": [116, 150, 128]}
 }

@@ -3,7 +3,7 @@
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct PlantDef {
     pub name: String,
     #[serde(default = "default_version")]

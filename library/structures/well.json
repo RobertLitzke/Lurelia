@@ -1,19 +1,31 @@
 {
   "name": "well",
-  "version": 1,
+  "version": 2,
   "introduced_by": "glassfall",
-  "notes": "Stone well with a winding post and a small roof.",
+  "notes": "Round stone well, 2.5 m across the shaft with a 1.25 m curb, a post-and-windlass frame with rope and bucket, and a small thatched roof. Open on all sides; carves its shaft.",
   "size": [12, 16, 12],
   "anchor": [6, 0, 6],
   "foundation": 4,
   "tags": ["settler"],
-  "slots": {"wall": "fieldstone", "timber": "timber_frame", "roof": "thatch"},
+  "slots": {"wall": "fieldstone", "timber": "timber_frame", "roof": "thatch", "water": "river_water", "rope": "straw_bound"},
   "ops": [
     {"op": "cylinder", "base": [6, 0, 6], "radius": 4.6, "height": 4, "mat": "wall", "part": "stone"},
-    {"op": "cylinder", "base": [6, 1, 6], "radius": 2.8, "height": 4, "mat": "air"},
-    {"op": "box", "from": [1, 4, 5], "to": [2, 12, 7], "mat": "timber", "part": "timber"},
-    {"op": "box", "from": [10, 4, 5], "to": [11, 12, 7], "mat": "timber", "part": "timber"},
-    {"op": "log", "base": [1, 10.5, 6], "radius": 0.6, "length": 10, "axis": "x", "mat": "timber", "part": "timber"},
-    {"op": "gable", "from": [0, 12, 3], "to": [12, 12, 9], "axis": "x", "mat": "roof", "rise": 1, "part": "roof"}
+    {"op": "cylinder", "base": [6, 4, 6], "radius": 4.9, "height": 1, "mat": "wall", "part": "stone"},
+    {"op": "cylinder", "base": [6, 1, 6], "radius": 2.8, "height": 5, "mat": "air"},
+    {"op": "cylinder", "base": [6, 1, 6], "radius": 2.6, "height": 1, "mat": "water", "part": "floor"},
+    {"op": "box", "from": [1, 5, 5], "to": [2, 12, 7], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [10, 5, 5], "to": [11, 12, 7], "mat": "timber", "part": "timber"},
+    {"op": "log", "base": [1, 10.5, 6], "radius": 0.8, "length": 10, "axis": "x", "mat": "timber", "part": "timber"},
+    {
+      "op": "segment",
+      "points": [[11.5, 10.5, 6], [11.5, 10.5, 8.6]],
+      "radius": 0.5,
+      "mat": "timber",
+      "part": "timber"
+    },
+    {"op": "segment", "points": [[6, 10.5, 6], [6, 5.5, 6]], "radius": 0.4, "mat": "rope", "part": "cloth"},
+    {"op": "cylinder", "base": [6, 3, 6], "radius": 1.3, "height": 2, "mat": "timber", "part": "timber"},
+    {"op": "cylinder", "base": [6, 4, 6], "radius": 0.8, "height": 1, "mat": "air"},
+    {"op": "gable", "from": [0, 12, 2], "to": [12, 12, 10], "axis": "x", "mat": "roof", "rise": 1, "part": "roof"}
   ]
 }

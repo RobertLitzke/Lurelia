@@ -4,6 +4,8 @@
   "size_m": 1024,
   "height_m": 224,
   "sea_level_m": 24,
+  "tide": {"range": 2.0, "high": 9.0},
+  "surf": {"height": 0.25},
   "underwater": {
     "visibility": 12,
     "light": 0.14

@@ -31,7 +31,7 @@
     {"creature": "eagle", "count": 2},
     {"creature": "cave_bear", "count": 1},
     {"creature": "marmot", "count": 4},
-    {"creature": "steppe_wolf", "count": 1},
+    {"creature": "wolf", "count": 1},
     {"creature": "lizard", "count": 4},
     {"creature": "wind_skate", "count": 2}
   ],

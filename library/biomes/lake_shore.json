@@ -21,7 +21,9 @@
     {"creature": "goose", "count": 6},
     {"creature": "mallard", "count": 4},
     {"creature": "meadowhawk", "count": 3},
-    {"creature": "frog", "count": 5}
+    {"creature": "frog", "count": 5},
+    {"creature": "killdeer", "count": 3},
+    {"creature": "annas_hummingbird", "count": 2}
   ],
   "mist": 0.55
 }

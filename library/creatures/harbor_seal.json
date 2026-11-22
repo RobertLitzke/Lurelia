@@ -73,8 +73,8 @@
   "rig": {
     "plan": "sprawler",
     "bones": [
-      {"name": "body", "role": "root"},
-      {"name": "head", "role": "head", "parent": "body", "joint": [16, 7.5, 7]},
+      {"name": "body", "role": "root", "flesh": 0.7},
+      {"name": "head", "role": "head", "parent": "body", "joint": [16, 7.5, 7], "flesh": 0.4},
       {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [12, 3.5, 11], "side": "l", "pair": 0},
       {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [20, 3.5, 11], "side": "r", "pair": 0},
       {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 4, 27]}

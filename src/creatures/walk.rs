@@ -4,11 +4,11 @@
 //! round trunks, walls, drops and water. Rigged ones choose their own
 //! activities (anim/life.rs).
 
-use crate::anim::Role;
 use super::affordance::Affordance;
 use super::terrain::{voxel_ground, water_voxel, Terrain};
 use super::{Creature, Look, Pathing, Species};
 use crate::anim::life::Act;
+use crate::anim::Role;
 use crate::models::Model;
 use crate::physics::{drawn_ground_lift, move_body, Body};
 use crate::world::noise::Rng;
@@ -204,11 +204,19 @@ pub fn update(
     let store = terrain.store;
     let sea = terrain.sea;
     // Where everyone is and how fast, for fleeing and hunting.
-    let snap: Vec<(Option<usize>, Vec3, Vec3, hecs::Entity)> = world
+    let mut snap: Vec<(Option<usize>, Vec3, Vec3, hecs::Entity)> = world
         .query::<(hecs::Entity, &Critter, &Look, &Body, Option<&Creature>)>()
         .iter()
         .map(|(e, _, l, b, c)| (c.map(|c| c.species), l.pos, b.vel, e))
         .collect();
+    // Running birds are hunters too (a roadrunner after a lizard), though
+    // they have no body of their own.
+    snap.extend(
+        world
+            .query::<(hecs::Entity, &super::runner::Runner, &Look, &Creature)>()
+            .iter()
+            .map(|(e, _, l, c)| (Some(c.species), l.pos, (l.pos - l.prev_pos) / dt.max(1e-3), e)),
+    );
     // Who is bolting this step: the alarm spreads from them to anything near
     // enough to hear the crash of it (creatures/startle.rs `Threat::alarm_of`).
     let bolting: Vec<(Vec3, Vec3, hecs::Entity)> = world
@@ -401,7 +409,9 @@ pub fn update(
                 }
             }
         }
-        let from_herd = herd.map_or(0.0, |(_, bp, bv)| super::startle::pressure_on(&nerve, look.pos, facing, head_down, &super::startle::Threat::alarm_of(bp, bv), || false));
+        let from_herd = herd.map_or(0.0, |(_, bp, bv)| {
+            super::startle::pressure_on(&nerve, look.pos, facing, head_down, &super::startle::Threat::alarm_of(bp, bv), || false)
+        });
         let from_hunter = match hunter {
             Some((_, hp, hv)) if !hiding => {
                 let t = super::startle::Threat::animal(hp, hv);

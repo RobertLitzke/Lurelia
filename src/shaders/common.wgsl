@@ -54,6 +54,16 @@ struct Globals {
     // Lightning (world/lightning.rs): x, z where it comes to ground, its
     // seed, and how bright it is now. w = 0 between strikes.
     bolt: vec4<f32>,
+    // The tide (world/tide.rs): x = how far the open sea has fallen from
+    // high water, y = the range, z = high water, w = 1 with a tide. `fog.y`
+    // is the open sea's surface now.
+    tide: vec4<f32>,
+    // The surf (world/surf.rs): x = breaker height on a fair day (m), y =
+    // wave length (m), z = period (s), w = 1 with surf.
+    surf: vec4<f32>,
+    // The swell (world/surf.rs): xy = the way it runs (x, z), z = crest to
+    // trough on a fair day (m; 0 for none), w = the longest wave's length.
+    swell: vec4<f32>,
 };
 
 // What the season does to the colour of a leaf: its own green multiply,
@@ -114,9 +124,57 @@ struct EntityInst {
     tint: vec4<f32>,      // rgb multiplier, w = flash
     rot: vec4<f32>,       // quaternion applied before the yaw; zero = none
     // Added after the multiply, so a coat can repaint and not only darken:
-    // a dark brown elk cannot be made pastel by multiplying. w is unused.
+    // a dark brown elk cannot be made pastel by multiplying. w flags the
+    // shadow and glass (models.rs `Instance::shift`).
     shift: vec4<f32>,
+    // A soft body's flesh (anim/flesh.rs): [0] this part's joint from the
+    // body's origin (creature frame, m) and its own weight, [1] the jiggle
+    // (m) and its parent's weight, [2] sag, floor, height and half length.
+    // All zero on anything rigid.
+    flesh: array<vec4<f32>, 3>,
+    // x: the glow's gain less one (a coat's `glow`, models.rs `Instance::glow`).
+    glow: vec4<f32>,
 };
+
+// How far a point of a soft body moves, `p` from the body's origin (bottom
+// centre) in the creature frame, metres. Must match anim/flesh.rs `field`.
+fn flesh_field(p: vec3<f32>, f: array<vec4<f32>, 3>) -> vec3<f32> {
+    let sag = f[2].x;
+    let floor = f[2].y;
+    let hgt = max(f[2].z, 0.001);
+    let len = max(f[2].w, 0.001);
+    let up = max(p.y - floor, 0.0);
+    let h = min(up / hgt, 1.0);
+    let s = sag * 0.34;
+    // The top settles most, and what it loses bulges out low on the flanks.
+    let low = 1.0 - h;
+    let spread = s * (1.6 * low * low + 0.25) * smoothstep(0.0, 0.08, up);
+    let along = clamp(p.z / len, -1.0, 1.0);
+    var d = vec3<f32>(p.x * spread, -s * up * h, p.z * spread * 0.2);
+    // Loose flesh lags the frame: the top and the hind end most, the belly
+    // on the ground not at all.
+    d += f[1].xyz * h * h * (1.0 + 0.4 * along);
+    return d;
+}
+
+// The flesh offset for a vertex `l` metres from its part's joint.
+fn flesh_offset(l: vec3<f32>, f: array<vec4<f32>, 3>) -> vec3<f32> {
+    let w = f[0].w;
+    let wp = f[1].w;
+    if (w == 0.0 && wp == 0.0) {
+        return vec3<f32>(0.0);
+    }
+    // A part goes with its parent's flesh at the joint, and with its own
+    // past it, so a soft head on a soft body never parts at the neck.
+    var d = vec3<f32>(0.0);
+    if (w != 0.0) {
+        d += w * flesh_field(l + f[0].xyz, f);
+    }
+    if (wp != w) {
+        d += (wp - w) * flesh_field(f[0].xyz, f);
+    }
+    return d;
+}
 
 // A material's declared colour field (`drift` in its library entry), as the
 // multiply that takes its own texture to each end. Rows 256.. of `mats` hold
@@ -535,6 +593,29 @@ fn inscatter(dir: vec3<f32>) -> vec3<f32> {
 // river the camera is in, else the sea.
 fn water_top() -> f32 {
     return select(g.fog.y, g.under.x, g.under.w > 0.5);
+}
+
+// How far the tide draws down river water standing at `level` that it may
+// draw down by at most `ebb` (world/tide.rs `Tide::river_fall`, the same):
+// all of the sea's fall at the sea's own level, none a full range above it.
+fn river_fall(level: f32, ebb: f32) -> f32 {
+    if (g.tide.w < 0.5 || ebb <= 0.0) {
+        return 0.0;
+    }
+    let taper = max(1.0 - max(level - g.tide.z, 0.0) / g.tide.y, 0.0);
+    return min(g.tide.x * taper, ebb);
+}
+
+// How wet the tide has left ground at height `y`, 0 to 1: soaked just above
+// the water, still dark up to the line high water reached. Nothing without a
+// tide, and nothing at high water but the swash at the edge.
+fn tide_wet(y: f32) -> f32 {
+    if (g.tide.w < 0.5) {
+        return 0.0;
+    }
+    let above = y - g.fog.y;
+    let under_high = smoothstep(g.tide.z + 0.12, g.tide.z - 0.05, y);
+    return under_high * mix(0.85, 1.0, smoothstep(0.6, 0.0, above)) * step(-0.3, above);
 }
 
 // The world's water colours (world.json `water`), or the engine's own.

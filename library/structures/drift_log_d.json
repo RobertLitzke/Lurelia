@@ -1,0 +1,124 @@
+{
+  "name": "drift_log_d",
+  "version": 1,
+  "introduced_by": "ribshore",
+  "notes": "A low root wad: a 3 m root plate standing on edge facing west with a metre of trunk behind it, sunk into the sand.",
+  "size": [20, 16, 20],
+  "anchor": [10, 3, 10],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"wood": "silver_deadwood", "split": "stick_wood"},
+  "ops": [
+    {"op": "disc", "centre": [7, 6.5, 10], "radius": 6, "thick": 3, "axis": "x", "mat": "wood", "part": "wood"},
+    {"op": "ellipsoid", "centre": [8, 6.5, 10], "radius": [3.5, 5, 5], "mat": "wood", "part": "wood"},
+    {"op": "log", "base": [9, 5.3, 10], "radius": 2.3, "length": 6, "axis": "x", "mat": "wood", "part": "wood"},
+    {
+      "op": "segment",
+      "points": [[8, 6.46, 12.0], [4.19, 6.78, 16.09], [0.5, 6.32, 16.11]],
+      "radius": 0.73,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[8, 7.13, 11.9], [4.93, 8.81, 15.71], [0.85, 8.99, 14.9]],
+      "radius": 0.62,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[8, 7.84, 11.49], [4.77, 11.25, 14.82], [0.53, 9.93, 15.79]],
+      "radius": 0.89,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[8, 8.47, 10.32], [6.11, 13.0, 11.0], [3.21, 11.63, 11.06]],
+      "radius": 0.52,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[8, 8.49, 9.8], [6.42, 12.46, 9.44], [3.85, 11.99, 9.32]],
+      "radius": 0.84,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[8, 8.05, 8.74], [5.25, 11.74, 6.08], [1.5, 11.66, 6.0]],
+      "radius": 0.61,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[8, 6.99, 8.06], [4.4, 8.58, 3.42], [0.5, 8.59, 3.05]],
+      "radius": 0.59,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[8, 6.67, 8.01], [4.58, 7.35, 4.71], [0.5, 6.75, 5.4]],
+      "radius": 0.65,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[8, 5.32, 8.39], [6.5, 3.03, 4.71], [4.0, 2.05, 5.53]],
+      "radius": 0.69,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[8, 4.73, 9.07], [6.32, 1.73, 7.3], [3.63, 1.59, 7.86]],
+      "radius": 0.61,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[8, 4.65, 9.24], [4.09, 1.6, 7.82], [0.5, 1.71, 7.06]],
+      "radius": 0.6,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[8, 4.5, 10.13], [4.51, 1.62, 10.34], [0.5, 0.57, 10.46]],
+      "radius": 0.68,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[8, 4.79, 11.04], [6.17, 1.47, 13.33], [3.35, 1.35, 12.56]],
+      "radius": 0.67,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "segment",
+      "points": [[8, 5.43, 11.69], [4.07, 3.89, 14.76], [0.5, 4.1, 14.37]],
+      "radius": 0.85,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {"op": "box", "from": [5, 8, 8], "to": [8, 11, 11], "mat": "air", "part": "wood"},
+    {"op": "box", "from": [5, 4, 13], "to": [8, 6, 15], "mat": "air", "part": "wood"},
+    {"op": "box", "from": [5, 7, 4], "to": [8, 9, 6], "mat": "air", "part": "wood"},
+    {"op": "segment", "points": [[14, 6.8, 10], [17, 7.3, 10]], "radius": 0.5, "mat": "wood", "part": "wood"},
+    {"op": "segment", "points": [[14, 4.1, 11.3], [16, 4.6, 11.3]], "radius": 0.5, "mat": "wood", "part": "wood"},
+    {"op": "segment", "points": [[14, 5.6, 8.2], [18, 6.1, 8.2]], "radius": 0.5, "mat": "wood", "part": "wood"},
+    {"op": "segment", "points": [[14, 3.8, 9.2], [16, 4.3, 9.2]], "radius": 0.5, "mat": "wood", "part": "wood"},
+    {"op": "segment", "points": [[10, 7.4, 10.3], [12, 10.0, 11]], "radius": 0.5, "mat": "wood", "part": "wood"},
+    {"op": "log", "base": [9, 7.0, 8.0], "radius": 0.5, "length": 5, "axis": "x", "mat": "split", "part": "wood"}
+  ]
+}

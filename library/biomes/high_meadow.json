@@ -27,7 +27,8 @@
     {"creature": "bison", "count": 5},
     {"creature": "sheep", "count": 6},
     {"creature": "wolf", "count": 1},
-    {"creature": "mule_deer", "count": 4}
+    {"creature": "mule_deer", "count": 4},
+    {"creature": "killdeer", "count": 2}
   ],
   "sound": {"wind": 1.25}
 }

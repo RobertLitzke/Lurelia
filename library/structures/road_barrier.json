@@ -6,7 +6,7 @@
   "size": [40, 12, 6],
   "anchor": [20, 0, 3],
   "tags": ["road"],
-  "slots": {"post": "weathered_planks", "red": "station_red", "white": "sign_white"},
+  "slots": {"post": "weathered_planks", "red": "station_red", "white": "trim_white"},
   "ops": [
     {"op": "box", "from": [2, 0, 2], "to": [4, 9, 4], "mat": "post", "part": "timber"},
     {"op": "box", "from": [36, 0, 2], "to": [38, 9, 4], "mat": "post", "part": "timber"},

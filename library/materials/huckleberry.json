@@ -6,6 +6,7 @@
   "id": 190,
   "smooth": false,
   "passable": true,
+  "sprites": "huckleberry",
   "texture": {
     "pattern": "speckle",
     "base": [52, 82, 40],

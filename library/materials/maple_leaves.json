@@ -1,0 +1,17 @@
+{
+  "name": "maple_leaves",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Green maple leaves, coloured like the built-in leaves; its own material so a maple's crown grows maple-shaped leaf cards (leaf_shape in mesh/sprites.rs).",
+  "smooth": false,
+  "tint": "leaves",
+  "sprites": {"rule": "leaves", "shape": "maple"},
+  "texture": {
+    "pattern": "blotch",
+    "base": [46, 84, 40],
+    "alt": [82, 126, 58],
+    "scale": 7,
+    "contrast": 1.0,
+    "calm": {"base": [48, 92, 48], "alt": [64, 110, 56]}
+  }
+}

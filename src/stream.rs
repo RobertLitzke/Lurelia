@@ -592,6 +592,18 @@ impl Streamer {
 
     /// Apply voxel edits (base-level voxel coordinates) and remesh what they touch.
     pub fn edit(&mut self, store: &mut Store, changes: &[([i32; 3], u8)]) -> usize {
+        self.apply(store, changes, true)
+    }
+
+    /// Voxel edits that are not kept: they last while their chunks stay
+    /// loaded and are gone when the column streams in again, as the animals
+    /// near the player are. Nothing goes in the edit map, so nothing is
+    /// saved. For a shrub the car has flattened.
+    pub fn edit_passing(&mut self, store: &mut Store, changes: &[([i32; 3], u8)]) -> usize {
+        self.apply(store, changes, false)
+    }
+
+    fn apply(&mut self, store: &mut Store, changes: &[([i32; 3], u8)], keep: bool) -> usize {
         let mut dirty = HashSet::default();
         let mut applied = 0;
         {
@@ -602,8 +614,10 @@ impl Streamer {
                 }
                 applied += 1;
                 let (cx, cy, cz) = (x >> 5, y >> 5, z >> 5);
-                let i = ((y & 31) * 1024 + (z & 31) * 32 + (x & 31)) as u16;
-                e.0.entry((cx, cy, cz)).or_default().insert(i, m);
+                if keep {
+                    let i = ((y & 31) * 1024 + (z & 31) * 32 + (x & 31)) as u16;
+                    e.0.entry((cx, cy, cz)).or_default().insert(i, m);
+                }
                 // A neighbour's padded copy holds our voxels within M across
                 // and MY vertically of the shared face, so an edit that close
                 // changes its mesh too.
@@ -624,7 +638,7 @@ impl Streamer {
                     }
                 }
             }
-            if applied > 0 {
+            if applied > 0 && keep {
                 e.1 += 1;
             }
         }
@@ -633,7 +647,7 @@ impl Streamer {
                 self.remesh_chunk(c, store);
             }
         }
-        if applied > 0 {
+        if applied > 0 && keep {
             self.dirty_edits = true;
         }
         applied
@@ -729,6 +743,21 @@ fn lower_priority() {
     }
 }
 
+/// Nanoseconds the workers spent on each part of a column job outside the
+/// generator's own stages (`gen::GEN_NANOS`), summed over all threads: tube
+/// trees, meshing, sprite scatter, copying the results out. Headless stats
+/// report both per column (`gen_stage_ms`).
+pub static WORK_NANOS: [std::sync::atomic::AtomicU64; 4] = [
+    std::sync::atomic::AtomicU64::new(0),
+    std::sync::atomic::AtomicU64::new(0),
+    std::sync::atomic::AtomicU64::new(0),
+    std::sync::atomic::AtomicU64::new(0),
+];
+
+fn work_nanos(stage: usize, since: Instant) {
+    WORK_NANOS[stage].fetch_add(since.elapsed().as_nanos() as u64, std::sync::atomic::Ordering::Relaxed);
+}
+
 fn worker(s: Arc<Shared>, tx: Sender<JobResult>) {
     lower_priority();
     let mut scratch = GenScratch::default();
@@ -773,11 +802,16 @@ fn worker(s: Arc<Shared>, tx: Sender<JobResult>) {
                 let mut chunks = Vec::with_capacity(8);
                 let edits = if local.is_empty() { None } else { Some(&local) };
                 // Thin leaning stems are drawn along their own lines (mesh/lean.rs).
+                let tw = Instant::now();
                 let tube_trees = s.gen.tube_trees(key);
+                work_nanos(0, tw);
                 let (solid_below, count) = s.gen.gen_column_with(key, edits, &mut scratch, |cy, padded, colh| {
-                    let threads = s.gen.chunk_threads(&tube_trees, key, cy);
+                    let tw = Instant::now();
+                    let (threads, own) = s.gen.chunk_threads(&tube_trees, key, cy);
                     // Leaf blocks on the two finest levels (mesh.rs module notes).
-                    mesh_chunk_t(padded, smooth, Some(colh), key.lod <= 1, &threads, &mut mesh);
+                    mesh_chunk_t(padded, smooth, Some(colh), key.lod <= 1, &threads, &own, &mut mesh);
+                    work_nanos(1, tw);
+                    let tw = Instant::now();
                     // Every level scatters: the coarse ones carry only the far
                     // cover (sprites.rs), which is what keeps the distance
                     // from being bare ground. Its cells and its cards are in
@@ -793,8 +827,11 @@ fn worker(s: Arc<Shared>, tx: Sender<JobResult>) {
                         &|x, z| s.gen.water_m(x, z),
                         &mut mesh.sprites,
                     );
+                    work_nanos(2, tw);
+                    let tw = Instant::now();
                     let v = if key.lod == 0 { Some(Voxels::from_padded(padded)) } else { None };
                     chunks.push((cy, take(&mesh), v));
+                    work_nanos(3, tw);
                 });
                 JobResult::Column {
                     key,
@@ -816,8 +853,8 @@ fn worker(s: Arc<Shared>, tx: Sender<JobResult>) {
                     }
                 }
                 let key = crate::world::gen::ColKey { lod: 0, x: chunk.0, z: chunk.2 };
-                let threads = s.gen.chunk_threads(&s.gen.tube_trees(key), key, chunk.1);
-                mesh_chunk_t(&padded, smooth, Some(&colh), true, &threads, &mut mesh);
+                let (threads, own) = s.gen.chunk_threads(&s.gen.tube_trees(key), key, chunk.1);
+                mesh_chunk_t(&padded, smooth, Some(&colh), true, &threads, &own, &mut mesh);
                 (mesh.sprite_fill, mesh.sprite_grass, mesh.sprite_patch, mesh.sprite_stalk) = sprites::scatter(
                     &padded,
                     smooth,

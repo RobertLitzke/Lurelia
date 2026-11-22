@@ -5,6 +5,7 @@
   "notes": "Short chalk turf: close-cropped grass gone khaki with thyme and small flowers in it, the chalk showing through on the crowns. v2: drifts between cool khaki and dry gold across the down, declared rather than taking the shared meadow ramp.",
   "smooth": true,
   "drift": {"calm": [[138, 142, 112], [166, 152, 110]], "classic": [[116, 122, 96], [142, 128, 92]]},
+  "sprites": "grass",
   "texture": {
     "pattern": "noise",
     "base": [112, 114, 88],

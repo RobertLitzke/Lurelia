@@ -1,0 +1,19 @@
+{
+  "name": "gh_clam_flats",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "Clam flats in the inner bay: sand and mud covered at high water and bare at low, with mussel beds on the harder ground.",
+  "priority": 5,
+  "rules": {"underwater": true, "region": "bay", "elev": [-2.6, 0.0]},
+  "surface": "salt_mud",
+  "subsurface": "dirt",
+  "map_color": [150, 136, 110],
+  "plants": [],
+  "features": [{"structure": "mussel_bed", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "black_oystercatcher", "count": 4},
+    {"creature": "gull", "count": 6},
+    {"creature": "sanderling", "count": 14}
+  ],
+  "collectibles": []
+}

@@ -3,19 +3,13 @@
   "version": 1,
   "introduced_by": "city",
   "notes": "A red oak planted along a street: tall, round, dark green.",
-  "form": "branching",
   "height": [10, 14],
   "trunk_radius": [0.3, 0.42],
   "buttress": 0.25,
   "crown_radius": [3.2, 4.4],
-  "bark": "bark",
-  "leaf": "leaves",
-  "curve": "arch",
-  "canopy": "lobes",
   "leader": 0.35,
   "fill": 0.8,
   "spread": 0.6,
   "max_slope": 0.7,
-  "autumn": "leaves_autumn",
-  "thin_limbs": 0.12
+  "like": "oak"
 }

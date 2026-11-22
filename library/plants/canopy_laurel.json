@@ -1,0 +1,18 @@
+{
+  "name": "canopy_laurel",
+  "version": 1,
+  "introduced_by": "canopy_test",
+  "notes": "branching: The main canopy under the emergents: tall, slim, dark-leaved broadleaf trees that close the sky at thirty metres.",
+  "form": "branching",
+  "height": [26, 34],
+  "trunk_radius": [0.8, 1.1],
+  "buttress": 0.9,
+  "crown_radius": [6, 8.5],
+  "bark": "bark",
+  "leaf": "leaves",
+  "curve": "sweep",
+  "canopy": "lobes",
+  "leader": 0.45,
+  "fill": 0.65,
+  "max_slope": 0.6
+}

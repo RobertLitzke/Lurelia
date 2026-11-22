@@ -215,7 +215,11 @@ pub fn move_body_with(store: &Store, pos: &mut Vec3, b: &mut Body, delta: Vec3, 
                 // a slab (`Store::slab`); anything else rejects it below as
                 // a stop that still hits.
                 let half = (d.y < 0.0).then(|| ((p.y * V).floor() + 0.5) / V);
-                let mut stops: Vec<f32> = std::iter::once(grid).chain(half).chain(plates).filter(|&y| if d.y < 0.0 { y >= p.y && y <= pos.y + BACK } else { y <= p.y && y >= pos.y - BACK }).collect();
+                let mut stops: Vec<f32> = std::iter::once(grid)
+                    .chain(half)
+                    .chain(plates)
+                    .filter(|&y| if d.y < 0.0 { y >= p.y && y <= pos.y + BACK } else { y <= p.y && y >= pos.y - BACK })
+                    .collect();
                 if d.y < 0.0 {
                     stops.sort_by(f32::total_cmp);
                 } else {
@@ -270,10 +274,17 @@ pub fn move_body_with(store: &Store, pos: &mut Vec3, b: &mut Body, delta: Vec3, 
             if !climbed {
                 // Slide up to the wall: the voxel face, or the side of a
                 // platform, whichever is clear and furthest along.
-                let grid = if step > 0.0 { ((p[axis] + hw) * V).floor() / V - hw - EPS } else { (((p[axis] - hw) * V).floor() + 1.0) / V + hw + EPS };
+                let grid = if step > 0.0 {
+                    ((p[axis] + hw) * V).floor() / V - hw - EPS
+                } else {
+                    (((p[axis] - hw) * V).floor() + 1.0) / V + hw + EPS
+                };
                 let plates: Vec<f32> = plates_in(store, p, hw, h).map(|s| if step > 0.0 { s.lo_m[axis] - hw } else { s.hi_m[axis] + hw }).collect();
                 let from = pos[axis];
-                let mut stops: Vec<f32> = std::iter::once(grid).chain(plates).filter(|&x| if step > 0.0 { x >= from - BACK && x <= p[axis] } else { x <= from + BACK && x >= p[axis] }).collect();
+                let mut stops: Vec<f32> = std::iter::once(grid)
+                    .chain(plates)
+                    .filter(|&x| if step > 0.0 { x >= from - BACK && x <= p[axis] } else { x <= from + BACK && x >= p[axis] })
+                    .collect();
                 stops.sort_by(|a, b| if step > 0.0 { b.total_cmp(a) } else { a.total_cmp(b) });
                 for x in stops {
                     let mut q = p;

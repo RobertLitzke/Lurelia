@@ -8,12 +8,12 @@
 //! and the full-screen flashes are drawn straight onto the `Hud`, because
 //! neither of them is in a corner.
 
+use super::round::TEAM_INK;
 use super::Shooter;
 use crate::brain::Score;
 use crate::combat::viewmodel;
 use crate::render::hud::Hud;
 use crate::render::ui::{Corner, Side, Tint};
-use super::round::TEAM_INK;
 
 /// Health, and the share of it under which the bar turns red.
 const HEALTH: Tint = Tint {

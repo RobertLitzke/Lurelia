@@ -147,6 +147,22 @@ pub struct WorldDef {
     /// bike, glide, climb, rope, screenshot, camera). Leaving it out allows all.
     #[serde(default)]
     pub modes: Option<Vec<String>>,
+    /// The games this world is built for, its own first: `["ctf", "team"]`
+    /// (explore, deathmatch, team, ctf, race). The launch screen offers
+    /// these and no others, and opens on the first. Left out, the world is
+    /// one to explore, plus whatever its `shooter` and `race` blocks allow.
+    /// Read by `launch::info`, before the world is loaded.
+    #[serde(default)]
+    #[allow(dead_code)]
+    pub games: Vec<String>,
+    /// The vehicles here, by library name (library/vehicles): `["sand_rail"]`.
+    /// The first is the one U brings unless the launch screen picks another.
+    /// A world with none has no driving, whatever `modes` says.
+    #[serde(default)]
+    pub vehicles: Vec<String>,
+    /// A race here (`RaceDef`): the launch screen offers RACE, and starts it.
+    #[serde(default)]
+    pub race: Option<RaceDef>,
     /// Height (m) above which ground turns to snow; default 72. A warm world
     /// with tall towers sets it out of reach.
     #[serde(default)]
@@ -192,6 +208,17 @@ pub struct WorldDef {
     /// you can see and how fast the sunlight fades with depth.
     #[serde(default)]
     pub underwater: Underwater,
+    /// The tide (world/tide.rs): `{"range": 2.5}` is two and a half metres
+    /// between high and low water, high at six. `sea_level_m` is high water.
+    /// Leaving it out is a still sea; a world with no open sea reaching the
+    /// edge of the map has none whatever this says.
+    #[serde(default)]
+    pub tide: Option<crate::world::tide::TideDef>,
+    /// Waves breaking on the shore (world/surf.rs): `{"height": 1.2}` is
+    /// breakers a little over a metre high on a fair day. Leaving it out is a
+    /// sea that only laps.
+    #[serde(default)]
+    pub surf: Option<crate::world::surf::SurfDef>,
     /// Which kinds of day this world gets, and how often: kind name
     /// ("sun", "heat", "clouds", "rain", "snow", "fog") to a weight
     /// (world/weather.rs). A kind left out of a block that has anything in it
@@ -235,6 +262,10 @@ pub struct WorldDef {
     /// minus this, keeps the same coast and islands under them.
     #[serde(default)]
     pub noise_at: [f32; 2],
+    /// The worlds beside this one, which it is built to meet at its edges
+    /// (`world/seam.rs`, notes/UBERWORLD_PLAN.md).
+    #[serde(default)]
+    pub neighbours: super::seam::Neighbours,
 }
 
 impl WorldDef {
@@ -728,7 +759,10 @@ mod when_tests {
 
     #[test]
     fn moon_follows_the_moon_not_the_clock() {
-        let w = When { moon: Some(true), ..Default::default() };
+        let w = When {
+            moon: Some(true),
+            ..Default::default()
+        };
         assert!(w.stands(13.0, 0.0, true, false), "the hour doesn't matter, only the moon");
         assert!(!w.stands(1.0, 0.0, false, true));
     }
@@ -888,6 +922,11 @@ pub struct Growth {
     pub plant: String,
     pub at: Vec3,
     pub out: Vec2,
+    /// The seed to grow it from. An event that needs to know the tree's
+    /// shape at chronicle time (where a canopy platform goes on the trunk)
+    /// grows it itself and passes the seed it used, so flora grows the same
+    /// tree. None takes one from the growth's place in the list.
+    pub seed: Option<u32>,
 }
 
 /// A point of interest the chronicle made, for the gazetteer and validation.
@@ -937,6 +976,15 @@ pub struct Fields {
     /// (event `reef`): strata are read at height minus this. Empty, all zero,
     /// until an event folds something.
     pub lift: Vec<f32>,
+    /// The tide (world/tide.rs): which cells are open sea and how far it has
+    /// fallen now. Off unless the world asks for one (`WorldDef::tide`).
+    pub tide: super::tide::Tide,
+    /// Surf and swell (world/surf.rs): the shore grid and the swell's waves.
+    /// Empty unless the world has surf (`WorldDef::surf`).
+    pub shore: super::surf::Shore,
+    /// Low water (m): `sea` less the tide's range, or `sea` with no tide.
+    /// Set before the rivers settle, which run their channels on down to it.
+    pub low_water: f32,
 }
 
 /// River water over one cell.
@@ -946,6 +994,11 @@ pub struct Wet {
     pub level: f32,
     /// Current, metres a second, in x and z.
     pub flow: [f32; 2],
+    /// How far the tide may draw this water down, metres: 0 for a lake, a
+    /// river that ends in one, and a river above a waterfall; for a river
+    /// running to the sea, its depth less a hand, so it never runs dry
+    /// (`Tide::river_fall`).
+    pub ebb: f32,
 }
 
 impl Fields {
@@ -1013,6 +1066,9 @@ impl Fields {
             inland: HashMap::default(),
             falls: Vec::new(),
             lift: Vec::new(),
+            tide: Default::default(),
+            shore: Default::default(),
+            low_water: sea,
         }
     }
 
@@ -1053,6 +1109,66 @@ impl Fields {
             return None;
         }
         self.inland.get(&(self.idx(x, z) as u32)).copied()
+    }
+
+    /// River water over the cell at (x, z) as it stands now, the tide drawn
+    /// out of it near the sea (`wet` is the water at high tide, which is what
+    /// the generator builds against).
+    pub fn wet_now(&self, x: f32, z: f32) -> Option<Wet> {
+        let mut w = self.wet(x, z)?;
+        w.level -= self.tide.river_fall(w.level, self.sea, w.ebb);
+        Some(w)
+    }
+
+    /// The sea's surface now: high water less what the tide has drawn out.
+    pub fn sea_now(&self) -> f32 {
+        self.sea - self.tide.drop()
+    }
+
+    /// The sea's surface at (x, z) now: `sea_now` with the swell on it, or
+    /// high water over a hollow the open sea cannot reach.
+    pub fn sea_at(&self, x: f32, z: f32) -> f32 {
+        if self.basin(x, z) {
+            return self.sea;
+        }
+        let level = self.sea_now();
+        level + self.shore.swell_at(x, z, level - self.height(x, z), self.size)
+    }
+
+    /// True for ground below the sea's level that the open sea cannot reach
+    /// (a hollow, a sunken pan): the water there stays at high water whatever
+    /// the tide does. Always false without a tide.
+    pub fn basin(&self, x: f32, z: f32) -> bool {
+        if !self.tide.on() || x < 0.0 || z < 0.0 || x >= self.size || z >= self.size {
+            return false;
+        }
+        let i = self.idx(x, z);
+        self.h[i] < self.sea && !self.tide.ocean(i)
+    }
+
+    /// Mark the open sea and start the tide (`WorldDef::tide`), after the
+    /// chronicle has given the land its last shape.
+    pub fn start_tide(&mut self, range: f32) {
+        let ocean = super::tide::ocean_cells(self.n, &self.h, self.sea);
+        self.tide = super::tide::Tide::new(range, &ocean);
+    }
+
+    /// Per texel of an `m` x `m` grid over the world, 1 where any cell under
+    /// it is a `basin`, for the renderer's sea (heightmap g): the open sea is
+    /// drawn at the tide's level, a basin at high water.
+    pub fn basin_grid(&self, m: usize) -> Vec<f32> {
+        let mut out = vec![0.0f32; m * m];
+        if !self.tide.on() {
+            return out;
+        }
+        let n = self.n;
+        for i in 0..n * n {
+            if self.h[i] < self.sea && !self.tide.ocean(i) {
+                let (x, z) = (i % n, i / n);
+                out[(z * m / n).min(m - 1) * m + (x * m / n).min(m - 1)] = 1.0;
+            }
+        }
+        out
     }
 
     /// Depth of river water at (x, z) over the bare ground, metres (0 where dry).
@@ -1247,6 +1363,37 @@ pub struct BiomeMats {
     pub fringe: f32,
 }
 
+/// A racing circuit's centreline, a point a metre or so apart, closed, in
+/// the direction a race runs; and how wide the road is.
+#[derive(Clone, Debug)]
+pub struct Circuit {
+    pub name: String,
+    pub points: Vec<glam::Vec2>,
+    /// The road's height at each point, metres.
+    pub heights: Vec<f32>,
+    pub width: f32,
+}
+
+/// A race in this world (world.json `race`): laps of a circuit against
+/// bots, everyone in the same vehicle.
+#[derive(Deserialize, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct RaceDef {
+    /// The `circuit` event's name.
+    pub circuit: String,
+    #[serde(default = "three")]
+    pub laps: u32,
+    /// Bots racing the player, 1 to 3.
+    #[serde(default = "three")]
+    pub rivals: u32,
+    /// The library vehicle everyone drives.
+    pub vehicle: String,
+}
+
+fn three() -> u32 {
+    3
+}
+
 /// A loaded, built world: its settings, the library, the fields and the lists
 /// the generator stamps.
 pub struct World {
@@ -1309,6 +1456,8 @@ pub struct World {
     pub city: super::city::City,
     /// Routed lines and what is built along them (world/route).
     pub ribbons: super::route::ribbon::Ribbons,
+    /// Racing circuits (event `circuit`): their centrelines, for a race.
+    pub circuits: Vec<Circuit>,
     pub spawn: Vec3,
     pub spawn_yaw: f32,
     /// What each event did, in order, for the gazetteer and `--validate`.
@@ -1345,8 +1494,7 @@ impl World {
     pub fn tree_bytes(&self) -> usize {
         let blob = std::mem::size_of::<super::canopy::Blob>();
         let limb = std::mem::size_of::<(Vec3, Vec3, f32)>();
-        self.trees.capacity() * std::mem::size_of::<Tree>()
-            + self.trees.iter().map(|t| t.blobs.capacity() * blob + t.branches.capacity() * limb).sum::<usize>()
+        self.trees.capacity() * std::mem::size_of::<Tree>() + self.trees.iter().map(|t| t.blobs.capacity() * blob + t.branches.capacity() * limb).sum::<usize>()
     }
 
     /// Trees whose bounds may touch the box, metres, in a fixed order. Trees

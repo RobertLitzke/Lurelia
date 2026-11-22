@@ -212,3 +212,49 @@ pub fn stamp_path(f: &mut Fields, line: &[Vec2], width: f32, m: u8) {
         }
     }
 }
+
+/// Where two polylines cross each other, in plan.
+pub fn crossing_points(a: &[Vec2], b: &[Vec2]) -> Vec<Vec2> {
+    let mut out = Vec::new();
+    let bound = |l: &[Vec2]| l.iter().fold((Vec2::splat(f32::MAX), Vec2::splat(f32::MIN)), |(lo, hi), p| (lo.min(*p), hi.max(*p)));
+    let ((alo, ahi), (blo, bhi)) = (bound(a), bound(b));
+    if alo.x > bhi.x || blo.x > ahi.x || alo.y > bhi.y || blo.y > ahi.y {
+        return out;
+    }
+    for u in a.windows(2) {
+        for v in b.windows(2) {
+            if let Some(p) = segments_cross(u[0], u[1], v[0], v[1]) {
+                out.push(p);
+            }
+        }
+    }
+    out
+}
+
+/// Where segment `a`-`b` crosses `c`-`d`, if it does.
+pub fn segments_cross(a: Vec2, b: Vec2, c: Vec2, d: Vec2) -> Option<Vec2> {
+    let r = b - a;
+    let s = d - c;
+    let den = r.perp_dot(s);
+    if den.abs() < 1e-9 {
+        return None;
+    }
+    let t = (c - a).perp_dot(s) / den;
+    let u = (c - a).perp_dot(r) / den;
+    ((0.0..=1.0).contains(&t) && (0.0..=1.0).contains(&u)).then(|| a + r * t)
+}
+
+#[cfg(test)]
+mod cross_tests {
+    use super::*;
+
+    #[test]
+    fn segments_cross_where_they_meet() {
+        let p = segments_cross(Vec2::new(0.0, 0.0), Vec2::new(10.0, 10.0), Vec2::new(0.0, 10.0), Vec2::new(10.0, 0.0)).unwrap();
+        assert!((p - Vec2::new(5.0, 5.0)).length() < 1e-4);
+        assert!(segments_cross(Vec2::ZERO, Vec2::new(1.0, 0.0), Vec2::new(0.0, 1.0), Vec2::new(1.0, 1.0)).is_none());
+        let a = [Vec2::new(0.0, 0.0), Vec2::new(10.0, 0.0), Vec2::new(10.0, 10.0)];
+        let b = [Vec2::new(5.0, -5.0), Vec2::new(5.0, 5.0), Vec2::new(15.0, 5.0)];
+        assert_eq!(crossing_points(&a, &b).len(), 2);
+    }
+}

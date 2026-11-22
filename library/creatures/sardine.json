@@ -1,18 +1,14 @@
 {
   "name": "sardine",
-  "version": 1,
+  "version": 2,
   "introduced_by": "underwater",
-  "notes": "Sardines: a bait ball of a hundred or more, turning together, opening round a diver and closing behind.",
+  "notes": "Sardines: a bait ball of a hundred or more, turning together, opening round a diver and closing behind. v2: the herring shoal's bait ball, smaller and bluer and a little deeper, rather than a second copy of it.",
   "colors": {"herring": [72, 102, 132], "silver": [192, 200, 212], "fin": [72, 102, 132]},
   "behaviour": {
-    "habit": "bait",
-    "walk_speed": 1.4,
-    "flee_speed": 4.0,
-    "leap": 0,
     "depth": [2, 8],
     "shallows": 4,
     "group": {"size": [100, 160], "spacing": 0.25, "range": 2.0, "separation": 1.0, "alignment": 1.5, "cohesion": 2.0}
   },
-  "like": "herring",
+  "like": "herring_shoal",
   "scale": 0.55
 }

@@ -80,6 +80,28 @@ Built structures (centre, age):
             pl.age
         ));
     }
+    // Natural features (rocks, logs, beds a biome scatters), which the list
+    // above leaves out: how many of each and where the first few stand, so
+    // tools/shoot_structure.py can find one to photograph.
+    let mut natural: Vec<(&str, Vec<(f32, f32)>)> = Vec::new();
+    for pl in &w.placed {
+        let d = &w.lib.structures[pl.def];
+        if d.decays || d.tags.iter().any(|t| t == "anomaly") {
+            continue;
+        }
+        let (x0, z0, x1, z1) = pl.footprint(&w.shapes);
+        let at = ((x0 + x1) as f32 * 0.125, (z0 + z1) as f32 * 0.125);
+        match natural.iter_mut().find(|(n, _)| *n == d.name.as_str()) {
+            Some((_, list)) => list.push(at),
+            None => natural.push((d.name.as_str(), vec![at])),
+        }
+    }
+    natural.sort_by(|a, b| a.0.cmp(b.0));
+    out.push_str("\nNatural features (count, first centres):\n");
+    for (name, list) in &natural {
+        let first: Vec<String> = list.iter().take(6).map(|(x, z)| format!("{x:.0},{z:.0}")).collect();
+        out.push_str(&format!("  {:<22} {:>5}  {}\n", name, list.len(), first.join("  ")));
+    }
     // Peaks: local maxima over 60 m windows.
     out.push_str("\nPeaks:\n");
     let step = 20usize;

@@ -1,0 +1,381 @@
+{
+  "$defs": {
+    "BraceDef": {
+      "description": "A strut repeated along the line, running across it on a slant: a knee\nbrace under a platform from the deck's edge in to the trunk. Its ends are\n[across, up] in metres, across measured left of the line as for a rail\n(`side: \"right\"` and `\"both\"` mirror it), up from the deck surface.",
+      "properties": {
+        "every": {
+          "format": "float",
+          "type": "number"
+        },
+        "from": {
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "mat": {
+          "type": "string"
+        },
+        "phase": {
+          "default": 0.0,
+          "format": "float",
+          "type": "number"
+        },
+        "side": {
+          "default": "both",
+          "type": "string"
+        },
+        "thick": {
+          "default": 0.25,
+          "format": "float",
+          "type": "number"
+        },
+        "to": {
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        }
+      },
+      "required": [
+        "every",
+        "from",
+        "to",
+        "mat"
+      ],
+      "type": "object"
+    },
+    "DeckDef": {
+      "description": "The slab a line rides on where it leaves the ground.",
+      "properties": {
+        "mat": {
+          "description": "The top voxel of the deck (what you walk on).",
+          "type": "string"
+        },
+        "thick": {
+          "default": 0.25,
+          "description": "How thick the slab is under the walking surface, metres.",
+          "format": "float",
+          "type": "number"
+        },
+        "under": {
+          "default": null,
+          "description": "The rest of the slab; the top material when left out.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "mat"
+      ],
+      "type": "object"
+    },
+    "PierDef": {
+      "description": "What holds a deck up where it stands clear of the ground.",
+      "properties": {
+        "every": {
+          "format": "float",
+          "type": "number"
+        },
+        "mat": {
+          "type": "string"
+        },
+        "min_drop": {
+          "default": 1.0,
+          "description": "Only where the deck stands at least this far above the ground.",
+          "format": "float",
+          "type": "number"
+        },
+        "radius": {
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "required": [
+        "every",
+        "radius",
+        "mat"
+      ],
+      "type": "object"
+    },
+    "PostDef": {
+      "description": "A member repeated along the line: a fence post, a lamp, a pier cap.",
+      "properties": {
+        "base": {
+          "default": 0.0,
+          "description": "Height above the surface the post starts at.",
+          "format": "float",
+          "type": "number"
+        },
+        "every": {
+          "description": "Metres between them, measured along the whole route.",
+          "format": "float",
+          "type": "number"
+        },
+        "mat": {
+          "type": "string"
+        },
+        "out": {
+          "default": 0.0,
+          "format": "float",
+          "type": "number"
+        },
+        "phase": {
+          "default": 0.0,
+          "description": "Metres along the route before the first one.",
+          "format": "float",
+          "type": "number"
+        },
+        "side": {
+          "default": "both",
+          "type": "string"
+        },
+        "size": {
+          "description": "Along, up, across: metres.",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        }
+      },
+      "required": [
+        "every",
+        "size",
+        "mat"
+      ],
+      "type": "object"
+    },
+    "RailDef": {
+      "description": "A member running the whole length: a guard rail, a kerb, a rope.",
+      "properties": {
+        "from": {
+          "description": "Height above the surface, metres.",
+          "format": "float",
+          "type": "number"
+        },
+        "mat": {
+          "type": "string"
+        },
+        "out": {
+          "default": 0.0,
+          "description": "Metres outward from the surface edge; negative pulls it in.",
+          "format": "float",
+          "type": "number"
+        },
+        "side": {
+          "default": "both",
+          "type": "string"
+        },
+        "thick": {
+          "default": 0.25,
+          "format": "float",
+          "type": "number"
+        },
+        "to": {
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "required": [
+        "from",
+        "to",
+        "mat"
+      ],
+      "type": "object"
+    },
+    "WalkDef": {
+      "description": "A pavement each side, past a planting gap.",
+      "properties": {
+        "gap": {
+          "default": 0.0,
+          "format": "float",
+          "type": "number"
+        },
+        "kerb": {
+          "default": null,
+          "description": "A raised lip between the surface and the gap.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mat": {
+          "type": "string"
+        },
+        "side": {
+          "default": "both",
+          "type": "string"
+        },
+        "width": {
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "required": [
+        "width",
+        "mat"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "patternProperties": {
+    "^_": {}
+  },
+  "properties": {
+    "braces": {
+      "items": {
+        "$ref": "#/$defs/BraceDef"
+      },
+      "type": "array"
+    },
+    "clear": {
+      "default": 0.0,
+      "description": "Air carved above the surface, metres: a tunnel's headroom.",
+      "format": "float",
+      "type": "number"
+    },
+    "deck": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DeckDef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ground": {
+      "default": "grade",
+      "description": "grade, deck, follow or none.",
+      "type": "string"
+    },
+    "introduced_by": {
+      "default": "",
+      "type": "string"
+    },
+    "lift": {
+      "default": 2.0,
+      "description": "How high a `deck` line rides over the ground under it, metres.",
+      "format": "float",
+      "type": "number"
+    },
+    "margin": {
+      "default": 4.0,
+      "description": "How far beside the surface a graded cut is feathered back, metres.",
+      "format": "float",
+      "type": "number"
+    },
+    "mat": {
+      "default": null,
+      "description": "Surface material; none leaves the land's own.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "max_span": {
+      "default": 80.0,
+      "description": "How far a span may reach between supports before the router gives up\nand looks for another way round, metres.",
+      "format": "float",
+      "type": "number"
+    },
+    "name": {
+      "type": "string"
+    },
+    "notes": {
+      "default": "",
+      "type": "string"
+    },
+    "piers": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PierDef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "posts": {
+      "items": {
+        "$ref": "#/$defs/PostDef"
+      },
+      "type": "array"
+    },
+    "rails": {
+      "items": {
+        "$ref": "#/$defs/RailDef"
+      },
+      "type": "array"
+    },
+    "sag": {
+      "default": 0.0,
+      "description": "How far the deck sags at mid-span, metres (rope bridges).",
+      "format": "float",
+      "type": "number"
+    },
+    "shoulder": {
+      "default": null,
+      "description": "Material for the last metre each side of the surface.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "span": {
+      "default": null,
+      "description": "The kit for stretches that leave the ground; none keeps this one.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tags": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "version": {
+      "default": 1,
+      "format": "uint32",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "walk": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WalkDef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "width": {
+      "default": 0.0,
+      "description": "Width of the surface, metres. 0 for a bare line (a fence).",
+      "format": "float",
+      "type": "number"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "title": "KitDef",
+  "type": "object"
+}

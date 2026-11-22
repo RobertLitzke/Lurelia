@@ -56,6 +56,7 @@ registry! {
     mesa: Mesa,
     road: Road,
     track: Track,
+    circuit: Circuit,
     spires: Spires,
     reef: Reef,
     dunes: Dunes,
@@ -88,6 +89,7 @@ registry! {
     glaciate: Glaciate,
     seat: Seat,
     strandline: Strandline,
+    canopy_town: CanopyTown,
 }
 
 pub fn find(name: &str) -> Option<&'static EventType> {

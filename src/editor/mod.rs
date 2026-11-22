@@ -1044,8 +1044,26 @@ static PLANT_KNOBS: &[Knob] = &[
         2,
         "Canes with tufts: how far a cane arches toward its tip. 0 stands straight; a buckthorn is about 0.07.",
     ),
-    num(2, "CANE LEAVES", "cane_leaves", 0.0, 1.0, 0.05, 2, "Canes with tufts: the chance of a leaf tuft at each upper joint. Low for near-leafless switches."),
-    num(2, "CANE SPURS", "cane_spurs", 0.0, 1.0, 0.05, 2, "Canes with tufts: the chance of a side spur on each segment. 0 for clean stems."),
+    num(
+        2,
+        "CANE LEAVES",
+        "cane_leaves",
+        0.0,
+        1.0,
+        0.05,
+        2,
+        "Canes with tufts: the chance of a leaf tuft at each upper joint. Low for near-leafless switches.",
+    ),
+    num(
+        2,
+        "CANE SPURS",
+        "cane_spurs",
+        0.0,
+        1.0,
+        0.05,
+        2,
+        "Canes with tufts: the chance of a side spur on each segment. 0 for clean stems.",
+    ),
     // ---- 3: materials ----
     mat(3, "BARK", "bark", "The material the trunk and limbs are drawn in."),
     mat(3, "LEAF", "leaf", "The material the foliage is drawn in."),
@@ -1789,7 +1807,9 @@ pub mod fmt {
     /// The per-kind key order, kept the same as tools/libfmt.py's ORDER.
     fn order(kind: &str) -> &'static [&'static str] {
         match kind {
-            "materials" => &["id", "smooth", "crisp", "passable", "water", "glow", "glints", "foliage", "tint", "drift", "texture", "top", "bottom"],
+            "materials" => &[
+                "like", "shade", "hue", "was", "id", "smooth", "crisp", "passable", "slab", "water", "glow", "glints", "foliage", "surface", "tint", "drift", "sprites", "texture", "top", "bottom",
+            ],
             "plants" => &[
                 "form",
                 "height",

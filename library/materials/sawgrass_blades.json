@@ -4,6 +4,7 @@
   "introduced_by": "lowmouth",
   "notes": "Sawgrass: tough tawny-green blades with toothed edges, in tussocks out of the water.",
   "smooth": false,
+  "sprites": "sawgrass",
   "texture": {
     "pattern": "grain",
     "base": [132, 132, 76],

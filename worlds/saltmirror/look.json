@@ -1,19 +1,72 @@
 {
-  "notes": "White glare off the salt: near ground bleached and neutral, the middle distance faintly warm, the far pan going to the pale blue of the sky it mirrors, and haze lying low so the dishes on the horizon lift off it.",
+  "notes": "White glare off the salt under a hard blue sky. The near ground stays neutral, the far pan goes pale cyan, and the horizon carries a blush of rose where salt and sky meet, so the dishes lift off a line of colour instead of a line of white.",
   "ramp": [
-    {"at": 0.0, "color": [1.0, 0.99, 0.96]},
-    {"at": 0.45, "color": [0.99, 0.96, 0.92]},
-    {"at": 1.0, "color": [0.76, 0.86, 1.0]}
+    {
+      "at": 0,
+      "color": [
+        1.0,
+        0.99,
+        0.97
+      ]
+    },
+    {
+      "at": 0.35,
+      "color": [
+        0.84,
+        0.96,
+        1.04
+      ]
+    },
+    {
+      "at": 0.72,
+      "color": [
+        0.72,
+        0.84,
+        1.1
+      ]
+    },
+    {
+      "at": 1,
+      "color": [
+        0.96,
+        0.8,
+        0.96
+      ]
+    }
   ],
   "knobs": {
-    "ramp_reach": 1100.0,
-    "ramp_curve": 0.6,
-    "haze_density": 1.1,
-    "haze_height": 140.0,
-    "sun_glow": 0.5,
-    "exposure": 1.02,
-    "saturation": 0.94
+    "ramp_reach": 1200.0,
+    "ramp_curve": 0.5,
+    "haze_density": 0.9,
+    "haze_height": 120.0,
+    "sun_glow": 0.4,
+    "exposure": 1.0,
+    "saturation": 1.08,
+    "ramp_value": 0.85,
+    "haze_ramp": 0.9,
+    "sky_ramp": 0.4,
+    "sky_reach": 0.32,
+    "shade_ramp": 0.75,
+    "contrast": 0.38
   },
-  "ambient": [0.62, 0.92, 1.08],
-  "sun_tint": [1.04, 1.0, 0.95]
+  "ambient": [
+    0.52,
+    0.9,
+    1.16
+  ],
+  "sun_tint": [
+    1.03,
+    1.0,
+    0.96
+  ],
+  "zenith": [
+    0.05,
+    0.36,
+    1.14
+  ],
+  "horizon": [
+    0.66,
+    0.84,
+    1.12
+  ]
 }

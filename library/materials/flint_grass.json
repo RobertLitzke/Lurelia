@@ -4,6 +4,7 @@
   "introduced_by": "windbarrow",
   "notes": "The cover of the Flint Down: thin tawny-khaki grass with chalk and black flint showing through everywhere.",
   "smooth": true,
+  "sprites": "grass",
   "texture": {
     "pattern": "speckle",
     "base": [120, 116, 94],

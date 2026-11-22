@@ -5,6 +5,7 @@
   "notes": "Tan, summer-dry bunchgrass. Only a tint: the grass tufts on pine_duff take this colour (mesh/sprites.rs).",
   "id": 145,
   "smooth": true,
+  "sprites": "grass",
   "texture": {
     "pattern": "noise",
     "base": [176, 150, 98],

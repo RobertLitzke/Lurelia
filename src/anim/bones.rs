@@ -14,9 +14,9 @@
 //! The parts come out on the creature's own rig, so a skeleton walks, lies,
 //! sags and ragdolls through exactly the same code as the animal did.
 
-use crate::anim::Role;
 use super::slice::Sliced;
 use super::Rig;
+use crate::anim::Role;
 use crate::models::Model;
 use glam::Vec3;
 

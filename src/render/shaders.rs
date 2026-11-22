@@ -65,6 +65,10 @@ fn prelude() -> String {
         // rock into a cave or a buried room (scene.wgsl under_land);
         // VOXEL_SUNK_SHADOW=0 for comparisons.
         format!("const SUNK_ON: bool = {};", env_on("VOXEL_SUNK_SHADOW")),
+        // The shadow maps' depth bias (scene.wgsl cascade_shadow):
+        // VOXEL_SHADOW_BIAS=legacy brings back the fixed 0.24 m (0.54 m
+        // saturated) bias it replaced, for comparisons.
+        format!("const SHADOW_BIAS_LEGACY: bool = {};", std::env::var("VOXEL_SHADOW_BIAS").is_ok_and(|v| v == "legacy")),
         // How much of the sky fill a closed-in hollow loses.
         format!("const SKY_OPENNESS: f32 = {:?};", 0.55f32),
         // The grass understory (scene.wgsl); VOXEL_UNDERSTORY=0 for comparisons.

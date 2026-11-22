@@ -2,12 +2,12 @@
   "name": "rabbitbrush",
   "version": 1,
   "introduced_by": "redrock",
-  "notes": "Rubber rabbitbrush: a rounded bush of many upright felted grey-green stems, each topped with mustard-yellow flower heads in late summer and autumn, in washes and disturbed ground. You walk through it.",
+  "notes": "Rubber rabbitbrush: a rounded bush of many upright felted grey-green stems, each topped with mustard-yellow flower heads in late summer and autumn, in washes and disturbed ground. You walk through it. No leaf tufts (cane_leaves 0): the rabbitbrush leaf material is a herb marker that would grow a whole bush sprite on every tuft voxel. The flower heads are rabbitbrush_flowers marker voxels drawn as small yellow sprays (mesh/sprites.rs).",
   "form": "canes",
   "height": [0.6, 1.0],
   "trunk_radius": [0.05, 0.05],
   "crown_radius": [0.5, 0.7],
-  "bark": "rabbitbrush_stem",
+  "bark": "straw_stem",
   "leaf": "rabbitbrush",
   "canopy": "tufts",
   "max_slope": 0.9,
@@ -18,5 +18,6 @@
   "cane_spurs": 0.5,
   "flower": "rabbitbrush_flowers",
   "flower_tips": true,
-  "flower_seasons": ["summer", "autumn"]
+  "flower_seasons": ["summer", "autumn"],
+  "cane_leaves": 0.0
 }

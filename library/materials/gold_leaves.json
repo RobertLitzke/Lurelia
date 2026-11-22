@@ -5,6 +5,7 @@
   "notes": "Leaves that stay gold all year, faintly bright in shade.",
   "id": 187,
   "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "maple"},
   "texture": {
     "pattern": "blotch",
     "base": [222, 186, 86],

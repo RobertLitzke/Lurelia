@@ -22,6 +22,9 @@ const CROUCH_H: f32 = 1.05;
 const CROUCH_DROP: f32 = 0.62;
 /// Seconds to go all the way down, and back up.
 const CROUCH_RATE: f32 = 6.0;
+/// Seconds for A/D's view turn while riding to come most of the way up to
+/// speed, or down from it (`Player::turn_by_keys`).
+const KEY_TURN_EASE: f32 = 0.12;
 /// How hard the keys push a body in the air, m/s squared, against 60 on the
 /// ground.
 const AIR_ACCEL: f32 = 16.0;
@@ -71,6 +74,8 @@ pub struct MoveInput {
     /// Q and E held: the camera's manual focus, nearer and further.
     pub focus_near: bool,
     pub focus_far: bool,
+    /// U held: in the car, a tap gets out and a hold resets it.
+    pub vehicle: bool,
 }
 
 pub struct Player {
@@ -85,6 +90,10 @@ pub struct Player {
     pub eye_offset: f32,
     prev_eye_offset: f32,
     eye_vel: f32,
+    /// How fast A/D are turning the view while riding, radians a second:
+    /// eased toward the key's rate, so a press winds the turn up and a
+    /// release winds it down instead of starting and stopping dead.
+    key_turn_v: f32,
     lift: f32,
     pub swimming: bool,
     /// Seconds left of a haul-out: the push that carries a swimmer over the
@@ -139,6 +148,7 @@ impl Player {
             eye_offset: 0.0,
             prev_eye_offset: 0.0,
             eye_vel: 0.0,
+            key_turn_v: 0.0,
             lift: 0.0,
             swimming: false,
             haul: 0.0,
@@ -189,10 +199,17 @@ impl Player {
     pub fn turn_by_keys(&mut self, ride: &Ride, input: &MoveInput, dt: f32) {
         let rate = ride.key_turn();
         if rate == 0.0 {
+            self.key_turn_v = 0.0;
             return;
         }
         let keys = input.right as i32 as f32 - input.left as i32 as f32;
-        self.yaw -= keys * rate * dt;
+        // A tenth of a second or so to reach the full rate, and as long to
+        // stop: a held key turns as before, a tap nudges.
+        let k = 1.0 - (-dt / KEY_TURN_EASE).exp();
+        let v0 = self.key_turn_v;
+        self.key_turn_v += (keys * rate - v0) * k;
+        // The average rate over the frame, so the turn is the same at any fps.
+        self.yaw -= 0.5 * (v0 + self.key_turn_v) * dt;
     }
 
     pub fn forward(&self) -> Vec3 {
@@ -607,6 +624,33 @@ mod tests {
     use super::*;
     use crate::world::material::STONE;
     use crate::world::store::Voxels;
+
+    /// A/D on the bike: held for a second it turns the same at 60 and 240
+    /// fps, nearly the full 2 rad; a single frame's tap turns only a little;
+    /// and let go, the turn winds down rather than stopping dead.
+    #[test]
+    fn key_turn_eases_in_and_out() {
+        let mut ride = crate::ride::Ride::default();
+        ride.mode = crate::ride::Mode::Bike;
+        let left = MoveInput { left: true, ..Default::default() };
+        let mut held = Vec::new();
+        for fps in [60.0f32, 240.0] {
+            let mut p = Player::new(Vec3::ZERO, 0.0);
+            let dt = 1.0 / fps;
+            for _ in 0..fps as i32 {
+                p.turn_by_keys(&ride, &left, dt);
+            }
+            let at_release = p.yaw;
+            p.turn_by_keys(&ride, &MoveInput::default(), dt);
+            assert!(p.yaw > at_release, "stopped dead on release");
+            held.push(at_release);
+        }
+        assert!((held[0] - held[1]).abs() < 0.01, "fps changes the turn: {held:?}");
+        assert!(held[0] > 1.7 && held[0] < 2.0, "a held second turned {}", held[0]);
+        let mut p = Player::new(Vec3::ZERO, 0.0);
+        p.turn_by_keys(&ride, &left, 1.0 / 60.0);
+        assert!(p.yaw < 0.5 * 2.0 / 60.0, "a tap jumped {}", p.yaw);
+    }
 
     fn stairs() -> Store {
         let mut s = Store::default();

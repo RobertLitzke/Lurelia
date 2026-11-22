@@ -4,6 +4,8 @@
   "size_m": 1024,
   "height_m": 160,
   "sea_level_m": 12,
+  "tide": {"range": 2.5, "high": 4.0},
+  "surf": {"height": 0.35},
   "underwater": {"visibility": 30, "light": 0.07},
   "seed": 400,
   "sun": {"latitude": 32},

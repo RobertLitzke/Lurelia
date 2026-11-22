@@ -5,6 +5,7 @@
   "notes": "Cottage-garden and dog roses: green leaves thick with pink blooms.",
   "id": 73,
   "smooth": false,
+  "sprites": "rose bush",
   "texture": {
     "pattern": "speckle",
     "base": [70, 108, 50],

@@ -5,6 +5,7 @@
   "notes": "Narrow yellow-green bamboo leaves in feathery sprays.",
   "id": 236,
   "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "narrow"},
   "texture": {
     "pattern": "blotch",
     "base": [88, 124, 52],

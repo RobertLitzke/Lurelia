@@ -146,6 +146,9 @@ impl Threat {
             Mode::Climb => 0.55,
             Mode::Swing => 0.8,
             Mode::Kayak => 0.65,
+            // An engine: loud, fast and big. Most things are gone before it
+            // arrives.
+            Mode::Drive => 2.0,
         };
         let flat = Vec3::new(vel.x, 0.0, vel.z);
         // A bike rattles whatever the ground; a glider and a kayak are
@@ -156,6 +159,7 @@ impl Threat {
             Mode::Wing => 0.0,
             Mode::Climb | Mode::Swing => 0.2,
             Mode::Kayak => 0.15,
+            Mode::Drive => 2.5 + flat.length() / 6.0,
         };
         Threat {
             pos,

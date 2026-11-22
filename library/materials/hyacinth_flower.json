@@ -4,6 +4,7 @@
   "introduced_by": "lowmouth",
   "notes": "Water hyacinth flowers: pale lilac spikes with a yellow eye.",
   "smooth": false,
+  "sprites": "flower",
   "texture": {
     "pattern": "speckle",
     "base": [164, 136, 204],

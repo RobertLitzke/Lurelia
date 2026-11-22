@@ -15,10 +15,10 @@ pub mod lamps;
 pub mod occlusion;
 pub mod overlay;
 pub mod particles;
-pub mod signs;
 pub mod plates;
 pub mod recipes;
 pub mod shaders;
+pub mod signs;
 pub mod sprite_plants;
 pub mod sprite_tex;
 pub mod texopts;
@@ -54,7 +54,7 @@ pub const MAX_SLOTS: u32 = 65536;
 pub const SHADOW_SIZE: u32 = 2048;
 /// Cells across the mist map (see `set_mist`).
 pub const MIST_N: u32 = 256;
-pub const MAX_ENTITY_QUADS: u32 = 1 << 17;
+pub const MAX_ENTITY_QUADS: u32 = 1 << 18;
 pub const MAX_INSTANCES: u32 = 8192;
 pub const MAX_HUD: u32 = 16384;
 /// Side of the heightmap the water and mist read (set_world).
@@ -79,6 +79,9 @@ pub struct RiverQuad {
     pub bed: [f32; 4],
     pub flow_x: [f32; 4],
     pub flow_z: [f32; 4],
+    /// Per corner, how far the tide may draw the water down (`Wet::ebb`);
+    /// unused by a fall's sheet.
+    pub ebb: [f32; 4],
 }
 
 /// Where a waterfall lands, for its spray (vs_spray) and for the pool it
@@ -91,6 +94,10 @@ pub struct Spray {
     pub at: [f32; 4],
     pub dir: [f32; 4],
 }
+
+/// Vertices along a side of the open sea's mesh when it has a swell
+/// (`vs_water`, `SEA_GRID` in scene.wgsl is the same).
+pub const SEA_GRID: u32 = 192;
 
 /// Most waterfalls a world can throw spray from.
 pub const SPRAY_CAP: usize = 4096;
@@ -297,6 +304,15 @@ pub struct Globals {
     /// Lightning (`FrameParams::bolt`): where it comes to ground, its seed,
     /// how bright it is now.
     bolt: [f32; 4],
+    /// The tide (world/tide.rs): x = how far the sea has fallen from high
+    /// water, y = the range, z = high water, w = 1 with a tide.
+    tide: [f32; 4],
+    /// The surf (world/surf.rs): x = breaker height on a fair day, y = wave
+    /// length, z = period, w = 1 with surf.
+    surf: [f32; 4],
+    /// The swell (world/surf.rs): x, z = the way it runs, z = crest to
+    /// trough on a fair day, w = the longest wave's length; z = 0 for none.
+    swell: [f32; 4],
 }
 
 /// The visual style: textures, palette, lighting and grade change together.
@@ -400,6 +416,9 @@ pub struct FrameParams<'a> {
     pub cam_fwd: Vec3,
     pub time: f32,
     pub underwater: bool,
+    /// The open sea's surface now: high water (`set_world`) less the tide
+    /// (world/tide.rs).
+    pub sea: f32,
     /// The water surface over the camera (the sea level when it is dry).
     pub water_level: f32,
     pub highlight: Option<(Vec3, Vec3)>,
@@ -446,6 +465,9 @@ pub struct FrameParams<'a> {
     pub bolt: [f32; 4],
     /// The heat mirage, 0 to 1 (post.wgsl `mirage`).
     pub mirage: f32,
+    /// The level of the ground the mirage lies over, metres: the ground
+    /// under the camera.
+    pub mirage_floor: f32,
     /// The camera's lens and viewfinder (src/camera), when it is up.
     pub lens: Option<LensFx>,
     /// A map floating in space (world.json `space`): the sky is black with
@@ -575,6 +597,17 @@ impl ChunkSink for TerrainBuffers {
         let size = 32.0 * scale;
         // Sloped and rounded corners move up to a voxel, so the box grows by one.
         let slack = Vec3::splat(scale);
+        // Kelp rises from its holdfast to the surface, lies along it and
+        // sways (sprites.rs STRAND): the box reaches as high as the longest
+        // strand could, and as far to the sides, or a chunk on the bed would
+        // be culled while its canopy is in view.
+        let mut reach = Vec3::ZERO;
+        for q in mesh.sprites.iter().filter(|q| (q[1] >> 8) & 255 == crate::mesh::sprites::STRAND) {
+            let y = (((q[0] >> 20) & 2047) as f32 / 16.0 - 2.0) * scale;
+            let len = ((q[2] >> 16) & 255) as f32 / 8.0;
+            reach = reach.max(Vec3::new(len, y + len - size, len));
+        }
+        let (lo, hi) = (Vec3::new(reach.x, 0.0, reach.z), reach.max(Vec3::ZERO));
         Some(GpuChunk {
             cy: 0,
             slot,
@@ -587,8 +620,8 @@ impl ChunkSink for TerrainBuffers {
             sprite_grass: mesh.sprite_grass,
             sprite_patch: mesh.sprite_patch,
             sprite_stalk: mesh.sprite_stalk,
-            min: origin - slack,
-            max: origin + Vec3::splat(size) + slack,
+            min: origin - slack - lo,
+            max: origin + Vec3::splat(size) + slack + hi,
         })
     }
 
@@ -849,6 +882,7 @@ pub struct Renderer {
     /// Entities drawn see-through (`models::GLASS`): blended, writing no depth.
     p_entity_glass: wgpu::RenderPipeline,
     p_water: wgpu::RenderPipeline,
+    p_water_basin: wgpu::RenderPipeline,
     p_river: wgpu::RenderPipeline,
     p_fall: wgpu::RenderPipeline,
     p_spray: wgpu::RenderPipeline,
@@ -912,7 +946,14 @@ pub struct Renderer {
     frame_no: u64,
     pub splits: [f32; 3],
     world_size: f32,
+    /// High water: the sea level the world was built against.
     sea_level: f32,
+    /// Metres between high and low water (`set_tide`); 0 for a still sea.
+    tide_range: f32,
+    /// The surf (`set_surf`, world/surf.rs): height, length, period, on.
+    surf: [f32; 4],
+    /// The swell (`set_surf`): heading x, z, height, length; height 0 for none.
+    swell: [f32; 4],
     /// The world's underwater visibility (m) and light falloff (/m).
     under: [f32; 2],
     /// Sized to `matlib::layer_count` at the last install; a world's own ids
@@ -1252,7 +1293,7 @@ impl Renderer {
             usage: wgpu::BufferUsages::INDEX,
         });
         let cascade_buf = buf("cascades", 256 * SHADOW_LAYERS as u64, wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST);
-        let einst_buf = buf("entity instances", MAX_INSTANCES as u64 * 64, st);
+        let einst_buf = buf("entity instances", MAX_INSTANCES as u64 * std::mem::size_of::<Instance>() as u64, st);
         let overlay_buf = buf("overlay lines", (overlay::MAX_LINES * std::mem::size_of::<overlay::Line>()) as u64, st);
         let lamp_buf = buf("lamps", (lamps::MAX * std::mem::size_of::<lamps::Lamp>()) as u64, st);
         let plate_buf = buf("sign plates", (plates::MAX_PLATES * std::mem::size_of::<plates::Plate>()) as u64, st);
@@ -1305,12 +1346,16 @@ impl Renderer {
                 mip_level_count: 1,
                 sample_count: 1,
                 dimension: wgpu::TextureDimension::D2,
-                format: wgpu::TextureFormat::R32Float,
+                // r = the ground, g = 1 over a hollow below sea level the
+                // open sea cannot reach (world/tide.rs), b = metres seaward
+                // of the high-water coast, a = how open the sea is there
+                // (world/surf.rs). See `set_world`.
+                format: wgpu::TextureFormat::Rgba32Float,
                 usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
                 view_formats: &[],
             },
             wgpu::util::TextureDataOrder::LayerMajor,
-            bytemuck::cast_slice(&heights),
+            bytemuck::cast_slice(&heights.iter().flat_map(|h| [*h, 0.0, 0.0, 0.0]).collect::<Vec<f32>>()),
         );
         let hm_view = hm.create_view(&Default::default());
 
@@ -1780,9 +1825,17 @@ impl Renderer {
         // `mirror`).
         let water_blend = Some(wgpu::BlendState {
             color: wgpu::BlendState::ALPHA_BLENDING.color,
-            alpha: wgpu::BlendComponent { src_factor: wgpu::BlendFactor::One, dst_factor: wgpu::BlendFactor::One, operation: wgpu::BlendOperation::Add },
+            alpha: wgpu::BlendComponent {
+                src_factor: wgpu::BlendFactor::One,
+                dst_factor: wgpu::BlendFactor::One,
+                operation: wgpu::BlendOperation::Add,
+            },
         });
         let p_water = scene("water", "vs_water", "fs_water", None, (false, ge, nobias), water_blend, tri);
+        // The high-water plane over hollows the open sea cannot reach (with a
+        // tide) writes its depth, so the reflections in post.wgsl take it as
+        // a pool at its own surface rather than the open sea's level.
+        let p_water_basin = scene("water basin", "vs_water", "fs_water", None, (true, ge, nobias), water_blend, tri);
         let p_river = scene("river", "vs_river", "fs_water", None, (false, ge, nobias), water_blend, tri);
         let p_fall = scene("waterfall", "vs_fall", "fs_fall", None, (false, ge, nobias), blend, tri);
         let p_spray = scene("spray", "vs_spray", "fs_spray", None, (false, ge, nobias), blend, tri);
@@ -1792,6 +1845,8 @@ impl Renderer {
         // Sign boards and letters: depth-tested against the world but writing
         // no depth, so the letters sit over the board they stand on.
         let p_plate = scene("plates", "vs_plate", "fs_plate", None, (true, ge, nobias), blend, tri);
+        // Measured 2026-11-21 against none at all: it moves shadow edges by a
+        // few pixels at most, and without it leaf crowns speckle.
         let sbias = wgpu::DepthBiasState {
             constant: 2,
             slope_scale: 1.5,
@@ -1818,7 +1873,11 @@ impl Renderer {
         // culling faces that point at the light changes nothing for flat ground
         // and keeps sunlit slopes out of the map.
         let p_shadow_terrain = shadow_pipe("shadow terrain", "vs_shadow_terrain", None, Some(wgpu::Face::Front));
-        let p_shadow_entity = shadow_pipe("shadow entity", "vs_shadow_entity", Some("fs_shadow_entity"), None);
+        // Entities too cast from the faces turned from the light: their
+        // models are closed (the scene pass culls their back faces), so a lit
+        // face is compared against the far side of its own body and can take
+        // the tight shadow bias (scene.wgsl SHADOW_TIGHT).
+        let p_shadow_entity = shadow_pipe("shadow entity", "vs_shadow_entity", Some("fs_shadow_entity"), if std::env::var("VOXEL_SHADOW_BIAS").is_ok_and(|v| v == "legacy") { None } else { Some(wgpu::Face::Front) });
         let p_rays = pipeline(
             &device,
             PipeDesc {
@@ -1937,6 +1996,7 @@ impl Renderer {
             p_entity,
             p_entity_glass,
             p_water,
+            p_water_basin,
             p_river,
             p_fall,
             p_spray,
@@ -1987,6 +2047,9 @@ impl Renderer {
             splits: [16.0, 50.0, 160.0],
             world_size,
             sea_level,
+            tide_range: 0.0,
+            surf: [0.0; 4],
+            swell: [0.0; 4],
             under: [14.0, 0.16],
             blocks: tex,
             blocks_samp: samp,
@@ -2217,11 +2280,23 @@ impl Renderer {
     /// Set how misty the land is: `mist` is `n` x `n` cells over the world,
     /// 0 (clear) to 1 (thick banks), from the biomes (Generator::mist_grid).
     /// Show a world: its heightmap (HEIGHTS_N square, metres, for the water and
-    /// the mist), size and sea level. Every terrain chunk of the last world is
-    /// dropped; call set_mist and set_models after.
-    pub fn set_world(&mut self, heights: &[f32], world_size: f32, sea_level: f32) {
+    /// the mist), size and sea level (high water). `shore` is HEIGHTS_N square
+    /// too, or empty: per texel 1 where the ground is a hollow below sea level
+    /// the open sea cannot reach (`Fields::basin_grid`), metres seaward of the
+    /// coast and how open the sea is (`surf::shore_grid`). Every terrain chunk
+    /// of the last world is dropped; call set_tide, set_surf, set_mist and
+    /// set_models after.
+    pub fn set_world(&mut self, heights: &[f32], shore: &[[f32; 3]], world_size: f32, sea_level: f32) {
         let n = HEIGHTS_N;
         assert_eq!(heights.len(), (n * n) as usize, "heightmap must be HEIGHTS_N square");
+        let texels: Vec<f32> = heights
+            .iter()
+            .enumerate()
+            .flat_map(|(i, h)| {
+                let [b, s, o] = shore.get(i).copied().unwrap_or([0.0; 3]);
+                [*h, b, s, o]
+            })
+            .collect();
         self.queue.write_texture(
             wgpu::TexelCopyTextureInfo {
                 texture: &self.heights_tex,
@@ -2229,10 +2304,10 @@ impl Renderer {
                 origin: wgpu::Origin3d::ZERO,
                 aspect: wgpu::TextureAspect::All,
             },
-            bytemuck::cast_slice(heights),
+            bytemuck::cast_slice(&texels),
             wgpu::TexelCopyBufferLayout {
                 offset: 0,
-                bytes_per_row: Some(4 * n),
+                bytes_per_row: Some(16 * n),
                 rows_per_image: Some(n),
             },
             wgpu::Extent3d {
@@ -2271,6 +2346,9 @@ impl Renderer {
         self.occlusion.reset();
         self.world_size = world_size;
         self.sea_level = sea_level;
+        self.tide_range = 0.0;
+        self.surf = [0.0; 4];
+        self.swell = [0.0; 4];
         self.terrain.reset();
         self.river_n = 0;
         self.fall_n = 0;
@@ -2364,6 +2442,27 @@ impl Renderer {
 
     /// Water colours (Generator::water_grid) and each alternate's share per
     /// cell of an n x n grid go in with the mist, in the mist map's b and a.
+    /// The tide's range in metres (world/tide.rs); 0, the default after
+    /// `set_world`, is a still sea.
+    pub fn set_tide(&mut self, range: f32) {
+        self.tide_range = range.max(0.0);
+    }
+
+    /// The surf breaking on this world's shores and the swell on its open
+    /// sea (world/surf.rs); none after `set_world`.
+    pub fn set_surf(&mut self, s: [f32; 4], swell: [f32; 4]) {
+        self.surf = s;
+        self.swell = swell;
+    }
+
+    fn swell_on(&self) -> bool {
+        self.swell[2] > 0.0
+    }
+
+    fn tide_on(&self) -> bool {
+        self.tide_range > 0.0
+    }
+
     /// The world's underwater visibility and light falloff.
     pub fn set_underwater(&mut self, u: crate::world::fields::Underwater) {
         self.under = [u.visibility.max(1.0), u.light.max(0.0)];
@@ -2500,7 +2599,7 @@ impl Renderer {
             });
             all.extend(m.mesh.quads.iter().map(|q| [q[0], (q[1] & 0xffff) | m.block << crate::mesh::quad::SLOT_SHIFT, q[2], q[3]]));
         }
-        assert!(all.len() as u32 <= MAX_ENTITY_QUADS);
+        assert!(all.len() as u32 <= MAX_ENTITY_QUADS, "{} entity quads, past MAX_ENTITY_QUADS", all.len());
         self.queue.write_buffer(&self.equad_buf, 0, bytemuck::cast_slice(&all));
     }
 
@@ -2558,7 +2657,7 @@ impl Renderer {
                 self.air.warmth,
                 p.streaks.clamp(0.0, 1.0),
                 p.time.rem_euclid(64.0),
-                0.0,
+                p.mirage_floor,
                 0.0,
                 // The weather's falling stuff, where the camera is looking so
                 // it sweeps past as you turn, and the horizon colour the rain
@@ -2579,7 +2678,7 @@ impl Renderer {
                 p.cam_pos.x,
                 p.cam_pos.y,
                 p.cam_pos.z,
-                self.sea_level,
+                p.sea,
             ]),
         );
         let vp = p.proj * p.view;
@@ -2835,11 +2934,7 @@ impl Renderer {
                         // loads dropped all its cover, out to its far side:
                         // bare ground near, cover further off.
                         let reach = (cam - c.min).abs().max((cam - c.max).abs()).length();
-                        let end = if ranges && reach < foliage::PATCH_FADE[0] {
-                            c.sprites - c.sprite_patch
-                        } else {
-                            c.sprites
-                        };
+                        let end = if ranges && reach < foliage::PATCH_FADE[0] { c.sprites - c.sprite_patch } else { c.sprites };
                         let n = end.saturating_sub(skip);
                         if n > 0 {
                             sprite_list.push((dist, qdraw(n, off + skip), bi));
@@ -2976,6 +3071,7 @@ impl Renderer {
         self.signs.upload(&self.queue, p.marks, p.cam_pos);
         self.foliage.upload_trample(&self.queue, p.marks, p.cam_pos);
         let au = aurora::uniform(p.hour);
+        let sea_now = if self.tide_on() { p.sea } else { self.sea_level };
         let globals = Globals {
             view_proj: view_proj.to_cols_array(),
             inv_view_proj: inv.to_cols_array(),
@@ -2986,7 +3082,7 @@ impl Renderer {
             sky_zenith: [lk.zenith[0], lk.zenith[1], lk.zenith[2], 0.0],
             sky_horizon: [lk.horizon[0], lk.horizon[1], lk.horizon[2], 0.0],
             ground_color: [lk.ground[0], lk.ground[1], lk.ground[2], 0.0],
-            fog: [lk.fog_density, self.sea_level, if p.underwater { 1.0 } else { 0.0 }, self.world_size],
+            fog: [lk.fog_density, sea_now, if p.underwater { 1.0 } else { 0.0 }, self.world_size],
             splits: [self.splits[0], self.splits[1], self.splits[2], 0.0],
             screen: [self.width as f32, self.height as f32, 1.0 / self.width as f32, 1.0 / self.height as f32],
             cam_fwd: [p.cam_fwd.x, p.cam_fwd.y, p.cam_fwd.z, 0.0],
@@ -3006,11 +3102,14 @@ impl Renderer {
             weather: p.sky.uniform(),
             season: p.season.uniform(),
             aurora: au,
-            under: [p.water_level, self.under[0], self.under[1], if p.water_level > self.sea_level + 0.05 { 1.0 } else { 0.0 }],
+            under: [p.water_level, self.under[0], self.under[1], if p.water_level > sea_now + 0.05 { 1.0 } else { 0.0 }],
             snow: [p.snow_cover, if p.space { 1.0 } else { 0.0 }, 0.0, 0.0],
             studio: p.studio.map_or([0.0; 4], |(x, z, half)| [x, z, half, 1.0]),
             damp: if p.space { [0.0; 4] } else { p.damp },
             bolt: p.bolt,
+            tide: [self.sea_level - sea_now, self.tide_range, self.sea_level, if self.tide_on() { 1.0 } else { 0.0 }],
+            surf: if p.space { [0.0; 4] } else { self.surf },
+            swell: if p.space { [0.0; 4] } else { self.swell },
         };
         self.queue.write_buffer(&self.globals_buf, 0, bytemuck::bytes_of(&globals));
 
@@ -3161,7 +3260,15 @@ impl Renderer {
                 pr.in_pass(&mut pass, 6);
             }
             pass.set_pipeline(&self.p_water);
-            pass.draw(0..6, 0..1);
+            // The open sea: a mesh round the camera that the swell moves, or
+            // one quad where there is none (vs_water). With a tide, a second
+            // plane at high water for the hollows the open sea cannot reach.
+            let sea_verts = if self.swell_on() { 6 * (SEA_GRID - 1) * (SEA_GRID - 1) } else { 6 };
+            pass.draw(0..sea_verts, 0..1);
+            if self.tide_on() {
+                pass.set_pipeline(&self.p_water_basin);
+                pass.draw(0..6, 1..2);
+            }
             if self.river_n > 0 {
                 pass.set_pipeline(&self.p_river);
                 pass.draw(0..6 * self.river_n, 0..1);
@@ -3441,7 +3548,13 @@ fn material_rows() -> Vec<[u32; 4]> {
             f[1],
             f[2],
             crate::world::matlib::flags(m as u8)
-                & (0xff | crate::world::matlib::flag::FOLIAGE | crate::world::matlib::flag::GROWS | crate::world::matlib::flag::GLOW_SPECKS | crate::world::matlib::flag::NIGHT_GLOW | crate::world::matlib::flag::FLOODS | 63 << crate::world::matlib::flag::GLOW_SHIFT),
+                & (0xff
+                    | crate::world::matlib::flag::FOLIAGE
+                    | crate::world::matlib::flag::GROWS
+                    | crate::world::matlib::flag::GLOW_SPECKS
+                    | crate::world::matlib::flag::NIGHT_GLOW
+                    | crate::world::matlib::flag::FLOODS
+                    | 63 << crate::world::matlib::flag::GLOW_SHIFT),
         ]
     });
     let drifts = (0..2usize).flat_map(|style| {

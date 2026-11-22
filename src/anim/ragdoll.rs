@@ -10,8 +10,8 @@
 //! carrier's own movement fed in, so it swings and jiggles as it is carried.
 //! And an animal that sleeps on its side tips over into it and stays there.
 
-use crate::anim::{Plan, Role};
 use super::{bone_rot, Pose, Rig};
+use crate::anim::{Plan, Role};
 use crate::world::noise::Rng;
 use glam::Vec3;
 
@@ -134,7 +134,13 @@ impl Ragdoll {
             // shot falls sideways every time. The grounding below works off
             // the pose rather than off the roll, so any of the four lands
             // the body correctly.
-            let how = (seed >> 1) & 3;
+            //
+            // Forwards and backwards are for an upright body only. Pitched a
+            // quarter turn, a four-legged animal's long axis points at the sky
+            // and it is left standing on its nose or its haunches, which is how
+            // a deer's skeleton came to be found standing in the grass.
+            let upright = rig.plan == Some(Plan::Biped);
+            let how = if upright { (seed >> 1) & 3 } else { (seed >> 1) & 1 };
             let far = 1.2 + rng.unit() * 0.4;
             let lean = rng.signed() * 0.25;
             pose.bones[0] = match how {
@@ -446,7 +452,10 @@ pub fn settled(rig: &Rig, voxel: f32, seed: u32) -> Pose {
 /// `side` is -1 or 1.
 pub fn on_side(rig: &Rig, voxel: f32, side: f32, seed: u32) -> Pose {
     let mut r = Ragdoll::new(rig, voxel, seed);
-    r.pose.bones[0].z = side * 1.35;
+    // Over onto the side and nothing else: `new` may have picked a fall
+    // forwards or backwards for this seed, and that pitch left in had some
+    // seals and walruses sleeping stood on their tails.
+    r.pose.bones[0] = Vec3::new(0.0, 0.0, side * 1.35);
     for _ in 0..MAX_STEPS {
         r.step(rig, 1.0 / 30.0, Vec3::ZERO);
         if r.settled() {
@@ -454,7 +463,7 @@ pub fn on_side(rig: &Rig, voxel: f32, side: f32, seed: u32) -> Pose {
         }
     }
     // Keep the body where it was put; only the limbs were allowed to fall.
-    r.pose.bones[0].z = side * 1.35;
+    r.pose.bones[0] = Vec3::new(0.0, 0.0, side * 1.35);
     r.rest_on_ground(rig);
     r.pose
 }
@@ -515,6 +524,16 @@ mod tests {
         assert_ne!(a.bones, b.bones, "{name}: two seeds settled identically");
         // And the same seed always gives the same pose.
         assert_eq!(settled(&rig, 0.05, 1).bones, a.bones);
+    }
+
+    #[test]
+    fn a_four_legged_body_lies_on_its_side() {
+        let (name, rig) = rigs().into_iter().find(|(n, _)| n == "deer").expect("a deer");
+        for seed in 0..64 {
+            let p = settled(&rig, 0.05, seed);
+            // Rolled onto a side (z), never pitched end over end (x).
+            assert!(p.bones[0].x.abs() < 0.8, "{name} seed {seed}: pitched {:?}", p.bones[0]);
+        }
     }
 
     #[test]

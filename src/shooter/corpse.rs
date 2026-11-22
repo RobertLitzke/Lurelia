@@ -112,7 +112,12 @@ impl Corpse {
         let mut owner: Vec<usize> = (0..n).collect();
         for k in 0..n {
             if let Some(p) = parents[k] {
-                sticks.push(Stick { a: k, b: p, len: pts[k].distance(pts[p]), part: Some(k) });
+                sticks.push(Stick {
+                    a: k,
+                    b: p,
+                    len: pts[k].distance(pts[p]),
+                    part: Some(k),
+                });
             }
             // What the part points at: its furthest child, or a tip of its
             // own past its end along the way its parent points into it.
@@ -138,10 +143,20 @@ impl Corpse {
             }
             for (i, &a) in kids[k].iter().enumerate() {
                 for &b in &kids[k][i + 1..] {
-                    sticks.push(Stick { a, b, len: pts[a].distance(pts[b]), part: None });
+                    sticks.push(Stick {
+                        a,
+                        b,
+                        len: pts[a].distance(pts[b]),
+                        part: None,
+                    });
                 }
                 if let Some(g) = parents[k] {
-                    sticks.push(Stick { a, b: g, len: pts[a].distance(pts[g]), part: None });
+                    sticks.push(Stick {
+                        a,
+                        b: g,
+                        len: pts[a].distance(pts[g]),
+                        part: None,
+                    });
                 }
             }
         }
@@ -291,16 +306,22 @@ impl Corpse {
     /// Each part still on it, `alpha` of the way through the step: which
     /// part, its joint and its orientation.
     pub fn parts(&self, alpha: f32) -> impl Iterator<Item = (usize, Vec3, Quat)> + '_ {
-        (0..self.rot.len()).filter(move |k| self.missing & (1 << k) == 0).map(move |k| (k, self.was[k].lerp(self.pts[k], alpha), self.prev_rot[k].slerp(self.rot[k], alpha)))
+        (0..self.rot.len())
+            .filter(move |k| self.missing & (1 << k) == 0)
+            .map(move |k| (k, self.was[k].lerp(self.pts[k], alpha), self.prev_rot[k].slerp(self.rot[k], alpha)))
     }
 
     /// Each lamp still on it: which, where, and how it is turned.
     pub fn lamps(&self, alpha: f32) -> impl Iterator<Item = (usize, Vec3, Quat)> + '_ {
-        self.lamps.iter().enumerate().filter(move |(j, _)| self.missing & (1 << (LAMP_BIT + j)) == 0).map(move |(j, &(k, off, turn))| {
-            let at = self.was[k].lerp(self.pts[k], alpha);
-            let rot = self.prev_rot[k].slerp(self.rot[k], alpha);
-            (j, at + rot * off, rot * turn)
-        })
+        self.lamps
+            .iter()
+            .enumerate()
+            .filter(move |(j, _)| self.missing & (1 << (LAMP_BIT + j)) == 0)
+            .map(move |(j, &(k, off, turn))| {
+                let at = self.was[k].lerp(self.pts[k], alpha);
+                let rot = self.prev_rot[k].slerp(self.rot[k], alpha);
+                (j, at + rot * off, rot * turn)
+            })
     }
 
     /// Whether part `k` still has a part hanging off it.
@@ -351,7 +372,19 @@ mod tests {
     fn figure() -> (Vec<Option<usize>>, Vec<(Vec3, Quat)>) {
         let at = |x: f32, y: f32| (Vec3::new(x, 1.0 + y, 0.0), Quat::IDENTITY);
         let parents = vec![None, Some(0), Some(1), Some(0), Some(3), Some(0), Some(5), Some(1), Some(7), Some(1), Some(9)];
-        let parts = vec![at(0.0, 0.9), at(0.0, 1.3), at(0.0, 1.65), at(-0.12, 0.85), at(-0.12, 0.45), at(0.12, 0.85), at(0.12, 0.45), at(-0.25, 1.45), at(-0.3, 1.15), at(0.25, 1.45), at(0.3, 1.15)];
+        let parts = vec![
+            at(0.0, 0.9),
+            at(0.0, 1.3),
+            at(0.0, 1.65),
+            at(-0.12, 0.85),
+            at(-0.12, 0.45),
+            at(0.12, 0.85),
+            at(0.12, 0.45),
+            at(-0.25, 1.45),
+            at(-0.3, 1.15),
+            at(0.25, 1.45),
+            at(0.3, 1.15),
+        ];
         (parents, parts)
     }
 

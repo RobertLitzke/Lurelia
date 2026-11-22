@@ -52,7 +52,7 @@
     {"creature": "badger", "count": 1},
     {"creature": "boar", "count": 2},
     {"creature": "firefly", "count": 60},
-    {"creature": "lantern_moth", "count": 20},
+    {"creature": "glassmoth", "morph": "lantern", "count": 20},
     {"creature": "sky_ray", "count": 3},
     {"creature": "dusk_wren", "count": 8}
   ],
