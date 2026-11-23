@@ -1,8 +1,12 @@
 {
   "name": "razorbill",
-  "version": 1,
+  "version": 2,
   "introduced_by": "gannet",
-  "notes": "circle: Razorbill: black above and white below, a heavy blunt black bill crossed by a white line and a fine white line from the bill to the eye. Nests on cliff ledges beside the puffins, circles low off the cliffs and sits on the sea below them, diving for fish.",
+  "notes": "circle: Razorbill, the base of the diving auks. Stands upright on land like a small penguin, legs far back, and sits low on the sea; black above and sharply white below, a deep blade-shaped black bill crossed by a white line (`bill_stripe`) and a fine white line from the bill to the eye (`face_line`). Short narrow wings with a white trailing edge, a short pointed tail. Nests on cliff ledges beside the puffins, circles low off the cliffs and dives for fish. Puffin, murrelet and the like inherit it: recolour `bill`, `bill_stripe`, `belly`, `face_line` or swap the bill ops.",
+  "voxel": 0.02,
+  "grid": [32, 32, 32],
+  "half_w": 0.1,
+  "height": 0.3,
   "colors": {
     "body": [22, 22, 26],
     "head": [22, 22, 26],
@@ -10,7 +14,11 @@
     "wing": [22, 22, 26],
     "tail": [22, 22, 26],
     "legs": [34, 34, 38],
-    "white": [238, 236, 230]
+    "white": [238, 236, 230],
+    "bill": [20, 20, 22],
+    "bill_stripe": [238, 236, 230],
+    "face_line": [238, 236, 230],
+    "belly": [238, 236, 230]
   },
   "behaviour": {
     "movement": "circle",
@@ -26,14 +34,36 @@
     "wind": 1,
     "winter": 0.4
   },
-  "like": "starling",
-  "scale": 1.9,
-  "extra_ops": [
-    {"op": "recolour_below", "y": 8, "from": "body", "to": "white"},
-    {"op": "box", "from": [15, 8, 6], "to": [17, 11, 9], "mat": "beak", "part": "head"},
-    {"op": "box", "from": [15, 8, 7], "to": [17, 11, 8], "mat": "white", "part": "head"},
-    {"op": "set", "at": [14, 10, 9], "mat": "white", "part": "head"},
-    {"op": "set", "at": [17, 10, 9], "mat": "white", "part": "head"},
-    {"op": "box", "from": [15, 8, 25], "to": [18, 9, 28], "mat": "tail", "part": "tail"}
-  ]
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 7, 14], "radius": [4.2, 5.4, 6], "mat": "body"},
+    {"op": "recolour_below", "y": 8, "from": "body", "to": "belly"},
+    {"op": "ellipsoid", "centre": [16, 12, 9.5], "radius": [2.5, 2.5, 3], "mat": "head", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 11.6, 5.4], "radius": [1.2, 1.8, 2.4], "mat": "bill", "part": "head"},
+    {"op": "box", "from": [15, 10, 5], "to": [17, 13, 6], "mat": "bill_stripe", "part": "head"},
+    {"op": "box", "from": [14, 12, 7], "to": [15, 13, 9], "mat": "face_line", "part": "head"},
+    {"op": "box", "from": [17, 12, 7], "to": [18, 13, 9], "mat": "face_line", "part": "head"},
+    {"op": "ellipsoid", "centre": [9.5, 9, 14], "radius": [3.6, 1, 2.6], "mat": "wing", "part": "wing_l"},
+    {"op": "ellipsoid", "centre": [4.5, 9, 14.5], "radius": [3.6, 0.8, 1.8], "mat": "wing", "part": "wing_l_tip"},
+    {"op": "ellipsoid", "centre": [22.5, 9, 14], "radius": [3.6, 1, 2.6], "mat": "wing", "part": "wing_r"},
+    {"op": "ellipsoid", "centre": [27.5, 9, 14.5], "radius": [3.6, 0.8, 1.8], "mat": "wing", "part": "wing_r_tip"},
+    {"op": "ellipsoid", "centre": [16, 3.4, 21], "radius": [1.4, 0.8, 3.2], "mat": "tail", "part": "tail"},
+    {"op": "box", "from": [13, 2, 15], "to": [15, 4, 17], "mat": "legs", "part": "leg_l"},
+    {"op": "box", "from": [13, 0, 13], "to": [15, 2, 18], "mat": "legs", "part": "leg_l"},
+    {"op": "box", "from": [17, 2, 15], "to": [19, 4, 17], "mat": "legs", "part": "leg_r"},
+    {"op": "box", "from": [17, 0, 13], "to": [19, 2, 18], "mat": "legs", "part": "leg_r"}
+  ],
+  "rig": {
+    "plan": "bird",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "head", "role": "head", "parent": "body", "joint": [16, 11, 11]},
+      {"name": "wing_l", "role": "wing", "parent": "body", "joint": [12, 9, 14], "side": "l"},
+      {"name": "wing_l_tip", "role": "wing", "parent": "wing_l", "joint": [7, 9, 14], "side": "l"},
+      {"name": "wing_r", "role": "wing", "parent": "body", "joint": [20, 9, 14], "side": "r"},
+      {"name": "wing_r_tip", "role": "wing", "parent": "wing_r", "joint": [25, 9, 14], "side": "r"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 4, 18.5]},
+      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [14, 4, 16], "side": "l", "pair": 0},
+      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [18, 4, 16], "side": "r", "pair": 0}
+    ]
+  }
 }

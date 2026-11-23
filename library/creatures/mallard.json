@@ -1,8 +1,8 @@
 {
   "name": "mallard",
-  "version": 1,
+  "version": 2,
   "introduced_by": "glassfall",
-  "notes": "Mallard: grey-bodied drakes with green heads and a white collar among brown hens, dabbling in pairs and small groups.",
+  "notes": "Mallard: grey-bodied drakes with green heads, a white neck ring and a chestnut breast among brown hens, dabbling in pairs and small groups. Short neck and head drawn over the goose's, in `head`, `neck` and `beak`.",
   "colors": {
     "body": [128, 132, 128],
     "head": [40, 96, 52],
@@ -10,7 +10,8 @@
     "beak": [220, 190, 60],
     "wing": [110, 92, 74],
     "tail": [24, 24, 30],
-    "legs": [230, 120, 50]
+    "legs": [230, 120, 50],
+    "breast": [112, 62, 44]
   },
   "behaviour": {
     "flee_speed": 10,
@@ -22,9 +23,18 @@
   "like": "goose",
   "scale": 0.6,
   "extra_ops": [
-    {"op": "box", "from": [13, 12, 4], "to": [20, 18, 12], "mat": "air", "part": "head"},
-    {"op": "ellipsoid", "centre": [16, 12.5, 9.5], "radius": [1.5, 1.5, 1.9], "mat": "head", "part": "head"},
-    {"op": "box", "from": [15, 12, 6], "to": [17, 13, 8], "mat": "beak", "part": "head"},
-    {"op": "recolour", "at": [15, 11, 9], "until": [17, 12, 11], "from": "neck", "to": "white"}
+    {"op": "box", "from": [29, 12, 8], "to": [36, 28, 23], "mat": "air", "part": "head"},
+    {
+      "op": "segment",
+      "points": [[32, 10.5, 21], [32, 13, 20.0], [32, 15.6, 19.0]],
+      "radius": 1.7,
+      "mat": "neck",
+      "part": "head"
+    },
+    {"op": "ellipsoid", "centre": [32, 17.2, 17.4], "radius": [1.7, 1.55, 2.3], "mat": "head", "part": "head"},
+    {"op": "box", "from": [31, 16, 12], "to": [33, 17, 15], "mat": "beak", "part": "head"},
+    {"op": "recolour", "at": [29, 13, 19], "until": [36, 14, 22], "from": "neck", "to": "white"},
+    {"op": "recolour", "at": [29, 6, 19], "until": [36, 12, 24], "from": "body", "to": "breast"},
+    {"op": "recolour", "at": [28, 5, 34], "until": [37, 10, 39], "from": "white", "to": "tail"}
   ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "eider",
-  "version": 1,
+  "version": 2,
   "introduced_by": "kaldvik",
   "notes": "Common eiders rafting in the open water off the ice: the drakes white-backed and black-bellied with a green nape, the ducks barred brown.",
   "colors": {
@@ -10,7 +10,14 @@
     "beak": [130, 150, 108],
     "wing": [28, 28, 34],
     "tail": [24, 24, 30],
-    "legs": [96, 112, 90]
+    "legs": [96, 112, 90],
+    "breast": [232, 214, 204]
   },
-  "like": "mallard"
+  "like": "mallard",
+  "extra_ops": [
+    {"op": "recolour", "at": [28, 10, 20], "until": [37, 15, 37], "from": "wing", "to": "body"},
+    {"op": "recolour", "at": [28, 5, 23], "until": [37, 10, 35], "from": "wing", "to": "body"},
+    {"op": "recolour", "at": [28, 2, 20], "until": [37, 8, 38], "from": "body", "to": "wing"},
+    {"op": "recolour", "at": [29, 13, 19], "until": [36, 14, 22], "from": "white", "to": "neck"}
+  ]
 }

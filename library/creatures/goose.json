@@ -1,8 +1,12 @@
 {
   "name": "goose",
-  "version": 2,
+  "version": 3,
   "introduced_by": "glassfall",
-  "notes": "paddle: Canada goose: brown-grey with a black neck and a white chin strap. Gaggles float near the shore, and lift off together, honking, when you come near. The base of every waterfowl.",
+  "notes": "paddle: Canada goose, about 0.9 m long and 0.75 m to the top of the head. A boat-shaped body that sits low and level on water, a long black neck held up, a black head with a white chin strap, a flat broad bill, a brown back over paler flanks barred brown, white under a short black tail, black legs set back with webbed feet. Gaggles float near the shore, and lift off together, honking, when you come near. The base of every waterfowl: neck and head are one bone (`head`) drawn in the `neck`, `head` and `beak` colours so a child recolours them (mallard: green; swan: white); the back and flank bars use `wing`, the white strap and undertail `white`. Model drawn on a 64x40x48 grid at 0.0315 m.",
+  "voxel": 0.0315,
+  "grid": [64, 40, 48],
+  "half_w": 0.25,
+  "height": 0.75,
   "colors": {
     "body": [140, 118, 96],
     "head": [24, 24, 30],
@@ -26,15 +30,50 @@
     "active": "diurnal",
     "off_hours": 0.45
   },
-  "like": "starling",
-  "scale": 3.0,
-  "extra_ops": [
-    {"op": "recolour", "at": [13, 7, 7], "until": [20, 12, 13], "from": "head", "to": "body"},
-    {"op": "box", "from": [15, 9, 7], "to": [17, 10, 9], "mat": "air", "part": "head"},
-    {"op": "box", "from": [15, 9, 9], "to": [17, 15, 11], "mat": "neck", "part": "head"},
-    {"op": "ellipsoid", "centre": [16, 15.5, 8.5], "radius": [1.4, 1.4, 2], "mat": "head", "part": "head"},
-    {"op": "box", "from": [15, 15, 5], "to": [17, 16, 7], "mat": "beak", "part": "head"},
-    {"op": "recolour", "at": [14, 14, 8], "until": [19, 16, 10], "from": "head", "to": "white"}
+  "ops": [
+    {"op": "ellipsoid", "centre": [32, 8.2, 28], "radius": [3.8, 3.7, 8.5], "mat": "body"},
+    {"op": "ellipsoid", "centre": [32, 9.3, 22.5], "radius": [3.3, 3.4, 3.6], "mat": "body"},
+    {"op": "ellipsoid", "centre": [32, 9.4, 34.2], "radius": [2.8, 2.5, 3.6], "mat": "body"},
+    {"op": "recolour", "at": [28, 10, 20], "until": [37, 15, 37], "from": "body", "to": "wing"},
+    {"op": "recolour", "at": [28, 7, 24], "until": [37, 10, 25], "from": "body", "to": "wing"},
+    {"op": "recolour", "at": [28, 7, 27], "until": [37, 10, 28], "from": "body", "to": "wing"},
+    {"op": "recolour", "at": [28, 7, 30], "until": [37, 10, 31], "from": "body", "to": "wing"},
+    {"op": "recolour", "at": [28, 7, 33], "until": [37, 10, 34], "from": "body", "to": "wing"},
+    {"op": "ellipsoid", "centre": [32, 8.0, 36.0], "radius": [2.5, 2.0, 1.9], "mat": "white"},
+    {"op": "segment", "points": [[32, 10.5, 21], [32, 14, 19.8]], "radius": 1.8, "mat": "neck", "part": "head"},
+    {
+      "op": "segment",
+      "points": [[32, 14, 19.8], [32, 18, 18.4], [32, 21.8, 17.4]],
+      "radius": 1.3,
+      "mat": "neck",
+      "part": "head"
+    },
+    {"op": "ellipsoid", "centre": [32, 22.6, 16.3], "radius": [1.8, 1.6, 2.4], "mat": "head", "part": "head"},
+    {"op": "box", "from": [31, 22, 11], "to": [33, 23, 14], "mat": "beak", "part": "head"},
+    {"op": "recolour", "at": [30, 21, 15], "until": [35, 22, 18], "from": "head", "to": "white"},
+    {"op": "ellipsoid", "centre": [24.5, 11.6, 25.5], "radius": [5.6, 0.95, 5], "mat": "wing", "part": "wing_l"},
+    {"op": "ellipsoid", "centre": [13.5, 11.6, 26.5], "radius": [6, 0.85, 3.4], "mat": "wing", "part": "wing_l_tip"},
+    {"op": "ellipsoid", "centre": [39.5, 11.6, 25.5], "radius": [5.6, 0.95, 5], "mat": "wing", "part": "wing_r"},
+    {"op": "ellipsoid", "centre": [50.5, 11.6, 26.5], "radius": [6, 0.85, 3.4], "mat": "wing", "part": "wing_r_tip"},
+    {"op": "ellipsoid", "centre": [32, 9.8, 39.2], "radius": [2.1, 0.95, 3.4], "mat": "tail", "part": "tail"},
+    {"op": "segment", "points": [[29.8, 5.6, 28.5], [29.8, 1.5, 28.2]], "radius": 0.6, "mat": "legs", "part": "leg_l"},
+    {"op": "ellipsoid", "centre": [29.8, 0.6, 26.4], "radius": [1.9, 0.5, 2.9], "mat": "legs", "part": "leg_l"},
+    {"op": "segment", "points": [[34.2, 5.6, 28.5], [34.2, 1.5, 28.2]], "radius": 0.6, "mat": "legs", "part": "leg_r"},
+    {"op": "ellipsoid", "centre": [34.2, 0.6, 26.4], "radius": [1.9, 0.5, 2.9], "mat": "legs", "part": "leg_r"}
   ],
+  "rig": {
+    "plan": "bird",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "head", "role": "head", "parent": "body", "joint": [32, 11, 21]},
+      {"name": "wing_l", "role": "wing", "parent": "body", "joint": [29.5, 11.6, 25.5], "side": "l"},
+      {"name": "wing_l_tip", "role": "wing", "parent": "wing_l", "joint": [19.5, 11.6, 25.5], "side": "l"},
+      {"name": "wing_r", "role": "wing", "parent": "body", "joint": [34.5, 11.6, 25.5], "side": "r"},
+      {"name": "wing_r_tip", "role": "wing", "parent": "wing_r", "joint": [44.5, 11.6, 25.5], "side": "r"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [32, 9.8, 36.4]},
+      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [29.8, 5.6, 28.5], "side": "l", "pair": 0},
+      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [34.2, 5.6, 28.5], "side": "r", "pair": 0}
+    ]
+  },
   "vary": {"size": 0.06, "shade": 0.05}
 }
