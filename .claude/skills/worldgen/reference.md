@@ -466,6 +466,9 @@ along the stems or, with `flower_tips: true`, clusters at the tips. Every
 leaning stem is a thread, about 15-20 quads a metre: a sugar-cane field at
 0.1 x 6-10 stems is about 1.2M quads in view, so keep stems x density modest.
 Give the stems their own bark material, set `passable` on knee-high ones),
+`bole` (branching, 0.15-0.85): the trunk's clear length to the first limbs as a
+share of the height, unset 0.46 less 0.12 x `spread`; about 0.6 puts a flat
+crown on top of a tall bare column (baobab).
 `thin_limbs` (any woody form, metres): limbs thinner than this are sticks,
 one thin line of voxels meshed as a smooth tube, whatever the bark. Twiggy and
 gnarled trees, mangrove prop roots and deciduous crowns use 0.12-0.2; a

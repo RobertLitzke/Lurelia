@@ -1106,7 +1106,7 @@ fn branching(
 
     // The trunk's clear length. A wide crown forks lower; a multi-stemmed
     // plant has almost no trunk at all.
-    let trunk_h = if basal > 1 { height * 0.1 + 0.25 } else { height * (0.46 - 0.12 * spread) };
+    let trunk_h = if basal > 1 { height * 0.1 + 0.25 } else { height * p.bole.map_or(0.46 - 0.12 * spread, |b| b.clamp(0.15, 0.85)) };
     let first_lo = if basal > 1 { trunk_h * 0.55 } else { trunk_h * 0.72 };
 
     // Where the first limbs leave: staggered up the top quarter of the trunk,

@@ -191,6 +191,15 @@
     "bark": {
       "type": "string"
     },
+    "bole": {
+      "default": null,
+      "description": "Form \"branching\": the trunk's clear length up to the first limbs, as\na share of the height (0.15 to 0.85). Unset, it is 0.46 less 0.12 x\n`spread`. High for a tree whose crown sits on top of a tall bare\ncolumn (baobab); the crown is then flatter, since the limbs climb\nthrough what height is left.",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
     "buttress": {
       "default": 0.0,
       "description": "Root flare for big old trees: extra trunk radius at the ground in\nmetres, in lobes like buttress roots, fading over about four times that\nheight. 0 for none.",

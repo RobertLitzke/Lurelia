@@ -101,6 +101,13 @@ pub struct PlantDef {
     /// on dense forests: each stick costs about 15-20 quads a metre.
     #[serde(default)]
     pub thin_limbs: Option<f32>,
+    /// Form "branching": the trunk's clear length up to the first limbs, as
+    /// a share of the height (0.15 to 0.85). Unset, it is 0.46 less 0.12 x
+    /// `spread`. High for a tree whose crown sits on top of a tall bare
+    /// column (baobab); the crown is then flatter, since the limbs climb
+    /// through what height is left.
+    #[serde(default)]
+    pub bole: Option<f32>,
     /// Form "canes" with canopy "tufts": an umbel at each cane tip, a mop of
     /// thin rays this long, metres (papyrus).
     #[serde(default)]
