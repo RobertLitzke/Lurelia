@@ -1,15 +1,16 @@
 {
   "name": "cormorant",
-  "version": 3,
+  "version": 4,
   "introduced_by": "glassfall",
-  "notes": "circle: Pelagic cormorant: glossy black, long-necked, flying low and straight over the water and sitting on it between dives.",
+  "notes": "circle: Pelagic cormorant: glossy black-brown, thick-necked, with a short hooked bill and a bare yellow-orange throat patch, flying low and straight over the water and sitting on it between dives.",
   "colors": {
-    "body": [24, 24, 30],
-    "head": [24, 24, 30],
-    "beak": [74, 58, 40],
-    "wing": [24, 24, 30],
-    "tail": [24, 24, 30],
-    "legs": [24, 24, 30]
+    "body": [24, 20, 19],
+    "head": [28, 23, 20],
+    "beak": [70, 62, 52],
+    "wing": [24, 20, 19],
+    "tail": [24, 20, 19],
+    "legs": [20, 18, 18],
+    "throat": [226, 150, 40]
   },
   "behaviour": {
     "movement": "circle",
@@ -23,19 +24,17 @@
     "group": null,
     "dive_depth": 10
   },
-  "like": "starling",
-  "scale": 2.6,
+  "like": "anhinga",
+  "scale": 1.45,
   "extra_ops": [
-    {"op": "box", "from": [15, 9, 7], "to": [17, 10, 9], "mat": "air", "part": "head"},
-    {
-      "op": "segment",
-      "points": [[16, 9.2, 11], [16, 9.8, 8], [16, 10.6, 5.5]],
-      "radius": 0.9,
-      "mat": "head",
-      "part": "head"
-    },
-    {"op": "ellipsoid", "centre": [16, 10.9, 4.4], "radius": [1.2, 1.2, 1.6], "mat": "head", "part": "head"},
-    {"op": "box", "from": [15, 10, 1], "to": [17, 11, 3], "mat": "beak", "part": "head"},
-    {"op": "set", "at": [16, 9, 1], "mat": "beak", "part": "head"}
+    {"op": "box", "from": [16, 12, 0], "to": [17, 13, 3], "mat": "air", "part": "head"},
+    {"op": "box", "from": [15, 9, 11], "to": [18, 11, 16], "mat": "body"},
+    {"op": "box", "from": [15, 10, 8], "to": [18, 12, 11], "mat": "body", "part": "head"},
+    {"op": "box", "from": [15, 11, 5], "to": [18, 13, 8], "mat": "body", "part": "head"},
+    {"op": "ellipsoid", "centre": [16.5, 12.6, 4.2], "radius": [1.5, 1.3, 1.7], "mat": "head", "part": "head"},
+    {"op": "ellipsoid", "centre": [16.5, 11.6, 3.8], "radius": [1.2, 0.8, 1.6], "mat": "throat", "part": "head"},
+    {"op": "box", "from": [15, 12, 1], "to": [18, 13, 3], "mat": "beak", "part": "head"},
+    {"op": "box", "from": [16, 11, 0], "to": [17, 12, 2], "mat": "beak", "part": "head"},
+    {"op": "box", "from": [14, 8, 28], "to": [19, 9, 31], "mat": "air", "part": "tail"}
   ]
 }

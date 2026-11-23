@@ -1,16 +1,20 @@
 {
   "name": "eagle",
-  "version": 1,
+  "version": 2,
   "introduced_by": "glassfall",
-  "notes": "A bald eagle: white head, dark body, circling high and alone over the slopes and the coast. Now and then it sits a while on the top of the tallest tree near. When it is hungry it stoops on what it eats in the open below it, a gull in the air or on the sea, a duck, a rabbit, a fish near the surface, and takes it or misses; a kill goes off in its talons, to a tree top if there is one.",
-  "half_w": 0.4,
-  "height": 0.5,
+  "notes": "A bald eagle: white head and tail, dark brown body and wings, a heavy yellow hooked bill, circling high and alone over the slopes and the coast. Now and then it sits a while on the top of the tallest tree near. When it is hungry it stoops on what it eats in the open below it, a gull in the air or on the sea, a duck, a rabbit, a fish near the surface, and takes it or misses; a kill goes off in its talons, to a tree top if there is one.",
   "colors": {
-    "body": [36, 28, 24],
+    "body": [58, 40, 28],
+    "belly": [66, 46, 32],
+    "band": [58, 40, 28],
     "head": [240, 236, 228],
+    "brow": [226, 220, 208],
+    "eye": [236, 200, 70],
     "beak": [240, 190, 40],
-    "wing": [150, 98, 60],
-    "tail": [150, 98, 60],
+    "cere": [240, 190, 40],
+    "wing": [70, 48, 32],
+    "wing_tip": [44, 30, 22],
+    "tail": [240, 236, 228],
     "legs": [240, 190, 40]
   },
   "behaviour": {
@@ -24,6 +28,14 @@
     "hunts": ["gull", "herring", "mallard", "puffin", "trout", "rabbit"],
     "group": null
   },
-  "like": "starling",
-  "scale": 3.57143
+  "like": "hawk",
+  "scale": 1.6,
+  "extra_ops": [
+    {"op": "box", "from": [31, 14, 8], "to": [33, 16, 9], "mat": "beak", "part": "head"},
+    {"op": "box", "from": [31, 12, 8], "to": [33, 14, 9], "mat": "beak", "part": "head"},
+    {"op": "ellipsoid", "centre": [29.4, 17.6, 13.4], "radius": [2.1, 1.0, 1.7], "mat": "brow", "part": "head"},
+    {"op": "ellipsoid", "centre": [34.6, 17.6, 13.4], "radius": [2.1, 1.0, 1.7], "mat": "brow", "part": "head"},
+    {"op": "set", "at": [29, 16, 13], "mat": "eye", "part": "head"},
+    {"op": "set", "at": [34, 16, 13], "mat": "eye", "part": "head"}
+  ]
 }

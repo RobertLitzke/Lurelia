@@ -1,15 +1,22 @@
 {
   "name": "tawny_owl",
-  "version": 2,
+  "version": 3,
   "introduced_by": "hemlow",
-  "notes": "Tawny owl: a round, rusty-brown wood owl with dark eyes, floating low between the trunks of the Hollins at dusk.",
+  "notes": "Tawny owl: a round, rufous-brown wood owl with a streaked front, a round pale-brown face with a darker rim and dark eyes, floating low between the trunks of the Hollins at dusk. Built on great_horned_owl, tufts removed.",
   "colors": {
-    "body": [150, 98, 60],
-    "head": [150, 98, 60],
-    "beak": [210, 180, 140],
-    "wing": [128, 96, 60],
-    "tail": [128, 96, 60],
-    "legs": [210, 180, 140]
+    "body": [150, 100, 62],
+    "head": [140, 92, 56],
+    "wing": [124, 88, 56],
+    "tail": [118, 84, 54],
+    "legs": [190, 164, 128],
+    "disc": [190, 150, 108],
+    "ring": [84, 56, 36],
+    "tufts": [140, 92, 56],
+    "bib": [206, 176, 138],
+    "mottle": [84, 56, 38],
+    "bars": [80, 54, 36],
+    "eye": [22, 18, 18],
+    "pupil": [6, 6, 6]
   },
   "behaviour": {
     "movement": "circle",
@@ -21,6 +28,7 @@
     "active": "nocturnal",
     "off_hours": 0.06
   },
-  "like": "starling",
-  "scale": 1.7
+  "like": "great_horned_owl",
+  "scale": 0.7,
+  "extra_ops": [{"op": "box", "from": [25, 22, 14], "to": [39, 28, 21], "mat": "air", "part": "head"}]
 }

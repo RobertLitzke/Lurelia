@@ -1,15 +1,23 @@
 {
   "name": "barn_owl",
-  "version": 2,
+  "version": 3,
   "introduced_by": "hemlow",
-  "notes": "Barn owl: pale gold and white, quartering low over the meadows at dusk on soft slow wingbeats.",
+  "notes": "Barn owl: pale golden-buff above with a grey wash, white below, a white heart-shaped face with a thin brown rim and dark eyes, quartering low over the meadows at dusk on soft slow wingbeats. Built on great_horned_owl, tufts removed.",
   "colors": {
-    "body": [240, 236, 228],
-    "head": [240, 236, 228],
-    "beak": [210, 180, 140],
-    "wing": [214, 176, 112],
-    "tail": [214, 176, 112],
-    "legs": [210, 180, 140]
+    "body": [246, 242, 232],
+    "head": [222, 184, 120],
+    "wing": [212, 172, 108],
+    "tail": [222, 188, 130],
+    "legs": [232, 214, 178],
+    "disc": [250, 248, 240],
+    "ring": [238, 230, 214],
+    "tufts": [222, 184, 120],
+    "bib": [250, 248, 240],
+    "mottle": [170, 160, 140],
+    "bars": [150, 126, 96],
+    "eye": [24, 20, 20],
+    "pupil": [6, 6, 6],
+    "beak": [214, 190, 150]
   },
   "behaviour": {
     "movement": "circle",
@@ -21,6 +29,7 @@
     "active": "nocturnal",
     "off_hours": 0.04
   },
-  "like": "starling",
-  "scale": 2.3
+  "like": "great_horned_owl",
+  "scale": 0.65,
+  "extra_ops": [{"op": "box", "from": [25, 22, 14], "to": [39, 28, 21], "mat": "air", "part": "head"}]
 }

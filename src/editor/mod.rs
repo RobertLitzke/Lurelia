@@ -1268,7 +1268,7 @@ impl Editor {
         }
         let mut out = Value::Null;
         for v in chain.into_iter().rev() {
-            out = if out.is_null() { v } else { crate::inherit::over(&out, &v) };
+            out = if out.is_null() { crate::inherit::root(&v) } else { crate::inherit::over(&out, &v) };
         }
         out
     }
@@ -1276,7 +1276,7 @@ impl Editor {
     /// The entry as the engine reads it: the file over its parents.
     pub fn resolved(&self) -> Value {
         if self.base.is_null() {
-            self.doc.clone()
+            crate::inherit::root(&self.doc)
         } else {
             crate::inherit::over(&self.base, &self.doc)
         }

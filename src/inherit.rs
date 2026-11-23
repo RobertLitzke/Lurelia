@@ -117,6 +117,30 @@ pub fn over(parent: &Value, child: &Value) -> Value {
     }
 }
 
+/// An entry with no `like`, as the loader resolves it: a root entry may
+/// still scale itself and carry `extra_ops`. The EDIT page uses this for
+/// the top of a chain, so a scaled root such as the anhinga opens there.
+pub fn root(v: &Value) -> Value {
+    match v.as_object() {
+        Some(own) => Value::Object(root_map(own)),
+        None => v.clone(),
+    }
+}
+
+fn root_map(own: &Map<String, Value>) -> Map<String, Value> {
+    let mut m = own.clone();
+    if let Some(s) = own.get("scale").and_then(|s| s.as_f64()) {
+        scale_sizes(&mut m, s, &Map::new());
+    }
+    m.remove("scale");
+    if let Some(Value::Array(extra)) = m.remove("extra_ops") {
+        if let Some(Value::Array(ops)) = m.get_mut("ops") {
+            ops.extend(extra);
+        }
+    }
+    m
+}
+
 /// Child over resolved parent.
 fn merge(parent: &Map<String, Value>, child: &Map<String, Value>) -> Map<String, Value> {
     let mut out: Map<String, Value> = parent.iter().filter(|(k, _)| !OWN.contains(&k.as_str())).map(|(k, v)| (k.clone(), v.clone())).collect();
@@ -199,20 +223,7 @@ pub fn resolve(entries: Vec<(String, Value)>, errors: &mut Vec<String>) -> Vec<(
             return false;
         };
         let resolved = match own.get("like").and_then(|l| l.as_str()) {
-            None => {
-                // A root entry may still scale itself.
-                let mut m = own.clone();
-                if let Some(s) = own.get("scale").and_then(|s| s.as_f64()) {
-                    scale_sizes(&mut m, s, &Map::new());
-                }
-                m.remove("scale");
-                if let Some(Value::Array(extra)) = m.remove("extra_ops") {
-                    if let Some(Value::Array(ops)) = m.get_mut("ops") {
-                        ops.extend(extra);
-                    }
-                }
-                m
-            }
+            None => root_map(own),
             Some(parent) => {
                 let Some(&p) = names.get(parent) else {
                     errors.push(format!("{file}: like {parent}, which is not in the library"));

@@ -1,16 +1,20 @@
 {
   "name": "puffin",
-  "version": 2,
+  "version": 3,
   "introduced_by": "glassfall",
-  "notes": "circle: Tufted puffin: black with a white face, a big orange-red beak and orange feet. Circles low off the basalt cliffs where it nests and rafts on the sea.",
+  "notes": "circle: Atlantic puffin on the razorbill's upright auk model: black back and collar, white face and belly, a tall triangular bill banded grey-blue, yellow and orange, orange feet. Circles low off the basalt cliffs where it nests and rafts on the sea.",
   "colors": {
     "body": [24, 24, 30],
     "head": [24, 24, 30],
-    "beak": [230, 96, 40],
     "wing": [24, 24, 30],
     "tail": [24, 24, 30],
-    "legs": [230, 120, 50],
-    "white": [240, 236, 228]
+    "legs": [236, 120, 40],
+    "belly": [240, 236, 228],
+    "face": [236, 232, 224],
+    "bill": [232, 90, 36],
+    "bill_stripe": [240, 190, 40],
+    "bill_base": [120, 140, 150],
+    "face_line": [24, 24, 30]
   },
   "behaviour": {
     "movement": "circle",
@@ -18,16 +22,20 @@
     "flee_speed": 12,
     "wary": 10,
     "flightiness": 0.8,
-    "fly_height": 7,
     "floats": true,
     "flight": "flap",
     "group": null,
+    "fly_height": 7,
     "dive_depth": 7
   },
-  "like": "starling",
-  "scale": 1.4,
+  "like": "razorbill",
+  "scale": 0.85,
   "extra_ops": [
-    {"op": "recolour", "at": [13, 9, 8], "until": [20, 11, 11], "from": "head", "to": "white"},
-    {"op": "box", "from": [15, 8, 7], "to": [17, 10, 9], "mat": "beak", "part": "head"}
+    {"op": "recolour", "at": [13, 9, 5], "until": [20, 15, 11], "from": "head", "to": "face"},
+    {"op": "ellipsoid", "centre": [16, 11.6, 5.4], "radius": [1.4, 2, 2.6], "mat": "air", "part": "head"},
+    {"op": "box", "from": [15, 9, 7], "to": [17, 14, 9], "mat": "bill_base", "part": "head"},
+    {"op": "box", "from": [15, 10, 5], "to": [17, 13, 7], "mat": "bill_stripe", "part": "head"},
+    {"op": "box", "from": [15, 10, 3], "to": [17, 13, 5], "mat": "bill", "part": "head"},
+    {"op": "box", "from": [15, 11, 2], "to": [17, 12, 3], "mat": "bill", "part": "head"}
   ]
 }

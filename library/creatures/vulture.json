@@ -1,16 +1,25 @@
 {
   "name": "vulture",
-  "version": 1,
+  "version": 2,
   "introduced_by": "thornpan",
   "notes": "White-backed vulture: a brown soaring plank with a bald head, circling anything dead. Where there are three in the air there is a kill under them.",
   "colors": {
     "body": [78, 68, 58],
-    "wing": [62, 54, 48],
-    "tail": [54, 48, 44],
+    "belly": [92, 80, 68],
+    "band": [78, 68, 58],
     "head": [196, 188, 176],
+    "brow": [170, 160, 150],
+    "eye": [50, 36, 28],
+    "beak": [70, 62, 54],
+    "cere": [190, 170, 140],
+    "wing": [62, 54, 48],
+    "wing_tip": [40, 34, 30],
+    "tail": [54, 48, 44],
+    "legs": [110, 100, 90],
     "white": [240, 236, 228]
   },
   "behaviour": {"movement": "soar", "walk_speed": 7.0, "flee_speed": 14.0, "wary": 30, "flightiness": 0.8},
   "like": "condor",
-  "scale": 0.82
+  "scale": 0.75,
+  "extra_ops": [{"op": "recolour", "at": [27, 10, 21], "until": [37, 15, 28], "from": "body", "to": "white"}]
 }

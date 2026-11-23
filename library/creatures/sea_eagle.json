@@ -1,15 +1,19 @@
 {
   "name": "sea_eagle",
-  "version": 1,
+  "version": 2,
   "introduced_by": "kaldvik",
   "notes": "A white-tailed sea eagle: broad brown wings like a barn door, a pale head and the white wedge of tail, quartering the fjord for fish.",
-  "half_w": 0.45,
-  "height": 0.55,
   "colors": {
     "body": [96, 76, 56],
+    "belly": [90, 70, 50],
+    "band": [96, 76, 56],
     "head": [200, 188, 160],
+    "brow": [184, 170, 140],
+    "eye": [236, 200, 70],
     "beak": [236, 196, 60],
+    "cere": [236, 196, 60],
     "wing": [78, 62, 46],
+    "wing_tip": [52, 40, 30],
     "tail": [238, 236, 228],
     "legs": [236, 196, 60]
   },
@@ -22,6 +26,30 @@
     "fly_height": 45,
     "group": null
   },
-  "like": "starling",
-  "scale": 4.2
+  "like": "hawk",
+  "scale": 1.75,
+  "extra_ops": [
+    {"op": "box", "from": [31, 14, 8], "to": [33, 16, 9], "mat": "beak", "part": "head"},
+    {"op": "box", "from": [31, 12, 8], "to": [33, 14, 9], "mat": "beak", "part": "head"},
+    {"op": "ellipsoid", "centre": [20.5, 12.5, 27.5], "radius": [7.4, 1.2, 3.2], "mat": "wing", "part": "wing_l"},
+    {"op": "ellipsoid", "centre": [11.0, 12.5, 28.0], "radius": [4.0, 1.0, 2.6], "mat": "wing", "part": "wing_l_tip"},
+    {"op": "ellipsoid", "centre": [43.5, 12.5, 27.5], "radius": [7.4, 1.2, 3.2], "mat": "wing", "part": "wing_r"},
+    {"op": "ellipsoid", "centre": [53.0, 12.5, 28.0], "radius": [4.0, 1.0, 2.6], "mat": "wing", "part": "wing_r_tip"},
+    {"op": "box", "from": [20, 8, 31], "to": [29, 9, 32], "mat": "air"},
+    {"op": "box", "from": [35, 8, 31], "to": [44, 9, 32], "mat": "air"},
+    {"op": "box", "from": [20, 8, 32], "to": [29, 9, 33], "mat": "air"},
+    {"op": "box", "from": [35, 8, 32], "to": [44, 9, 33], "mat": "air"},
+    {"op": "box", "from": [20, 8, 33], "to": [30, 9, 34], "mat": "air"},
+    {"op": "box", "from": [34, 8, 33], "to": [44, 9, 34], "mat": "air"},
+    {"op": "box", "from": [20, 8, 34], "to": [30, 9, 35], "mat": "air"},
+    {"op": "box", "from": [34, 8, 34], "to": [44, 9, 35], "mat": "air"},
+    {"op": "box", "from": [20, 8, 35], "to": [31, 9, 36], "mat": "air"},
+    {"op": "box", "from": [33, 8, 35], "to": [44, 9, 36], "mat": "air"},
+    {"op": "box", "from": [20, 8, 36], "to": [31, 9, 37], "mat": "air"},
+    {"op": "box", "from": [33, 8, 36], "to": [44, 9, 37], "mat": "air"},
+    {"op": "ellipsoid", "centre": [29.4, 17.6, 13.4], "radius": [2.1, 1.0, 1.7], "mat": "brow", "part": "head"},
+    {"op": "ellipsoid", "centre": [34.6, 17.6, 13.4], "radius": [2.1, 1.0, 1.7], "mat": "brow", "part": "head"},
+    {"op": "set", "at": [29, 16, 13], "mat": "eye", "part": "head"},
+    {"op": "set", "at": [34, 16, 13], "mat": "eye", "part": "head"}
+  ]
 }

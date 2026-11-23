@@ -1,17 +1,18 @@
 {
   "name": "ptarmigan",
-  "version": 1,
+  "version": 2,
   "introduced_by": "kaldvik",
   "notes": "Rock ptarmigan in winter white, crouched in the snow on the fell in small coveys and only seen when they burst up from under your feet. They fly fast and low on whirring wings when flushed.",
   "half_w": 0.18,
   "height": 0.22,
   "colors": {
-    "body": [244, 244, 240],
+    "grey": [244, 244, 240],
+    "buff": [244, 244, 240],
+    "chestnut": [244, 244, 240],
+    "white": [244, 244, 240],
     "head": [240, 240, 236],
-    "beak": [26, 26, 28],
     "wing": [248, 248, 246],
-    "tail": [24, 24, 28],
-    "legs": [236, 236, 232]
+    "legs": [240, 240, 236]
   },
   "behaviour": {
     "movement": "flock",
@@ -22,6 +23,17 @@
     "fly_height": 4,
     "group": {"size": [3, 8], "spacing": 1.2, "range": 5, "separation": 1.0, "alignment": 1.2, "cohesion": 1.2}
   },
-  "like": "starling",
-  "scale": 1.6
+  "like": "gambels_quail",
+  "scale": 1.9,
+  "extra_ops": [
+    {"op": "box", "from": [15, 15, 8], "to": [17, 19, 11], "mat": "air", "part": "head"},
+    {"op": "recolour", "at": [10, 4, 10], "until": [22, 12, 24], "from": "black", "to": "white"},
+    {"op": "recolour", "at": [12, 10, 6], "until": [20, 16, 13], "from": "black", "to": "white"},
+    {"op": "box", "from": [14, 13, 7], "to": [15, 14, 9], "mat": "eye", "part": "head"},
+    {"op": "box", "from": [17, 13, 7], "to": [18, 14, 9], "mat": "eye", "part": "head"},
+    {"op": "box", "from": [15, 9, 22], "to": [17, 10, 23], "mat": "white", "part": "tail"},
+    {"op": "box", "from": [14, 9, 23], "to": [18, 10, 25], "mat": "black", "part": "tail"},
+    {"op": "box", "from": [13, 2, 14], "to": [16, 5, 17], "mat": "legs", "part": "leg_l"},
+    {"op": "box", "from": [16, 2, 14], "to": [19, 5, 17], "mat": "legs", "part": "leg_r"}
+  ]
 }
