@@ -1,0 +1,26 @@
+{
+  "name": "sau_garden",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "Gardens and green squares in Cascadelle: lawns, planes and flowering cherries, clumps of cycads.",
+  "priority": 23,
+  "rules": {"region": "garden"},
+  "surface": "lawn_grass",
+  "subsurface": "dirt",
+  "fringe": 0,
+  "map_color": [120, 168, 96],
+  "plants": [
+    {"plant": "plane_tree", "density": 0.002, "placement": {"verb": "lone", "params": {"spacing": 12}}},
+    {
+      "plant": "flowering_cherry",
+      "density": 0.002,
+      "placement": {"verb": "clustered", "params": {"size": 12, "min": 0.3, "max": 1.0}}
+    },
+    {
+      "plant": "cycad",
+      "density": 0.01,
+      "placement": {"verb": "clustered", "params": {"size": 8, "min": 0.4, "max": 1.0}}
+    }
+  ],
+  "creatures": [{"creature": "compsognathus", "count": 6}, {"creature": "sparrow", "count": 8}, {"creature": "bee", "count": 6}]
+}

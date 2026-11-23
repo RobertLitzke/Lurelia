@@ -66,9 +66,15 @@ enum Job {
     /// Generate and mesh a column. `true` regenerates one already loaded (after
     /// the slopes setting changed); those survive rescheduling.
     Column(ColKey, bool),
+    /// Mesh one chunk again after an edit, from the store's padded copy.
+    /// `missing` has a bit for each of the nine columns round the chunk
+    /// that is not in the store (`missing_columns`): the copy's cells
+    /// there are taken from the generator and the kept edits instead
+    /// (`remesh_chunk`).
     Remesh {
         chunk: (i32, i32, i32),
         padded: Box<[u8; PAD3]>,
+        missing: u16,
         version: u32,
     },
 }
@@ -173,6 +179,9 @@ pub struct Streamer {
     roots: Vec<ColKey>,
     max_lod: u8,
     chunk_versions: HashMap<(i32, i32, i32), u32>,
+    /// Chunks waiting to be remeshed until the columns round them load, and
+    /// since when (`remesh_chunk`).
+    held: HashMap<(i32, i32, i32), Instant>,
     pub stats: StreamStats,
     pub dirty_edits: bool,
 }
@@ -226,6 +235,7 @@ impl Streamer {
             roots,
             max_lod,
             chunk_versions: HashMap::default(),
+            held: HashMap::default(),
             stats: StreamStats::default(),
             dirty_edits: false,
         }
@@ -333,6 +343,7 @@ impl Streamer {
                 Err(_) => break,
             }
         }
+        self.flush_held(store);
         let t_accept = start.elapsed();
         let moved = self.last_center.map_or(true, |c| (c - p).length() > 4.0);
         if moved {
@@ -670,15 +681,60 @@ impl Streamer {
         }
     }
 
+    /// Mesh chunk `c` again after an edit. The store's padded copy is only
+    /// whole where every column round it is loaded: a missing one reads as
+    /// air, and a chunk meshed against it drops its edge toward the gap,
+    /// which shows as white slivers of sky between it and the coarser ground
+    /// beyond. Edits do land at the edge of the loaded ring: an animal
+    /// flattens a shrub there (`edit_passing`), and a match's bots and
+    /// rivals dig and build wherever they are. Such a chunk is held until
+    /// its neighbours load, or for `HOLD_S` at most, and is then meshed
+    /// once for all the edits meanwhile, from the store where the store has
+    /// the ground and from the generator and the kept edits where it has
+    /// not. The chunk's own voxels are always the store's, so an edit that
+    /// is not kept is drawn too.
     fn remesh_chunk(&mut self, c: (i32, i32, i32), store: &Store) {
+        if missing_columns(store, c) == 0 {
+            self.held.remove(&c);
+            self.push_remesh(c, store, 0);
+        } else {
+            self.held.entry(c).or_insert_with(Instant::now);
+        }
+    }
+
+    fn push_remesh(&mut self, c: (i32, i32, i32), store: &Store, missing: u16) {
+        let padded = store.padded(c.0, c.1, c.2);
         let v = self.chunk_versions.entry(c).or_insert(0);
         *v += 1;
         let version = *v;
-        let padded = store.padded(c.0, c.1, c.2);
         let mut q = self.shared.queue.lock().unwrap();
         // Remeshes go to the end, which is popped first.
-        q.jobs.push((-1.0, Job::Remesh { chunk: c, padded, version }));
+        q.jobs.push((-1.0, Job::Remesh { chunk: c, padded, missing, version }));
         self.shared.cv.notify_one();
+    }
+
+    /// Mesh the held chunks whose neighbours have loaded, and those held
+    /// `HOLD_S` with the generator standing in for the neighbours still
+    /// missing. A chunk whose own column has gone is dropped.
+    fn flush_held(&mut self, store: &Store) {
+        if self.held.is_empty() {
+            return;
+        }
+        let mut go = Vec::new();
+        self.held.retain(|&c, since| {
+            let missing = missing_columns(store, c);
+            if missing & OWN_COLUMN != 0 {
+                return false;
+            }
+            let ready = missing == 0 || since.elapsed().as_secs_f32() >= HOLD_S;
+            if ready {
+                go.push((c, missing));
+            }
+            !ready
+        });
+        for (c, missing) in go {
+            self.push_remesh(c, store, missing);
+        }
     }
 
     /// Throw away every voxel edit and build the loaded world back the way
@@ -787,18 +843,7 @@ fn worker(s: Arc<Shared>, tx: Sender<JobResult>) {
             Job::Column(key, _) => {
                 let t = Instant::now();
                 // Copy just the edits near this column so the lock is held briefly.
-                let (local, epoch) = if key.lod == 0 {
-                    let e = s.edits.read().unwrap();
-                    let mut local = EditMap::default();
-                    for (k, v) in e.0.iter() {
-                        if (k.0 - key.x).abs() <= 1 && (k.2 - key.z).abs() <= 1 {
-                            local.insert(*k, v.clone());
-                        }
-                    }
-                    (local, e.1)
-                } else {
-                    (EditMap::default(), 0)
-                };
+                let (local, epoch) = if key.lod == 0 { edits_near(&s.edits, key) } else { (EditMap::default(), 0) };
                 let mut chunks = Vec::with_capacity(8);
                 let edits = if local.is_empty() { None } else { Some(&local) };
                 // Thin leaning stems are drawn along their own lines (mesh/lean.rs).
@@ -843,7 +888,28 @@ fn worker(s: Arc<Shared>, tx: Sender<JobResult>) {
                     smooth,
                 }
             }
-            Job::Remesh { chunk, padded, version } => {
+            Job::Remesh { chunk, mut padded, missing, version } => {
+                let key = crate::world::gen::ColKey { lod: 0, x: chunk.0, z: chunk.2 };
+                if missing != 0 {
+                    // The border toward a column the store lacks, as a
+                    // column load would build it: from the generator and
+                    // the kept edits. Where the generator has no chunk at
+                    // this height the border is air above the ground, and
+                    // below it a copy of the chunk's own edge, so no face
+                    // is drawn toward the gap.
+                    let (local, _) = edits_near(&s.edits, key);
+                    let edits = if local.is_empty() { None } else { Some(&local) };
+                    let mut made = false;
+                    let (solid_below, _) = s.gen.gen_column_with(key, edits, &mut scratch, |cy, p, _| {
+                        if cy == chunk.1 {
+                            made = true;
+                            fill_missing(&mut padded, Some(p), missing);
+                        }
+                    });
+                    if !made && chunk.1 < solid_below {
+                        fill_missing(&mut padded, None, missing);
+                    }
+                }
                 // True ground heights of the padded columns, in this chunk's voxels.
                 let mut colh = vec![0f32; PAD * PAD];
                 for pz in 0..PAD {
@@ -852,7 +918,6 @@ fn worker(s: Arc<Shared>, tx: Sender<JobResult>) {
                         colh[pz * PAD + px] = s.gen.ground_vox(x, z) - (chunk.1 * 32 - MY as i32) as f32;
                     }
                 }
-                let key = crate::world::gen::ColKey { lod: 0, x: chunk.0, z: chunk.2 };
                 let (threads, own) = s.gen.chunk_threads(&s.gen.tube_trees(key), key, chunk.1);
                 mesh_chunk_t(&padded, smooth, Some(&colh), true, &threads, &own, &mut mesh);
                 (mesh.sprite_fill, mesh.sprite_grass, mesh.sprite_patch, mesh.sprite_stalk) = sprites::scatter(
@@ -876,6 +941,63 @@ fn worker(s: Arc<Shared>, tx: Sender<JobResult>) {
         s.queue.lock().unwrap().busy -= 1;
         if tx.send(result).is_err() {
             return;
+        }
+    }
+}
+
+/// The kept edits in column `key` and the columns round it, copied so the
+/// lock is held briefly, and the edit map's epoch.
+fn edits_near(edits: &RwLock<(EditMap, u64)>, key: ColKey) -> (EditMap, u64) {
+    let e = edits.read().unwrap();
+    let mut local = EditMap::default();
+    for (k, v) in e.0.iter() {
+        if (k.0 - key.x).abs() <= 1 && (k.2 - key.z).abs() <= 1 {
+            local.insert(*k, v.clone());
+        }
+    }
+    (local, e.1)
+}
+
+/// Seconds a remesh waits for the columns round its chunk to load before
+/// the generator stands in for them (`Streamer::remesh_chunk`).
+const HOLD_S: f32 = 1.0;
+
+/// The bit of `missing_columns` for the chunk's own column.
+const OWN_COLUMN: u16 = 1 << 4;
+
+/// Which of the nine columns round chunk `c` (its own among them) are not
+/// in the store, a bit each, numbered `dz * 3 + dx` with both from 0 to 2.
+/// 0 is a padded copy that is whole.
+fn missing_columns(store: &Store, c: (i32, i32, i32)) -> u16 {
+    let mut missing = 0;
+    for dz in 0..3 {
+        for dx in 0..3 {
+            if !store.chunks.contains_key(&(c.0 + dx - 1, 0, c.2 + dz - 1)) {
+                missing |= 1 << (dz * 3 + dx);
+            }
+        }
+    }
+    missing
+}
+
+/// Set the cells of `padded` that lie in a `missing` column: from `from`,
+/// the same chunk as the generator builds it, or with None from the nearest
+/// cell of the chunk itself.
+fn fill_missing(padded: &mut [u8; PAD3], from: Option<&[u8; PAD3]>, missing: u16) {
+    // Which of the three columns a padded x or z falls in.
+    let col = |p: usize| (p >= M) as usize + (p >= M + 32) as usize;
+    for pz in 0..PAD {
+        for px in 0..PAD {
+            if missing & (1 << (col(pz) * 3 + col(px))) == 0 {
+                continue;
+            }
+            let (ex, ez) = (px.clamp(M, M + 31), pz.clamp(M, M + 31));
+            for py in 0..PADY {
+                padded[pidx(px, py, pz)] = match from {
+                    Some(g) => g[pidx(px, py, pz)],
+                    None => padded[pidx(ex, py, ez)],
+                };
+            }
         }
     }
 }

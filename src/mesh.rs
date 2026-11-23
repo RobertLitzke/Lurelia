@@ -891,7 +891,7 @@ fn tube_face(v: &[u8; PAD3], i: isize, d: usize) -> Option<([[i32; 3]; 4], [Opti
 
 /// Pack four corner offsets (sixteenths, quarters for a leaf block) into
 /// word2 and word3 of a rounded quad: x:5 y:6 z:5 each, corner k at bit 16k.
-fn pack_round(c: &[[i32; 3]; 4]) -> (u32, u32) {
+pub(crate) fn pack_round(c: &[[i32; 3]; 4]) -> (u32, u32) {
     let mut v = 0u64;
     for (k, o) in c.iter().enumerate() {
         let bits = (o[0] as u64 & 31) | (o[1] as u64 & 63) << 5 | (o[2] as u64 & 31) << 11;

@@ -16,7 +16,7 @@
 pub mod corpse;
 pub mod flag;
 pub mod gibs;
-mod hold;
+pub(crate) mod hold;
 mod hud;
 pub mod pickup;
 pub mod round;
@@ -3177,6 +3177,7 @@ mod tests {
             head: false,
             blast: risky,
             risky,
+            look: None,
         };
         sh.combat.land(blow(2, 1, 60.0, false));
         sh.settle(&mut player);
@@ -3282,6 +3283,7 @@ mod tests {
             head: false,
             blast: false,
             risky: false,
+            look: None,
         });
         run(&mut sh, &mut player, &store, 2, |_, _| {});
         match sh.flags.of(0).map(|f| f.state) {

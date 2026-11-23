@@ -1,0 +1,21 @@
+{
+  "name": "rowan",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Rowan: a slender small tree with feathery leaves and heavy bunches of red berries in autumn, planted at farm gates against witches.",
+  "form": "branching",
+  "height": [6, 11],
+  "trunk_radius": [0.14, 0.22],
+  "crown_radius": [1.6, 2.4],
+  "bark": "grey_brown_bark",
+  "leaf": "rowan_leaves",
+  "curve": "sweep",
+  "canopy": "tufts",
+  "leader": 0.5,
+  "fill": 0.4,
+  "max_slope": 1.0,
+  "autumn": "rowan_autumn",
+  "thin_limbs": 0.14,
+  "flower": "red_berries",
+  "flower_seasons": ["autumn"]
+}

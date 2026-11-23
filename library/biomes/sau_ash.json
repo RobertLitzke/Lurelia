@@ -1,0 +1,37 @@
+{
+  "name": "sau_ash",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "The ash country north-east of Cinderhorn: grey ash from the last eruption, dead snags of the forest it buried, horsetails and ferns coming back in the gullies.",
+  "priority": 9,
+  "rules": {"region": "ash"},
+  "surface": "grey_ash",
+  "subsurface": "cinders",
+  "fringe": 14,
+  "map_color": [150, 146, 138],
+  "plants": [
+    {"plant": "snag", "density": 0.002, "placement": {"verb": "lone", "params": {"spacing": 14}}},
+    {"plant": "broken_snag", "density": 0.002, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "giant_horsetail",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 12, "min": 0.5, "max": 1.0}}
+    },
+    {
+      "plant": "fern",
+      "density": 0.05,
+      "placement": {"verb": "clustered", "params": {"size": 12, "min": 0.5, "max": 1.0}}
+    },
+    {
+      "plant": "fireweed",
+      "density": 0.05,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.0, "max": 1.0}}
+    }
+  ],
+  "features": [{"structure": "boulder", "density": 0.0001, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "tyrannosaurus", "count": 1},
+    {"creature": "utahraptor", "count": 2},
+    {"creature": "compsognathus", "count": 1}
+  ]
+}

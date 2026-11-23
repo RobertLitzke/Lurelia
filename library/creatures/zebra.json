@@ -10,7 +10,7 @@
     "muzzle": [24, 24, 30],
     "stripe": [24, 24, 30]
   },
-  "behaviour": {"wary": 14, "flightiness": 1.0},
+  "behaviour": {"sleeps_on_side": true, "wary": 14, "flightiness": 1.0},
   "like": "horse",
   "scale": 0.92,
   "extra_ops": [

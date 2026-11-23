@@ -39,9 +39,12 @@ fn by_water(t: &Terrain, x: f32, z: f32) -> bool {
     t.wet(x, z) || t.shore_dist(x, z).is_some_and(|d| d < 3.0)
 }
 
-/// Height of the top of the ground or water at (x, z).
+/// Height of the top of the ground or water at (x, z): the sea, or a river
+/// or lake standing above the sea (without it a dragonfly over an upland
+/// stream hovers on the bed, under the water).
 fn floor(t: &Terrain, x: f32, z: f32, from: f32) -> f32 {
-    t.ground(x, z, from).map(|g| g.0).or_else(|| t.height(x, z)).unwrap_or(t.sea).max(t.sea)
+    let ground = t.ground(x, z, from).map(|g| g.0).or_else(|| t.height(x, z)).unwrap_or(t.sea).max(t.sea);
+    t.inland_water(x, z).map_or(ground, |(level, _)| ground.max(level))
 }
 
 /// The next place to hover.

@@ -72,10 +72,9 @@
     "CreatureUse": {
       "properties": {
         "count": {
-          "description": "How many to keep around the player while they are in this biome.",
-          "format": "uint32",
-          "minimum": 0,
-          "type": "integer"
+          "description": "How many to keep around the player while they are in this biome. A\nfraction is an extra one in that share of the country: 2.2 keeps two,\nand a third in about one 128 m square in five.",
+          "format": "float",
+          "type": "number"
         },
         "creature": {
           "type": "string"
@@ -268,6 +267,11 @@
             "array",
             "null"
           ]
+        },
+        "crisp": {
+          "default": false,
+          "description": "Read the region at the cell itself rather than through the warp that\ngives other biomes ragged edges: fields that end at a wall.",
+          "type": "boolean"
         },
         "elev": {
           "default": null,

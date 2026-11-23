@@ -491,6 +491,18 @@ pub const HELP: &[HelpBox] = &[
         ],
     },
     HelpBox {
+        title: "CONTROLLER",
+        rows: &[
+            keys("LEFT STICK / RIGHT STICK", "MOVE OR STEER / LOOK", None),
+            keys("RT / LT", "THROTTLE / BRAKE; ON FOOT DIG / BUILD, FIRE", None),
+            keys("A OR RB", "JUMP; IN THE CAR HOP, HELD TO DRIFT", None),
+            keys("B / LB", "CROUCH, HANDBRAKE / SPRINT, BOOST", None),
+            keys("X / Y", "CAR IN OR OUT, HELD: RESET / CAMERA", None),
+            keys("D-PAD", "GLIDE / KAYAK / BIKE / CAMERA OUT", None),
+            keys("START / BACK", "PAUSE / HELP", None),
+        ],
+    },
+    HelpBox {
         title: "ROPE",
         rows: &[acts(&[Action::Hook], "GET IT OUT, THROW, NEXT ANCHOR, LET GO", ModeId::Rope)],
     },

@@ -9,8 +9,8 @@
   "subsurface": "silt",
   "map_color": [84, 132, 110],
   "creatures": [
-    {"creature": "herring", "count": 20},
-    {"creature": "sea_turtle", "count": 10},
-    {"creature": "stingray", "count": 1}
+    {"creature": "herring", "count": 22},
+    {"creature": "sea_turtle", "count": 11},
+    {"creature": "stingray", "count": 1.1}
   ]
 }

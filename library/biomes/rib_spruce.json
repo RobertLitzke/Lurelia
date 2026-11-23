@@ -25,12 +25,15 @@
     {"structure": "fallen_trunk", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "elk", "count": 5},
+    {"creature": "elk", "count": 5.5},
     {"creature": "raven", "count": 2},
-    {"creature": "douglas_squirrel", "count": 4},
-    {"creature": "great_horned_owl", "count": 1},
-    {"creature": "deer", "count": 3},
-    {"creature": "eagle", "count": 2}
+    {"creature": "douglas_squirrel", "count": 4.4},
+    {"creature": "great_horned_owl", "count": 2},
+    {"creature": "deer", "count": 3.3},
+    {"creature": "eagle", "count": 2},
+    {"creature": "raccoon", "count": 1.1},
+    {"creature": "bat", "count": 3.3},
+    {"creature": "banana_slug", "count": 6.6}
   ],
   "collectibles": []
 }

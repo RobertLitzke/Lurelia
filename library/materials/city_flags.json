@@ -1,0 +1,16 @@
+{
+  "name": "city_flags",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "Cascadelle's paving: big pale limestone flags worn smooth, set in courses.",
+  "smooth": false,
+  "crisp": true,
+  "texture": {
+    "pattern": "coursed",
+    "base": [146, 142, 134],
+    "alt": [164, 158, 148],
+    "scale": 1.5,
+    "contrast": 0.9,
+    "calm": {"base": [150, 146, 138], "alt": [166, 160, 150]}
+  }
+}

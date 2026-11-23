@@ -1,0 +1,16 @@
+{
+  "name": "sau_cinder",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "Cinderhorn's cone of black cinders: a few pines, and fireweed come back in magenta drifts on the cinders three hundred years after the last eruption.",
+  "plants": [
+    {"plant": "ponderosa", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 40}}},
+    {"plant": "young_ponderosa", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "fireweed",
+      "density": 0.03,
+      "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.0, "max": 1.0}}
+    }
+  ],
+  "like": "cinder_field"
+}

@@ -13,17 +13,24 @@
       "plant": "bull_kelp",
       "density": 0.06,
       "placement": {"verb": "clustered", "params": {"size": 24, "min": 0.3, "max": 0.48}}
+    },
+    {
+      "plant": "kelp",
+      "density": 0.015,
+      "placement": {"verb": "clustered", "params": {"size": 24, "min": 0.3, "max": 0.48}}
     }
   ],
   "features": [{"structure": "plumose_anemones", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}],
   "creatures": [
-    {"creature": "rockfish", "count": 24},
-    {"creature": "kelp_perch", "count": 30},
-    {"creature": "sea_otter", "count": 3},
-    {"creature": "harbor_seal", "count": 2},
-    {"creature": "sea_lion", "count": 2},
-    {"creature": "herring_shoal", "count": 60},
-    {"creature": "giant_octopus", "count": 2}
+    {"creature": "rockfish", "count": 26.4},
+    {"creature": "kelp_perch", "count": 33},
+    {"creature": "sea_otter", "count": 3.3},
+    {"creature": "harbor_seal", "count": 2.2},
+    {"creature": "sea_lion", "count": 2.2},
+    {"creature": "herring_shoal", "count": 66},
+    {"creature": "giant_octopus", "count": 2.2},
+    {"creature": "mola", "count": 0.55},
+    {"creature": "marbled_murrelet", "count": 2}
   ],
   "collectibles": []
 }

@@ -2,7 +2,7 @@
   "name": "sand_rail",
   "version": 1,
   "introduced_by": "ribshore",
-  "notes": "A one-seat tube-frame sand rail, rear engine and rear drive, long travel. The first four-wheeler (notes/WHEELS_PLAN.md). Every number not given here is the default in src/vehicle/spec.rs; edit this file while driving and the car takes the new tune.",
+  "notes": "A one-seat tube-frame sand rail, rear engine and rear drive, long travel. The first four-wheeler. Every number not given here is the default in src/vehicle/spec.rs; edit this file while driving and the car takes the new tune.",
   "title": "SAND RAIL",
   "model": "sand_rail",
   "steering": "look",

@@ -76,6 +76,36 @@ pub struct MoveInput {
     pub focus_far: bool,
     /// U held: in the car, a tap gets out and a hold resets it.
     pub vehicle: bool,
+    /// The controller's left stick, x right and y forward, 0..1 past its
+    /// dead zone (src/pad.rs). Zero without one. The four direction keys
+    /// above are also set from it, for whatever only reads keys.
+    pub stick: glam::Vec2,
+    /// The controller's triggers, 0..1: right is the throttle, left the brake.
+    pub throttle: f32,
+    pub brake: f32,
+    /// The controller is what is being played with: the last thing pressed
+    /// or moved was on it, not the keyboard.
+    pub pad: bool,
+}
+
+impl MoveInput {
+    /// Right minus left, -1..1: the stick when it is pushed, else the keys.
+    pub fn side(&self) -> f32 {
+        if self.stick.x != 0.0 {
+            self.stick.x
+        } else {
+            self.right as i32 as f32 - self.left as i32 as f32
+        }
+    }
+
+    /// Forward minus back, -1..1, the same way.
+    pub fn ahead(&self) -> f32 {
+        if self.stick.y != 0.0 {
+            self.stick.y
+        } else {
+            self.forward as i32 as f32 - self.back as i32 as f32
+        }
+    }
 }
 
 pub struct Player {
@@ -202,7 +232,7 @@ impl Player {
             self.key_turn_v = 0.0;
             return;
         }
-        let keys = input.right as i32 as f32 - input.left as i32 as f32;
+        let keys = input.side();
         // A tenth of a second or so to reach the full rate, and as long to
         // stop: a held key turns as before, a tap nudges.
         let k = 1.0 - (-dt / KEY_TURN_EASE).exp();
@@ -291,9 +321,10 @@ impl Player {
         let (sy, cy) = self.yaw.sin_cos();
         let fwd = Vec3::new(-sy, 0.0, -cy);
         let right = Vec3::new(cy, 0.0, -sy);
-        let f = input.forward as i32 as f32 - input.back as i32 as f32;
-        let r = input.right as i32 as f32 - input.left as i32 as f32;
-        let wish = (fwd * f + right * r).normalize_or_zero();
+        let (f, r) = (input.ahead(), input.side());
+        // A stick pushed part way walks slower; keys are all or nothing.
+        let wish = (fwd * f + right * r).clamp_length_max(1.0);
+        let wish = if input.stick == glam::Vec2::ZERO { wish.normalize_or_zero() } else { wish };
         let dodge = self.double_tap([input.forward, input.back, input.left, input.right], dt);
         if self.fly {
             self.stand_up();

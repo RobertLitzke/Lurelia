@@ -32,7 +32,8 @@
       "plant": "salal",
       "density": 0.015,
       "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.4, "max": 0.6}}
-    }
+    },
+    {"plant": "sapling_pine", "density": 0.01, "placement": {"verb": "edge", "params": {"width": 30, "inner": 0.05}}}
   ],
   "features": [
     {"structure": "boulder", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}},
@@ -41,18 +42,19 @@
     {"structure": "mossy_log", "density": 0.0006, "placement": {"verb": "scatter", "params": {"seat": 0.4}}}
   ],
   "creatures": [
-    {"creature": "bear", "count": 1},
-    {"creature": "deer", "count": 3},
-    {"creature": "marmot", "count": 2},
+    {"creature": "bear", "count": 1.1},
+    {"creature": "deer", "count": 3.3},
+    {"creature": "marmot", "count": 2.2},
     {"creature": "eagle", "count": 1},
-    {"creature": "elk", "count": 3},
+    {"creature": "elk", "count": 3.3},
     {"creature": "northern_flicker", "count": 1},
     {"creature": "pileated_woodpecker", "count": 1},
-    {"creature": "great_horned_owl", "count": 1},
-    {"creature": "cougar", "count": 1},
-    {"creature": "douglas_squirrel", "count": 4},
-    {"creature": "wolf", "count": 2},
-    {"creature": "raven", "count": 2}
+    {"creature": "great_horned_owl", "count": 2},
+    {"creature": "cougar", "count": 1.1},
+    {"creature": "douglas_squirrel", "count": 4.4},
+    {"creature": "wolf", "count": 2.2},
+    {"creature": "raven", "count": 2},
+    {"creature": "bat", "count": 3.3}
   ],
   "collectibles": [
     {"item": "pine_cone", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},

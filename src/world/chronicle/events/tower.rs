@@ -1,5 +1,5 @@
 use crate::world::chronicle::{EventCtx, Process};
-use crate::world::fields::{Growth, Poi, Pos, Tower, TOWER_ANGLES, TOWER_DY};
+use crate::world::fields::{Arch, Growth, Poi, Pos, Tower, TOWER_ANGLES, TOWER_DY};
 use crate::world::noise::{hash32, perlin2, perlin3, smoothstep};
 use glam::{Vec2, Vec3};
 use serde::Deserialize;
@@ -10,8 +10,11 @@ use std::f32::consts::TAU;
 /// changes with height in lumps (`bulge`), vertical fluting, a lean, and a
 /// top that is a dome, knobs, a slope, a point or flat. Plants named in
 /// `ledge_plants` grow on the ledges where a bulge sticks out from under a
-/// waist, and `ledge_vine` hangs from them.
-#[derive(Deserialize, Debug)]
+/// waist, and `ledge_vine` hangs from them. With `joints`, `notch`, `arch`,
+/// `tideline` and `skerries` it is a sea stack: split along its joints,
+/// cut in at the waterline, holed through, and standing among the low rocks
+/// it has shed.
+#[derive(Deserialize, Debug, Clone)]
 pub struct TowerEvent {
     at: Pos,
     radius: f32,
@@ -76,8 +79,63 @@ pub struct TowerEvent {
     /// Ledge plants per 100 m of height (2).
     #[serde(default = "two")]
     ledges: f32,
+    /// Jointed rock, 0 (smooth lumps, the default) to 1: the outline breaks
+    /// into flat faces meeting at corners, and every few metres up (a bed)
+    /// the faces step in or out, as a sea stack splits along its joints.
+    #[serde(default)]
+    joints: f32,
+    /// A wave-cut notch round it at the waterline, metres deep.
+    #[serde(default)]
+    notch: f32,
+    /// [bearing, height, width]: a sea arch through it along the bearing,
+    /// its opening `height` m over the foot and `width` m across.
+    #[serde(default)]
+    arch: Option<[f32; 3]>,
+    /// A band of this material on its skin from the foot up to
+    /// `tideline_height` m over the sea (barnacles, black tar lichen).
+    #[serde(default)]
+    tideline: Option<String>,
+    #[serde(default = "tide_band")]
+    tideline_height: f32,
+    /// Surface material on its top, where turf would otherwise grow.
+    #[serde(default)]
+    cap: Option<String>,
+    /// Plants on its top: `crown_count` of them picked from the list
+    /// (windswept trees on a stack).
+    #[serde(default)]
+    crown_plants: Vec<String>,
+    #[serde(default)]
+    crown_count: u32,
+    /// A biome for its top, from the world's list (`gh_spruce`): the top
+    /// grows that biome's ground, plants and features as if it were a patch
+    /// of the mainland, whatever the biome's rules say.
+    #[serde(default)]
+    biome: Option<String>,
+    /// Low plants scattered over its top round the trees (ferns, salal):
+    /// `undergrowth_count` of them, by default about one for every 4 m2 of
+    /// level top.
+    #[serde(default)]
+    undergrowth: Vec<String>,
+    #[serde(default)]
+    undergrowth_count: Option<u32>,
+    /// Low wave-cut rocks round its foot, in its own rock and joints: how
+    /// many, how high they stand over the sea at most (m), and how far out
+    /// they go (m from the middle; default 2.5 radii + 8).
+    #[serde(default)]
+    skerries: u32,
+    #[serde(default = "skerry_height")]
+    skerry_height: f32,
+    #[serde(default)]
+    skerry_reach: Option<f32>,
     #[serde(default)]
     poi: Option<String>,
+}
+
+fn tide_band() -> f32 {
+    2.5
+}
+fn skerry_height() -> f32 {
+    2.5
 }
 
 fn half() -> f32 {
@@ -106,7 +164,91 @@ pub struct Growths(pub Vec<Growth>);
 impl Process for TowerEvent {
     fn apply(&self, cx: &mut EventCtx) -> String {
         let c = cx.pos(&self.at);
-        let (seed, cause) = (cx.seed, cx.cause);
+        let seed = cx.seed;
+        let mut msg = self.raise(cx, c, seed);
+        if self.skerries > 0 {
+            msg += &self.skerry_field(cx, c, seed);
+        }
+        if let Some(name) = &self.poi {
+            cx.pois.push(Poi { name: name.clone(), pos: c, cause: cx.cause });
+        }
+        msg
+    }
+}
+
+impl TowerEvent {
+    /// Low rocks round the foot: each a small tower of the same rock,
+    /// standing up to `skerry_height` m out of the water (or a boulder on
+    /// the sand), domed or flat or sloping, broken by the same joints.
+    fn skerry_field(&self, cx: &mut EventCtx, c: Vec2, seed: u32) -> String {
+        let mut rng = seed ^ 0x736b_6572;
+        let mut rnd = || {
+            rng = hash32(rng.wrapping_add(0x6d2b_79f5));
+            (rng >> 8) as f32 / 16_777_216.0
+        };
+        let r0 = self.radius.max(2.0);
+        let reach = self.skerry_reach.unwrap_or(r0 * 2.5 + 8.0);
+        let sea = cx.f.sea;
+        let mut done: Vec<(Vec2, f32)> = Vec::new();
+        let mut tries = 0;
+        while (done.len() as u32) < self.skerries && tries < self.skerries * 20 + 20 {
+            tries += 1;
+            // More of them close in, where the stack shed them.
+            let a = rnd() * TAU;
+            let d = r0 * 1.05 + (reach - r0 * 1.05).max(1.0) * rnd().powf(1.4);
+            let p = c + Vec2::new(a.cos(), a.sin()) * d;
+            let f = &cx.f;
+            if p.x < 4.0 || p.y < 4.0 || p.x > f.size - 4.0 || p.y > f.size - 4.0 {
+                continue;
+            }
+            let ground = f.height(p.x, p.y);
+            // In the water or on the beach just above it, not up on the land.
+            if ground > sea + 3.0 || ground < sea - 12.0 {
+                continue;
+            }
+            let r = 0.9 + (r0 * 0.3).clamp(0.5, 3.5) * rnd() * (0.4 + 0.6 * rnd());
+            if done.iter().any(|(q, rq)| q.distance(p) < (r + rq) * 0.9) {
+                continue;
+            }
+            // Some barely break the surface (reefs the swell foams over),
+            // a few stand well out.
+            let over = 0.3 + self.skerry_height * rnd().powf(1.7);
+            let height = (sea.max(ground) + over - ground).max(0.6);
+            let crown = ["dome", "dome", "flat", "slope", "knobs"][(rnd() * 5.0) as usize % 5];
+            let stretch = if rnd() < 0.6 { Some([rnd() * 180.0, 1.2 + rnd() * 1.4]) } else { None };
+            let small = TowerEvent {
+                radius: r,
+                height,
+                top: None,
+                bulge: 0.2,
+                flute: 0.05,
+                taper: Some(0.15 + 0.3 * rnd()),
+                lean: Some(0.0),
+                crown: Some(crown.to_string()),
+                stretch,
+                apron: None,
+                rubble: Vec::new(),
+                rubble_count: 0,
+                ledge_plants: Vec::new(),
+                ledge_vine: None,
+                arch: None,
+                notch: 0.0,
+                crown_plants: Vec::new(),
+                crown_count: 0,
+                undergrowth: Vec::new(),
+                biome: None,
+                skerries: 0,
+                poi: None,
+                ..self.clone()
+            };
+            small.raise(cx, p, hash32(seed ^ 0x5eed ^ (done.len() as u32).wrapping_mul(0x9e37_79b9)));
+            done.push((p, r));
+        }
+        format!(", {} skerries", done.len())
+    }
+
+    fn raise(&self, cx: &mut EventCtx, c: Vec2, seed: u32) -> String {
+        let cause = cx.cause;
         let rock = self.rock.as_ref().map_or(0, |m| cx.mat(m));
         let mantle = self.mantle.as_ref().map_or(0, |m| cx.mat(m));
         let moss = self.moss.as_ref().map_or(0, |m| cx.mat(m));
@@ -116,7 +258,7 @@ impl Process for TowerEvent {
             rng = hash32(rng.wrapping_add(0x6d2b_79f5));
             (rng >> 8) as f32 / 16_777_216.0
         };
-        let r0 = self.radius.max(2.0);
+        let r0 = self.radius.max(0.8);
         // The foot: the low fifth of the ground in a ring just outside it.
         let mut ring: Vec<f32> = (0..24)
             .map(|k| {
@@ -155,8 +297,8 @@ impl Process for TowerEvent {
         }
         let base = foot - 2.0;
         let height = match self.top {
-            Some(t) => (cx.f.sea + t - foot).max(4.0),
-            None => self.height.max(4.0),
+            Some(t) => (cx.f.sea + t - foot).max(0.6),
+            None => self.height.max(0.6),
         };
         let top = foot + height;
         let cap = match self.crown.as_deref().unwrap_or("any") {
@@ -193,6 +335,32 @@ impl Process for TowerEvent {
         } else {
             Vec2::ZERO
         };
+        // Joints and beds, from a stream of their own so towers without them
+        // come out as they always did. A handful of faces round the outline;
+        // the rock is split into beds a few metres thick, and in each bed
+        // every face stands a little in or out of the one below.
+        let mut jrng = seed ^ 0x6a6f_696e;
+        let mut jrnd = || {
+            jrng = hash32(jrng.wrapping_add(0x6d2b_79f5));
+            (jrng >> 8) as f32 / 16_777_216.0
+        };
+        let joints = self.joints.clamp(0.0, 1.0);
+        let nf = 5 + (jrnd() * 4.0) as usize;
+        let phase = jrnd() * TAU;
+        let faces: Vec<f32> = (0..nf).map(|k| phase + (k as f32 + (jrnd() - 0.5) * 0.7) * TAU / nf as f32).collect();
+        let mut beds: Vec<(f32, Vec<f32>, f32)> = Vec::new();
+        if joints > 0.0 {
+            let mut yb = base;
+            while yb < top + 2.0 {
+                yb += 2.5 + 3.5 * jrnd();
+                beds.push((yb, (0..nf).map(|_| jrnd() * 2.0 - 1.0).collect(), jrnd() * 2.0 - 1.0));
+            }
+        }
+        // How far a face steps in or out from one bed to the next, as a share
+        // of the radius: about a metre whatever the size, so a big stack
+        // doesn't grow eaves.
+        let bed_step = (1.0 / (r0 * sfac.max(1.0))).min(0.1);
+        let sea = cx.f.sea;
         let nrows = ((top + 1.0 - base) / TOWER_DY).ceil() as usize + 2;
         let s3 = seed.wrapping_add(17);
         let mut rows = Vec::with_capacity(nrows);
@@ -221,6 +389,10 @@ impl Process for TowerEvent {
             if y > top + 0.01 + tilt.length() * r0 * 1.5 {
                 r = 0.0;
             }
+            // The notch the waves cut, deepest a little over the still water:
+            // the same depth all round, however the outline is stretched.
+            let notch = if self.notch > 0.0 { self.notch * (-((y - sea - 0.6) / 1.4).powi(2)).exp() } else { 0.0 };
+            let bed = beds.iter().find(|b| y < b.0).or(beds.last());
             off.push(lean_dir * lean * t + Vec2::new(perlin2(y * 0.05, 1.3, seed), perlin2(y * 0.05, 7.9, seed)) * r0 * 0.25);
             let mut row = [0.0f32; TOWER_ANGLES];
             for (k, v) in row.iter_mut().enumerate() {
@@ -239,7 +411,25 @@ impl Process for TowerEvent {
                 } else {
                     1.0
                 };
-                *v = (r * oval * (1.0 + lobes + grooves) * knob).max(0.0);
+                let mut shape = 1.0 + lobes + grooves;
+                if let Some((_, jit, whole)) = bed {
+                    // The outline as a polygon: the nearest face's plane.
+                    let mut poly = f32::MAX;
+                    for (fk, fa) in faces.iter().enumerate() {
+                        let cs = (a - fa).cos();
+                        if cs > 0.05 {
+                            poly = poly.min((1.0 + bed_step * jit[fk]) / cs);
+                        }
+                    }
+                    // Clefts where the sea has opened a joint: sharp-sided,
+                    // running most of the way up.
+                    let cl = perlin3(ca * 2.6, sa * 2.6, y * 0.03, seed + 41);
+                    let cleft = 0.2 * smoothstep(0.22, 0.3, cl);
+                    let jointed = poly.min(1.6) * 0.92 * (1.0 + lobes * 0.25 + 0.5 * bed_step * whole - cleft);
+                    shape += (jointed - shape) * joints;
+                }
+                let full = r * oval * shape * knob;
+                *v = (full - notch).max(full * 0.45).max(0.0);
                 reach = reach.max(*v + off[i].length());
             }
             rows.push(row);
@@ -266,6 +456,24 @@ impl Process for TowerEvent {
             moss,
             moss_share: self.moss_share.clamp(0.0, 1.0),
             soil,
+            arch: self.arch.map(|[b, h, wd]| {
+                let a = b.to_radians();
+                let hw = (wd * 0.5).max(0.5);
+                Arch { dir: Vec2::new(a.sin(), -a.cos()), hw, spring: foot + h.max(hw) - hw }
+            }),
+            tide: self.tideline.as_ref().map_or(0, |m| cx.mat(m)),
+            tide_top: sea + self.tideline_height,
+        };
+        let cap_mat = self.cap.as_ref().map(|m| cx.mat(m));
+        let pin = match &self.biome {
+            Some(b) => match cx.lib.biome(b) {
+                Some(k) => Some(k as u8),
+                None => {
+                    cx.warnings.push(format!("tower: unknown biome {b}"));
+                    None
+                }
+            },
+            None => None,
         };
 
         // Its top into the heightfield, cell by cell, scanning down.
@@ -299,7 +507,20 @@ impl Process for TowerEvent {
                             let mut y = start;
                             while y > base {
                                 if shape.inside(Vec3::new(x, y, z)) {
-                                    *slot = y + 0.25;
+                                    // The skin is somewhere in the half metre
+                                    // above: find it, so the ground height is
+                                    // the rock's own and the voxels over it
+                                    // aren't drawn as bare rock above ground.
+                                    let (mut lo, mut hi) = (y, y + 0.5);
+                                    for _ in 0..5 {
+                                        let mid = (lo + hi) * 0.5;
+                                        if shape.inside(Vec3::new(x, mid, z)) {
+                                            lo = mid;
+                                        } else {
+                                            hi = mid;
+                                        }
+                                    }
+                                    *slot = lo;
                                     break;
                                 }
                                 y -= 0.5;
@@ -322,6 +543,16 @@ impl Process for TowerEvent {
                     tower.under[(iz * w + ix) as usize] = ground.min(f.h[i]);
                     f.h[i] = ht;
                     f.cause[i] = cause;
+                    if let Some(m) = cap_mat {
+                        f.surface[i] = m;
+                    }
+                    // The top only: not the walls, nor the shoulders of a
+                    // dome running down into the sea.
+                    if let Some(b) = pin {
+                        if ht > f.sea + 2.0 {
+                            f.biome_pin.insert(i as u32, b);
+                        }
+                    }
                     cells += 1;
                 }
             }
@@ -351,14 +582,69 @@ impl Process for TowerEvent {
                 }
             }
         }
+        let mut growths = Vec::new();
+        // Plants on the top: cells near the highest, level with their
+        // neighbours, a couple of metres apart.
+        if (!self.crown_plants.is_empty() && self.crown_count > 0) || !self.undergrowth.is_empty() {
+            let tmax = tops.iter().filter(|t| !t.is_nan()).fold(f32::MIN, |m, t| m.max(*t));
+            let band = (cap_h * 0.5).max(1.5);
+            let mut spots = Vec::new();
+            for iz in 1..w - 1 {
+                for ix in 1..w - 1 {
+                    let k = (iz * w + ix) as usize;
+                    let t0 = tops[k];
+                    if t0.is_nan() || t0 < tmax - band || tower.under[k].is_nan() || t0 < sea + 2.0 {
+                        continue;
+                    }
+                    let level = [(1, 0), (-1, 0), (0, 1), (0, -1)].iter().all(|(dx, dz)| {
+                        let t = tops[((iz + dz) * w + ix + dx) as usize];
+                        !t.is_nan() && (t - t0).abs() < 1.0
+                    });
+                    if level {
+                        spots.push(Vec3::new((x0 + ix) as f32 + 0.5, t0, (z0 + iz) as f32 + 0.5));
+                    }
+                }
+            }
+            let mut put: Vec<Vec3> = Vec::new();
+            let mut tries = 0;
+            while put.len() < self.crown_count as usize && !self.crown_plants.is_empty() && !spots.is_empty() && tries < 200 {
+                tries += 1;
+                let at = spots[(jrnd() * spots.len() as f32) as usize % spots.len()];
+                if put.iter().any(|q| Vec2::new(q.x - at.x, q.z - at.z).length() < 2.5) {
+                    continue;
+                }
+                let name = &self.crown_plants[(jrnd() * self.crown_plants.len() as f32) as usize % self.crown_plants.len()];
+                let out = (Vec2::new(at.x, at.z) - c).normalize_or_zero();
+                growths.push(Growth { plant: name.clone(), at, out, seed: None });
+                put.push(at);
+            }
+            // Undergrowth round the trunks, clear of them.
+            if !self.undergrowth.is_empty() {
+                let want = self.undergrowth_count.unwrap_or(spots.len() as u32 / 4) as usize;
+                let mut low: Vec<Vec3> = Vec::new();
+                let mut tries = 0;
+                while low.len() < want && !spots.is_empty() && tries < want * 20 + 20 {
+                    tries += 1;
+                    let at = spots[(jrnd() * spots.len() as f32) as usize % spots.len()];
+                    let near = |q: &Vec3, d: f32| Vec2::new(q.x - at.x, q.z - at.z).length() < d;
+                    if put.iter().any(|q| near(q, 1.2)) || low.iter().any(|q| near(q, 0.9)) {
+                        continue;
+                    }
+                    let name = &self.undergrowth[(jrnd() * self.undergrowth.len() as f32) as usize % self.undergrowth.len()];
+                    let out = (Vec2::new(at.x, at.z) - c).normalize_or_zero();
+                    growths.push(Growth { plant: name.clone(), at, out, seed: None });
+                    low.push(at);
+                }
+            }
+        }
+        let ncrown = growths.len();
         // Ledges: where the outline steps in going up, the bulge below has a
         // flat top sticking out. Pick a few for plants.
-        let mut growths = Vec::new();
         if !self.ledge_plants.is_empty() || self.ledge_vine.is_some() {
             let want = (height / 100.0 * self.ledges).round().max(1.0) as usize;
             let n = tower.rows.len();
             let mut tries = 0;
-            while growths.len() < want * 2 && tries < 200 {
+            while growths.len() - ncrown < want * 2 && tries < 200 {
                 tries += 1;
                 let i = 4 + (rnd() * (n as f32 - 12.0).max(1.0)) as usize;
                 if i + 4 >= n {
@@ -378,7 +664,7 @@ impl Process for TowerEvent {
                 let rr = (r_here + r_up) * 0.5;
                 let p = c + tower.off[i] + dir * rr;
                 let at = Vec3::new(p.x, y + TOWER_DY, p.y);
-                if growths.len() % 2 == 0 && !self.ledge_plants.is_empty() {
+                if (growths.len() - ncrown) % 2 == 0 && !self.ledge_plants.is_empty() {
                     let name = &self.ledge_plants[(rnd() * self.ledge_plants.len() as f32) as usize % self.ledge_plants.len()];
                     growths.push(Growth { plant: name.clone(), at, out: dir, seed: None });
                 }
@@ -417,13 +703,11 @@ impl Process for TowerEvent {
                 nrub += 1;
             }
         }
-        let nled = growths.len();
+        let nled = growths.len() - ncrown;
         cx.state.get::<Growths>().0.extend(growths);
         all.push(tower);
         cx.state.get::<Towers>().0 = all;
-        if let Some(name) = &self.poi {
-            cx.pois.push(Poi { name: name.clone(), pos: c, cause });
-        }
-        format!("{cap} tower {height:.0} m from {foot:.0} m, r {r0} m ({cells} m2, {nled} ledge plants, {apron_cells} m2 apron, {nrub} rubble)")
+        let crowned = if ncrown > 0 { format!(", {ncrown} on top") } else { String::new() };
+        format!("{cap} tower {height:.0} m from {foot:.0} m, r {r0} m ({cells} m2, {nled} ledge plants{crowned}, {apron_cells} m2 apron, {nrub} rubble)")
     }
 }

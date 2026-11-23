@@ -1,0 +1,23 @@
+{
+  "notes": "The look of the ice arenas: a road of packed blue-grey ice that grips like rock, blue and white kerbs, glacier ice for walls and decks, packed snow beside the road, and Kaldvik's cold blue air. Summer, so no snow lies on the road. Best with walls.",
+  "story": "ice and packed snow under a pale sky",
+  "road": "ice_track",
+  "kerb": "ice_kerb",
+  "wall": "fall_ice_blue",
+  "deck": "fall_ice_blue",
+  "gate_post": "bridge_steel",
+  "world": {
+    "rock": [["glacier_ice", 0.7], ["fall_ice_blue", 0.3]],
+    "biomes": ["ice_deck", "arena_seabed"],
+    "default_biome": "ice_deck",
+    "seabed_biome": "arena_seabed",
+    "seasons": ["summer"],
+    "weather": {"clouds": 1.0, "sun": 0.6},
+    "start_weather": "clouds",
+    "weathering": 0.0,
+    "moss": 0.0,
+    "round_edges": ["fall_ice_blue", "packed_snow"],
+    "snow_line_m": 400
+  },
+  "look": "kaldvik"
+}

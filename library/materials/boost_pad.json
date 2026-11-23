@@ -1,0 +1,18 @@
+{
+  "name": "boost_pad",
+  "version": 2,
+  "introduced_by": "kestrel",
+  "notes": "A boost pad painted into a race track's road (track.json `pads`, chronicle/race_track.rs): a plain block of glowing orange, so a pad reads from a distance and after dark. Plain rather than banded: the old `columns` bands read as wooden planks. Grips as the road does (surface rock).",
+  "smooth": true,
+  "crisp": true,
+  "glow": 0.6,
+  "surface": "rock",
+  "texture": {
+    "pattern": "noise",
+    "base": [250, 150, 28],
+    "alt": [255, 184, 48],
+    "scale": 4,
+    "contrast": 0.25,
+    "calm": {"base": [246, 146, 26], "alt": [252, 178, 44]}
+  }
+}

@@ -18,9 +18,9 @@
     {"structure": "rock_outcrop", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "marmot", "count": 5},
-    {"creature": "bumblebee", "count": 2},
-    {"creature": "bighorn", "count": 3},
+    {"creature": "marmot", "count": 5.5},
+    {"creature": "bumblebee", "count": 2.2},
+    {"creature": "bighorn", "count": 3.3},
     {"creature": "ptarmigan", "count": 3},
     {"creature": "raven", "count": 2}
   ],

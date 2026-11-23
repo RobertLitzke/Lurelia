@@ -1,0 +1,13 @@
+{
+  "name": "race_gate",
+  "version": 1,
+  "introduced_by": "kestrel",
+  "notes": "The gantry over a circuit's start/finish line: two posts outside the kerbs and a chequered beam across. Its voxels are built by the `circuit` event to fit the road where the line is; this entry only names the placement. `base: rim` keeps it where the event put it.",
+  "size": [1, 1, 1],
+  "anchor": [0, 0, 0],
+  "level": false,
+  "decays": false,
+  "base": "rim",
+  "tags": ["landmark"],
+  "ops": []
+}

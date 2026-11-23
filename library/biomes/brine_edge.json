@@ -1,6 +1,6 @@
 {
   "name": "brine_edge",
-  "version": 1,
+  "version": 2,
   "introduced_by": "saltmirror",
   "notes": "The wet salt round the brine: glasswort in red mats and the flamingos standing in rows along the water.",
   "priority": 8,
@@ -19,7 +19,7 @@
   "creatures": [
     {"creature": "flamingo", "count": 70},
     {"creature": "heron", "count": 2},
-    {"creature": "coyote", "count": 1},
-    {"creature": "snowy_plover", "count": 8}
+    {"creature": "coyote", "count": 1.1},
+    {"creature": "snowy_plover", "count": 14}
   ]
 }

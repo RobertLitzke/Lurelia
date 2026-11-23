@@ -17,9 +17,9 @@
     }
   ],
   "creatures": [
-    {"creature": "boar", "count": 3},
+    {"creature": "boar", "count": 3.3},
     {"creature": "crow", "count": 8},
-    {"creature": "jackrabbit", "count": 3},
-    {"creature": "barn_owl", "count": 1}
+    {"creature": "jackrabbit", "count": 3.3},
+    {"creature": "barn_owl", "count": 2}
   ]
 }

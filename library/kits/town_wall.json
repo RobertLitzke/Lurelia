@@ -1,0 +1,11 @@
+{
+  "name": "town_wall",
+  "version": 2,
+  "introduced_by": "townlab",
+  "notes": "A medieval town wall: dressed stone two metres thick and six high, following the ground, with merlons along its top. The `town` event puts towers along it and at its gates.",
+  "ground": "follow",
+  "width": 0.0,
+  "rails": [{"side": "centre", "out": 0.0, "from": 0.0, "to": 6.0, "thick": 2.0, "mat": "cotswold_stone"}],
+  "posts": [{"side": "centre", "out": 0.0, "every": 1.5, "size": [0.75, 0.9, 2.0], "base": 6.0, "mat": "cotswold_stone"}],
+  "tags": ["wall"]
+}

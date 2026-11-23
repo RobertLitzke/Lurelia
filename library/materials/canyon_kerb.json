@@ -1,0 +1,9 @@
+{
+  "name": "canyon_kerb",
+  "version": 1,
+  "introduced_by": "vermilion",
+  "notes": "Oxide-red and cream racing kerb for a red rock circuit: the red is darker than the sand round it, so the edge of the road reads against the desert.",
+  "like": "track_kerb",
+  "surface": "hardpack",
+  "texture": {"base": [132, 40, 30], "alt": [232, 214, 178], "calm": {"base": [140, 52, 40], "alt": [228, 212, 180]}}
+}

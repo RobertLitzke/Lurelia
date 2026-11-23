@@ -35,8 +35,10 @@ pub struct SignEvent {
     centre_m: Option<f32>,
 }
 
+/// The sign style where the event names none (`events::defaults_used`).
+pub const STYLE: &str = "timber_sign";
 fn default_style() -> String {
-    "timber_sign".to_string()
+    STYLE.to_string()
 }
 
 impl Process for SignEvent {

@@ -19,24 +19,28 @@
     {"plant": "birch", "density": 0.003, "placement": {"verb": "clustered", "params": {"size": 20}}},
     {"plant": "juniper", "density": 0.006, "placement": {"verb": "clustered", "params": {"size": 12}}},
     {"plant": "snag", "density": 0.001, "placement": {"verb": "lone", "params": {"spacing": 24}}},
-    {"plant": "rock_lichen", "density": 0.06}
+    {"plant": "rock_lichen", "density": 0.06},
+    {"plant": "sapling_pine", "density": 0.01, "placement": {"verb": "edge", "params": {"width": 30, "inner": 0.05}}},
+    {"plant": "lowbush_blueberry", "density": 0.15, "placement": {"verb": "clustered", "params": {"size": 16}}},
+    {"plant": "rowan", "density": 0.0003, "placement": {"verb": "edge", "params": {"width": 10}}}
   ],
   "features": [
     {"structure": "basalt_boulder", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}},
     {"structure": "fallen_trunk", "density": 0.0008, "placement": {"verb": "scatter", "params": {"seat": 0.4}}}
   ],
   "creatures": [
-    {"creature": "elk", "count": 3},
-    {"creature": "bear", "count": 1},
+    {"creature": "elk", "count": 3.3},
+    {"creature": "bear", "count": 1.1},
     {"creature": "raven", "count": 3},
-    {"creature": "arctic_fox", "count": 3},
-    {"creature": "pale_hare", "count": 5},
+    {"creature": "arctic_fox", "count": 3.3},
+    {"creature": "pale_hare", "count": 5.5},
     {"creature": "sea_eagle", "count": 1},
     {"creature": "ptarmigan", "count": 2},
-    {"creature": "tawny_owl", "count": 1},
-    {"creature": "red_squirrel", "count": 3},
-    {"creature": "wolf", "count": 2},
-    {"creature": "great_horned_owl", "count": 1}
+    {"creature": "tawny_owl", "count": 2},
+    {"creature": "red_squirrel", "count": 3.3},
+    {"creature": "wolf", "count": 2.2},
+    {"creature": "great_horned_owl", "count": 2},
+    {"creature": "bat", "count": 3.3}
   ],
   "collectibles": [{"item": "pine_cone", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}],
   "sound": {"leaves": 0.7, "wind": 0.8, "notes": "A close spruce wood: needles, and little wind at the ground."},

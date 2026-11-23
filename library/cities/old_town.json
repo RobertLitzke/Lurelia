@@ -1,0 +1,65 @@
+{
+  "name": "old_town",
+  "version": 1,
+  "introduced_by": "townlab",
+  "notes": "A generated European town: plastered and stone houses under tile and slate in the old lanes, brick in the surveyed streets, painted siding in the suburbs; setts in the core, asphalt on the through roads, gravel lanes out in the villages. Field walls of heaped stone, a dry-stone town wall.",
+  "like": "modern",
+  "deck": "cotswold_stone",
+  "deck_top": "stone_tiles",
+  "rail": "cotswold_stone",
+  "town": {
+    "walls": {
+      "maze": ["stucco_tan", "siding_cream", "cotswold_stone", "stucco_tan", "white_siding", "timber_frame"],
+      "radial": ["stucco_tan", "siding_cream", "cotswold_stone", "white_siding"],
+      "grid": ["brick_brown", "brick_brown", "stucco_tan", "siding_cream", "cotswold_stone"],
+      "suburb": [
+        "white_siding",
+        "siding_cream",
+        "siding_sage",
+        "siding_teal",
+        "siding_rust",
+        "brick_brown",
+        "siding_grey",
+        "white_siding"
+      ],
+      "village": ["cotswold_stone", "white_siding", "stucco_tan", "siding_cream"],
+      "ribbon": ["cotswold_stone", "white_siding", "stucco_tan"]
+    },
+    "roofs": {
+      "maze": ["tile_terracotta", "roof_tile_red", "roof_tile_brown", "roof_tile_pale", "tile_terracotta", "tile_slate"],
+      "radial": ["tile_slate", "tile_slate", "tile_terracotta", "roof_tile_red"],
+      "grid": ["tile_slate", "roof_tile_red", "tile_slate", "roof_tile_brown", "tile_terracotta"],
+      "suburb": ["roof_shingle_grey", "roof_shingle_brown", "roof_tile_brown", "tile_slate", "roof_tile_red"],
+      "village": ["tile_slate", "tile_terracotta", "roof_tile_brown", "tile_slate"],
+      "ribbon": ["tile_slate", "tile_terracotta", "roof_tile_brown"]
+    },
+    "trims": ["trim_white", "trim_white", "trim_white", "trim_dark"],
+    "streets": {
+      "main": "road_asphalt",
+      "ring": "road_asphalt",
+      "street": "road_asphalt",
+      "lane": "road_gravel",
+      "close": "road_asphalt",
+      "alley": "road_gravel",
+      "country": "road_gravel",
+      "quay": "stone_tiles",
+      "maze_main": "stone_tiles",
+      "maze_street": "stone_tiles",
+      "maze_lane": "city_flags",
+      "maze_alley": "city_flags",
+      "village_main": "road_gravel",
+      "village_street": "road_gravel",
+      "ribbon_main": "road_gravel",
+      "drive": "pavement"
+    },
+    "plaza": "stone_tiles",
+    "flat_roof": "roof_tar",
+    "church": "cotswold_stone",
+    "trees": ["street_maple", "plane_tree", "street_oak", "great_oak"],
+    "field_wall": "fieldstone_wall",
+    "rail": "timber_fence",
+    "town_wall": "town_wall",
+    "garden": "garden_hedge",
+    "hedge": "hedgerow"
+  }
+}

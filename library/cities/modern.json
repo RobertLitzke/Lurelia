@@ -1,7 +1,7 @@
 {
   "name": "modern",
   "version": 1,
-  "introduced_by": "seattle",
+  "introduced_by": "city",
   "notes": "The city as the importer means it: asphalt roads, concrete, tar and shingle. What a `city` event uses when it names no kit.",
   "road": "road_asphalt",
   "pavement": "pavement",

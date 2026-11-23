@@ -1,6 +1,6 @@
 {
   "name": "gh_redwood_grove",
-  "version": 1,
+  "version": 2,
   "introduced_by": "gannet",
   "notes": "The old groves in the redwoods: the giants alone, bare trunks over a floor of fern, nothing else growing in their shade.",
   "priority": 6,
@@ -12,13 +12,29 @@
     {"plant": "giant_redwood", "density": 0.003, "placement": {"verb": "lone", "params": {"spacing": 22}}},
     {"plant": "young_redwood", "density": 0.003, "placement": {"verb": "clustered", "params": {"size": 10}}},
     {"plant": "fern", "density": 0.14, "placement": {"verb": "clustered", "params": {"size": 14}}},
-    {"plant": "tree_moss", "density": 0.5, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "tree_moss", "density": 0.5, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "redwood_sorrel",
+      "density": 0.18,
+      "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.2, "max": 1.0}}
+    },
+    {
+      "plant": "trillium",
+      "density": 0.015,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.5, "max": 1.0}}
+    }
   ],
   "features": [{"structure": "fallen_trunk", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}],
   "creatures": [
-    {"creature": "elk", "count": 2},
-    {"creature": "great_horned_owl", "count": 1},
-    {"creature": "douglas_squirrel", "count": 2}
+    {"creature": "elk", "count": 2.2},
+    {"creature": "great_horned_owl", "count": 2},
+    {"creature": "douglas_squirrel", "count": 2.2},
+    {"creature": "pileated_woodpecker", "count": 3.3},
+    {"creature": "woodpecker", "count": 4.4},
+    {"creature": "sparrow", "count": 5.5},
+    {"creature": "marbled_murrelet", "count": 4},
+    {"creature": "stellers_jay", "count": 2},
+    {"creature": "banana_slug", "count": 6.6}
   ],
   "collectibles": []
 }

@@ -573,7 +573,7 @@
           ]
         },
         {
-          "description": "A rod, rope or spar through `points` (two or more, voxel units, the\ncentre of a voxel is +0.5), `radius` voxels thick: rigging, stays,\nspokes, diagonal legs and braces. Drawn as one thin line of voxels,\nand where it leans the mesher draws it as a smooth tube along its own\nline (a thread, mesh/lean.rs) instead of a staircase. A radius under\nabout 0.6 is still one voxel of line, drawn as a tube that thin.",
+          "description": "A rod, rope or spar through `points` (two or more, voxel units, the\ncentre of a voxel is +0.5), `radius` voxels thick: rigging, stays,\nspokes, diagonal legs and braces. Drawn as one thin line of voxels,\nand where it leans the mesher draws it as a smooth tube along its own\nline (a thread, mesh/lean.rs) instead of a staircase. A radius under\nabout 0.6 is still one voxel of line, drawn as a tube that thin. It\nfills only air, and its tube hides only the voxels it drew\n(`Shape::thread_vox`), so it can join a post or lie on a shell of\nits own material.",
           "type": "object",
           "properties": {
             "mat": {

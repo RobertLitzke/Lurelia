@@ -16,13 +16,13 @@
     }
   ],
   "creatures": [
-    {"creature": "sky_ray", "count": 4},
-    {"creature": "glow_bee", "count": 4},
-    {"creature": "glassmoth", "morph": "lantern", "count": 16},
-    {"creature": "firefly", "count": 30},
-    {"creature": "fae_badger", "count": 1},
-    {"creature": "fae_toad", "count": 2},
-    {"creature": "fae_elephant", "count": 1}
+    {"creature": "sky_ray", "count": 4.4},
+    {"creature": "glow_bee", "count": 4.4},
+    {"creature": "glassmoth", "morph": "lantern", "count": 17.6},
+    {"creature": "firefly", "count": 33},
+    {"creature": "fae_badger", "count": 2.2},
+    {"creature": "fae_toad", "count": 2.2},
+    {"creature": "fae_elephant", "count": 1.1}
   ],
   "collectibles": [{"item": "hag_stone", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}]
 }

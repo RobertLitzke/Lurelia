@@ -24,13 +24,19 @@
       "plant": "sea_whip",
       "density": 0.015,
       "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.3, "max": 1.0}}
+    },
+    {"plant": "table_coral", "density": 0.018, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "staghorn_violet",
+      "density": 0.015,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.35, "max": 0.55}}
     }
   ],
   "creatures": [
-    {"creature": "reef_chromis", "count": 140},
-    {"creature": "butterflyfish", "count": 10},
-    {"creature": "angelfish", "count": 4},
-    {"creature": "parrotfish", "count": 7},
-    {"creature": "reef_manta", "count": 2}
+    {"creature": "reef_chromis", "count": 154},
+    {"creature": "butterflyfish", "count": 11},
+    {"creature": "angelfish", "count": 4.4},
+    {"creature": "parrotfish", "count": 7.7},
+    {"creature": "reef_manta", "count": 2.2}
   ]
 }

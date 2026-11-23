@@ -1,0 +1,84 @@
+{
+  "name": "sau_fernwood",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "The Fernwood, the high forest that fills the middle of Saurischia: monkey-puzzles standing over ginkgos and podocarps, tree ferns and cycads in the gaps, ferns underfoot. Raptors hunt it and stegosaurs browse its edges.",
+  "priority": 2,
+  "rules": {},
+  "surface": "fernwood_floor",
+  "subsurface": "dirt",
+  "fringe": 8,
+  "map_color": [46, 84, 50],
+  "plants": [
+    {
+      "plant": "araucaria",
+      "density": 0.0015,
+      "placement": {"verb": "clustered", "params": {"size": 45, "min": 0.0, "max": 1.0, "spacing": 9}}
+    },
+    {
+      "plant": "ginkgo",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 26, "min": 0.0, "max": 1.0}}
+    },
+    {
+      "plant": "dawn_redwood",
+      "density": 0.0007,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.4, "max": 1.0}}
+    },
+    {
+      "plant": "giant_fir",
+      "density": 0.0005,
+      "placement": {"verb": "clustered", "params": {"size": 50, "min": 0.3, "max": 1.0}}
+    },
+    {
+      "plant": "podocarp",
+      "density": 0.03,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.2, "max": 1.0}}
+    },
+    {
+      "plant": "tree_fern",
+      "density": 0.04,
+      "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.25, "max": 1.0}}
+    },
+    {
+      "plant": "cycad",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 12, "min": 0.25, "max": 1.0}}
+    },
+    {
+      "plant": "seed_fern",
+      "density": 0.03,
+      "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.2, "max": 1.0}}
+    },
+    {"plant": "grim_fern", "density": 0.5, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "fern",
+      "density": 0.2,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.2, "max": 1.0}}
+    },
+    {"plant": "shelf_fungus", "density": 0.25},
+    {"plant": "tree_moss", "density": 0.6},
+    {
+      "plant": "young_araucaria",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 22, "min": 0.0, "max": 1.0}}
+    }
+  ],
+  "features": [
+    {"structure": "fallen_trunk", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "mossy_log", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "rock_outcrop", "density": 8e-05, "placement": {"verb": "lone", "params": {"spacing": 60}}}
+  ],
+  "creatures": [
+    {"creature": "velociraptor", "count": 6},
+    {"creature": "utahraptor", "count": 2},
+    {"creature": "compsognathus", "count": 10},
+    {"creature": "archaeopteryx", "count": 10},
+    {"creature": "giant_millipede", "count": 6},
+    {"creature": "stellers_jay", "count": 4},
+    {"creature": "stegosaurus", "count": 3},
+    {"creature": "ankylosaurus", "count": 2},
+    {"creature": "firefly", "count": 22}
+  ],
+  "sound": {"wind": 0.7}
+}

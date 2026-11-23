@@ -1,0 +1,16 @@
+{
+  "name": "foxglove",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Foxgloves (drawn as sprites): tall spikes of pink-purple bells over a rosette of soft leaves.",
+  "smooth": false,
+  "sprites": "lupine",
+  "texture": {
+    "pattern": "noise",
+    "base": [84, 104, 66],
+    "alt": [176, 92, 150],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [91, 112, 72], "alt": [187, 99, 160]}
+  }
+}

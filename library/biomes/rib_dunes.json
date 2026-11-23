@@ -1,6 +1,6 @@
 {
   "name": "rib_dunes",
-  "version": 1,
+  "version": 2,
   "introduced_by": "ribshore",
   "notes": "The old dunes, held by grass: tan dunegrass combed by the wind, purple lupine in drifts and thickets of sea buckthorn in the hollows.",
   "priority": 4,
@@ -24,6 +24,11 @@
       "plant": "beach_pea",
       "density": 0.01,
       "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.5, "max": 0.65}}
+    },
+    {
+      "plant": "gorse",
+      "density": 0.06,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.15, "max": 1.0}}
     }
   ],
   "features": [
@@ -49,15 +54,16 @@
     }
   ],
   "creatures": [
-    {"creature": "elk", "count": 9},
-    {"creature": "coyote", "count": 1},
+    {"creature": "elk", "count": 9.9},
+    {"creature": "coyote", "count": 1.1},
     {"creature": "raven", "count": 2},
     {"creature": "gull", "count": 2},
-    {"creature": "jackrabbit", "count": 4},
-    {"creature": "bumblebee", "count": 3},
+    {"creature": "jackrabbit", "count": 4.4},
+    {"creature": "bumblebee", "count": 3.3},
     {"creature": "sparrow", "count": 4},
-    {"creature": "snowy_plover", "count": 5},
-    {"creature": "annas_hummingbird", "count": 3}
+    {"creature": "snowy_plover", "count": 10},
+    {"creature": "annas_hummingbird", "count": 3},
+    {"creature": "nightjar", "count": 2.2}
   ],
   "collectibles": [{"item": "seashell", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}]
 }

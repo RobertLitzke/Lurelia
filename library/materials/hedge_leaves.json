@@ -1,0 +1,16 @@
+{
+  "name": "hedge_leaves",
+  "version": 1,
+  "introduced_by": "townlab",
+  "notes": "A clipped field hedge seen as a mass: solid dark green, smoothed into a rounded bank rather than drawn leaf by leaf, so a hedge reads as one line across the fields.",
+  "smooth": true,
+  "sprites": "none",
+  "texture": {
+    "pattern": "blotch",
+    "base": [52, 84, 40],
+    "alt": [70, 104, 52],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [64, 98, 50], "alt": [84, 120, 62]}
+  }
+}

@@ -18,17 +18,20 @@
     {"plant": "ponderosa", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 60}}}
   ],
   "creatures": [
-    {"creature": "deer", "count": 6},
-    {"creature": "pronghorn", "count": 4},
-    {"creature": "elk", "count": 3},
-    {"creature": "horse", "count": 5},
+    {"creature": "deer", "count": 6.6},
+    {"creature": "pronghorn", "count": 4.4},
+    {"creature": "elk", "count": 3.3},
+    {"creature": "horse", "count": 5.5},
     {"creature": "sandhill_crane", "count": 3},
     {"creature": "northern_flicker", "count": 1},
-    {"creature": "bison", "count": 5},
-    {"creature": "sheep", "count": 6},
-    {"creature": "wolf", "count": 1},
-    {"creature": "mule_deer", "count": 4},
-    {"creature": "killdeer", "count": 2}
+    {"creature": "bison", "count": 5.5},
+    {"creature": "sheep", "count": 6.6},
+    {"creature": "wolf", "count": 1.1},
+    {"creature": "mule_deer", "count": 4.4},
+    {"creature": "killdeer", "count": 2},
+    {"creature": "skunk", "count": 2.2},
+    {"creature": "bat", "count": 3.3},
+    {"creature": "acorn_woodpecker", "count": 1.5}
   ],
   "sound": {"wind": 1.25}
 }

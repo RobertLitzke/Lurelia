@@ -21,10 +21,10 @@
   "features": [{"structure": "boulder", "density": 0.0006}],
   "creatures": [
     {"creature": "eagle", "count": 3},
-    {"creature": "great_horned_owl", "count": 1},
-    {"creature": "lizard", "count": 6},
-    {"creature": "marmot", "count": 5},
-    {"creature": "bat", "count": 8},
+    {"creature": "great_horned_owl", "count": 2},
+    {"creature": "lizard", "count": 6.6},
+    {"creature": "marmot", "count": 5.5},
+    {"creature": "bat", "count": 8.8},
     {"creature": "sparrow", "count": 6},
     {"creature": "raven", "count": 2}
   ],

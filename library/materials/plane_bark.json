@@ -1,0 +1,15 @@
+{
+  "name": "plane_bark",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "London plane bark: flaking in patches, cream and olive and grey.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [150, 146, 120],
+    "alt": [196, 188, 156],
+    "scale": 3,
+    "contrast": 1.1,
+    "calm": {"base": [160, 154, 128], "alt": [200, 192, 162]}
+  }
+}

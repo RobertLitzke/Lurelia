@@ -25,6 +25,7 @@ chain is resolved (`src/inherit.rs`):
 | `rarity` | Above 0 (and with `like`): a rare morph. That fraction of the parent's spawns are this creature instead, in any biome where the parent lives. |
 | `scale` | Multiplies the parent's (or its own) `voxel`, `half_w`, `height` and `fly_height`. |
 | `voxel` | Edge of one model voxel in metres. The shape is drawn on a 32^3 grid, so this one number scales the whole animal. |
+| `grid` | The grid's size in voxels along x, y and z, 32 to 96 each (default `[32, 32, 32]`). For the big animals: a long-bodied one wastes most of a cube, so a sauropod gets `[32, 56, 92]` at 0.25 m and keeps a head you can see. A grid bigger than 32^3 needs a rig, because only its parts are drawn: each part is meshed in a 32^3 window of its own (a mesh's positions are packed in five bits), so every bone's voxels must fit in 32 a side, and `--validate` names any part that does not (split it into more bones). |
 | `half_w`, `height` | The collision box, in metres. |
 | `colors` | Colour name -> sRGB, with an optional fourth value for glow (the glassmoth's wings use 1.8). A fourth value below 0 is iridescence instead: the colour is dusky until the sun's reflection off it lines up with the eye, then flashes, brighter than lit paint (`entity_colour` in scene.wgsl); an Anna's hummingbird's gorget uses -1.6. |
 | `ops` | The shape program: `box`, `ellipsoid`, `cylinder`, `log`, `disc`, `set`, `walls`, `gable`, `repeat`, `recolour_below` (bellies and socks) and `recolour` (a colour swapped inside a box: zebra stripes, a javelina's collar, a donkey's shoulder cross). Later ops overwrite earlier ones; `mat: "air"` carves. The model faces -Z and its pivot is the bottom centre. The same op language builds structures (`src/world/shape.rs`). |
@@ -43,7 +44,7 @@ runs each verb and with what settings. The movers are in `src/creatures/`:
 |---|---|---|
 | `graze` | `walk.rs`: wander, pause, flee | deer, elk, mule deer, bighorn, serow, pronghorn, marmot, boar, javelina, horse, donkey, zebra, fae horse, bear, panda |
 | `hop` | same, with a hop impulse on every step | rabbit, pale hare, jackrabbit |
-| `skulk` | same; hunts what it lists in `hunts` | fox, silver fox, coyote, lizard |
+| `skulk` | same; hunts what it lists in `hunts`, noticing it within 14 m or eight times its own height if that is more, and taking it within 1 m or 0.6 of its height (so a tyrannosaur sees a hadrosaur 32 m off and takes it at body length) | fox, silver fox, coyote, lizard, tyrannosaurus, the raptors, compsognathus |
 | `wade` | same, steering back toward river or coast. A wader whose rig has wings and whose `fly_height` is above 0 takes off instead of running when it bolts (below): it flies 25 to 50 m on slow beats (`wingbeat`) to open ground by the water and lands (`Air` in `walk.rs`) | heron, sandhill crane, faerie heron (fly); capybara (walks) |
 | `haulout` | same, close to the sea; lies out on rock or sand, and when it bolts (below) humps to the water and dives with a splash, swimming on in the water form its entry's `in_water` block describes. Seals at sea climb back out onto a low bank about once a minute | harbour seal, sea lion |
 | `plod` | same, slow; instead of running it stops and draws head, legs and tail into its shell while the player is within `wary`, and comes out slowly once you leave (`Pose.tuck`, `motors::retract`; legs that stick out sideways fold back under the rim) | tortoise, desert tortoise, moss tortoise |
@@ -120,7 +121,7 @@ accordingly (`src/creatures/diel.rs`). `behaviour.active` is one of:
 | `active` | Out when | Who |
 |---|---|---|
 | `diurnal` | daylight | the default, and most of the library: starlings, crows, squirrels, bees, cranes, zebra |
-| `nocturnal` | after dark | owls, bats, badgers, hedgehogs, frogs and toads, crocodiles, hippo, jaguar, lion, the water snake, and the lights: fireflies, the marsh light in both its coats (the wisp and the corpse candle) |
+| `nocturnal` | after dark | owls, nightjars, bats, badgers, raccoons, skunks, hedgehogs, kangaroo rats, spotted hyenas, frogs and toads, crocodiles, hippo, jaguar, lion, the water snake, and the lights: fireflies, the marsh light in both its coats (the wisp and the corpse candle) |
 | `crepuscular` | dawn and dusk, half out by day | deer and their children, rabbits and hares, fox, coyote, wolf, cougar and the big cats, bear, boar, otter, elephant, rattlesnake, desert tortoise, the dusk wren |
 | `any` | no hours of its own | fish, rays and the whale, seals, the sea turtle, the panda |
 
@@ -258,6 +259,15 @@ one place in a biome's quota, so this is one animal with one name:
 
 `--validate` rejects an `in_water` that does not school, or that repeats the land movement.
 
+Big swimmers (any water form, or a model over 0.6 m tall) turn in arcs, their heading swinging
+at most about 1.6 rad/s, and swing aside toward deeper water when they meet rock, instead of
+flicking straight back as a fish does: turned like fish, seals and walrus spun on the spot by
+the shore. `swim_pitch` in the `in_water` block tips the body nose-down while swimming, so the
+walrus, modelled propped up on its foreflippers, lies level in the water.
+
+Fish also spawn under a roof (a sea cave's pool, Gannet's grotto): they read the depth there
+from the voxels under the surface rather than the height map, which holds the land overhead.
+
 ## The families
 
 | Parent | Child | Kind | What differs |
@@ -278,8 +288,8 @@ one place in a biome's quota, so this is one animal with one name:
 | water_snake | anaconda | subspecies (jade shallows, cenote) | nearly three times the size, darker, rare (`spawn_chance` 0.15) |
 | rattlesnake | garter_snake | subspecies (meadows, forest, river banks) | half the size, olive, quick to leave, no rattle |
 
-The black bear and the humpback are rare through `spawn_chance` (0.001 and 0.0008 per
-half-second check while a biome round you wants one): on paper a bear every 8 minutes in its
+The black bear and the humpback are rare through `spawn_chance` (0.00133 and 0.0008 per
+half-second check while a biome round you wants one): on paper a bear every 6 minutes in its
 biome and a whale every 10 near deep water, and either stays until it is 130 m (bear) or 260 m
 (whale) away and out of view. In practice a bear is rarer than the paper rate: half an hour of `--tour 1800`
 walking a loop through Glassfall's interior, forests included, met no bear, while it met 316
@@ -313,6 +323,7 @@ Other families:
 | Parent | Children | Notes |
 |---|---|---|
 | heron (bird rig that walks; wings fold along the body on the ground, `motors::fold_wings`) | sandhill crane, faerie heron | walk and wade, fly off on huge slow wings |
+| quetzalcoatlus, pteranodon (each its own model; standing at rest on folded wings, opened by `spread` angles: ANIMATION.md, Pterosaurs) | | the quetzalcoatlus grazes and takes off when it bolts; the pteranodon glides and stands where it lands |
 | tortoise (plan sprawler, `plod`) | desert tortoise, moss tortoise, sea turtle (`bask`: own rounded shape, long flippers that fold under the shell) | hide in the shell |
 | boar | javelina, capybara (own blunt head, no tail, `wade`) | |
 | horse | donkey (long ears, shoulder cross), zebra (`recolour` stripes), fae horse (glowing mane) | |
@@ -427,6 +438,71 @@ Flocks, schools and insect swarms flee as one and have no per-individual alarm t
 for them flightiness and your approach move the radius instead (`startle::reach`): a shy flock at
 a walking pace lets you to about two thirds of its flee distance, and a bike at speed flushes it
 half as far out again.
+
+## Big bodies in a herd
+
+A walker's collision box (`physics::Body`) is a square `half_w` across at its feet. For a deer
+that is the animal; for a triceratops it is a fifth of it. So walkers are also capsules on the
+flat (`creatures/crowd.rs`): a spine from rump to snout along the heading, `half_w` thick. How far
+the body runs back and forward of the feet (`Model::reach`) is measured from the voxels when the
+library loads, ignoring a tail tip or claw only a voxel or two across.
+
+- Herds space by body, not feet. herd.rs measures `group.spacing` between spines, so a member
+  keeps that much room along the whole of a neighbour, and spawn sets each member down clear of
+  the ones already placed, trying up to ten spots.
+- Nothing stands in anything. Once a step, after everyone has moved, any two walkers whose
+  capsules overlap are pushed apart along the line between their nearest points, the lighter
+  giving way more, and never into a wall. A shallow overlap eases out at up to 3 m/s; a deep one
+  (two bolting into each other) closes half of itself each step. The player shoulders against
+  the same capsule, so you cannot walk through a triceratops's head.
+- Turning takes time. Anything over 1.5 m tall turns toward its heading at its own rate and walks
+  the way it faces, slowing to a crawl through a sharp turn instead of pivoting or sliding: about
+  1.6 rad/s at a walk for a 3 m elephant or triceratops, 0.6 for a 6 m brachiosaur, 1.6 times
+  that bolting.
+- Big animals walk through brush (`creatures/trample.rs`). A walker at least 2.8 m tall and
+  0.75 m `half_w` (an elephant, a mammoth, the big dinosaurs; not a bison or a giraffe) does not
+  steer round a shrub below 85% of its height (2.6 m at most, stems no thicker than 12 cm): the
+  shrub is flattened to its bottom layer of stems as it reaches it. Each grows back four minutes
+  later once nothing big is standing in it, at most 600 lie flattened at once, and none of it is
+  saved. Shrubs drawn as sprites (cycads, tussocks) have no voxels and nothing to flatten.
+- Their footfalls are felt. A big walker's step within `10 + 12 x weight` metres of the player
+  drops and rocks the view by a centimetre or so, settling in a fifth of a second (weight is
+  `sqrt(height x half_w / 2.4)`: 1 for an elephant, 2 for a brachiosaur). `VG_THUMP=k` scales it,
+  0 turns it off.
+
+## Large animals
+
+A walker 2.5 m tall or more (`creatures::LARGE_M`: elephants, bison, giraffes, gallimimus and
+the big dinosaurs) is a large animal; `behaviour.large` says so either way (`Species::large`).
+Large animals are found, kept and set down twice as far off as the rest (`spawn::LARGE_REACH`),
+so a herd can be watched from a ridge:
+
+- The biomes are asked what they want out to 180 m for them, not 45, and each large species is
+  wanted half as many again (`LARGE_QUOTA`), since its numbers are spread over four times the
+  ground. Newcomers are set down 30 to 180 m out, behind the player as usual, except in the first
+  three seconds of a world (`FIRST_FILL_S`), so a lookout opens with its herds in view.
+- They are dropped at 260 m out of view and 720 m in view, not 130 and 360.
+- Past full detail (128 m, stream.rs `FULL_DETAIL_M`) there are no voxels to walk on, so out
+  there a large animal walks the generator's ground (terrain.rs `far_ground`, which is what the
+  coarser rings are drawn from), steering off drops of more than 1.6 m, deep water, tree trunks
+  and the map's edge (walk.rs `far_walkable`), and the crowd push moves it freely. It steps onto
+  the voxels when they load.
+- They are remembered (`creatures/tracked.rs`). A large animal dropped for being far away leaves
+  a record of where it stood, its species, age, coat and herd; come back within 220 m and it is
+  put back there before the biomes are asked for anything new, so the same herd is waiting. A
+  record the player has gone more than 600 m from is forgotten, and at most 160 are kept.
+
+`creature_pathing` has `large_about`, `large_far` (past 128 m), `large_remembered` and
+`large_restored`. Headless, `VG_AWAY=x,z,from,to` puts the camera at (x, z), facing away, between
+two times in seconds and back after, for checking that a herd is still there on the return. On
+Thunderfield's south edge about 80 large animals are about, a third of them past 128 m; walking
+400 m away and back put 103 back where they were left, and 750 m away forgot them.
+
+`creature_pathing` counts `jostled` (walker-steps spent pushed out of another), `trampled`
+(shrubs flattened) and `thumps_felt`. `VG_CROWD=1` prints once a second how many walkers overlap,
+the deepest overlap and the fastest any big one is turning; `VG_CROWD=still` measures the same
+without pushing anyone, for comparison. On a brachiosaur and diplodocus herd in the Saurischia
+parkland, overlaps ran to 3 m without the push and stay under 0.4 m with it.
 
 ## Variation within a species
 
@@ -607,7 +683,8 @@ defaults from its `height`, so almost no entry needs the block:
 dying a day with bones that last half a day. Juveniles cluster: in a family group the animal
 that chose the spot is the adult and each of the others is a juvenile about a third of the
 time. `behaviour.sleeps_on_side` makes an animal tip over as it lies down instead of lying
-upright; the cats, dogs, bears, badgers, boar, monkeys and seals do.
+upright; the cats, dogs, wolves, bears, badgers, pigs, horses, elephants, hippos, monkeys,
+seals and walruses do, and so does the triceratops.
 
 Skeletons are derived from the creature's own voxels rather than authored, so a new creature
 gets one for nothing, and one too thin to read is dropped at load. The ages, the skeleton and
@@ -625,8 +702,9 @@ from a distance. Plant children inherit all of those.
 1. `src/worldload.rs::used_entries` collects the creatures named by the biomes that the built
    world actually contains, plus anything those creatures hunt, plus the rare morphs of
    anything collected. Only these are loaded.
-2. `worldload::creatures` runs each one's ops into a 32^3 grid and meshes it into one `Model`
-   (and one part model per bone if it has a rig). Its colours go into a palette block of its
+2. `worldload::creatures` runs each one's ops into its grid (32^3 unless `grid` says otherwise)
+   and meshes it into one `Model` (and one part model per bone if it has a rig; a bigger grid
+   has only the part models, each cut from a 32^3 window round its bone, `anim::slice::Dims`). Its colours go into a palette block of its
    own, appended after the fixed block (`models::FIXED_SLOTS`), and the model's `block` says
    where that starts; its part models and skeleton use the same block, with the two bone
    colours on the end. A world has no limit on its colours, and one model can use up to 192

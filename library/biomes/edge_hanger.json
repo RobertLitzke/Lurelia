@@ -22,7 +22,18 @@
       "placement": {"verb": "clustered", "params": {"size": 8, "min": 0.0, "max": 1.0}}
     },
     {"plant": "hazel", "density": 0.004, "placement": {"verb": "scatter", "params": {}}},
-    {"plant": "rock_moss", "density": 0.12}
+    {"plant": "rock_moss", "density": 0.12},
+    {
+      "plant": "holly",
+      "density": 0.002,
+      "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.3, "max": 1.0}}
+    },
+    {"plant": "yew", "density": 0.006, "placement": {"verb": "edge", "params": {"width": 30}}}
   ],
-  "creatures": [{"creature": "woodpecker", "count": 1}, {"creature": "firefly", "count": 20}, {"creature": "sky_ray", "count": 2}]
+  "creatures": [
+    {"creature": "woodpecker", "count": 1},
+    {"creature": "firefly", "count": 22},
+    {"creature": "sky_ray", "count": 2.2},
+    {"creature": "peregrine", "count": 1}
+  ]
 }

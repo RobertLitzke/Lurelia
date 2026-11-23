@@ -20,11 +20,11 @@
     {"plant": "golden_bamboo", "density": 0.004, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "kite_ray", "count": 12},
-    {"creature": "dragonfly", "count": 8},
-    {"creature": "glassmoth", "morph": "lantern", "count": 10},
-    {"creature": "crystal_bat", "count": 5},
-    {"creature": "anaconda", "count": 1},
+    {"creature": "kite_ray", "count": 13.2},
+    {"creature": "dragonfly", "count": 8.8},
+    {"creature": "glassmoth", "morph": "lantern", "count": 11},
+    {"creature": "crystal_bat", "count": 5.5},
+    {"creature": "anaconda", "count": 2.2},
     {"creature": "kingfisher", "count": 3}
   ],
   "mist": 0.15,

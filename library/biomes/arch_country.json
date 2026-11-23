@@ -23,15 +23,16 @@
     {"structure": "red_boulder", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "lizard", "count": 8},
+    {"creature": "lizard", "count": 8.8},
     {"creature": "condor", "count": 1},
-    {"creature": "desert_tortoise", "count": 2},
-    {"creature": "bee", "count": 2},
-    {"creature": "canyon_bat", "count": 4},
-    {"creature": "bighorn", "count": 2},
+    {"creature": "desert_tortoise", "count": 2.2},
+    {"creature": "bee", "count": 2.2},
+    {"creature": "canyon_bat", "count": 4.4},
+    {"creature": "bighorn", "count": 2.2},
     {"creature": "roadrunner", "count": 1},
     {"creature": "annas_hummingbird", "count": 2},
-    {"creature": "gambels_quail", "count": 12}
+    {"creature": "gambels_quail", "count": 12},
+    {"creature": "kangaroo_rat", "count": 2.2}
   ],
   "sound": {"ground": "stone"}
 }

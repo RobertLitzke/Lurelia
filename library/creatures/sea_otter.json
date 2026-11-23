@@ -8,6 +8,7 @@
     "movement": "school",
     "habit": "hover",
     "awash": true,
+    "back_float": true,
     "walk_speed": 0.3,
     "flee_speed": 1.5,
     "wary": 3,

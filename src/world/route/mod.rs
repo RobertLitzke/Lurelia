@@ -251,8 +251,17 @@ fn lay_inner(cx: &mut EventCtx, line: &[Vec2], kit_ix: usize, smooth: f32, heigh
     let base = sagged(&base, &airborne, kit.sag);
     let segs = emit(cx, line, &base, &airborne, &skip, kit_ix, &kit);
     let piers = piers(cx, line, &base, &airborne, &kit);
+    if kit.half > 0.8 && kit.ground != Ground::Bore {
+        cx.state.get::<RoadLines>().0.push((line.to_vec(), kit.half));
+    }
     Laid { length, segs, spans, piers }
 }
+
+/// Every road laid so far that carries traffic (a surface wider than a
+/// fence), as its centre line and half-width: what a later `town` or
+/// `fields` event hangs its fields off and keeps its walls clear of.
+#[derive(Default)]
+pub struct RoadLines(pub Vec<(Vec<Vec2>, f32)>);
 
 /// Lay a route that follows the land.
 pub fn lay(cx: &mut EventCtx, line: &[Vec2], kit_ix: usize, smooth: f32) -> Laid {

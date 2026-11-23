@@ -272,6 +272,15 @@
         "null"
       ]
     },
+    "crown_base_vary": {
+      "default": null,
+      "description": "Conifer forms: how much `crown_base` varies from tree to tree, as a\nshare of the height either side of it (default 0).",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
     "crown_radius": {
       "default": [
         1.5,
@@ -448,6 +457,15 @@
       "default": "",
       "type": "string"
     },
+    "open": {
+      "default": null,
+      "description": "Conifer forms: 0 to 1. Above 0 the crown is a stack of rounded pucks\nof needles centred on the trunk instead of a cone, one per `whorls`,\nsmall at the foot, widest about two fifths up and small again at the\ntop, with this share of each puck's slot left as a gap where the trunk\nshows (an old ponderosa, about 0.25). Default 0, a closed cone.",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
     "rarity": {
       "default": 0.0,
       "description": "Above 0: a rare morph of its parent. Where the parent is placed, this\nfraction of them grow as this plant instead.",
@@ -567,6 +585,20 @@
       "maxItems": 2,
       "minItems": 2,
       "type": "array"
+    },
+    "trunk_taper": {
+      "default": null,
+      "description": "How much of its radius the trunk loses from its foot to where the\nlimbs leave, 0 to 0.85 (default `flora::TRUNK_TAPER`, 0.3). More\nfor a trunk that narrows clearly into its limbs.",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "tube_limbs": {
+      "default": false,
+      "description": "Keep the sticks (`thin_limbs`) smooth tubes while the tree is in\nleaf, not only once it is bare: a planted tree whose clean limbs\nshow under the crown (street oaks and maples).",
+      "type": "boolean"
     },
     "version": {
       "default": 1,

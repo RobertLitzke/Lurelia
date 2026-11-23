@@ -1,0 +1,12 @@
+{
+  "name": "redwood_sorrel",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Redwood sorrel: bright clover-like leaves carpeting the redwood floor.",
+  "form": "herb",
+  "height": [0.15, 0.25],
+  "crown_radius": [0.5, 0.8],
+  "bark": "dead_wood",
+  "leaf": "redwood_sorrel",
+  "max_slope": 0.9
+}

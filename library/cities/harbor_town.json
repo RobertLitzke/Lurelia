@@ -1,0 +1,46 @@
+{
+  "name": "harbor_town",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "A generated New England harbour town: clapboard in white, grey and cream under slate and shingle, gravel lanes and asphalt streets, stone walls round every field (no hedges), picket-and-rail garden fences. Gannet Harbor and Shad Landing.",
+  "like": "modern",
+  "town": {
+    "walls": {
+      "grid": ["white_siding", "white_siding", "siding_grey", "siding_cream", "brick_brown"],
+      "maze": ["white_siding", "siding_grey", "siding_cream"],
+      "radial": ["white_siding", "siding_cream", "brick_brown"],
+      "suburb": ["white_siding", "siding_grey", "siding_cream", "siding_sage"],
+      "village": ["white_siding", "siding_grey", "siding_cream"],
+      "ribbon": ["white_siding", "siding_grey"]
+    },
+    "roofs": {
+      "grid": ["tile_slate", "roof_shingle_grey", "tile_slate", "roof_shingle_brown"],
+      "maze": ["tile_slate", "roof_shingle_grey"],
+      "radial": ["tile_slate", "roof_shingle_grey"],
+      "suburb": ["roof_shingle_grey", "roof_shingle_brown", "tile_slate"],
+      "village": ["roof_shingle_grey", "roof_shingle_brown", "tile_slate"],
+      "ribbon": ["roof_shingle_grey", "tile_slate"]
+    },
+    "trims": ["trim_white", "trim_white", "trim_white", "trim_dark"],
+    "streets": {
+      "main": "road_gravel",
+      "ring": "road_gravel",
+      "street": "road_gravel",
+      "lane": "road_gravel",
+      "close": "road_gravel",
+      "alley": "road_gravel",
+      "country": "road_gravel",
+      "quay": "road_gravel",
+      "drive": "road_gravel"
+    },
+    "plaza": "road_gravel",
+    "flat_roof": "tile_slate",
+    "church": "white_siding",
+    "trees": ["street_maple", "street_oak", "great_oak"],
+    "field_wall": "fieldstone_wall",
+    "rail": "timber_fence",
+    "town_wall": "fieldstone_wall",
+    "garden": "garden_fence",
+    "hedge": "fieldstone_wall"
+  }
+}

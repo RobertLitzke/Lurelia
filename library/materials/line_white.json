@@ -1,0 +1,17 @@
+{
+  "name": "line_white",
+  "version": 1,
+  "introduced_by": "kestrel",
+  "notes": "The white squares of a circuit's start/finish chequer and its grid boxes, painted into the road (event circuit's gate). Grips as the road does (surface rock), so the line costs a kart nothing.",
+  "smooth": true,
+  "crisp": true,
+  "surface": "rock",
+  "texture": {
+    "pattern": "speckle",
+    "base": [232, 232, 228],
+    "alt": [222, 222, 218],
+    "scale": 8,
+    "contrast": 0.3,
+    "calm": {"base": [228, 228, 224], "alt": [220, 220, 216]}
+  }
+}

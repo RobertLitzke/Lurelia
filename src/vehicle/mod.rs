@@ -7,26 +7,33 @@
 //! Each 60 Hz step runs `SUBSTEPS` substeps: the springs are soft, but the
 //! bump stop and the tyres are stiff, and substeps are the cheap cure. The
 //! ground under each wheel is read once a step, as a plane.
-//!
-//! notes/WHEELS_PLAN.md is the design.
 
 mod assist;
 mod body;
 pub mod bot;
 pub mod draw;
 mod grip;
+mod kart;
+#[cfg(test)]
+mod lab;
+pub mod lights;
 pub mod spec;
+pub mod touch;
 pub mod tune;
 mod wheel;
 
 pub use body::Body;
 #[allow(unused_imports)]
 pub use spec::Driven;
-pub use spec::{Catalogue, Spec, Steering};
+pub use spec::{Catalogue, Handling, Spec, Steering};
 
 use crate::world::store::{Cell, Store};
 use glam::{Quat, Vec3};
 use wheel::Contact;
+
+/// Seconds a drift's boost holds the boosted top speed, for each tier of
+/// charge it fired with.
+const DRIFT_KICK_SECS: f32 = 0.7;
 
 pub const SUBSTEPS: usize = 4;
 
@@ -126,6 +133,9 @@ pub struct Vehicle {
     pub rpm: f32,
     pub load: f32,
     pub boosting: bool,
+    /// The brakes were on last step (the brake pedal while rolling forward,
+    /// the throttle while rolling back, or the handbrake): the brake lights.
+    pub braking: bool,
     /// Water over the floor, metres.
     pub wade: f32,
     pub stalled: bool,
@@ -157,18 +167,41 @@ pub fn draw_ground(store: &Store, q: Vec3) -> Option<f32> {
     wheel::height(store, q.x, q.z, q.y + 2.0, 8.0, false).map(|(h, _)| h)
 }
 
+/// The ground under `p` (x, z), searching down from a little above `near`
+/// and then from high up: where a car is set down on a grid or back on a
+/// track.
+pub fn ground(store: &Store, p: glam::Vec2, near: f32) -> f32 {
+    let at = |y: f32| draw_ground(store, Vec3::new(p.x, y, p.y));
+    at(near + 6.0).or_else(|| (0..40).rev().find_map(|k| at(k as f32 * 8.0))).unwrap_or(near)
+}
+
+/// The yaw of a car facing along `d`, a direction on the ground (x, z).
+pub fn yaw_along(d: glam::Vec2) -> f32 {
+    (-d.x).atan2(-d.y)
+}
+
+/// Two cars touching, as a race has them: two karts by their footprints
+/// (`touch::karts`; with `store`, neither is pushed into a wall), any other
+/// pair by their chassis spheres (`bump`). Returns how hard they met, m/s.
+pub fn meet(a: &mut Vehicle, b: &mut Vehicle, store: Option<&Store>) -> f32 {
+    if a.spec.handling == Handling::Kart && b.spec.handling == Handling::Kart {
+        touch::karts(a, b, store)
+    } else {
+        bump(a, b)
+    }
+}
+
 /// Two cars touching: their chassis spheres pushed apart and an impulse
 /// between them at the contact, so a nudge turns the car it hits. Returns
-/// how hard they met, m/s. Only the tournament test races cars together
-/// so far.
-#[allow(dead_code)]
-pub fn bump(a: &mut Vehicle, b: &mut Vehicle) -> f32 {
+/// how hard they met, m/s.
+fn bump(a: &mut Vehicle, b: &mut Vehicle) -> f32 {
     if (a.b.pos - b.b.pos).length() > 6.0 {
         return 0.0;
     }
     let mut hardest = 0.0f32;
-    for sa in a.spec.collide.clone() {
-        for sb in b.spec.collide.clone() {
+    for i in 0..a.spec.collide.len() {
+        for j in 0..b.spec.collide.len() {
+            let (sa, sb) = (a.spec.collide[i], b.spec.collide[j]);
             let ca = a.b.pos + a.b.rot * Vec3::new(sa[0], sa[1], sa[2]);
             let cb = b.b.pos + b.b.rot * Vec3::new(sb[0], sb[1], sb[2]);
             let d = ca - cb;
@@ -179,9 +212,9 @@ pub fn bump(a: &mut Vehicle, b: &mut Vehicle) -> f32 {
             }
             let n = d / dist;
             let pen = reach - dist;
+            let p = cb + n * sb[3];
             a.b.pos += n * pen * 0.5;
             b.b.pos -= n * pen * 0.5;
-            let p = cb + n * sb[3];
             let vn = (a.b.point_vel(p) - b.b.point_vel(p)).dot(n);
             if vn >= 0.0 {
                 continue;
@@ -272,6 +305,7 @@ impl Vehicle {
             rpm: 0.0,
             load: 0.0,
             boosting: false,
+            braking: false,
             wade: 0.0,
             stalled: false,
             still: 0.0,
@@ -314,11 +348,18 @@ impl Vehicle {
         self.b.vel.dot(self.forward())
     }
 
-    /// The steering lock at this speed, radians.
+    /// The steering lock at this speed, radians. A kart's is no more than
+    /// its grip can turn it with, so full lock is the tightest it holds.
     pub fn lock(&self) -> f32 {
         let s = &self.spec;
-        let k = smoothstep(0.0, s.top_speed, self.v_fwd().abs());
-        (s.lock + (s.lock_fast - s.lock) * k).to_radians()
+        let v = self.v_fwd().abs();
+        let k = smoothstep(0.0, s.top_speed, v);
+        let lock = (s.lock + (s.lock_fast - s.lock) * k).to_radians();
+        if s.handling == Handling::Kart && v > 1.0 {
+            lock.min((s.wheelbase * kart::reach(s, v) / (v * v)).atan())
+        } else {
+            lock
+        }
     }
 
     /// The pose to draw, `alpha` of the way from the last step to this one.
@@ -339,6 +380,9 @@ impl Vehicle {
         self.righting = 0.0;
         self.upset = 0.0;
         self.asleep = false;
+        for w in &mut self.wheels {
+            w.contact = None;
+        }
     }
 
     /// One fixed step of `dt` seconds. `level` is the water's surface here.
@@ -382,14 +426,25 @@ impl Vehicle {
             None => c.steer.clamp(-1.0, 1.0),
         };
         let want = -ask * self.lock();
-        let rate = self.spec.steer_rate.to_radians() * dt;
+        // A kart's lock shrinks with speed, and the rate with it, so the
+        // wheel takes as long to reach full lock fast as slow.
+        let pace = if self.spec.handling == Handling::Kart { self.lock() / self.spec.lock.to_radians().max(0.01) } else { 1.0 };
+        let rate = self.spec.steer_rate.to_radians() * dt * pace;
         self.steer += (want - self.steer).clamp(-rate, rate);
 
         self.probe(store, level, slopes);
         let h = dt / SUBSTEPS as f32;
         let mut thump = 0.0f32;
         let mut crash = 0.0f32;
-        for _ in 0..SUBSTEPS {
+        // A kart's wheels are small and its springs short: a voxel step
+        // drawn sloped is a ramp shorter than a step's travel at speed, so it
+        // reads the ground every substep rather than miss the ramp and meet
+        // the step's face.
+        let kart = self.spec.handling == Handling::Kart;
+        for i in 0..SUBSTEPS {
+            if kart && i > 0 {
+                self.probe(store, level, slopes);
+            }
             let (t, k) = self.substep(c, store, level, h);
             thump = thump.max(t);
             crash = crash.max(k);
@@ -411,7 +466,18 @@ impl Vehicle {
             // Look from a little above the tyre's top to well below full droop.
             let from = mount.y.max(hub.y + r * 0.6);
             let reach = (from - hub.y) + travel + r + 1.5;
-            w.contact = wheel::probe(store, hub, fwd, r, from, reach, level, slopes);
+            // A small wheel rolls on with the slope it was on, and a little
+            // more; ground above that is a kerb's face, met by the chassis.
+            // Off the ground, it may come down on anything below its hub.
+            let limit = (s.climb > 0.0).then(|| match w.contact {
+                Some(c) if c.n.y > 0.3 => {
+                    let d = hub - c.point;
+                    let on = c.point.y - (c.n.x * d.x + c.n.z * d.z) / c.n.y;
+                    on.max(hub.y - r) + s.climb
+                }
+                _ => hub.y,
+            });
+            w.contact = wheel::probe(store, hub, fwd, r, from, reach, level, slopes, limit);
         }
     }
 
@@ -431,6 +497,7 @@ impl Vehicle {
                 s.travel + s.wheel_radius + 2.0,
                 level,
                 slopes,
+                None,
             );
             match (now, w.contact) {
                 (Some(a), Some(b)) => (a.point.y - b.point.y).abs() > 0.02,
@@ -444,7 +511,8 @@ impl Vehicle {
     /// bump-stop hit and chassis strike, m/s.
     #[allow(clippy::needless_range_loop)] // four wheels read and written by index
     fn substep(&mut self, c: &Controls, store: &Store, level: f32, h: f32) -> (f32, f32) {
-        let s = self.spec.clone();
+        let s = &self.spec;
+        let kart = s.handling == Handling::Kart;
         let g = s.gravity;
         let up = self.up();
         let fwd = self.forward();
@@ -461,7 +529,7 @@ impl Vehicle {
             let corner = s.corner(w.rear);
             let mount = self.b.pos + self.b.rot * w.mount;
             let vm = self.b.point_vel(mount);
-            springs[i] = wheel::suspend(con, mount, up, vm, s.wheel_radius, s.travel, corner.k, corner.mass, (s.damp_bump, s.damp_rebound, s.damp_knee), h);
+            springs[i] = wheel::suspend(con, mount, up, vm, s.wheel_radius, s.travel, corner.k, corner.mass, (s.damp_bump, s.damp_rebound, s.damp_knee), kart, h);
             if let Some(sp) = &springs[i] {
                 if sp.x > s.travel {
                     thump = thump.max(sp.x_dot);
@@ -511,9 +579,15 @@ impl Vehicle {
         // Nothing asked and barely moving: the brakes hold it, as an automatic
         // with a hill hold does, so a parked car stays parked on a dune.
         let hold = c.throttle == 0.0 && c.brake == 0.0 && speed < 2.0;
+        // Let roll, the drag is `coast` times as much.
+        let coast = if c.throttle == 0.0 { s.coast } else { 1.0 };
+        self.braking = brake > 0.05 || (c.handbrake && speed > 1.0);
         let brake_total = s.brake * 9.81 * s.mass * brake;
 
         let corner_m = s.mass * 0.25;
+        // The kart's tyres as one (kart.rs): their loads, ground and grip
+        // gathered here, the push worked out after.
+        let (mut k_load, mut k_n, mut k_mu, mut k_drag) = (0.0f32, Vec3::ZERO, 0.0f32, 0.0f32);
         for i in 0..4 {
             let Some(sp) = &springs[i] else { continue };
             let w = &self.wheels[i];
@@ -528,6 +602,17 @@ impl Vehicle {
             let at = patch + n * lift;
             f += up * sp.force;
             t += (hub - self.b.pos).cross(up * sp.force);
+            if kart {
+                let feel = con.surface.feel();
+                let wet = (con.depth / r).clamp(0.0, 1.0);
+                let speed = self.b.point_vel(patch).length();
+                let load = sp.force.max(1.0);
+                k_load += sp.force;
+                k_n += n * load;
+                k_mu += s.grip * feel.grip * (1.0 - 0.3 * wet) * load;
+                k_drag += (feel.drag + feel.soft / (1.0 + speed / 6.0) + 3.0 * wet) * load;
+                continue;
+            }
 
             let steer = if w.rear { 0.0 } else { self.steer };
             let heading = self.b.rot * (Quat::from_rotation_y(steer) * Vec3::NEG_Z);
@@ -539,7 +624,7 @@ impl Vehicle {
             let loose = if w.rear && self.drift.is_some() { s.drift_grip } else { 1.0 };
             let mu = s.grip * feel.grip * (1.0 - 0.3 * wet) * loose;
             let v = self.b.point_vel(at);
-            let plane = feel.drag + feel.soft / (1.0 + v.length() / 6.0) + 3.0 * wet;
+            let plane = (feel.drag + feel.soft / (1.0 + v.length() / 6.0) + 3.0 * wet) * coast;
             let share = if driven.contains(&i) {
                 let rear_share: f32 = if s.driven != spec::Driven::All {
                     1.0
@@ -559,7 +644,7 @@ impl Vehicle {
                 locked: c.handbrake && w.rear,
                 hold,
             };
-            let gr = grip::slip(&s, ask, sp.force, v, fl, sd, mu, feel.peak, plane, corner_m, h);
+            let gr = grip::slip(s, ask, sp.force, v, fl, sd, mu, feel.peak, plane, corner_m, h);
             f += gr.force;
             t += (at - self.b.pos).cross(gr.force);
             let w = &mut self.wheels[i];
@@ -567,6 +652,34 @@ impl Vehicle {
             w.slide = gr.slide;
             w.spin = gr.spin;
             w.omega = if w.rear && c.handbrake { 0.0 } else { gr.v_long / r * (1.0 + gr.spin * 2.0) };
+        }
+        if kart && k_load > 0.0 {
+            let weight = k_n.length().max(1e-3);
+            let ground = kart::Ground {
+                n: k_n / weight,
+                load: k_load,
+                mu: k_mu / weight,
+                drag: k_drag / weight * coast,
+            };
+            let drift = self.drift.map(|d| (d.dir, c.steer * d.dir));
+            let ask = kart::Ask {
+                steer: self.steer,
+                drive,
+                brake: brake_total,
+                hold,
+                drift,
+            };
+            let out = kart::tyres(s, &self.b, &ground, &ask, h);
+            f += out.force;
+            t += out.torque;
+            for (i, w) in self.wheels.iter_mut().enumerate() {
+                if springs[i].is_some() {
+                    w.slip = out.slip;
+                    w.slide = out.slide;
+                    w.spin = if driven.contains(&i) { out.spin } else { 0.0 };
+                    w.omega = out.v_long / r * (1.0 + w.spin * 2.0);
+                }
+            }
         }
         for (i, w) in self.wheels.iter_mut().enumerate() {
             match &springs[i] {
@@ -598,9 +711,13 @@ impl Vehicle {
         let down = springs.iter().filter(|s| s.is_some()).count();
 
         // Air drag, and down-force with the wheels down.
-        f -= self.b.vel * self.b.vel.length() * s.drag;
+        f -= self.b.vel * self.b.vel.length() * s.drag * coast;
         if down >= 3 {
             f -= up * s.downforce * v_fwd * v_fwd;
+        }
+        let near = self.wheels.iter().filter(|w| w.contact.is_some()).count();
+        if down == 0 && near >= 2 && self.air_time < 0.5 {
+            f -= Vec3::Y * s.stick * s.mass;
         }
         // Water: drag, and the car floats once it is deep enough.
         let floor = self.b.pos.y - (r + s.com_height) + 0.1;
@@ -612,8 +729,8 @@ impl Vehicle {
             t -= self.b.ang * s.inertia[0] * 2.0 * sub.min(1.0);
         }
 
-        // Assists.
-        if let Some(d) = self.drift.filter(|_| down >= 2) {
+        // Assists. The kart's tyres steer its yaw and hold its drift.
+        if let Some(d) = self.drift.filter(|_| down >= 2 && !kart) {
             // Held at the drift's angle to the way it is going: the keys
             // tighten it (more angle) or widen it, and the nose is steered
             // to that angle rather than let go, so it neither spins nor
@@ -627,34 +744,43 @@ impl Vehicle {
                 let r_path = v_fwd * self.steer.tan() / s.wheelbase;
                 t += up * ((-d.dir * angle - slip) * 45.0 + (r_path - r) * 6.0) * s.inertia[1];
             }
-        } else {
-            t += assist::yaw_damp(&s, &self.b, self.steer, v_fwd);
+        } else if !kart {
+            t += assist::yaw_damp(s, &self.b, self.steer, v_fwd);
         }
         // Kept on with only one axle down: over a crest the front leaves
         // first and the rear springs, still loaded, kick the tail up, and
         // undamped that is a nose-first landing.
         if down >= 1 {
-            t += assist::settle(&s, &self.b);
+            t += assist::settle(s, &self.b);
         }
         {
             let (sum, k) = self.wheels.iter().filter_map(|w| w.contact.map(|c| c.n)).fold((Vec3::ZERO, 0), |(a, k), n| (a + n, k + 1));
             let n = if k > 0 { sum.normalize_or(Vec3::Y) } else { Vec3::Y };
-            t += assist::upright(&s, &self.b, n);
+            t += assist::upright(s, &self.b, n);
         }
         if down == 0 {
             let below = self.wheels.iter().find_map(|w| w.contact.map(|c| c.n));
-            t += assist::air(&s, &self.b, c, below);
+            t += assist::air(s, &self.b, c, below);
         }
         if self.righting > 0.0 {
-            let (rt, lift) = assist::right_up(&s, &self.b);
+            let (rt, lift) = assist::right_up(s, &self.b);
             t += rt;
             f += lift;
         }
 
         self.b.integrate(f, t, h);
+        if kart {
+            // Lifted to halfway back to where the spring sits at rest, so it
+            // is not left wound up to throw the kart off the top.
+            let over: [f32; 4] = std::array::from_fn(|i| match &springs[i] {
+                Some(sp) if sp.x > s.travel => sp.x - s.travel + 0.5 * (s.travel - s.corner(i >= 2).sag),
+                _ => 0.0,
+            });
+            Self::climb_out(&mut self.b, s, over);
+        }
         // A drift carries its speed: it is shed at 1.5 m/s a second, not
         // scrubbed off by the sliding tyres.
-        if let Some(d) = self.drift.as_mut().filter(|_| down >= 2) {
+        if let Some(d) = self.drift.as_mut().filter(|_| down >= 2 && !kart) {
             d.keep = (d.keep - 1.5 * h).min(top);
             let flat = Vec3::new(self.b.vel.x, 0.0, self.b.vel.z);
             let speed = flat.length();
@@ -668,8 +794,14 @@ impl Vehicle {
         // ground the wheel rolls on, so it never takes the wheel's load.
         let r = s.wheel_radius;
         let tyres = self.wheels.iter().map(|w| [w.mount.x, w.mount.y - w.t + 0.3 * r, w.mount.z, 0.7 * r]);
-        let spheres: Vec<[f32; 4]> = s.collide.iter().copied().chain(tyres).collect();
-        let crash = self.b.collide(store, &spheres, self.slopes);
+        let crash = if kart {
+            let glance = Some(self.wheels.iter().filter_map(|w| w.contact.map(|c| c.n)).sum::<Vec3>().normalize_or(Vec3::Y));
+            let tyres: Vec<[f32; 4]> = tyres.collect();
+            self.b.collide(store, &s.collide, self.slopes, glance, false).max(self.b.collide(store, &tyres, self.slopes, glance, true))
+        } else {
+            let spheres: Vec<[f32; 4]> = s.collide.iter().copied().chain(tyres).collect();
+            self.b.collide(store, &spheres, self.slopes, None, false)
+        };
         // Foliage drags at the chassis as it pushes through.
         let centre = self.b.pos + up * 0.6;
         if matches!(
@@ -828,19 +960,46 @@ impl Vehicle {
                 }
             }
             Some(d) => {
+                // On the kart model a drift charges fastest steered into the
+                // turn, as kart games charge it, and one knocked round past
+                // 70 degrees is lost.
+                let kart = self.spec.handling == Handling::Kart;
+                let keys = (c.steer * d.dir).clamp(0.0, 1.0);
                 if down >= 2 {
-                    d.t += dt;
+                    d.t += dt * if kart { 0.4 + 0.6 * keys } else { 1.0 };
                 }
-                if !c.hop || v < 5.0 {
+                let flat = Vec3::new(self.b.vel.x, 0.0, self.b.vel.z);
+                let lost = kart && flat.length() > 2.0 && flat.normalize().dot(Vec3::new(fwd.x, 0.0, fwd.z).normalize_or(fwd)) < 0.34;
+                if lost {
+                    d.t = 0.0;
+                }
+                if !c.hop || v < 5.0 || lost {
                     let tiers = (d.t / charge.max(0.1)).floor().min(2.0);
                     if !c.hop && tiers > 0.0 {
                         self.b.vel += fwd * boost * tiers;
-                        self.kick_t = 0.35 * tiers;
+                        self.kick_t = DRIFT_KICK_SECS * tiers;
                     }
                     self.drift = None;
                 }
             }
         }
+    }
+
+    /// A kart's wheels `over` metres past the end of their travel (run up a
+    /// kerb or a steep bit of ramp): the body is lifted and turned out of the
+    /// ground by as much, without being given any speed to fly on with.
+    fn climb_out(b: &mut Body, s: &Spec, over: [f32; 4]) {
+        if over.iter().all(|&o| o <= 0.0) {
+            return;
+        }
+        let mean = |i: usize, j: usize| (over[i] + over[j]) * 0.5;
+        let (right, up, back) = (b.rot * Vec3::X, b.rot * Vec3::Y, b.rot * Vec3::Z);
+        // Wheels 0 and 1 are the front, 0 and 2 the left.
+        let lift = over.iter().sum::<f32>() / 4.0;
+        let pitch = (mean(0, 1) - mean(2, 3)) / s.wheelbase;
+        let roll = (mean(1, 3) - mean(0, 2)) / s.track;
+        b.pos += up * lift;
+        b.rot = (Quat::from_axis_angle(right, pitch) * Quat::from_axis_angle(back, roll) * b.rot).normalize();
     }
 
     /// The boost a drift has charged so far: 0, 1 or 2.
@@ -964,16 +1123,19 @@ mod tests {
         }
     }
 
-    /// Prints a ramp run, for tuning: `cargo test ramp_trace -- --ignored --nocapture`.
+    /// Prints a ramp run, for tuning: `TUNE=atv KMH=50 cargo test ramp_trace -- --ignored --nocapture`.
     #[test]
     #[ignore]
     fn ramp_trace() {
         let slopes = std::env::var("SLOPES").is_ok();
         let s = land(ramp_at, DIRT, (-1, 30), (-2, 2));
-        let mut v = Vehicle::new(Spec::default(), Vec3::new(0.0, 4.0, 0.0), EAST);
+        let spec = std::env::var("TUNE").map_or_else(|_| Spec::default(), |n| Catalogue::load(&std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))).get(&n));
+        let kmh: f32 = std::env::var("KMH").ok().and_then(|k| k.parse().ok()).unwrap_or(60.0);
+        let mut v = Vehicle::new(spec, Vec3::new(0.0, 4.0, 0.0), EAST);
         run(&mut v, &s, Controls::default(), 0.5, slopes, |_, _| {});
-        v.b.vel = v.forward() * (60.0 / 3.6);
-        run(&mut v, &s, Controls::default(), 4.0, slopes, |v, t| {
+        v.b.vel = v.forward() * (kmh / 3.6);
+        let secs: f32 = std::env::var("SECS").ok().and_then(|k| k.parse().ok()).unwrap_or(4.0);
+        run(&mut v, &s, Controls::default(), secs, slopes, |v, t| {
             let f = v.forward();
             println!(
                 "t {t:4.2} x {:6.2} y {:5.2} v {:5.2} pitch {:6.3} up.y {:5.2} down {} x {:?}",
@@ -1116,6 +1278,58 @@ mod tests {
         assert!(min_up > 0.6, "a dune at 20 degrees tipped it to up.y {min_up}");
     }
 
+    /// Over `ground` from x = 0 at `kmh`, coasting: the air time, the
+    /// nose's pitch (degrees, up positive) when the first wheel touches past
+    /// x = `lip`, whether that wheel was a rear one, whether any landing was
+    /// clean, and the least up.y.
+    fn jump(spec: &Spec, ground: impl Fn(f32, f32) -> f32, lip: f32, kmh: f32) -> (f32, f32, bool, bool, f32) {
+        let s = land(ground, DIRT, (-1, 30), (-2, 2));
+        let mut v = Vehicle::new(spec.clone(), Vec3::new(0.0, 4.0, 0.0), EAST);
+        run(&mut v, &s, Controls::default(), 0.5, true, |_, _| {});
+        v.b.vel = v.forward() * (kmh / 3.6);
+        let (mut air, mut pitch, mut rear, mut clean, mut min_up, mut was) = (0.0f32, None, false, false, 1.0f32, 4);
+        run(&mut v, &s, Controls::default(), 6.0, true, |v, _| {
+            air = air.max(v.air_time);
+            if v.pos().x > lip && was == 0 && v.grounded > 0 && pitch.is_none() {
+                pitch = Some(v.forward().y.asin().to_degrees());
+                rear = v.wheels.iter().any(|w| w.down && w.rear);
+            }
+            clean |= v.events.clean_landing;
+            min_up = min_up.min(v.up().y);
+            was = v.grounded;
+        });
+        (air, pitch.expect("never landed"), rear, clean, min_up)
+    }
+
+    /// The ATV gets more air off a ramp than the heavy kart it is tuned from,
+    /// holds its nose up through the flight and lands rear wheels first; over
+    /// a dune, onto its back slope, that is a clean landing.
+    #[test]
+    fn the_atv_flies_further_and_lands_tail_first() {
+        let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let cat = Catalogue::load(&root);
+        let (kart_air, ..) = jump(&cat.get("kart_heavy"), ramp_at, 48.0, 50.0);
+        let (air, pitch, rear, _, min_up) = jump(&cat.get("atv"), ramp_at, 48.0, 50.0);
+        assert!(air > kart_air + 0.05, "atv {air} s in the air, heavy kart {kart_air} s");
+        assert!((2.0..15.0).contains(&pitch), "atv touched down {pitch} deg nose up");
+        assert!(rear && min_up > 0.8, "atv touched down front first, or tipped to up.y {min_up}");
+        let (air, _, rear, clean, min_up) = jump(&cat.get("atv"), dune(2.5, 20.0), 50.0, 60.0);
+        assert!(air > 0.5 && rear && clean && min_up > 0.8, "dune: {air} s air, rear first {rear}, clean {clean}, up.y {min_up}");
+    }
+
+    /// The ATV rolls up a voxel step at walking pace, where a kart meets it
+    /// as a kerb.
+    #[test]
+    fn the_atv_climbs_a_voxel_step() {
+        let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let spec = Catalogue::load(&root).get("atv");
+        let s = land(|x, _| if x > 10.0 { 4.25 } else { 4.0 }, DIRT, (-1, 30), (-2, 2));
+        let mut v = Vehicle::new(spec, Vec3::new(4.0, 4.0, 0.0), EAST);
+        run(&mut v, &s, Controls::default(), 0.5, false, |_, _| {});
+        run(&mut v, &s, Controls { throttle: 0.5, ..Default::default() }, 4.0, false, |_, _| {});
+        assert!(v.pos().x > 13.0 && v.pos().y > 4.3, "stuck at x {} y {}", v.pos().x, v.pos().y);
+    }
+
     /// A 30% ramp at 60 km/h is a jump, and the car comes down on its wheels.
     #[test]
     fn a_ramp_is_a_jump_that_lands() {
@@ -1173,6 +1387,138 @@ mod tests {
         v.b.rot = Quat::from_rotation_z(std::f32::consts::PI) * v.b.rot;
         run(&mut v, &s, Controls::default(), 7.0, false, |_, _| {});
         assert!(v.up().y > 0.85, "still upset: up.y {}", v.up().y);
+    }
+
+    fn the_kart() -> Spec {
+        Catalogue::load(&std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))).get("kart")
+    }
+
+    /// A kart settled on `s` at `at`, facing `yaw`, then set going at `v`
+    /// m/s; returns it and the height it rides at.
+    fn kart_at(s: &Store, at: Vec3, yaw: f32, v: f32, slopes: bool) -> (Vehicle, f32) {
+        let mut k = Vehicle::new(the_kart(), at, yaw);
+        run(&mut k, s, Controls::default(), 0.5, slopes, |_, _| {});
+        k.b.vel = k.forward() * v;
+        let y = k.pos().y;
+        (k, y)
+    }
+
+    /// A kart run into a wall 2.5 m high glances along it at a shallow
+    /// angle and stops square on, and either way stays on its wheels:
+    /// never lifted, rolled or thrown back.
+    #[test]
+    fn a_kart_meets_a_wall_on_its_wheels() {
+        let s = land(|_, z| if z >= 3.0 { 4.5 } else { 2.0 }, DIRT, (-1, 12), (-2, 2));
+        for slopes in [false, true] {
+            for (deg, v) in [(15.0f32, 28.0f32), (30.0, 25.0), (60.0, 20.0), (90.0, 15.0)] {
+                let yaw = EAST - deg.to_radians();
+                let (mut k, y0) = kart_at(&s, Vec3::new(10.0, 2.0, 0.0), yaw, v, slopes);
+                let (mut rise, mut min_up, mut max_roll) = (0.0f32, 1.0f32, 0.0f32);
+                run(&mut k, &s, Controls { throttle: 1.0, ..Default::default() }, 2.0, slopes, |k, _| {
+                    rise = rise.max(k.pos().y - y0);
+                    min_up = min_up.min(k.up().y);
+                    max_roll = max_roll.max((k.b.rot * Vec3::X).y.asin().to_degrees().abs());
+                });
+                let tag = format!("slopes {slopes}, {deg} deg at {v} m/s");
+                assert!(rise < 0.15, "{tag}: lifted {rise:.2} m");
+                assert!(min_up > 0.95 && max_roll < 8.0, "{tag}: tipped to up.y {min_up:.2}, roll {max_roll:.0}");
+                assert!(k.pos().z < 3.0, "{tag}: through the wall to z {}", k.pos().z);
+                if deg <= 30.0 {
+                    // Along the wall, keeping most of its speed.
+                    let along = k.b.vel.x;
+                    assert!(along > 0.6 * v, "{tag}: down to {along:.1} m/s along the wall");
+                }
+            }
+        }
+    }
+
+    /// A one-voxel step across its path at speed, square or at a slant: the
+    /// kart steps up it (`climb_out`) or hops it, and is never thrown up.
+    /// `KTRACE=true/0/30` (slopes, the step's angle, m/s) traces one run.
+    #[test]
+    fn a_kart_is_not_thrown_by_a_step() {
+        for slopes in [false, true] {
+            for deg in [0.0f32, 30.0, 60.0] {
+                let (sn, cs) = deg.to_radians().sin_cos();
+                let s = land(move |x, z| if (x - 40.0) * cs + z * sn > 0.0 { 2.25 } else { 2.0 }, DIRT, (-1, 12), (-3, 3));
+                for v in [10.0f32, 20.0, 30.0] {
+                    let (mut k, y0) = kart_at(&s, Vec3::new(10.0, 2.0, 0.0), EAST, v, slopes);
+                    let (mut rise, mut min_up, mut air, mut most_air) = (0.0f32, 1.0f32, 0.0f32, 0.0f32);
+                    run(&mut k, &s, Controls { throttle: 0.5, ..Default::default() }, 2.5, slopes, |k, _| {
+                        // Measured against whatever ground it is over.
+                        let top = if (k.pos().x - 40.0) * cs + k.pos().z * sn > 0.0 { 0.25 } else { 0.0 };
+                        rise = rise.max(k.pos().y - y0 - top);
+                        min_up = min_up.min(k.up().y);
+                        air = if k.grounded == 0 { air + 1.0 / 60.0 } else { 0.0 };
+                        most_air = most_air.max(air);
+                        if std::env::var("KTRACE").is_ok_and(|t| t == format!("{slopes}/{deg}/{v}")) && (36.0..44.0).contains(&k.pos().x) {
+                            eprintln!(
+                                "x {:6.2} y {:5.2} vy {:5.2} vx {:5.2} pitch {:5.1} down {} crash {:4.1} wheels {:?}",
+                                k.pos().x,
+                                k.pos().y - y0,
+                                k.b.vel.y,
+                                k.b.vel.x,
+                                k.forward().y.asin().to_degrees(),
+                                k.grounded,
+                                k.events.crash,
+                                k.wheels.map(|w| (w.contact.map_or(-9.0, |c| ((c.point.y - 2.0) * 100.0).round()), w.contact.map_or(-9.0, |c| c.n.y.acos().to_degrees().round())))
+                            );
+                        }
+                    });
+                    let tag = format!("slopes {slopes}, step at {deg} deg, {v} m/s");
+                    // Drawn sloped, the step is a ramp of about 14 degrees,
+                    // and square on at full speed that is a hop: a small one.
+                    assert!(rise < 0.35 && most_air < 0.3, "{tag}: thrown up {rise:.2} m, {most_air:.2} s in the air");
+                    assert!(min_up > 0.85, "{tag}: tipped to up.y {min_up:.2}");
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn a_kart_coasts_down_faster_with_coast() {
+        let pad = land(|_, _| 2.0, DIRT, (-12, 12), (-12, 12));
+        let lost = |coast: f32| {
+            let mut k = Vehicle::new(Spec { coast, ..the_kart() }, Vec3::new(-40.0, 2.0, 0.0), EAST);
+            run(&mut k, &pad, Controls::default(), 0.5, false, |_, _| {});
+            k.b.vel = k.forward() * 25.0;
+            run(&mut k, &pad, Controls::default(), 2.0, false, |_, _| {});
+            25.0 - k.b.vel.length()
+        };
+        let (plain, more) = (lost(1.0), lost(1.2));
+        assert!(more / plain > 1.15 && more / plain < 1.25, "lost {plain:.2} then {more:.2} m/s");
+        assert_eq!(the_kart().coast, 1.2);
+    }
+
+    /// Full lock at speed on the flat: the kart turns as tightly as its grip
+    /// allows, with its nose on its path, and holds the line at an even
+    /// rate. The tightness the buggy's slip model never had.
+    #[test]
+    fn a_kart_holds_full_lock() {
+        let pad = land(|_, _| 2.0, DIRT, (-12, 12), (-12, 12));
+        let spec = the_kart();
+        for v in [12.0f32, 20.0, 28.0] {
+            let (mut k, _) = kart_at(&pad, Vec3::new(-40.0, 2.0, 0.0), EAST, v, false);
+            let (mut slip, mut rates) = (0.0f32, Vec::new());
+            run(&mut k, &pad, Controls { throttle: 1.0, steer: 1.0, ..Default::default() }, 3.0, false, |k, t| {
+                let vel = Vec3::new(k.b.vel.x, 0.0, k.b.vel.z);
+                if t > 0.5 {
+                    slip = slip.max(vel.normalize().dot(k.forward()).clamp(-1.0, 1.0).acos().to_degrees());
+                    rates.push(k.b.ang.y * vel.length());
+                }
+            });
+            let mean = rates.iter().sum::<f32>() / rates.len() as f32;
+            let reach = kart::reach(&spec, k.b.vel.length());
+            assert!(slip < 6.0, "{v} m/s: slid {slip:.1} deg off its nose");
+            // Turning right, so the yaw rate is negative; its v r is the
+            // sideways acceleration, near the grip at speed.
+            if v >= 20.0 {
+                assert!(-mean > 0.75 * reach && -mean < 1.05 * reach, "{v} m/s: cornering at {:.1} m/s2 of {reach:.1}", -mean);
+            }
+            let spread = rates.iter().map(|r| (r - mean).abs()).fold(0.0f32, f32::max);
+            assert!(spread < 0.2 * mean.abs() + 0.5, "{v} m/s: cornering wavers by {spread:.1} m/s2");
+            assert!(k.up().y > 0.95, "{v} m/s: leaned to up.y {}", k.up().y);
+        }
     }
 
     /// Driven into a wall it stops, and does not climb or tunnel through.
@@ -1628,7 +1974,7 @@ mod tests {
             if slow_t > 3.0 || upset_t > 2.0 {
                 resets += 1;
                 let (p, d) = track.at(pl.s);
-                car = Vehicle::new(car.spec.clone(), Vec3::new(p.x, 2.2, p.y), (-d.x).atan2(-d.y));
+                car = Vehicle::new(car.spec.clone(), Vec3::new(p.x, 2.2, p.y), yaw_along(d));
                 slow_t = 0.0;
                 upset_t = 0.0;
             }
@@ -1816,7 +2162,7 @@ mod tests {
             for i in 0..3 {
                 for j in i + 1..3 {
                     let (a, b) = cars.split_at_mut(j);
-                    if bump(&mut a[i], &mut b[0]) > 1.0 {
+                    if meet(&mut a[i], &mut b[0], Some(ground)) > 1.0 {
                         out.hits += 1;
                     }
                 }
@@ -1843,7 +2189,7 @@ mod tests {
                 if slow[i] > 3.0 || upset[i] > 2.0 {
                     out.resets[i] += 1;
                     let (p, d) = track.at(s);
-                    cars[i] = Vehicle::new(cars[i].spec.clone(), Vec3::new(p.x, 2.4, p.y), (-d.x).atan2(-d.y));
+                    cars[i] = Vehicle::new(cars[i].spec.clone(), Vec3::new(p.x, 2.4, p.y), yaw_along(d));
                     slow[i] = 0.0;
                     upset[i] = 0.0;
                 }

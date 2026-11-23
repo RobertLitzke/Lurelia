@@ -9,15 +9,15 @@ Each layer uses the ones below it and never the ones above.
 
 | Layer | What | Where |
 |---|---|---|
-| App | window, screens (title, launch, settings, loading, playing, pause menu, help), what a run was launched with, the games a world can be played as, key table, CLI, dev tools | `main.rs`, `menu.rs`, `launch.rs`, `games.rs`, `input.rs`, `cli.rs`, `tools/` |
+| App | window, screens (title, launch, settings, loading, playing, pause menu, help), what a run was launched with, the games a world can be played as, key table, CLI, dev tools | `main.rs`, `menu.rs`, `launch.rs`, `games.rs`, `input.rs`, `pad.rs`, `cli.rs`, `tools/` |
 | Sound | the device, the mixer and its three buses, the ambient voices and the one-shot effects, all synthesised; what the ear gets from the world, worked out by `bed.rs` and `watch.rs`, the two files with game knowledge | `sound/`; see GUIDE.md, "Sound" |
 | Editing | the LOOK page (F7) and the EDIT page (F8): a creature or plant in a studio with its library entry beside it, written back to `library/`; both drawn as one form, with one kind of knob | `form.rs`, `lookpage.rs`, `editor/`; see `docs/LOOK.md`, `docs/EDITOR.md` |
 | On-screen type | distance-field text (Cinzel, Cormorant Garamond Italic, OFL) and the Lurelia logo, compiled in; rebake the atlas with `library/fonts/bake_atlas.py` | `render/font.rs`, `render/hud.rs`, `library/fonts/`, `library/logo/` |
-| Modes | walking, bike, glider, climbing, rope, kayak, four wheels (`vehicle/`); the camera rig every mode hands the renderer; the camera (film, tasks, scrapbook); screenshot mode, the shooter's rules and a race (`race.rs`) as activities | `modes.rs`, `ride.rs`, `ride/`, `vehicle/`, `race.rs`, `rig.rs`, `camera/`, `screenshot.rs`, `shooter/`, `player.rs` |
+| Modes | walking, bike, glider, climbing, rope, kayak, four wheels (`vehicle/`); the camera rig every mode hands the renderer; the camera (film, tasks, scrapbook); screenshot mode, the shooter's rules and a race (`race/`, set up by `racemenu.rs`) as activities | `modes.rs`, `ride.rs`, `ride/`, `vehicle/`, `race/`, `racemenu.rs`, `rig.rs`, `camera/`, `screenshot.rs`, `shooter/`, `player.rs` |
 | Combat | guns, shots, shells, bursts and damage, with no rules about why | `combat.rs`, `combat/`, `library/weapons/`; see `docs/SHOOTER.md` |
 | Game | the session: one world, its player, creatures and saves, a fixed 60 Hz step; the lifts and portals step through `WorldParts`, which the tournament drives too | `game.rs`, `world_parts.rs` |
 | Creatures | living things and how they move and act | `entities.rs` and friends; see `docs/CREATURES.md` |
-| Content | the shared library and the world builder | `library/`, `inherit.rs`, `variety.rs`, `worldload.rs`, `world/chronicle/`, `world/fields.rs`, `world/flora.rs`, `world/canopy.rs`, `world/city.rs`, `world/route/`, `world/seam.rs` |
+| Content | the shared library and the world builder | `library/`, `inherit.rs`, `variety.rs`, `worldload.rs`, `world/chronicle/`, `world/fields.rs`, `world/flora.rs`, `world/canopy.rs`, `world/city.rs`, `world/route/`, `world/town/`, `world/seam.rs` |
 | Engine | voxels, meshing, streaming, physics, rendering | `world/store.rs`, `world/gen.rs`, `world/stamp.rs`, `world/material.rs`, `world/matlib.rs`, `mesh.rs`, `mesh/`, `stream.rs`, `physics.rs`, `models.rs`, `render/`, `shaders/` |
 | Shared | small helpers with no game knowledge | `util.rs` (Fx hash, blur, compass bearing), `world/clock.rs`, `world/weather.rs`, `world/season.rs`, `world/noise.rs` |
 
@@ -68,7 +68,7 @@ Each layer uses the ones below it and never the ones above.
   after `Fields::derive`, and drops trees that would stand in the
   neighbour's crowns. The neighbour is built before the world's own
   library is installed, since building one installs its material table.
-  The older world never changes. `notes/UBERWORLD_PLAN.md` has the rest.
+  The older world never changes.
 
 - **Seeds.** Everything a world generates is seeded by a key that stays put
   when the world is edited: an event by its kind, its year and which of that
@@ -79,6 +79,13 @@ Each layer uses the ones below it and never the ones above.
   reshuffle land that is already built. A world that says `"seeds": 1` in its
   `world.json` keeps the older list-position keys, which every shipped world
   does so its land stays as built; a new world leaves the field out.
+
+- **Towns.** `world/town/` grows a town from a few inputs and returns a
+  plan (streets with ranks, building footprints, squares, walls, fields)
+  without touching voxels or the library; it reads the land through its
+  `Ground` trait. The `town` event hands the footprints and streets to the
+  city code below as if they had been imported, grades the streets, and lays
+  the walls and fences as route ribbons. See `docs/TOWNS.md`.
 
 - **Cities.** An imported city (`city.json`) is drawn with a *kit*:
   `library/cities/<name>.json`, named by the `city` event's `"kit"`. The kit
@@ -198,6 +205,23 @@ Each layer uses the ones below it and never the ones above.
   noise, closeness, scent. See GUIDE.md, "Stalking, prints and trampled
   grass".
 
+- **Big bodies.** Walkers are capsules from rump to snout as well as boxes
+  at their feet (`creatures/crowd.rs`, sized by `Model::reach`, measured
+  from the voxels at load). `crowd::update` pushes apart any two that
+  overlap after each step, herd.rs spaces members by the gap between their
+  spines, and anything over 1.5 m tall turns at a limited rate (walk.rs
+  `turn_rate`). Big walkers report shrubs in their way through
+  `Entities::crush` instead of steering round them; `game.rs`
+  `trample_shrubs` flattens them through `Streamer::edit_passing` and
+  `creatures/trample.rs` stands them back up minutes later. Heavy footfalls
+  carry a `Step::weight`, which `game.rs` `feel_steps` turns into a small
+  jolt of the camera. See docs/CREATURES.md, "Big bodies in a herd".
+  Large animals (`Species::large`) are spawned and kept twice as far out
+  (`spawn::LARGE_REACH`), walk the generator's ground past full detail
+  (`terrain::far_ground`), and are remembered where they were dropped and
+  put back on the player's return (`creatures/tracked.rs`, held by
+  `Entities::tracked`).
+
 - **Lamps.** `render/lamps.rs`: point lights a world places (`lamp` event),
   the only light anything with a roof over it gets. `Game::prepare_frame`
   picks the nearest to the camera; `lamp_light` in `common.wgsl` adds them in
@@ -244,15 +268,20 @@ Each layer uses the ones below it and never the ones above.
   example); every key is in `vehicle/spec.rs`, with its default. A new body
   shape is a builder in `vehicle/draw.rs` named by the spec's `model`. A new
   way of handling (karts) is a `spec::Handling` variant and its tyre function
-  beside `grip::slip`. A world lists what it has in `"vehicles"`. Nothing in
+  beside `grip::slip`. A world lists what it has in `"vehicles"`, and one that
+  lists none has the ATV (`fields::default_vehicles`). Nothing in
   `vehicle/` reads keys: `ride/drive.rs` turns them into `vehicle::Controls`,
   and a bot or a race would fill the same struct. `vehicle/bot.rs` is one:
   a `Driver` that follows a `Track` (a closed centreline and a width), aiming
   at a point ahead and planning its speed from the bends; its `Style` is what
   a race would vary per opponent.
-- **A race:** a `.course` file built by `tools/course/course_file.py`
-  (`tools/course/FORMAT.md`), which writes a `circuit` event in the chronicle
-  and a `race` block in world.json (`worlds/kestrel`). `race.rs` is the activity; it reaches the
+- **A race:** a `.track` file built by `tools/course/track_file.py`
+  (`tools/course/FORMAT.md`) into the world's `track.json`, the road frozen a
+  sample a metre with its race furniture, which `chronicle/race_track.rs`
+  stamps after the chronicle so the world round it can't move it;
+  world.json's `race` block names it
+  (`worlds/peregrine`, `worlds/vermilion`). The older `circuit` event lays a road over the land
+  without that guarantee. `race/` is the activity; it reaches the
   player's car through `Activity::race_mut`, which `Game` hands the ride to
   after each fixed step, since `ActivityCtx` carries no ride.
 - **An activity** (a race, another kind of shooter): implement

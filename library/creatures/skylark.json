@@ -1,0 +1,18 @@
+{
+  "name": "skylark",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Skylark: a small streaked brown bird of the open down and the heath, rising to sing high overhead.",
+  "colors": {
+    "body": [140, 116, 84],
+    "head": [126, 104, 76],
+    "beak": [80, 70, 60],
+    "wing": [118, 98, 72],
+    "tail": [104, 88, 66],
+    "legs": [170, 140, 110],
+    "breast": [214, 196, 162],
+    "head_cap": [110, 90, 64]
+  },
+  "like": "sparrow",
+  "scale": 0.95
+}

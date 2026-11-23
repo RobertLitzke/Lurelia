@@ -1,6 +1,6 @@
 {
   "name": "rib_beach",
-  "version": 1,
+  "version": 2,
   "introduced_by": "ribshore",
   "notes": "The wide flat beach: wet grey-brown sand that holds the sky, as far as you can see each way.",
   "priority": 6,
@@ -20,14 +20,14 @@
   "creatures": [
     {"creature": "gull", "count": 8},
     {"creature": "brown_pelican", "count": 4},
-    {"creature": "harbor_seal", "count": 3},
+    {"creature": "harbor_seal", "count": 3.3},
     {"creature": "crow", "count": 2},
-    {"creature": "walrus", "count": 8},
-    {"creature": "bone_crab", "count": 3},
+    {"creature": "walrus", "count": 8.8},
+    {"creature": "bone_crab", "count": 3.3},
     {"creature": "black_oystercatcher", "count": 4},
     {"creature": "albatross", "count": 4},
     {"creature": "sanderling", "count": 40},
-    {"creature": "snowy_plover", "count": 8}
+    {"creature": "snowy_plover", "count": 20}
   ],
   "collectibles": [{"item": "seashell", "density": 0.003, "placement": {"verb": "scatter", "params": {}}}]
 }

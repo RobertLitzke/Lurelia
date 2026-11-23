@@ -49,6 +49,12 @@ left between joints that weathered out, and the weather has worn windows
 through several of them. Out on the slickrock bench the Lone Arch is the
 thinnest of them, its span worn through a fin that is almost gone.
 
+Where the creek reaches the edge of the plateau the caprock of the White
+Cliffs is hard enough that the water has not cut back through it. The Sorrel
+goes over in a single drop of about a hundred feet, Sorrel Falls, into a round
+pool it has drilled into the rock, sheer on three sides, with blocks fallen
+from the lip lying in the shallows.
+
 Along the foot of the White Cliffs, frost and rain have cut the soft pink rock
 into an amphitheatre of hoodoos: columns of rock, each with a harder cap.
 Most stand in a crowd under the cliff. Out on the desert floor south of the
@@ -67,7 +73,10 @@ mark.
 A little over nine hundred years ago a small volcano opened on the plateau. It
 built a black cinder cone, sent a tongue of basalt west through the pines, and
 left a lava tube under the flow whose roof has fallen in at two places. Cold
-air pools in the tube and the floor holds ice into summer.
+air pools in the tube and the floor holds ice into summer. The crater floor is
+black basalt, where the lava lake in the throat froze and sank back, with
+broken columns standing in it, and two more tubes run out from it under the
+flanks, east and north, where the last of that lava drained away.
 
 ## The canyon people
 
@@ -132,6 +141,12 @@ chapel of Bitterwater stands at the water's edge again, on cracked mud where
 the Sorrel's drowned mouth has drawn back. The ferry stopped
 four years ago because the ramp no longer reached the water. The station closed
 two years ago. The pumps are still there.
+
+As the water went down it uncovered sandbars, and a few of them are green.
+In 1961 a roadside zoo at the marina lost its animals in a flood, and the
+ones that swam made it to the bars: water buffalo, a troop of macaques, otters.
+Their descendants live there still, among palms and figs grown from what the
+zoo fed them, on islands a long swim from either shore.
 
 A fire in 1998 burned a long strip of the plateau forest west of the cinder
 cone. It is grassland now, gold in summer, with grey snags standing in

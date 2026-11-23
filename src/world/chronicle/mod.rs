@@ -14,8 +14,10 @@ mod events;
 mod gazetteer;
 pub mod geom;
 pub mod hydro;
+pub mod race_track;
 
 pub use ctx::{compile_structure, EventCtx, Process};
+pub use events::defaults_used as event_defaults;
 pub use gazetteer::gazetteer;
 
 use super::fields::*;
@@ -47,6 +49,11 @@ pub struct Event {
     /// Seed the event as if it stood at this place (1-based) in the sorted
     /// list: keeps its noise when events are added before it later.
     pub seed: Option<u32>,
+    /// Added after a first-scheme world was laid out (`"seeds": 1`): keyed
+    /// by kind and year as the second scheme keys every event, and not
+    /// counted among the places the first scheme keys the others by, so
+    /// adding it leaves the rest of the world as it was.
+    pub late: bool,
     pub process: Box<dyn Process>,
 }
 
@@ -74,6 +81,7 @@ fn parse_chronicle(v: serde_json::Value, warnings: &mut Vec<String>) -> Result<C
         let year = m.remove("year").and_then(|y| y.as_i64()).ok_or_else(|| format!("chronicle.json: event {i} has no year"))? as i32;
         let cause = m.remove("cause").and_then(|c| c.as_str().map(String::from)).unwrap_or_default();
         let seed = m.remove("seed").and_then(|s| s.as_u64()).map(|s| s as u32);
+        let late = m.remove("late").and_then(|l| l.as_bool()).unwrap_or(false);
         let tag = m
             .remove("event")
             .and_then(|t| t.as_str().map(String::from))
@@ -88,6 +96,7 @@ fn parse_chronicle(v: serde_json::Value, warnings: &mut Vec<String>) -> Result<C
             cause,
             kind: et.name,
             seed,
+            late,
             process,
         });
     }
@@ -108,16 +117,22 @@ fn name_key(name: &str) -> u32 {
 /// The first scheme (`v1`, the worlds written before this) keyed an event by
 /// its place in the sorted list, so adding one in the middle moved every
 /// event after it onto a new seed and reshuffled half the world. A world laid
-/// out that way says `"seeds": 1` in its world.json and keeps it.
-fn event_keys<'a>(events: impl Iterator<Item = (&'a str, i32, Option<u32>)>, v1: bool) -> Vec<u32> {
+/// out that way says `"seeds": 1` in its world.json and keeps it. An event
+/// added to such a world later says `"late": true`: it takes no place in that
+/// count and is keyed as the second scheme would key it.
+fn event_keys<'a>(events: impl Iterator<Item = (&'a str, i32, Option<u32>, bool)>, v1: bool) -> Vec<u32> {
     let mut seen: std::collections::HashMap<(&str, i32), u32> = std::collections::HashMap::new();
+    let mut place = 0u32;
     events
-        .enumerate()
-        .map(|(k, (kind, year, own))| {
+        .map(|(kind, year, own, late)| {
             let nth = *seen.entry((kind, year)).and_modify(|n| *n += 1).or_insert(0);
+            let v1 = v1 && !late;
+            if v1 {
+                place += 1;
+            }
             match (own, v1) {
                 (Some(s), _) => s,
-                (None, true) => (k + 1) as u32,
+                (None, true) => place,
                 (None, false) => hash32(name_key(kind) ^ (year as u32).wrapping_mul(0x85eb_ca6b) ^ nth.wrapping_mul(0x27d4_eb2d)),
             }
         })
@@ -181,7 +196,22 @@ pub fn build_world_with(dir: &Path, lib: Library, edges: &[super::seam::Edge]) -
     events.sort_by_key(|e| e.year);
     let mut cx = EventCtx::new(&lib, &chron.places, dir, Fields::new(def.size_m, def.sea_level_m), warnings);
     cx.noise_at = Vec2::from(def.noise_at);
-    let keys = event_keys(events.iter().map(|e| (e.kind, e.year, e.seed)), def.seeds_v1());
+    // A race track (world.json `race.track`): read now so events can place
+    // things by lap distance, stamped after the chronicle (race_track.rs).
+    let track = match def.race.as_ref().and_then(|r| r.track.as_deref()) {
+        Some(file) => match race_track::load(dir, file) {
+            Ok(t) => {
+                cx.track = Some(race_track::TrackLine::of(&t));
+                Some(t)
+            }
+            Err(e) => {
+                cx.warnings.push(e);
+                None
+            }
+        },
+        None => None,
+    };
+    let keys = event_keys(events.iter().map(|e| (e.kind, e.year, e.seed, e.late)), def.seeds_v1());
     let mut item_keys: Vec<u32> = Vec::new();
     for (k, ev) in events.iter().enumerate() {
         let cause = (k + 1) as u16;
@@ -253,6 +283,18 @@ pub fn build_world_with(dir: &Path, lib: Library, edges: &[super::seam::Edge]) -
     let cenotes = cx.state.take::<events::cenote::Cenotes>();
     events::cenote::settle(&mut cx.f, &cenotes);
     stage("water settling", &mut stages);
+    // The race track over all of it: whatever the world did, the road and
+    // its corridor are the track's.
+    if let Some(t) = &track {
+        cx.year = i32::MAX;
+        cx.cause = (events.len() + 1).min(u16::MAX as usize) as u16;
+        cx.seed = hash32(def.seed ^ 0x7ac4_0001);
+        let world_placed = cx.placed.len();
+        let t_ev = std::time::Instant::now();
+        let msg = race_track::stamp(&mut cx, t, world_placed);
+        log.push(format!("{:>6}  {:<10} {:>7.0} ms  {msg}", "last", "track", t_ev.elapsed().as_secs_f32() * 1000.0));
+        stage("track", &mut stages);
+    }
     cx.f.derive();
     for e in edges {
         super::seam::fix_distances(&mut cx.f, e);
@@ -489,7 +531,18 @@ mod key_tests {
     const RIVER: &str = "river";
 
     fn keys(rows: &[(&'static str, i32, Option<u32>)], v1: bool) -> Vec<u32> {
-        event_keys(rows.iter().copied(), v1)
+        event_keys(rows.iter().map(|&(k, y, s)| (k, y, s, false)), v1)
+    }
+
+    /// Under the first scheme a late event takes no place in the count, so
+    /// the events after it keep their keys.
+    #[test]
+    fn a_late_event_moves_nothing_under_the_first_scheme() {
+        let before = [("landmass", -9000, None, false), (RIVER, -3000, None, false), ("lake", -500, None, false)];
+        let after = [("landmass", -9000, None, false), ("mesa", -4000, None, true), (RIVER, -3000, None, false), ("lake", -500, None, false)];
+        let (a, b) = (event_keys(before.iter().copied(), true), event_keys(after.iter().copied(), true));
+        assert_eq!((a[0], a[1], a[2]), (b[0], b[2], b[3]));
+        assert!(![1, 2, 3].contains(&b[1]), "the late event took a place in the count");
     }
 
     /// Adding an event to the middle of a chronicle leaves every other

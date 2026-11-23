@@ -1,0 +1,16 @@
+{
+  "name": "araucaria_needles",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Monkey-puzzle foliage: rope-thick branches clad in hard overlapping scales, dark green going grey.",
+  "smooth": false,
+  "sprites": "needles",
+  "texture": {
+    "pattern": "blotch",
+    "base": [38, 50, 34],
+    "alt": [48, 60, 40],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [42, 54, 38], "alt": [52, 64, 44]}
+  }
+}

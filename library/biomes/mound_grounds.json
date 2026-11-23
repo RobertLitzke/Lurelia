@@ -13,10 +13,10 @@
     {"plant": "spanish_moss", "density": 0.6, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "deer", "count": 5},
+    {"creature": "deer", "count": 5.5},
     {"creature": "sandhill_crane", "count": 3},
-    {"creature": "great_horned_owl", "count": 1},
-    {"creature": "coyote", "count": 2},
+    {"creature": "great_horned_owl", "count": 2},
+    {"creature": "coyote", "count": 2.2},
     {"creature": "killdeer", "count": 2}
   ],
   "collectibles": [

@@ -57,6 +57,8 @@ const FLOOR_GRIP: f32 = 1.4;
 const RELAX: f32 = 9.0;
 /// Steps a settle is allowed to take before it is called finished.
 const MAX_STEPS: u32 = 600;
+/// The length of one step of a settle, seconds.
+pub const SETTLE_DT: f32 = 1.0 / 30.0;
 /// How far the body's own axis may be off horizontal and still count as
 /// lying down: 0.34 is within twenty degrees. Above it a thrown body on the
 /// floor keeps going over, because the floor cannot hold a corpse up on its
@@ -77,6 +79,15 @@ const TOPPLE: f32 = 18.0;
 /// heights. A joint is the middle of a bone, not its underside, so a body
 /// whose lowest joint sat exactly on the floor would be half a limb into it.
 const LIE_REST: f32 = 0.16;
+/// How hard the floor brings a horizontal body's long axis back to level,
+/// radians a second squared per radian of pitch. Nothing else turns the root
+/// of a body that is down (it has no gravity of its own), so this is what
+/// takes out the pitch its first shove or a tumble gave it, and a ribcage
+/// lies along the floor rather than leaning on its rump. With the YXZ order
+/// the root's x is exactly the pitch of its long axis, whatever the roll.
+const LEVEL: f32 = 8.0;
+/// Pitch, radians, within which a horizontal body counts as level.
+const LEVEL_DONE: f32 = 0.08;
 
 /// Which way a bone of this plan points when it is at rest: down the body for
 /// most animals, back along the chain for a serpent (anim/spine.rs). Gravity's
@@ -248,6 +259,15 @@ impl Ragdoll {
         if dir.y.abs() < DOWN {
             return (0.0, 0.0);
         }
+        let g = if dir.y < 0.0 { -TOPPLE } else { TOPPLE };
+        // A horizontal body goes over onto a side and only that way, so this
+        // never pitches it against the levelling in `step`.
+        if self.horizontal(rig) {
+            return match dir.x.abs() < 0.05 {
+                true => (0.0, self.fall.1 * TOPPLE),
+                false => (0.0, -g * dir.x.signum()),
+            };
+        }
         let tilt = (dir.x * dir.x + dir.z * dir.z).sqrt();
         if tilt < 0.1 {
             return match self.fall {
@@ -258,7 +278,6 @@ impl Ragdoll {
         // Gravity's own torque turns a bone until it hangs; this is that
         // turned around, so the axis leaves vertical instead of finding it,
         // and signed so a body on its head comes down the same way.
-        let g = if dir.y < 0.0 { -TOPPLE } else { TOPPLE };
         (g * dir.z / tilt, -g * dir.x / tilt)
     }
 
@@ -296,6 +315,17 @@ impl Ragdoll {
 
     pub fn settled(&self) -> bool {
         self.settled
+    }
+
+    /// Step it where it lies, nothing shaking it, until it has settled or
+    /// `MAX_STEPS` steps have gone by.
+    pub fn run_out(&mut self, rig: &Rig) {
+        for _ in 0..MAX_STEPS {
+            if self.settled {
+                break;
+            }
+            self.step(rig, SETTLE_DT, Vec3::ZERO);
+        }
     }
 
     /// Let it start moving again: it has just been dropped.
@@ -371,6 +401,15 @@ impl Ragdoll {
                 torque_p = 0.0;
                 torque_r = 0.0;
             }
+            // A horizontal body on the floor lies along it. After the grip,
+            // which would otherwise hold it at whatever tilt is too small to
+            // overcome friction.
+            if i == 0 && !self.airborne && self.horizontal(rig) {
+                torque_p -= self.pose.bones[0].x * LEVEL;
+                // Not asleep while it is still tipped: a landing can leave the
+                // root at its stop with no speed and nothing else moving.
+                moving |= self.pose.bones[0].x.abs() > LEVEL_DONE;
+            }
             // A thrown body relaxing as it comes to rest. A flat body's
             // limbs are held by the floor and not by gravity, so whatever a
             // tumble bent stays bent -- and a corpse propped on two bent
@@ -417,6 +456,13 @@ impl Ragdoll {
         self.settled = !moving && !self.airborne;
     }
 
+    /// A body whose long axis runs front to back (a four-legged animal, a
+    /// bird, a dinosaur) rather than up and down (a person) or along the
+    /// ground already (a serpent).
+    fn horizontal(&self, rig: &Rig) -> bool {
+        self.leg_m > 0.0 && rig.plan != Some(Plan::Biped)
+    }
+
     /// Which way bone `i` points in the creature's frame, by the pose so far.
     fn direction(&self, rig: &Rig, i: usize) -> Vec3 {
         let mut q = bone_rot(self.pose.bones[i]);
@@ -439,12 +485,7 @@ impl Ragdoll {
 /// same way.
 pub fn settled(rig: &Rig, voxel: f32, seed: u32) -> Pose {
     let mut r = Ragdoll::new(rig, voxel, seed);
-    for _ in 0..MAX_STEPS {
-        r.step(rig, 1.0 / 30.0, Vec3::ZERO);
-        if r.settled() {
-            break;
-        }
-    }
+    r.run_out(rig);
     r.pose
 }
 
@@ -456,12 +497,7 @@ pub fn on_side(rig: &Rig, voxel: f32, side: f32, seed: u32) -> Pose {
     // forwards or backwards for this seed, and that pitch left in had some
     // seals and walruses sleeping stood on their tails.
     r.pose.bones[0] = Vec3::new(0.0, 0.0, side * 1.35);
-    for _ in 0..MAX_STEPS {
-        r.step(rig, 1.0 / 30.0, Vec3::ZERO);
-        if r.settled() {
-            break;
-        }
-    }
+    r.run_out(rig);
     // Keep the body where it was put; only the limbs were allowed to fall.
     r.pose.bones[0] = Vec3::new(0.0, 0.0, side * 1.35);
     r.rest_on_ground(rig);
@@ -475,6 +511,9 @@ mod tests {
 
     fn rigs() -> Vec<(String, Rig)> {
         let (lib, errors) = Library::load(&crate::library::data_root());
+        // Only the creatures are used here; the rest of the library has its
+        // own tests, and a kit being edited elsewhere should not fail these.
+        let errors: Vec<_> = errors.iter().filter(|e| e.contains("creatures")).collect();
         assert!(errors.is_empty(), "{errors:?}");
         lib.creatures
             .iter()
@@ -488,8 +527,8 @@ mod tests {
                         names.iter().position(|x| x.as_str() == n).map(|k| k as u8 + 1)
                     }
                 };
-                let whole = crate::world::shape::compile(&c.ops, [32, 32, 32], &resolve).mat;
-                let s = crate::anim::slice::slice(def, &c.ops, &whole, &|n| resolve(n).is_some(), c.voxel, c.half_w, c.height);
+                let whole = crate::world::shape::compile(&c.ops, c.grid, &resolve).mat;
+                let s = crate::anim::slice::slice(def, &c.ops, &whole, crate::anim::slice::Dims(c.grid), &|n| resolve(n).is_some(), c.voxel, c.half_w, c.height);
                 Some((c.name.clone(), s.rig))
             })
             .collect()
@@ -533,6 +572,53 @@ mod tests {
             let p = settled(&rig, 0.05, seed);
             // Rolled onto a side (z), never pitched end over end (x).
             assert!(p.bones[0].x.abs() < 0.8, "{name} seed {seed}: pitched {:?}", p.bones[0]);
+        }
+    }
+
+    /// Lying along the floor, not leaning on one end of itself.
+    fn assert_level(name: &str, how: &str, r: &Ragdoll) {
+        let pitch = r.pose.bones[0].x;
+        assert!(pitch.abs() < 0.15, "{name} {how}: body left pitched {pitch:.2} rad");
+    }
+
+    #[test]
+    fn a_horizontal_body_lies_level_however_it_fell() {
+        for (name, rig) in rigs() {
+            if rig.plan == Some(Plan::Biped) || rig.plan == Some(Plan::Serpent) {
+                continue;
+            }
+            for seed in 0..24u32 {
+                // Dropped where it stood.
+                let mut r = Ragdoll::new(&rig, 0.05, seed);
+                for _ in 0..MAX_STEPS {
+                    r.step(&rig, 1.0 / 30.0, Vec3::ZERO);
+                    if r.settled() {
+                        break;
+                    }
+                }
+                assert!(r.settled(), "{name} seed {seed}: dropped body still moving");
+                assert_level(&name, &format!("dropped, seed {seed}"), &r);
+
+                // Thrown: tumbles in the air for a while, then lands.
+                let mut r = Ragdoll::new(&rig, 0.05, seed);
+                r.hurl(&rig, 6.0 + (seed % 5) as f32 * 3.0, seed.wrapping_mul(2654435761));
+                for _ in 0..(10 + seed % 20) {
+                    r.step(&rig, 1.0 / 30.0, Vec3::ZERO);
+                }
+                r.aloft(false);
+                for _ in 0..MAX_STEPS * 2 {
+                    r.step(&rig, 1.0 / 30.0, Vec3::ZERO);
+                    if r.settled() {
+                        break;
+                    }
+                }
+                assert!(r.settled(), "{name} seed {seed}: thrown body still moving");
+                assert_level(&name, &format!("thrown, seed {seed}"), &r);
+                // And over on a side: the floor puts a thrown body down
+                // (`topple`), however it landed.
+                let down = r.direction(&rig, 0);
+                assert!(down.y.abs() < DOWN + 0.1, "{name} thrown, seed {seed}: not lying down, belly axis {down:?}");
+            }
         }
     }
 

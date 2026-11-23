@@ -1,0 +1,15 @@
+{
+  "name": "roof_shingle_grey",
+  "version": 1,
+  "introduced_by": "townlab",
+  "notes": "Grey asphalt shingles on a suburban roof. Smoothed, so a roof at an angle to the grid is a slope rather than a staircase.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [64, 66, 72],
+    "alt": [52, 54, 60],
+    "scale": 5,
+    "contrast": 0.6,
+    "calm": {"base": [78, 80, 88], "alt": [66, 68, 76]}
+  }
+}

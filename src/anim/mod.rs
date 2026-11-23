@@ -18,7 +18,9 @@ pub mod motors;
 pub mod ragdoll;
 pub mod sheet;
 pub mod slice;
+pub mod slope;
 pub mod spine;
+pub mod trail;
 
 use crate::library::{CreatureDef, Op};
 use crate::models::Instance;
@@ -74,6 +76,10 @@ pub struct RigDef {
     /// (life.rs): activity name -> { time: [lo, hi], next: { name: weight } }.
     #[serde(default)]
     pub activities: HashMap<String, life::ActDef>,
+    /// Mesh the parts with sloped corners and stretch them where they meet
+    /// their parents, instead of square voxel faces (slope.rs).
+    #[serde(default)]
+    pub slope: bool,
 }
 
 #[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
@@ -104,6 +110,12 @@ pub struct BoneDef {
     /// where the animal lies and lags as it moves (flesh.rs).
     #[serde(default)]
     pub flesh: f32,
+    /// The bone's angles in flight, (pitch, yaw, roll) radians in its
+    /// parent's frame, for a flier whose rest pose is standing on the ground
+    /// (pterosaurs: forelimbs as legs, the wing finger folded up the arm).
+    /// Flight opens toward these and beats on top of them (flight.rs).
+    #[serde(default)]
+    pub spread: Option<[f32; 3]>,
 }
 
 #[derive(Clone, Debug)]
@@ -118,6 +130,8 @@ pub struct Bone {
     /// -1 left, 1 right, 0 middle.
     pub side: f32,
     pub pair: u32,
+    /// Its pose in flight, if the rig stands at rest (`BoneDef::spread`).
+    pub spread: Option<Vec3>,
 }
 
 #[derive(Clone, Debug)]
@@ -138,6 +152,11 @@ impl Rig {
         for b in &mut self.bones {
             b.model += by;
         }
+    }
+
+    /// Stands at rest and opens its wings to fly (`BoneDef::spread`).
+    pub fn spreads(&self) -> bool {
+        self.bones.iter().any(|b| b.spread.is_some())
     }
 
     /// The activity table for a creature with this rig and movement verb's routine.
@@ -367,6 +386,10 @@ pub fn push_parts_at(
             scale
         };
         let w = at + yq * jp;
+        // The parent's rotation, for the corners of a sloped part that
+        // follow it (slope.rs): x, y, z of the quaternion with w kept >= 0.
+        let pq = b.parent.and_then(|p| fk.get(p)).map_or(Quat::IDENTITY, |f| f.1);
+        let pq = if pq.w < 0.0 { -pq } else { pq };
         out.push((
             model,
             Instance {
@@ -376,7 +399,7 @@ pub fn push_parts_at(
                 rot: [q.x, q.y, q.z, q.w],
                 shift: [shift[0], shift[1], shift[2], 0.0],
                 flesh: rig.soft.as_ref().map_or([[0.0; 4]; 3], |s| s.instance(rig, pose, &fk[..], voxel * scale, bi)),
-                glow: [0.0; 4],
+                glow: [0.0, pq.x, pq.y, pq.z],
             },
         ));
     }
@@ -384,8 +407,15 @@ pub fn push_parts_at(
 
 /// Problems with a creature's rig, for `--validate`.
 pub fn validate(c: &CreatureDef, out: &mut Vec<String>) {
-    let Some(rig) = &c.rig else { return };
     let what = format!("creature {}", c.name);
+    if c.grid.iter().any(|n| !(32..=96).contains(n)) {
+        out.push(format!("{what}: grid {:?}: each side must be 32 to 96 voxels", c.grid));
+    }
+    let big = c.grid != [32, 32, 32];
+    if big && c.rig.is_none() {
+        out.push(format!("{what}: a grid bigger than 32^3 needs a rig, since only a rig's parts are drawn"));
+    }
+    let Some(rig) = &c.rig else { return };
     if rig.plan == Some(Plan::Flutterer) {
         out.push(format!("{what}: plan flutterer isn't built yet; it would move as a quadruped"));
     }
@@ -399,6 +429,15 @@ pub fn validate(c: &CreatureDef, out: &mut Vec<String>) {
     if rig.bones.is_empty() {
         out.push(format!("{what}: rig has no bones"));
         return;
+    }
+    if big {
+        // Each part must fit the 32^3 window it is meshed in.
+        let resolve = |n: &str| Some(if n == "air" { 0 } else { 1 });
+        let whole = crate::world::shape::compile(&c.ops, c.grid, &resolve).mat;
+        let s = slice::slice(rig, &c.ops, &whole, slice::Dims(c.grid), &|_| true, c.voxel, c.half_w, c.height);
+        for b in &s.oversize {
+            out.push(slice::oversize_problem(&what, b));
+        }
     }
     // A serpent is posed along a path, one point per bone (anim/spine.rs), so
     // its bones must be one line from the head.
@@ -432,8 +471,8 @@ pub fn validate(c: &CreatureDef, out: &mut Vec<String>) {
             out.push(format!("{what}: bone {} needs a joint", b.name));
         }
         if let Some(j) = b.joint {
-            if j.iter().any(|v| !(0.0..=32.0).contains(v)) {
-                out.push(format!("{what}: bone {}: joint outside the 32^3 grid", b.name));
+            if j.iter().zip(c.grid).any(|(v, n)| !(0.0..=n as f32).contains(v)) {
+                out.push(format!("{what}: bone {}: joint outside the {:?} grid", b.name, c.grid));
             }
         }
         if let Some(s) = &b.side {
@@ -489,6 +528,7 @@ mod tests {
             model: 0,
             side: 0.0,
             pair: 0,
+            spread: None,
         };
         Rig {
             plan: None,

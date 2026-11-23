@@ -13,7 +13,13 @@
     {"plant": "shore_pine", "density": 0.0012, "placement": {"verb": "clustered", "params": {"size": 24}}},
     {"plant": "heather", "density": 0.03, "placement": {"verb": "clustered", "params": {"size": 18}}},
     {"plant": "salal", "density": 0.02, "placement": {"verb": "clustered", "params": {"size": 14}}},
-    {"plant": "rock_lichen", "density": 0.08, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "rock_lichen", "density": 0.08, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "lowbush_blueberry", "density": 0.15, "placement": {"verb": "clustered", "params": {"size": 16}}},
+    {
+      "plant": "gorse",
+      "density": 0.06,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.15, "max": 1.0}}
+    }
   ],
   "features": [{"structure": "basalt_boulder", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}],
   "creatures": [

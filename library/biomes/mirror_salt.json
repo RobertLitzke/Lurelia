@@ -11,10 +11,10 @@
   "map_color": [226, 224, 216],
   "plants": [],
   "creatures": [
-    {"creature": "pronghorn", "count": 9},
-    {"creature": "salt_tortoise", "count": 6},
+    {"creature": "pronghorn", "count": 9.9},
+    {"creature": "salt_tortoise", "count": 6.6},
     {"creature": "vulture", "count": 4},
     {"creature": "raven", "count": 4},
-    {"creature": "coyote", "count": 1}
+    {"creature": "coyote", "count": 1.1}
   ]
 }

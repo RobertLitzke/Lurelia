@@ -15,15 +15,22 @@ pub struct Region {
     radius: f32,
     #[serde(default)]
     poly: Vec<Pos>,
+    /// In place of `poly`: a band beside the race track
+    /// (`race_track::AlongBand`).
+    #[serde(default)]
+    along: Option<crate::world::chronicle::race_track::AlongBand>,
 }
 
 impl Process for Region {
     fn apply(&self, cx: &mut EventCtx) -> String {
-        let Region { name, at, radius, poly } = self;
+        let Region { name, at, radius, poly, along } = self;
         let seed = cx.seed;
         let rid = cx.f.region_id(name);
-        if poly.len() >= 3 {
-            let pts: Vec<glam::Vec2> = poly.iter().map(|p| cx.pos(p)).collect();
+        let pts: Vec<glam::Vec2> = match along {
+            Some(b) => crate::world::chronicle::race_track::along_band(cx, b),
+            None => poly.iter().map(|p| cx.pos(p)).collect(),
+        };
+        if pts.len() >= 3 {
             let (mut lo, mut hi) = (pts[0], pts[0]);
             for p in &pts {
                 lo = lo.min(*p);

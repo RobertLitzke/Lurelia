@@ -100,6 +100,10 @@ pub struct Opt {
     pub help: &'static str,
     pub values: Vec<String>,
     pub default: usize,
+    /// What the first value comes to, shown under it while it is the one
+    /// picked: the hour or the laps "Default" stands for, the seasons
+    /// "Cycle" goes through.
+    pub under: Option<String>,
 }
 
 impl Opt {
@@ -110,6 +114,7 @@ impl Opt {
             help,
             values: vec!["Off".into(), "On".into()],
             default: usize::from(on),
+            under: None,
         }
     }
 
@@ -120,7 +125,12 @@ impl Opt {
             help,
             values: values.iter().map(|v| v.to_string()).collect(),
             default,
+            under: None,
         }
+    }
+
+    fn under(self, s: String) -> Opt {
+        Opt { under: Some(s), ..self }
     }
 }
 
@@ -137,10 +147,11 @@ const TARGETS: [&str; 6] = ["5", "10", "15", "20", "30", "50"];
 const CAPTURES: [&str; 4] = ["1", "3", "5", "7"];
 const MINUTES: [&str; 5] = ["Off", "5", "10", "15", "20"];
 const SIDES: [&str; 3] = ["Either", "Cyan", "Magenta"];
-/// How the first value of the season and hour lines begins: the one that
-/// leaves it to the world. What follows the word says what the world does.
-const TURNING: &str = "Turning";
-const WORLD: &str = "World";
+/// The first value of the lines that can be left to the world: the season
+/// line's lets the year go round, the others' take what the world or course
+/// was written with. `Opt::under` says what that comes to.
+const CYCLE: &str = "Cycle";
+const DEFAULT: &str = "Default";
 
 /// "easy" -> "Easy": the menu's voice for a value that is a word.
 fn capitalise(s: &str) -> String {
@@ -196,24 +207,32 @@ pub fn options(world: &str, game: &crate::games::GameDef) -> Vec<Opt> {
     // The parts of the year this world has, where it has more than one: the
     // year turns on its own unless a season is picked, which holds it there.
     if info.seasons.len() > 1 {
-        let mut values = vec![format!("{TURNING}, from {}", info.start_season.name())];
+        let mut values = vec![CYCLE.to_string()];
         values.extend(info.seasons.iter().map(|s| capitalise(s.name())));
         let values: Vec<&str> = values.iter().map(|v| v.as_str()).collect();
-        out.push(Opt::pick(
-            "season",
-            "SEASON",
-            "Which part of the year to open in. Turning lets the year go round on its own, about two days a season.",
-            &values,
-            0,
-        ));
+        // The seasons the year goes through, from the one it opens in.
+        let from = info.seasons.iter().position(|s| *s == info.start_season).unwrap_or(0);
+        let n = info.seasons.len();
+        let round: Vec<&str> = (0..n).map(|k| info.seasons[(from + k) % n].name()).collect();
+        out.push(
+            Opt::pick(
+                "season",
+                "SEASON",
+                "Which part of the year to open in. Cycle lets the year go round on its own, a day a season.",
+                &values,
+                0,
+            )
+            .under(capitalise(&round.join(", "))),
+        );
     }
     // The hour to open on, which the world's own is the first offer of.
     let own = info.start_hour.unwrap_or(crate::world::clock::START);
-    let mut hours = vec![format!("{WORLD}, {:02}:{:02}", own.floor() as u32, ((own.fract() * 60.0).round() as u32).min(59))];
+    let own = format!("{:02}:{:02}", own.floor() as u32, ((own.fract() * 60.0).round() as u32).min(59));
+    let mut hours = vec![DEFAULT.to_string()];
     hours.extend(crate::world::clock::PRESETS.iter().map(|(_, n)| capitalise(&n.to_lowercase())));
     let hours: Vec<&str> = hours.iter().map(|h| h.as_str()).collect();
     if !info.space {
-        out.push(Opt::pick("hour", "TIME", "The hour the world opens at. World is the hour it was written to be seen in.", &hours, 0));
+        out.push(Opt::pick("hour", "TIME", "The hour the world opens at. Default is the hour it was written to be seen in.", &hours, 0).under(own));
     }
     for m in TRAVEL {
         if info.allowed.has(m) {
@@ -268,8 +287,53 @@ pub fn options(world: &str, game: &crate::games::GameDef) -> Vec<Opt> {
             out.push(Opt::pick("side", "YOUR SIDE", "Which side you play on. Either puts you on the shorter one.", &SIDES, 0));
         }
     }
+    if mode == Mode::Race && info.race_karts {
+        out.push(Opt::pick("kart", "KART", "Your kart. The heavy one is fastest on the straights and wins the shoves; the quick one gets off the line and out of the bends first. Rivals drive all three.", &KARTS.map(|(_, n)| n), 0));
+    }
+    if mode == Mode::Race {
+        out.push(Opt::pick("rivals", "RIVALS", "How many karts race you. Default is as many as the course is written for.", &RIVALS, 0).under(format!("{} rival{}", info.race_rivals, if info.race_rivals == 1 { "" } else { "s" })));
+        out.push(Opt::pick("laps", "LAPS", "Laps of the course. Default is as many as the course is written for.", &LAPS, 0).under(format!("{} lap{}", info.race_laps, if info.race_laps == 1 { "" } else { "s" })));
+        // The course's own weather is where it starts; it may change where
+        // the climate has more than one kind of day.
+        let sky = capitalise(info.start_sky.name());
+        out.push(
+            Opt::pick(
+                "sky",
+                "CONDITIONS",
+                "The weather for the race, held all the way: rain makes the road slippery, snow more so, fog shortens the view. Default is the course's own weather, which can change.",
+                &SKIES,
+                0,
+            )
+            .under(if info.weathers > 1 { format!("{sky} to start") } else { sky }),
+        );
+        out.push(Opt::pick(
+            "difficulty",
+            "DIFFICULTY",
+            "How hard the rivals drive: how late they brake and how fast they take the bends. Nothing slows the leaders down to wait for you.",
+            &RACE_LEVELS,
+            2,
+        ));
+    }
     out
 }
+
+/// The karts a race offers: library name and how the launch screen shows it.
+pub const KARTS: [(&str, &str); 3] = [("kart", "Kart"), ("kart_heavy", "Heavy kart"), ("kart_quick", "Quick kart")];
+
+/// Whether a race written for the library vehicle `vehicle` is a kart race:
+/// the player picks one of `KARTS` and the rivals drive all three. The
+/// launch screen and the race both ask here. It goes by the name because the
+/// ATV has the kart's handling and drift too, and a race in ATVs is not one.
+pub fn kart_race(vehicle: &str) -> bool {
+    KARTS.iter().any(|(k, _)| *k == vehicle)
+}
+const RIVALS: [&str; 8] = [DEFAULT, "1", "2", "3", "4", "5", "6", "7"];
+const LAPS: [&str; 6] = [DEFAULT, "1", "2", "3", "4", "5"];
+const SKIES: [&str; 6] = [DEFAULT, "Sun", "Clouds", "Rain", "Snow", "Fog"];
+/// A race's difficulty levels, and the share of the grip and braking the
+/// bred driving style trusts that the rivals drive to at each.
+pub const RACE_LEVELS: [&str; 3] = ["Easy", "Medium", "Hard"];
+pub const RACE_LEVEL_SHARE: [f32; 3] = [0.88, 0.94, 1.0];
 
 /// The games a world offers, the one it is built for first.
 ///
@@ -450,6 +514,20 @@ impl Launch {
         o.values.get(self.index(o)).cloned().unwrap_or_default()
     }
 
+    /// The line under the value, while the value leaves it to the world:
+    /// what "Default" or "Cycle" comes to.
+    pub fn under(&self, o: &Opt) -> Option<String> {
+        o.under.clone().filter(|_| self.index(o) == 0)
+    }
+
+    /// Put one option on `value`, one of its own.
+    pub fn set(&mut self, o: &Opt, value: &str) {
+        if o.values.iter().any(|v| v == value) {
+            let key = self.key();
+            self.kept.entry(key).or_default().insert(o.id.clone(), value.to_string());
+        }
+    }
+
     /// Step one option, wrapping round.
     pub fn step(&mut self, o: &Opt, dir: i32) {
         let n = o.values.len() as i32;
@@ -534,8 +612,8 @@ impl Launch {
         // clock of a map in space, which is held.
         let on_or = |id: &str, absent: bool| if opts.iter().any(|o| o.id == id) { on(id) } else { absent };
         let num = |id: &str, fallback: u32| -> u32 { opts.iter().find(|o| o.id == id).and_then(|o| self.value(o).parse().ok()).unwrap_or(fallback) };
-        // A pick whose first value means "leave it to the world".
-        let pick = |id: &str| -> Option<String> { opts.iter().find(|o| o.id == id).map(|o| self.value(o)).filter(|v| !v.starts_with(TURNING) && !v.starts_with(WORLD)) };
+        // A pick whose first value leaves it to the world gives nothing.
+        let pick = |id: &str| -> Option<String> { opts.iter().find(|o| o.id == id).filter(|o| self.under(o).is_none()).map(|o| self.value(o)) };
         let off = TRAVEL
             .into_iter()
             .filter(|m| opts.iter().any(|o| o.id == format!("travel.{}", m.name())) && !on(&format!("travel.{}", m.name())))
@@ -562,6 +640,10 @@ impl Launch {
             season: pick("season").and_then(|v| crate::world::season::Season::parse(&v.to_lowercase())).map(|s| s.name().to_string()),
             hour: pick("hour").and_then(|v| crate::world::clock::PRESETS.iter().find(|(_, n)| n.eq_ignore_ascii_case(&v)).map(|(h, _)| *h)),
             vehicle: opts.iter().find(|o| o.id == "vehicle").map(|o| self.value(o).to_lowercase().replace(' ', "_")),
+            kart: opts.iter().find(|o| o.id == "kart").and_then(|o| KARTS.iter().find(|(_, n)| *n == self.value(o))).map(|(k, _)| k.to_string()),
+            rivals: pick("rivals").and_then(|v| v.parse().ok()),
+            laps: pick("laps").and_then(|v| v.parse().ok()),
+            sky: pick("sky").map(|v| v.to_lowercase()),
         }
     }
 }
@@ -598,6 +680,14 @@ pub struct Chosen {
     pub hour: Option<f32>,
     /// The vehicle U brings, by library name. None takes the world's first.
     pub vehicle: Option<String>,
+    /// A race: the player's kart, by library name, and how many rivals and
+    /// laps (None takes the course's own).
+    pub kart: Option<String>,
+    pub rivals: Option<u32>,
+    pub laps: Option<u32>,
+    /// A race's weather, held (world/weather.rs `Kind`, by name); None takes
+    /// the course's own, drifting as the launch screen says.
+    pub sky: Option<String>,
 }
 
 /// Names and shell colours for the bots a match is asked for, in the order
@@ -670,6 +760,10 @@ impl Chosen {
             season: None,
             hour: None,
             vehicle: None,
+            kart: None,
+            rivals: None,
+            laps: None,
+            sky: None,
         }
     }
 
@@ -798,8 +892,15 @@ pub struct Info {
     pub start_season: crate::world::season::Season,
     /// Its vehicles (world.json `vehicles`).
     pub vehicles: Vec<String>,
-    /// Whether it has a race (world.json `race`).
+    /// Whether it has a race (world.json `race`), the laps and rivals it is
+    /// written for, and whether it is raced in karts (`kart_race`).
     pub race: bool,
+    pub race_laps: u32,
+    pub race_rivals: u32,
+    pub race_karts: bool,
+    /// The weather it opens on: world.json `start_weather`, else the
+    /// commonest its climate has.
+    pub start_sky: crate::world::weather::Kind,
     /// The games it says it is for (world.json `games`), by their names in
     /// `library/games/`, its own first. Empty where it does not say.
     pub games: Vec<String>,
@@ -833,7 +934,7 @@ struct Peek {
     modes: Option<Vec<String>>,
     #[serde(default)]
     games: Vec<String>,
-    #[serde(default)]
+    #[serde(default = "crate::world::fields::default_vehicles")]
     vehicles: Vec<String>,
     #[serde(default)]
     shooter: Option<PeekShooter>,
@@ -859,6 +960,8 @@ struct Peek {
     size_m: Option<f32>,
     #[serde(default)]
     weather: BTreeMap<String, f32>,
+    #[serde(default)]
+    start_weather: Option<String>,
     #[serde(default)]
     biomes: Vec<String>,
     #[serde(default)]
@@ -901,6 +1004,12 @@ fn story_opening(dir: &std::path::Path) -> Option<String> {
     }
     let end = para.find(". ").map_or(para.len(), |i| i + 1);
     Some(para[..end].to_string())
+}
+
+/// A number from world.json's `race` block, 3 where it does not say (as
+/// `RaceDef` reads it).
+fn race_num(p: &Peek, key: &str) -> u32 {
+    p.race.as_ref().and_then(|r| r.get(key)).and_then(|v| v.as_u64()).map_or(3, |v| v as u32)
 }
 
 fn count_word(n: usize) -> String {
@@ -1009,6 +1118,14 @@ pub fn info(world: &str) -> Info {
                 },
                 vehicles: p.vehicles.clone(),
                 race: p.race.is_some(),
+                race_laps: race_num(&p, "laps"),
+                race_rivals: race_num(&p, "rivals"),
+                race_karts: p.race.as_ref().and_then(|r| r.get("vehicle")).and_then(|v| v.as_str()).is_some_and(kart_race),
+                start_sky: p
+                    .start_weather
+                    .as_deref()
+                    .and_then(crate::world::weather::Kind::parse)
+                    .unwrap_or_else(|| crate::world::weather::Climate::from_weights(&p.weather).commonest()),
                 games: p.games.clone(),
                 shooter: p.shooter.is_some(),
                 seasons,
@@ -1023,6 +1140,10 @@ pub fn info(world: &str) -> Info {
             allowed: Allowed::all().without(ModeId::Drive),
             vehicles: Vec::new(),
             race: false,
+            race_laps: 3,
+            race_rivals: 3,
+            race_karts: false,
+            start_sky: crate::world::weather::Kind::Sun,
             games: Vec::new(),
             shooter: false,
             seasons: vec![crate::world::season::Season::Summer],
@@ -1175,7 +1296,7 @@ mod tests {
     fn a_world_offers_the_games_it_lists() {
         assert_eq!(modes("sluice"), [Mode::Ctf, Mode::Team]);
         assert_eq!(modes("porch"), [Mode::Fps, Mode::Team]);
-        assert_eq!(modes("kestrel"), [Mode::Race]);
+        assert_eq!(modes("peregrine"), [Mode::Race]);
         assert_eq!(modes("glassfall"), [Mode::Explore], "a world with no list and no blocks is one to explore");
     }
 
@@ -1205,9 +1326,9 @@ mod tests {
     #[test]
     fn the_world_list_follows_the_game() {
         let has = |game: &str, w: &str| worlds_for(game).contains(&w.to_string());
-        assert!(has("ctf", "megalith") && has("deathmatch", "porch") && has("race", "kestrel") && has("explore", "glassfall"));
+        assert!(has("ctf", "megalith") && has("deathmatch", "porch") && has("race", "peregrine") && has("explore", "glassfall"));
         assert!(worlds_for("ctf").iter().all(|w| info(w).ctf), "a world with no flags is on the capture the flag list");
-        assert!(!has("explore", "porch") && !has("explore", "kestrel"), "an arena or a circuit is on the explore list");
+        assert!(!has("explore", "porch") && !has("explore", "peregrine"), "an arena or a circuit is on the explore list");
         assert!(!has("deathmatch", "megalith"), "a flag map is on the deathmatch list");
         let mut l = launch("glassfall", Mode::Explore);
         l.set_game("ctf");

@@ -49,9 +49,10 @@ pub fn height(store: &Store, x: f32, z: f32, y: f32, reach: f32, slopes: bool) -
 
 /// The ground plane under a wheel at `hub` rolling along `fwd`, looked for
 /// from `from` metres down to `reach` below it. `level` is the water's
-/// surface.
+/// surface. Ground above `limit` (a height) is an obstacle for the chassis,
+/// not ground under the tyre: a small wheel meets a voxel step as a kerb.
 #[allow(clippy::too_many_arguments)]
-pub fn probe(store: &Store, hub: Vec3, fwd: Vec3, r: f32, from: f32, reach: f32, level: f32, slopes: bool) -> Option<Contact> {
+pub fn probe(store: &Store, hub: Vec3, fwd: Vec3, r: f32, from: f32, reach: f32, level: f32, slopes: bool, limit: Option<f32>) -> Option<Contact> {
     let f = Vec3::new(fwd.x, 0.0, fwd.z).normalize_or(Vec3::NEG_Z);
     // A column that is still solid where the search starts is a wall or a
     // trunk beside the tyre, not ground under it: the chassis meets it.
@@ -60,7 +61,7 @@ pub fn probe(store: &Store, hub: Vec3, fwd: Vec3, r: f32, from: f32, reach: f32,
         if inside {
             None
         } else {
-            height(store, x, z, from, reach, slopes)
+            height(store, x, z, from, reach, slopes).filter(|c| limit.is_none_or(|l| c.0 <= l))
         }
     };
     // The highest the ground may rise round the hub and still be rolled
@@ -132,8 +133,11 @@ pub struct Spring {
 
 /// The spring and damper for a wheel hanging from `mount` (world) on a body
 /// whose up is `u`, over plane `c`. None when the tyre does not reach.
+/// `dead` makes the bump stop dead rather than springy: past full travel it
+/// stops the body falling onto the wheel and stores nothing to throw it back
+/// up with (the kart, whose travel is a few centimetres).
 #[allow(clippy::too_many_arguments)]
-pub fn suspend(c: &Contact, mount: Vec3, u: Vec3, v_mount: Vec3, r: f32, travel: f32, k: f32, mass: f32, damp: (f32, f32, f32), h: f32) -> Option<Spring> {
+pub fn suspend(c: &Contact, mount: Vec3, u: Vec3, v_mount: Vec3, r: f32, travel: f32, k: f32, mass: f32, damp: (f32, f32, f32), dead: bool, h: f32) -> Option<Spring> {
     let un = u.dot(c.n);
     if un < 0.25 {
         return None;
@@ -153,11 +157,11 @@ pub fn suspend(c: &Contact, mount: Vec3, u: Vec3, v_mount: Vec3, r: f32, travel:
     }
     // The bump stop: very stiff, and the force is capped so a wheel that
     // has gone into the ground pushes out over a few steps rather than in one.
-    if x > travel {
+    if x > travel && !dead {
         f += 30.0 * k * (x - travel).min(0.15);
     }
     let zeta = if x_dot > 0.0 { damp.0 } else { damp.1 };
-    let c_d = 2.0 * zeta * (k * mass).sqrt() * if x > travel { 3.0 } else { 1.0 };
+    let c_d = 2.0 * zeta * (k * mass).sqrt() * if x > travel && !dead { 3.0 } else { 1.0 };
     // A damper can stop the wheel's motion in a substep but never reverse
     // it: that is what keeps a car at rest from buzzing.
     let cap = mass * x_dot.abs() / h;
@@ -170,7 +174,17 @@ pub fn suspend(c: &Contact, mount: Vec3, u: Vec3, v_mount: Vec3, r: f32, travel:
     } else {
         x_dot
     };
-    let fd = (c_d * v).clamp(-cap, cap);
+    let mut fd = (c_d * v).clamp(-cap, cap);
+    if x > travel && dead {
+        // Out of travel: the closing speed that comes of falling (a landing)
+        // is stopped in this substep. What comes of running into a slope is
+        // not: the caller lifts the body out of the ground instead
+        // (`Vehicle::climb_out`), so a kerb is stepped up, never launched off.
+        let fall = -v_mount.y * c.n.y / un;
+        if fall > 0.0 {
+            fd = fd.max(mass * fall / h);
+        }
+    }
     Some(Spring {
         t: t.max(0.0),
         x,

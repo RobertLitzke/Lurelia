@@ -1,0 +1,47 @@
+{
+  "name": "aspen_draw",
+  "version": 1,
+  "introduced_by": "vermilion",
+  "notes": "A damp ravine cut into a mesa's face by a spring-fed stream: a grove of aspen on grass along the water, a few young ponderosa and gambel oak on the drier banks, willow and thimbleberry by the stream.",
+  "priority": 7,
+  "rules": {"region": "draw"},
+  "surface": "meadow_grass",
+  "subsurface": "dirt",
+  "map_color": [128, 160, 84],
+  "plants": [
+    {"plant": "aspen", "density": 0.05, "placement": {"verb": "riparian", "params": {"width": 26}}},
+    {
+      "plant": "aspen",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 22, "min": 0.4, "max": 0.62}}
+    },
+    {"plant": "willow", "density": 0.006, "placement": {"verb": "riparian", "params": {"width": 5}}},
+    {"plant": "thimbleberry", "density": 0.02, "placement": {"verb": "riparian", "params": {"width": 10}}},
+    {
+      "plant": "young_ponderosa",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.5, "max": 0.68}}
+    },
+    {
+      "plant": "gambel_oak",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.5, "max": 0.66}}
+    },
+    {"plant": "rock_lichen", "density": 0.06}
+  ],
+  "features": [
+    {"structure": "boulder", "density": 0.0002, "placement": {"verb": "riparian", "params": {"width": 8}}},
+    {"structure": "red_boulder", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "mule_deer", "count": 3.3},
+    {"creature": "dragonfly", "count": 2.2},
+    {"creature": "meadowhawk", "count": 3.3},
+    {"creature": "annas_hummingbird", "count": 2},
+    {"creature": "desert_toad", "count": 2.2},
+    {"creature": "northern_flicker", "count": 1},
+    {"creature": "skunk", "count": 1.1},
+    {"creature": "great_horned_owl", "count": 1}
+  ],
+  "sound": {"leaves": 1.2, "wind": 0.7}
+}

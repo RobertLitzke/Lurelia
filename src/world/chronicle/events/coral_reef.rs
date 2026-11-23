@@ -196,8 +196,10 @@ fn default_flat_depth() -> f32 {
 fn default_taper() -> f32 {
     40.0
 }
+/// The reef's rock where the event names none (`events::defaults_used`).
+pub const ROCK: &str = "reef_rock";
 fn default_rock() -> String {
-    "reef_rock".into()
+    ROCK.into()
 }
 fn default_sand() -> String {
     "sand".into()

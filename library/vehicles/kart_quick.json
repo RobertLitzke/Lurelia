@@ -1,0 +1,16 @@
+{
+  "name": "kart_quick",
+  "version": 1,
+  "introduced_by": "kestrel",
+  "like": "kart",
+  "title": "QUICK KART",
+  "notes": "The kart made light and quick off the line: less mass, hard acceleration out of the corners, a lower top speed, and easily shoved. Tuned against kart and kart_heavy so the three lap close on an average course: quickest through tight bends.",
+  "mass": 160,
+  "inertia": [60, 76, 38],
+  "force": 2500,
+  "power": 52,
+  "top_speed": 29.3,
+  "grip": 1.65,
+  "steer_rate": 270,
+  "drift_charge": 0.7
+}

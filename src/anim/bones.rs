@@ -1,7 +1,7 @@
 //! The skeleton inside a creature, derived from the creature.
 //!
 //! Nothing here is authored. `slice.rs` already works out which bone owns each
-//! voxel of a creature's 32³ body; this walks that grid and keeps, for each
+//! voxel of a creature's body; this walks that grid and keeps, for each
 //! bone, a thin structure well inside the flesh: a strut down a leg or a tail,
 //! a ribcage and a spine through the body, a hollow skull.
 //!
@@ -14,22 +14,13 @@
 //! The parts come out on the creature's own rig, so a skeleton walks, lies,
 //! sags and ragdolls through exactly the same code as the animal did.
 
-use super::slice::Sliced;
+use super::slice::{Dims, Sliced};
 use super::Rig;
 use crate::anim::Role;
 use crate::models::Model;
 use glam::Vec3;
 
-const N: i32 = 32;
 const NONE: u8 = u8::MAX;
-
-fn idx(x: i32, y: i32, z: i32) -> usize {
-    ((y * N + z) * N + x) as usize
-}
-
-fn inside(x: i32, y: i32, z: i32) -> bool {
-    (0..N).contains(&x) && (0..N).contains(&y) && (0..N).contains(&z)
-}
 
 /// How often a rib ring is kept along the body, in voxels.
 const RIB_EVERY: i32 = 3;
@@ -41,7 +32,8 @@ const RIB_EVERY: i32 = 3;
 pub fn skeletonise(sliced: &Sliced, bone: u8, bone_dark: u8, voxel: f32, half_w: f32, height: f32) -> (Vec<u8>, Vec<Model>) {
     let owner = &sliced.owner;
     let rig = &sliced.rig;
-    let solid = |x: i32, y: i32, z: i32| inside(x, y, z) && owner[idx(x, y, z)] != NONE;
+    let d = sliced.dims;
+    let solid = |x: i32, y: i32, z: i32| d.inside(x, y, z) && owner[d.idx(x, y, z)] != NONE;
     // The core: solid voxels with no face on the outside world. Everything
     // below only ever removes voxels from this, which is what keeps the
     // skeleton inside the animal.
@@ -50,7 +42,7 @@ pub fn skeletonise(sliced: &Sliced, bone: u8, bone_dark: u8, voxel: f32, half_w:
             if owner[i] == NONE {
                 return false;
             }
-            let (x, y, z) = ((i as i32) % N, (i as i32) / (N * N), ((i as i32) / N) % N);
+            let (x, y, z) = d.at(i);
             [(1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)]
                 .iter()
                 .all(|&(a, b, c)| solid(x + a, y + b, z + c))
@@ -67,12 +59,15 @@ pub fn skeletonise(sliced: &Sliced, bone: u8, bone_dark: u8, voxel: f32, half_w:
         if mine.is_empty() {
             continue;
         }
-        let at = |i: usize| Vec3::new((i as i32 % N) as f32 + 0.5, (i as i32 / (N * N)) as f32 + 0.5, ((i as i32 / N) % N) as f32 + 0.5);
+        let at = |i: usize| {
+            let (x, y, z) = d.at(i);
+            Vec3::new(x as f32 + 0.5, y as f32 + 0.5, z as f32 + 0.5)
+        };
         let axis = axis_of(rig, b, &mine, &at);
         let along = |i: usize| (at(i) - bn.joint).dot(axis);
         match bn.role {
-            Role::Root | Role::Spine => ribcage(&mine, &core, axis, &mut cells, bone, bone_dark),
-            Role::Head => skull(&mine, &core, &mut cells, bone, bone_dark),
+            Role::Root | Role::Spine => ribcage(d, &mine, &core, axis, &mut cells, bone, bone_dark),
+            Role::Head => skull(d, &mine, &core, &mut cells, bone, bone_dark),
             // Legs, neck, tail, jaw, wing, arm: one strut down the middle.
             Role::Neck | Role::Jaw | Role::Tail | Role::Leg | Role::Arm | Role::Wing | Role::Ear => strut(&mine, &at, &along, axis, bn.joint, &mut cells, bone),
         }
@@ -119,7 +114,7 @@ fn strut(mine: &[usize], at: &dyn Fn(usize) -> Vec3, along: &dyn Fn(usize) -> f3
 
 /// Ribs every few voxels along the body with a spine over the top of them.
 #[allow(clippy::too_many_arguments)]
-fn ribcage(mine: &[usize], core: &[bool], axis: Vec3, cells: &mut [u8], bone: u8, bone_dark: u8) {
+fn ribcage(d: Dims, mine: &[usize], core: &[bool], axis: Vec3, cells: &mut [u8], bone: u8, bone_dark: u8) {
     // Slice along whichever of the body's own axes runs down its length.
     let long = if axis.z.abs() >= axis.x.abs() && axis.z.abs() >= axis.y.abs() {
         2
@@ -128,10 +123,9 @@ fn ribcage(mine: &[usize], core: &[bool], axis: Vec3, cells: &mut [u8], bone: u8
     } else {
         1
     };
-    let coord = |i: usize| match long {
-        0 => i as i32 % N,
-        1 => i as i32 / (N * N),
-        _ => (i as i32 / N) % N,
+    let coord = |i: usize| {
+        let (x, y, z) = d.at(i);
+        [x, y, z][long]
     };
     let (lo, hi) = (mine.iter().map(|&i| coord(i)).min().unwrap(), mine.iter().map(|&i| coord(i)).max().unwrap());
     let mut slices: std::collections::BTreeMap<i32, Vec<usize>> = Default::default();
@@ -142,7 +136,7 @@ fn ribcage(mine: &[usize], core: &[bool], axis: Vec3, cells: &mut [u8], bone: u8
         // A ring at each end (shoulder and pelvis) and every few voxels between.
         let ring = *k == lo || *k == hi || (*k - lo) % RIB_EVERY == 0;
         // The spine: the highest core voxel of every slice, all the way along.
-        if let Some(&top) = group.iter().max_by_key(|&&i| i as i32 / (N * N)) {
+        if let Some(&top) = group.iter().max_by_key(|&&i| d.at(i).1) {
             cells[top] = bone_dark;
         }
         if !ring {
@@ -151,11 +145,11 @@ fn ribcage(mine: &[usize], core: &[bool], axis: Vec3, cells: &mut [u8], bone: u8
         for &i in group {
             // The ring is the slice's own edge: a core voxel with a
             // neighbour in this slice that is not core.
-            let (x, y, z) = (i as i32 % N, i as i32 / (N * N), (i as i32 / N) % N);
+            let (x, y, z) = d.at(i);
             let edge = [(1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)]
                 .iter()
                 .filter(|&&(a, b, c)| [a, b, c][long] == 0)
-                .any(|&(a, b, c)| !inside(x + a, y + b, z + c) || !core[idx(x + a, y + b, z + c)]);
+                .any(|&(a, b, c)| !d.inside(x + a, y + b, z + c) || !core[d.idx(x + a, y + b, z + c)]);
             if edge && cells[i] == 0 {
                 cells[i] = bone;
             }
@@ -165,15 +159,15 @@ fn ribcage(mine: &[usize], core: &[bool], axis: Vec3, cells: &mut [u8], bone: u8
 
 /// A hollow skull: the head's core kept as a shell, with its lowest voxels
 /// darker so the eye end reads as sockets rather than a solid block.
-fn skull(mine: &[usize], core: &[bool], cells: &mut [u8], bone: u8, bone_dark: u8) {
-    let ys: Vec<i32> = mine.iter().map(|&i| i as i32 / (N * N)).collect();
+fn skull(d: Dims, mine: &[usize], core: &[bool], cells: &mut [u8], bone: u8, bone_dark: u8) {
+    let ys: Vec<i32> = mine.iter().map(|&i| d.at(i).1).collect();
     let (lo, hi) = (*ys.iter().min().unwrap(), *ys.iter().max().unwrap());
     let band = lo + (hi - lo) / 3;
     for &i in mine {
-        let (x, y, z) = (i as i32 % N, i as i32 / (N * N), (i as i32 / N) % N);
+        let (x, y, z) = d.at(i);
         let shell = [(1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)]
             .iter()
-            .any(|&(a, b, c)| !inside(x + a, y + b, z + c) || !core[idx(x + a, y + b, z + c)]);
+            .any(|&(a, b, c)| !d.inside(x + a, y + b, z + c) || !core[d.idx(x + a, y + b, z + c)]);
         if shell {
             cells[i] = if y <= band { bone_dark } else { bone };
         }
@@ -201,18 +195,19 @@ mod tests {
                     names.iter().position(|x| x.as_str() == n).map(|k| k as u8 + 1)
                 }
             };
-            let whole = crate::world::shape::compile(&c.ops, [32, 32, 32], &resolve).mat;
-            let sliced = crate::anim::slice::slice(def, &c.ops, &whole, &|n| resolve(n).is_some(), c.voxel, c.half_w, c.height);
+            let whole = crate::world::shape::compile(&c.ops, c.grid, &resolve).mat;
+            let sliced = crate::anim::slice::slice(def, &c.ops, &whole, Dims(c.grid), &|n| resolve(n).is_some(), c.voxel, c.half_w, c.height);
             let (cells, parts) = skeletonise(&sliced, 65, 66, c.voxel, c.half_w, c.height);
             let owner = &sliced.owner;
-            let solid = |x: i32, y: i32, z: i32| inside(x, y, z) && owner[idx(x, y, z)] != NONE;
+            let d = sliced.dims;
+            let solid = |x: i32, y: i32, z: i32| d.inside(x, y, z) && owner[d.idx(x, y, z)] != NONE;
             let mut kept = 0;
             for i in 0..cells.len() {
                 if cells[i] == 0 {
                     continue;
                 }
                 kept += 1;
-                let (x, y, z) = (i as i32 % N, i as i32 / (N * N), (i as i32 / N) % N);
+                let (x, y, z) = d.at(i);
                 assert!(solid(x, y, z), "{}: skeleton voxel at {x},{y},{z} is not in the animal", c.name);
                 let buried = [(1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)]
                     .iter()

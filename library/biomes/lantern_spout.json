@@ -19,11 +19,12 @@
     {"plant": "willow", "density": 0.001, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "firefly", "count": 40},
-    {"creature": "glass_dragonfly", "count": 6},
-    {"creature": "dragonfly", "count": 4},
-    {"creature": "glassmoth", "morph": "lantern", "count": 10},
-    {"creature": "crystal_bat", "count": 4}
+    {"creature": "firefly", "count": 44},
+    {"creature": "glass_dragonfly", "count": 6.6},
+    {"creature": "dragonfly", "count": 4.4},
+    {"creature": "glassmoth", "morph": "lantern", "count": 11},
+    {"creature": "crystal_bat", "count": 4.4},
+    {"creature": "dipper", "count": 1}
   ],
   "mist": 0.35
 }

@@ -9,7 +9,7 @@
   "subsurface": "lake_mud",
   "map_color": [70, 110, 120],
   "creatures": [
-    {"creature": "trout", "count": 10},
+    {"creature": "trout", "count": 11},
     {"creature": "goose", "count": 6},
     {"creature": "mallard", "count": 5},
     {"creature": "swan", "count": 1}

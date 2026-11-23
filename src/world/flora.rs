@@ -765,8 +765,14 @@ pub fn grow(lib: &Library, p: &PlantDef, base: Vec3, seed: u32, worn: Worn) -> T
         autumn,
         flower: flower.unwrap_or(0),
         sticks: p.thin_limbs.unwrap_or(0.0),
+        taper: p.trunk_taper.unwrap_or(TRUNK_TAPER).clamp(0.0, 0.85),
+        tube_limbs: p.tube_limbs,
     }
 }
+
+/// How much of its radius a trunk loses from its foot to the crown, unless
+/// the plant says (`trunk_taper`).
+pub const TRUNK_TAPER: f32 = 0.3;
 
 crate::util::named! {
     /// The shape a branching plant's limb takes (`curve`).
@@ -826,11 +832,65 @@ fn conifer(p: &PlantDef, rnd: &mut dyn FnMut() -> f32, base: Vec3, height: f32, 
     // tree narrower than they say; the whorls reach it honestly, and 0.6 left
     // every fir a pencil.
     let rmax = if p.form == Form::Columnar { crown * 0.62 } else { crown };
-    let lo = (height * p.crown_base.unwrap_or(0.2)).max(0.4);
+    // Drawn only when the plant asks for it, so one that doesn't keeps its shape.
+    let vary = p.crown_base_vary.map_or(0.0, |v| v * (2.0 * rnd() - 1.0));
+    let lo = (height * (p.crown_base.unwrap_or(0.2) + vary).clamp(0.05, 0.85)).max(0.4);
     let sweep = p.sweep.unwrap_or(Sweep::Level);
     let whorls = p.whorls.map(|w| lerp(w, rnd()));
+    let open = p.open.unwrap_or(0.0).clamp(0.0, 1.0);
+    if open > 0.0 {
+        let trunk_h = open_crown(rnd, base, height, rmax, lo, p.taper.unwrap_or(CONIFER_TAPER), whorls, open, blobs);
+        // Drawn as a broadleaf: the trunk should show in the gaps between
+        // the tiers, and a `Pine` has its trunk clothed in needles all the
+        // way up the crown (stamp.rs).
+        return (TreeKind::Broad, trunk_h, lo);
+    }
     let trunk_h = conifer_crown(rnd, base, height, trunk_r, rmax, lo, p.taper.unwrap_or(CONIFER_TAPER), sweep, whorls, blobs, branches);
     (TreeKind::Pine, trunk_h, lo)
+}
+
+/// An open conifer (`open` > 0), an old ponderosa: a tall bare trunk and
+/// over it a stack of rounded pucks of needles centred on the trunk, small at
+/// the bottom, widening to the crown's full radius about two fifths of the way
+/// up and drawing in again to a small blunt top, with a gap between each puck
+/// and the next (`open` is the share of each puck's slot left empty). No limbs
+/// and no needle core: the stack reads as layered tiers at any range and costs
+/// one clump per tier.
+#[allow(clippy::too_many_arguments)]
+fn open_crown(
+    rnd: &mut dyn FnMut() -> f32,
+    base: Vec3,
+    height: f32,
+    rmax: f32,
+    lo: f32,
+    taper: f32,
+    whorls: Option<f32>,
+    open: f32,
+    blobs: &mut Vec<Blob>,
+) -> f32 {
+    let span = (height - lo).max(0.5);
+    let taper = taper.clamp(0.35, 2.0);
+    let n = (whorls.unwrap_or(span / 2.0).round() as usize).clamp(2, 14);
+    let slot = span / n as f32;
+    // Half the puck's thickness, never under one leaf cell (0.5 m) so a puck
+    // stays solid instead of a sheet of single voxels.
+    let half = (slot * (1.0 - open.min(0.8)) * 0.5).max(0.5);
+    // The widest tier sits about two fifths up: f^0.756 is a half there.
+    const PEAK_K: f32 = 0.756;
+    let floor = ARM_NEEDLE * 1.3;
+    for i in 0..n {
+        let f = (i as f32 + 0.5) / n as f32;
+        let prof = (std::f32::consts::PI * f.powf(PEAK_K)).sin().max(0.0).powf(taper);
+        let r = (rmax * prof * (0.9 + 0.2 * rnd())).max(floor);
+        // A little off the axis, so the stack is not a lathe-turned spindle.
+        let a = rnd() * TAU;
+        let off = Vec3::new(a.cos(), 0.0, a.sin()) * r * 0.08 * rnd();
+        let c = base + Vec3::Y * (lo + slot * (i as f32 + 0.5)) + off;
+        blobs.push(Blob::plate(c, r, Vec3::Y, (half / r).min(0.9)));
+    }
+    // The trunk stops inside the puck under the top one, which is too thin
+    // to hide a trunk's end.
+    lo + slot * (n as f32 - 1.5).max(0.5)
 }
 
 /// The conifer geometry itself, without a library entry: the worlds that
@@ -1372,6 +1432,8 @@ fn stalk_marker(mat: u8, base: Vec3, seed: u32) -> Tree {
         autumn: 0,
         flower: 0,
         sticks: 0.0,
+        taper: crate::world::flora::TRUNK_TAPER,
+        tube_limbs: false,
     }
 }
 
@@ -1734,6 +1796,8 @@ fn place_growths(w: &World) -> Vec<super::gen::Tree> {
             autumn: 0,
             flower: 0,
             sticks: 0.0,
+            taper: crate::world::flora::TRUNK_TAPER,
+            tube_limbs: false,
         });
     }
     out
@@ -1862,6 +1926,8 @@ fn place_vines(w: &World, trees: &mut Vec<super::gen::Tree>, bi: usize, ui: usiz
             autumn,
             flower: 0,
             sticks: 0.0,
+            taper: crate::world::flora::TRUNK_TAPER,
+            tube_limbs: false,
         })
     };
     let mut add = Vec::new();
@@ -2113,6 +2179,8 @@ fn place_crusts(w: &World, trees: &mut Vec<super::gen::Tree>, bi: usize, ui: usi
             autumn: 0,
             flower: 0,
             sticks: 0.0,
+            taper: crate::world::flora::TRUNK_TAPER,
+            tube_limbs: false,
         })
     };
     let mut add = Vec::new();

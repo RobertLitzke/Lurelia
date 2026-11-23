@@ -1,5 +1,5 @@
 //! The seasons: which part of the year the whole world is in, turning over on
-//! the game clock about every two days.
+//! the game clock about once a day.
 //!
 //! Four seasons (`Season`), of which a world has one or more: a tropical world
 //! names summer alone and never turns, a temperate one names all four. Summer
@@ -47,9 +47,9 @@ pub enum Season {
 /// Every season, in the order the year goes round.
 pub const SEASONS: [Season; 4] = [Season::Spring, Season::Summer, Season::Autumn, Season::Winter];
 
-/// How long a season lasts, in game hours: two days, which is about fifty
+/// How long a season lasts, in game hours: one day, which is about 25
 /// minutes of real time at the clock's own pace.
-pub const SEASON_H: f32 = 48.0;
+pub const SEASON_H: f32 = 24.0;
 
 /// The hour a turn of the year prefers to land on, and how far either side it
 /// wanders: the small hours, when the leaves can change without being watched.
@@ -58,12 +58,12 @@ const NIGHT: (f32, f32) = (2.0, 1.0);
 /// How often a turn is pulled to the night rather than left where it falls.
 const PULL: f32 = 0.8;
 
-/// How far a turn left to itself wanders from the two-day mark, game hours.
-const DRIFT_H: f32 = 10.0;
+/// How far a turn left to itself wanders from the one-day mark, game hours.
+const DRIFT_H: f32 = 5.0;
 
 /// How long the leaves take to turn once a season has, game hours: half the
-/// season, so autumn is still arriving a day into it.
-pub const TURN_H: f32 = 24.0;
+/// season, so autumn is still arriving half a day into it.
+pub const TURN_H: f32 = SEASON_H * 0.5;
 
 /// How many steps the turn is cut into. Every tree in a step changes at once
 /// and the world is regenerated once for it, so this is the number of sweeps
@@ -704,7 +704,7 @@ mod tests {
     }
 
     /// Left alone the year goes round, every season turns up, and a season
-    /// lasts about two days.
+    /// lasts about a day.
     #[test]
     fn the_year_goes_round() {
         let c = Calendar::of(&SEASONS);

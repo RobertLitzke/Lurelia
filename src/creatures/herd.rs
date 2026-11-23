@@ -7,7 +7,13 @@
 //! facing -- with the weights coming from the species' `group` block. A herd
 //! of thirty wildebeest holds its own footprint instead of spreading until
 //! each animal is alone.
+//!
+//! Distances are between bodies, not feet: each member is the capsule
+//! crowd.rs pushes apart, so `spacing` is the room between two spines and
+//! a nine-metre triceratops keeps its horns out of the one ahead's rump
+//! the way a deer keeps its nose out of another's flank.
 
+use super::crowd::Shape;
 use super::walk::{Critter, Mood};
 use super::{Creature, Look, Species};
 use crate::util::FxHashMap as HashMap;
@@ -30,9 +36,11 @@ const STRAY: f32 = 1.35;
 
 /// One member as its neighbours see it.
 struct Member {
+    e: hecs::Entity,
     pos: Vec3,
     dir: Vec3,
     walking: bool,
+    shape: Shape,
 }
 
 struct Group {
@@ -43,20 +51,22 @@ struct Group {
 
 /// Steer every group: boids among themselves, and when one bolts the rest
 /// within reach bolt the same way.
-pub fn update(world: &mut hecs::World, species: &[Species], dt: f32) {
+pub fn update(world: &mut hecs::World, species: &[Species], models: &[crate::models::Model], dt: f32) {
     let mut groups: HashMap<u32, Group> = HashMap::default();
-    for (kin, crit, look) in world.query::<(&Kin, &Critter, &Look)>().iter() {
+    for (e, kin, crit, look, body, morph) in world.query::<(hecs::Entity, &Kin, &Critter, &Look, &crate::physics::Body, Option<&crate::variety::Morph>)>().iter() {
         let g = groups.entry(kin.group).or_insert(Group { members: Vec::new(), flee: None });
         g.members.push(Member {
+            e,
             pos: look.pos,
             dir: Vec3::new(crit.heading.sin(), 0.0, crit.heading.cos()),
             walking: crit.mood == Mood::Walk,
+            shape: Shape::of_walker(look, body, models, morph),
         });
         if crit.mood == Mood::Flee && g.flee.is_none() {
             g.flee = Some((look.pos, crit.heading));
         }
     }
-    for (kin, crit, look, me) in world.query_mut::<(&Kin, &mut Critter, &Look, Option<&Creature>)>() {
+    for (ent, kin, crit, look, me) in world.query_mut::<(hecs::Entity, &Kin, &mut Critter, &Look, Option<&Creature>)>() {
         let Some(g) = groups.get(&kin.group) else {
             continue;
         };
@@ -76,14 +86,18 @@ pub fn update(world: &mut hecs::World, species: &[Species], dt: f32) {
             continue;
         }
         let spacing = grp.spacing.max(0.5);
+        let Some(mine) = g.members.iter().find(|m| m.e == ent).map(|m| m.shape) else {
+            continue;
+        };
         // What this one sees of the others, all on the flat: who is too
         // close, where the middle of them is, and which way they face.
         let (mut push, mut centre, mut dir, mut n) = (Vec3::ZERO, Vec3::ZERO, Vec3::ZERO, 0.0f32);
         for m in &g.members {
+            if m.e == ent {
+                continue;
+            }
             let to = Vec3::new(m.pos.x - look.pos.x, 0.0, m.pos.z - look.pos.z);
-            let d = to.length();
-            // Under a hand's width is this one looking at itself.
-            if d < 0.05 || d > grp.range {
+            if to.length() > grp.range {
                 continue;
             }
             n += 1.0;
@@ -91,8 +105,14 @@ pub fn update(world: &mut hecs::World, species: &[Species], dt: f32) {
             if m.walking {
                 dir += m.dir;
             }
+            // Too close is measured spine to spine: for a deer that is feet
+            // to feet, for a sauropod it is the gap along its whole length.
+            let (p, q) = mine.nearest(&m.shape);
+            let gap = q - p;
+            let d = gap.length();
             if d < spacing {
-                push -= to / d * (1.0 - d / spacing);
+                let away = if d > 0.05 { gap / d } else { (m.shape.mid() - mine.mid()).normalize_or_zero() };
+                push -= Vec3::new(away.x, 0.0, away.y) * (1.0 - d / spacing);
             }
         }
         if n < 1.0 {

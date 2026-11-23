@@ -261,6 +261,10 @@ pub struct Step {
     /// The body's height, metres: how big a print and how wide a trampled
     /// patch.
     pub height: f32,
+    /// How hard it lands, for the ground shaking under it (game.rs
+    /// `feel_steps`): about 1 for an elephant, 2 for a brachiosaur, 0 for
+    /// anything too light to feel.
+    pub weight: f32,
 }
 
 /// A mark on the ground.
@@ -477,6 +481,7 @@ mod tests {
                 yaw: 0.0,
                 foot: Foot::Hoof,
                 height: 1.4,
+                weight: 0.0,
             });
         }
         assert!(m.signs.len() <= 5, "{} patches", m.signs.len());

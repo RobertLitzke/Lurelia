@@ -10,22 +10,24 @@
   "map_color": [142, 196, 98],
   "plants": [
     {"plant": "hawthorn", "density": 0.0007, "placement": {"verb": "lone", "params": {"spacing": 34}}},
-    {"plant": "great_oak", "density": 0.00012, "placement": {"verb": "lone", "params": {"spacing": 90}}}
+    {"plant": "great_oak", "density": 0.00012, "placement": {"verb": "lone", "params": {"spacing": 90}}},
+    {"plant": "rowan", "density": 0.0006, "placement": {"verb": "edge", "params": {"width": 10}}}
   ],
   "features": [],
   "creatures": [
-    {"creature": "sheep", "count": 34},
-    {"creature": "cow", "count": 3},
-    {"creature": "horse", "count": 2},
-    {"creature": "rabbit", "count": 8},
+    {"creature": "sheep", "count": 37.4},
+    {"creature": "cow", "count": 3.3},
+    {"creature": "horse", "count": 2.2},
+    {"creature": "rabbit", "count": 8.8},
     {"creature": "starling", "count": 24},
     {"creature": "crow", "count": 4},
     {"creature": "sparrow", "count": 8},
-    {"creature": "barn_owl", "count": 1},
-    {"creature": "firefly", "count": 70},
-    {"creature": "glassmoth", "morph": "lantern", "count": 8},
-    {"creature": "hedgehog", "count": 2},
-    {"creature": "lapwing", "count": 10}
+    {"creature": "barn_owl", "count": 2},
+    {"creature": "firefly", "count": 77},
+    {"creature": "glassmoth", "morph": "lantern", "count": 8.8},
+    {"creature": "hedgehog", "count": 3.3},
+    {"creature": "lapwing", "count": 10},
+    {"creature": "skylark", "count": 4}
   ],
   "collectibles": []
 }

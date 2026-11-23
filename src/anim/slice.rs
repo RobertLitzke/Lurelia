@@ -12,11 +12,70 @@ use crate::models::{self, Model};
 use crate::world::shape;
 use glam::Vec3;
 
-const N: i32 = 32;
 const NONE: u8 = u8::MAX;
 
-fn idx(x: i32, y: i32, z: i32) -> usize {
-    ((y * N + z) * N + x) as usize
+/// The size of a creature's grid in voxels, x, y and z, laid out x fastest,
+/// then z, then y (`shape::compile`'s order). Most are 32 on every side; a
+/// big animal may have more (`CreatureDef::grid`), and then each of its parts
+/// is meshed in a 32^3 window of its own (`WINDOW`), since a mesh's positions
+/// are packed in five bits (mesh/quad.rs).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Dims(pub [i32; 3]);
+
+/// The edge of the window a part is meshed in, voxels.
+pub const WINDOW: i32 = 32;
+
+impl Dims {
+    pub const CUBE: Dims = Dims([WINDOW; 3]);
+    pub fn len(self) -> usize {
+        (self.0[0] * self.0[1] * self.0[2]) as usize
+    }
+    pub fn idx(self, x: i32, y: i32, z: i32) -> usize {
+        ((y * self.0[2] + z) * self.0[0] + x) as usize
+    }
+    pub fn inside(self, x: i32, y: i32, z: i32) -> bool {
+        (0..self.0[0]).contains(&x) && (0..self.0[1]).contains(&y) && (0..self.0[2]).contains(&z)
+    }
+    /// The x, y, z of index `i`.
+    pub fn at(self, i: usize) -> (i32, i32, i32) {
+        let i = i as i32;
+        (i % self.0[0], i / (self.0[0] * self.0[2]), (i / self.0[0]) % self.0[2])
+    }
+    /// The whole model's pivot: the bottom centre.
+    pub fn pivot(self) -> Vec3 {
+        Vec3::new(self.0[0] as f32 * 0.5, 0.0, self.0[2] as f32 * 0.5)
+    }
+    /// The 32^3 window inside the grid that best holds a part whose voxels
+    /// span `lo..=hi`: centred on it, moved in from the grid's edges. In a
+    /// 32^3 grid it is the grid itself.
+    pub fn window(self, lo: [i32; 3], hi: [i32; 3]) -> [i32; 3] {
+        std::array::from_fn(|a| {
+            let ext = hi[a] - lo[a] + 1;
+            (lo[a] - (WINDOW - ext).max(0) / 2).clamp(0, (self.0[a] - WINDOW).max(0))
+        })
+    }
+    /// The 32^3 cells of `cells` (a grid of this size) from `origin`, keeping
+    /// only the voxels `keep` says.
+    pub fn cut(self, cells: &[u8], origin: [i32; 3], keep: &dyn Fn(usize) -> bool) -> Vec<u8> {
+        if self == Dims::CUBE {
+            return cells.iter().enumerate().map(|(i, &c)| if keep(i) { c } else { 0 }).collect();
+        }
+        let mut out = vec![0u8; Dims::CUBE.len()];
+        for y in 0..WINDOW {
+            for z in 0..WINDOW {
+                for x in 0..WINDOW {
+                    let (gx, gy, gz) = (origin[0] + x, origin[1] + y, origin[2] + z);
+                    if self.inside(gx, gy, gz) {
+                        let i = self.idx(gx, gy, gz);
+                        if keep(i) {
+                            out[Dims::CUBE.idx(x, y, z)] = cells[i];
+                        }
+                    }
+                }
+            }
+        }
+        out
+    }
 }
 
 /// The rig and its part models (bone `model` indices count from 0 in `parts`).
@@ -24,14 +83,29 @@ pub struct Sliced {
     pub rig: Rig,
     pub parts: Vec<Model>,
     /// Which bone owns each voxel of the whole grid (`u8::MAX` = empty).
-    #[allow(dead_code)] // read by the slicer's tests
     pub owner: Vec<u8>,
+    pub dims: Dims,
+    /// Where each part's 32^3 window starts in the grid (all zero in a 32^3
+    /// grid): a part's own voxel (x, y, z) is the grid's origin + (x, y, z).
+    pub origins: Vec<[i32; 3]>,
+    /// Bones whose voxels reach further than one window holds; the voxels
+    /// past it are left out of the part.
+    pub oversize: Vec<String>,
 }
 
-/// `whole` is the compiled colour grid (32^3, x fastest, then z, then y, 0 =
-/// empty, else palette slot + 1, as `models::from_cells` takes it);
+/// What to tell the author of `who` (a creature, as the caller names it)
+/// about a bone in `Sliced::oversize`.
+pub fn oversize_problem(who: &str, bone: &str) -> String {
+    format!("{who}: part {bone} is bigger than one 32^3 window; split it into more bones")
+}
+
+/// `whole` is the compiled colour grid (`dims`, x fastest, then z, then y, 0
+/// = empty, else palette slot + 1, as `models::from_cells` takes it);
 /// `colour_ok` says whether an op's material resolved in that compile.
-pub fn slice(def: &RigDef, ops: &[Op], whole: &[u8], colour_ok: &dyn Fn(&str) -> bool, voxel: f32, half_w: f32, height: f32) -> Sliced {
+#[allow(clippy::too_many_arguments)]
+pub fn slice(def: &RigDef, ops: &[Op], whole: &[u8], dims: Dims, colour_ok: &dyn Fn(&str) -> bool, voxel: f32, half_w: f32, height: f32) -> Sliced {
+    let [nx, ny, nz] = dims.0;
+    let idx = |x: i32, y: i32, z: i32| dims.idx(x, y, z);
     let names: Vec<&str> = def.bones.iter().map(|b| b.name.as_str()).collect();
     let bone_of = |p: &Option<String>| -> usize { p.as_deref().and_then(|p| names.iter().position(|n| *n == p)).unwrap_or(0) };
     let tagged = retag(ops, &bone_of, colour_ok);
@@ -41,7 +115,7 @@ pub fn slice(def: &RigDef, ops: &[Op], whole: &[u8], colour_ok: &dyn Fn(&str) ->
         }
         n.strip_prefix('#').and_then(|k| k.parse::<u8>().ok()).map(|k| k + 1)
     };
-    let parts_grid = shape::compile(&tagged, [N, N, N], &resolve);
+    let parts_grid = shape::compile(&tagged, dims.0, &resolve);
 
     // Owner of each solid voxel.
     let mut owner = vec![NONE; whole.len()];
@@ -68,9 +142,9 @@ pub fn slice(def: &RigDef, ops: &[Op], whole: &[u8], colour_ok: &dyn Fn(&str) ->
     // Claims take voxels from the root or from the bone's parent.
     for (b, bd) in def.bones.iter().enumerate() {
         for [from, to] in &bd.claims {
-            for y in from[1].max(0)..to[1].min(N) {
-                for z in from[2].max(0)..to[2].min(N) {
-                    for x in from[0].max(0)..to[0].min(N) {
+            for y in from[1].max(0)..to[1].min(ny) {
+                for z in from[2].max(0)..to[2].min(nz) {
+                    for x in from[0].max(0)..to[0].min(nx) {
                         let i = idx(x, y, z);
                         let o = owner[i];
                         if o != NONE && (o == 0 || Some(o as usize) == parent[b]) {
@@ -85,9 +159,9 @@ pub fn slice(def: &RigDef, ops: &[Op], whole: &[u8], colour_ok: &dyn Fn(&str) ->
     // Joints: given, or the centre of the bone's own voxels.
     let centre = |b: usize| -> Vec3 {
         let (mut s, mut n) = (Vec3::ZERO, 0.0);
-        for y in 0..N {
-            for z in 0..N {
-                for x in 0..N {
+        for y in 0..ny {
+            for z in 0..nz {
+                for x in 0..nx {
                     if owner[idx(x, y, z)] == b as u8 {
                         s += Vec3::new(x as f32 + 0.5, y as f32 + 0.5, z as f32 + 0.5);
                         n += 1.0;
@@ -98,29 +172,34 @@ pub fn slice(def: &RigDef, ops: &[Op], whole: &[u8], colour_ok: &dyn Fn(&str) ->
         if n > 0.0 {
             s / n
         } else {
-            Vec3::new(16.0, 0.0, 16.0)
+            dims.pivot()
         }
     };
     let joints: Vec<Vec3> = def.bones.iter().enumerate().map(|(b, bd)| bd.joint.map(Vec3::from).unwrap_or_else(|| centre(b))).collect();
 
+    let slope = super::slope::wanted(def.slope);
+    let body = slope.then(|| super::slope::Body::new(dims, whole, &owner, &parent));
     let mut parts = Vec::with_capacity(def.bones.len());
     let mut bones = Vec::with_capacity(def.bones.len());
+    let mut origins = Vec::with_capacity(def.bones.len());
+    let mut oversize = Vec::new();
     for (b, bd) in def.bones.iter().enumerate() {
         let mut mine: Vec<bool> = owner.iter().map(|&o| o == b as u8).collect();
-        // Overlap: grow into the parent's voxels, a layer at a time.
-        if let Some(p) = parent[b] {
+        // Overlap: grow into the parent's voxels, a layer at a time. A
+        // sloped part needs none: it stretches to its parent instead.
+        if let Some(p) = parent[b].filter(|_| !slope) {
             for _ in 0..bd.overlap {
                 let prev = mine.clone();
-                for y in 0..N {
-                    for z in 0..N {
-                        for x in 0..N {
+                for y in 0..ny {
+                    for z in 0..nz {
+                        for x in 0..nx {
                             let i = idx(x, y, z);
                             if prev[i] || owner[i] != p as u8 {
                                 continue;
                             }
                             let near = [(1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)].iter().any(|&(dx, dy, dz)| {
                                 let (a, c, d) = (x + dx, y + dy, z + dz);
-                                (0..N).contains(&a) && (0..N).contains(&c) && (0..N).contains(&d) && prev[idx(a, c, d)]
+                                dims.inside(a, c, d) && prev[idx(a, c, d)]
                             });
                             if near {
                                 mine[i] = true;
@@ -130,10 +209,18 @@ pub fn slice(def: &RigDef, ops: &[Op], whole: &[u8], colour_ok: &dyn Fn(&str) ->
                 }
             }
         }
-        let cells: Vec<u8> = whole.iter().zip(&mine).map(|(&c, &m)| if m { c } else { 0 }).collect();
+        let (origin, fits) = window_of(dims, &mine);
+        if !fits {
+            oversize.push(bd.name.clone());
+        }
+        let cells = dims.cut(whole, origin, &|i| mine[i]);
         let mut m = models::from_cells(&cells, voxel, half_w, height);
-        m.pivot = joints[b];
+        if let Some(body) = &body {
+            m.mesh = body.mesh(b, origin);
+        }
+        m.pivot = joints[b] - Vec3::new(origin[0] as f32, origin[1] as f32, origin[2] as f32);
         parts.push(m);
+        origins.push(origin);
         bones.push(Bone {
             name: bd.name.clone(),
             role: bd.role.clone(),
@@ -146,16 +233,17 @@ pub fn slice(def: &RigDef, ops: &[Op], whole: &[u8], colour_ok: &dyn Fn(&str) ->
                 _ => 0.0,
             },
             pair: bd.pair.unwrap_or(0),
+            spread: bd.spread.map(Vec3::from),
         });
     }
-    let floor = (0..N).find(|&y| (0..N).any(|z| (0..N).any(|x| owner[idx(x, y, z)] != NONE))).unwrap_or(0) as f32;
+    let floor = (0..ny).find(|&y| (0..nz).any(|z| (0..nx).any(|x| owner[idx(x, y, z)] != NONE))).unwrap_or(0) as f32;
     // The soft body: the bones with flesh and the box their voxels fill.
     let weight: Vec<f32> = def.bones.iter().map(|b| b.flesh.clamp(0.0, 1.0)).collect();
     let soft = if weight.iter().any(|w| *w > 0.0) {
         let mut ext: Vec<Option<(Vec3, Vec3)>> = vec![None; def.bones.len()];
-        for y in 0..N {
-            for z in 0..N {
-                for x in 0..N {
+        for y in 0..ny {
+            for z in 0..nz {
+                for x in 0..nx {
                     let o = owner[idx(x, y, z)] as usize;
                     if let Some(e) = ext.get_mut(o) {
                         let (a, b) = (Vec3::new(x as f32, y as f32, z as f32), Vec3::new(x as f32 + 1.0, y as f32 + 1.0, z as f32 + 1.0));
@@ -178,7 +266,30 @@ pub fn slice(def: &RigDef, ops: &[Op], whole: &[u8], colour_ok: &dyn Fn(&str) ->
         },
         parts,
         owner,
+        dims,
+        origins,
+        oversize,
     }
+}
+
+/// The window for the voxels `mine` marks, and whether they all fit in it.
+fn window_of(dims: Dims, mine: &[bool]) -> ([i32; 3], bool) {
+    if dims == Dims::CUBE {
+        return ([0; 3], true);
+    }
+    let (mut lo, mut hi) = ([i32::MAX; 3], [i32::MIN; 3]);
+    for (i, _) in mine.iter().enumerate().filter(|(_, &m)| m) {
+        let (x, y, z) = dims.at(i);
+        for (a, v) in [x, y, z].into_iter().enumerate() {
+            lo[a] = lo[a].min(v);
+            hi[a] = hi[a].max(v);
+        }
+    }
+    if lo[0] > hi[0] {
+        return ([0; 3], true);
+    }
+    let fits = (0..3).all(|a| hi[a] - lo[a] < WINDOW);
+    (dims.window(lo, hi), fits)
 }
 
 /// The same split again over a different colour grid: one part per bone, each
@@ -191,9 +302,10 @@ pub fn parts_from(sliced: &Sliced, cells: &[u8], voxel: f32, half_w: f32, height
         .iter()
         .enumerate()
         .map(|(b, bone)| {
-            let masked: Vec<u8> = cells.iter().zip(&sliced.owner).map(|(&c, &o)| if o == b as u8 { c } else { 0 }).collect();
+            let origin = sliced.origins[b];
+            let masked = sliced.dims.cut(cells, origin, &|i| sliced.owner[i] == b as u8);
             let mut m = models::from_cells(&masked, voxel, half_w, height);
-            m.pivot = bone.joint;
+            m.pivot = bone.joint - Vec3::new(origin[0] as f32, origin[1] as f32, origin[2] as f32);
             m
         })
         .collect()
@@ -248,8 +360,8 @@ mod tests {
             let names: Vec<&String> = c.colors.keys().collect();
             let slot = |n: &str| names.iter().position(|x| x.as_str() == n).map(|k| k as u8 + 1);
             let resolve = |n: &str| if n == "air" { Some(0) } else { slot(n) };
-            let whole = shape::compile(&c.ops, [32, 32, 32], &resolve).mat;
-            let s = slice(def, &c.ops, &whole, &|n| resolve(n).is_some(), c.voxel, c.half_w, c.height);
+            let whole = shape::compile(&c.ops, c.grid, &resolve).mat;
+            let s = slice(def, &c.ops, &whole, Dims(c.grid), &|n| resolve(n).is_some(), c.voxel, c.half_w, c.height);
             out.push((c.name.clone(), s, whole, c.voxel));
         }
         out
@@ -275,15 +387,16 @@ mod tests {
     #[test]
     fn rest_pose_reproduces_the_whole_model() {
         for (name, s, whole, voxel) in rigged() {
-            let pivot = Vec3::new(16.0, 0.0, 16.0);
+            let pivot = s.dims.pivot();
             let (at, yaw) = (Vec3::new(5.0, 2.0, -3.0), 0.7);
             let yq = Quat::from_rotation_y(yaw);
             let mut fk = Vec::new();
             forward(&s.rig, &Pose::rest(s.rig.bones.len()), voxel, pivot, &mut fk);
-            for y in 0..N {
-                for z in 0..N {
-                    for x in 0..N {
-                        let i = idx(x, y, z);
+            let [nx, ny, nz] = s.dims.0;
+            for y in 0..ny {
+                for z in 0..nz {
+                    for x in 0..nx {
+                        let i = s.dims.idx(x, y, z);
                         if whole[i] == 0 {
                             continue;
                         }
@@ -291,9 +404,12 @@ mod tests {
                         let want = at + yq * ((local - pivot) * voxel);
                         let b = s.owner[i] as usize;
                         let (jp, q) = fk[b];
+                        // The part's own voxel coordinates start at its window.
+                        let o = s.origins[b];
+                        let own = local - Vec3::new(o[0] as f32, o[1] as f32, o[2] as f32);
                         let part_pivot = s.parts[b].pivot;
                         // scene.wgsl: pos + yaw(qrot(rot, (local - pivot) * s)).
-                        let got = (at + yq * jp) + yq * (q * ((local - part_pivot) * voxel));
+                        let got = (at + yq * jp) + yq * (q * ((own - part_pivot) * voxel));
                         assert!((got - want).length() < 1e-4, "{name}: voxel {x},{y},{z} of {} is off by {}", s.rig.bones[b].name, (got - want).length());
                     }
                 }

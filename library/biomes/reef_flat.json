@@ -17,12 +17,22 @@
       "density": 0.05,
       "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.3, "max": 0.6}}
     },
-    {"plant": "staghorn_coral", "density": 0.015, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "staghorn_coral", "density": 0.015, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "staghorn_violet",
+      "density": 0.015,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.35, "max": 0.55}}
+    },
+    {
+      "plant": "elkhorn_coral",
+      "density": 0.045,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.25, "max": 0.55}}
+    }
   ],
   "creatures": [
-    {"creature": "reef_chromis", "count": 105},
-    {"creature": "yellow_tang", "count": 28},
-    {"creature": "butterflyfish", "count": 10},
-    {"creature": "parrotfish", "count": 7}
+    {"creature": "reef_chromis", "count": 115.5},
+    {"creature": "yellow_tang", "count": 30.8},
+    {"creature": "butterflyfish", "count": 11},
+    {"creature": "parrotfish", "count": 7.7}
   ]
 }

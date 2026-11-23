@@ -23,6 +23,6 @@
     {"structure": "craft_debris", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}},
     {"structure": "craft_rib", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}
   ],
-  "creatures": [{"creature": "raven", "count": 2}, {"creature": "bee", "count": 8}],
+  "creatures": [{"creature": "raven", "count": 2}, {"creature": "bee", "count": 8.8}],
   "collectibles": [{"item": "hull_shard", "density": 0.0025, "placement": {"verb": "scatter", "params": {}}}]
 }

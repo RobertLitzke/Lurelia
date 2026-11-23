@@ -66,6 +66,9 @@ pub struct EventCtx<'a> {
     pub seed: u32,
     /// World.json `noise_at`: added to points before position noise is read.
     pub noise_at: Vec2,
+    /// The world's race track, if it has one (world.json `race.track`), for
+    /// placing things by lap distance (`Pos::Along`).
+    pub track: Option<super::race_track::TrackLine>,
 }
 
 impl<'a> EventCtx<'a> {
@@ -92,15 +95,24 @@ impl<'a> EventCtx<'a> {
             cause: 0,
             seed: 0,
             noise_at: Vec2::ZERO,
+            track: None,
         }
     }
 
     /// A position: coordinates, a name (a place an event found, else one
-    /// from the chronicle's `places`), or an offset from a name.
+    /// from the chronicle's `places`), an offset from a name, or a place
+    /// beside the race track.
     pub fn pos(&mut self, p: &Pos) -> Vec2 {
         match p {
             Pos::At(a) => Vec2::new(a[0], a[1]),
             Pos::Named(n) => self.named(n),
+            Pos::Along { along, left, right } => match &self.track {
+                Some(t) => t.beside(*along, right - left),
+                None => {
+                    self.warnings.push(format!("along {along}: the world has no race track (world.json race.track)"));
+                    Vec2::ZERO
+                }
+            },
             Pos::Rel { from, by, .. } => {
                 let base = self.named(from);
                 let by = Vec2::new(by[0], by[1]);

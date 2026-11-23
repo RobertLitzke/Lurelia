@@ -75,8 +75,10 @@ fn default_passes() -> u32 {
 fn default_pass_width() -> f32 {
     14.0
 }
+/// The reef's rock where the event names none (`events::defaults_used`).
+pub const ROCK: &str = "reef_rock";
 fn default_rock() -> String {
-    "reef_rock".into()
+    ROCK.into()
 }
 fn default_sand() -> String {
     "sand".into()

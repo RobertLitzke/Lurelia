@@ -72,6 +72,8 @@ registry! {
     route: Route,
     network: Network,
     village: Village,
+    town: Town,
+    fields: FieldsEvent,
     watercourse: Watercourse,
     trough: Trough,
     cirque: Cirque,
@@ -90,6 +92,24 @@ registry! {
     seat: Seat,
     strandline: Strandline,
     canopy_town: CanopyTown,
+}
+
+/// The library entries event `e` (its object in chronicle.json) uses without
+/// naming them: what its code falls back on for the fields `e` leaves out.
+/// No file spells these, so `worldload::reach` adds them to the world's
+/// reach. An event that names a library entry in code lists it here.
+pub fn defaults_used(e: &serde_json::Value, lib: &crate::library::Library) -> Vec<&'static str> {
+    let left_out = |field: &str| e.get(field).is_none_or(|v| v.is_null());
+    let town_kit = || e.get("kit").and_then(|k| k.as_str()).and_then(|k| lib.city_kit(k));
+    match e.get("event").and_then(|v| v.as_str()).unwrap_or("") {
+        "town" | "fields" => town_kit().map(|k| k.town.defaults_used()).unwrap_or_default(),
+        "circuit" => circuit::DEFAULTS.to_vec(),
+        "atoll" if left_out("rock") => vec![atoll::ROCK],
+        "coral_reef" if left_out("rock") => vec![coral_reef::ROCK],
+        "sign" if left_out("style") => vec![sign::STYLE],
+        "city" if left_out("kit") => vec![city::KIT],
+        _ => Vec::new(),
+    }
 }
 
 pub fn find(name: &str) -> Option<&'static EventType> {

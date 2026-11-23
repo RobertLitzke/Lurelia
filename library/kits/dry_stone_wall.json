@@ -1,10 +1,21 @@
 {
   "name": "dry_stone_wall",
-  "version": 1,
+  "version": 2,
   "introduced_by": "routing engine",
-  "notes": "A field wall a metre high and half a metre thick, laid dry and following the ground over every hump. Cotswold stone; swap the slot for fieldstone elsewhere.",
+  "notes": "A dry-laid field wall about a metre high, a metre across at the foot and narrowing upward, laid in courses of separate stones with a ragged top. Cotswold stone with mossy stones among it; swap the slot for fieldstone elsewhere.",
   "ground": "follow",
   "width": 0.0,
-  "rails": [{"side": "centre", "out": 0.0, "from": 0.0, "to": 1.0, "thick": 0.5, "mat": "cotswold_stone"}],
+  "rails": [
+    {
+      "side": "centre",
+      "out": 0.0,
+      "from": 0.0,
+      "to": 1.05,
+      "thick": 1.0,
+      "mat": "cotswold_stone",
+      "mat2": "mossy_stone",
+      "rubble": 0.3
+    }
+  ],
   "tags": ["fence", "wall"]
 }

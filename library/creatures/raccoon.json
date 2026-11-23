@@ -1,0 +1,25 @@
+{
+  "name": "raccoon",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Raccoon: a grizzled grey forager with a black mask and a ringed tail, out after dark along creek banks, levees and the backs of towns, slow to bolt and quick to come back.",
+  "colors": {"coat": [118, 112, 104], "belly": [152, 146, 136], "white": [206, 200, 190], "dark": [32, 28, 26]},
+  "behaviour": {
+    "walk_speed": 0.8,
+    "flee_speed": 4.0,
+    "wary": 6,
+    "flightiness": 0.5,
+    "spawn_chance": 0.5,
+    "swims": true,
+    "off_hours": 0.06
+  },
+  "like": "badger",
+  "scale": 1.1,
+  "extra_ops": [
+    {"op": "ellipsoid", "centre": [16, 7, 27], "radius": [2.2, 2.2, 3.6], "mat": "coat", "part": "tail"},
+    {"op": "recolour", "at": [13, 4, 26], "until": [19, 10, 27], "from": "coat", "to": "dark"},
+    {"op": "recolour", "at": [13, 4, 28], "until": [19, 10, 29], "from": "coat", "to": "dark"},
+    {"op": "recolour", "at": [13, 4, 30], "until": [19, 10, 31], "from": "coat", "to": "dark"}
+  ],
+  "vary": {"size": 0.1, "shade": 0.08}
+}

@@ -67,9 +67,12 @@ pub const ARMOUR_M: usize = 4;
 /// is the side it belongs to.
 pub const FLAG_M: usize = 5;
 pub const STAND_M: usize = 6;
+/// A kart race's shield (src/race/fight.rs): a hollow dome of light, lit in
+/// the same slot, so the instance tint is its colour.
+pub const BUBBLE_M: usize = 7;
 /// How many models come before the rigs' parts.
 #[cfg(test)]
-pub const WHOLE: usize = 7;
+pub const WHOLE: usize = 8;
 
 /// The bots' bodies: the models to draw them with, and one `Body` per build.
 pub struct Avatar {
@@ -149,7 +152,7 @@ const DEFAULT_BARS: [Vec3; 2] = [Vec3::new(0.0, 4.5, -2.0), Vec3::new(0.0, 4.5, 
 
 /// The models every build shares, after the given whole body.
 fn shared(whole: Model) -> Vec<Model> {
-    vec![whole, lamp_model(), pad_model(), cross_model(), armour_model(), flag_model(), stand_model()]
+    vec![whole, lamp_model(), pad_model(), cross_model(), armour_model(), flag_model(), stand_model(), bubble_model()]
 }
 
 /// The lamp across a bot's chest, drawn as its own instance so its colour
@@ -258,6 +261,26 @@ fn stand_model() -> Model {
     g.build(LAMP_VOX, 0.7, 0.1)
 }
 
+/// A kart's shield: the shell of an egg a little wider than it is tall, a
+/// voxel and a half thick, its middle 14 voxels up, open at the bottom
+/// where the road cuts it. Drawn see-through, so it is the rim that shows.
+fn bubble_model() -> Model {
+    let mut g = Grid::new();
+    let (c, r) = ([16.0f32, 14.0, 16.0], [15.0f32, 13.0, 15.0]);
+    for y in 1..32 {
+        for z in 0..32 {
+            for x in 0..32 {
+                let p = [x as f32 + 0.5, y as f32 + 0.5, z as f32 + 0.5];
+                let d = (((p[0] - c[0]) / r[0]).powi(2) + ((p[1] - c[1]) / r[1]).powi(2) + ((p[2] - c[2]) / r[2]).powi(2)).sqrt();
+                if (0.9..=1.0).contains(&d) {
+                    g.set(x, y, z, LAMP);
+                }
+            }
+        }
+    }
+    g.build(LAMP_VOX, 0.8, 1.5)
+}
+
 /// How far the pad's blob floats above the floor it stands on, metres: it
 /// turns on the spot there rather than lying in the dust.
 pub const PAD_RISE: f32 = 0.45;
@@ -332,7 +355,7 @@ pub fn build(lib: Option<&Library>, palette: &mut [[f32; 4]]) -> Avatar {
             continue;
         };
         let colour_ok = |n: &str| resolve(n).is_some();
-        let sliced = crate::anim::slice::slice(rig_def, &def.ops, &s.mat, &colour_ok, def.voxel, def.half_w, def.height);
+        let sliced = crate::anim::slice::slice(rig_def, &def.ops, &s.mat, crate::anim::slice::Dims::CUBE, &colour_ok, def.voxel, def.half_w, def.height);
         let mut rig = sliced.rig;
         rig.offset_models(models_out.len());
         models_out.extend(sliced.parts);
@@ -342,7 +365,7 @@ pub fn build(lib: Option<&Library>, palette: &mut [[f32; 4]]) -> Avatar {
         let mut halves = Vec::new();
         for painted in [false, true] {
             let mat: Vec<u8> = s.mat.iter().map(|&m| if (m == paint_slot) == painted { m } else { 0 }).collect();
-            let half = crate::anim::slice::slice(rig_def, &def.ops, &mat, &colour_ok, def.voxel, def.half_w, def.height);
+            let half = crate::anim::slice::slice(rig_def, &def.ops, &mat, crate::anim::slice::Dims::CUBE, &colour_ok, def.voxel, def.half_w, def.height);
             let mut r = half.rig;
             r.offset_models(models_out.len());
             models_out.extend(half.parts);
@@ -666,6 +689,7 @@ mod tests {
                 ARMOUR_M => "the armour plate",
                 FLAG_M => "the flag",
                 STAND_M => "the flag stand",
+                BUBBLE_M => "the shield bubble",
                 _ => "a bone",
             };
             assert!(!m.mesh.quads.is_empty(), "{what} (model {i}) has no voxels in it");

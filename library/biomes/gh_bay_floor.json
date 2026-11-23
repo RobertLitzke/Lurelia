@@ -11,9 +11,9 @@
   "plants": [],
   "features": [],
   "creatures": [
-    {"creature": "kelp_perch", "count": 10},
-    {"creature": "moon_jelly", "count": 6},
-    {"creature": "lobster", "count": 6},
+    {"creature": "kelp_perch", "count": 11},
+    {"creature": "moon_jelly", "count": 6.6},
+    {"creature": "lobster", "count": 6.6},
     {"creature": "gannet", "count": 8}
   ],
   "collectibles": []

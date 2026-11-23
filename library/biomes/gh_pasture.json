@@ -16,16 +16,17 @@
   ],
   "features": [{"structure": "boulder", "density": 0.00015, "placement": {"verb": "scatter", "params": {}}}],
   "creatures": [
-    {"creature": "sheep", "count": 30},
-    {"creature": "cow", "count": 5},
-    {"creature": "horse", "count": 2},
+    {"creature": "sheep", "count": 33},
+    {"creature": "cow", "count": 5.5},
+    {"creature": "horse", "count": 2.2},
     {"creature": "starling", "count": 20},
     {"creature": "crow", "count": 4},
     {"creature": "sparrow", "count": 8},
-    {"creature": "barn_owl", "count": 1},
-    {"creature": "rabbit", "count": 6},
-    {"creature": "fox", "count": 1},
-    {"creature": "killdeer", "count": 2}
+    {"creature": "barn_owl", "count": 2},
+    {"creature": "rabbit", "count": 6.6},
+    {"creature": "fox", "count": 1.1},
+    {"creature": "killdeer", "count": 2},
+    {"creature": "skunk", "count": 2.2}
   ],
   "collectibles": []
 }

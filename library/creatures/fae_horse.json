@@ -5,6 +5,7 @@
   "notes": "The faerie wood's horse: smaller and finer, a soft lilac coat, with a mane and tail that glow violet at dusk. Walks the glades in pairs and lets you come close.",
   "colors": {"coat": [190, 166, 210], "belly": [226, 214, 236], "mane": [214, 170, 255, 1.4], "muzzle": [150, 120, 150]},
   "behaviour": {
+    "sleeps_on_side": true,
     "wary": 5,
     "flightiness": 0.25,
     "walk_speed": 1.0,

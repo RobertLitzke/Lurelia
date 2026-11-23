@@ -1,4 +1,4 @@
-//! Where two worlds meet (notes/UBERWORLD_PLAN.md). A world names the worlds
+//! Where two worlds meet. A world names the worlds
 //! beside it in `world.json`:
 //!
 //! ```json
@@ -354,12 +354,24 @@ pub fn report(w: &World, e: &Edge) -> String {
     let n = f.n;
     let (mut worst, mut sum, mut cells, mut coast, mut biome) = (0f32, 0f32, 0usize, 0usize, 0usize);
     let mut runs: Vec<(usize, usize, String, String)> = Vec::new();
+    // Runs of cells along the edge where the step is over a metre: first,
+    // last, worst.
+    let mut steps: Vec<(usize, usize, f32)> = Vec::new();
     for a in 0..n {
         let (Some(h0), Some(h1)) = (e.h0[a], e.h1[a]) else { continue };
         let (x, z) = e.side.cell(n, a, 1);
         let k = z * n + x;
         let step = (f.h[k] - (h0 + (h0 - h1).clamp(-1.5, 1.5) * (-1.0 / SLOPE_RUN).exp())).abs();
         worst = worst.max(step);
+        if step > 1.0 {
+            match steps.last_mut() {
+                Some(r) if r.1 + 1 == a => {
+                    r.1 = a;
+                    r.2 = r.2.max(step);
+                }
+                _ => steps.push((a, a, step)),
+            }
+        }
         sum += step;
         cells += 1;
         if (f.h[k] >= f.sea) != (h0 >= f.sea) {
@@ -384,6 +396,9 @@ pub fn report(w: &World, e: &Edge) -> String {
         coast,
         biome
     );
+    for r in &steps {
+        s.push_str(&format!("\n  {}..{}: steps up to {:.2} m", r.0, r.1, r.2));
+    }
     for r in runs.iter().filter(|r| r.1 - r.0 >= 4) {
         s.push_str(&format!("\n  {}..{}: {} here, {} there", r.0, r.1, r.2, r.3));
     }

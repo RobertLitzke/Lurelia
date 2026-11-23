@@ -91,6 +91,7 @@ so a fence's posts stay evenly spaced across a corner.
 | `route` | A\* from one place to another with a kit; builds spans where it must |
 | `network` | named nodes and links, routed together, junctions resolved |
 | `village` | a layout (grid, radial, organic, linear) as a network, with buildings on its frontages and footpaths to their doors |
+| `town` | a whole town grown from its roads in: districts in their own styles, closed blocks, squares, quays, fields (docs/TOWNS.md) |
 | `watercourse` | a channel that finds its own way down, and the distributaries that leave it |
 | `canopy_town` | host trees grown at chronicle time, a ring platform round each trunk, walkways picked between them and stairs up a few trunks |
 

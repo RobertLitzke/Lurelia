@@ -59,14 +59,36 @@ impl Body {
     }
 
     /// Push the chassis spheres out of solid voxels. Returns the hardest
-    /// speed into the rock among them, m/s (0 for none).
-    pub fn collide(&mut self, store: &Store, spheres: &[[f32; 4]], slopes: bool) -> f32 {
+    /// speed into the rock among them, m/s (0 for none). `glance` (the
+    /// kart) meets a wall as a barrier it glances along: pushed only across
+    /// the ground, `up` being the ground's, and through the centre of mass's
+    /// height, so a wall turns it but never lifts or rolls it; no bounce,
+    /// and little friction. Anything flatter is floor, pushing straight up:
+    /// never a slant between the two, which turns speed into a kerb into
+    /// speed upward. `walls` meets walls only: the kart's tyres, which leave
+    /// the floor to the wheels.
+    pub fn collide(&mut self, store: &Store, spheres: &[[f32; 4]], slopes: bool, glance: Option<Vec3>, walls: bool) -> f32 {
         let mut hardest = 0.0f32;
         for s in spheres {
             let c = self.pos + self.rot * Vec3::new(s[0], s[1], s[2]);
             let Some((n, pen)) = push_out(store, c, s[3], slopes) else { continue };
+            let mut p = c - n * s[3];
+            let (mut n, mut pen, mut rub) = (n, pen, 0.45);
+            if let Some(up) = glance {
+                if n.dot(up) < 0.7 {
+                    let flat = (n - up * n.dot(up)).normalize_or(n);
+                    pen *= flat.dot(n).max(0.0);
+                    n = flat;
+                    p -= up * (p - self.pos).dot(up);
+                    rub = 0.15;
+                } else if walls {
+                    continue;
+                } else {
+                    pen *= n.dot(up);
+                    n = up;
+                }
+            }
             self.pos += n * pen * 0.8;
-            let p = c - n * s[3];
             let r = p - self.pos;
             let v = self.point_vel(p);
             let vn = v.dot(n);
@@ -75,7 +97,7 @@ impl Body {
             }
             hardest = hardest.max(-vn);
             let k = 1.0 / self.mass + n.dot(self.inv_i(r.cross(n)).cross(r));
-            let e = if -vn > 3.0 { 0.15 } else { 0.0 };
+            let e = if -vn > 3.0 && glance.is_none() { 0.15 } else { 0.0 };
             let jn = -(1.0 + e) * vn / k;
             self.impulse(p, n * jn);
             // Friction along the rock.
@@ -85,7 +107,7 @@ impl Body {
             if len > 1e-4 {
                 let t = vt / len;
                 let kt = 1.0 / self.mass + t.dot(self.inv_i(r.cross(t)).cross(r));
-                let jt = (len / kt).min(0.45 * jn);
+                let jt = (len / kt).min(rub * jn);
                 self.impulse(p, -t * jt);
             }
         }

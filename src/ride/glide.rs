@@ -285,7 +285,7 @@ impl Ride {
         // path), so fast flight turns wider than slow and a turn has to be
         // rolled into. A and D together throw a barrel roll. Holding Alt
         // looks around while the aim holds; letting go snaps the view back.
-        let keys = input.right as i32 as f32 - input.left as i32 as f32;
+        let keys = input.side();
         let both = input.left && input.right;
         // Aiming across with the mouse also banks the body, half as hard as A
         // or D. How far the mouse has swung since the last step is how far

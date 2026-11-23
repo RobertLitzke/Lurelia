@@ -1,0 +1,21 @@
+{
+  "name": "spotted_hyena",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Spotted hyena: a sloping sandy-grey dog-like hunter with dark spots, travelling the savanna and the pan edges in loose clans after dark.",
+  "colors": {"coat": [160, 138, 104], "belly": [182, 166, 138], "muzzle": [56, 46, 38], "dark": [36, 28, 24]},
+  "behaviour": {
+    "walk_speed": 1.2,
+    "flee_speed": 7.0,
+    "wary": 18,
+    "flightiness": 0.4,
+    "hunts": ["zebra", "wildebeest", "warthog", "lechwe"],
+    "spawn_chance": 0.12,
+    "group": {"size": [2, 5], "spacing": 3.0, "range": 16, "alignment": 0.7, "cohesion": 1.1},
+    "active": "nocturnal",
+    "off_hours": 0.15
+  },
+  "like": "cougar",
+  "scale": 0.95,
+  "vary": {"size": 0.1, "shade": 0.08}
+}

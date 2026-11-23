@@ -1,0 +1,19 @@
+{
+  "name": "giant_horsetail",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Giant horsetail: clumps of jointed green stems taller than a man, whorled at every node, on wet ground.",
+  "form": "canes",
+  "height": [2.4, 4.2],
+  "trunk_radius": [0.05, 0.06],
+  "crown_radius": [0.6, 1.0],
+  "bark": "horsetail_stem",
+  "leaf": "horsetail_whorl",
+  "canopy": "tufts",
+  "max_slope": 0.5,
+  "stems": [12, 20],
+  "cane_lean": 0.18,
+  "cane_bend": 0.0,
+  "cane_spurs": 0.0,
+  "cane_leaves": 0.9
+}

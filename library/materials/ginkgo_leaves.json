@@ -1,0 +1,16 @@
+{
+  "name": "ginkgo_leaves",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Ginkgo leaves: small fans of fresh yellow-green.",
+  "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "broad"},
+  "texture": {
+    "pattern": "blotch",
+    "base": [88, 106, 62],
+    "alt": [100, 118, 70],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [92, 110, 66], "alt": [104, 122, 74]}
+  }
+}

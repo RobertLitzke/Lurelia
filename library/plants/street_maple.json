@@ -1,8 +1,8 @@
 {
   "name": "street_maple",
-  "version": 1,
+  "version": 2,
   "introduced_by": "city",
-  "notes": "A planted street maple: smaller and tidier than the bigleaf, a few leaves turning.",
+  "notes": "A planted street maple: smaller and tidier than the bigleaf, a few leaves turning, its trunk tapering into smooth limbs. v2: tapered trunk and tube limbs.",
   "height": [7, 10],
   "trunk_radius": [0.2, 0.28],
   "crown_radius": [2.4, 3.4],
@@ -11,5 +11,8 @@
   "leader": 0.6,
   "fill": 0.45,
   "max_slope": 0.7,
-  "like": "maple"
+  "like": "maple",
+  "trunk_taper": 0.55,
+  "thin_limbs": 0.2,
+  "tube_limbs": true
 }

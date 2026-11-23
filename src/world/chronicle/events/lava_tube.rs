@@ -6,7 +6,9 @@ use glam::{Vec2, Vec3};
 use serde::Deserialize;
 
 /// A lava tube: a tunnel `depth` m under the ground along `path`, opening at
-/// both ends and through `skylights` collapsed holes in its roof.
+/// both ends and through `skylights` collapsed holes in its roof. `wall`
+/// turns the rock all round it to a material (the dark basalt the tube
+/// drained out of), as a `passage`'s does.
 #[derive(Deserialize, Debug)]
 pub struct LavaTube {
     path: Vec<Pos>,
@@ -14,6 +16,8 @@ pub struct LavaTube {
     depth: f32,
     #[serde(default)]
     skylights: u32,
+    #[serde(default)]
+    wall: Option<String>,
 }
 
 /// Every tube segment so far; the world keeps them to carve the voxels.
@@ -22,7 +26,8 @@ pub struct Tubes(pub Vec<Tube>);
 
 impl Process for LavaTube {
     fn apply(&self, cx: &mut EventCtx) -> String {
-        let LavaTube { path, radius, depth, skylights } = self;
+        let LavaTube { path, radius, depth, skylights, wall } = self;
+        let wall = wall.as_ref().map_or(0, |m| cx.mat(m));
         let (seed, cause) = (cx.seed, cx.cause);
         let pts: Vec<Vec2> = path.iter().map(|p| cx.pos(p)).collect();
         let line = densify(&pts, 4.0, seed);
@@ -43,14 +48,14 @@ impl Process for LavaTube {
             centres.push(Vec3::new(p.x, y, p.y));
         }
         for w in centres.windows(2) {
-            tubes.push(Tube { a: w[0], b: w[1], r: *radius, lining: 0, wall: 0 });
+            tubes.push(Tube { a: w[0], b: w[1], r: *radius, lining: 0, wall });
         }
         // Skylights: shafts where the roof fell in.
         for s in 0..*skylights {
             let k = ((s as f32 + 1.0) / (*skylights as f32 + 1.0) * n as f32) as usize;
             let c = centres[k.min(n - 1)];
             let top = f.height(c.x, c.z) + 1.0;
-            tubes.push(Tube { a: c, b: Vec3::new(c.x, top, c.z), r: radius * 0.75, lining: 0, wall: 0 });
+            tubes.push(Tube { a: c, b: Vec3::new(c.x, top, c.z), r: radius * 0.75, lining: 0, wall });
             cx.pois.push(Poi { name: "skylight into a lava tube".into(), pos: Vec2::new(c.x, c.z), cause });
         }
         cx.pois.push(Poi { name: "lava tube mouth".into(), pos: line[0], cause });

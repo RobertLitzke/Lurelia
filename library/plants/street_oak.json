@@ -1,8 +1,8 @@
 {
   "name": "street_oak",
-  "version": 1,
+  "version": 2,
   "introduced_by": "city",
-  "notes": "A red oak planted along a street: tall, round, dark green.",
+  "notes": "A red oak planted along a street: tall and round, its trunk narrowing clearly into smooth limbs under a dark green crown. v2: tapered trunk and tube limbs.",
   "height": [10, 14],
   "trunk_radius": [0.3, 0.42],
   "buttress": 0.25,
@@ -11,5 +11,8 @@
   "fill": 0.8,
   "spread": 0.6,
   "max_slope": 0.7,
-  "like": "oak"
+  "like": "oak",
+  "trunk_taper": 0.6,
+  "thin_limbs": 0.26,
+  "tube_limbs": true
 }

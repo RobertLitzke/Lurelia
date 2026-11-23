@@ -469,8 +469,8 @@
   },
   {
    "year": -9000,
-   "event": "mesa",
-   "cause": "sea stacks, the last of a headland the waves cut back",
+   "event": "tower",
+   "cause": "sea stacks, the last of a headland the waves cut back: the tallest a blade of basalt split into columns",
    "at": {
     "from": "drangar",
     "by": [
@@ -479,16 +479,28 @@
     ]
    },
    "radius": 6,
-   "height": 50,
-   "warp": 0.15,
-   "talus": 0.2,
+   "height": 48,
+   "stretch": [
+    40,
+    1.8
+   ],
+   "crown": "slope",
+   "taper": 0.3,
+   "lean": 2,
+   "bulge": 0.12,
+   "flute": 0.04,
+   "joints": 1.0,
+   "notch": 1.2,
+   "rock": "basalt",
    "cap": "basalt",
+   "skerries": 5,
+   "skerry_height": 2.0,
    "poi": "the Drangar sea stacks"
   },
   {
    "year": -9000,
-   "event": "mesa",
-   "cause": "sea stacks, the last of a headland the waves cut back",
+   "event": "tower",
+   "cause": "sea stacks, the last of a headland the waves cut back: a needle",
    "at": {
     "from": "drangar",
     "by": [
@@ -496,16 +508,24 @@
      12
     ]
    },
-   "radius": 4,
-   "height": 40,
-   "warp": 0.15,
-   "talus": 0.2,
-   "cap": "basalt"
+   "radius": 3.5,
+   "height": 38,
+   "crown": "point",
+   "taper": 0.4,
+   "lean": 3,
+   "bulge": 0.12,
+   "flute": 0.04,
+   "joints": 1.0,
+   "notch": 1.2,
+   "rock": "basalt",
+   "cap": "basalt",
+   "skerries": 5,
+   "skerry_height": 2.0
   },
   {
    "year": -9000,
-   "event": "mesa",
-   "cause": "sea stacks, the last of a headland the waves cut back",
+   "event": "tower",
+   "cause": "sea stacks, the last of a headland the waves cut back: a squat column with a flat top",
    "at": {
     "from": "drangar",
     "by": [
@@ -514,10 +534,18 @@
     ]
    },
    "radius": 5,
-   "height": 44,
-   "warp": 0.15,
-   "talus": 0.2,
-   "cap": "basalt"
+   "height": 40,
+   "crown": "flat",
+   "taper": 0.2,
+   "lean": 1,
+   "bulge": 0.12,
+   "flute": 0.04,
+   "joints": 1.0,
+   "notch": 1.2,
+   "rock": "basalt",
+   "cap": "basalt",
+   "skerries": 5,
+   "skerry_height": 2.0
   },
   {
    "year": -6000,

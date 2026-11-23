@@ -25,7 +25,7 @@ struct Globals {
     shadow_layers: vec4<f32>, // layers of the older/newer maps of cascades 1 and 2
     shadow_blend: vec4<f32>,  // x, y: how far cascades 1 and 2 have blended to their newer map
     water: array<vec4<f32>, 6>, // world shallow, deep, then two alternates; w = 1 where set
-    lamps: vec4<f32>,        // x = how many lamps are in the lamp buffer
+    lamps: vec4<f32>,        // x = how many lamps are in the lamp buffer, y = 1 while the polish map has marks
     // The weather (world/weather.rs): x = cover added to the cloud deck,
     // y = rain, z = snow, w = the wind's multiplier. All zero and w = 1 on a
     // fair day, which is the sky every one of these was tuned under.
@@ -90,6 +90,7 @@ fn strawed(c: vec3<f32>) -> vec3<f32> {
 struct Lamp {
     pos: vec4<f32>,          // xyz, w = reach in metres
     color: vec4<f32>,        // linear rgb, w = strength at the lamp
+    dir: vec4<f32>,          // a spot's direction, w = cos of its half-angle; w = -2 lights all round
 };
 
 // Where world point p falls in shadow map `m`: uv, depth, and whether inside.
@@ -255,7 +256,13 @@ fn lamp_light(world: vec3<f32>, n: vec3<f32>) -> vec3<f32> {
         // Half-Lambert: 1 straight at the lamp, 0.25 at right angles, a
         // little under 0 behind.
         let wrap = max(ndl * 0.5 + 0.5, 0.0);
-        acc = acc + l.color.rgb * (l.color.w * fall * wrap * wrap);
+        // A spot lights only inside its cone, fading over its outer edge.
+        var cone = 1.0;
+        if (l.dir.w > -1.5) {
+            let c = dot(-d / max(dist, 1e-4), l.dir.xyz);
+            cone = smoothstep(l.dir.w, mix(l.dir.w, 1.0, 0.35), c);
+        }
+        acc = acc + l.color.rgb * (l.color.w * fall * wrap * wrap * cone);
     }
     return acc;
 }
@@ -342,11 +349,44 @@ fn quad_flip(q: vec4<u32>) -> bool {
     return ((aoall & 3u) + ((aoall >> 4u) & 3u)) < (((aoall >> 2u) & 3u) + ((aoall >> 6u) & 3u)) && !sloped;
 }
 
-// Vertex c (0..5) of a quad drawn as six vertices (creature models).
-fn decode_quad(q: vec4<u32>, c: u32) -> QuadVert {
+// The corner (0..3) vertex c (0..5) of a six-vertex quad is drawn at.
+fn quad_vertex_corner(q: vec4<u32>, c: u32) -> u32 {
     var ta = array<u32, 6>(0u, 1u, 2u, 0u, 2u, 3u);
     var tb = array<u32, 6>(1u, 2u, 3u, 1u, 3u, 0u);
-    return decode_corner(q, select(ta[c], tb[c], quad_flip(q)));
+    return select(ta[c], tb[c], quad_flip(q));
+}
+
+// How far corner k of a sloped creature part's quad follows the parent bone
+// (anim/slope.rs), 0 to 1. Only rounded quads without a smoothed normal keep
+// weights in their size fields; everything else reads 0.
+fn seam_weight(q: vec4<u32>, k: u32) -> f32 {
+    if (((q.x >> Q_ROUND_BIT) & 1u) == 0u || ((q.x >> Q_NORMAL_BIT) & 3u) != 0u) {
+        return 0.0;
+    }
+    return f32((q.x >> (Q_SEAM_SHIFT + 2u * k)) & 3u) / 3.0;
+}
+
+// A part's vertex in the creature frame (metres from the creature's pivot
+// before the yaw, as `rot` leaves it): its own rotation, or for the corners
+// of a sloped part stretched to its parent, partly the parent's (glow.yzw,
+// w kept positive: anim push_parts). Then the soft body's flesh.
+fn entity_local(q: vec4<u32>, k: u32, local: vec3<f32>, inst: EntityInst) -> vec3<f32> {
+    let v = (local - inst.info.yzw) * inst.info.x;
+    var r = qrot(inst.rot, v);
+    let w = seam_weight(q, k);
+    if (w > 0.0) {
+        let pq = vec4<f32>(inst.glow.yzw, sqrt(max(1.0 - dot(inst.glow.yzw, inst.glow.yzw), 0.0)));
+        r = mix(r, qrot(pq, v), w);
+    }
+    return r + flesh_offset(r, inst.flesh);
+}
+
+// `entity_local` turned by the yaw and placed in the world.
+fn entity_world(q: vec4<u32>, k: u32, local: vec3<f32>, inst: EntityInst) -> vec3<f32> {
+    let l = entity_local(q, k, local, inst);
+    let c = cos(inst.pos_yaw.w);
+    let sn = sin(inst.pos_yaw.w);
+    return inst.pos_yaw.xyz + vec3<f32>(l.x * c + l.z * sn, l.y, -l.x * sn + l.z * c);
 }
 
 // Vertex c (0..3) of a quad drawn indexed as (0, 1, 2) (0, 2, 3): turning the
@@ -618,13 +658,14 @@ fn tide_wet(y: f32) -> f32 {
     return under_high * mix(0.85, 1.0, smoothstep(0.6, 0.0, above)) * step(-0.3, above);
 }
 
-// The world's water colours (world.json `water`), or the engine's own.
+// The world's water colours (world.json `water`), or the engine's own
+// (WATER_SHALLOW and WATER_DEEP, from render/mod.rs).
 fn uw_shallow() -> vec3<f32> {
-    return select(vec3<f32>(0.10, 0.42, 0.42), g.water[0].rgb, g.water[0].w > 0.5);
+    return select(WATER_SHALLOW, g.water[0].rgb, g.water[0].w > 0.5);
 }
 
 fn uw_deep() -> vec3<f32> {
-    return select(vec3<f32>(0.02, 0.09, 0.15), g.water[1].rgb, g.water[1].w > 0.5);
+    return select(WATER_DEEP, g.water[1].rgb, g.water[1].w > 0.5);
 }
 
 // The colour of the water itself round a swimmer: the bright shallow colour
@@ -930,4 +971,44 @@ fn billboard(f: vec3<f32>) -> Facing {
     }
     right = normalize(right);
     return Facing(right, cross(f, right));
+}
+
+// The swell at `xz` (world/surf.rs `swell`, the same; here for the sea in
+// scene.wgsl and the kelp canopy riding it in foliage.wgsl): x = how far it lifts
+// the sea, yz = its slope (d/dx, d/dz). A few long waves running in from the
+// open sea, gone in shallow water and in sheltered water (`open`, from
+// `shore_at`); a wave shorter than a few `spacing`s (the mesh's, or a
+// pixel's) is left out, not aliased.
+fn swell(xz: vec2<f32>, t: f32, depth: f32, spacing: f32, open: f32) -> vec3<f32> {
+    // Most of the mesh is too coarse to hold even the longest wave: nothing
+    // to read there.
+    if (spacing >= g.swell.w * 0.25) {
+        return vec3<f32>(0.0);
+    }
+    let a = g.swell.z * 0.5 * clamp(g.weather.w, 0.5, 2.0) * open * smoothstep(0.4, 4.0, depth);
+    if (a <= 0.0) {
+        return vec3<f32>(0.0);
+    }
+    var ls = array<f32, 3>(1.0, 0.63, 0.41);
+    var turn = array<f32, 3>(0.0, 0.47, -0.66);
+    var share = array<f32, 3>(0.5, 0.3, 0.2);
+    var y = 0.0;
+    var slope = vec2<f32>(0.0);
+    for (var i = 0; i < 3; i++) {
+        let len = g.swell.w * ls[i];
+        let keep = 1.0 - smoothstep(len * 0.12, len * 0.25, spacing);
+        if (keep <= 0.0) {
+            continue;
+        }
+        let k = 6.2831853 / len;
+        let w = sqrt(9.81 * k);
+        let sn = sin(turn[i]);
+        let cs = cos(turn[i]);
+        let d = vec2<f32>(g.swell.x * cs - g.swell.y * sn, g.swell.x * sn + g.swell.y * cs);
+        let phase = k * dot(d, xz) - w * t + f32(i) * 1.7;
+        let amp = a * share[i] * keep;
+        y += amp * cos(phase);
+        slope -= d * (amp * k * sin(phase));
+    }
+    return vec3<f32>(y, slope);
 }

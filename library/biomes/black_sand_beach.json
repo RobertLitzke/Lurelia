@@ -1,6 +1,6 @@
 {
   "name": "black_sand_beach",
-  "version": 2,
+  "version": 3,
   "introduced_by": "glassfall",
   "priority": 6,
   "rules": {"coast": [0, 10], "elev": [0, 3.5], "region": "west_coast"},
@@ -12,11 +12,12 @@
   "features": [{"structure": "basalt_columns", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}],
   "creatures": [
     {"creature": "gull", "count": 4},
-    {"creature": "harbor_seal", "count": 3},
+    {"creature": "harbor_seal", "count": 3.3},
     {"creature": "cormorant", "count": 2},
     {"creature": "puffin", "count": 4},
-    {"creature": "sea_lion", "count": 3},
-    {"creature": "sanderling", "count": 16}
+    {"creature": "sea_lion", "count": 3.3},
+    {"creature": "sanderling", "count": 16},
+    {"creature": "snowy_plover", "count": 10}
   ],
   "collectibles": [{"item": "seashell", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}],
   "mist": 0.55

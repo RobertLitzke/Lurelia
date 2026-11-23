@@ -23,10 +23,10 @@
     {"plant": "plate_coral", "density": 0.015, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "anthias", "count": 140},
-    {"creature": "reef_chromis", "count": 105},
-    {"creature": "butterflyfish", "count": 10},
-    {"creature": "angelfish", "count": 4},
-    {"creature": "reef_manta", "count": 2}
+    {"creature": "anthias", "count": 154},
+    {"creature": "reef_chromis", "count": 115.5},
+    {"creature": "butterflyfish", "count": 11},
+    {"creature": "angelfish", "count": 4.4},
+    {"creature": "reef_manta", "count": 2.2}
   ]
 }

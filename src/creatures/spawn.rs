@@ -217,6 +217,23 @@ const DROP_SEEN_M: f32 = 360.0;
 /// Whales are watched from far off, so they go further first.
 const DROP_WHALE_M: f32 = 260.0;
 const DROP_WHALE_SEEN_M: f32 = 600.0;
+/// The furthest from the player an ordinary animal is set down, metres.
+const SPAWN_M: f32 = 90.0;
+/// How much further off a large animal (`Species::large`: elephants,
+/// bison, the big dinosaurs) is found, kept and set down than the rest, so
+/// a herd can be watched from a ridge across a valley. Past full detail
+/// (stream.rs `FULL_DETAIL_M`) it walks the generator's ground instead of
+/// the voxels (walk.rs `far`).
+pub const LARGE_REACH: f32 = 2.0;
+/// The share more of a large species the biomes want, since its numbers
+/// are spread over four times the ground. Half as many again rather than
+/// four times, because each is a rigged model drawn in full: a Thunderfield
+/// view holds about seventy large animals.
+const LARGE_QUOTA: f32 = 1.5;
+/// How long after the world opens a large animal may be set down in view:
+/// the first fill, so the plain below a lookout has its herds on arrival.
+/// After that newcomers turn up behind the player like everything else.
+const FIRST_FILL_S: f32 = 3.0;
 
 /// Whether the player may be looking at `p`: within 75 degrees either side
 /// of where they face (a wide screen shows about 50), across the ground.
@@ -233,7 +250,7 @@ pub fn in_view(p: Vec3, player: Vec3, facing: Vec3) -> bool {
 /// Drop creatures that wandered far from the player, once they are out of
 /// view: a bird or an elephant does not wink out on the skyline while it is
 /// watched, only behind the player's back (or very far off).
-pub fn drop_far(world: &mut hecs::World, species: &[Species], player: Vec3, facing: Vec3) {
+pub fn drop_far(world: &mut hecs::World, species: &[Species], models: &[Model], player: Vec3, facing: Vec3, tracked: &mut super::tracked::Tracked) {
     let far: Vec<hecs::Entity> = world
         .query::<(hecs::Entity, &Look, &Creature)>()
         .iter()
@@ -241,8 +258,11 @@ pub fn drop_far(world: &mut hecs::World, species: &[Species], player: Vec3, faci
             if l.pos.y < 0.0 {
                 return true;
             }
-            let (near, seen) = if species[c.species].verb().mover == Mover::Breach {
+            let sp = &species[c.species];
+            let (near, seen) = if sp.verb().mover == Mover::Breach {
                 (DROP_WHALE_M, DROP_WHALE_SEEN_M)
+            } else if sp.large(models) {
+                (DROP_M * LARGE_REACH, DROP_SEEN_M * LARGE_REACH)
             } else {
                 (DROP_M, DROP_SEEN_M)
             };
@@ -252,6 +272,11 @@ pub fn drop_far(world: &mut hecs::World, species: &[Species], player: Vec3, faci
         .map(|(e, _, _)| e)
         .collect();
     for e in far {
+        // A large animal is remembered, to be put back if the player
+        // returns (tracked.rs); the rest are made up again.
+        if world.get::<&Creature>(e).is_ok_and(|c| species[c.species].large(models)) {
+            tracked.remember(world, e);
+        }
         let _ = world.despawn(e);
     }
 }
@@ -272,15 +297,19 @@ pub fn world_creatures(
     hour: f32,
     sky: &crate::world::weather::Sky,
     phase: &crate::world::season::Phase,
+    tracked: &mut super::tracked::Tracked,
 ) {
     let f = &land.f;
-    drop_far(world, species, player, facing);
+    drop_far(world, species, models, player, facing, tracked);
+    // The large animals the player is coming back to, where they were left,
+    // before anything new is asked for: they fill their biomes' numbers.
+    tracked.restore(world, store, player);
     // Under a roof the player is in a room the land was laid over -- a
     // buried arena, a cave -- and newcomers are looked for on its floor,
     // not on the land overhead (#377).
     let indoors = super::terrain::roof_over(store, player).map(|_| player);
     // What the biomes around the player want.
-    let mut want: HashMap<usize, u32> = HashMap::default();
+    let mut want: HashMap<usize, f32> = HashMap::default();
     for k in 0..9 {
         let p = if k == 0 {
             player
@@ -291,9 +320,32 @@ pub fn world_creatures(
         let b = &land.lib.biomes[f.biome[f.idx(p.x, p.z)] as usize];
         for cu in &b.creatures {
             if let Some(s) = species.iter().position(|x| x.name == cu.creature) {
-                let e = want.entry(s).or_insert(0);
-                *e = (*e).max(cu.count);
+                let e = want.entry(s).or_insert(0.0);
+                *e = e.max(cu.count);
             }
+        }
+    }
+    // Large animals are wanted by the biomes out to their own reach too:
+    // a herd on the plain below a lookout belongs to the plain's biome, not
+    // the cliff top's. Two rings: half way out to where a large animal is
+    // set down at the furthest, and all the way.
+    for share in [0.5, 1.0] {
+        let ring = SPAWN_M * LARGE_REACH * share;
+        for k in 0..12 {
+            let a = k as f32 * std::f32::consts::TAU / 12.0;
+            let p = player + Vec3::new(a.cos(), 0.0, a.sin()) * ring;
+            let b = &land.lib.biomes[f.biome[f.idx(p.x, p.z)] as usize];
+            for cu in &b.creatures {
+                if let Some(s) = species.iter().position(|x| x.name == cu.creature && x.large(models)) {
+                    let e = want.entry(s).or_insert(0.0);
+                    *e = e.max(cu.count);
+                }
+            }
+        }
+    }
+    for (s, n) in want.iter_mut() {
+        if species[*s].large(models) {
+            *n *= LARGE_QUOTA;
         }
     }
     // Dev hook: VG_SPAWN=name,name puts one of each named creature (a group
@@ -321,7 +373,7 @@ pub fn world_creatures(
                 for t in 0..12 {
                     let a = (k * 5 + t) as f32 * 0.9 + k as f32 * 0.37;
                     let (x, z) = (player.x + a.cos() * r, player.z + a.sin() * r);
-                    let land_ok = store.top_m() > 0.0 && voxel_ground(store, x, z, store.top_m()).is_some();
+                    let land_ok = store.top_m() > 0.0 && (voxel_ground(store, x, z, store.top_m()).is_some() || species[s].large(models) && super::terrain::far_ground(store, x, z).is_some());
                     if !land_ok {
                         continue;
                     }
@@ -344,7 +396,8 @@ pub fn world_creatures(
     // The clock thins each species down to what is abroad at this hour
     // (diel.rs): the ones that sleep where they stand mostly stay, bedded
     // down, and the rest -- birds, insects, fish -- are simply not out.
-    let mut order: Vec<(usize, u32)> = want.into_iter().map(|(s, n)| (s, super::diel::quota(n, abroad(&species[s], hour, sky, phase)))).collect();
+    let square = (player.x / 128.0).floor() as i32 as u32 ^ ((player.z / 128.0).floor() as i32 as u32).wrapping_mul(0x9e37_79b9);
+    let mut order: Vec<(usize, u32)> = want.into_iter().map(|(s, n)| (s, super::diel::quota(whole(n, s, square), abroad(&species[s], hour, sky, phase)))).collect();
     order.sort();
     cull_off_hours(world, species, player, facing, &order, hour, sky, phase);
     let have = census::quota(world);
@@ -358,12 +411,16 @@ pub fn world_creatures(
         }
         let mover = sp.verb().mover;
         let whale = mover == Mover::Breach;
+        let large = sp.large(models);
         // A group never brings the count past what the biomes want.
         let room = n - have.get(&s).copied().unwrap_or(0);
         // Newcomers turn up out of view: behind and beside the player, never in
         // the 140 degrees ahead (birds popping into an open sky give it away).
         let ahead = facing.z.atan2(facing.x);
         let looking = facing.length_squared() > 0.01;
+        // A large animal may be set down anywhere on the first fill
+        // (`FIRST_FILL_S`), so a view opens with its herds in it.
+        let looking = looking && !(large && now < FIRST_FILL_S);
         for _ in 0..4 {
             let a = if looking {
                 ahead + std::f32::consts::PI + (rng.unit() - 0.5) * 3.8
@@ -376,10 +433,14 @@ pub fn world_creatures(
             let fish = mover == Mover::School;
             let r = if whale {
                 50.0 + rng.unit() * 90.0
+            } else if large {
+                // Out to twice as far, and seldom right on top of the
+                // player: a herd is better met across open ground.
+                30.0 + rng.unit() * (SPAWN_M * LARGE_REACH - 30.0)
             } else if fish {
                 12.0 + rng.unit() * 38.0
             } else {
-                20.0 + rng.unit() * 70.0
+                20.0 + rng.unit() * (SPAWN_M - 20.0)
             };
             let (x, z) = (player.x + a.cos() * r, player.z + a.sin() * r);
             let i = f.idx(x, z);
@@ -396,6 +457,16 @@ pub fn world_creatures(
             }
         }
     }
+}
+
+/// A biome's count as a whole number of animals. The fraction of a count like
+/// 2.2 is one more in that share of the country, rolled once per species for
+/// each 128 m square the player stands in (`square`), so the extra one comes
+/// and goes as they travel rather than flickering in place.
+fn whole(count: f32, s: usize, square: u32) -> u32 {
+    let n = count.max(0.0);
+    let roll = crate::world::noise::unit(hash32(square ^ (s as u32).wrapping_mul(0x85eb_ca6b)));
+    (n + roll).floor() as u32
 }
 
 /// Whether a species sleeps where it stands rather than leaving when its
@@ -578,9 +649,10 @@ pub(crate) fn place(
     let whale = mover == Mover::Breach;
     let i = f.idx(x, z);
     // In a room under the land only what keeps to the floor it was put on
-    // will do: a walker, and a small bird that hops and perches (`flit`).
-    // The rest steer by the land's height map or by plants growing on it,
-    // and would be up through the roof at once.
+    // will do: a walker, a small bird that hops and perches (`flit`), and
+    // fish, which read the floor under them from the voxels. The rest steer
+    // by the land's height map or by plants growing on it, and would be up
+    // through the roof at once.
     if let Some(near) = room {
         return match mover {
             Mover::Walk { wades: false, .. } => walkers(world, species, s, rng, land, store, models, (x, z), size, false, now, Some(near)),
@@ -592,6 +664,22 @@ pub(crate) fn place(
                     return false;
                 }
                 flit::spawn(world, s, sp, Vec3::new(x, gy, z), size.max(1), hash32(rng.state ^ s as u32 ^ 0xf117));
+                true
+            }
+            // Fish in a sea cave's pool: open water at the surface here, deep
+            // enough down to the floor (swim.rs reads the depth the same way).
+            Mover::School => {
+                let ter = super::terrain::Terrain { store, land: Some(land), sea };
+                let top = f.sea_now();
+                let p = Vec3::new(x, top - 0.3, z);
+                if !store.loaded((x * 4.0).floor() as i32, (p.y * 4.0).floor() as i32, (z * 4.0).floor() as i32) || ter.in_rock(p) {
+                    return false;
+                }
+                let depth = top - ter.bed_under(p);
+                if depth < sp.beh.shallows.unwrap_or(2.0) {
+                    return false;
+                }
+                swim::spawn_school(world, s, species, models, Vec3::new(x, top, z), depth, size.max(1), hash32(rng.state ^ s as u32 ^ 0xf15));
                 true
             }
             _ => false,
@@ -711,6 +799,13 @@ fn inland_pool(f: &crate::world::fields::Fields, x: f32, z: f32, r: f32) -> Opti
 /// share gives a lone animal, which is the point: fawns come with does.
 const FAMILY_JUVENILE: f32 = 0.3;
 
+/// Dev hook VG_SPAWN_WET, read once: walkers may be set down in the water,
+/// to test swimming.
+fn spawn_wet() -> bool {
+    static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *ON.get_or_init(|| std::env::var_os("VG_SPAWN_WET").is_some())
+}
+
 /// A walker, or a family group standing together a few spacings apart, at
 /// (x, z). False when the spot won't do.
 #[allow(clippy::too_many_arguments)]
@@ -736,9 +831,21 @@ fn walkers(
     // In a room under the land, its own floor: the sea level and the height
     // map both describe the land on top, and a buried room's floor can lie
     // below either.
-    let ground = |x: f32, z: f32| match room {
-        Some(near) => super::terrain::ground_near(store, x, z, near),
-        None => voxel_ground(store, x, z, store.top_m()),
+    // A large animal may be set down past full detail, on the generator's
+    // ground (terrain.rs `far_ground`), with nothing there to bump into.
+    let large = sp.large(models);
+    // The ground's height and the material of its top voxel; no material
+    // on the generator's ground.
+    let ground = |x: f32, z: f32| -> Option<(f32, Option<u8>)> {
+        match room {
+            Some(near) => super::terrain::ground_near(store, x, z, near).map(|(g, m)| (g, Some(m))),
+            None => voxel_ground(store, x, z, store.top_m()).map(|(g, m)| (g, Some(m))).or_else(|| {
+                // Never off the edge of the map, where the generator still
+                // answers with a height.
+                let inside = x > 8.0 && z > 8.0 && x < f.size - 8.0 && z < f.size - 8.0;
+                (large && inside).then(|| super::terrain::far_ground(store, x, z)).flatten().map(|g| (g, None))
+            }),
+        }
     };
     let Some((gy, _)) = ground(x, z) else {
         return false;
@@ -752,30 +859,61 @@ fn walkers(
     }
     let kin = if size > 1 { Some(hash32(rng.state ^ 0x4b1e ^ s as u32) | 1) } else { None };
     let mut placed = 0;
+    // Where the members already stand, so the next is set down beside them
+    // and not inside one (creatures/crowd.rs would push them apart, but a
+    // herd that spends its first seconds unpicking itself looks it).
+    let mut taken: Vec<super::crowd::Shape> = Vec::new();
+    let lead = &models[sp.model];
+    let length = lead.reach[1] - lead.reach[0];
+    let shape_at = |mx: f32, mz: f32| super::crowd::Shape::of(Vec3::new(mx, 0.0, mz), yaw, lead.half_w, lead.height, lead.reach, 1.0);
+    let clear_of = |sh: &super::crowd::Shape, taken: &[super::crowd::Shape]| {
+        taken.iter().all(|t| {
+            let (p, q) = sh.nearest(t);
+            (p - q).length() >= sh.r + t.r + group.spacing * 0.3
+        })
+    };
     for k in 0..size.max(1) {
-        let (mx, mz) = if k == 0 {
-            (x, z)
-        } else {
-            let a = rng.unit() * std::f32::consts::TAU;
-            let r = group.spacing * (1.0 + rng.unit());
-            (x + a.cos() * r, z + a.sin() * r)
-        };
-        let Some((my, mm)) = ground(mx, mz) else {
-            continue;
-        };
-        // Never set down in a river: a wader in the shallows at most.
-        // (VG_SPAWN_WET=1 lets the dev hook put walkers in the water to test
-        // swimming.)
-        let river = (water_voxel(mm) || f.river_depth(mx, mz) > if wades { 0.5 } else { 0.1 }) && std::env::var_os("VG_SPAWN_WET").is_none();
-        let off_land = room.is_none() && (my < sea + 0.4 || (my - f.height(mx, mz)).abs() > 1.0);
-        if off_land || crate::mesh::sprites::leafy(mm) || river {
-            continue;
+        // The first member stands where the group was asked for; each of
+        // the others tries a few spots round it, so one boulder or a patch
+        // of brush costs a herd a moment's search rather than a member.
+        let mut found = None;
+        for _ in 0..if k == 0 { 1 } else { 10 } {
+            let (mx, mz) = if k == 0 {
+                (x, z)
+            } else {
+                // A long animal needs a body length more room than its
+                // spacing says before anyone stands nose to its tail.
+                let a = rng.unit() * std::f32::consts::TAU;
+                let r = group.spacing * (1.0 + rng.unit()) + length * 0.5 * rng.unit();
+                let c = (x + a.cos() * r, z + a.sin() * r);
+                if !clear_of(&shape_at(c.0, c.1), &taken) {
+                    continue;
+                }
+                c
+            };
+            let Some((my, mm)) = ground(mx, mz) else {
+                continue;
+            };
+            // Never set down in a river: a wader in the shallows at most
+            // (unless `spawn_wet`).
+            let river = (mm.is_some_and(water_voxel) || f.river_depth(mx, mz) > if wades { 0.5 } else { 0.1 }) && !spawn_wet();
+            let off_land = room.is_none() && (my < sea + 0.4 || (my - f.height(mx, mz)).abs() > 1.0);
+            if off_land || mm.is_some_and(crate::mesh::sprites::leafy) || river {
+                continue;
+            }
+            let pos = Vec3::new(mx, my + 0.01, mz);
+            // On the generator's ground there are no voxels to stand in.
+            let far = mm.is_none();
+            if !far && crate::physics::hits(store, pos, lead.half_w, lead.height) {
+                continue;
+            }
+            found = Some((mx, mz, pos));
+            break;
         }
-        let pos = Vec3::new(mx, my + 0.01, mz);
-        let mmd = &models[sp.model];
-        if crate::physics::hits(store, pos, mmd.half_w, mmd.height) {
+        let Some((mx, mz, pos)) = found else {
             continue;
-        }
+        };
+        taken.push(shape_at(mx, mz));
         let seed = hash32(rng.state ^ 0xabcdef ^ s as u32 ^ k.wrapping_mul(0x9e37));
         let timer = rng.unit() * 2.0;
         let yaw = yaw + (rng.unit() - 0.5) * 0.8;

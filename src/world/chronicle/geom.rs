@@ -86,6 +86,32 @@ pub fn densify(pts: &[Vec2], meander: f32, seed: u32) -> Vec<Vec2> {
     out
 }
 
+/// The distance along `points` to each one, and the whole length. A closed
+/// line's length takes in the segment from the last point back to the first.
+pub fn cumulative(points: &[Vec2], closed: bool) -> (Vec<f32>, f32) {
+    let n = points.len();
+    let mut along = Vec::with_capacity(n);
+    let mut s = 0.0;
+    for i in 0..n {
+        along.push(s);
+        if closed || i + 1 < n {
+            s += points[i].distance(points[(i + 1) % n]);
+        }
+    }
+    (along, s)
+}
+
+/// The point `s` metres round a closed line and the direction it runs
+/// there, given its `cumulative` distances and length. `s` wraps, either way.
+pub fn at_closed(points: &[Vec2], along: &[f32], length: f32, s: f32) -> (Vec2, Vec2) {
+    let n = points.len();
+    let s = s.rem_euclid(length);
+    let k = along.partition_point(|&a| a <= s).saturating_sub(1);
+    let (a, b) = (points[k], points[(k + 1) % n]);
+    let seg = a.distance(b).max(1e-4);
+    (a.lerp(b, (s - along[k]) / seg), (b - a) / seg)
+}
+
 /// Ground height along a line sampled about every metre, averaged over a
 /// triangle window `window` m long, so a road or track grades through bumps.
 /// Samples more than `GAP` m below the grade are a gap the road bridges: they
@@ -137,23 +163,87 @@ pub struct Strip {
 /// Ground more than `GAP` m under the grade is left alone: a gap for a bridge.
 /// Returns those gaps as (start, end, deck height).
 pub fn grade_strip(cx: &mut EventCtx, line: &[Vec2], base: &[f32], off: &[f32], bank: &[f32], s: &Strip) -> Vec<(Vec2, Vec2, f32)> {
+    grade_strip_except(cx, line, base, off, bank, s, &[])
+}
+
+/// Two stretches of road count as one over the other, not side by side,
+/// when their heights are more than this far apart, metres.
+pub const UNDER: f32 = 3.0;
+/// A road's wall is this thick, standing just outside the kerb, metres.
+pub const WALL_THICK: f32 = 1.2;
+
+/// A line point near a cell: how far, which point, and how many metres
+/// left of the line the cell is there.
+#[derive(Clone, Copy)]
+pub struct Nearest {
+    pub d: f32,
+    pub k: usize,
+    pub side: f32,
+}
+
+/// One cell near a line: its nearest point, and the point whose road has it.
+pub struct Claim {
+    pub cell: usize,
+    pub near: Nearest,
+    /// `near`, unless that point is `off` (a deck, a tunnel: built some
+    /// other way). Then the nearest point that is not off, if its road is
+    /// more than `UNDER` above or below (the cell is under a deck over that
+    /// road); otherwise none, and the cell is left alone.
+    pub owner: Option<Nearest>,
+}
+
+/// Every cell within `reach(k)` of some point `k` of `line`, in cell order,
+/// each by its nearest point of the whole line: where a road passes close
+/// to itself, a cell never goes to the further stretch. `y(k)` is the
+/// road's height at a point. A closed line's direction at its ends wraps.
+pub fn claims(f: &mut Fields, line: &[Vec2], closed: bool, reach: impl Fn(usize) -> f32, off: impl Fn(usize) -> bool, y: impl Fn(usize) -> f32) -> Vec<Claim> {
+    let n = line.len();
+    let none = Nearest { d: f32::MAX, k: 0, side: 0.0 };
+    let mut best: HashMap<usize, Nearest> = HashMap::default();
+    let mut on: HashMap<usize, Nearest> = HashMap::default();
+    for (k, &p) in line.iter().enumerate() {
+        let dir = if closed { (line[(k + 1) % n] - line[(k + n - 1) % n]).normalize_or(Vec2::X) } else { (line[(k + 1).min(n - 1)] - line[k.saturating_sub(1)]).normalize_or_zero() };
+        let left = Vec2::new(dir.y, -dir.x);
+        let off_k = off(k);
+        each_near(f, p, reach(k), |_f: &mut Fields, i, d, q| {
+            let here = Nearest { d, k, side: (q - p).dot(left) };
+            let e = best.entry(i).or_insert(none);
+            if d < e.d {
+                *e = here;
+            }
+            if !off_k {
+                let e = on.entry(i).or_insert(none);
+                if d < e.d {
+                    *e = here;
+                }
+            }
+        });
+    }
+    let mut out: Vec<Claim> = best
+        .into_iter()
+        .map(|(cell, near)| {
+            let owner = if off(near.k) { on.get(&cell).filter(|b| (y(b.k) - y(near.k)).abs() > UNDER).copied() } else { Some(near) };
+            Claim { cell, near, owner }
+        })
+        .collect();
+    out.sort_unstable_by_key(|c| c.cell);
+    out
+}
+
+/// `grade_strip`, leaving out the line points marked in `skip`: a stretch
+/// built some other way (a circuit's decks), which neither grades the ground
+/// under it nor claims the cells another stretch below it grades.
+pub fn grade_strip_except(cx: &mut EventCtx, line: &[Vec2], base: &[f32], off: &[f32], bank: &[f32], s: &Strip, skip: &[bool]) -> Vec<(Vec2, Vec2, f32)> {
     let (width, m, shoulder, margin, cause) = (s.width, s.mat, s.shoulder, s.margin, cx.cause);
     let f = &mut cx.f;
     let half = width * 0.5;
     let reach = half + 1.0 + margin;
-    let mut best: HashMap<usize, (f32, usize, f32)> = HashMap::default();
-    for (k, p) in line.iter().enumerate() {
-        let next = line[(k + 1).min(line.len() - 1)];
-        let prev = line[k.saturating_sub(1)];
-        let dir = (next - prev).normalize_or_zero();
-        let left = Vec2::new(dir.y, -dir.x);
-        each_near(f, *p, reach, |_f: &mut Fields, i, d, q| {
-            let e = best.entry(i).or_insert((f32::MAX, 0, 0.0));
-            if d < e.0 {
-                *e = (d, k, (q - *p).dot(left));
-            }
-        });
-    }
+    // Each cell goes by its nearest line point. Every point takes part,
+    // and a cell whose nearest point is skipped is left alone unless a road
+    // under or over the skipped stretch has it (`claims`), so the stretch
+    // before a skipped one never claims the ground past its end.
+    let skipped = |k: usize| skip.get(k).copied().unwrap_or(false);
+    let cells = claims(f, line, false, |_| reach, skipped, |k| base[k] + off[k]);
     // Gaps along the centre line.
     let gap: Vec<bool> = line.iter().enumerate().map(|(k, p)| f.height(p.x, p.y) < base[k] + off[k] - GAP).collect();
     let mut spans = Vec::new();
@@ -168,7 +258,8 @@ pub fn grade_strip(cx: &mut EventCtx, line: &[Vec2], base: &[f32], off: &[f32], 
         }
         k += 1;
     }
-    for (i, (d, k, side)) in best {
+    for c in cells {
+        let (i, Some(Nearest { d, k, side })) = (c.cell, c.owner) else { continue };
         if f.water[i] == 1 {
             continue;
         }
@@ -233,15 +324,37 @@ pub fn crossing_points(a: &[Vec2], b: &[Vec2]) -> Vec<Vec2> {
 
 /// Where segment `a`-`b` crosses `c`-`d`, if it does.
 pub fn segments_cross(a: Vec2, b: Vec2, c: Vec2, d: Vec2) -> Option<Vec2> {
-    let r = b - a;
-    let s = d - c;
+    cross_params(a, b, c, d, 1e-9).map(|(t, _)| a + (b - a) * t)
+}
+
+/// Where segments `a`-`b` and `c`-`d` cross, as (t along ab, u along cd).
+/// They count as parallel, and never cross, when the cross product of their
+/// vectors is under `parallel`.
+pub fn cross_params(a: Vec2, b: Vec2, c: Vec2, d: Vec2, parallel: f32) -> Option<(f32, f32)> {
+    let (r, s) = (b - a, d - c);
     let den = r.perp_dot(s);
-    if den.abs() < 1e-9 {
+    if den.abs() < parallel {
         return None;
     }
     let t = (c - a).perp_dot(s) / den;
     let u = (c - a).perp_dot(r) / den;
-    ((0.0..=1.0).contains(&t) && (0.0..=1.0).contains(&u)).then(|| a + r * t)
+    ((0.0..=1.0).contains(&t) && (0.0..=1.0).contains(&u)).then_some((t, u))
+}
+
+/// The distance from `p` to segment `a`-`b`, the nearest point on it, and
+/// how far along it that is (0 at `a`, 1 at `b`).
+pub fn seg_foot(a: Vec2, b: Vec2, p: Vec2) -> (f32, Vec2, f32) {
+    let ab = b - a;
+    let l2 = ab.length_squared().max(1e-9);
+    let t = ((p - a).dot(ab) / l2).clamp(0.0, 1.0);
+    let f = a + ab * t;
+    (p.distance(f), f, t)
+}
+
+/// `seg_foot` without the point: the distance and how far along.
+pub fn seg_dist(a: Vec2, b: Vec2, p: Vec2) -> (f32, f32) {
+    let (d, _, t) = seg_foot(a, b, p);
+    (d, t)
 }
 
 #[cfg(test)]

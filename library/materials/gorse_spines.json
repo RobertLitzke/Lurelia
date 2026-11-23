@@ -1,0 +1,15 @@
+{
+  "name": "gorse_spines",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Gorse: dense dark green spines on tangled green stems.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [44, 80, 38],
+    "alt": [60, 98, 46],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [49, 87, 43], "alt": [66, 105, 51]}
+  }
+}

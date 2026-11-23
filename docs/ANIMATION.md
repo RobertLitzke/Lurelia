@@ -64,15 +64,56 @@ Voxels nothing assigns belong to the root (the first bone).
 - `"overlap": n` on a bone grows its part n voxel layers into its parent's voxels at the
   joint, which hides gaps when the joint bends. Off by default.
 - `"flesh": f` on a bone (0 to 1, default 0) makes the part soft: see **Soft bodies** below.
+- `"spread": [pitch, yaw, roll]` on a bone is its pose in flight, for a flier whose rest pose
+  stands on the ground. See **Pterosaurs** below.
+- `"slope": true` on the rig (next to `plan`) draws the parts with sloped corners and joins
+  them where they meet their parents: see **Sloped parts** below. Off by default. The deer,
+  horse, fox and boar have it (each version 4), and so their children: elk, mule deer, lechwe,
+  mossback deer, unicorn; donkey, fae horse, Przewalski's horse, zebra; arctic fox; javelina,
+  warthog.
 - The root's joint defaults to the body's centre; every other bone needs one. Parents must be
   listed before their children.
 
 The slicer (`src/anim/slice.rs`) runs at load: it runs the ops a second time with each op's
-material replaced by its bone, applies the claims and overlaps, splits the 32^3 grid into one
+material replaced by its bone, applies the claims and overlaps, splits the grid into one
 grid per bone and meshes each, so each part is its own `Model` with its pivot at the joint.
-The unsliced whole model is kept too. `--validate` checks the rig (`anim::validate`): known
-roles and plans, unique bone names, parents before children, joints inside the grid, and every
-op `part` naming a bone.
+The unsliced whole model is kept too. A creature with a `grid` bigger than 32^3 (the
+sauropods, the tyrannosaur) has no whole mesh: each part is cut from a 32^3 window round its
+own voxels (`Sliced::origins`) and its pivot is the joint less the window's corner, so the
+parts pose and draw exactly as a 32^3 creature's do. `--validate` checks the rig
+(`anim::validate`): known roles and plans, unique bone names, parents before children, joints
+inside the grid, every op `part` naming a bone, and on a big grid that every part fits its
+window.
+
+### Sloped parts
+
+With `"slope": true` on the rig, each part is meshed by `src/anim/slope.rs` instead of as square
+voxel faces. Every corner is placed by surface nets over the whole body's voxels, the way trees
+are rounded, so box legs come out bevelled and an ellipsoid body smooth. A corner moves up to half
+a voxel in, but only half as far along an axis where the shape is one voxel thick, so a fox's
+one-voxel legs and ears keep about three quarters of their width.
+
+A sloped part draws no faces toward its parent or its children, so at rest the body is one
+closed surface with no caps at the joints. The corners of a part that touch its parent's voxels
+(the ring where a leg leaves the body) follow the parent's rotation, and the ring one voxel
+further along goes a third of the way. The parent draws the same ring with its own rotation, so
+when a joint bends the ring stays where the two parts meet and the faces between it and the
+rest of the part stretch over what would have been a gap. The weights are two bits a corner in
+the quad (`quad::SEAM_SHIFT`), the parent's rotation rides in the instance (`glow[1..]`, set in
+`push_parts`), and `entity_local` in `common.wgsl` blends the two in both the entity and the
+shadow pass. Sloped faces are lit by their diagonals as drawn, stretched or not.
+
+Parts that touch without being parent and child (a head resting on the body, legs side by side)
+keep their caps toward each other, as square parts do. `overlap` is ignored on a sloped rig. A
+juvenile's head is drawn larger about its own joint and its ring is not, so a young animal's neck
+seam can open a little. Skeletons stay square.
+
+`VOXEL_SLOPE_CREATURES=1` turns slopes on for every rigged creature and `0` off for all, for
+before-and-after comparisons:
+
+```bash
+VOXEL_SLOPE_CREATURES=1 cargo run --release -- --headless --anim-sheet deer --no-hud --hour 10 --size 3840x2160 --look -90,14 --screenshot sloped.png
+```
 
 ### Soft bodies
 
@@ -102,7 +143,7 @@ picked by roles.
 
 | Plan | Creatures | Notes |
 |---|---|---|
-| quadruped | deer, elk, bighorn, pronghorn, fox, coyote, marmot, boar, horse, bear and their children | walk, trot, gallop; sits if its table includes `sit` |
+| quadruped | deer, elk, bighorn, pronghorn, fox, coyote, marmot, boar, horse, bear and their children; the dinosaurs | walk, trot, gallop; sits if its table includes `sit`. A rig with only two legs (a tyrannosaur, a raptor) takes them in turn at every pace, so its run is a fast walk rather than a hop, and rises and falls once a step. A chain of tail bones shares the swish and the alarm lift between them, so a long tail curves instead of whipping up |
 | hopper | rabbit, pale hare, jackrabbit | always bounds |
 | sprawler | lizard, tortoise, sea turtle, harbour seal | legs swing sideways, the tail swings against them; never gallops; lies flat to bask |
 | bird | starling and its children, gull, heron | flight motor in the air; the heron, geese and woodpeckers also use the ground modes below |
@@ -247,6 +288,38 @@ from the position change.
 - Rays that fly (`undulate`) ripple their wings instead of beating them; rays at sea are
   rippled by `swim.rs`.
 
+### Pterosaurs
+
+The quetzalcoatlus and the pteranodon are modelled standing, plan `quadruped`, and open their
+wings only in flight. Each side has three bones:
+
+- `leg_fl` (`leg`, pair 0): the forelimb from shoulder to hand, with the inner membrane as a
+  sheet behind it. On the ground it walks as a front leg.
+- `wing_l` (`wing`, child of the forelimb, hinged low on it): the wing finger, folded up and
+  back along the side, with the part of the outer membrane that lies between it and the arm.
+- `panel_l` (`wing`, child of the finger, same hinge): the rest of the outer membrane, stored
+  behind the folded finger inside the inner membrane's outline, which fans out behind the
+  finger in flight.
+
+Every bone that moves in flight has a `spread` angle: the forelimb rolls out level, the finger
+pitches down past the hand into line with it and swept back a little, the panel pitches on
+round behind it, and the neck, head, body and hind legs take their flight attitude. In the
+air `Flight::compose_spread` (flight.rs) eases each bone from rest to its spread angle as the
+wings open, beats the forelimb's roll on top as a bird's inner wing, flexes the finger as a
+tip, and lets the panel ride on the finger. Landing eases everything back to rest, which is
+the standing pose, so there is no separate fold. `fold_wings` leaves bones with `spread` alone.
+
+The membrane geometry is laid out as the wing is in flight (one planform tapering from the
+inner membrane's width at the hand to the finger tip) and folded back to rest by each piece's
+spread angle, so the pieces meet without gaps when open. The layers sit one voxel apart across
+the side of the body, so the open wing is stepped by a voxel or two. A voxel of membrane that
+falls inside another bone's op (a thigh) moves with that bone and leaves a hole in flight.
+
+A walker with wings and a `fly_height` takes off when it bolts (`Air` in walk.rs), so the
+quetzalcoatlus (`graze`) runs a few steps' worth of alarm and flies 25 to 50 m. The pteranodon
+(`glide`) flies all the time as a `Flyer` and stands when it comes down on high ground.
+`creatures::birds::animate` and the `moves` sheet treat a rig with `spread` bones as winged.
+
 ### Serpents
 
 A serpent is the one plan with no motors. Its rig is a single chain of bones,
@@ -281,6 +354,21 @@ mover (creatures/snake.rs)  ->  Spine (a path)  ->  pose_along  ->  one instance
 - `JOINT_RATE` holds every joint to 6 radians a second. A path can ask for
   more than a body can give — a hairpin travelling down the length as a coil
   unwinds — and the lag that costs reads as weight.
+
+### Long necks and tails
+
+`src/anim/trail.rs` bends a sauropod's neck and tail out of line with its body. A tail of
+three bones or more (two for a sprawler: the crocodile, the alligator, the lizard) is a rope
+dragged behind the hips with the snake's `Spine::lead`: its root follows the body, every point
+behind is pulled up to its own distance from the one ahead, and `spine::pose_limb` lays the
+bones along it. So a turn swings the tail wide and walking on straightens it. The rope runs on
+the flat, each bone keeps its own droop from the model, no joint turns more than 0.45 rad from
+the one before, and a tail left standing eases back straight. Lying down blends it out.
+
+A neck of three bones or more browses: it swings well out to one side or the other while the
+animal grazes, and leads into a turn while it walks, more toward the head. Neither counts in
+the crowd: `crowd::trunk_reach` cuts the walker's capsule at the root of the neck and of the
+tail, so a herd of diplodocus spaces by their trunks rather than by 25 m of neck and tail.
 
 ### Crabs
 

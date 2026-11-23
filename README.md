@@ -9,15 +9,18 @@ Lurelia is an engine that allows you to play different games in different worlds
 
 - A peaceful open-world exploration game where you hike, mountain bike,
   wingsuit, kayak, free-climb and scuba dive across landscapes shaped by
-  simulated geological history. You'll share terrain as varied as paleolithic grasslands, tropical karst towers, nordic fjords, faerie forests with 179 species of wildlife, 137 species of plants, and dozens of procedural structures, artifacts, towns, trails and roads.
+  simulated geological history. You'll share terrain as varied as paleolithic grasslands, tropical karst towers, nordic fjords, faerie forests and an upland where dinosaurs never died out, with 209 species of wildlife, 166 species of plants, and dozens of procedural structures, artifacts, towns, trails and roads.
 - A fast retro arena deathmatch where triple jumps, double dodges,   terrain-carving, trap-laying, enemy-decimating weapons that change each map, each time you play it. No multiplayer, but supports smart local bots.
+- Kart racing on hand-built circuits: drift boosts, pickup rows of weapons,
+  shields and boosts, a racing line that polishes in as karts wear it, and
+  bots bred in tournaments.
 
 ## Part I: the open world
 
 Open-world mode is built around curiosity and a sense of place. There are no
 quest markers, no health bars and no enemies in the wild. Every island, desert
 canyon, fjord and bayou is generated from a written chronicle of its history:
-fifty-three kinds of geological and human events, run in order before you take
+sixty-three kinds of geological and human events, run in order before you take
 your first step.
 
 Volcanoes pour lava tongues down to the sea and blanket the leeward hills in
@@ -31,7 +34,7 @@ arrowheads, coins and skystone shards left behind in the dirt.
 
 ![Strata, a highway and a filling station in Redrock](worlds/redrock/pictures/redrock.png)
 
-### Six ways to travel
+### Seven ways to travel
 
 You can cross every kilometre of land, cliff and sea with movement modes that
 flow into one another:
@@ -55,12 +58,15 @@ flow into one another:
   caustics move on the seabed. Swim with reef sharks and schools of tropical
   fish, ride deep currents, or hold on to a passing humpback, manta ray or sea
   turtle for a tow.
+- Driving. Call up an ATV, a beach buggy or a sand rail wherever a world
+  allows it, and take it over dunes, voxel steps and dirt roads on long soft
+  suspension, hopping and drifting as a kart does.
 
-### 179 creatures and 137 plants
+### 209 creatures and 166 plants
 
-All of the life is procedural. The library holds 137 plant species across
-twenty-nine growth forms, from tall conifers, weeping willows and hollow
-walk-in baobabs to kelp beds and antler coral, and 179 animal species animated
+All of the life is procedural. The library holds 166 plant species across
+twenty-eight growth forms, from tall conifers, weeping willows and hollow
+walk-in baobabs to kelp beds and antler coral, and 209 animal species, sauropods and tyrannosaurs among them, animated
 in real time by bone motors rather than recorded clips.
 
 Wildlife fills the air, land and water with behaviour of its own:
@@ -126,7 +132,8 @@ made of live, destructible voxels.
 
 ## The worlds
 
-Lurelia ships with ten open-world landscapes and eight arenas, and
+Lurelia ships with twelve open-world landscapes, three kart circuits and
+eight arenas, and
 can also load random islands and worlds you keep locally:
 
 - Glassfall: a volcanic island with a meteor crater, a strewn field of black
@@ -151,6 +158,16 @@ can also load random islands and worlds you keep locally:
 - Saltmirror: a salt pan flat enough to mirror the sky, eleven abandoned radio
   dishes still facing the zenith, and something burned up in the range behind
   them.
+- Gannet Harbor: a whaling town on a grey bay, swept and rigged for sea with
+  nobody in it, walled sheep pasture, a river out of the redwoods and two
+  granite islands in the mouth of the bay.
+- Saurischia: the upland east of Hemlow where the great animals never died
+  out, with sauropod herds, horned skulls and trackways, a lava field and
+  the villages of the people who stayed to live beside them.
+- Peregrine Ridge, Vermilion Mesa and Ribstrand: the kart circuits. A fast
+  loop over chalk downs, a figure-eight up a red rock mesa and back through
+  a tunnel under its own road, and a lap of a grey beach and its dunes that
+  ends down the middle of a titan's ribcage.
 - Porch, Transmission, Slagdeck and Duelbox: the arenas. A frozen outpost of
   rooms and a long porch, a three-storey relay station inside a glacier, an
   offshore smelter over molten slag, and a plain box for testing weapons.
@@ -167,13 +184,13 @@ On an RTX 3060 at 1440p with 4x MSAA a frame takes 2.3 to 5 ms, thanks to GPU
 depth-pyramid occlusion culling, leaf crowns meshed in larger blocks, draw
 lists bucketed near to far, and shadow cascades updated in slices.
 
-Content is data: 434 materials, 244 structures, 179 creatures, 151 biomes and
-137 plants, each a short JSON file in `library/`. Two studios built into the
+Content is data: 473 materials, 332 structures, 209 creatures, 200 biomes and
+166 plants, each a short JSON file in `library/`. Two studios built into the
 game let you change it while it runs: one grades the sky, fog and colour ramps
 live, and a turntable studio edits creatures, plants, materials and weapons and
 writes the change straight back to disk. The engine also runs headless from
 the command line to take screenshots, draw top-down world maps, run bot
-tournaments and run its 589 unit and shader tests.
+tournaments and run its 720 unit and shader tests.
 
 ## Installation
 

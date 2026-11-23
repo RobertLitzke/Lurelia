@@ -1,0 +1,41 @@
+{
+  "name": "sau_glade",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "A fern glade in the Fernwood: an opening of waist-high ferns and cycads with the forest standing round it.",
+  "priority": 8,
+  "rules": {"region": "glade"},
+  "surface": "fernwood_floor",
+  "subsurface": "dirt",
+  "fringe": 10,
+  "map_color": [92, 128, 70],
+  "plants": [
+    {
+      "plant": "fern",
+      "density": 0.5,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.3, "max": 1.0}}
+    },
+    {"plant": "grim_fern", "density": 0.3, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "cycad",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.4, "max": 1.0}}
+    },
+    {
+      "plant": "tree_fern",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.5, "max": 1.0}}
+    },
+    {
+      "plant": "young_araucaria",
+      "density": 0.0015,
+      "placement": {"verb": "edge", "params": {"width": 10, "inner": 0.0}}
+    }
+  ],
+  "creatures": [
+    {"creature": "compsognathus", "count": 8},
+    {"creature": "stegosaurus", "count": 3},
+    {"creature": "brachiosaurus", "count": 2},
+    {"creature": "diplodocus", "count": 3}
+  ]
+}

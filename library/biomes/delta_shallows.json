@@ -10,11 +10,11 @@
   "map_color": [196, 196, 168],
   "plants": [{"plant": "water_lily", "density": 0.05, "placement": {"verb": "scatter", "params": {}}}],
   "creatures": [
-    {"creature": "channel_catfish", "count": 14},
-    {"creature": "trout", "count": 16, "morph": "golden"},
-    {"creature": "crocodile", "count": 4},
-    {"creature": "otter", "count": 4},
-    {"creature": "hippo", "count": 6},
-    {"creature": "lechwe", "count": 10}
+    {"creature": "channel_catfish", "count": 15.4},
+    {"creature": "trout", "count": 17.6, "morph": "golden"},
+    {"creature": "crocodile", "count": 4.4},
+    {"creature": "otter", "count": 4.4},
+    {"creature": "hippo", "count": 6.6},
+    {"creature": "lechwe", "count": 11}
   ]
 }

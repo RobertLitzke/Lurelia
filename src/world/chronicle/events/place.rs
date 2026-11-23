@@ -38,9 +38,14 @@ impl Process for Place {
             cx.warnings.push(format!("place: unknown structure {structure}"));
             return "skipped".into();
         };
-        let b = match (bearing, face) {
-            (Some(b), _) => *b + 90.0 * cx.turn(at) as f32,
-            (None, Some(t)) => crate::util::bearing(cx.pos(t) - p).to_degrees(),
+        let b = match (bearing, face, at) {
+            (Some(b), _, _) => *b + 90.0 * cx.turn(at) as f32,
+            (None, Some(t), _) => crate::util::bearing(cx.pos(t) - p).to_degrees(),
+            // Beside the race track: facing the road.
+            (None, None, Pos::Along { along, .. }) => match &cx.track {
+                Some(t) => crate::util::bearing(t.at(*along).0 - p).to_degrees(),
+                None => 0.0,
+            },
             _ => 0.0,
         };
         let k = cx.place(d, p, b, slots, *age, seed);

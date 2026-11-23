@@ -16,6 +16,9 @@ pub struct City {
     kit: Option<String>,
 }
 
+/// The city kit where the event names none (`events::defaults_used`).
+pub const KIT: &str = "modern";
+
 impl Process for City {
     fn apply(&self, cx: &mut EventCtx) -> String {
         let City { file, kit } = self;
@@ -58,12 +61,12 @@ impl Process for City {
         // would otherwise leave the city looking untouched.
         let fallback = Kit::default();
         let kit = match kit.as_deref() {
-            None => cx.lib.city_kit("modern").unwrap_or(&fallback),
+            None => cx.lib.city_kit(KIT).unwrap_or(&fallback),
             Some(n) => match cx.lib.city_kit(n) {
                 Some(k) => k,
                 None => {
                     cx.warnings.push(format!("city {file}: no city kit called {n}"));
-                    cx.lib.city_kit("modern").unwrap_or(&fallback)
+                    cx.lib.city_kit(KIT).unwrap_or(&fallback)
                 }
             },
         };

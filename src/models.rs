@@ -67,6 +67,13 @@ pub struct Model {
     /// Half-width and height of the collision box, metres.
     pub half_w: f32,
     pub height: f32,
+    /// How far the body runs either side of the feet along the model's own
+    /// z, metres before any morph scale: (low z, high z). A model faces
+    /// -Z, so `reach[0]` is the snout end and `reach[1]` the rump. The
+    /// collision box is a square `half_w` across, which is right for a deer
+    /// and a fifth of a triceratops; herds and crowds space by this instead
+    /// (creatures/crowd.rs). `[-half_w, half_w]` unless the loader measured it.
+    pub reach: [f32; 2],
     /// Library creatures with a rig: drawn as parts (src/anim).
     pub rig: Option<crate::anim::Rig>,
     /// The same rig, with each bone's part replaced by the bones inside it
@@ -196,6 +203,7 @@ impl Grid {
             pivot: Vec3::new(16.0, 0.0, 16.0),
             half_w,
             height,
+            reach: [-half_w, half_w],
             rig: None,
             skeleton: None,
             block: 0,
@@ -259,6 +267,20 @@ pub fn from_cells(cells: &[u8], voxel: f32, half_w: f32, height: f32) -> Model {
         }
     }
     g.build(voxel, half_w, height)
+}
+
+/// The whole model of a creature's grid of any size (`anim::slice::Dims`). A
+/// 32^3 grid is meshed as `from_cells` does it. A bigger one has no mesh of
+/// its own, since a mesh holds 32^3 at most: it is drawn by its rig's parts
+/// alone, each meshed in a window of its own, and keeps only its voxel size
+/// and its pivot at the grid's bottom centre, which the parts are posed from.
+pub fn from_grid(cells: &[u8], dims: crate::anim::slice::Dims, voxel: f32, half_w: f32, height: f32) -> Model {
+    if dims == crate::anim::slice::Dims::CUBE {
+        return from_cells(cells, voxel, half_w, height);
+    }
+    let mut m = Grid::new().build(voxel, half_w, height);
+    m.pivot = dims.pivot();
+    m
 }
 
 pub fn build_all() -> Vec<Model> {
@@ -406,7 +428,12 @@ pub struct Instance {
     /// named coat sets it (variety::Repaint `glow`): the lantern moth is the
     /// glassmoth's model with its wings burning a third brighter. It only
     /// scales a glow the model has; nothing here lights a colour that does
-    /// not glow. The rest is spare.
+    /// not glow.
+    ///
+    /// `[1..]`: on a rig's part, the parent bone's rotation as the x, y, z
+    /// of a quaternion whose w is kept at or above zero, for the corners of
+    /// a sloped part that follow the parent (anim/mod.rs `push_parts_at`,
+    /// anim/slope.rs). Zero is no rotation. None of the four is spare.
     pub glow: [f32; 4],
 }
 

@@ -934,25 +934,26 @@ pub(super) fn kelp_stipe(img: &mut Img, r: &mut Rng, s: f32) {
     });
 }
 
-/// A kelp blade, root at the bottom edge and tip at the top: a long strap,
-/// narrow at the root, widest a third of the way up and tapering to the tip,
-/// its edges ruffled and a paler band down the middle. Grey, tinted by the
-/// blade material.
+/// A kelp blade, root at the bottom edge and tip at the top: a ribbon,
+/// pinched at the root, the same width most of its length and rounded off at
+/// the tip, its edges gently ruffled and the middle a little paler. Grey,
+/// tinted by the blade material.
 pub(super) fn kelp_blade(img: &mut Img, r: &mut Rng, s: f32) {
     let ph = r.range(0.0, std::f32::consts::TAU);
     paint(img, 0.0, 0.0, s, s, |x, y| {
         let t = 1.0 - y / s;
-        let width = s * 0.72 * (t * 3.0).min(1.0).powf(0.6) * (1.0 - t).powf(0.7) / 0.62;
-        let ruffle = 1.0 + 0.12 * (t * 38.0 + ph).sin() + 0.06 * (t * 71.0).sin();
-        let half = width * 0.5 * ruffle;
+        let root = (t * 8.0).min(1.0).sqrt();
+        let tip = (1.0 - ((t - 0.86) / 0.14).max(0.0).powi(2)).max(0.0).sqrt();
+        let ruffle = 1.0 + 0.07 * (t * 23.0 + ph).sin() + 0.04 * (t * 47.0 + ph * 2.0).sin();
+        let half = s * 0.42 * root * tip * ruffle;
         let d = (x - s * 0.5).abs();
         if d > half + 1.0 || half <= 0.0 {
             return None;
         }
         let cov = (half - d + 0.5).clamp(0.0, 1.0);
         let mid = 1.0 - (d / half.max(1.0)).min(1.0);
-        let wrinkle = 0.05 * ((t * 55.0 + x * 0.4 + ph).sin());
-        let v = 0.58 + 0.22 * mid * mid + 0.12 * t + wrinkle;
+        let wrinkle = 0.04 * (t * 31.0 + d * 0.25 + ph).sin();
+        let v = 0.62 + 0.12 * mid + 0.08 * t + wrinkle;
         Some((cov, [v, v, v]))
     });
 }

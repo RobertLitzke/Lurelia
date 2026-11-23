@@ -1,0 +1,16 @@
+{
+  "name": "podocarp_needles",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Podocarp scrub: short dark needles, a dull olive green.",
+  "smooth": false,
+  "sprites": "needles",
+  "texture": {
+    "pattern": "blotch",
+    "base": [36, 52, 36],
+    "alt": [46, 62, 42],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [40, 56, 40], "alt": [50, 66, 46]}
+  }
+}

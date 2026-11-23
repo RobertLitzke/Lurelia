@@ -66,8 +66,10 @@ impl MorphPick {
 #[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct CreatureUse {
     pub creature: String,
-    /// How many to keep around the player while they are in this biome.
-    pub count: u32,
+    /// How many to keep around the player while they are in this biome. A
+    /// fraction is an extra one in that share of the country: 2.2 keeps two,
+    /// and a third in about one 128 m square in five.
+    pub count: f32,
     /// Which of the creature's coats turn up here (see `MorphPick`): the glass
     /// country's elk pale, the faerie wood's herons recoloured.
     #[serde(default)]
@@ -97,6 +99,10 @@ pub struct Rules {
     /// Inside a named region painted by the chronicle.
     #[serde(default)]
     pub region: Option<String>,
+    /// Read the region at the cell itself rather than through the warp that
+    /// gives other biomes ragged edges: fields that end at a wall.
+    #[serde(default)]
+    pub crisp: bool,
     /// true: only under the sea; false: only above it; unset: above it,
     /// unless `amphibious`.
     #[serde(default)]

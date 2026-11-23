@@ -1,0 +1,16 @@
+{
+  "name": "grim_fern",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Ferns of the Grimwold floor, a dark dull green (drawn as sprites).",
+  "smooth": false,
+  "sprites": "fern",
+  "texture": {
+    "pattern": "blotch",
+    "base": [40, 60, 40],
+    "alt": [54, 72, 48],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [44, 64, 44], "alt": [58, 76, 52]}
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "shore_kerb",
+  "version": 1,
+  "introduced_by": "ribstrand",
+  "notes": "Racing kerb for the grey coast, banded basalt black and bone white so the road's edge reads against both the dark wet sand and the pale dunes.",
+  "like": "track_kerb",
+  "surface": "hardpack",
+  "texture": {"base": [46, 48, 50], "alt": [214, 206, 186], "calm": {"base": [54, 56, 58], "alt": [210, 204, 186]}}
+}

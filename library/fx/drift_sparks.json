@@ -1,0 +1,16 @@
+{
+  "name": "drift_sparks",
+  "version": 1,
+  "introduced_by": "kart_race",
+  "notes": "Sparks off a drifting kart's back wheels once the drift has charged its first boost (fx/hooks.rs `drift`).",
+  "shape": "streak",
+  "count": [1, 2],
+  "speed": [2.0, 4.5],
+  "cone_deg": 50,
+  "life": [0.08, 0.2],
+  "size": [0.012, 0.006],
+  "gravity": 6.0,
+  "drag": 0.8,
+  "color": [120, 180, 255],
+  "glow": 3.0
+}

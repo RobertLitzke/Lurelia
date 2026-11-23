@@ -1,0 +1,29 @@
+{
+  "name": "sau_faewood",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "The south-west corner, where the faerie wood in Hemlow's south-east corner comes over the edge: the same somebody-else's wood, with toadstool rings in its clearings.",
+  "collectibles": [
+    {
+      "item": "mushroom",
+      "density": 0.5,
+      "placement": {"verb": "ring", "params": {"x": 48, "z": 1466, "radius": 12, "width": 1.4}}
+    },
+    {
+      "item": "mushroom",
+      "density": 0.5,
+      "placement": {"verb": "ring", "params": {"x": 92, "z": 1508, "radius": 8, "width": 1.4}}
+    },
+    {
+      "item": "mushroom",
+      "density": 0.5,
+      "placement": {"verb": "ring", "params": {"x": 30, "z": 1418, "radius": 6, "width": 1.4}}
+    },
+    {
+      "item": "mushroom",
+      "density": 0.5,
+      "placement": {"verb": "ring", "params": {"x": 120, "z": 1470, "radius": 5, "width": 1.4}}
+    }
+  ],
+  "like": "gh_faewood"
+}

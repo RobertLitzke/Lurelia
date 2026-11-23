@@ -17,20 +17,27 @@
       "placement": {"verb": "clustered", "params": {"size": 7, "min": 0.7, "max": 1.0}}
     },
     {"plant": "fern", "density": 0.05, "placement": {"verb": "edge", "params": {"width": 8, "inner": 0.0}}},
-    {"plant": "bramble", "density": 0.006, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "bramble", "density": 0.006, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "foxglove",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 8, "min": 0.4, "max": 1.0}}
+    },
+    {"plant": "rowan", "density": 0.0006, "placement": {"verb": "lone", "params": {"spacing": 30}}}
   ],
   "features": [],
   "creatures": [
-    {"creature": "rabbit", "count": 8},
-    {"creature": "pale_hare", "count": 4},
-    {"creature": "deer", "count": 3},
-    {"creature": "fae_horse", "count": 1},
-    {"creature": "firefly", "count": 120},
-    {"creature": "glassmoth", "morph": "lantern", "count": 26},
-    {"creature": "bumblebee", "count": 6},
-    {"creature": "glow_bee", "count": 8},
-    {"creature": "sky_ray", "count": 2},
-    {"creature": "barn_owl", "count": 1}
+    {"creature": "rabbit", "count": 8.8},
+    {"creature": "pale_hare", "count": 4.4},
+    {"creature": "deer", "count": 3.3},
+    {"creature": "fae_horse", "count": 1.1},
+    {"creature": "firefly", "count": 132},
+    {"creature": "glassmoth", "morph": "lantern", "count": 28.6},
+    {"creature": "bumblebee", "count": 6.6},
+    {"creature": "glow_bee", "count": 8.8},
+    {"creature": "sky_ray", "count": 2.2},
+    {"creature": "barn_owl", "count": 2},
+    {"creature": "unicorn", "count": 2.2}
   ],
   "collectibles": [{"item": "hag_stone", "density": 0.001, "placement": {"verb": "scatter", "params": {}}}]
 }

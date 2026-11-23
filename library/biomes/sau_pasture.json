@@ -1,0 +1,27 @@
+{
+  "name": "sau_pasture",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "Pasture and hay round the farms and Spray Meadow, with hawthorn along the edges and the odd ginkgo.",
+  "priority": 18,
+  "rules": {"region": "pasture"},
+  "surface": "meadow_grass",
+  "subsurface": "dirt",
+  "fringe": 6,
+  "map_color": [134, 170, 84],
+  "plants": [
+    {"plant": "hawthorn", "density": 0.002, "placement": {"verb": "edge", "params": {"width": 4, "inner": 0.0}}},
+    {"plant": "ginkgo", "density": 0.0003, "placement": {"verb": "lone", "params": {"spacing": 50}}},
+    {
+      "plant": "foxglove",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.5, "max": 1.0}}
+    }
+  ],
+  "creatures": [
+    {"creature": "parasaurolophus", "count": 10},
+    {"creature": "triceratops", "count": 8},
+    {"creature": "compsognathus", "count": 6},
+    {"creature": "skylark", "count": 6}
+  ]
+}

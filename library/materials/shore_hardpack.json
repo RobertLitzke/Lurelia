@@ -1,0 +1,17 @@
+{
+  "name": "shore_hardpack",
+  "version": 1,
+  "introduced_by": "ribstrand",
+  "notes": "A racing road of beach sand rolled hard and damp over a bed of crushed shell: grey-brown, a shade darker than the dry dunes beside it and lighter than the wet beach, flecked pale with shell. Grips like hardpack.",
+  "smooth": true,
+  "crisp": true,
+  "surface": "hardpack",
+  "texture": {
+    "pattern": "speckle",
+    "base": [118, 114, 104],
+    "alt": [138, 134, 122],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [122, 118, 108], "alt": [140, 136, 124]}
+  }
+}

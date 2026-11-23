@@ -1,0 +1,14 @@
+{
+  "name": "roof_shingle_brown",
+  "version": 1,
+  "introduced_by": "townlab",
+  "notes": "Brown asphalt shingles on a suburban roof. Smoothed, so a roof at an angle to the grid is a slope rather than a staircase.",
+  "smooth": true,
+  "texture": {
+    "alt": [82, 62, 50],
+    "calm": {"alt": [96, 74, 60], "base": [112, 88, 70]},
+    "base": [98, 76, 60],
+    "pattern": "noise",
+    "contrast": 0.6
+  }
+}

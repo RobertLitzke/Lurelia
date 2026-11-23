@@ -730,6 +730,7 @@ static CREATURE_KNOBS: &[Knob] = &[
     num(3, "WINGBEAT", "behaviour.wingbeat", 0.0, 30.0, 0.25, 2, "Wingbeats a second. Unset, it follows from the wingspan."),
     flag(3, "FLOATS", "behaviour.floats", "A seabird that comes down off its circle now and then to sit on the sea."),
     flag(3, "AWASH", "behaviour.awash", "Cruises with its back and eyes out of the water rather than under it: a crocodile."),
+    flag(3, "BACK FLOAT", "behaviour.back_float", "Drifts and sleeps on its back at the surface, rolling over to swim off: an otter."),
     num(
         3,
         "SHALLOWS",
@@ -982,6 +983,8 @@ static PLANT_KNOBS: &[Knob] = &[
         2,
         "Conifers: where the needles start, as a share of the height. Ponderosa pines carry theirs high on a bare trunk.",
     ),
+    num(2, "BASE VARY", "crown_base_vary", 0.0, 0.4, 0.02, 2, "Conifers: how far crown base varies tree to tree, as a share of the height either way."),
+    num(2, "OPEN", "open", 0.0, 1.0, 0.05, 2, "Conifers: above 0 a stack of rounded needle pucks on the trunk, widest two fifths up, with this share of each tier left as a gap (an old ponderosa)."),
     num(
         2,
         "SPREAD",

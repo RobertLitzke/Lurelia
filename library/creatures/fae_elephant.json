@@ -11,7 +11,13 @@
     "dark": [36, 28, 24],
     "moss": [92, 130, 70]
   },
-  "behaviour": {"walk_speed": 0.6, "wary": 4, "spawn_chance": 0.2, "group": {"size": [1, 3], "spacing": 3.0, "range": 16}},
+  "behaviour": {
+    "sleeps_on_side": true,
+    "walk_speed": 0.6,
+    "wary": 4,
+    "spawn_chance": 0.2,
+    "group": {"size": [1, 3], "spacing": 3.0, "range": 16}
+  },
   "like": "elephant",
   "scale": 0.45,
   "extra_ops": [

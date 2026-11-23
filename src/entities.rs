@@ -31,6 +31,12 @@ pub struct Entities {
     /// Footfalls the walkers made this step (creatures/sign.rs), for the
     /// game to lay as marks.
     pub steps: Vec<crate::creatures::sign::Step>,
+    /// Large animals remembered where the player left them
+    /// (creatures/tracked.rs).
+    pub tracked: crate::creatures::tracked::Tracked,
+    /// The bases of shrubs big walkers are walking into this step, for the
+    /// game to flatten (creatures/trample.rs).
+    pub crush: Vec<Vec3>,
     pub just_collected: u32,
     /// A chronicle-built world: creatures come from its biomes and pickups from
     /// its items.
@@ -76,6 +82,8 @@ impl Entities {
             gulls_placed: false,
             cues: Vec::new(),
             steps: Vec::new(),
+            tracked: Default::default(),
+            crush: Vec::new(),
             just_collected: 0,
             land: None,
             species: Vec::new(),
@@ -193,8 +201,10 @@ impl Entities {
             &mut stats,
             &mut self.cues,
             &mut self.steps,
+            &mut self.crush,
         );
-        herd::update(world, species, dt);
+        herd::update(world, species, models, dt);
+        stats.jostled += 2 * crate::creatures::crowd::update(world, models, store, dt);
         let groups: Vec<flock::Group> = species.iter().map(|s| s.beh.group.clone().unwrap_or_default()).collect();
         let kills = flock::update(world, species, &groups, &self.plants, dt, threat, &terrain);
         carry::take(world, species, models, &kills, self.clock);
@@ -254,7 +264,18 @@ impl Entities {
                 self.hour,
                 &self.sky,
                 &self.phase,
+                &mut self.tracked,
             );
+            self.pathing.large_restored = self.tracked.restored;
+            self.pathing.large_remembered = self.tracked.len() as u32;
+            let (mut about, mut far) = (0, 0);
+            for (c, l) in self.world.query::<(&crate::creatures::Creature, &crate::creatures::Look)>().iter() {
+                if self.species[c.species].large(models) {
+                    about += 1;
+                    far += (Vec3::new(l.pos.x - player.x, 0.0, l.pos.z - player.z).length() > crate::stream::FULL_DETAIL_M) as u32;
+                }
+            }
+            (self.pathing.large_about, self.pathing.large_far) = (about, far);
             crate::items::world_items(&mut self.world, &mut self.gems_spawned, &self.gems_collected, &land, &self.items, store, player);
             return;
         }

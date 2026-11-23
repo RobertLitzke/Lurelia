@@ -1,6 +1,6 @@
 {
   "name": "lime_beach",
-  "version": 3,
+  "version": 4,
   "introduced_by": "jadewater",
   "notes": "White lime-sand beaches at the foot of the jungle and round the towers.",
   "priority": 6,
@@ -10,7 +10,12 @@
   "map_color": [226, 222, 200],
   "plants": [
     {"plant": "hazel", "density": 0.002, "placement": {"verb": "edge", "params": {"width": 8, "inner": 0.004}}},
-    {"plant": "small_fig", "density": 0.004, "placement": {"verb": "edge", "params": {"width": 10, "inner": 0.006}}}
+    {"plant": "small_fig", "density": 0.004, "placement": {"verb": "edge", "params": {"width": 10, "inner": 0.006}}},
+    {
+      "plant": "red_mangrove",
+      "density": 0.01,
+      "placement": {"verb": "clustered", "params": {"size": 24, "min": 0.3, "max": 0.6}}
+    }
   ],
   "features": [
     {"structure": "stone_stupa", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 60}}},
@@ -18,11 +23,13 @@
   ],
   "creatures": [
     {"creature": "heron", "count": 5},
-    {"creature": "sea_turtle", "count": 2},
+    {"creature": "sea_turtle", "count": 2.2},
     {"creature": "gull", "count": 4},
     {"creature": "glossy_starling", "count": 20},
     {"creature": "kingfisher", "count": 2},
-    {"creature": "sanderling", "count": 14}
+    {"creature": "sanderling", "count": 14},
+    {"creature": "snowy_plover", "count": 10},
+    {"creature": "fruit_bat", "count": 2.2}
   ],
   "collectibles": [{"item": "seashell", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}]
 }

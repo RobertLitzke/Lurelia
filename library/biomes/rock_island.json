@@ -30,9 +30,9 @@
     {"plant": "rock_lichen", "density": 0.3, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "lizard", "count": 14},
-    {"creature": "salt_tortoise", "count": 2},
-    {"creature": "rattlesnake", "count": 1},
+    {"creature": "lizard", "count": 15.4},
+    {"creature": "salt_tortoise", "count": 2.2},
+    {"creature": "rattlesnake", "count": 1.1},
     {"creature": "raven", "count": 2},
     {"creature": "vulture", "count": 2},
     {"creature": "annas_hummingbird", "count": 1}

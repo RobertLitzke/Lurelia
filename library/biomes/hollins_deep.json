@@ -51,30 +51,35 @@
     {"plant": "blossom_vine", "density": 0.6, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "hanging_vine", "density": 0.25, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "shelf_fungus", "density": 0.35},
-    {"plant": "tree_moss", "density": 0.9}
+    {"plant": "tree_moss", "density": 0.9},
+    {
+      "plant": "holly",
+      "density": 0.001,
+      "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.3, "max": 1.0}}
+    }
   ],
   "features": [
     {"structure": "mossy_log", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}},
     {"structure": "fallen_trunk", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "unicorn", "count": 2},
-    {"creature": "mossback_deer", "count": 9},
-    {"creature": "deer", "count": 4},
-    {"creature": "fae_horse", "count": 3},
-    {"creature": "moss_bear", "count": 1},
-    {"creature": "moss_tortoise", "count": 3},
-    {"creature": "fae_badger", "count": 2},
-    {"creature": "fae_elephant", "count": 1},
-    {"creature": "sky_ray", "count": 10},
-    {"creature": "glassmoth", "morph": "lantern", "count": 70},
-    {"creature": "firefly", "count": 130},
-    {"creature": "glow_bee", "count": 12},
+    {"creature": "unicorn", "count": 2.2},
+    {"creature": "mossback_deer", "count": 9.9},
+    {"creature": "deer", "count": 4.4},
+    {"creature": "fae_horse", "count": 3.3},
+    {"creature": "moss_bear", "count": 1.1},
+    {"creature": "moss_tortoise", "count": 3.3},
+    {"creature": "fae_badger", "count": 2.2},
+    {"creature": "fae_elephant", "count": 1.1},
+    {"creature": "sky_ray", "count": 11},
+    {"creature": "glassmoth", "morph": "lantern", "count": 77},
+    {"creature": "firefly", "count": 143},
+    {"creature": "glow_bee", "count": 13.2},
     {"creature": "marsh_light", "morph": "wisp", "count": 6},
     {"creature": "tawny_owl", "count": 2},
     {"creature": "dusk_wren", "count": 10},
-    {"creature": "fae_toad", "count": 3},
-    {"creature": "pale_hare", "count": 3}
+    {"creature": "fae_toad", "count": 3.3},
+    {"creature": "pale_hare", "count": 3.3}
   ],
   "collectibles": [
     {"item": "hag_stone", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}},

@@ -154,6 +154,14 @@ pub enum Kind {
     /// Digging and placing by hand.
     Dig(Ground),
     Place,
+    /// A race's countdown: a beep for each second, and a higher, longer one
+    /// for GO (true).
+    Beep(bool),
+    /// Across the line with a lap done: a chime, rising further when the
+    /// lap ahead is the last (true).
+    Lap(bool),
+    /// Home: the race finished.
+    Finish,
 }
 
 /// A sound posted by the game. `at` is where it happened, or None for a
@@ -632,6 +640,27 @@ fn recipe(k: Kind) -> Recipe {
         Hurt(_) => r(&[low(260.0, 1.0, 0.12), tone(120.0, 55.0, 0.06, 0.8, 0.1), band(900.0, 1.0, 0.2, 0.04)], 0.2),
         Death => r(&[tone(220.0, 55.0, 0.5, 0.8, 0.45), low(300.0, 0.8, 0.35), later(low(150.0, 0.5, 0.4), 0.1)], 0.8),
         Clank => r(&[band(1100.0, 8.0, 1.0, 0.09), band(2300.0, 6.0, 0.5, 0.06), band(3000.0, 1.0, 0.4, 0.008)], 0.4),
+        Beep(false) => r(&[tone(660.0, 660.0, 0.0, 0.45, 0.16)], 0.05),
+        Beep(true) => r(&[tone(1320.0, 1320.0, 0.0, 0.5, 0.45), tone(660.0, 660.0, 0.0, 0.2, 0.3)], 0.1),
+        Lap(false) => r(&[tone(784.0, 784.0, 0.0, 0.4, 0.14), later(tone(1047.0, 1047.0, 0.0, 0.4, 0.3), 0.09)], 0.2),
+        Lap(true) => r(
+            &[
+                tone(784.0, 784.0, 0.0, 0.4, 0.12),
+                later(tone(988.0, 988.0, 0.0, 0.4, 0.12), 0.09),
+                later(tone(1175.0, 1175.0, 0.0, 0.45, 0.4), 0.18),
+            ],
+            0.25,
+        ),
+        Finish => r(
+            &[
+                tone(523.0, 523.0, 0.0, 0.4, 0.12),
+                later(tone(659.0, 659.0, 0.0, 0.4, 0.12), 0.1),
+                later(tone(784.0, 784.0, 0.0, 0.4, 0.12), 0.2),
+                later(tone(1047.0, 1047.0, 0.0, 0.5, 0.6), 0.3),
+                later(tone(523.0, 523.0, 0.0, 0.25, 0.6), 0.3),
+            ],
+            0.4,
+        ),
         Shutdown => r(
             &[
                 from(tone(420.0, 50.0, 0.25, 0.6, 0.6), Src::Saw),

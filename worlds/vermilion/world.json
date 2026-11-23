@@ -1,0 +1,101 @@
+{
+  "name": "vermilion",
+  "title": "VERMILION MESA",
+  "blurb": "A figure-eight in red rock country: a broad sweep along a canyon floor, switchbacks up a ravine of aspens, a run through the pines on top of the mesa, a plunge through the boulders and a long tunnel through the mesa's foot.",
+  "size_m": 768.0,
+  "height_m": 96,
+  "sea_level_m": 4,
+  "seed": 6878,
+  "sun": {
+    "latitude": 37
+  },
+  "modes": [
+    "walk",
+    "drive",
+    "race",
+    "screenshot",
+    "camera"
+  ],
+  "games": [
+    "race"
+  ],
+  "vehicles": [
+    "kart"
+  ],
+  "start_hour": 15.5,
+  "rock": [
+    [
+      "wingate_sandstone",
+      1.0
+    ]
+  ],
+  "strata": [
+    [
+      "chinle_mudstone",
+      0
+    ],
+    [
+      "wingate_sandstone",
+      34
+    ],
+    [
+      "high_water_mark",
+      47
+    ],
+    [
+      "wingate_sandstone",
+      48
+    ],
+    [
+      "kayenta_ledges",
+      51
+    ],
+    [
+      "navajo_sandstone",
+      55
+    ],
+    [
+      "navajo_white",
+      60
+    ]
+  ],
+  "biomes": [
+    "red_desert",
+    "talus_slope",
+    "slickrock",
+    "arch_country",
+    "mesa_pines",
+    "aspen_draw",
+    "boulder_fall",
+    "canyon_floor",
+    "lake_bed"
+  ],
+  "default_biome": "red_desert",
+  "seabed_biome": "lake_bed",
+  "seasons": [
+    "summer",
+    "autumn"
+  ],
+  "start_season": "summer",
+  "weather": {
+    "sun": 1.5,
+    "heat": 1.2,
+    "clouds": 0.5,
+    "fog": 0.05
+  },
+  "start_weather": "sun",
+  "weathering": 0.2,
+  "moss": 0.0,
+  "spawn": [
+    330,
+    502
+  ],
+  "spawn_bearing": 104,
+  "race": {
+    "circuit": "vermilion_ring",
+    "track": "track.json",
+    "laps": 3,
+    "rivals": 3,
+    "vehicle": "kart"
+  }
+}

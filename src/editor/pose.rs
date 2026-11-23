@@ -186,6 +186,8 @@ pub fn drive(anim: &mut Anim, model: &Model, sp: &Species, pose: Pose, at: Vec3,
             ground: &ground,
             water: None,
             hide: false,
+            pivot: model.pivot,
+            scale: 1.0,
         },
     );
 }

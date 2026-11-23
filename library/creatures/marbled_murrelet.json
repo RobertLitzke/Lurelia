@@ -1,0 +1,36 @@
+{
+  "name": "marbled_murrelet",
+  "version": 2,
+  "introduced_by": "hemlow",
+  "notes": "Marbled murrelet in breeding plumage on the razorbill's upright auk model: mottled dark brown all over with a paler brown belly and a short thin dark bill. Nests high on the limbs of the old redwoods at Loftwood and flies down to the bay at dawn.",
+  "colors": {
+    "body": [86, 66, 46],
+    "head": [64, 50, 38],
+    "wing": [62, 48, 36],
+    "tail": [62, 48, 36],
+    "legs": [190, 150, 110],
+    "belly": [150, 120, 88],
+    "bill": [28, 26, 24],
+    "bill_stripe": [28, 26, 24],
+    "face_line": [64, 50, 38],
+    "mottle": [112, 88, 60]
+  },
+  "behaviour": {
+    "movement": "circle",
+    "fly_height": 40,
+    "walk_speed": 1.0,
+    "flee_speed": 10.0,
+    "wary": 12.0,
+    "flightiness": 1.0,
+    "group": null
+  },
+  "like": "razorbill",
+  "scale": 0.6,
+  "extra_ops": [
+    {"op": "ellipsoid", "centre": [16, 11.6, 5.4], "radius": [1.4, 2, 2.6], "mat": "air", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 11.6, 6.4], "radius": [0.7, 0.7, 1.6], "mat": "bill", "part": "head"},
+    {"op": "recolour", "at": [12, 5, 9], "until": [15, 10, 13], "from": "body", "to": "mottle"},
+    {"op": "recolour", "at": [17, 7, 12], "until": [20, 12, 16], "from": "body", "to": "mottle"},
+    {"op": "recolour", "at": [13, 4, 16], "until": [18, 9, 20], "from": "body", "to": "mottle"}
+  ]
+}

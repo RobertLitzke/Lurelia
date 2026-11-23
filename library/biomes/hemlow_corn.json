@@ -15,10 +15,10 @@
     {"creature": "sparrow", "count": 14},
     {"creature": "starling", "count": 10},
     {"creature": "crow", "count": 3},
-    {"creature": "rabbit", "count": 3},
-    {"creature": "bumblebee", "count": 4},
-    {"creature": "barn_owl", "count": 1},
-    {"creature": "firefly", "count": 40}
+    {"creature": "rabbit", "count": 3.3},
+    {"creature": "bumblebee", "count": 4.4},
+    {"creature": "barn_owl", "count": 2},
+    {"creature": "firefly", "count": 44}
   ],
   "collectibles": []
 }

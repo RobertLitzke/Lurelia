@@ -17,9 +17,9 @@
     {"plant": "rabbitbrush", "density": 0.004, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "barn_owl", "count": 1},
-    {"creature": "jackrabbit", "count": 2},
-    {"creature": "lizard", "count": 4},
+    {"creature": "barn_owl", "count": 2},
+    {"creature": "jackrabbit", "count": 2.2},
+    {"creature": "lizard", "count": 4.4},
     {"creature": "roadrunner", "count": 1},
     {"creature": "gambels_quail", "count": 8}
   ]

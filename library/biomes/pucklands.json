@@ -1,0 +1,81 @@
+{
+  "name": "pucklands",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "The Pucklands, where Chepworth Down turns strange: turf very short and very green, rings of toadstools tens of metres across that the sheep won't graze inside, a lone thorn or two, glassbloom round Puck's Barrow, pale hares at dusk and fae horses after dark.",
+  "priority": 8,
+  "rules": {"region": "pucklands"},
+  "surface": "moss_grass",
+  "subsurface": "dirt",
+  "map_color": [150, 120, 200],
+  "plants": [
+    {
+      "plant": "glassbloom",
+      "density": 0.03,
+      "placement": {"verb": "ring", "params": {"x": 470, "z": 715, "radius": 45, "width": 14}}
+    },
+    {
+      "plant": "glassbloom",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 8, "min": 0.6, "max": 1.0}}
+    },
+    {"plant": "hawthorn", "density": 0.00025, "placement": {"verb": "lone", "params": {"spacing": 60}}},
+    {
+      "plant": "pale_birch",
+      "density": 0.0006,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.7, "max": 1.0}}
+    },
+    {
+      "plant": "foxglove",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 8, "min": 0.6, "max": 1.0}}
+    }
+  ],
+  "creatures": [
+    {"creature": "pale_hare", "count": 8},
+    {"creature": "fae_horse", "count": 4},
+    {"creature": "glassmoth", "morph": "lantern", "count": 40},
+    {"creature": "firefly", "count": 60},
+    {"creature": "glow_bee", "count": 8},
+    {"creature": "barn_owl", "count": 2},
+    {"creature": "skylark", "count": 3}
+  ],
+  "collectibles": [
+    {
+      "item": "mushroom",
+      "density": 0.5,
+      "placement": {"verb": "ring", "params": {"x": 430, "z": 650, "radius": 14, "width": 1.4}}
+    },
+    {
+      "item": "mushroom",
+      "density": 0.5,
+      "placement": {"verb": "ring", "params": {"x": 520, "z": 640, "radius": 9, "width": 1.4}}
+    },
+    {
+      "item": "mushroom",
+      "density": 0.4,
+      "placement": {"verb": "ring", "params": {"x": 400, "z": 760, "radius": 22, "width": 1.4}}
+    },
+    {
+      "item": "mushroom",
+      "density": 0.5,
+      "placement": {"verb": "ring", "params": {"x": 545, "z": 770, "radius": 12, "width": 1.4}}
+    },
+    {
+      "item": "mushroom",
+      "density": 0.5,
+      "placement": {"verb": "ring", "params": {"x": 470, "z": 600, "radius": 7, "width": 1.4}}
+    },
+    {
+      "item": "mushroom",
+      "density": 0.5,
+      "placement": {"verb": "ring", "params": {"x": 360, "z": 690, "radius": 10, "width": 1.4}}
+    },
+    {
+      "item": "mushroom",
+      "density": 0.4,
+      "placement": {"verb": "ring", "params": {"x": 585, "z": 700, "radius": 17, "width": 1.4}}
+    },
+    {"item": "hag_stone", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}
+  ]
+}

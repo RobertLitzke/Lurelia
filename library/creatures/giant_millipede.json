@@ -1,0 +1,9 @@
+{
+  "name": "giant_millipede",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Giant millipede: a metre of glossy black-brown segments on orange legs, slow over the moss and the deadfall in the Grimwold.",
+  "colors": {"skin": [44, 32, 26]},
+  "like": "garter_snake",
+  "scale": 1.2
+}

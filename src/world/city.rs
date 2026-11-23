@@ -9,13 +9,14 @@
 
 use super::fields::{Fields, BUCKET, CELL};
 use crate::util::FxHashMap as HashMap;
+use crate::world::chronicle::geom::seg_dist;
 use crate::world::material::AIR;
 use glam::{Vec2, Vec3};
 use serde::Deserialize;
 
 // ---- the file the importer writes -----------------------------------------------------
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Default)]
 pub struct CityFile {
     #[serde(default)]
     pub buildings: Vec<BuildingDef>,
@@ -134,6 +135,150 @@ pub struct Kit {
     /// along its row (0.5 = every other one doubles).
     #[serde(default)]
     pub tree_boost: f32,
+    /// What a generated town (`town` event, `world/town/`) is made of.
+    #[serde(default)]
+    pub town: TownKit,
+}
+
+/// The materials of a generated town, by district style (`grid`, `radial`,
+/// `maze`, `suburb`, `village`) where a style changes them. Each list is
+/// drawn from at random, so a material named twice comes up twice as often.
+#[derive(Deserialize, Clone, Debug, Default)]
+pub struct TownKit {
+    #[serde(default)]
+    pub walls: HashMap<String, Vec<String>>,
+    #[serde(default)]
+    pub roofs: HashMap<String, Vec<String>>,
+    #[serde(default)]
+    pub trims: Vec<String>,
+    /// Street surfaces: by rank (`main`, `ring`, `street`, `lane`, `close`,
+    /// `alley`, `country`), or `<style>_<rank>` for one style only
+    /// (`maze_lane`).
+    #[serde(default)]
+    pub streets: HashMap<String, String>,
+    #[serde(default)]
+    pub plaza: Option<String>,
+    /// A flat roof's covering.
+    #[serde(default)]
+    pub flat_roof: Option<String>,
+    /// The church's walls.
+    #[serde(default)]
+    pub church: Option<String>,
+    /// Street trees (the first) and park trees (any).
+    #[serde(default)]
+    pub trees: Vec<String>,
+    /// Route kits (`library/kits/`) for the field walls, the rail fences and
+    /// the town wall.
+    #[serde(default)]
+    pub field_wall: Option<String>,
+    #[serde(default)]
+    pub rail: Option<String>,
+    #[serde(default)]
+    pub town_wall: Option<String>,
+    /// Back-yard and garden fences.
+    #[serde(default)]
+    pub garden: Option<String>,
+    /// Hedges between fields.
+    #[serde(default)]
+    pub hedge: Option<String>,
+}
+
+/// What a town or a farm is made of where its kit names nothing. A world
+/// reaches the ones its kit needs (`TownKit::defaults_used`).
+pub mod town_default {
+    pub const PLAZA: &str = "stone_tiles";
+    pub const WALL: &str = "stucco_tan";
+    pub const ROOF: &str = "slate";
+    pub const TRIM: &str = "trim_white";
+    pub const TREE: &str = "street_maple";
+    pub const STREET: &str = "road_asphalt";
+    pub const DRIVE: &str = "pavement";
+    /// Route kits.
+    pub const FIELD_WALL: &str = "fieldstone_wall";
+    pub const FENCE: &str = "timber_fence";
+    pub const TOWN_WALL: &str = "dry_stone_wall";
+    pub const HEDGE: &str = "hedgerow";
+    /// The region a town paints over its parks, for a biome to take.
+    pub const PARK_REGION: &str = "city_park";
+}
+
+/// The district styles a kit's `walls` and `roofs` are keyed by.
+pub const STYLE_KEYS: [&str; 6] = ["grid", "radial", "maze", "suburb", "village", "ribbon"];
+
+impl TownKit {
+    pub fn plaza_mat(&self) -> &str {
+        self.plaza.as_deref().unwrap_or(town_default::PLAZA)
+    }
+    /// The wall materials for a district style: the first of `lists` (the
+    /// event's own, then usually the kit's `walls`) that has any for it.
+    pub fn walls_for(lists: &[&HashMap<String, Vec<String>>], style: &str) -> Vec<String> {
+        Self::list_for(lists, style, town_default::WALL)
+    }
+    /// The roof materials for a district style, as `walls_for`.
+    pub fn roofs_for(lists: &[&HashMap<String, Vec<String>>], style: &str) -> Vec<String> {
+        Self::list_for(lists, style, town_default::ROOF)
+    }
+    fn list_for(lists: &[&HashMap<String, Vec<String>>], style: &str, or: &str) -> Vec<String> {
+        lists.iter().find_map(|l| l.get(style).filter(|l| !l.is_empty())).cloned().unwrap_or_else(|| vec![or.to_string()])
+    }
+    pub fn trim_list(&self) -> Vec<String> {
+        if self.trims.is_empty() {
+            vec![town_default::TRIM.to_string()]
+        } else {
+            self.trims.clone()
+        }
+    }
+    /// Street trees (the first), park trees (any) and hedgerow trees (the last).
+    pub fn tree_list(&self) -> Vec<String> {
+        if self.trees.is_empty() {
+            vec![town_default::TREE.to_string()]
+        } else {
+            self.trees.clone()
+        }
+    }
+    pub fn field_wall_kit(&self) -> &str {
+        self.field_wall.as_deref().unwrap_or(town_default::FIELD_WALL)
+    }
+    pub fn rail_kit(&self) -> &str {
+        self.rail.as_deref().unwrap_or(town_default::FENCE)
+    }
+    pub fn garden_kit(&self) -> &str {
+        self.garden.as_deref().unwrap_or(town_default::FENCE)
+    }
+    pub fn town_wall_kit(&self) -> &str {
+        self.town_wall.as_deref().unwrap_or(town_default::TOWN_WALL)
+    }
+    pub fn hedge_kit(&self) -> &str {
+        self.hedge.as_deref().unwrap_or(town_default::HEDGE)
+    }
+    /// The route kits this kit names for its walls, fences and hedges.
+    pub fn route_kits(&self) -> impl Iterator<Item = &String> {
+        [&self.field_wall, &self.rail, &self.town_wall, &self.garden, &self.hedge].into_iter().flatten()
+    }
+
+    /// The `town_default` entries a town or farm of this kit falls back on:
+    /// one for each role the kit leaves out. Walls and roofs count as left
+    /// out unless every district style has its own.
+    pub fn defaults_used(&self) -> Vec<&'static str> {
+        use town_default::*;
+        let partial = |m: &HashMap<String, Vec<String>>| STYLE_KEYS.iter().any(|k| m.get(*k).is_none_or(|l| l.is_empty()));
+        let mut out = Vec::new();
+        let mut want = |left_out: bool, name: &'static str| {
+            if left_out {
+                out.push(name);
+            }
+        };
+        want(self.plaza.is_none(), PLAZA);
+        want(partial(&self.walls), WALL);
+        want(partial(&self.roofs), ROOF);
+        want(self.trims.is_empty(), TRIM);
+        want(self.trees.is_empty(), TREE);
+        want(self.field_wall.is_none(), FIELD_WALL);
+        want(self.rail.is_none() || self.garden.is_none(), FENCE);
+        want(self.town_wall.is_none(), TOWN_WALL);
+        want(self.hedge.is_none(), HEDGE);
+        out
+    }
 }
 
 fn d_road() -> String {
@@ -195,6 +340,14 @@ impl Kit {
         .chain(self.plinths.iter())
         .chain(self.ivy_mat.iter())
         .chain(self.remap.values())
+        .chain(self.town.walls.values().flatten())
+        .chain(self.town.roofs.values().flatten())
+        .chain(self.town.trims.iter())
+        .chain(self.town.streets.values())
+        .chain(self.town.plaza.iter())
+        .chain(self.town.flat_roof.iter())
+        .chain(self.town.church.iter())
+        .chain(self.town.trees.iter())
     }
 }
 
@@ -218,6 +371,12 @@ pub struct BuildingDef {
     pub trim: String,
     #[serde(default)]
     pub door: usize,
+    /// The ridge's direction [x, z], over the longest wall's.
+    #[serde(default)]
+    pub ridge: Option<[f32; 2]>,
+    /// How far the roof overhangs the walls, metres (0.5 when left out).
+    #[serde(default)]
+    pub eave: Option<f32>,
 }
 
 #[derive(Deserialize)]
@@ -325,6 +484,11 @@ pub struct Street {
     pub strip: f32,
     pub walk: f32,
     pub mat: u8,
+    /// The street stops square at `a` (or `b`): an end of its line that
+    /// meets no other street, where a round end would wrap the pavement
+    /// round it in a loop.
+    pub square_a: bool,
+    pub square_b: bool,
 }
 
 #[derive(Default)]
@@ -377,6 +541,21 @@ impl City {
 
     pub fn is_empty(&self) -> bool {
         self.buildings.is_empty() && self.decks.is_empty() && self.piers.is_empty() && self.streets.is_empty()
+    }
+
+    /// Take in another city's buildings, streets, decks, piers and trees
+    /// (a second `town` or `city` event). The first city's materials for
+    /// glass, decks and the rest stand for both.
+    pub fn absorb(&mut self, other: City) {
+        if self.buildings.is_empty() && self.streets.is_empty() && self.decks.is_empty() {
+            *self = other;
+            return;
+        }
+        self.buildings.extend(other.buildings);
+        self.decks.extend(other.decks);
+        self.piers.extend(other.piers);
+        self.streets.extend(other.streets);
+        self.trees.extend(other.trees);
     }
 
     pub fn index(&mut self) {
@@ -436,6 +615,11 @@ impl City {
         let (mut road, mut road_half, mut walk) = (0u8, 0.0f32, 0u8);
         for &k in list {
             let s = &self.streets[k as usize];
+            let ab = s.b - s.a;
+            let t = (p - s.a).dot(ab) / ab.length_squared().max(1e-6);
+            if (t < 0.0 && s.square_a) || (t > 1.0 && s.square_b) {
+                continue;
+            }
             let (d, _) = seg_dist(s.a, s.b, p);
             if d <= s.half {
                 if s.half > road_half {
@@ -518,11 +702,36 @@ fn nearest_edge(rings: &[Vec<Vec2>], p: Vec2) -> (f32, usize, usize, f32, f32) {
     best
 }
 
-fn seg_dist(a: Vec2, b: Vec2, p: Vec2) -> (f32, f32) {
-    let ab = b - a;
-    let l2 = ab.length_squared().max(1e-6);
-    let t = ((p - a).dot(ab) / l2).clamp(0.0, 1.0);
-    (p.distance(a + ab * t), t)
+/// Mark the ends of each street line (`lines`, ranges of `streets`) that
+/// meet no other line's carriageway: those stop square.
+fn square_ends(streets: &mut [Street], lines: &[std::ops::Range<usize>]) {
+    let meets = |streets: &[Street], own: &std::ops::Range<usize>, p: Vec2| {
+        lines.iter().filter(|r| *r != own).flat_map(|r| r.clone()).any(|k| {
+            let o = &streets[k];
+            let reach = o.half + 0.5;
+            p.x >= o.a.x.min(o.b.x) - reach
+                && p.x <= o.a.x.max(o.b.x) + reach
+                && p.y >= o.a.y.min(o.b.y) - reach
+                && p.y <= o.a.y.max(o.b.y) + reach
+                && seg_dist(o.a, o.b, p).0 <= reach
+        })
+    };
+    for r in lines {
+        if r.is_empty() {
+            continue;
+        }
+        let (first, last) = (r.start, r.end - 1);
+        // A line under a metre long is a disc (a turning circle), not a street.
+        let len: f32 = streets[r.clone()].iter().map(|s| s.a.distance(s.b)).sum();
+        // A closed ring has no ends.
+        if len < 1.0 || streets[first].a.distance(streets[last].b) < 0.5 {
+            continue;
+        }
+        let sa = !meets(streets, r, streets[first].a);
+        let sb = !meets(streets, r, streets[last].b);
+        streets[first].square_a = sa;
+        streets[last].square_b = sb;
+    }
 }
 
 fn hash(a: i32, b: i32, s: u32) -> f32 {
@@ -982,8 +1191,10 @@ pub fn build(f: &mut Fields, file: &CityFile, kit: &Kit, cause: u16, seed: u32, 
     };
     // Streets: kept as segments (the generator draws the surface per voxel
     // column); the fields only learn that nothing grows there.
+    let mut lines: Vec<std::ops::Range<usize>> = Vec::with_capacity(file.streets.len());
     for s in &file.streets {
         let m = mat(&s.mat);
+        let first = city.streets.len();
         for w in s.pts.windows(2) {
             city.streets.push(Street {
                 a: Vec2::new(w[0][0], w[0][1]),
@@ -992,8 +1203,11 @@ pub fn build(f: &mut Fields, file: &CityFile, kit: &Kit, cause: u16, seed: u32, 
                 strip: s.strip,
                 walk: s.walk,
                 mat: m,
+                square_a: false,
+                square_b: false,
             });
         }
+        lines.push(first..city.streets.len());
         paint_line(f, &s.pts, s.width * 0.5 + s.strip + s.walk, |f, i| {
             if f.h[i] > sea {
                 f.occupied[i] = true;
@@ -1001,6 +1215,7 @@ pub fn build(f: &mut Fields, file: &CityFile, kit: &Kit, cause: u16, seed: u32, 
             }
         });
     }
+    square_ends(&mut city.streets, &lines);
     // Buildings.
     let doors: Vec<u8> = kit.doors.iter().map(|d| mat(d)).collect();
     let plinths: Vec<u8> = kit.plinths.iter().map(|d| mat(d)).collect();
@@ -1068,6 +1283,12 @@ pub fn build(f: &mut Fields, file: &CityFile, kit: &Kit, cause: u16, seed: u32, 
                 axis = e / e.length();
             }
         }
+        if let Some([x, z]) = bd.ridge {
+            let v = Vec2::new(x, z);
+            if v.length() > 1e-3 {
+                axis = v.normalize();
+            }
+        }
         let nrm = Vec2::new(-axis.y, axis.x);
         let (mut v0, mut v1, mut a0, mut a1) = (f32::MAX, f32::MIN, f32::MAX, f32::MIN);
         for q in outer {
@@ -1118,7 +1339,7 @@ pub fn build(f: &mut Fields, file: &CityFile, kit: &Kit, cause: u16, seed: u32, 
         } else {
             (Vec2::ZERO, 0.0)
         };
-        let eave: f32 = if roof == Roof::Flat { 0.0 } else { 0.5 };
+        let eave: f32 = if roof == Roof::Flat { 0.0 } else { bd.eave.unwrap_or(0.5) };
         let reach = eave.max(if porch.0 > 0.0 { porch.0 + 0.1 } else { 0.0 }).max(if plinth > 0.2 { 1.5 } else { 0.0 });
         kinds[match roof {
             Roof::Flat => 0,

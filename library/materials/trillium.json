@@ -1,0 +1,16 @@
+{
+  "name": "trillium",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Trillium (drawn as sprites): three broad leaves under one white three-petalled flower.",
+  "smooth": false,
+  "sprites": "flower",
+  "texture": {
+    "pattern": "noise",
+    "base": [72, 110, 58],
+    "alt": [236, 232, 220],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [78, 118, 64], "alt": [249, 245, 232]}
+  }
+}

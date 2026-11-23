@@ -15,6 +15,7 @@
     "flightiness": 1.0,
     "flees_from": ["player"],
     "swims": true,
+    "back_float": true,
     "active": "crepuscular",
     "off_hours": 0.3
   },

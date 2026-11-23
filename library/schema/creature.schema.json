@@ -96,6 +96,11 @@
           "description": "Swimmers (`school`): cruise at the surface with the back and eyes out\nof the water instead of under it (crocodiles).",
           "type": "boolean"
         },
+        "back_float": {
+          "default": false,
+          "description": "Lies on its back at the surface when drifting or asleep, belly and\nforepaws out of the water, and rolls over to swim off when startled\n(otters). For a `school` swimmer, whenever it is not fleeing; for a\nwalker that `swims`, while it idles afloat.",
+          "type": "boolean"
+        },
         "blink": {
           "default": 0.0,
           "description": "Flashes of its glowing colours per second (fireflies); 0 glows steady.\nEach one keeps its own rhythm and is dark between flashes.",
@@ -204,6 +209,14 @@
           "format": "float",
           "type": "number"
         },
+        "large": {
+          "default": null,
+          "description": "Walkers: a large animal, seen from twice as far off as the rest --\nfound, kept and walked out to about 260 m rather than 130, so a herd\ncan be watched from a ridge (creatures/mod.rs `Species::large`). Left\nout, anything 2.5 m tall or more is large.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "leap": {
           "default": 0.0,
           "description": "How often it leaps clear of the water: for `school`, leaps per fish\nper minute; for `breach`, the chance that a dive ends in a breach.",
@@ -262,6 +275,12 @@
         "spawn_chance": {
           "default": 1.0,
           "description": "Chance, each half-second check while its biome wants one, that a\nmissing one turns up. Below 1 makes a creature rare (whales).",
+          "format": "float",
+          "type": "number"
+        },
+        "swim_pitch": {
+          "default": 0.0,
+          "description": "Radians the body is tipped nose-down while swimming (an `in_water`\nblock): an animal modelled sitting up on the beach (a walrus propped\non its foreflippers) lies level in the water. 0: as modelled.",
           "format": "float",
           "type": "number"
         },
@@ -394,6 +413,20 @@
           "description": "\"l\" or \"r\".",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "spread": {
+          "default": null,
+          "description": "The bone's angles in flight, (pitch, yaw, roll) radians in its\nparent's frame, for a flier whose rest pose is standing on the ground\n(pterosaurs: forelimbs as legs, the wing finger folded up the arm).\nFlight opens toward these and beats on top of them (flight.rs).",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": [
+            "array",
             "null"
           ]
         }
@@ -1222,6 +1255,11 @@
             }
           ],
           "default": null
+        },
+        "slope": {
+          "default": false,
+          "description": "Mesh the parts with sloped corners and stretch them where they meet\ntheir parents, instead of square voxel faces (slope.rs).",
+          "type": "boolean"
         }
       },
       "required": [
@@ -1326,6 +1364,21 @@
       },
       "type": "array"
     },
+    "grid": {
+      "default": [
+        32,
+        32,
+        32
+      ],
+      "description": "The model grid's size in voxels along x, y and z: 32 to 96 each. A\ngrid bigger than 32^3 is for the big animals (a sauropod, a\ntyrannosaur) and needs a rig, since each part is meshed in a 32^3\nwindow of its own (anim/slice.rs); `--validate` says which part is too\nbig for one.",
+      "items": {
+        "format": "int32",
+        "type": "integer"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+    },
     "half_w": {
       "format": "float",
       "type": "number"
@@ -1405,7 +1458,7 @@
       "type": "integer"
     },
     "voxel": {
-      "description": "Model voxel edge, metres (the model grid is 32 voxels on a side).",
+      "description": "Model voxel edge, metres (the model grid is `grid` voxels, 32 on a\nside unless it says otherwise).",
       "format": "float",
       "type": "number"
     }

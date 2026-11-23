@@ -35,7 +35,9 @@
     {"creature": "crow", "count": 4},
     {"creature": "starling", "count": 10},
     {"creature": "sparrow", "count": 6},
-    {"creature": "lizard", "count": 4}
+    {"creature": "lizard", "count": 4.4},
+    {"creature": "bat", "count": 3.3},
+    {"creature": "badger", "count": 1.1}
   ],
   "collectibles": [
     {"item": "flint_blade", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}},

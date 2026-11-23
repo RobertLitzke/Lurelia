@@ -1,0 +1,39 @@
+{
+  "name": "boulder_fall",
+  "version": 1,
+  "introduced_by": "vermilion",
+  "notes": "The broken slope under a mesa's cliffs where its caprock has fallen: red sand thick with sandstone boulders, juniper and sagebrush between them.",
+  "priority": 7,
+  "rules": {"region": "boulders"},
+  "surface": "red_sand",
+  "subsurface": "red_sand",
+  "map_color": [176, 96, 70],
+  "plants": [
+    {"plant": "juniper", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "dead_juniper", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "sagebrush",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 24, "min": 0.35, "max": 0.6}}
+    },
+    {"plant": "yucca", "density": 0.002, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "rock_lichen", "density": 0.1},
+    {
+      "plant": "pinyon",
+      "density": 0.003,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.35, "max": 0.6}}
+    }
+  ],
+  "features": [
+    {"structure": "red_boulder", "density": 0.0025, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "boulder", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "lizard", "count": 6.6},
+    {"creature": "bighorn", "count": 3.3},
+    {"creature": "rattlesnake", "count": 2.2},
+    {"creature": "raven", "count": 2},
+    {"creature": "canyon_bat", "count": 3.3}
+  ],
+  "sound": {"ground": "stone"}
+}

@@ -806,7 +806,8 @@ const NORMALS: [[isize; 3]; 6] = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], 
 /// same height in metres) under water standing at `surface` metres at high
 /// water: a few strands, each its stipe in segments, its blades and, for bull
 /// kelp, its float (kind STRAND). A strand is as long as its share of the
-/// water plus a canopy of about two crowns, which lies on the surface at high
+/// water plus a canopy (about a crown for giant kelp, a hand or two for bull
+/// kelp, whose blades do the trailing), which lies on the surface at high
 /// water and gets longer there as the tide goes out.
 fn kelp(k: &crate::world::matlib::Kelp, p: [f32; 3], bed: f32, surface: f32, scale: f32, rnd: &mut impl FnMut() -> f32, out: &mut Vec<Quad>) {
     let depth = surface - bed;
@@ -817,7 +818,10 @@ fn kelp(k: &crate::world::matlib::Kelp, p: [f32; 3], bed: f32, surface: f32, sca
     let word = |layer: u32, part: u32, index: u32, blade: f32| layer | part << 8 | (index & 255) << 10 | ((blade * 4.0).round().clamp(0.0, 63.0) as u32) << 18;
     for _ in 0..n {
         let share = k.reach[0] + (k.reach[1] - k.reach[0]) * rnd();
-        let len = depth * share + k.size * (1.5 + 1.5 * rnd());
+        // Bull kelp ends at its float with its blades streaming on from
+        // there; a long stipe lying along the water read as a rope.
+        let canopy = if k.float != 0 { 0.15 + 0.3 * rnd() } else { 0.7 + 0.7 * rnd() };
+        let len = depth * share + k.size * canopy;
         // As stored, so the shader cuts the stipe at the same joints.
         let len = (len * 8.0).round().clamp(8.0, 255.0) / 8.0;
         let heading = (rnd() * 256.0) as u32;
@@ -836,7 +840,7 @@ fn kelp(k: &crate::world::matlib::Kelp, p: [f32; 3], bed: f32, surface: f32, sca
             for _ in 0..blades {
                 let bl = k.size * (1.6 + 1.4 * rnd());
                 let sd = (rnd() * 255.0) as u32;
-                out.push(pack_ext(root, k.blade, STRAND, heading, (0.3 + 0.16 * rnd()) / scale, len, sd, word(layer::KELP_BLADE, BLADE, 255, bl)));
+                out.push(pack_ext(root, k.blade, STRAND, heading, (0.18 + 0.08 * rnd()) / scale, len, sd, word(layer::KELP_BLADE, BLADE, 255, bl)));
             }
         } else {
             // Giant kelp: a blade about every metre up the stipe and on
@@ -846,7 +850,7 @@ fn kelp(k: &crate::world::matlib::Kelp, p: [f32; 3], bed: f32, surface: f32, sca
                 let t = (0.12 + 0.88 * (j as f32 + rnd() * 0.6) / blades as f32).min(1.0);
                 let bl = k.size * (0.6 + 0.4 * rnd());
                 let sd = (rnd() * 255.0) as u32;
-                out.push(pack_ext(root, k.blade, STRAND, heading, (0.28 + 0.12 * rnd()) / scale, len, sd, word(layer::KELP_BLADE, BLADE, (t * 255.0) as u32, bl)));
+                out.push(pack_ext(root, k.blade, STRAND, heading, (0.2 + 0.08 * rnd()) / scale, len, sd, word(layer::KELP_BLADE, BLADE, (t * 255.0) as u32, bl)));
             }
         }
     }

@@ -65,35 +65,52 @@
     },
     {"plant": "hawthorn", "density": 0.004, "placement": {"verb": "scatter"}},
     {"plant": "shelf_fungus", "density": 0.18},
-    {"plant": "tree_moss", "density": 0.55}
+    {"plant": "tree_moss", "density": 0.55},
+    {
+      "plant": "holly",
+      "density": 0.002,
+      "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.3, "max": 1.0}}
+    },
+    {
+      "plant": "bluebell",
+      "density": 0.05,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.3, "max": 1.0}}
+    },
+    {
+      "plant": "foxglove",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.5, "max": 1.0}}
+    },
+    {"plant": "bracken", "density": 0.05, "placement": {"verb": "edge", "params": {"width": 18}}}
   ],
   "features": [
     {"structure": "mossy_log", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}},
     {"structure": "fallen_trunk", "density": 0.00015, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "deer", "count": 8},
-    {"creature": "mossback_deer", "count": 7},
-    {"creature": "fae_horse", "count": 3},
-    {"creature": "moss_bear", "count": 1},
-    {"creature": "moss_tortoise", "count": 3},
-    {"creature": "boar", "count": 4},
-    {"creature": "fox", "count": 3},
-    {"creature": "sky_ray", "count": 7},
-    {"creature": "glassmoth", "morph": "lantern", "count": 50},
-    {"creature": "firefly", "count": 90},
+    {"creature": "deer", "count": 8.8},
+    {"creature": "mossback_deer", "count": 7.7},
+    {"creature": "fae_horse", "count": 3.3},
+    {"creature": "moss_bear", "count": 1.1},
+    {"creature": "moss_tortoise", "count": 3.3},
+    {"creature": "boar", "count": 4.4},
+    {"creature": "fox", "count": 3.3},
+    {"creature": "sky_ray", "count": 7.7},
+    {"creature": "glassmoth", "morph": "lantern", "count": 55},
+    {"creature": "firefly", "count": 99},
     {"creature": "dusk_wren", "count": 14},
     {"creature": "woodpecker", "count": 2},
-    {"creature": "glow_bee", "count": 8},
+    {"creature": "glow_bee", "count": 8.8},
     {"creature": "tawny_owl", "count": 2},
-    {"creature": "great_horned_owl", "count": 1},
-    {"creature": "badger", "count": 1},
-    {"creature": "fae_badger", "count": 1},
-    {"creature": "red_squirrel", "count": 4},
-    {"creature": "toad", "count": 3},
-    {"creature": "fae_toad", "count": 2},
-    {"creature": "bat", "count": 4},
-    {"creature": "fae_elephant", "count": 1}
+    {"creature": "great_horned_owl", "count": 2},
+    {"creature": "badger", "count": 2.2},
+    {"creature": "fae_badger", "count": 2.2},
+    {"creature": "red_squirrel", "count": 4.4},
+    {"creature": "toad", "count": 3.3},
+    {"creature": "fae_toad", "count": 2.2},
+    {"creature": "bat", "count": 4.4},
+    {"creature": "fae_elephant", "count": 1.1},
+    {"creature": "unicorn", "count": 1.1}
   ],
   "collectibles": [{"item": "mushroom", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}]
 }

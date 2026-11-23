@@ -1,0 +1,15 @@
+{
+  "name": "roof_tile_brown",
+  "version": 1,
+  "introduced_by": "townlab",
+  "notes": "Clay roof tiles weathered brown, with lichen in them. For telling one terraced house's roof from the next. Smoothed, so a roof at an angle to the grid is a slope rather than a staircase.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [128, 84, 60],
+    "alt": [112, 72, 52],
+    "scale": 5,
+    "contrast": 0.6,
+    "calm": {"base": [140, 94, 68], "alt": [124, 82, 60]}
+  }
+}

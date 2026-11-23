@@ -101,6 +101,16 @@ pub struct PlantDef {
     /// on dense forests: each stick costs about 15-20 quads a metre.
     #[serde(default)]
     pub thin_limbs: Option<f32>,
+    /// Keep the sticks (`thin_limbs`) smooth tubes while the tree is in
+    /// leaf, not only once it is bare: a planted tree whose clean limbs
+    /// show under the crown (street oaks and maples).
+    #[serde(default)]
+    pub tube_limbs: bool,
+    /// How much of its radius the trunk loses from its foot to where the
+    /// limbs leave, 0 to 0.85 (default `flora::TRUNK_TAPER`, 0.3). More
+    /// for a trunk that narrows clearly into its limbs.
+    #[serde(default)]
+    pub trunk_taper: Option<f32>,
     /// Form "branching": the trunk's clear length up to the first limbs, as
     /// a share of the height (0.15 to 0.85). Unset, it is 0.46 less 0.12 x
     /// `spread`. High for a tree whose crown sits on top of a tall bare
@@ -158,6 +168,17 @@ pub struct PlantDef {
     /// one every metre and a quarter of crown, which is a few years' growth.
     #[serde(default)]
     pub whorls: Option<[f32; 2]>,
+    /// Conifer forms: 0 to 1. Above 0 the crown is a stack of rounded pucks
+    /// of needles centred on the trunk instead of a cone, one per `whorls`,
+    /// small at the foot, widest about two fifths up and small again at the
+    /// top, with this share of each puck's slot left as a gap where the trunk
+    /// shows (an old ponderosa, about 0.25). Default 0, a closed cone.
+    #[serde(default)]
+    pub open: Option<f32>,
+    /// Conifer forms: how much `crown_base` varies from tree to tree, as a
+    /// share of the height either side of it (default 0).
+    #[serde(default)]
+    pub crown_base_vary: Option<f32>,
     /// Form "vine": what it hangs from, "tree" (crowns of broadleaf trees,
     /// and swags between them), "cliff" (the lip of a drop) and/or "wall"
     /// (the outer walls of placed structures). Empty means all three.

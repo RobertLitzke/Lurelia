@@ -1,0 +1,13 @@
+{
+  "name": "race_tunnel",
+  "version": 1,
+  "introduced_by": "vermilion",
+  "notes": "A piece of a race track's tunnel: the hollow bored over the road, the road on its floor and a metre of lining round it (track.json `tunnels`). Its voxels are built by `chronicle/race_track.rs`; this entry only names the placement. `base: rim` keeps it where the track put it.",
+  "size": [1, 1, 1],
+  "anchor": [0, 0, 0],
+  "level": false,
+  "decays": false,
+  "base": "rim",
+  "tags": ["landmark", "bore"],
+  "ops": []
+}

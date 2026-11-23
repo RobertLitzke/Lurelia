@@ -11,9 +11,9 @@
   "fringe": 0,
   "map_color": [20, 40, 120],
   "creatures": [
-    {"creature": "grouper", "count": 4},
-    {"creature": "moon_jelly", "count": 14},
-    {"creature": "reef_shark", "count": 2},
-    {"creature": "whale_shark", "count": 1}
+    {"creature": "grouper", "count": 4.4},
+    {"creature": "moon_jelly", "count": 15.4},
+    {"creature": "reef_shark", "count": 2.2},
+    {"creature": "whale_shark", "count": 1.1}
   ]
 }

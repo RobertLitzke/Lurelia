@@ -1,0 +1,14 @@
+{
+  "name": "tree_fern",
+  "version": 2,
+  "introduced_by": "hemlow",
+  "notes": "Tree fern: a slender fibrous brown trunk from two to six metres high, some short, some tall, under a spreading crown of long arching fronds.",
+  "form": "umbrella",
+  "height": [2, 6],
+  "trunk_radius": [0.15, 0.22],
+  "crown_radius": [1.4, 2.1],
+  "bark": "tree_fern_trunk",
+  "leaf": "tree_fern_frond",
+  "squash": 0.4,
+  "max_slope": 0.8
+}

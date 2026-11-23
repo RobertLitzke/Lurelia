@@ -28,7 +28,7 @@ pub const PLANK_REACH: f32 = 1.8;
 pub fn trunk_reach(t: &Tree, hy: f32, stem_min: f32) -> f32 {
     let plank = t.flare >= PLANK_FLARE;
     let flare_h = if plank { t.flare * 2.2 } else { (t.flare * 4.0).max(1.0) };
-    let taper = 1.0 - 0.3 * (hy / t.trunk_h).max(0.0);
+    let taper = 1.0 - t.taper * (hy / t.trunk_h).max(0.0);
     let mut flare = 0.14 * (1.0 - hy / 0.5).max(0.0);
     if plank {
         let k = (1.0 - hy / flare_h).max(0.0);
@@ -263,7 +263,7 @@ fn woody(t: &Tree, v: &mut [u8; PAD3], o: Vec3, vsize: f32, leaf_seed: u32) -> b
             let rc = ((m.x - c.x).powi(2) + (m.z - c.z).powi(2)).sqrt();
             let hh = (((b.x - a.x) * 0.5).powi(2) + ((b.z - a.z) * 0.5).powi(2)).sqrt();
             let (hy_lo, hy_hi) = (a.y - c.y, b.y - c.y);
-            let inner = t.trunk_r * (1.0 - 0.3 * (hy_hi / t.trunk_h).max(0.0));
+            let inner = t.trunk_r * (1.0 - t.taper * (hy_hi / t.trunk_h).max(0.0));
             if rc + hh < inner {
                 return Some(t.bark);
             }
@@ -277,7 +277,7 @@ fn woody(t: &Tree, v: &mut [u8; PAD3], o: Vec3, vsize: f32, leaf_seed: u32) -> b
         if raster_b(c + Vec3::new(-rmax, -0.8, -rmax), c + Vec3::new(rmax, trunk_top, rmax), v, &trunk_class, &|p: Vec3| {
             let hy = p.y - c.y;
             let (dx, dz) = (p.x - c.x, p.z - c.z);
-            let taper = 1.0 - 0.3 * (hy / t.trunk_h).max(0.0);
+            let taper = 1.0 - t.taper * (hy / t.trunk_h).max(0.0);
             let mut flare = 0.14 * (1.0 - hy / 0.5).max(0.0);
             if plank {
                 let core = t.trunk_r * taper;

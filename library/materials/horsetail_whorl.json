@@ -1,0 +1,16 @@
+{
+  "name": "horsetail_whorl",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Horsetail whorls: rings of thin bright green branchlets round each joint.",
+  "smooth": false,
+  "sprites": "needles",
+  "texture": {
+    "pattern": "blotch",
+    "base": [56, 80, 50],
+    "alt": [68, 90, 56],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [60, 84, 54], "alt": [72, 94, 60]}
+  }
+}

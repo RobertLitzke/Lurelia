@@ -23,5 +23,9 @@
     {"plant": "restio", "density": 0.05, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "heather", "density": 0.04, "placement": {"verb": "scatter", "params": {}}}
   ],
-  "creatures": [{"creature": "rock_hyrax", "count": 6}, {"creature": "desert_toad", "count": 2}, {"creature": "bee", "count": 6}]
+  "creatures": [
+    {"creature": "rock_hyrax", "count": 6.6},
+    {"creature": "desert_toad", "count": 2.2},
+    {"creature": "bee", "count": 6.6}
+  ]
 }

@@ -1,0 +1,16 @@
+{
+  "name": "bracken",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Bracken (drawn as sprites): waist-high fronds, fresh green going gold-brown at the tips.",
+  "smooth": false,
+  "sprites": "fern",
+  "texture": {
+    "pattern": "blotch",
+    "base": [96, 128, 50],
+    "alt": [150, 136, 62],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [103, 137, 56], "alt": [160, 145, 68]}
+  }
+}

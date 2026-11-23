@@ -1,0 +1,16 @@
+{
+  "name": "tree_fern_trunk",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A tree fern's trunk: a column of matted dark brown root fibre and old frond bases.",
+  "smooth": false,
+  "sprites": "none",
+  "texture": {
+    "pattern": "rings",
+    "base": [70, 52, 38],
+    "alt": [52, 38, 28],
+    "scale": 5,
+    "contrast": 0.7,
+    "calm": {"base": [76, 58, 43], "alt": [58, 43, 33]}
+  }
+}

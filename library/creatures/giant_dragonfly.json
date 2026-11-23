@@ -1,0 +1,15 @@
+{
+  "name": "giant_dragonfly",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Giant dragonfly of the Grimwold: bronze-green, with a wingspan like a gull's, hunting along the Wend.",
+  "colors": {
+    "body": [92, 120, 52],
+    "thorax": [120, 100, 46],
+    "eye": [60, 90, 40],
+    "wing": [214, 222, 206],
+    "dark": [40, 46, 30]
+  },
+  "like": "dragonfly",
+  "scale": 3.2
+}

@@ -26,11 +26,11 @@
   ],
   "creatures": [
     {"creature": "ptarmigan", "count": 3},
-    {"creature": "arctic_fox", "count": 3},
-    {"creature": "pale_hare", "count": 4},
+    {"creature": "arctic_fox", "count": 3.3},
+    {"creature": "pale_hare", "count": 4.4},
     {"creature": "raven", "count": 2},
-    {"creature": "elk", "count": 1},
-    {"creature": "wolf", "count": 1}
+    {"creature": "elk", "count": 1.1},
+    {"creature": "wolf", "count": 1.1}
   ],
   "collectibles": [],
   "sound": {"wind": 1.35, "notes": "Bare upland: exposed, and the wind says so."}

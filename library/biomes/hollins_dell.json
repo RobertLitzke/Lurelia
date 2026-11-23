@@ -43,25 +43,26 @@
     {"plant": "hanging_vine", "density": 0.3, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "snag", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "shelf_fungus", "density": 0.4},
-    {"plant": "tree_moss", "density": 0.95}
+    {"plant": "tree_moss", "density": 0.95},
+    {"plant": "elder", "density": 0.0003, "placement": {"verb": "scatter", "params": {}}}
   ],
   "features": [
     {"structure": "mossy_log", "density": 0.0014, "placement": {"verb": "scatter", "params": {}}},
     {"structure": "fallen_trunk", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "frog", "count": 10},
-    {"creature": "toad", "count": 4},
-    {"creature": "fae_toad", "count": 4},
-    {"creature": "dragonfly", "count": 8},
-    {"creature": "glass_dragonfly", "count": 8},
+    {"creature": "frog", "count": 11},
+    {"creature": "toad", "count": 4.4},
+    {"creature": "fae_toad", "count": 4.4},
+    {"creature": "dragonfly", "count": 8.8},
+    {"creature": "glass_dragonfly", "count": 8.8},
     {"creature": "marsh_light", "morph": "wisp", "count": 7},
-    {"creature": "firefly", "count": 110},
-    {"creature": "glassmoth", "morph": "lantern", "count": 24},
+    {"creature": "firefly", "count": 121},
+    {"creature": "glassmoth", "morph": "lantern", "count": 26.4},
     {"creature": "kingfisher", "count": 2},
     {"creature": "heron", "count": 1},
-    {"creature": "mossback_deer", "count": 3},
-    {"creature": "otter", "count": 1}
+    {"creature": "mossback_deer", "count": 3.3},
+    {"creature": "otter", "count": 1.1}
   ],
   "collectibles": [{"item": "hag_stone", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}],
   "mist": 0.28

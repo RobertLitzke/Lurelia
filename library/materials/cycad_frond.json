@@ -1,0 +1,16 @@
+{
+  "name": "cycad_frond",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Cycad fronds: stiff, glossy, very dark green feathers in a low crown.",
+  "smooth": false,
+  "sprites": "palmetto",
+  "texture": {
+    "pattern": "grain",
+    "base": [30, 48, 36],
+    "alt": [40, 58, 42],
+    "scale": 6,
+    "contrast": 0.8,
+    "calm": {"base": [34, 52, 40], "alt": [44, 62, 46]}
+  }
+}

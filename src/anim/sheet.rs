@@ -69,7 +69,7 @@ pub fn spawn(ents: &mut Entities, models: &[Model], what: &str, eye: Vec3, yaw: 
             [cells(model, a), cells(model, b)]
         }
         "moves" => {
-            let [a, b] = moves(need_rig()?, m.voxel, sp.verb(), &sp.beh);
+            let [a, b] = moves(need_rig()?, m.voxel, m.pivot, sp.verb(), &sp.beh);
             [cells(model, a), cells(model, b)]
         }
         "family" => family(ents, models, si),
@@ -91,7 +91,7 @@ pub fn spawn(ents: &mut Entities, models: &[Model], what: &str, eye: Vec3, yaw: 
     let fwd = Vec3::new(-yaw.sin(), 0.0, -yaw.cos());
     let right = Vec3::new(yaw.cos(), 0.0, -yaw.sin());
     // Birds three-quarters on, so both wings show.
-    let face = yaw + std::f32::consts::FRAC_PI_2 + if m.rig.as_ref().is_some_and(|r| r.plan == Some(Plan::Bird)) { 0.7 } else { 0.0 };
+    let face = yaw + std::f32::consts::FRAC_PI_2 + if m.rig.as_ref().is_some_and(|r| r.plan == Some(Plan::Bird) || r.spreads()) { 0.7 } else { 0.0 };
     let mut lines = vec![format!("{name} ({mode}), columns left to right:")];
     for (r, row) in rows.iter().enumerate() {
         lines.push(format!(
@@ -292,17 +292,19 @@ fn bones(rig: &Rig) -> [Vec<(String, Pose)>; 2] {
     [row(Vec3::X), row(Vec3::Y)]
 }
 
-fn moves(rig: &Rig, voxel: f32, verb: &Verb, beh: &crate::library::Behaviour) -> [Vec<(String, Pose)>; 2] {
+/// `pivot` is the whole model's (`Model::pivot`), in model voxels.
+fn moves(rig: &Rig, voxel: f32, pivot: Vec3, verb: &Verb, beh: &crate::library::Behaviour) -> [Vec<(String, Pose)>; 2] {
     if rig.plan == Some(Plan::Ray) {
         return ray_moves(rig);
     }
     if rig.plan == Some(Plan::Serpent) || verb.slithers() {
-        return serpent_moves(rig, voxel);
+        return serpent_moves(rig, voxel, pivot);
     }
     if rig.plan == Some(Plan::Octopus) {
-        return crate::creatures::octopus::sheet(rig, voxel, Vec3::new(16.0, 0.0, 16.0));
+        return crate::creatures::octopus::sheet(rig, voxel, pivot);
     }
-    if rig.plan == Some(Plan::Bird) && verb.flies() {
+    let winged = rig.plan == Some(Plan::Bird) || rig.spreads();
+    if winged && verb.flies() {
         return bird_moves(rig, voxel, verb, beh);
     }
     let base = Life::new(rig.table(verb.routine), 7);
@@ -360,12 +362,17 @@ fn moves(rig: &Rig, voxel: f32, verb: &Verb, beh: &crate::library::Behaviour) ->
     ));
     upper.push(("alarm".to_string(), with(&|l| l.alarm = 1.0)));
     upper.push(("uphill".to_string(), with(&|l| l.tilt = 0.3)));
+    if beh.back_float {
+        let mut p = with(&|_| {});
+        crate::creatures::swim::back_pose(rig, &mut p, 1.0, 0.0);
+        upper.push(("on its back".to_string(), p));
+    }
     if verb.hides() {
         upper.push(("hiding".to_string(), with(&|l| l.hide = 0.5)));
         upper.push(("in its shell".to_string(), with(&|l| l.hide = 1.0)));
     }
-    if rig.plan == Some(Plan::Bird) {
-        // A bird that walks (a heron): its flight replaces the postures.
+    if winged {
+        // A bird that walks (a heron, a pterosaur): its flight replaces the postures.
         let [beats, _] = bird_moves(rig, voxel, verb, beh);
         lower.truncate(8);
         return [lower, beats];
@@ -378,11 +385,10 @@ fn moves(rig: &Rig, voxel: f32, verb: &Verb, beh: &crate::library::Behaviour) ->
 /// up and buzzing, up a trunk, and draped along a branch with its head
 /// hanging off it. Every one is a path the mover could put it on
 /// (`anim/spine.rs`), posed through the same code as the game.
-fn serpent_moves(rig: &Rig, voxel: f32) -> [Vec<(String, Pose)>; 2] {
+fn serpent_moves(rig: &Rig, voxel: f32, pivot: Vec3) -> [Vec<(String, Pose)>; 2] {
     use crate::anim::spine::{self, Wave};
     let ch = spine::chain(rig);
     let len = ch.length(voxel);
-    let pivot = Vec3::new(16.0, 0.0, 16.0);
     // The paths are built about the origin; the sheet draws them wherever the
     // column is, which is what the mover does with the creature's position.
     let along = |pts: &[Vec3]| spine::pose_along(rig, &ch, voxel, pivot, Vec3::ZERO, 0.0, pts);

@@ -13,9 +13,19 @@
     {"plant": "live_oak", "density": 0.0015, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "small_fig", "density": 0.001, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "saw_palmetto", "density": 0.04, "placement": {"verb": "scatter", "params": {}}},
-    {"plant": "spanish_moss", "density": 0.6, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "spanish_moss", "density": 0.6, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "switchcane",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.5, "max": 0.7}}
+    }
   ],
   "features": [{"structure": "bottle_tree", "density": 8e-05, "placement": {"verb": "lone", "params": {"spacing": 120}}}],
-  "creatures": [{"creature": "deer", "count": 4}, {"creature": "boar", "count": 2}, {"creature": "firefly", "count": 40}],
+  "creatures": [
+    {"creature": "deer", "count": 4.4},
+    {"creature": "boar", "count": 2.2},
+    {"creature": "firefly", "count": 44},
+    {"creature": "raccoon", "count": 3.3}
+  ],
   "collectibles": [{"item": "purple_bottle", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}]
 }

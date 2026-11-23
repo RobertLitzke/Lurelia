@@ -1,0 +1,20 @@
+{
+  "name": "yew",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Yew: a squat, very dark evergreen with a fluted red-brown trunk and a dense rounded crown of flat needles. An ancient family, and the one tree the Grimwold shares with the Hollins; it grows thickest along the top of Raven Scar.",
+  "form": "branching",
+  "height": [8, 13],
+  "trunk_radius": [0.45, 0.7],
+  "buttress": 0.4,
+  "crown_radius": [2.6, 3.4],
+  "bark": "redwood_bark",
+  "leaf": "podocarp_needles",
+  "curve": "arch",
+  "canopy": "cloud",
+  "leader": 0.2,
+  "fill": 0.85,
+  "spread": 0.6,
+  "max_slope": 0.9,
+  "thin_limbs": 0.14
+}

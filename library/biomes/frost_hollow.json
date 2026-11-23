@@ -26,9 +26,9 @@
   "creatures": [
     {"creature": "marsh_light", "morph": "corpse", "count": 5},
     {"creature": "crow", "count": 3},
-    {"creature": "wind_skate", "count": 2},
+    {"creature": "wind_skate", "count": 2.2},
     {"creature": "sparrow", "count": 3},
-    {"creature": "marmot", "count": 2}
+    {"creature": "marmot", "count": 2.2}
   ],
   "collectibles": [{"item": "flint_blade", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}}],
   "sound": {"wind": 0.6},

@@ -1,6 +1,6 @@
 {
   "name": "eye_rim",
-  "version": 1,
+  "version": 2,
   "introduced_by": "saltmirror",
   "notes": "Round the Turquoise and its eyes: wet salt banded orange, olive and white with the mats that live in the brine, glasswort in red patches, avocet-thin waders and the flamingos that come over from the Brine.",
   "priority": 12,
@@ -16,6 +16,6 @@
       "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.2, "max": 1.0}}
     }
   ],
-  "creatures": [{"creature": "flamingo", "count": 30}, {"creature": "heron", "count": 1}, {"creature": "snowy_plover", "count": 4}],
+  "creatures": [{"creature": "flamingo", "count": 30}, {"creature": "heron", "count": 1}, {"creature": "snowy_plover", "count": 8}],
   "water": {"shallow": [96, 206, 200], "deep": [18, 118, 140]}
 }

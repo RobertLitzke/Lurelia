@@ -65,6 +65,11 @@ pub fn classify(f: &mut Fields, lib: &Library, default: usize, seabed: Option<us
 #[allow(clippy::too_many_arguments)]
 fn one(f: &Fields, lib: &Library, default: usize, seabed: Option<usize>, allowed: &[bool], regions: &[Option<u8>], j: usize, i: usize) -> u8 {
     let within = |r: &Option<[f32; 2]>, v: f32| r.is_none_or(|[a, b]| v >= a && v <= b);
+    if let Some(&b) = f.biome_pin.get(&(i as u32)) {
+        if allowed.get(b as usize).copied().unwrap_or(false) {
+            return b;
+        }
+    }
     {
         let elev = f.h[j] - f.sea;
         let under = f.h[i] < f.sea;
@@ -97,7 +102,7 @@ fn one(f: &Fields, lib: &Library, default: usize, seabed: Option<usize>, allowed
                 }
             }
             if let Some(rid) = regions[bi] {
-                if f.region[j] != rid {
+                if f.region[if r.crisp { i } else { j }] != rid {
                     continue;
                 }
             }

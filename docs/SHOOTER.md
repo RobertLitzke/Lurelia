@@ -10,8 +10,8 @@ open-world sniper game, so the split below keeps the rules out of the weapons.
 | Layer | What it knows | Where |
 |---|---|---|
 | Weapons | one gun: its fire modes, damage, ammo, how it looks and sounds | `library/weapons/*.json`, `src/combat/weapon.rs` |
-| Combat | firing a shot and what it hits: rays, flying shells, splash, push, damage to the player and to creatures | `src/combat.rs`, `src/combat/shot.rs`, `src/combat/fx.rs` |
-| Rules | health, armour, respawn, score, the loadout a world hands out, the HUD | `src/shooter.rs` (a `modes::Activity`), `"shooter"` in `world.json` |
+| Combat | firing a shot and what it hits: rays, flying shells, splash, push, damage to the player and to creatures | `src/combat.rs`, `src/combat/shot.rs` |
+| Rules | health, armour, respawn, score, the loadout a world hands out, the HUD | `src/shooter/` (a `modes::Activity`), `"shooter"` in `world.json` |
 
 Combat never reads the rules, and the rules never reach inside a weapon. A
 sniper game writes a different `Rules` (one life, no respawn, long sight

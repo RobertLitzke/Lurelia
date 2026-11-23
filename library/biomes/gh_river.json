@@ -13,7 +13,12 @@
     {"plant": "alder", "density": 0.012, "placement": {"verb": "riparian", "params": {"width": 12}}},
     {"plant": "bigleaf_maple", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 18}}},
     {"plant": "red_osier", "density": 0.006, "placement": {"verb": "riparian", "params": {"width": 8}}},
-    {"plant": "tree_moss", "density": 0.4, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "tree_moss", "density": 0.4, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "sapling_maple",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 22, "min": 0.45, "max": 0.62}}
+    }
   ],
   "features": [
     {"structure": "boulder", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}},
@@ -21,12 +26,16 @@
     {"structure": "mossy_log", "density": 0.0005, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "otter", "count": 2},
-    {"creature": "salmon", "morph": "run", "count": 8},
-    {"creature": "trout", "count": 10},
+    {"creature": "otter", "count": 2.2},
+    {"creature": "salmon", "morph": "run", "count": 8.8},
+    {"creature": "trout", "count": 11},
     {"creature": "heron", "count": 1},
     {"creature": "kingfisher", "count": 2},
-    {"creature": "dragonfly", "count": 8}
+    {"creature": "dragonfly", "count": 8.8},
+    {"creature": "raccoon", "count": 3.3},
+    {"creature": "bat", "count": 4.4},
+    {"creature": "toad", "count": 2.2},
+    {"creature": "frog", "count": 4.4}
   ],
   "collectibles": []
 }

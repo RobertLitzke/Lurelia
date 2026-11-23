@@ -160,8 +160,7 @@ impl Player {
             }
         }
         let right = Vec3::new(cy, 0.0, -sy);
-        let f = input.forward as i32 as f32 - input.back as i32 as f32;
-        let r = input.right as i32 as f32 - input.left as i32 as f32;
+        let (f, r) = (input.ahead(), input.side());
         let u = input.jump as i32 as f32 - input.down as i32 as f32;
         let mut wish = (look * f + right * r + Vec3::Y * u).normalize_or_zero();
         let mut speed = CRUISE;

@@ -116,16 +116,18 @@ pub fn creature(def: &CreatureDef, lib: &Library, model_base: usize, block: u32,
         }
         paint.slot.get(n).copied()
     };
-    let s = crate::world::shape::compile(&def.ops, [32, 32, 32], &resolve);
+    let dims = crate::anim::slice::Dims(def.grid);
+    let s = crate::world::shape::compile(&def.ops, def.grid, &resolve);
     if s.solid == 0 {
         return Err(format!("{}: the ops fill nothing", def.name));
     }
-    let mut model = models::from_cells(&s.mat, def.voxel, def.half_w, def.height);
+    let mut model = models::from_grid(&s.mat, dims, def.voxel, def.half_w, def.height);
     let mut parts: Vec<Model> = Vec::new();
     let stages = crate::creatures::age::Stages::resolve(&def.ages, def.height);
     let mut has_bones = false;
     if let Some(rig_def) = def.rig.as_ref() {
-        let sliced = crate::anim::slice::slice(rig_def, &def.ops, &s.mat, &|n| resolve(n).is_some(), def.voxel, def.half_w, def.height);
+        let sliced = crate::anim::slice::slice(rig_def, &def.ops, &s.mat, dims, &|n| resolve(n).is_some(), def.voxel, def.half_w, def.height);
+        problems.extend(sliced.oversize.iter().map(|b| crate::anim::slice::oversize_problem(&def.name, b)));
         let base = sliced.rig.clone();
         let skeleton = stages
             .bones

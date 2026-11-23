@@ -33,4 +33,5 @@ pub mod store;
 pub mod surf;
 pub mod surface;
 pub mod tide;
+pub mod town;
 pub mod weather;

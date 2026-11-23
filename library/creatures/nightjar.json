@@ -1,0 +1,27 @@
+{
+  "name": "nightjar",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Nightjar: a bark-mottled bird with a wide gape that sits unseen on the ground by day and hawks moths low over heath, down and dune at dusk.",
+  "colors": {
+    "body": [120, 100, 78],
+    "head": [104, 86, 66],
+    "beak": [60, 48, 38],
+    "wing": [92, 76, 58],
+    "tail": [110, 92, 70],
+    "legs": [90, 72, 56]
+  },
+  "behaviour": {
+    "movement": "circle",
+    "fly_height": 2.5,
+    "walk_speed": 3.0,
+    "flee_speed": 7.0,
+    "wary": 6.0,
+    "flightiness": 0.8,
+    "active": "nocturnal",
+    "off_hours": 0.03
+  },
+  "like": "starling",
+  "scale": 1.4,
+  "vary": {"shade": 0.06}
+}

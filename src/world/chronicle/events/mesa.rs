@@ -167,6 +167,10 @@ impl Mesa {
             if want > f.h[i] {
                 f.h[i] = want;
                 f.cause[i] = cause;
+                // Rock raised out of a lake's basin is dry ground (an island).
+                if f.water[i] == 1 {
+                    f.water[i] = 0;
+                }
                 cells += 1;
                 if grade != 0.0 {
                     f.lift_mut()[i] += tilt;

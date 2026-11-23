@@ -315,6 +315,12 @@ impl Library {
                     out.push(format!("city kit {}: no material or plant called {n}", k.name));
                 }
             }
+            // The walls, fences and hedges of its towns are route kits.
+            for n in k.town.route_kits() {
+                if !self.kits.iter().any(|r| &r.name == n) {
+                    out.push(format!("city kit {}: no route kit called {n}", k.name));
+                }
+            }
         }
         // Route kits.
         for k in &self.kits {
@@ -329,6 +335,9 @@ impl Library {
             }
             for r in &k.rails {
                 mat(&r.mat, &format!("kit {} rail", k.name), &mut out);
+                if let Some(m) = &r.mat2 {
+                    mat(m, &format!("kit {} rail", k.name), &mut out);
+                }
                 if r.to <= r.from {
                     out.push(format!("kit {}: a rail from {} to {} holds no voxels", k.name, r.from, r.to));
                 }

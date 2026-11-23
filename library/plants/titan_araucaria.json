@@ -1,0 +1,14 @@
+{
+  "name": "titan_araucaria",
+  "version": 2,
+  "introduced_by": "saurischia",
+  "notes": "The oldest monkey-puzzles in the Titan Stand: 38-46 m, far thicker in the trunk than the Grimwold's, with a heavy root flare, bare for most of its height under a broad, lopsided crown of long upturned limbs in loose tiers.",
+  "height": [38, 46],
+  "trunk_radius": [0.9, 1.2],
+  "buttress": 0.8,
+  "crown_radius": [5.2, 7.0],
+  "spread": 0.8,
+  "dome": 0.6,
+  "like": "araucaria",
+  "thin_limbs": 0.2
+}

@@ -19,18 +19,23 @@
     {"plant": "fern", "density": 0.07, "placement": {"verb": "clustered", "params": {"size": 12}}},
     {"plant": "salal", "density": 0.04, "placement": {"verb": "clustered", "params": {"size": 16}}},
     {"plant": "huckleberry", "density": 0.02, "placement": {"verb": "clustered", "params": {"size": 14}}},
-    {"plant": "tree_moss", "density": 0.5, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "tree_moss", "density": 0.5, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "giant_douglas", "density": 0.0003, "placement": {"verb": "lone", "params": {"spacing": 30}}}
   ],
   "features": [
     {"structure": "mossy_log", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}},
     {"structure": "fallen_trunk", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "elk", "count": 3},
+    {"creature": "elk", "count": 3.3},
     {"creature": "raven", "count": 2},
-    {"creature": "douglas_squirrel", "count": 4},
-    {"creature": "great_horned_owl", "count": 1},
-    {"creature": "eagle", "count": 2}
+    {"creature": "douglas_squirrel", "count": 4.4},
+    {"creature": "great_horned_owl", "count": 2},
+    {"creature": "eagle", "count": 2},
+    {"creature": "raccoon", "count": 2.2},
+    {"creature": "bat", "count": 3.3},
+    {"creature": "marbled_murrelet", "count": 4},
+    {"creature": "banana_slug", "count": 6.6}
   ],
   "collectibles": []
 }

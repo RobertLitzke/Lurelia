@@ -1,0 +1,20 @@
+{
+  "name": "holly",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Holly: a small dark evergreen tree of the Hollins understory, glossy spined leaves and red berries in winter. The tree the Hollins are named for.",
+  "form": "branching",
+  "height": [4, 9],
+  "trunk_radius": [0.14, 0.22],
+  "crown_radius": [1.4, 2.0],
+  "bark": "grey_brown_bark",
+  "leaf": "holly_leaves",
+  "canopy": "cloud",
+  "leader": 0.6,
+  "fill": 0.85,
+  "spread": 0.3,
+  "max_slope": 0.9,
+  "thin_limbs": 0.12,
+  "flower": "red_berries",
+  "flower_seasons": ["autumn", "winter"]
+}

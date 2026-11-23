@@ -25,6 +25,9 @@ pub struct AreaEvent {
     /// An outline in metres instead of a circle.
     #[serde(default)]
     poly: Vec<[f32; 2]>,
+    /// Or a band beside the race track (`race_track::AlongBand`).
+    #[serde(default)]
+    along: Option<crate::world::chronicle::race_track::AlongBand>,
     /// How far inside the edge you must be before the HUD names it. The
     /// default is a tenth of the radius, between 4 and 20 m.
     #[serde(default)]
@@ -37,9 +40,15 @@ fn default_wobble() -> f32 {
 
 impl Process for AreaEvent {
     fn apply(&self, cx: &mut EventCtx) -> String {
-        let AreaEvent { name, kind, at, radius, wobble, poly, inside } = self;
+        let AreaEvent { name, kind, at, radius, wobble, poly, along, inside } = self;
         let kind = if kind.is_empty() { "place".to_string() } else { kind.clone() };
-        let mut area = if !poly.is_empty() {
+        let mut area = if let Some(b) = along {
+            let pts = crate::world::chronicle::race_track::along_band(cx, b);
+            if pts.len() < 3 {
+                return "skipped".into();
+            }
+            Area::new(name.clone(), kind, pts, 0.0)
+        } else if !poly.is_empty() {
             if poly.len() < 3 {
                 cx.warnings.push(format!("area {name}: an outline needs at least three points"));
                 return "skipped".into();

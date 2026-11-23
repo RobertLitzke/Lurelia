@@ -13,6 +13,10 @@
     {"plant": "dead_baobab", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 60}}},
     {"plant": "sagebrush", "density": 0.004, "placement": {"verb": "edge", "params": {"width": 40, "inner": 0.0}}}
   ],
-  "creatures": [{"creature": "vulture", "count": 5}, {"creature": "jackrabbit", "count": 3}],
+  "creatures": [
+    {"creature": "vulture", "count": 5},
+    {"creature": "jackrabbit", "count": 3.3},
+    {"creature": "spotted_hyena", "count": 2.2}
+  ],
   "collectibles": [{"item": "seashell", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}}]
 }

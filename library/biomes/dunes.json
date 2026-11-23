@@ -1,6 +1,6 @@
 {
   "name": "dunes",
-  "version": 1,
+  "version": 2,
   "introduced_by": "glassfall",
   "priority": 4,
   "rules": {"coast": [0, 40], "elev": [0, 9]},
@@ -18,10 +18,11 @@
   ],
   "features": [],
   "creatures": [
-    {"creature": "rabbit", "count": 6},
+    {"creature": "rabbit", "count": 6.6},
     {"creature": "gull", "count": 2},
-    {"creature": "bumblebee", "count": 3},
-    {"creature": "snowy_plover", "count": 4}
+    {"creature": "bumblebee", "count": 3.3},
+    {"creature": "snowy_plover", "count": 8},
+    {"creature": "nightjar", "count": 2.2}
   ],
   "collectibles": [{"item": "seashell", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}]
 }

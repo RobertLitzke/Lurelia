@@ -1,0 +1,15 @@
+{
+  "name": "field_rubble",
+  "version": 1,
+  "introduced_by": "townlab",
+  "notes": "Grey field stones heaped into a wall: darker and more mottled than dressed stone, and smoothed so a heap reads as rounded stones rather than blocks.",
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [108, 106, 100],
+    "alt": [146, 142, 132],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [124, 121, 114], "alt": [158, 153, 142]}
+  }
+}

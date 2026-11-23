@@ -1,0 +1,24 @@
+{
+  "name": "gh_grotto",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "Hogback over the grotto: the island's turf above, and below it the cave pool, lit blue by the sea coming in under the rock, with reef fish round its coral.",
+  "priority": 7,
+  "rules": {"region": "grotto"},
+  "creatures": [
+    {"creature": "gull", "count": 8},
+    {"creature": "eider", "count": 6},
+    {"creature": "black_oystercatcher", "count": 3},
+    {"creature": "harbor_seal", "count": 6.6},
+    {"creature": "cormorant", "count": 3},
+    {"creature": "reef_chromis", "count": 60},
+    {"creature": "anthias", "count": 40},
+    {"creature": "yellow_tang", "count": 12},
+    {"creature": "butterflyfish", "count": 6},
+    {"creature": "angelfish", "count": 4},
+    {"creature": "lobster", "count": 6.6},
+    {"creature": "giant_octopus", "count": 1.1}
+  ],
+  "like": "gh_island",
+  "water": {"shallow": [70, 200, 215], "deep": [12, 96, 150]}
+}

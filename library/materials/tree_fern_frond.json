@@ -1,0 +1,16 @@
+{
+  "name": "tree_fern_frond",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Tree fern fronds: long arching fans of bright lacy green.",
+  "smooth": false,
+  "sprites": "palm frond",
+  "texture": {
+    "pattern": "grain",
+    "base": [50, 74, 46],
+    "alt": [62, 86, 52],
+    "scale": 6,
+    "contrast": 0.8,
+    "calm": {"base": [54, 78, 50], "alt": [66, 90, 56]}
+  }
+}

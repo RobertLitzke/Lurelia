@@ -1,0 +1,19 @@
+{
+  "name": "sau_city",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "Cascadelle's streets, quays and squares: pale limestone flags, plane trees along the boulevards, compsognathus underfoot.",
+  "priority": 22,
+  "rules": {"region": "city"},
+  "surface": "city_flags",
+  "subsurface": "dirt",
+  "fringe": 0,
+  "map_color": [204, 196, 178],
+  "plants": [{"plant": "plane_tree", "density": 0.0012, "placement": {"verb": "lone", "params": {"spacing": 14}}}],
+  "creatures": [
+    {"creature": "compsognathus", "count": 12},
+    {"creature": "starling", "count": 10},
+    {"creature": "sparrow", "count": 10},
+    {"creature": "pteranodon", "count": 3}
+  ]
+}

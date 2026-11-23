@@ -199,6 +199,10 @@ pub struct Input<'a> {
     pub water: Option<f32>,
     /// Drawn into its shell (the `plod` verb when the player is close).
     pub hide: bool,
+    /// The model's pivot (model voxels) and this animal's size, for a tail
+    /// dragged through the world (trail.rs).
+    pub pivot: Vec3,
+    pub scale: f32,
 }
 
 #[derive(Clone, Debug)]
@@ -242,6 +246,14 @@ pub struct Life {
     /// the first time it lies down, since settling a ragdoll is not something
     /// to do every frame.
     side_pose: Option<Pose>,
+    /// A long tail dragged behind and a long neck that browses (trail.rs),
+    /// found the first step.
+    tail: Option<Box<super::trail::Tail>>,
+    neck: Option<Box<super::trail::Neck>>,
+    rigged: bool,
+    /// The heading a step ago, and how fast it is turning, radians a second.
+    last_yaw: Option<f32>,
+    turn: f32,
 }
 
 impl Life {
@@ -274,6 +286,11 @@ impl Life {
             on_side: false,
             side: 1.0,
             side_pose: None,
+            tail: None,
+            neck: None,
+            rigged: false,
+            last_yaw: None,
+            turn: 0.0,
         };
         l.seed = l.rand() * 10.0;
         l.phase = l.rand();
@@ -438,6 +455,29 @@ impl Life {
         if self.on_side && self.level > 1.0 && self.side_pose.is_none() {
             self.side_pose = Some(super::ragdoll::on_side(rig, voxel, self.side, (self.seed * 1000.0) as u32 | 1));
         }
+
+        // A long tail and neck bending out of line (trail.rs).
+        if !self.rigged {
+            self.rigged = true;
+            self.tail = super::trail::Tail::new(rig).map(Box::new);
+            self.neck = super::trail::Neck::new(rig).map(Box::new);
+        }
+        let turn_now = self.last_yaw.map_or(0.0, |y| {
+            let d = crate::util::wrap_angle(inp.yaw - y);
+            if dt > 0.0 { d / dt } else { 0.0 }
+        });
+        self.last_yaw = Some(inp.yaw);
+        self.turn += (turn_now - self.turn) * k(3.0);
+        if let Some(t) = self.tail.as_mut() {
+            t.step(rig, voxel * inp.scale.max(0.05), inp.pivot, inp.pos, inp.yaw, dt);
+        }
+        if self.neck.is_some() {
+            let r = self.rand();
+            let (graze, turn, walk) = (self.graze_w, self.turn, self.gait_w);
+            if let Some(n) = self.neck.as_mut() {
+                n.step(dt, graze, turn, walk, r);
+            }
+        }
     }
 
     pub fn compose(&self, rig: &Rig, voxel: f32) -> Pose {
@@ -451,6 +491,12 @@ impl Life {
         motors::claws(rig, &mut p, self.t, self.gait_w * up, self.graze_w, self.alarm);
         let free = 1.0 - self.graze_w;
         motors::look(rig, &mut p, self.look.0 * free, self.look.1 * free + 0.2 * self.alert * free);
+        if let Some(t) = &self.tail {
+            t.apply(rig, &mut p, up);
+        }
+        if let Some(n) = &self.neck {
+            n.apply(&mut p);
+        }
         motors::tail(rig, &mut p, self.t, self.seed, self.phase, self.gait_w, self.alarm);
         motors::ears(rig, &mut p, (self.flick * std::f32::consts::PI).sin() * self.supple, self.alert * self.supple);
         motors::breathe(&mut p, self.t, 2.0 + 3.0 * self.alarm, leg_m);
@@ -489,8 +535,8 @@ mod tests {
                 names.iter().position(|x| x.as_str() == n).map(|k| k as u8 + 1)
             }
         };
-        let whole = shape::compile(&c.ops, [32, 32, 32], &resolve).mat;
-        let s = super::super::slice::slice(c.rig.as_ref().expect("deer rig"), &c.ops, &whole, &|n| resolve(n).is_some(), c.voxel, c.half_w, c.height);
+        let whole = shape::compile(&c.ops, c.grid, &resolve).mat;
+        let s = super::super::slice::slice(c.rig.as_ref().expect("deer rig"), &c.ops, &whole, crate::anim::slice::Dims(c.grid), &|n| resolve(n).is_some(), c.voxel, c.half_w, c.height);
         (s.rig, c.voxel, crate::creatures::locomotion::verb(&c.behaviour.movement).routine)
     }
 
@@ -550,7 +596,7 @@ mod tests {
                 wary: 10.0,
                 ground: &ground,
                 water: None,
-                hide: false,
+                hide: false, pivot: Vec3::ZERO, scale: 1.0,
             };
             life.step(&rig, voxel, &inp);
             if (walking || fleeing) && life.level > 0.2 {
@@ -600,7 +646,7 @@ mod tests {
                         wary: 10.0,
                         ground: &ground,
                         water,
-                        hide: false,
+                        hide: false, pivot: Vec3::ZERO, scale: 1.0,
                     },
                 );
             }

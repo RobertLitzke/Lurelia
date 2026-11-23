@@ -488,13 +488,17 @@ pub fn gait(rig: &Rig, pose: &mut Pose, g: Gait, phase: f32, w: f32, leg_m: f32)
         return crab(rig, pose, phase, w, leg_m);
     }
     let (a, k) = g.swing();
+    // Two legs (a bird, a tyrannosaur) take turns at every pace: there is no
+    // pair to gallop or bound with, so a run is a walk's alternation, faster.
+    let two = (0..rig.bones.len()).filter(|&i| upper_leg(rig, i)).count() == 2;
     for i in 0..rig.bones.len() {
         if !upper_leg(rig, i) {
             continue;
         }
         let b = &rig.bones[i];
         let fr = front(rig, i);
-        let t = TAU * (phase + g.offset(fr, b.side <= 0.0));
+        let off = if two { if b.side <= 0.0 { 0.0 } else { 0.5 } } else { g.offset(fr, b.side <= 0.0) };
+        let t = TAU * (phase + off);
         let swing = a * t.sin() * w;
         if rig.plan == Some(Plan::Sprawler) {
             // Legs out to the side swing round a vertical axis.
@@ -515,6 +519,8 @@ pub fn gait(rig: &Rig, pose: &mut Pose, g: Gait, phase: f32, w: f32, leg_m: f32)
     let t = TAU * phase;
     match g {
         Gait::Walk | Gait::Trot => pose.root.y -= 0.03 * leg_m * (2.0 * t).sin().abs() * w,
+        // A two-legged run rises and falls once a step, with no rocking.
+        Gait::Gallop | Gait::Bound if two => pose.root.y += 0.05 * leg_m * (2.0 * t + 0.6).sin() * w,
         Gait::Gallop | Gait::Bound => {
             pose.bones[0].x += 0.12 * (t + 1.2).sin() * w;
             pose.root.y += 0.08 * leg_m * (t + 0.6).sin() * w;
@@ -572,14 +578,21 @@ pub fn graze(rig: &Rig, pose: &mut Pose, w: f32, t: f32) {
 
 /// Tail swish and stride bounce; `alarm` raises it (a deer's white flag).
 pub fn tail(rig: &Rig, pose: &mut Pose, t: f32, seed: f32, phase: f32, w: f32, alarm: f32) {
+    // A chain of tail bones shares the swing, so a long tail (a sauropod's,
+    // a tyrannosaur's) curves through it rather than adding it up at every
+    // joint; the alarm flag, a deer's lifted tail, is shared outright.
+    let n = rig.bones.iter().filter(|b| b.role == Role::Tail).count().max(1) as f32;
+    // Sprawlers (lizards, crocodiles) swing their tails in the gait itself
+    // and keep the whole swish here.
+    let share = if rig.plan == Some(Plan::Sprawler) { 1.0 } else { 1.0 / n.sqrt() };
     for i in 0..rig.bones.len() {
         if rig.bones[i].role != Role::Tail {
             continue;
         }
-        pose.bones[i].y += 0.25 * (t * 1.7 + seed).sin() * (1.0 - w * 0.6);
+        pose.bones[i].y += 0.25 * share * (t * 1.7 + seed).sin() * (1.0 - w * 0.6);
         // Sprawlers keep their tails down when they run.
-        let flag = if rig.plan == Some(Plan::Sprawler) { 0.0 } else { 0.7 };
-        pose.bones[i].x += -0.15 * (TAU * 2.0 * phase).sin() * w - flag * alarm;
+        let flag = if rig.plan == Some(Plan::Sprawler) { 0.0 } else { 0.7 / n };
+        pose.bones[i].x += -0.15 * share * (TAU * 2.0 * phase).sin() * w - flag * alarm;
     }
 }
 
@@ -601,11 +614,12 @@ pub fn breathe(pose: &mut Pose, t: f32, rate: f32, leg_m: f32) {
 }
 
 /// Wings folded back along the body, for a bird walking on the ground (the
-/// same fold flight.rs uses for a perched bird).
+/// same fold flight.rs uses for a perched bird). A wing with a `spread` pose
+/// is already folded at rest (a pterosaur's), so it is left alone.
 pub fn fold_wings(rig: &Rig, pose: &mut Pose) {
     for i in 0..rig.bones.len() {
         let b = &rig.bones[i];
-        if b.role != Role::Wing {
+        if b.role != Role::Wing || b.spread.is_some() {
             continue;
         }
         let inner = b.parent.is_none_or(|q| rig.bones[q].role != Role::Wing);

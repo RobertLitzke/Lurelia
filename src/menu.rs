@@ -31,7 +31,7 @@ pub struct Prefs {
     pub view: f32,
     pub vsync: bool,
     /// A launch choice this build cannot read takes its default and leaves
-    /// the other settings alone. What RETURN opens: the world, the way of playing it and its options
+    /// the other settings alone. What CONTINUE opens: the world, the way of playing it and its options
     /// (src/launch.rs).
     #[serde(deserialize_with = "crate::util::or_default")]
     pub last: crate::launch::Launch,
@@ -125,7 +125,7 @@ pub enum Setting {
 /// What a menu line does when chosen.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Choice {
-    /// Open the world RETURN names again, where it was left.
+    /// Open the world CONTINUE names again, where it was left.
     Continue,
     /// The launch screen: the world, the mode and their options.
     Open,
@@ -137,6 +137,20 @@ pub enum Choice {
     Start,
     /// Put this world and game's options back as the world wrote them.
     LaunchReset,
+    /// The race's own screens (racemenu.rs): open them on the courses, pick
+    /// a course or a kart by its card, and put the race on now back on the
+    /// grid.
+    RaceSetup,
+    /// Race this course now, with what was last picked for it.
+    RaceCourse(u8),
+    /// This course, on to the kart and the race options.
+    RaceOptions(u8),
+    /// Move the course picked one card left (false) or right.
+    RaceShift(bool),
+    /// Take this kart (an index into `launch::KARTS`), on to the race options.
+    RaceKart(u8),
+    /// Put the race being run back on its grid, from the pause menu.
+    RaceRestart,
     /// A line of an open dropdown: the world, or the game, at this index.
     ChooseWorld(u8),
     ChooseMode(u8),
@@ -209,6 +223,8 @@ pub struct Item {
     pub value: Option<String>,
     /// A word or two in italic after the label (the world CONTINUE opens).
     pub note: Option<String>,
+    /// A smaller line under the value: what "Default" comes to.
+    pub sub: Option<String>,
     /// A colour chip before the value (a gradient stop, a light colour).
     pub swatch: Option<[f32; 3]>,
     /// A sentence or two about what this line does, shown while it is picked.
@@ -233,6 +249,7 @@ impl Item {
             label: label.to_string(),
             value: None,
             note: None,
+            sub: None,
             swatch: None,
             help: "",
             drop: false,
@@ -283,11 +300,15 @@ pub fn title_items(prefs: &Prefs) -> Vec<Item> {
         Item {
             note: Some(launch_words(&prefs.last)),
             help: "The world you were last in, as you left it.",
-            ..Item::new("RETURN", Choice::Continue)
+            ..Item::new("CONTINUE", Choice::Continue)
         },
         Item {
             help: "Pick a game, a world to play it in, and what is in it.",
-            ..Item::new("OPEN WORLD", Choice::Open)
+            ..Item::new("PLAY", Choice::Open)
+        },
+        Item {
+            help: "Pick a course, a kart, and the race: laps, rivals, how hard they drive, the hour and the weather.",
+            ..Item::new("KART RACE", Choice::RaceSetup)
         },
         Item {
             help: "The studio: a creature or a plant on a platform, with its library entry beside it.",
@@ -299,9 +320,14 @@ pub fn title_items(prefs: &Prefs) -> Vec<Item> {
     ]
 }
 
-pub fn pause_items() -> Vec<Item> {
-    vec![
-        Item::new("RESUME", Choice::Resume),
+/// The pause menu; in a race, with the race's own lines under RESUME.
+pub fn pause_items(race: bool) -> Vec<Item> {
+    let mut out = vec![Item::new("RESUME", Choice::Resume)];
+    if race {
+        out.push(Item::new("RESTART RACE", Choice::RaceRestart));
+        out.push(Item::new("CHANGE COURSE", Choice::RaceSetup));
+    }
+    out.extend([
         Item::new("SAVE", Choice::Save),
         Item::new("SETTINGS", Choice::Settings),
         Item::new("LOOK AND COLOUR", Choice::Look(0)),
@@ -309,7 +335,8 @@ pub fn pause_items() -> Vec<Item> {
         Item::new("CONTROLS", Choice::Controls),
         Item::new("BACK TO MAIN MENU", Choice::MainMenu),
         Item::new("EXIT GAME", Choice::Quit),
-    ]
+    ]);
+    out
 }
 
 /// The launch screen: the game, a world that offers it, the options those
@@ -333,6 +360,7 @@ pub fn launch_items(l: &crate::launch::Launch, here: Option<&str>) -> Vec<Item> 
         out.push(Item {
             help: o.help,
             changed: l.changed(o),
+            sub: l.under(o),
             ..Item::value(&o.label, Choice::LaunchOpt(i as u8), l.value(o))
         });
     }
@@ -385,7 +413,7 @@ pub fn drop_at(l: &crate::launch::Launch, which: u8) -> usize {
     }
 }
 
-/// "Glassfall, explore" for the note under RETURN.
+/// "Glassfall, explore" for the note beside CONTINUE.
 pub fn launch_words(l: &crate::launch::Launch) -> String {
     format!("{}, {}", world_words(&l.world), l.def().title.to_lowercase())
 }
@@ -481,6 +509,9 @@ pub struct Menu {
     /// mouse. Both zero-sized when the whole list fits.
     pub track: [f32; 4],
     pub thumb: [f32; 4],
+    /// The race's step names along the top (COURSE, KART, RACE), which a
+    /// click goes to. Empty on every other screen.
+    pub tabs: Vec<[f32; 4]>,
 }
 
 impl Menu {
@@ -608,11 +639,11 @@ pub fn world_words(name: &str) -> String {
 }
 
 /// Menu line type: Cinzel, and its bold for the selected line.
-fn line_type(u: f32, lit: bool) -> Type {
+pub(crate) fn line_type(u: f32, lit: bool) -> Type {
     Type::new(if lit { Face::CapsBold } else { Face::Caps }, 1.62 * u, 0.15)
 }
 
-fn italic(u: f32, size: f32) -> Type {
+pub(crate) fn italic(u: f32, size: f32) -> Type {
     Type::new(Face::Italic, size * u, 0.01)
 }
 
@@ -651,8 +682,40 @@ fn scrim_left(hud: &mut Hud, w: f32, h: f32) {
 }
 
 /// A heading in the logo's gradient.
-fn heading_type(u: f32) -> Type {
+pub(crate) fn heading_type(u: f32) -> Type {
     Type::new(Face::CapsBold, 3.4 * u, 0.14)
+}
+
+/// The type a button's label is set in, and how tall its box is.
+pub(crate) fn button_type(u: f32) -> Type {
+    Type::new(Face::CapsBold, 2.15 * u, 0.14)
+}
+
+pub(crate) fn button_height(u: f32) -> f32 {
+    (button_type(u).cap() + 3.0 * u).round()
+}
+
+/// A border `line` thick just inside the box `r` (x, y, width, height).
+pub(crate) fn border(hud: &mut Hud, r: [f32; 4], line: f32, c: [f32; 4]) {
+    let [x, y, w, h] = r;
+    hud.rect(x, y, w, line, c);
+    hud.rect(x, y + h - line, w, line, c);
+    hud.rect(x, y, line, h, c);
+    hud.rect(x + w - line, y, line, h, c);
+}
+
+/// A button in its box `r`, its label centred: apricot-edged and in the
+/// logo's gradient when it is the one picked (`lit`), a quiet hairline and
+/// plain ink when it is not.
+pub(crate) fn button(hud: &mut Hud, r: [f32; 4], label: &str, lit: bool, u: f32) {
+    let p = pal();
+    let bt = button_type(u);
+    let [bx, by, bw, bh] = r;
+    hud.rect(bx, by, bw, bh, with_a(p.plum, if lit { 0.82 } else { 0.5 }));
+    border(hud, r, (0.1 * u).max(1.0), if lit { with_a(p.apricot, 0.95) } else { with_a(p.ink, 0.35) });
+    let lw = Hud::measure(bt, label);
+    let ink = if lit { Ink::Grad(&p.lit) } else { Ink::Flat(p.ink) };
+    hud.set_lit(bt, (bx + (bw - lw) * 0.5).floor(), (by + (bh + bt.cap()) * 0.5).round(), ink, if lit { 0.9 } else { 0.7 }, label);
 }
 
 /// Where a menu sits: down the left side (title screen and the screens it
@@ -689,7 +752,9 @@ pub fn draw_menu(hud: &mut Hud, menu: &mut Menu, heading: &str, items: &[Item], 
                 Hud::measure(vt, &format!("\u{2039}  {v}  \u{203a}"))
             }
         })
-        .fold(0.0, f32::max);
+        .fold(0.0, f32::max)
+        // A line under a value starts where the value's text does.
+        .max(rows.iter().filter_map(|i| i.sub.as_ref()).map(|v| Hud::measure(vt, "\u{2039}  ") + Hud::measure(italic(u, 1.55), v)).fold(0.0, f32::max));
     let col_gap = 9.0 * u;
     let table_w = label_w + if tabled { col_gap + value_w } else { 0.0 };
     let cx = (w * 0.5).floor();
@@ -697,9 +762,9 @@ pub fn draw_menu(hud: &mut Hud, menu: &mut Menu, heading: &str, items: &[Item], 
     // The buttons stand in a row under the list and must be wholly on screen
     // whatever the list does, so the room the list has is measured from what
     // is left over once they and the footer have theirs.
-    let bt = Type::new(Face::CapsBold, 2.15 * u, 0.14);
-    let (bpx, bpy) = (3.2 * u, 1.5 * u);
-    let bh = (bt.cap() + bpy * 2.0).round();
+    let bt = button_type(u);
+    let bpx = 3.2 * u;
+    let bh = button_height(u);
     let button_space = if items.iter().any(|i| i.button) { bh + 3.2 * u } else { 0.0 };
     let head_h = if heading.is_empty() { 0.0 } else { 6.2 * u };
     let left_top = if heading.is_empty() { 29.0 * u } else { 8.0 * u + ht.cap() + 1.6 * u };
@@ -707,18 +772,25 @@ pub fn draw_menu(hud: &mut Hud, menu: &mut Menu, heading: &str, items: &[Item], 
         Place::Left => h - 6.0 * u - button_space - left_top,
         Place::Centre => h - 9.0 * u - button_space - head_h - 4.0 * u,
     };
+    // A line with a smaller one under its value stands that much taller.
+    let st = italic(u, 1.55);
+    let sub_h = (1.5 * u).round();
+    let subs = rows.iter().filter(|i| i.sub.is_some()).count() as f32 * sub_h;
+    let room_lines = room - subs;
     // A list a little too long for its room closes its lines up before it
     // scrolls: the launch screen's dozen lines are better all in view,
     // tighter, than nine of them and a bar.
-    if rows.len() as f32 * pitch > room {
-        pitch = (room / rows.len() as f32).floor().clamp((1.5 * size).round(), pitch);
+    if rows.len() as f32 * pitch > room_lines {
+        pitch = (room_lines / rows.len() as f32).floor().clamp((1.5 * size).round(), pitch);
     }
+    let row_h = |i: &Item| pitch + if i.sub.is_some() { sub_h } else { 0.0 };
     // A list too long for the window is scrolled instead of running off the
     // bottom of the screen (`Menu::top`, the wheel and the bar below).
-    let shown = rows.len().min((room / pitch).floor().max(3.0) as usize);
+    let shown = rows.len().min((room_lines / pitch).floor().max(3.0) as usize);
     menu.shown = shown;
     menu.top = menu.top.min(rows.len() - shown);
     let first = menu.top;
+    let shown_h: f32 = rows[first..first + shown].iter().map(|i| row_h(i)).sum();
 
     // Heading and where the list starts.
     let list_top = match place {
@@ -731,7 +803,7 @@ pub fn draw_menu(hud: &mut Hud, menu: &mut Menu, heading: &str, items: &[Item], 
         }
         Place::Centre => {
             hud.rect(0.0, 0.0, w, h, with_a(p.plum, 0.6));
-            let total = head_h + pitch * shown as f32 + button_space;
+            let total = head_h + shown_h + button_space;
             let y0 = ((h - total) * 0.46).max(2.0 * u).floor();
             if !heading.is_empty() {
                 let hw = Hud::measure(ht, heading);
@@ -748,6 +820,7 @@ pub fn draw_menu(hud: &mut Hud, menu: &mut Menu, heading: &str, items: &[Item], 
     };
 
     menu.at = menu.at.min(items.len().saturating_sub(1));
+    menu.tabs.clear();
     menu.hits.clear();
     menu.minus.clear();
     menu.plus.clear();
@@ -756,6 +829,7 @@ pub fn draw_menu(hud: &mut Hud, menu: &mut Menu, heading: &str, items: &[Item], 
         Place::Left => 7.0 * u,
         Place::Centre => (cx - table_w * 0.5).floor(),
     };
+    let mut y_next = list_top;
     for (i, it) in rows.iter().enumerate() {
         // Scrolled out of the window: no line, and a hit box of no size, so
         // the boxes stay parallel to the items for whoever is clicking.
@@ -767,7 +841,9 @@ pub fn draw_menu(hud: &mut Hud, menu: &mut Menu, heading: &str, items: &[Item], 
             continue;
         }
         let lit = i == menu.at;
-        let ry = (list_top + (i - first) as f32 * pitch).floor();
+        let ry = y_next.floor();
+        let line_h = row_h(it);
+        y_next += line_h;
         let base = (ry + 0.62 * size + cap).round();
         let mid = base - cap * 0.5;
         let lt = line_type(u, lit);
@@ -820,16 +896,22 @@ pub fn draw_menu(hud: &mut Hud, menu: &mut Menu, heading: &str, items: &[Item], 
             // after its left arrow, so nothing jumps as the selection moves.
             right = if lit {
                 let aw = Hud::measure(vt, "\u{2039}  ") + 1.2 * u;
-                minus = [vx - 0.6 * u, ry, aw, pitch];
+                minus = [vx - 0.6 * u, ry, aw, line_h];
                 let end = vx + hud.set_lit(vt, vx, base, Ink::Flat(p.apricot), 0.6, &format!("\u{2039}  {v}  \u{203a}"));
-                plus = [end - aw + 0.6 * u, ry, aw, pitch];
+                plus = [end - aw + 0.6 * u, ry, aw, line_h];
                 end
             } else {
                 let vx = vx + Hud::measure(vt, "\u{2039}  ") + vt.track * vt.size;
                 vx + hud.set_lit(vt, vx, base, Ink::Flat(p.ink_value), 0.6, v)
             };
+            // What the value comes to, under it where the value starts.
+            if let Some(sub) = &it.sub {
+                let sx = vx + Hud::measure(vt, "\u{2039}  ") + vt.track * vt.size;
+                let end = sx + hud.set_lit(st, sx, base + 1.8 * u, Ink::Flat(with_a(p.note, if lit { 0.95 } else { 0.75 })), 0.5, sub);
+                right = right.max(end);
+            }
         }
-        menu.hits.push([x - 6.0 * u, ry, (right - x).max(table_w) + 7.0 * u, pitch]);
+        menu.hits.push([x - 6.0 * u, ry, (right - x).max(table_w) + 7.0 * u, line_h]);
         menu.minus.push(minus);
         menu.plus.push(plus);
         menu.drops.push(drop);
@@ -839,35 +921,22 @@ pub fn draw_menu(hud: &mut Hud, menu: &mut Menu, heading: &str, items: &[Item], 
     // than a line so the eye lands on them last.
     let buttons: Vec<(usize, &Item)> = items.iter().enumerate().filter(|(_, i)| i.button).collect();
     if !buttons.is_empty() {
-        let (px, py) = (bpx, bpy);
         let gap = 2.2 * u;
-        let widths: Vec<f32> = buttons.iter().map(|(_, it)| (Hud::measure(bt, &it.label) + px * 2.0).max(16.0 * u)).collect();
+        let widths: Vec<f32> = buttons.iter().map(|(_, it)| (Hud::measure(bt, &it.label) + bpx * 2.0).max(16.0 * u)).collect();
         let total: f32 = widths.iter().sum::<f32>() + gap * (buttons.len() as f32 - 1.0);
         // On the left-hand pages the buttons sit on the bottom of the
         // screen, where the eye ends up, rather than wandering up and down
         // with the length of the list. A centred menu keeps them under it.
         let by = match place {
             Place::Left => (h - 6.0 * u - bh).floor(),
-            Place::Centre => (list_top + shown as f32 * pitch + 1.6 * u).floor(),
+            Place::Centre => (list_top + shown_h + 1.6 * u).floor(),
         };
         let mut bx = match place {
             Place::Left => x_left,
             Place::Centre => (cx - total * 0.5).floor(),
         };
         for ((i, it), bw) in buttons.iter().zip(&widths) {
-            let lit = *i == menu.at;
-            let line = (0.1 * u).max(1.0);
-            hud.rect(bx, by, *bw, bh, with_a(p.plum, if lit { 0.82 } else { 0.5 }));
-            // The border: the logo's gradient along the top and bottom when
-            // the button is the one picked, a quiet hairline when it is not.
-            let edge = if lit { with_a(p.apricot, 0.95) } else { with_a(p.ink, 0.35) };
-            hud.rect(bx, by, *bw, line, edge);
-            hud.rect(bx, by + bh - line, *bw, line, edge);
-            hud.rect(bx, by, line, bh, edge);
-            hud.rect(bx + *bw - line, by, line, bh, edge);
-            let lw = Hud::measure(bt, &it.label);
-            let ink = if lit { Ink::Grad(&p.lit) } else { Ink::Flat(p.ink) };
-            hud.set_lit(bt, (bx + (*bw - lw) * 0.5).floor(), by + py + bt.cap(), ink, if lit { 0.9 } else { 0.7 }, &it.label);
+            button(hud, [bx, by, *bw, bh], &it.label, *i == menu.at, u);
             menu.hits.push([bx, by, *bw, bh]);
             menu.minus.push([0.0; 4]);
             menu.plus.push([0.0; 4]);
@@ -888,7 +957,7 @@ pub fn draw_menu(hud: &mut Hud, menu: &mut Menu, heading: &str, items: &[Item], 
             Place::Centre => (cx + table_w.max(label_w) * 0.5 + 3.0 * u).floor(),
         };
         let by = list_top;
-        let bar_h = pitch * shown as f32;
+        let bar_h = shown_h;
         hud.rect(bx, by, bw, bar_h, with_a(p.apricot, 0.16));
         let max = rows.len() - shown;
         let th = (bar_h * shown as f32 / rows.len() as f32).max(2.0 * u);
@@ -960,6 +1029,7 @@ pub fn draw_dropdown(hud: &mut Hud, menu: &mut Menu, items: &[Item], anchor: [f3
     hud.rect(x, y + tall - line, wide, line, with_a(p.apricot, 0.5));
     hud.rect(x, y, line, tall, with_a(p.apricot, 0.5));
     hud.rect(x + wide - line, y, line, tall, with_a(p.apricot, 0.5));
+    menu.tabs.clear();
     menu.hits.clear();
     menu.minus.clear();
     menu.plus.clear();
@@ -1276,6 +1346,11 @@ impl Slides {
 
 /// Decode a PNG and crop it to fill BACKDROP_W x BACKDROP_H, as sRGB RGBA.
 pub fn load_picture(path: &Path) -> Option<Vec<u8>> {
+    load_picture_at(path, BACKDROP_W as usize, BACKDROP_H as usize)
+}
+
+/// Decode a PNG and crop it to fill `dw` x `dh`, as sRGB RGBA.
+pub fn load_picture_at(path: &Path, dw: usize, dh: usize) -> Option<Vec<u8>> {
     let file = std::fs::File::open(path).ok()?;
     let mut dec = png::Decoder::new(std::io::BufReader::new(file));
     dec.set_transformations(png::Transformations::EXPAND | png::Transformations::STRIP_16);
@@ -1298,8 +1373,7 @@ pub fn load_picture(path: &Path) -> Option<Vec<u8>> {
             [buf[i]; 3]
         }
     };
-    let (dw, dh) = (BACKDROP_W as usize, BACKDROP_H as usize);
-    // The largest 16:9 window of the source, centred.
+    // The largest window of the source in the output's shape, centred.
     let (cw, chh) = if sw * dh > sh * dw { (sh * dw / dh, sh) } else { (sw, sw * dh / dw) };
     let (ox, oy) = ((sw - cw) / 2, (sh - chh) / 2);
     let f = cw as f32 / dw as f32;

@@ -34,6 +34,11 @@ pub fn build_threads() -> usize {
 /// The seed scheme a world without a `seeds` line uses.
 pub const SEEDS_NOW: u32 = 2;
 
+/// The vehicles of a world.json that names none: the ATV goes anywhere.
+pub fn default_vehicles() -> Vec<String> {
+    vec!["atv".into()]
+}
+
 /// A world's own settings file (`worlds/<name>/world.json`).
 #[derive(Deserialize, Clone, Debug)]
 pub struct WorldDef {
@@ -134,7 +139,7 @@ pub struct WorldDef {
     pub season: String,
     /// The parts of the year this world has, by name ("spring", "summer",
     /// "autumn", "winter"). The year turns from one to the next in that
-    /// order, about every two days, and a world that names one season never
+    /// order, about once a day, and a world that names one season never
     /// turns at all. Leaving it out gives summer alone, which is every world
     /// the engine had before there were seasons.
     #[serde(default)]
@@ -157,8 +162,9 @@ pub struct WorldDef {
     pub games: Vec<String>,
     /// The vehicles here, by library name (library/vehicles): `["sand_rail"]`.
     /// The first is the one U brings unless the launch screen picks another.
-    /// A world with none has no driving, whatever `modes` says.
-    #[serde(default)]
+    /// Left out, the world has the ATV (`default_vehicles`); `[]` is no
+    /// driving, whatever `modes` says.
+    #[serde(default = "default_vehicles")]
     pub vehicles: Vec<String>,
     /// A race here (`RaceDef`): the launch screen offers RACE, and starts it.
     #[serde(default)]
@@ -263,7 +269,7 @@ pub struct WorldDef {
     #[serde(default)]
     pub noise_at: [f32; 2],
     /// The worlds beside this one, which it is built to meet at its edges
-    /// (`world/seam.rs`, notes/UBERWORLD_PLAN.md).
+    /// (`world/seam.rs`).
     #[serde(default)]
     pub neighbours: super::seam::Neighbours,
 }
@@ -659,6 +665,15 @@ pub enum Pos {
         #[serde(default)]
         as_if: Option<f32>,
     },
+    /// By a race track (world.json `race.track`): `along` metres round the
+    /// lap from the start line, `left` or `right` metres off the centreline.
+    Along {
+        along: f32,
+        #[serde(default)]
+        left: f32,
+        #[serde(default)]
+        right: f32,
+    },
 }
 
 /// A buried band: material, depth of its top below the surface, thickness,
@@ -860,6 +875,31 @@ pub struct Tower {
     /// Soil on the tops of its ledges and bulges, wherever its skin faces up
     /// (0: bare rock).
     pub soil: u8,
+    /// A sea arch through it, if it has one.
+    pub arch: Option<Arch>,
+    /// A band of material on its skin (barnacles, tar lichen) up to
+    /// `tide_top` m (0: none).
+    pub tide: u8,
+    pub tide_top: f32,
+}
+
+/// The opening of a sea arch through a tower: it runs along `dir` through
+/// the tower's middle, its sides `hw` m either side of that line, its roof a
+/// half circle springing at `spring` m. It goes all the way down.
+#[derive(Clone, Copy, Debug)]
+pub struct Arch {
+    pub dir: Vec2,
+    pub hw: f32,
+    pub spring: f32,
+}
+
+impl Arch {
+    /// How far inside the opening p is, metres (negative outside it).
+    fn depth(&self, c: Vec2, p: Vec3) -> f32 {
+        let s = (Vec2::new(p.x, p.z) - c).perp_dot(self.dir);
+        let dy = (p.y - self.spring).max(0.0);
+        self.hw - (s * s + dy * dy).sqrt()
+    }
 }
 
 impl Tower {
@@ -892,11 +932,18 @@ impl Tower {
         let r0 = self.rows[i][a0] + (self.rows[i][a1] - self.rows[i][a0]) * fa;
         let r1 = self.rows[i + 1][a0] + (self.rows[i + 1][a1] - self.rows[i + 1][a0]) * fa;
         let r = r0 + (r1 - r0) * ft;
-        if dd < r * r {
-            Some((r - dd.sqrt()).min(cut))
-        } else {
-            None
+        if dd >= r * r {
+            return None;
         }
+        let mut m = (r - dd.sqrt()).min(cut);
+        if let Some(a) = &self.arch {
+            let g = a.depth(self.c, p);
+            if g > 0.0 {
+                return None;
+            }
+            m = m.min(-g);
+        }
+        Some(m)
     }
 
     /// The ground this tower stands over at (x, z), if it raised that cell.
@@ -970,6 +1017,10 @@ pub struct Fields {
     /// the water and a margin of bank, so the drawn surface meets the
     /// ground under it.
     pub inland: HashMap<u32, Wet>,
+    /// Cells whose biome the chronicle chose outright (a sea stack's top
+    /// carrying the spruce wood of the mainland), by library biome index.
+    /// They take it if the world lists that biome, whatever its rules say.
+    pub biome_pin: HashMap<u32, u8>,
     /// Waterfalls: where a river drops over a cliff (`settle_water`).
     pub falls: Vec<super::falls::Fall>,
     /// How far the rock beds under each cell have been lifted (m) by folding
@@ -1064,6 +1115,7 @@ impl Fields {
             river_dist: vec![1e9; nn],
             biome: vec![0; nn],
             inland: HashMap::default(),
+            biome_pin: HashMap::default(),
             falls: Vec::new(),
             lift: Vec::new(),
             tide: Default::default(),
@@ -1181,15 +1233,25 @@ impl Fields {
         self.wet(x, z).map_or(Vec2::ZERO, |w| Vec2::from(w.flow))
     }
 
+    /// How much of (x, z) is path (`water` 3), read between the cells.
+    pub fn path_share(&self, x: f32, z: f32) -> f32 {
+        self.share(x, z, |i| self.water[i] == 3)
+    }
+
     /// Bilinear share (0..1) of occupied cells around a point.
     pub fn occupied_share(&self, x: f32, z: f32) -> f32 {
+        self.share(x, z, |i| self.occupied[i])
+    }
+
+    /// Bilinear share (0..1) of the cells around a point that pass `is`.
+    fn share(&self, x: f32, z: f32, is: impl Fn(usize) -> bool) -> f32 {
         let n = self.n;
         let fx = (x / CELL - 0.5).clamp(0.0, (n - 1) as f32);
         let fz = (z / CELL - 0.5).clamp(0.0, (n - 1) as f32);
         let (x0, z0) = (fx as usize, fz as usize);
         let (x1, z1) = ((x0 + 1).min(n - 1), (z0 + 1).min(n - 1));
         let (tx, tz) = (fx - x0 as f32, fz - z0 as f32);
-        let o = |x: usize, z: usize| if self.occupied[z * n + x] { 1.0 } else { 0.0 };
+        let o = |x: usize, z: usize| if is(z * n + x) { 1.0 } else { 0.0 };
         let a = o(x0, z0) * (1.0 - tx) + o(x1, z0) * tx;
         let b = o(x0, z1) * (1.0 - tx) + o(x1, z1) * tx;
         a * (1.0 - tz) + b * tz
@@ -1364,14 +1426,60 @@ pub struct BiomeMats {
 }
 
 /// A racing circuit's centreline, a point a metre or so apart, closed, in
-/// the direction a race runs; and how wide the road is.
-#[derive(Clone, Debug)]
+/// the direction a race runs; and how wide the road is. A circuit stamped
+/// from a world's `track.json` (`chronicle/race_track.rs`) also carries the
+/// width at each point and its race furniture; one laid by the `circuit`
+/// event has none of those.
+#[derive(Clone, Debug, Default)]
 pub struct Circuit {
     pub name: String,
     pub points: Vec<glam::Vec2>,
     /// The road's height at each point, metres.
     pub heights: Vec<f32>,
+    /// The widest the road gets.
     pub width: f32,
+    /// The road's width at each point (empty: `width` all round).
+    pub widths: Vec<f32>,
+    /// Rows of pickups the track places (empty: the race places its own).
+    pub items: Vec<ItemRow>,
+    /// Boost pads on the road.
+    pub pads: Vec<Pad>,
+    /// Lap distances a lap must pass, in order (empty: none).
+    pub checkpoints: Vec<f32>,
+    /// The jumps: (from, to) round the lap, from the foot of each ramp to
+    /// past where a kart at full speed comes down. A driver takes these
+    /// flat out, where any other crest it would ease over.
+    pub jumps: Vec<(f32, f32)>,
+}
+
+/// A row of pickups across the road `s` metres round: `across` of them, of
+/// `kinds` in order from the left (empty: the race's own cycle).
+#[derive(Deserialize, Clone, Debug)]
+pub struct ItemRow {
+    pub s: f32,
+    #[serde(default = "four")]
+    pub across: u32,
+    #[serde(default)]
+    pub kinds: Vec<String>,
+}
+
+fn four() -> u32 {
+    4
+}
+
+/// A boost pad `s` metres round, `len` long, its middle `side` of the way
+/// from the centreline to the edge (-1 left, 1 right).
+#[derive(Deserialize, Clone, Debug)]
+pub struct Pad {
+    pub s: f32,
+    #[serde(default)]
+    pub side: f32,
+    #[serde(default = "pad_len")]
+    pub len: f32,
+}
+
+fn pad_len() -> f32 {
+    6.0
 }
 
 /// A race in this world (world.json `race`): laps of a circuit against
@@ -1379,8 +1487,12 @@ pub struct Circuit {
 #[derive(Deserialize, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct RaceDef {
-    /// The `circuit` event's name.
+    /// The circuit's name: the `circuit` event's, or the track's.
     pub circuit: String,
+    /// A track file in the world folder (`track.json`, written by
+    /// `tools/course/track_file.py`), stamped after the chronicle.
+    #[serde(default)]
+    pub track: Option<String>,
     #[serde(default = "three")]
     pub laps: u32,
     /// Bots racing the player, 1 to 3.

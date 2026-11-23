@@ -44,6 +44,26 @@ impl Ride {
         self.car.as_mut().filter(|_| self.mode == Mode::Drive)
     }
 
+    /// A knock from outside the car's own step (another kart meeting it in
+    /// a race), `hard` m/s: the view shakes and the controller rumbles as
+    /// for a crash.
+    pub fn jolt(&mut self, hard: f32) {
+        self.shake += (hard * 0.012).min(0.12);
+        self.rumble = self.rumble.max(((hard - 3.0) / 12.0).clamp(0.0, 1.0));
+    }
+
+    /// Everything a race sets on the ride, back to what it is out of one:
+    /// the car takes the keys and is drawn, unlit, the view looks ahead, and
+    /// the boost meter is the ride's own.
+    pub fn clear_race(&mut self) {
+        self.hold = false;
+        self.auto = None;
+        self.race_boost = None;
+        self.flash = false;
+        self.hide = false;
+        self.look_back = false;
+    }
+
     /// Into a new car of `spec` at `at` (on the ground) facing `yaw`, from
     /// wherever the player was: how a race puts them on its grid.
     pub fn race_car(&mut self, p: &mut Player, spec: crate::vehicle::Spec, at: Vec3, yaw: f32) {
@@ -193,8 +213,18 @@ impl Ride {
         let key = |b: bool| b as i32 as f32;
         // In the driver's seat the view is fixed to the car, so it cannot be
         // what the wheels steer toward: A/D steer there, whatever the tune.
-        let direct = car.spec.steering == Steering::Direct || seat;
-        let steer = if direct {
+        // With the controller the left stick steers, whatever the camera:
+        // the right stick is for looking round, so the view cannot steer.
+        let direct = car.spec.steering == Steering::Direct || seat || input.pad;
+        let steer = if input.pad {
+            // Softer near the centre, so small corrections are small.
+            let x = input.stick.x;
+            if x != 0.0 {
+                x.signum() * x.abs().powf(1.5)
+            } else {
+                key(input.right) - key(input.left)
+            }
+        } else if direct {
             key(input.right) - key(input.left)
         } else {
             // Toward where the view points; looking far aside or behind
@@ -211,15 +241,21 @@ impl Ride {
         } else if let Some(c) = self.auto.take() {
             c
         } else {
+            // The triggers are the pedals; W and S still work beside them.
+            let (throttle, brake) = if input.pad {
+                (input.throttle.max(key(input.forward)), input.brake.max(key(input.back)))
+            } else {
+                (key(input.forward), key(input.back))
+            };
             Controls {
-                throttle: key(input.forward),
-                brake: key(input.back),
+                throttle,
+                brake,
                 steer,
                 handbrake: input.down,
                 hop: input.jump,
                 boost: boosting,
-                pitch: key(input.forward) - key(input.back),
-                roll: key(input.right) - key(input.left),
+                pitch: input.ahead(),
+                roll: input.side(),
             }
         };
         let h0 = car.heading();
@@ -243,6 +279,8 @@ impl Ride {
             self.spent = (self.spent - 0.4).max(0.0);
             self.boost_glow = 1.0;
         }
+        // The controller shakes with the knocks: a landing, a hit.
+        self.rumble = self.rumble.max(((ev.thump - 2.0) / 10.0).max((ev.crash - 3.0) / 12.0).clamp(0.0, 1.0));
         if ev.thump > 3.0 {
             self.shake += (ev.thump * 0.01).min(0.1);
             self.bob_v -= ev.thump * 0.05;
@@ -397,9 +435,13 @@ impl Ride {
     /// camera, or the gloves on the wheel in first person) and the parked one.
     /// `base` is the first vehicle model.
     pub fn vehicle_instances(&self, alpha: f32, base: usize, models: &[crate::models::Model], out: &mut Vec<(usize, crate::models::Instance)>) {
-        if let Some(car) = self.car() {
+        if let Some(car) = self.car().filter(|_| !self.hide) {
             let outside = self.chase_on() || self.show_body;
+            let from = out.len();
             crate::vehicle::draw::instances(car, alpha, base, models, true, !outside, out);
+            if self.flash {
+                crate::vehicle::draw::flash(&mut out[from..]);
+            }
         }
         if let Some(car) = &self.parked {
             crate::vehicle::draw::instances(car, alpha, base, models, false, false, out);

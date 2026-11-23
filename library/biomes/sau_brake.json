@@ -1,0 +1,45 @@
+{
+  "name": "sau_brake",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "Tree-fern brakes and horsetail beds along the streams of the Fernwood, under dawn redwoods, with eelgrass in the slow water, trout and pond turtles in it and gulls come up from the mere.",
+  "priority": 4,
+  "rules": {"river": [0, 22]},
+  "surface": "moss_grass",
+  "subsurface": "dirt",
+  "fringe": 6,
+  "map_color": [58, 104, 64],
+  "plants": [
+    {
+      "plant": "tree_fern",
+      "density": 0.09,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.3, "max": 1.0}}
+    },
+    {"plant": "giant_horsetail", "density": 0.05, "placement": {"verb": "riparian", "params": {"width": 12}}},
+    {"plant": "dawn_redwood", "density": 0.002, "placement": {"verb": "lone", "params": {"spacing": 18}}},
+    {
+      "plant": "cycad",
+      "density": 0.015,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.3, "max": 1.0}}
+    },
+    {"plant": "grim_fern", "density": 0.5, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "fern",
+      "density": 0.2,
+      "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.2, "max": 1.0}}
+    },
+    {"plant": "shelf_fungus", "density": 0.25},
+    {"plant": "tree_moss", "density": 0.6}
+  ],
+  "features": [{"structure": "mossy_log", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "giant_dragonfly", "count": 8},
+    {"creature": "dipper", "count": 3},
+    {"creature": "frog", "count": 8},
+    {"creature": "parasaurolophus", "count": 7},
+    {"creature": "trout", "count": 8},
+    {"creature": "gull", "count": 3},
+    {"creature": "pond_turtle", "count": 5},
+    {"creature": "compsognathus", "count": 2}
+  ]
+}

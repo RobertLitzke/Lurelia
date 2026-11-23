@@ -1,0 +1,16 @@
+{
+  "name": "bluebells",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Bluebells (drawn as sprites): drifts of nodding violet-blue flowers on the wood floor.",
+  "smooth": false,
+  "sprites": "flower",
+  "texture": {
+    "pattern": "noise",
+    "base": [74, 98, 60],
+    "alt": [92, 96, 196],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [80, 105, 66], "alt": [99, 103, 207]}
+  }
+}

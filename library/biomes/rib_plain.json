@@ -48,10 +48,10 @@
     }
   ],
   "creatures": [
-    {"creature": "elk", "count": 6},
+    {"creature": "elk", "count": 6.6},
     {"creature": "raven", "count": 2},
     {"creature": "gull", "count": 2},
-    {"creature": "jackrabbit", "count": 3},
+    {"creature": "jackrabbit", "count": 3.3},
     {"creature": "sparrow", "count": 4},
     {"creature": "annas_hummingbird", "count": 3}
   ],

@@ -7,6 +7,7 @@
 //! is which. `library/kits/*.json` holds them, loaded like every other kind.
 
 use crate::library::Library;
+use crate::world::gen::VOXEL;
 use serde::Deserialize;
 
 /// Which side of the line a member sits on.
@@ -158,6 +159,14 @@ pub struct RailDef {
     #[serde(default = "quarter")]
     pub thick: f32,
     pub mat: String,
+    /// 0 for a smooth bar. Above 0 the rail is a heap of stones: laid in
+    /// courses of separate stones, narrowing upward, its top ragged by up to
+    /// this fraction of its height; a field wall rather than a kerb.
+    #[serde(default)]
+    pub rubble: f32,
+    /// A second stone, every other one or so, for a rubble rail.
+    #[serde(default)]
+    pub mat2: Option<String>,
 }
 
 /// A member repeated along the line: a fence post, a lamp, a pier cap.
@@ -244,6 +253,8 @@ pub struct Rail {
     pub to: f32,
     pub thick: f32,
     pub mat: u8,
+    pub rubble: f32,
+    pub mat2: u8,
 }
 
 #[derive(Clone, Debug)]
@@ -343,6 +354,8 @@ impl Kit {
                 to: r.to,
                 thick: r.thick.max(0.25),
                 mat: mat(&r.mat),
+                rubble: r.rubble,
+                mat2: r.mat2.as_deref().map_or(0, &mut mat),
             })
             .collect();
         let posts: Vec<Post> = def
@@ -415,7 +428,8 @@ impl Kit {
         let mut rise: f32 = 0.0;
         for r in &rails {
             reach = reach.max(half + r.out + r.thick);
-            rise = rise.max(r.to);
+            // A thin rail is drawn a voxel tall about its middle (`voxel`).
+            rise = rise.max(r.to).max((r.from + r.to) * 0.5 + 0.125);
         }
         for p in &posts {
             reach = reach.max(half + p.out + p.across);
@@ -486,10 +500,26 @@ impl Kit {
             }
         }
         for r in &self.rails {
-            if !r.side.has(across) || up < r.from || up >= r.to {
+            // A rail less than a voxel tall takes the one voxel row nearest
+            // its middle: tested as it stands, a 0.2 m band misses every
+            // voxel centre on level ground at some heights and the whole
+            // rail is gone.
+            let (from, to) = if r.to - r.from < VOXEL {
+                let mid = (r.from + r.to) * 0.5;
+                (mid - VOXEL * 0.5, mid + VOXEL * 0.5)
+            } else {
+                (r.from, r.to)
+            };
+            if !r.side.has(across) || up < from || up >= to {
                 continue;
             }
             let (lo, hi) = band(self.half, r.out, r.thick, r.side);
+            if r.rubble > 0.0 {
+                if let Some(m) = rubble(r, a - lo, hi - lo, up, s) {
+                    return Some(m);
+                }
+                continue;
+            }
             if a >= lo && a < hi {
                 return Some(r.mat);
             }
@@ -529,6 +559,39 @@ impl Kit {
         }
         None
     }
+}
+
+/// A heaped stone rail at `x` m into its band (of width `w`), `up` m above
+/// the ground and `s` m along: which stone is there, if any. Stones are laid
+/// in courses about 0.3 m high, each 0.4 to 0.9 m long and offset from the
+/// course below; each has its own width and top, and the whole narrows
+/// toward the top, so it reads as a pile and not a bar.
+fn rubble(r: &Rail, x: f32, w: f32, up: f32, s: f32) -> Option<u8> {
+    use crate::world::noise::{hash32, unit};
+    let tall = r.to - r.from;
+    let rel = ((up - r.from) / tall.max(0.1)).clamp(0.0, 1.0);
+    let course = ((up - r.from) / 0.3).floor() as i32;
+    let shift = unit(hash32(course as u32 ^ 0x51ab)) * 0.9;
+    let len = 0.5;
+    let k = ((s + shift) / len).floor() as i32;
+    let h = hash32((k as u32).wrapping_mul(0x9e37_79b9) ^ (course as u32).wrapping_mul(0x85eb_ca6b));
+    // The stone's top: the courses stop short in places along the wall.
+    let along_top = r.to - r.rubble * tall * unit(hash32((((s + 0.3) / 1.4).floor() as i32) as u32 ^ 0x7f4a));
+    if up >= along_top {
+        return None;
+    }
+    // Battered: full width at the foot, about two thirds at the top, and
+    // each stone bulging or sitting back a little.
+    // A centred rail's band is half its width (the other half is the
+    // mirror across the line).
+    let width = if r.side == Side::Centre { w * 2.0 } else { w };
+    let half = width * 0.5 * (1.0 - 0.38 * rel) * (0.82 + 0.3 * unit(h >> 3));
+    let off = (unit(h >> 9) - 0.5) * 0.12 * width;
+    let centre = if r.side == Side::Centre { 0.0 } else { w * 0.5 };
+    if (x - centre - off).abs() > half {
+        return None;
+    }
+    Some(if r.mat2 != 0 && unit(h >> 17) < 0.4 { r.mat2 } else { r.mat })
 }
 
 /// Where a member sits across the line: a centred one straddles it, the rest

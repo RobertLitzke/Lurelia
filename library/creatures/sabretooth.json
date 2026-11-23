@@ -13,6 +13,7 @@
   },
   "behaviour": {
     "movement": "skulk",
+    "sleeps_on_side": true,
     "walk_speed": 1.2,
     "flee_speed": 9.0,
     "wary": 24,

@@ -14,7 +14,8 @@
     {"creature": "puffin", "count": 40},
     {"creature": "razorbill", "count": 10},
     {"creature": "gull", "count": 8},
-    {"creature": "cormorant", "count": 4}
+    {"creature": "cormorant", "count": 4},
+    {"creature": "gannet", "count": 8}
   ],
   "collectibles": []
 }

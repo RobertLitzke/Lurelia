@@ -14,7 +14,13 @@
     {"creature": "sparrow", "count": 8},
     {"creature": "starling", "count": 10},
     {"creature": "crow", "count": 2},
-    {"creature": "bee", "count": 4}
+    {"creature": "bee", "count": 4.4},
+    {"creature": "bat", "count": 4.4},
+    {"creature": "barn_owl", "count": 1},
+    {"creature": "tawny_owl", "count": 1},
+    {"creature": "badger", "count": 2.2},
+    {"creature": "hedgehog", "count": 2.2},
+    {"creature": "toad", "count": 2.2}
   ],
   "collectibles": [{"item": "pottery_shard", "density": 0.001, "placement": {"verb": "scatter", "params": {}}}]
 }

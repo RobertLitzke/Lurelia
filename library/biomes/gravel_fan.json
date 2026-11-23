@@ -43,16 +43,17 @@
     {"plant": "ephedra", "density": 0.003, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "lizard", "count": 16},
-    {"creature": "jackrabbit", "count": 5},
-    {"creature": "coyote", "count": 2},
-    {"creature": "rattlesnake", "count": 2},
-    {"creature": "desert_tortoise", "count": 4},
-    {"creature": "desert_toad", "count": 3},
-    {"creature": "canyon_bat", "count": 4},
+    {"creature": "lizard", "count": 17.6},
+    {"creature": "jackrabbit", "count": 5.5},
+    {"creature": "coyote", "count": 2.2},
+    {"creature": "rattlesnake", "count": 2.2},
+    {"creature": "desert_tortoise", "count": 4.4},
+    {"creature": "desert_toad", "count": 3.3},
+    {"creature": "canyon_bat", "count": 4.4},
     {"creature": "raven", "count": 2},
     {"creature": "roadrunner", "count": 2},
     {"creature": "annas_hummingbird", "count": 2},
-    {"creature": "gambels_quail", "count": 16}
+    {"creature": "gambels_quail", "count": 16},
+    {"creature": "kangaroo_rat", "count": 3.3}
   ]
 }

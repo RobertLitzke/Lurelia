@@ -4,7 +4,11 @@
   "introduced_by": "redrock",
   "notes": "Collared peccary: a small grizzled grey-black pig of the desert with a pale band round the shoulders. Bands of four to ten root among the yucca and prickly ground, and huff off together when startled.",
   "colors": {"coat": [92, 88, 82], "belly": [120, 114, 104], "mane": [36, 28, 24], "collar": [210, 196, 176]},
-  "behaviour": {"wary": 10, "group": {"size": [3, 8], "spacing": 1.6, "range": 10, "alignment": 1.0, "cohesion": 1.4}},
+  "behaviour": {
+    "sleeps_on_side": true,
+    "wary": 10,
+    "group": {"size": [3, 8], "spacing": 1.6, "range": 10, "alignment": 1.0, "cohesion": 1.4}
+  },
   "like": "boar",
   "scale": 0.72,
   "extra_ops": [

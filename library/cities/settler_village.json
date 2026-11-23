@@ -1,0 +1,37 @@
+{
+  "name": "settler_village",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "A frontier settlement of timber houses: dirt lanes and a beaten-earth green, no paving. Meant for a town that stands its world's own settler buildings on its plots (`houses`, `footprints: false`); the walls and roofs here only dress the odd footprint house or farmstead.",
+  "like": "old_town",
+  "deck": "weathered_planks",
+  "deck_top": "weathered_planks",
+  "rail": "timber_frame",
+  "town": {
+    "walls": {"village": ["weathered_planks"], "ribbon": ["weathered_planks"]},
+    "roofs": {"village": ["roof_shingle_grey"], "ribbon": ["roof_shingle_grey"]},
+    "trims": ["trim_dark"],
+    "streets": {
+      "main": "path_dirt",
+      "ring": "path_dirt",
+      "street": "path_dirt",
+      "lane": "path_dirt",
+      "close": "path_dirt",
+      "alley": "path_dirt",
+      "country": "path_dirt",
+      "village_main": "path_dirt",
+      "village_street": "path_dirt",
+      "ribbon_main": "path_dirt",
+      "drive": "path_dirt"
+    },
+    "plaza": "path_dirt",
+    "flat_roof": "roof_shingle_grey",
+    "church": "weathered_planks",
+    "trees": ["street_oak"],
+    "field_wall": "timber_fence",
+    "rail": "timber_fence",
+    "town_wall": "timber_fence",
+    "garden": "timber_fence",
+    "hedge": "hedgerow"
+  }
+}

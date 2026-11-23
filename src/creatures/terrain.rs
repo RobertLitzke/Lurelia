@@ -30,6 +30,23 @@ pub fn voxel_ground(store: &Store, x: f32, z: f32, from_y: f32) -> Option<(f32, 
     store.top_below(vx, vz, start).map(|(vy, m)| ((vy as f32 + if matlib::slab(m) { 0.5 } else { 1.0 }) / 4.0, m))
 }
 
+/// The ground at (x, z) where its voxels are not loaded at full detail
+/// (stream.rs `FULL_DETAIL_M`, 128 m out): the generator's own ground
+/// height, metres, which is what the coarser rings out there are drawn from.
+/// None where the voxels are loaded (use `voxel_ground`) or there is no
+/// generator. An animal out in the distance walks on this (walk.rs).
+///
+/// A column loads and unloads whole (`Store::insert_column`), so its bottom
+/// chunk says whether it is loaded, and the generator is only asked where
+/// it is not.
+pub fn far_ground(store: &Store, x: f32, z: f32) -> Option<f32> {
+    let (vx, vz) = ((x * 4.0).floor() as i32, (z * 4.0).floor() as i32);
+    if store.loaded(vx, 0, vz) {
+        return None;
+    }
+    Some(store.ground_vox(vx, vz)? / 4.0)
+}
+
 /// How far above a body's feet `roof_over` looks for a roof, metres.
 pub const ROOF_LOOK_M: f32 = 40.0;
 

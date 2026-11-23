@@ -11,6 +11,7 @@
     "dark": [36, 28, 24]
   },
   "behaviour": {
+    "sleeps_on_side": true,
     "walk_speed": 1.1,
     "flee_speed": 8.0,
     "wary": 14,

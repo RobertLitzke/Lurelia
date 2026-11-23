@@ -1,0 +1,16 @@
+{
+  "name": "dawn_needles",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "Dawn redwood foliage: soft feathery sprays, a fresh bright green.",
+  "smooth": false,
+  "sprites": "needles",
+  "texture": {
+    "pattern": "blotch",
+    "base": [86, 120, 54],
+    "alt": [74, 106, 46],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [96, 128, 62], "alt": [84, 114, 54]}
+  }
+}

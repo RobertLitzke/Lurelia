@@ -38,6 +38,11 @@ pub struct Lake {
     /// rock bowl.
     #[serde(default)]
     steep: bool,
+    /// Leave ground that later events raise above the water inside the
+    /// lake standing when the lake takes its final shape: an island, a
+    /// causeway. Without it the bowl is dug again over everything.
+    #[serde(default)]
+    keep_islands: bool,
 }
 
 fn default_ragged() -> f32 {
@@ -61,6 +66,11 @@ pub struct LakeRec {
     pub axis: Vec2,
     pub seed: u32,
     pub steep: bool,
+    pub keep_islands: bool,
+    /// The level found when the basin was dug (none until then); a lake
+    /// that keeps its islands holds it, since what later events raised
+    /// round its shore must not lower the water under them.
+    pub level: Option<f32>,
 }
 
 /// Every lake so far, by name.
@@ -85,12 +95,14 @@ impl Process for Lake {
             axis: Vec2::new(b.sin(), -b.cos()),
             seed: cx.seed,
             steep: self.steep,
+            keep_islands: self.keep_islands,
+            level: None,
         };
         // Dug now, so later events (a village on its shore, a river into it)
         // see the basin; shaped again, with its water, after every event.
         let mut none = HashMap::default();
         let level = shape(&mut cx.f, &rec, &mut none, false);
-        cx.state.get::<Lakes>().0.insert(self.name.clone(), rec);
+        cx.state.get::<Lakes>().0.insert(self.name.clone(), LakeRec { level: Some(level), ..rec });
         format!("{}: {:.0} m across, water at {:.1} m", self.name, self.radius * 2.0, level)
     }
 }
@@ -130,7 +142,8 @@ pub fn shape(f: &mut Fields, rec: &LakeRec, owner: &mut HashMap<u32, f32>, water
     if rim == f32::MAX {
         rim = f.height(rec.centre.x, rec.centre.y);
     }
-    let level = (rim - 0.3).max(f.sea);
+    let held = rec.level.filter(|_| water && rec.keep_islands);
+    let level = held.unwrap_or((rim - 0.3).max(f.sea));
     let sea = f.sea;
     let seed = rec.seed;
     let mut cells: Vec<usize> = Vec::new();
@@ -139,6 +152,11 @@ pub fn shape(f: &mut Fields, rec: &LakeRec, owner: &mut HashMap<u32, f32>, water
         let p = f.centre(i);
         let (s, out) = reach(rec, p);
         let occupied = f.occupied[i];
+        if water && s < 1.0 && rec.keep_islands && f.h[i] > level + 0.3 {
+            // An island or a causeway an event raised out of the dug basin
+            // (only on the final pass: the first dig has to take the land).
+            continue;
+        }
         if s < 1.0 {
             // A bowl, shelving gently near the shore.
             f.h[i] = level - 0.05 - (rec.depth - 0.05) * (1.0 - s * s).max(0.0).powf(0.6);

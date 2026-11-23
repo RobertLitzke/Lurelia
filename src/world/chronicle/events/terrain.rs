@@ -50,6 +50,11 @@ pub struct Terrain {
     /// Depth of the sea floor off the coast, m.
     #[serde(default = "default_shelf")]
     shelf: f32,
+    /// "add": lay all of this over the ground already there (a `heightmap`'s,
+    /// a race track's fitted land) instead of replacing it, `base` measured
+    /// from that ground. The sea still takes the coasts.
+    #[serde(default)]
+    mode: Option<String>,
 }
 
 /// A rise (`height` above zero) or a basin (below), fading out over `radius`.
@@ -189,6 +194,15 @@ impl Process for Terrain {
             .collect();
         let k = 1.0 / self.scale.max(0.05);
         let vary = self.vary.clamp(0.0, 1.0);
+        let over: Option<Vec<f32>> = match self.mode.as_deref() {
+            Some("add") => Some(f.h.clone()),
+            None | Some("replace") => None,
+            Some(m) => {
+                cx.warnings.push(format!("terrain: mode {m}: add or replace"));
+                None
+            }
+        };
+        let f = &mut cx.f;
         let mut top = f32::MIN;
         for i in 0..n * n {
             let at = f.centre(i);
@@ -199,6 +213,9 @@ impl Process for Terrain {
             let small = Vec2::new(fbm2(p.x * 0.011, p.y * 0.011, 2, seed + 2), fbm2(p.x * 0.011 - 37.0, p.y * 0.011, 2, seed + 3)) * self.warp * 0.25;
             let q = at + big + small;
             let mut h = read(q);
+            if let Some(o) = &over {
+                h += o[i];
+            }
             // How strongly each kind of roughness shows here.
             let slow = |s: u32| (1.0 + vary * 1.6 * fbm2(p.x * 0.0016 + s as f32 * 13.0, p.y * 0.0016, 2, seed + 10 + s)).clamp(0.08, 2.2);
             let w = p + big * 0.6;

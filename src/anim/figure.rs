@@ -628,8 +628,8 @@ mod tests {
                 names.iter().position(|x| x.as_str() == n).map(|k| k as u8 + 1)
             }
         };
-        let whole = crate::world::shape::compile(&c.ops, [32, 32, 32], &resolve).mat;
-        let s = crate::anim::slice::slice(c.rig.as_ref().expect("rig"), &c.ops, &whole, &|n| resolve(n).is_some(), c.voxel, c.half_w, c.height);
+        let whole = crate::world::shape::compile(&c.ops, c.grid, &resolve).mat;
+        let s = crate::anim::slice::slice(c.rig.as_ref().expect("rig"), &c.ops, &whole, crate::anim::slice::Dims(c.grid), &|n| resolve(n).is_some(), c.voxel, c.half_w, c.height);
         (s.rig, c.voxel)
     }
 

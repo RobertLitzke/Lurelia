@@ -1,0 +1,19 @@
+{
+  "name": "stellers_jay",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Steller's jay: a loud crested jay of the redwoods, charcoal head and shining blue body.",
+  "colors": {
+    "body": [40, 80, 150],
+    "head": [30, 34, 44],
+    "beak": [24, 24, 28],
+    "wing": [36, 92, 170],
+    "tail": [34, 74, 150],
+    "legs": [30, 30, 34],
+    "breast": [52, 96, 160],
+    "head_cap": [24, 26, 34]
+  },
+  "behaviour": {"flightiness": 0.9},
+  "like": "sparrow",
+  "scale": 1.6
+}

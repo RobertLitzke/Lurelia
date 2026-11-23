@@ -5,6 +5,7 @@
   "notes": "Jaguar: stockier and shorter-tailed than a cougar, golden under black rosettes, keeping to the river jungle.",
   "colors": {"coat": [214, 170, 86], "belly": [238, 230, 206], "spot": [36, 28, 24], "muzzle": [238, 230, 206]},
   "behaviour": {
+    "sleeps_on_side": true,
     "walk_speed": 1.2,
     "flee_speed": 8.0,
     "wary": 20,

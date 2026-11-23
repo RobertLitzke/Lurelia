@@ -2,10 +2,15 @@
 //! (`world/bones.rs`). The spine follows `path` from the head to the tail
 //! and lies on the ground; the animal is on its side, so its upper ribs
 //! arch up and over toward the `belly` side and its lower ribs lie flat in
-//! the sand under them. Sizes go by the length of the path.
+//! the sand under them. Sizes go by the length of the path. The dinosaur
+//! kinds ("sauropod", "theropod") are drawn by `dino`, and a ribcage on
+//! its own ("ribcage") by `ribcage`.
+
+mod dino;
+mod ribcage;
 
 use crate::world::bones::{Bone, BoneSet, Bones};
-use crate::world::chronicle::geom::{smoothed_ground, spline};
+use crate::world::chronicle::geom::{cumulative, smoothed_ground, spline};
 use crate::world::chronicle::{EventCtx, Process};
 use crate::world::fields::{Poi, Pos};
 use crate::world::noise::{hash32, unit};
@@ -21,12 +26,22 @@ pub struct Skeleton {
     /// The spine, head first; the body is as long as the path.
     path: Vec<Pos>,
     /// "toothed" (teeth in the lower jaw) or "baleen" (rows of plates on an
-    /// upturned upper jaw).
+    /// upturned upper jaw), the whales; or "sauropod" (a long-neck) or
+    /// "theropod" (a big hunter on two legs), which go by their own
+    /// proportions and ignore `vertebrae` and `ribs`; or "ribcage", the
+    /// ribs alone in two rows either side of an open lane down `path`
+    /// (`gap`), curling in over it.
     #[serde(default = "default_kind")]
     kind: String,
-    /// The skull's share of the length.
-    #[serde(default = "default_skull")]
-    skull: f32,
+    /// Dinosaurs only: "side" (the default) lies on the `belly`-ward side,
+    /// the upper ribs arching over and the legs lying out toward the belly;
+    /// "belly" lies face down, ribs hooped out either side, legs splayed.
+    #[serde(default)]
+    pose: Option<String>,
+    /// The skull's share of the length (0.2 for a whale, 0.035 for a
+    /// sauropod, 0.12 for a theropod).
+    #[serde(default)]
+    skull: Option<f32>,
     #[serde(default = "default_vertebrae")]
     vertebrae: usize,
     #[serde(default = "default_ribs")]
@@ -37,6 +52,13 @@ pub struct Skeleton {
     /// How far the longest rib reaches across, metres (0.15 of the length).
     #[serde(default)]
     rib_span: Option<f32>,
+    /// Ribcage only: how far each row of rib heads is from the lane's
+    /// middle, metres (10).
+    #[serde(default)]
+    gap: Option<f32>,
+    /// Ribcage only: the ribs' radius at the head, metres.
+    #[serde(default)]
+    rib_radius: Option<f32>,
     /// "right" or "left" of the line from head to tail: the side the ribs
     /// arch over to.
     #[serde(default = "default_belly")]
@@ -89,9 +111,6 @@ pub struct Skeleton {
 fn default_kind() -> String {
     "toothed".into()
 }
-fn default_skull() -> f32 {
-    0.2
-}
 fn default_vertebrae() -> usize {
     50
 }
@@ -130,6 +149,53 @@ fn v3(p: Vec2, y: f32) -> Vec3 {
     Vec3::new(p.x, y, p.y)
 }
 
+/// The id of a material the event may leave out; 0 without one.
+fn opt_mat(cx: &mut EventCtx, m: &Option<String>) -> u8 {
+    m.as_ref().map_or(0, |n| cx.mat(n))
+}
+
+impl Skeleton {
+    /// The bones' materials as the event names them, the hard outside of
+    /// each bone `shell` thick.
+    fn bone_set(&self, cx: &mut EventCtx, shell: f32) -> BoneSet {
+        BoneSet {
+            bone: cx.mat(&self.bone),
+            marrow: cx.mat(&self.marrow),
+            pits: opt_mat(cx, &self.pits),
+            lichen: opt_mat(cx, &self.lichen),
+            lichen_share: self.lichen_share,
+            wet: opt_mat(cx, &self.wet),
+            wet_depth: self.wet_depth,
+            deep: opt_mat(cx, &self.deep),
+            shell,
+        }
+    }
+}
+
+/// The point `t` (0 to 1) along the cubic curve with control points `c`.
+fn cubic(c: [Vec3; 4], t: f32) -> Vec3 {
+    let m = 1.0 - t;
+    c[0] * (m * m * m) + c[1] * (3.0 * m * m * t) + c[2] * (3.0 * m * t * t) + c[3] * (t * t * t)
+}
+
+/// A bone bent along the curve `pt` (0 at its root to 1), as `segs`
+/// capsules of radius `radius(w)`, flattened by `squash` across `along`. It
+/// is drawn only to `end` (under 1: broken there, the break cut clean).
+/// Returns where it stops.
+#[allow(clippy::too_many_arguments)]
+fn bent_bone(list: &mut Vec<Bone>, pt: impl Fn(f32) -> Vec3, segs: usize, end: f32, radius: impl Fn(f32) -> f32, along: Vec3, squash: f32, sid: u16) -> Vec3 {
+    let mut prev = pt(0.0);
+    for j in 1..=segs {
+        let (w0, w1) = ((j - 1) as f32 / segs as f32 * end, j as f32 / segs as f32 * end);
+        let cur = pt(w1);
+        let dir = (cur - prev).normalize_or_zero();
+        let flat = dir.cross(along).normalize_or_zero();
+        list.push(Bone { flat, squash, cut_b: end < 1.0 && j == segs, ..Bone::capsule(prev, cur, radius(w0), radius(w1), sid) });
+        prev = cur;
+    }
+    prev
+}
+
 impl Process for Skeleton {
     fn apply(&self, cx: &mut EventCtx) -> String {
         let pts: Vec<Vec2> = self.path.iter().map(|p| cx.pos(p)).collect();
@@ -137,38 +203,22 @@ impl Process for Skeleton {
             cx.warnings.push(format!("skeleton {}: a path needs two points", self.name));
             return format!("skeleton {}: no path", self.name);
         }
-        let mat = |cx: &mut EventCtx, m: &Option<String>| m.as_ref().map_or(0, |n| cx.mat(n));
-        let set = BoneSet {
-            bone: cx.mat(&self.bone),
-            marrow: cx.mat(&self.marrow),
-            pits: mat(cx, &self.pits),
-            lichen: mat(cx, &self.lichen),
-            lichen_share: self.lichen_share,
-            wet: mat(cx, &self.wet),
-            wet_depth: self.wet_depth,
-            deep: mat(cx, &self.deep),
-            shell: 0.9,
-        };
-        let tooth_mat = mat(cx, &self.teeth);
-        let sand = mat(cx, &self.sand);
+        if self.kind == "sauropod" || self.kind == "theropod" {
+            return dino::lay(self, cx, &pts);
+        }
+        if self.kind == "ribcage" {
+            return ribcage::lay(self, cx, &pts);
+        }
+        let set = self.bone_set(cx, 0.9);
+        let tooth_mat = opt_mat(cx, &self.teeth);
+        let sand = opt_mat(cx, &self.sand);
         let mut dice = Dice(cx.seed ^ 0x5ce1);
         let (cause, sea) = (cx.cause, cx.f.sea);
 
-        // The spine at 1 m steps, with arc length and the ground under it.
-        let line = spline(&pts, false, 1.0);
-        let mut arc = vec![0f32; line.len()];
-        for i in 1..line.len() {
-            arc[i] = arc[i - 1] + line[i].distance(line[i - 1]);
-        }
-        let len = *arc.last().unwrap();
-        let ground = smoothed_ground(&cx.f, &line, 30.0, false);
-        let at = |s: f32| -> (Vec2, Vec2, f32) {
-            let i = arc.partition_point(|&a| a < s).clamp(1, line.len() - 1);
-            let t = ((s - arc[i - 1]) / (arc[i] - arc[i - 1]).max(1e-4)).clamp(0.0, 1.0);
-            let p = line[i - 1].lerp(line[i], t);
-            let d = (line[i] - line[i - 1]).normalize_or_zero();
-            (p, d, ground[i - 1] + (ground[i] - ground[i - 1]) * t)
-        };
+        let spine = Spine::new(&cx.f, &pts, 30.0);
+        let (line, arc) = (&spine.line, &spine.arc);
+        let len = spine.len();
+        let at = |s: f32| spine.at(s);
         let side = if self.belly == "left" { -1.0 } else { 1.0 };
         // Right of a heading (x east, z south): north's right is east.
         let belly_of = |d: Vec2| Vec2::new(-d.y, d.x) * side;
@@ -193,7 +243,7 @@ impl Process for Skeleton {
         let mut occupy: Vec<(Vec2, f32)> = Vec::new();
         let mut places: Vec<(String, Vec2)> = Vec::new();
 
-        let skull_len = self.skull * len;
+        let skull_len = self.skull.unwrap_or(0.2) * len;
         let n = self.vertebrae.max(4);
         let spacing = (len - skull_len) / n as f32;
         let rv0 = 0.0065 * len;
@@ -582,24 +632,7 @@ impl Process for Skeleton {
 
         let count = bones.list.len() - first;
         *cx.state.get::<Bones>() = bones;
-        let f = &mut cx.f;
-        for (c, r) in occupy {
-            let ri = r.ceil() as i32;
-            for dz in -ri..=ri {
-                for dx in -ri..=ri {
-                    let q = c + Vec2::new(dx as f32, dz as f32);
-                    if q.x >= 0.0 && q.y >= 0.0 && q.x < f.size && q.y < f.size && q.distance(c) <= r {
-                        let j = f.idx(q.x, q.y);
-                        f.occupied[j] = true;
-                    }
-                }
-            }
-        }
-        let mut names = Vec::new();
-        for (nm, p) in &places {
-            cx.seat(nm, *p, None);
-            names.push(format!("{nm} {:.0},{:.0}", p.x, p.y));
-        }
+        let names = settle(cx, &occupy, &places);
         if let Some(poi) = &self.poi {
             cx.pois.push(Poi { name: poi.clone(), pos: cxz, cause });
         }
@@ -611,6 +644,61 @@ impl Process for Skeleton {
             names.join(", ")
         )
     }
+}
+
+/// The spine's path at 1 m steps, with arc length and the ground under it
+/// smoothed over `window` m.
+struct Spine {
+    line: Vec<Vec2>,
+    arc: Vec<f32>,
+    ground: Vec<f32>,
+}
+
+impl Spine {
+    fn new(f: &crate::world::fields::Fields, pts: &[Vec2], window: f32) -> Self {
+        let line = spline(pts, false, 1.0);
+        let (arc, _) = cumulative(&line, false);
+        let ground = smoothed_ground(f, &line, window, false);
+        Spine { line, arc, ground }
+    }
+
+    fn len(&self) -> f32 {
+        *self.arc.last().unwrap()
+    }
+
+    /// The point `s` m along, the heading there and the ground under it.
+    fn at(&self, s: f32) -> (Vec2, Vec2, f32) {
+        let (line, arc, ground) = (&self.line, &self.arc, &self.ground);
+        let i = arc.partition_point(|&a| a < s).clamp(1, line.len() - 1);
+        let t = ((s - arc[i - 1]) / (arc[i] - arc[i - 1]).max(1e-4)).clamp(0.0, 1.0);
+        let p = line[i - 1].lerp(line[i], t);
+        let d = (line[i] - line[i - 1]).normalize_or_zero();
+        (p, d, ground[i - 1] + (ground[i] - ground[i - 1]) * t)
+    }
+}
+
+/// Mark the ground the bones cover as occupied (no trees through a rib
+/// cage) and leave the named places; returns "name x,z" for each.
+fn settle(cx: &mut EventCtx, occupy: &[(Vec2, f32)], places: &[(String, Vec2)]) -> Vec<String> {
+    let f = &mut cx.f;
+    for &(c, r) in occupy {
+        let ri = r.ceil() as i32;
+        for dz in -ri..=ri {
+            for dx in -ri..=ri {
+                let q = c + Vec2::new(dx as f32, dz as f32);
+                if q.x >= 0.0 && q.y >= 0.0 && q.x < f.size && q.y < f.size && q.distance(c) <= r {
+                    let j = f.idx(q.x, q.y);
+                    f.occupied[j] = true;
+                }
+            }
+        }
+    }
+    let mut names = Vec::new();
+    for (nm, p) in places {
+        cx.seat(nm, *p, None);
+        names.push(format!("{nm} {:.0},{:.0}", p.x, p.y));
+    }
+    names
 }
 
 /// How much of a gap between two vertebrae w (0..1 from one centre to the

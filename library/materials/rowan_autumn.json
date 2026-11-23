@@ -1,0 +1,16 @@
+{
+  "name": "rowan_autumn",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Rowan in autumn: leaflets gone orange and scarlet.",
+  "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "narrow"},
+  "texture": {
+    "pattern": "blotch",
+    "base": [206, 96, 40],
+    "alt": [180, 60, 34],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [218, 103, 45], "alt": [191, 66, 39]}
+  }
+}

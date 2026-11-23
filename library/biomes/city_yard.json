@@ -31,5 +31,5 @@
     {"plant": "street_maple", "density": 0.002, "placement": {"verb": "lone", "params": {"spacing": 10}}},
     {"plant": "street_oak", "density": 0.0012, "placement": {"verb": "lone", "params": {"spacing": 14}}}
   ],
-  "creatures": [{"creature": "crow", "count": 4}]
+  "creatures": [{"creature": "crow", "count": 4}, {"creature": "raccoon", "count": 2.2}]
 }

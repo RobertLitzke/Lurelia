@@ -257,6 +257,24 @@ impl Flight {
         self.stride = (self.stride + dt * (flat / self.stride_m.max(0.05)).clamp(0.6, cap) * (self.walk > 0.02) as u8 as f32).fract();
     }
 
+    /// Where the beat has the wings now, radians above level: the inner
+    /// wing, and the tip against the inner wing.
+    fn stroke(&self) -> (f32, f32) {
+        let (amp, tip_amp, dihedral) = match self.pattern {
+            Pattern::Hover => (0.5, 0.3, 0.1),
+            Pattern::Soar => (0.6, 0.4, 0.22),
+            Pattern::Sail => (0.5, 0.35, 0.04),
+            _ => (0.85, 0.6, 0.08),
+        };
+        // Big, slow wings beat shallower (a heron's, an eagle's).
+        let deep = (self.beat / 3.5).clamp(0.5, 1.0);
+        // Downstroke quicker than upstroke: a sine bent toward the bottom.
+        let s = (TAU * self.phase).sin();
+        let wave = if s < 0.0 { s * 1.15 } else { s * 0.9 };
+        let tip_wave = (TAU * (self.phase - 0.12)).sin();
+        (amp * deep * wave * self.flapping + dihedral + 0.5 * self.flare, tip_amp * deep * tip_wave * self.flapping + 0.05)
+    }
+
     pub fn compose(&self, rig: &Rig, voxel: f32) -> Pose {
         let n = rig.bones.len();
         let mut p = Pose::rest(n);
@@ -267,21 +285,12 @@ impl Flight {
             p.bones[0].z += self.bank;
             return p;
         }
+        if rig.spreads() {
+            return self.compose_spread(rig);
+        }
         let f = self.fold;
         let open = 1.0 - f;
-        let (amp, tip_amp, dihedral) = match self.pattern {
-            Pattern::Hover => (0.5, 0.3, 0.1),
-            Pattern::Soar => (0.6, 0.4, 0.22),
-            Pattern::Sail => (0.5, 0.35, 0.04),
-            _ => (0.85, 0.6, 0.08),
-        };
-        // Big, slow wings beat shallower (a heron's, an eagle's).
-        let deep = (self.beat / 3.5).clamp(0.5, 1.0);
-        let (amp, tip_amp) = (amp * deep, tip_amp * deep);
-        // Downstroke quicker than upstroke: a sine bent toward the bottom.
-        let s = (TAU * self.phase).sin();
-        let wave = if s < 0.0 { s * 1.15 } else { s * 0.9 };
-        let tip_wave = (TAU * (self.phase - 0.12)).sin();
+        let (inner_up, tip_up) = self.stroke();
         let bounding_fold = if self.pattern == Pattern::Bound && self.resting { (1.0 - self.flapping) * 0.85 } else { 0.0 };
         for i in 0..n {
             let b = &rig.bones[i];
@@ -290,11 +299,7 @@ impl Flight {
                 Role::Wing => {
                     let inner = b.parent.is_none_or(|q| rig.bones[q].role != Role::Wing);
                     let tuck = (f + bounding_fold).min(1.0);
-                    let spread_up = if inner {
-                        amp * wave * self.flapping + dihedral + 0.5 * self.flare
-                    } else {
-                        tip_amp * tip_wave * self.flapping + 0.05
-                    };
+                    let spread_up = if inner { inner_up } else { tip_up };
                     let spread_yaw = if inner { side * 0.4 * self.flare } else { 0.0 };
                     let (fold_yaw, fold_up) = if inner { (-side * 1.45, -0.25) } else { (-side * 2.8, 0.0) };
                     let up = spread_up * (1.0 - tuck) + fold_up * tuck;
@@ -325,6 +330,57 @@ impl Flight {
         p.bones[0].z = self.bank + 0.07 * self.walk * f * (TAU * self.stride).sin();
         // Perched: stand on the feet, which hang below the model's floor.
         p.root.y = -rig.floor * voxel * f;
+        p
+    }
+
+    /// The beat and attitude for a rig that stands at rest and flies with
+    /// its bones at their `spread` angles (a pterosaur). Folded is the rest
+    /// pose, so landing just eases every bone back to it. The bone carrying
+    /// the wing (a forelimb with a `wing` child) beats as a bird's inner
+    /// wing does, on top of its spread roll; the `wing` bone hinged on it
+    /// flexes as a wing tip, and a `wing` bone hinged on that (a membrane
+    /// panel that fans out behind the finger) just takes its spread angle.
+    /// The finger lies folded up the arm at rest and its spread pitch swings
+    /// it down into line, so a roll before that pitch bends it out of the
+    /// wing's plane: hence the tip's sign.
+    fn compose_spread(&self, rig: &Rig) -> Pose {
+        let n = rig.bones.len();
+        let mut p = Pose::rest(n);
+        let open = 1.0 - self.fold;
+        let (inner_up, tip_up) = self.stroke();
+        for i in 0..n {
+            let b = &rig.bones[i];
+            let side = b.side;
+            if let Some(sp) = b.spread {
+                p.bones[i] = sp * open;
+                // The limb carrying the wing beats; the finger hinged on it
+                // flexes; a panel hinged on the finger rides along with it.
+                let carries = b.role != Role::Wing && rig.bones.iter().any(|c| c.parent == Some(i) && c.role == Role::Wing);
+                let tip = b.role == Role::Wing && b.parent.is_some_and(|q| rig.bones[q].role != Role::Wing);
+                if carries {
+                    p.bones[i].z += side * inner_up * open;
+                    p.bones[i].y += side * 0.4 * self.flare * open;
+                } else if tip {
+                    p.bones[i].z -= side * tip_up * open;
+                }
+            }
+            match b.role {
+                Role::Tail => {
+                    p.bones[i].x += 0.5 * self.flare * open;
+                    p.bones[i].y += -self.bank * 0.3;
+                }
+                Role::Head => {
+                    p.bones[i].y += self.look.0;
+                    p.bones[i].x += self.look.1 - 0.9 * (self.peck * std::f32::consts::PI).sin() - 0.3 * self.pitch;
+                    p.bones[i].z += -self.bank * 0.5;
+                }
+                // Coming in to land the hind legs swing down to take it.
+                Role::Leg if b.spread.is_some() && b.pair > 0 => p.bones[i].x *= 1.0 - 0.8 * self.flare,
+                Role::Root | Role::Spine | Role::Neck | Role::Jaw | Role::Leg | Role::Arm | Role::Wing | Role::Ear => {}
+            }
+        }
+        p.bones[0].x += self.pitch;
+        p.bones[0].z += self.bank;
         p
     }
 }

@@ -67,6 +67,7 @@
   },
   "modes": [
     "walk",
+    "drive",
     "glide",
     "climb",
     "rope",

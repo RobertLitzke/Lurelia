@@ -18,7 +18,8 @@
 //! (block bit) is one face of a 0.5 m cell of leaves: 2x2 voxels, with corner
 //! offsets in quarters of a voxel instead of sixteenths. With the normal bit,
 //! the size fields hold the normal the face is lit by, smoothed over the
-//! crown (octahedral, 5 bits a component: `normal_bits`).
+//! crown (octahedral, 5 bits a component: `normal_bits`). Without it, a
+//! sloped creature part's quad keeps its seam weights there (`SEAM_SHIFT`).
 
 pub type Quad = [u32; 4];
 
@@ -33,6 +34,10 @@ pub const BLOCK_BIT: u32 = 30;
 /// A rounded quad that is a face of a tube (mesh/lean.rs): it casts its
 /// shadow from its real corners, not from the square face it hangs from.
 pub const TUBE_BIT: u32 = 31;
+/// A rounded quad of a sloped creature part (anim/slope.rs) without the
+/// normal bit: how far each corner follows the parent bone, two bits a
+/// corner (thirds) from here, in the size fields a rounded quad leaves free.
+pub const SEAM_SHIFT: u32 = W_SHIFT;
 pub const AO_SHIFT: u32 = 8;
 pub const SLOT_SHIFT: u32 = 16;
 pub const BLEND_SHIFT: u32 = 16;

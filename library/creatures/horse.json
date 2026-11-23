@@ -1,6 +1,6 @@
 {
   "name": "horse",
-  "version": 3,
+  "version": 4,
   "introduced_by": "glassfall",
   "notes": "graze: Feral horse: bay with a black mane, tail and legs. Small bands graze open grass, a stallion keeping watch, and wheel away at a gallop. The base of every horse.",
   "voxel": 0.08,
@@ -9,6 +9,7 @@
   "colors": {"coat": [150, 98, 60], "belly": [128, 96, 60], "mane": [36, 28, 24], "muzzle": [74, 58, 40], "dark": [36, 28, 24]},
   "behaviour": {
     "movement": "graze",
+    "sleeps_on_side": true,
     "walk_speed": 1.3,
     "flee_speed": 9.0,
     "wary": 16,
@@ -44,6 +45,7 @@
   ],
   "vary": {"size": 0.06, "shade": 0.14, "hue": 0.05},
   "rig": {
+    "slope": true,
     "plan": "quadruped",
     "bones": [
       {"name": "body", "role": "root"},

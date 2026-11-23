@@ -1,0 +1,89 @@
+# Ribstrand: a kart circuit on a grey northern coast, after Ribshore.
+# Units in metres: x east, z south, from the world's north-west corner.
+# The sea is to the west. The lap runs south down the wet beach, turns
+# inland through winding dunes, comes back north over a run of jumps across
+# the dune crests, and drops back onto the beach, where the last straight
+# runs south down the middle of a giant's ribcage to the line.
+track ribstrand size 768 style shore
+title RIBSTRAND
+blurb A fast lap of a grey northern coast: half a kilometre of wet beach at the water's edge under the sea stacks, a tangle of small bends through the dunes past the bones of a giant's calf, three jumps over the dune crests, and back down the beach through the middle of a titan's ribcage to the line.
+race laps 3 rivals 5 vehicle kart
+road 12 bank 1.25
+land 30 1.5
+hour 11
+lights 25
+
+# The beach: a bench just over high water, rising to the dunes over 45 m.
+plateau 27 45 -10,-10 240,-10 232,150 236,250 244,400 238,500 228,600 230,700 240,778 -10,778
+# The sea floor, falling away past the waterline (sea level 26).
+plateau 13 75 -10,-10 112,-10 104,150 108,250 116,400 110,500 100,600 102,700 112,778 -10,778
+# The dunes rise inland toward the east.
+hill 470 470 170 7
+hill 520 150 120 4
+
+# Centreline in race order. The first point is the start / finish line,
+# just out of the ribcage, heading south down the beach.
+point 200 300 at 27.3          # start / finish
+point 202 350 at 27.3          # the Strand, bowing out with the bay
+point 208 400 at 27.3
+point 211 450 at 27.3
+point 205 500 at 27.3
+point 196 550 at 27.3
+point 191 610 at 27.3
+point 195 660 at 27.3          # Strand End: left, up off the beach
+point 212 698 at 27.6
+point 245 714 at 28.4
+point 285 712
+point 318 702                  # the Dune Tangle: small bends over the ridges
+point 339 680 1.0
+point 340 650
+point 349 623 0.8
+point 372 610 1.0
+point 400 606
+point 422 590 0.8
+point 431 564
+point 441 538 0.6
+point 461 518
+point 480 497
+point 489 462                  # the Jumps: north over the dune crests
+point 488 430 0.6              # crest: lip 1
+point 488 390 -0.9             # down the back of it, where karts land
+point 487 366 0.6              # crest: lip 2
+point 488 324 -0.9
+point 487 299 0.7              # crest: lip 3
+point 487 256 -0.9
+point 486 230 0.8              # crest: lip 4, the big one
+point 486 196 -0.2
+point 478 164                  # Tail Bend: left, back toward the sea
+point 452 120
+point 414 88
+point 366 72
+point 316 70
+point 274 74
+point 240 86 at 28.6           # Shore Bend: left, down onto the beach
+point 215 106 at 27.6
+point 203 135 at 27.3          # into the ribcage
+point 200 180 at 27.3
+point 200 240 at 27.3
+
+# The beach is wet sand from Shore Bend through the ribs and down to
+# Strand End, its run-off too.
+surface 1440 420 wet_sand
+verge 1440 420 wet_sand 8
+materials verge dune_sand
+
+# The Jumps: four lips on the dune crests, each curving up from level and
+# falling away down a slip face behind, turned 35 degrees to lie along
+# them (the dunes' wind blows toward 145), the road dipping between.
+jump 872 1.2 17 35
+jump 934 1.3 18 35
+jump 1001 1.5 20 35
+jump 1070 2.1 24 35       # the big one, half as high again
+
+items 200
+items 820
+items 1330
+# Pads where a kart is slow enough to feel them: out of Strand End and
+# out of Tail Bend.
+pad 455 centre 8
+pad 1265 centre 8

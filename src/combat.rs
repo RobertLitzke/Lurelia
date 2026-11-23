@@ -122,6 +122,10 @@ pub struct Hit {
     /// weapon's and the firer's to manage; any other lands at the rules'
     /// `friendly_fire`.
     pub risky: bool,
+    /// The look (`viewmodel::shell_of`) of the shell that struck, for a
+    /// shell's own blow; None for a beam, a ray, an arc or a burst. What a
+    /// set of rules may treat one weapon's hit apart by (a kart race's disc).
+    pub look: Option<usize>,
 }
 
 /// Everything in the air: the shells flying, the tracers still fading and the
@@ -572,6 +576,7 @@ impl Combat {
                 head: false,
                 blast: false,
                 risky: false,
+                look: None,
             });
             self.tracers.push(Tracer {
                 a: from,
@@ -850,6 +855,7 @@ impl Combat {
                     head,
                     blast: false,
                     risky: false,
+                    look: None,
                 });
                 from + dir * t
             }
@@ -928,6 +934,7 @@ impl Combat {
                 head: false,
                 blast: true,
                 risky: sp.self_damage > 0.0,
+                look: None,
             });
         }
         if sp.crater > 0.0 {
@@ -1005,6 +1012,7 @@ impl Combat {
                             head: false,
                             blast: s.splash.is_some(),
                             risky: s.self_hit > 0.0 || s.splash.is_some_and(|sp| sp.self_damage > 0.0),
+                            look: Some(s.look),
                         });
                     }
                     // A glob of sludge that found a wall or the floor, or

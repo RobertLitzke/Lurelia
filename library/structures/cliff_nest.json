@@ -1,0 +1,21 @@
+{
+  "name": "cliff_nest",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "A pteranodon nest on a rock shelf in a cliff face: a 4 x 3.5 m shelf with a ring of sticks and two pale eggs and droppings streaked down the rock under it. Hung by its back edge, the front (-Z) facing out from the cliff.",
+  "size": [16, 12, 16],
+  "anchor": [8, 5, 15],
+  "level": false,
+  "decays": false,
+  "base": "rim",
+  "tags": ["natural", "nest"],
+  "slots": {"rock": "stone_dark", "sticks": "stick_wood", "egg": "old_bone", "lime": "bone_lichen"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [8, 3, 10], "radius": [7.4, 2.9, 5.4], "mat": "rock"},
+    {"op": "box", "from": [5, 1, 9], "to": [11, 3, 12], "mat": "lime"},
+    {"op": "ellipsoid", "centre": [8, 5.5, 7.5], "radius": [4.2, 1.4, 3.6], "mat": "sticks"},
+    {"op": "ellipsoid", "centre": [8, 6.4, 7.5], "radius": [3.0, 1.0, 2.6], "mat": "air"},
+    {"op": "ellipsoid", "centre": [7, 5.6, 7.2], "radius": [0.9, 1.2, 0.9], "mat": "egg"},
+    {"op": "ellipsoid", "centre": [9.2, 5.6, 8.0], "radius": [0.9, 1.2, 0.9], "mat": "egg"}
+  ]
+}

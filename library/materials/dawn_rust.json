@@ -1,0 +1,16 @@
+{
+  "name": "dawn_rust",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "Dawn redwood in autumn: the feathery sprays gone copper and rust before they fall.",
+  "smooth": false,
+  "sprites": "needles",
+  "texture": {
+    "pattern": "blotch",
+    "base": [168, 92, 46],
+    "alt": [140, 72, 38],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [176, 104, 58], "alt": [150, 84, 48]}
+  }
+}

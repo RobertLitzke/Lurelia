@@ -1,0 +1,106 @@
+{
+  "name": "market_hall",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Hemlow's market hall, 14.5 m by 6.75 m: an open ground floor of five arched bays by two on square stone piers over flagstones, a wool room above lit by three-light mullioned windows, under a steep stone-slate roof with coped gables 10.25 m to the ridge. Front (a long side) faces local -Z; carves nothing.",
+  "size": [62, 47, 32],
+  "anchor": [31, 0, 16],
+  "foundation": 8,
+  "decays": true,
+  "tags": ["hemlow", "market"],
+  "slots": {
+    "wall": "cotswold_stone",
+    "roof": "stone_tiles",
+    "floor": "moss_flagstone",
+    "boards": "weathered_planks",
+    "beam": "oak_post",
+    "glass": "window_glass",
+    "dressing": "carved_limestone"
+  },
+  "ops": [
+    {"op": "walls", "from": [2, 0, 2], "to": [60, 26, 29], "mat": "wall", "thick": 3, "part": "wall"},
+    {"op": "box", "from": [5, 0, 5], "to": [57, 1, 26], "mat": "floor", "part": "floor"},
+    {
+      "op": "repeat",
+      "count": 5,
+      "step": [11, 0, 0],
+      "ops": [
+        {"op": "box", "from": [5, 1, 2], "to": [13, 9, 5], "mat": "air"},
+        {"op": "box", "from": [6, 9, 2], "to": [12, 10, 5], "mat": "air"},
+        {"op": "box", "from": [7, 10, 2], "to": [11, 11, 5], "mat": "air"},
+        {"op": "box", "from": [5, 1, 26], "to": [13, 9, 29], "mat": "air"},
+        {"op": "box", "from": [6, 9, 26], "to": [12, 10, 29], "mat": "air"},
+        {"op": "box", "from": [7, 10, 26], "to": [11, 11, 29], "mat": "air"},
+        {"op": "box", "from": [5, 0, 2], "to": [13, 1, 5], "mat": "floor", "part": "floor"},
+        {"op": "box", "from": [5, 0, 26], "to": [13, 1, 29], "mat": "floor", "part": "floor"}
+      ]
+    },
+    {
+      "op": "repeat",
+      "count": 2,
+      "step": [0, 0, 12],
+      "ops": [
+        {"op": "box", "from": [2, 1, 5], "to": [5, 9, 14], "mat": "air"},
+        {"op": "box", "from": [2, 9, 6], "to": [5, 10, 13], "mat": "air"},
+        {"op": "box", "from": [2, 10, 7], "to": [5, 11, 12], "mat": "air"},
+        {"op": "box", "from": [57, 1, 5], "to": [60, 9, 14], "mat": "air"},
+        {"op": "box", "from": [57, 9, 6], "to": [60, 10, 13], "mat": "air"},
+        {"op": "box", "from": [57, 10, 7], "to": [60, 11, 12], "mat": "air"},
+        {"op": "box", "from": [2, 0, 5], "to": [5, 1, 14], "mat": "floor", "part": "floor"},
+        {"op": "box", "from": [57, 0, 5], "to": [60, 1, 14], "mat": "floor", "part": "floor"}
+      ]
+    },
+    {
+      "op": "repeat",
+      "count": 4,
+      "step": [11, 0, 0],
+      "ops": [{"op": "box", "from": [13, 1, 14], "to": [16, 11, 17], "mat": "wall", "part": "wall"}]
+    },
+    {"op": "box", "from": [5, 11, 14], "to": [57, 12, 17], "mat": "beam", "part": "timber"},
+    {"op": "box", "from": [5, 12, 5], "to": [57, 13, 26], "mat": "boards", "part": "floor"},
+    {"op": "walls", "from": [1, 12, 1], "to": [61, 13, 30], "mat": "dressing", "thick": 1, "part": "stone"},
+    {
+      "op": "repeat",
+      "count": 5,
+      "step": [11, 0, 0],
+      "ops": [
+        {"op": "box", "from": [5, 16, 2], "to": [13, 21, 5], "mat": "air"},
+        {"op": "box", "from": [5, 16, 3], "to": [13, 21, 4], "mat": "glass", "part": "glass"},
+        {"op": "box", "from": [7, 16, 2], "to": [8, 21, 5], "mat": "dressing", "part": "stone"},
+        {"op": "box", "from": [10, 16, 2], "to": [11, 21, 5], "mat": "dressing", "part": "stone"},
+        {"op": "box", "from": [5, 15, 1], "to": [13, 16, 2], "mat": "dressing", "part": "stone"},
+        {"op": "box", "from": [4, 21, 1], "to": [14, 22, 2], "mat": "dressing", "part": "stone"},
+        {"op": "box", "from": [5, 16, 26], "to": [13, 21, 29], "mat": "air"},
+        {"op": "box", "from": [5, 16, 27], "to": [13, 21, 28], "mat": "glass", "part": "glass"},
+        {"op": "box", "from": [7, 16, 26], "to": [8, 21, 29], "mat": "dressing", "part": "stone"},
+        {"op": "box", "from": [10, 16, 26], "to": [11, 21, 29], "mat": "dressing", "part": "stone"},
+        {"op": "box", "from": [5, 15, 29], "to": [13, 16, 30], "mat": "dressing", "part": "stone"},
+        {"op": "box", "from": [4, 21, 29], "to": [14, 22, 30], "mat": "dressing", "part": "stone"}
+      ]
+    },
+    {
+      "op": "repeat",
+      "count": 2,
+      "step": [55, 0, 0],
+      "ops": [
+        {"op": "gable", "from": [2, 26, 0], "to": [4, 26, 31], "axis": "x", "mat": "wall", "rise": 1, "part": "wall"},
+        {"op": "gable", "from": [3, 26, 0], "to": [5, 26, 31], "axis": "x", "mat": "wall", "rise": 1, "part": "wall"},
+        {"op": "box", "from": [2, 16, 12], "to": [5, 21, 19], "mat": "air"},
+        {"op": "box", "from": [3, 16, 12], "to": [4, 21, 19], "mat": "glass", "part": "glass"},
+        {"op": "box", "from": [2, 16, 15], "to": [5, 21, 16], "mat": "dressing", "part": "stone"},
+        {"op": "box", "from": [2, 30, 14], "to": [5, 34, 17], "mat": "air"},
+        {"op": "box", "from": [3, 30, 14], "to": [4, 34, 17], "mat": "glass", "part": "glass"},
+        {"op": "box", "from": [2, 41, 14], "to": [5, 43, 17], "mat": "dressing", "part": "stone"},
+        {
+          "op": "ellipsoid",
+          "centre": [3.5, 44.5, 15.5],
+          "radius": [1.3, 1.3, 1.3],
+          "mat": "dressing",
+          "part": "stone"
+        }
+      ]
+    },
+    {"op": "gable", "from": [5, 26, 1], "to": [57, 26, 30], "axis": "x", "mat": "roof", "rise": 1, "part": "roof"},
+    {"op": "box", "from": [5, 41, 15], "to": [57, 42, 16], "mat": "wall", "part": "roof"}
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "gorse",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Gorse: dense spiny dark green bushes, yellow with flowers most of the year, on the heath of the rising ground.",
+  "form": "canes",
+  "height": [1.0, 1.8],
+  "trunk_radius": [0.05, 0.06],
+  "crown_radius": [0.7, 1.1],
+  "bark": "broom_switch",
+  "leaf": "gorse_spines",
+  "canopy": "tufts",
+  "max_slope": 1.0,
+  "stems": [16, 26],
+  "cane_lean": 0.35,
+  "cane_bend": 0.03,
+  "cane_spurs": 0.6,
+  "cane_leaves": 0.7,
+  "flower": "broom_flowers",
+  "affords": ["nectar"]
+}

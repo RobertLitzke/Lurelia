@@ -24,6 +24,14 @@ use std::path::PathBuf;
 use std::time::Duration;
 
 pub const STEP: f32 = 1.0 / 60.0;
+/// How a heavy footfall rocks the view at full strength (an elephant at
+/// arm's length): metres the eye drops, and radians it rolls
+/// (`Game::feel_steps`). Kept small on purpose: it should be felt more than
+/// seen.
+const THUMP_M: f32 = 0.012;
+const THUMP_ROLL: f32 = 0.0022;
+/// How fast it settles, per second.
+const THUMP_FADE: f32 = 16.0;
 /// How near the camera a `WorldVent` must be to breathe, metres.
 const VENT_REACH: f32 = 220.0;
 /// The hour the EDIT page's studio is lit at: late morning, the sun high
@@ -166,8 +174,8 @@ pub enum TuneHit {
 /// The settings a player keeps from one run to the next, whatever world it
 /// is. `menu::Prefs` holds them (flattened, so settings.json reads as it
 /// always has) and a game is handed them when it starts; the keys that change
-/// them in play (G, T, B, F3, F6) change `Game::settings`, and the window
-/// copies that back. Nothing here is saved with a world.
+/// them in play (G, T, B, F3, F6, and V in a car) change `Game::settings`,
+/// and the window copies that back. Nothing here is saved with a world.
 #[derive(Clone, Copy, PartialEq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Settings {
@@ -180,6 +188,10 @@ pub struct Settings {
     pub show_stats: bool,
     /// The debug minimap (F6): a north-up map of the ground round the player.
     pub minimap: bool,
+    /// The view a car is driven in, true for the chase camera and false for
+    /// the driver's seat. V while driving changes it, and every vehicle of
+    /// `Mode::Drive` (all of them four-wheeled) opens in it.
+    pub drive_chase: bool,
 }
 
 impl Default for Settings {
@@ -190,6 +202,7 @@ impl Default for Settings {
             slopes: true,
             show_stats: false,
             minimap: false,
+            drive_chase: true,
         }
     }
 }
@@ -274,6 +287,12 @@ pub struct Game {
     boot: (f32, bool),
     /// Where each rear tyre last laid a piece of track.
     tyre_marks: [Option<Vec3>; 2],
+    /// Shrubs the big animals have flattened, and when each grows back
+    /// (creatures/trample.rs).
+    trample: crate::creatures::trample::Trample,
+    /// The last heavy footfall felt through the ground: how hard it came to
+    /// the player, and seconds since (`feel_steps`, `camera`).
+    thump: (f32, f32),
     pub streamer: Streamer,
     pub store: Store,
     pub player: Player,
@@ -353,6 +372,8 @@ pub struct Game {
     /// Lines drawn into the world this frame (render/overlay.rs): modes and
     /// activities push them while the frame is built; cleared every frame.
     pub overlay: crate::render::overlay::Overlay,
+    /// A race's polished racing line, every mark so far, for the renderer.
+    pub polish: crate::render::polish::Marks,
     pub frame_ms: VecDeque<f32>,
     dig_cd: f32,
     place_cd: f32,
@@ -445,7 +466,11 @@ impl Game {
         // The weather this world gets, and the kind it opens on: whatever
         // `world.json` says, else the commonest kind its climate allows.
         let climate = loaded.as_ref().map(|l| crate::world::weather::Climate::from_weights(&l.world.def.weather)).unwrap_or_default();
-        let start_sky = if !launch.weather {
+        let held = launch.sky.as_deref().and_then(crate::world::weather::Kind::parse);
+        let start_sky = if let Some(k) = held {
+            // A race's conditions, held for the race.
+            k
+        } else if !launch.weather {
             // The launch screen's switch off: fair weather, held.
             crate::world::weather::Kind::Sun
         } else {
@@ -455,7 +480,7 @@ impl Game {
                 .and_then(crate::world::weather::Kind::parse)
                 .unwrap_or_else(|| climate.commonest())
         };
-        let weather = crate::world::weather::Weather::new(start_sky, climate, spec.seed, launch.weather);
+        let weather = crate::world::weather::Weather::new(start_sky, climate, spec.seed, launch.weather && held.is_none());
         let height_vox = gen.height_vox;
         // A match opens in the arena as it was built. The craters of the
         // last one are that match, not the map, and a world you are
@@ -524,7 +549,6 @@ impl Game {
             ride.parked = Some(car);
         }
         ride.glide_air = loaded.as_ref().and_then(|l| l.world.def.glide.as_ref()).map_or_else(Default::default, |g| g.air());
-        ride.set_seed(spec.seed);
         let sea = spec.sea_level_m;
         let mut models = models::build_all();
         let mut palette = models::palette();
@@ -581,6 +605,8 @@ impl Game {
             marks: crate::creatures::sign::Marks::default(),
             boot: (0.0, false),
             tyre_marks: [None; 2],
+            trample: Default::default(),
+            thump: (0.0, 9.0),
             weather,
             year,
             streamer,
@@ -623,6 +649,7 @@ impl Game {
             area_was: None,
             area_since: 0.0,
             overlay: Default::default(),
+            polish: Default::default(),
             frame_ms: VecDeque::new(),
             dig_cd: 0.0,
             place_cd: 0.0,
@@ -827,8 +854,38 @@ impl Game {
             self.ride.allowed = self.ride.allowed.without(ModeId::Race);
             return;
         };
-        let spec = self.ride.catalogue.get(&def.vehicle);
-        self.activity = Some(Box::new(crate::race::Race::new(&def, circuit, spec, self.vehicle_models)));
+        // The launch screen's choices: laps, rivals, the player's kart, and
+        // how hard the rivals drive.
+        let mut def = def;
+        if let Some(l) = self.launch.laps {
+            def.laps = l;
+        }
+        if let Some(r) = self.launch.rivals {
+            def.rivals = r;
+        }
+        let kart_race = crate::launch::kart_race(&def.vehicle);
+        let mine = self.launch.kart.clone().filter(|_| kart_race).unwrap_or_else(|| def.vehicle.clone());
+        let spec = self.ride.catalogue.get(&mine);
+        // Rivals drive all three karts in turn in a kart race, or the
+        // course's vehicle otherwise.
+        let rivals: Vec<crate::vehicle::Spec> = (0..crate::race::MAX_RIVALS as usize)
+            .map(|i| {
+                let name = if kart_race { crate::launch::KARTS[(i + 1) % crate::launch::KARTS.len()].0 } else { def.vehicle.as_str() };
+                self.ride.catalogue.get(name)
+            })
+            .collect();
+        // The road's grip in this weather, for every kart and the bots'
+        // judgement of it: wet, then snowy, is slipperier.
+        let grip = match self.weather.name() {
+            "rain" => 0.85,
+            "snow" => 0.72,
+            _ => 1.0,
+        };
+        let level = crate::launch::RACE_LEVELS
+            .iter()
+            .position(|l| l.eq_ignore_ascii_case(&self.launch.difficulty))
+            .map_or(1.0, |k| crate::launch::RACE_LEVEL_SHARE[k]);
+        self.activity = Some(Box::new(crate::race::Race::new(&def, circuit, spec, rivals, level, grip, self.vehicle_models, &w.lib)));
     }
 
     /// On a world whose world.json carries a `"shooter"` block, the gun is
@@ -1090,7 +1147,13 @@ impl Game {
         }
         if std::mem::take(&mut actions.cam_toggle) {
             self.ride.toggle_chase();
+            if self.ride.mode == crate::ride::Mode::Drive {
+                self.settings.drive_chase = self.ride.chase_on();
+            }
         }
+        // A car is shown in the kept view, so the next one opens in the view
+        // the last one was left in.
+        self.ride.set_drive_chase(self.settings.drive_chase);
         if let Some(i) = actions.select.take() {
             if i < PALETTE_KEYS.len() {
                 self.selected = i;
@@ -1346,12 +1409,17 @@ impl Game {
         // A new match: the holes the last one blew in the arena go.
         if a.wants_world_clean() {
             let undone = self.streamer.clear_edits(self.player.pos);
-            if undone > 0 {
+            // A race starting over says nothing: its grid says it all.
+            if undone > 0 && a.id() != ModeId::Race {
                 self.note("THE ARENA IS MENDED");
             }
         }
         if let Some(sh) = a.shooter_mut() {
             let cues = sh.combat.take_cues();
+            self.combat_fx(&cues);
+            self.combat_sounds(&cues);
+        } else if let Some(r) = a.race_mut() {
+            let cues = r.combat_cues();
             self.combat_fx(&cues);
             self.combat_sounds(&cues);
         }
@@ -1402,6 +1470,20 @@ impl Game {
             self.player.update(&mut self.ride, input, &self.store, self.sea, water, slopes, STEP);
             if let Some(r) = self.activity.as_mut().and_then(|a| a.race_mut()) {
                 r.tick(&mut self.ride, &mut self.player, &self.store, self.sea, slopes, STEP);
+                let (cleared, marks) = r.polish_marks();
+                self.polish.take(cleared, marks);
+                // A finish goes to the records in the save folder, which the
+                // race's course cards read.
+                if let Some((laps, race, lap, kart)) = r.result() {
+                    let root = self.save_dir.parent().map(|p| p.to_path_buf()).unwrap_or_else(|| self.save_dir.clone());
+                    let mut recs = crate::race::records::Records::load(&root);
+                    let beaten = recs.note(&self.launch.world, laps, race, lap, &kart);
+                    recs.save(&root);
+                    r.beat(beaten);
+                }
+            } else {
+                // Out of a race the ride is its own again.
+                self.ride.clear_race();
             }
             self.step_fx(before, water.0);
             self.dive_extras();
@@ -1438,7 +1520,9 @@ impl Game {
             // Spray the animals threw up this step (creatures/swim.rs).
             self.fx.take(&mut self.ents.cues);
             self.lay_marks();
+            self.trample_shrubs();
         }
+        self.thump.1 += STEP;
         if self.spawned && !self.editing {
             self.hitch_step(input.focus_far && !self.camera.active);
         }
@@ -1449,6 +1533,59 @@ impl Game {
             } else {
                 self.shoulder_past_animals();
             }
+        }
+    }
+
+    /// A heavy animal's footfall near the player is felt as a small jolt of
+    /// the view: a centimetre or so beside an elephant, nothing past a
+    /// couple of dozen metres, and a little more from a brachiosaur, which
+    /// is felt further off too. The strongest recent one wins rather than
+    /// adding up, so a herd going by is a steady tremor, not an earthquake.
+    /// `VG_THUMP=k` scales it (0 turns it off).
+    fn feel_steps(&mut self, steps: &[crate::creatures::sign::Step]) {
+        static SCALE: std::sync::OnceLock<f32> = std::sync::OnceLock::new();
+        let scale = *SCALE.get_or_init(|| std::env::var("VG_THUMP").ok().and_then(|s| s.parse().ok()).unwrap_or(1.0));
+        if scale <= 0.0 {
+            return;
+        }
+        let me = self.player.pos;
+        for s in steps.iter().filter(|s| s.weight > 0.0) {
+            let range = 10.0 + 12.0 * s.weight;
+            let d = (s.pos - me).length();
+            if d >= range {
+                continue;
+            }
+            let k = s.weight * (1.0 - d / range).powi(2) * scale;
+            self.ents.pathing.thumps_felt += 1;
+            // What is left of the last one, against this one.
+            let left = self.thump.0 * (-self.thump.1 * THUMP_FADE).exp();
+            if k > left {
+                self.thump = (k.min(2.5), 0.0);
+            }
+        }
+    }
+
+    /// Flatten the shrubs the big animals walked into this step, and stand
+    /// back up the ones that have been down long enough
+    /// (creatures/trample.rs).
+    fn trample_shrubs(&mut self) {
+        let bases = std::mem::take(&mut self.ents.crush);
+        let now = self.ents.clock;
+        let world = self.streamer.generator().world.clone();
+        let bark_of = |i: u16| crate::creatures::trample::bark_of(world.as_deref(), i);
+        let mut changes = if bases.is_empty() { Vec::new() } else { self.trample.flatten(&self.ents.plants, &self.store, bark_of, now, &bases) };
+        self.ents.pathing.trampled = self.trample.count;
+        // The walkers' shapes are only built on a step a shrub is due.
+        if self.trample.due(now) {
+            let big: Vec<crate::creatures::crowd::Shape> = crate::creatures::crowd::shapes(&self.ents.world, &self.models)
+                .into_iter()
+                .map(|(_, s, _)| s)
+                .filter(|s| crate::creatures::trample::big(s.r, s.y1 - s.y0))
+                .collect();
+            changes.extend(self.trample.regrow(&self.store, now, |q, r| big.iter().any(|s| s.spine_dist(q) < s.r + r)));
+        }
+        if !changes.is_empty() {
+            self.streamer.edit_passing(&mut self.store, &changes);
         }
     }
 
@@ -1466,7 +1603,7 @@ impl Game {
         let mut laid = Vec::new();
         for (k, w) in car.wheels.iter().filter(|w| w.rear).enumerate() {
             let patch = match (w.down, w.contact) {
-                (true, Some(c)) if c.depth < 0.05 => car.pos() + car.b.rot * w.mount - up * w.t - c.n * r,
+                (true, Some(c)) if c.depth < 0.05 => crate::vehicle::draw::drawn_at(car, car.pos() + car.b.rot * w.mount - up * w.t - c.n * r),
                 _ => {
                     self.tyre_marks[k] = None;
                     continue;
@@ -1477,22 +1614,36 @@ impl Game {
                 continue;
             };
             let d = patch - last;
-            let flat = Vec3::new(d.x, 0.0, d.z);
-            if flat.length() > 4.0 {
+            if Vec3::new(d.x, 0.0, d.z).length() > 4.0 {
                 self.tyre_marks[k] = Some(patch);
-            } else if flat.length() >= len {
+                continue;
+            }
+            // As many pieces as the tyre covered this step: one a step fell
+            // behind above 0.6 m a step (130 km/h), and the track wandered
+            // off the tyre on a fast lap.
+            let mut last = last;
+            loop {
+                let d = patch - last;
+                let flat = Vec3::new(d.x, 0.0, d.z);
+                if flat.length() < len {
+                    break;
+                }
                 let dir = flat.normalize();
+                let end = last + dir * len;
+                // Height along the way to the patch, so a piece on a slope
+                // lies on it.
+                let y = last.y + (patch.y - last.y) * (len / flat.length());
                 let mid = last + dir * len * 0.5;
-                let mut pos = Vec3::new(mid.x, patch.y.min(last.y) + (patch.y - last.y).abs() * 0.5, mid.z);
-                pos.y += 0.01;
                 laid.push(Step {
-                    pos,
+                    pos: Vec3::new(mid.x, (last.y + y) * 0.5 + 0.01, mid.z),
                     yaw: (-dir.x).atan2(-dir.z),
                     foot: Foot::Tyre,
                     height: 1.0,
+                    weight: 0.0,
                 });
-                self.tyre_marks[k] = Some(last + dir * len);
+                last = Vec3::new(end.x, y, end.z);
             }
+            self.tyre_marks[k] = Some(last);
         }
         for step in laid {
             let ground = crate::creatures::sign::ground_at(&self.store, step.pos + Vec3::Y * 0.3);
@@ -1534,13 +1685,15 @@ impl Game {
                         pos.y = (vy + 1) as f32 / 4.0;
                         pos.y += crate::physics::drawn_ground_lift(&self.store, pos);
                     }
-                    let step = Step { pos, yaw, foot, height };
+                    let step = Step { pos, yaw, foot, height, weight: 0.0 };
                     let ground = crate::creatures::sign::ground_at(&self.store, pos + Vec3::Y * 0.5);
                     self.marks.lay(&step, ground, 1.0);
                 }
             }
         }
-        for step in std::mem::take(&mut self.ents.steps) {
+        let steps = std::mem::take(&mut self.ents.steps);
+        self.feel_steps(&steps);
+        for step in steps {
             let ground = crate::creatures::sign::ground_at(&self.store, step.pos);
             self.marks.lay(&step, ground, soft);
         }
@@ -1567,6 +1720,7 @@ impl Game {
             yaw: (-fwd.x).atan2(-fwd.z),
             foot: crate::creatures::sign::Foot::Boot,
             height: 1.8,
+            weight: 0.0,
         };
         let ground = crate::creatures::sign::ground_at(&self.store, step.pos);
         self.marks.lay(&step, ground, soft);
@@ -1666,6 +1820,16 @@ impl Game {
         crate::fx::hooks::step(&mut self.fx, &body, &self.store, STEP);
         if let Some(car) = self.ride.car() {
             crate::fx::hooks::vehicle(&mut self.fx, car, &self.ride.drive_events, STEP);
+            crate::fx::hooks::drift(&mut self.fx, car, STEP);
+        }
+        // The rivals' drifts smoke and spark as the player's do.
+        if let Some(a) = &self.activity {
+            let fx = &mut self.fx;
+            a.each_race_kart(&mut |car| {
+                if (car.pos() - eye).length() < 120.0 {
+                    crate::fx::hooks::drift(fx, car, STEP);
+                }
+            });
         }
         crate::fx::ambient::step(&mut self.fx, &self.store, eye, season, sky.wind, STEP);
         // Falling snow near the camera, as flakes in the world: they drift
@@ -1836,7 +2000,7 @@ impl Game {
         const BLOCKS_AT_M: f32 = 0.6;
         let (hw, h) = (self.player.body.half_w, self.player.body.height);
         let mut by = Vec3::ZERO;
-        for (_, look, me, crit, age) in self.ents.world.query::<(hecs::Entity, &Look, Option<&Creature>, Option<&Critter>, Option<&Age>)>().iter() {
+        for (e, look, me, crit, age) in self.ents.world.query::<(hecs::Entity, &Look, Option<&Creature>, Option<&Critter>, Option<&Age>)>().iter() {
             if (me.is_none() && crit.is_none()) || age.is_some_and(|a| a.dead()) {
                 continue;
             }
@@ -1844,12 +2008,21 @@ impl Game {
             if m.height < BLOCKS_AT_M {
                 continue;
             }
-            // Cheap reject before the box test: most animals in the world
-            // are nowhere near you.
-            if (look.pos.x - self.player.pos.x).abs() > 4.0 || (look.pos.z - self.player.pos.z).abs() > 4.0 {
+            // Cheap reject before the shape test: most animals in the world
+            // are nowhere near you. The reach covers a sauropod's length.
+            let far = m.reach[0].abs().max(m.reach[1]) + m.half_w + 1.0;
+            if (look.pos.x - self.player.pos.x).abs() > far || (look.pos.z - self.player.pos.z).abs() > far {
                 continue;
             }
-            by += crate::physics::separate(self.player.pos, hw, h, look.pos, m.half_w, m.height);
+            // Against its whole body, not the square box at its feet: a
+            // triceratops is nine metres of horns and rump (creatures/crowd.rs).
+            let (morph, body) = (self.ents.world.get::<&crate::variety::Morph>(e).ok().map(|m| m.scale), self.ents.world.get::<&crate::physics::Body>(e).ok().map(|b| (b.half_w, b.height)));
+            let (bhw, bh) = body.unwrap_or((m.half_w, m.height));
+            let them = crate::creatures::crowd::Shape::of(look.pos, look.yaw, bhw, bh, m.reach, morph.unwrap_or(1.0));
+            let me = crate::creatures::crowd::Shape::of(self.player.pos, 0.0, hw, h, [-hw, hw], 1.0);
+            if let Some(p) = me.push_from(&them) {
+                by += Vec3::new(p.x, 0.0, p.y);
+            }
         }
         if by != Vec3::ZERO {
             crate::physics::nudge(&self.store, &mut self.player.pos, by, hw, h);
@@ -2078,6 +2251,16 @@ impl Game {
         if roll != 0.0 {
             c.up = glam::Quat::from_axis_angle(c.fwd.normalize(), roll.to_radians()) * c.up;
         }
+        // A heavy footfall nearby (`feel_steps`): the view drops a touch and
+        // rocks, and settles within a fifth of a second.
+        let (k, t) = self.thump;
+        let t = t + self.alpha * STEP;
+        let fade = k * (-t * THUMP_FADE).exp();
+        if fade > 1e-3 && self.activity.is_none() {
+            c.eye.y -= THUMP_M * fade * (t * 45.0).cos();
+            let roll = THUMP_ROLL * fade * (t * 38.0).sin();
+            c.up = glam::Quat::from_axis_angle(c.fwd.normalize(), roll) * c.up;
+        }
         c
     }
 
@@ -2096,13 +2279,23 @@ impl Game {
                 }
             }
         }
+        if let Some(r) = self.activity.as_mut().and_then(|a| a.race_mut()) {
+            for (at, reach, colour, strength) in r.flashes() {
+                if (at - eye).length() < reach + LAMP_SLACK {
+                    self.lamps.push(at, reach, colour, strength);
+                }
+            }
+        }
+        // How far into the evening it is, for lamps lit only after dark,
+        // and for the cars' lights, which heavy weather turns on by day.
+        let e = crate::world::clock::sun_elevation(self.hour);
+        let dark = ((2.0 - e) / 6.0).clamp(0.0, 1.0);
+        let lit = dark.max(crate::vehicle::lights::gloom(&self.weather.sky()));
+        crate::vehicle::lights::set_lit(lit);
         let Some(w) = self.generator().world.clone() else {
             self.lamps.sort_to(eye);
             return;
         };
-        // How far into the evening it is, for lamps lit only after dark.
-        let e = crate::world::clock::sun_elevation(self.hour);
-        let dark = ((2.0 - e) / 6.0).clamp(0.0, 1.0);
         for l in &w.lamps {
             let v = l.pos - eye;
             let d = v.length();
@@ -2130,6 +2323,28 @@ impl Game {
                 continue;
             }
             self.lamps.push(l.pos, l.reach, l.colour, strength);
+        }
+        // The karts' lights after dark (and in heavy weather): headlights,
+        // and tail lights brighter when braking (src/vehicle/lights.rs).
+        {
+            let lamps = &mut self.lamps;
+            let mut light = |car: &crate::vehicle::Vehicle| {
+                if !crate::vehicle::lights::any(car, lit) || car.pos().distance(eye) > crate::vehicle::lights::REACH + LAMP_SLACK + 40.0 {
+                    return;
+                }
+                for l in crate::vehicle::lights::of(car, lit) {
+                    match l.spot {
+                        Some((dir, half)) => lamps.push_spot(l.pos, dir, half, l.reach, l.colour, l.strength),
+                        None => lamps.push(l.pos, l.reach, l.colour, l.strength),
+                    }
+                }
+            };
+            if let Some(c) = self.ride.car().filter(|_| !self.ride.hide) {
+                light(c);
+            }
+            if let Some(a) = &self.activity {
+                a.each_race_kart(&mut light);
+            }
         }
         self.lamps.sort_to(eye);
     }
@@ -2194,7 +2409,6 @@ impl Game {
         }
         self.ride.rope(&self.player, alpha, self.ride_models, &self.models, &mut self.inst);
         self.ride.gear(&self.player, &self.store, alpha, self.ride_models, &self.models, &mut self.inst);
-        self.ride.tokens(self.ride_models, &self.models, &mut self.inst);
         self.ride.moored_instance(self.time, self.ride_models, &self.models, &mut self.inst);
         if self.vehicle_models != usize::MAX {
             self.ride.vehicle_instances(alpha, self.vehicle_models, &self.models, &mut self.inst);
@@ -2278,7 +2492,8 @@ impl Game {
         let proj = Mat4::perspective_infinite_reverse_rh(fov, aspect, NEAR);
         // No dig outline on the EDIT page: the camera there is the studio's,
         // and the box would sit on the floor beside the subject in every shot.
-        let highlight = self.target.filter(|_| !self.editing).map(|(h, _)| {
+        // Nor at the wheel, where it floats on the road ahead.
+        let highlight = self.target.filter(|_| !self.editing && self.ride.car().is_none()).map(|(h, _)| {
             let a = Vec3::new(h[0] as f32, h[1] as f32, h[2] as f32) / 4.0;
             (a, a + Vec3::splat(0.25))
         });
@@ -2300,6 +2515,7 @@ impl Game {
             },
             highlight,
             overlay: &self.overlay,
+            polish: &self.polish,
             entities: &self.inst,
             plates: &self.plates,
             fx: &self.fx,
@@ -2552,7 +2768,11 @@ impl Game {
             hud.label(16.0, 14.0 + i as f32 * line, s, dim, l);
         }
         // Driving: each wheel's load, slip and compression, low on the left
-        // where nothing else is, for tuning the car (library/vehicles).
+        // where nothing else is, for tuning the car (library/vehicles). Not
+        // in a race, whose own HUD has the screen.
+        if self.activity.is_some() {
+            return;
+        }
         let wheels = self.ride.drive_debug();
         if !wheels.is_empty() {
             let wmax = wheels.iter().map(|l| Hud::text_width(l, s)).fold(0.0, f32::max);
@@ -2569,7 +2789,7 @@ impl Game {
     /// Where the tuning panel's lines go: on the right, a window round the
     /// picked line while playing, every line (smaller) on the pause screen.
     pub fn tune_layout(&self, w: f32, h: f32, paused: bool) -> Option<TuneLayout> {
-        if !self.settings.show_stats {
+        if !self.settings.show_stats || self.activity.is_some() {
             return None;
         }
         let lines = self.ride.tune_lines();

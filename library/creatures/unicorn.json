@@ -4,7 +4,7 @@
   "introduced_by": "glassfall",
   "notes": "One deer in a hundred is born white with a single faintly glowing horn and no antlers. It lives and runs with ordinary deer and is harder to get near.",
   "colors": {"coat": [240, 236, 228], "belly": [240, 236, 228], "horn": [244, 236, 214, 1.1]},
-  "behaviour": {"wary": 18, "flightiness": 0.5},
+  "behaviour": {"sleeps_on_side": true, "wary": 18, "flightiness": 0.5},
   "like": "deer",
   "rarity": 0.01,
   "extra_ops": [

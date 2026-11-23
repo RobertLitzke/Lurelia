@@ -15,10 +15,10 @@
     {"plant": "finger_coral", "density": 0.004, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "stingray", "count": 7},
-    {"creature": "yellow_tang", "count": 21},
-    {"creature": "reef_chromis", "count": 70},
-    {"creature": "sea_turtle", "count": 4},
-    {"creature": "reef_manta", "count": 2}
+    {"creature": "stingray", "count": 7.7},
+    {"creature": "yellow_tang", "count": 23.1},
+    {"creature": "reef_chromis", "count": 77},
+    {"creature": "sea_turtle", "count": 4.4},
+    {"creature": "reef_manta", "count": 2.2}
   ]
 }

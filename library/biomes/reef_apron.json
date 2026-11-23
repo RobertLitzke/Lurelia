@@ -16,8 +16,8 @@
     {"plant": "barrel_sponge", "density": 0.006, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "stingray", "count": 7},
-    {"creature": "garden_eel", "count": 56},
-    {"creature": "barracuda", "count": 4}
+    {"creature": "stingray", "count": 7.7},
+    {"creature": "garden_eel", "count": 61.6},
+    {"creature": "barracuda", "count": 4.4}
   ]
 }

@@ -20,9 +20,9 @@
     {"plant": "finger_coral", "density": 0.03, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "yellow_tang", "count": 28},
-    {"creature": "parrotfish", "count": 7},
-    {"creature": "butterflyfish", "count": 7},
-    {"creature": "reef_manta", "count": 1}
+    {"creature": "yellow_tang", "count": 30.8},
+    {"creature": "parrotfish", "count": 7.7},
+    {"creature": "butterflyfish", "count": 7.7},
+    {"creature": "reef_manta", "count": 1.1}
   ]
 }

@@ -1,0 +1,14 @@
+{
+  "name": "garden_fence",
+  "version": 1,
+  "introduced_by": "townlab",
+  "notes": "A back-garden fence: thin posts every two metres with two rails, a metre high. Between the yards behind a row of houses.",
+  "ground": "follow",
+  "width": 0.0,
+  "rails": [
+    {"side": "centre", "out": 0.0, "from": 0.4, "to": 0.52, "thick": 0.12, "mat": "stick_wood"},
+    {"side": "centre", "out": 0.0, "from": 0.85, "to": 0.97, "thick": 0.12, "mat": "stick_wood"}
+  ],
+  "posts": [{"side": "centre", "out": 0.0, "every": 2.0, "size": [0.15, 1.05, 0.15], "mat": "oak_post"}],
+  "tags": ["fence"]
+}

@@ -12,10 +12,12 @@
   "plants": [{"plant": "hawthorn", "density": 0.0002, "placement": {"verb": "lone", "params": {"spacing": 60}}}],
   "features": [],
   "creatures": [
-    {"creature": "rabbit", "count": 4},
+    {"creature": "rabbit", "count": 4.4},
     {"creature": "starling", "count": 12},
     {"creature": "crow", "count": 3},
-    {"creature": "killdeer", "count": 2}
+    {"creature": "killdeer", "count": 2},
+    {"creature": "skunk", "count": 2.2},
+    {"creature": "barn_owl", "count": 1}
   ],
   "collectibles": []
 }

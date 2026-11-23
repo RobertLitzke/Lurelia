@@ -4,7 +4,7 @@
   "introduced_by": "faerie",
   "notes": "The faerie wood's bear: larger and slower than a black bear, its coat gone green-brown under a mantle of moss, with pale mushrooms on its back that glow at dusk. It barely minds people.",
   "colors": {"bear": [110, 100, 66], "moss": [74, 116, 50], "cap": [190, 240, 170, 1.4]},
-  "behaviour": {"walk_speed": 0.7, "wary": 5, "spawn_chance": 0.0015},
+  "behaviour": {"sleeps_on_side": true, "walk_speed": 0.7, "wary": 5, "spawn_chance": 0.0015},
   "like": "bear",
   "scale": 1.15,
   "extra_ops": [

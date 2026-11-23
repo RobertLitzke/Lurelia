@@ -9,15 +9,15 @@
   "subsurface": "white_sand",
   "map_color": [96, 186, 176],
   "creatures": [
-    {"creature": "herring", "count": 40},
-    {"creature": "manta_ray", "count": 2},
-    {"creature": "sea_turtle", "count": 14},
+    {"creature": "herring", "count": 44},
+    {"creature": "manta_ray", "count": 2.2},
+    {"creature": "sea_turtle", "count": 15.4},
     {"creature": "cormorant", "count": 6},
     {"creature": "gull", "count": 8},
-    {"creature": "anaconda", "count": 1},
-    {"creature": "yellow_tang", "count": 6},
-    {"creature": "stingray", "count": 1},
-    {"creature": "moon_jelly", "count": 4},
+    {"creature": "anaconda", "count": 2.2},
+    {"creature": "yellow_tang", "count": 6.6},
+    {"creature": "stingray", "count": 1.1},
+    {"creature": "moon_jelly", "count": 4.4},
     {"creature": "kingfisher", "count": 3}
   ]
 }

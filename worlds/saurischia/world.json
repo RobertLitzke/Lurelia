@@ -1,0 +1,82 @@
+{
+  "name": "saurischia",
+  "blurb": "The old high country east of Hemlow, where the great animals never died out: a canal city in a mere under a waterfall, farms, a timber town, grass plains with sauropod herds, and a young volcano in the south.",
+  "size_m": 1536,
+  "height_m": 256,
+  "sea_level_m": 34,
+  "seed": 8117,
+  "neighbours": {
+    "west": {
+      "world": "hemlow",
+      "offset": 0
+    }
+  },
+  "sun": {
+    "latitude": 48
+  },
+  "rock": [
+    [
+      "stone_dark",
+      0.5
+    ],
+    [
+      "granite",
+      0.3
+    ],
+    [
+      "stone",
+      0.2
+    ]
+  ],
+  "spawn": [
+    1068,
+    738
+  ],
+  "spawn_bearing": 165,
+  "seasons": [
+    "spring",
+    "summer",
+    "autumn",
+    "winter"
+  ],
+  "start_season": "summer",
+  "weather": {
+    "sun": 1.2,
+    "heat": 0.6,
+    "clouds": 0.8,
+    "rain": 0.6,
+    "fog": 0.5,
+    "storm": 0.15,
+    "snow": 0.05
+  },
+  "start_weather": "sun",
+  "start_hour": 16.5,
+  "default_biome": "sau_fernwood",
+  "seabed_biome": "seabed",
+  "biomes": [
+    "sau_fernwood",
+    "sau_brake",
+    "sau_titan",
+    "sau_glade",
+    "sau_marsh",
+    "sau_swamp",
+    "sau_parkland",
+    "sau_thunderfield",
+    "sau_highwood",
+    "sau_fields",
+    "sau_orchard",
+    "sau_pasture",
+    "sau_city",
+    "sau_garden",
+    "sau_spray",
+    "sau_ash",
+    "sau_lava",
+    "sau_ferncross",
+    "grimwold",
+    "sau_cinder",
+    "basalt_crater",
+    "sau_faewood",
+    "seabed"
+  ],
+  "moss": 1.1
+}

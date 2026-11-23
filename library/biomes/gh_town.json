@@ -19,7 +19,9 @@
     {"creature": "crow", "count": 4},
     {"creature": "sparrow", "count": 10},
     {"creature": "starling", "count": 10},
-    {"creature": "annas_hummingbird", "count": 2}
+    {"creature": "annas_hummingbird", "count": 2},
+    {"creature": "raccoon", "count": 2.2},
+    {"creature": "bat", "count": 3.3}
   ],
   "collectibles": []
 }

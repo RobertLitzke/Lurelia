@@ -31,7 +31,9 @@ pub struct River {
     meander: f32,
     /// The deepest the bed may be carved, metres under the sea. The bed must
     /// fall a little at every step, which across flat country (a delta) adds
-    /// up to a gorge; this stops it. None: no limit.
+    /// up to a gorge; this stops it. None: no limit. Negative holds the bed
+    /// that far above the sea, also when the river settles: a river leaving
+    /// over the map's edge at its neighbour's level.
     #[serde(default)]
     floor: Option<f32>,
     /// Metres over which the river grows from a trickle to its full width
@@ -340,6 +342,13 @@ fn settle_one(f: &mut Fields, rec: &RiverRec, owner: &mut HashMap<u32, f32>) {
             }
         });
         let lo = if lo == f32::MAX { f.height(p.x, p.y) - rec.depth } else { lo };
+        // A negative `floor` holds the bed above the sea (a river that must
+        // leave over the map's edge at its neighbour's level), however low
+        // an earlier event cut the ground it runs in.
+        let lo = match rec.floor {
+            Some(fl) if fl < 0.0 => lo.max(sea - fl),
+            _ => lo,
+        };
         bed.push(lo);
         rim.push(if r == f32::MAX { lo + deep + 0.4 } else { r });
     }
@@ -493,7 +502,10 @@ fn settle_one(f: &mut Fields, rec: &RiverRec, owner: &mut HashMap<u32, f32>) {
         })
         .collect();
     for &(a, b) in &falls {
-        let dir = (line[(a + 2).min(m - 1)] - line[a]).normalize_or(dirs[a]);
+        // Aimed from the lip at the foot, not along the channel at the lip:
+        // where the drop runs down a bend the sheet would otherwise fly
+        // straight into the far wall and vanish halfway down.
+        let dir = (line[b] - line[a]).normalize_or((line[(a + 2).min(m - 1)] - line[a]).normalize_or(dirs[a]));
         f.falls.push(Fall {
             lip: Vec3::new(line[a].x, level[a], line[a].y),
             dir,
@@ -533,6 +545,7 @@ fn settle_one(f: &mut Fields, rec: &RiverRec, owner: &mut HashMap<u32, f32>) {
         });
     }
     let seed = rec.seed;
+    let station: HashMap<usize, usize> = best.iter().map(|(&i, &(_, k))| (i, k)).collect();
     let mut cells: Vec<(usize, (f32, usize))> = best.into_iter().collect();
     cells.sort_unstable_by_key(|c| c.0);
     for (i, (d, k)) in cells {
@@ -607,5 +620,63 @@ fn settle_one(f: &mut Fields, rec: &RiverRec, owner: &mut HashMap<u32, f32>) {
                 f.inland.insert(key, Wet { level: floor, flow: [0.0, 0.0], ebb: ebb(k) });
             }
         }
+    }
+    // A plunge pool where each fall lands: the falling water has drilled a
+    // round basin wider and deeper than the channel, at the foot's level.
+    // Rock higher than the pool's banks (a pit's walls) stays standing, and
+    // so does everything upstream of the lip and past the next fall's lip:
+    // the pool must not cut away the cliff it sits under, nor spill its
+    // level over the river below the next drop.
+    for (n, &(a, b)) in falls.iter().enumerate() {
+        let l = level[b];
+        if b >= mouth || l <= sea + 0.02 {
+            continue;
+        }
+        let at = line[b];
+        let lip = line[a];
+        let fdir = (line[b] - line[a]).normalize_or(dirs[a]);
+        let next_lip = falls.get(n + 1).map_or(m, |x| x.0);
+        // Sized by the stream, a little more for a taller drop: a small
+        // stream scours a basin little wider than itself however far it
+        // falls; only a big river over a tall drop drills a broad pool.
+        let drop = level[a] - l;
+        let r = half * (1.1 + 0.6 * (drop / 20.0).min(1.0)) + 1.0;
+        let pool_deep = deep * (1.0 + 0.8 * (drop / 12.0).min(1.0));
+        each_near(f, at, r + 4.0, |f: &mut Fields, i, d, p| {
+            if f.occupied[i] || owner.get(&(i as u32)).is_some_and(|o| *o == f32::NEG_INFINITY) {
+                return;
+            }
+            match station.get(&i) {
+                Some(&k) if k < a || k >= next_lip => return,
+                None if (p - lip).dot(fdir) < 0.5 => return,
+                _ => {}
+            }
+            if f.inland.get(&(i as u32)).is_some_and(|w| (w.level - l).abs() > 0.3) {
+                // Another stretch's water: above the lip or below the next.
+                return;
+            }
+            let d = d + perlin2(p.x * 0.15, p.y * 0.15, seed ^ 0x2f) * 1.2;
+            let s = d / r;
+            if s < 1.0 {
+                if f.h[i] > l + 1.5 {
+                    return;
+                }
+                let t = l - 0.06 - (pool_deep - 0.06) * (1.0 - s * s).max(0.0).powf(0.6);
+                f.h[i] = f.h[i].min(t);
+                f.water[i] = 1;
+                f.surface[i] = if rec.bank != 0 && s > 0.8 { rec.bank } else { rec.bed };
+                let key = i as u32;
+                if owner.get(&key).is_none_or(|&o| o > 0.0) {
+                    owner.insert(key, 0.0);
+                    f.inland.insert(key, Wet { level: l, flow: [0.0, 0.0], ebb: ebb(b) });
+                }
+            } else {
+                // A short bank up from the water; above it the ground is left.
+                let bank = l - 0.06 + (d - r) * 0.5;
+                if f.h[i] > bank && f.h[i] < l + 1.5 {
+                    f.h[i] = bank;
+                }
+            }
+        });
     }
 }

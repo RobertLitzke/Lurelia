@@ -1,0 +1,52 @@
+{
+  "name": "cotswold_village",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "A stone village on the oolite: honey limestone walls under stone slates and thatch, gravel and dirt lanes, a grass green, dry-stone walls round the fields and between the gardens. Meant for a town event that stands the world's own cottage structures on its plots (`houses`), so the footprint houses that fill the odd plot match them.",
+  "like": "old_town",
+  "deck": "cotswold_stone",
+  "deck_top": "stone_tiles",
+  "rail": "cotswold_stone",
+  "town": {
+    "walls": {
+      "village": ["cotswold_stone"],
+      "ribbon": ["cotswold_stone"],
+      "maze": ["cotswold_stone"],
+      "grid": ["cotswold_stone"],
+      "radial": ["cotswold_stone"],
+      "suburb": ["cotswold_stone"]
+    },
+    "roofs": {
+      "village": ["stone_tiles"],
+      "ribbon": ["stone_tiles"],
+      "maze": ["stone_tiles"],
+      "grid": ["stone_tiles"],
+      "radial": ["stone_tiles"],
+      "suburb": ["stone_tiles"]
+    },
+    "trims": ["trim_white", "trim_dark"],
+    "streets": {
+      "main": "road_gravel",
+      "ring": "road_gravel",
+      "street": "road_gravel",
+      "lane": "path_dirt",
+      "close": "road_gravel",
+      "alley": "path_dirt",
+      "country": "road_gravel",
+      "quay": "stone_tiles",
+      "village_main": "road_gravel",
+      "village_street": "path_dirt",
+      "ribbon_main": "road_gravel",
+      "drive": "path_dirt"
+    },
+    "plaza": "stone_tiles",
+    "flat_roof": "stone_tiles",
+    "church": "cotswold_stone",
+    "trees": ["street_oak", "great_oak"],
+    "field_wall": "dry_stone_wall",
+    "rail": "timber_fence",
+    "town_wall": "dry_stone_wall",
+    "garden": "dry_stone_wall",
+    "hedge": "hedgerow"
+  }
+}

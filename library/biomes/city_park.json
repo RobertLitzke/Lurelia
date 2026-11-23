@@ -19,7 +19,8 @@
     {"creature": "crow", "count": 2},
     {"creature": "woodpecker", "count": 1},
     {"creature": "northern_flicker", "count": 1},
-    {"creature": "squirrel", "count": 4},
-    {"creature": "bat", "count": 3}
+    {"creature": "squirrel", "count": 4.4},
+    {"creature": "bat", "count": 3.3},
+    {"creature": "raccoon", "count": 3.3}
   ]
 }

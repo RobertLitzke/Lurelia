@@ -24,14 +24,14 @@
     }
   ],
   "creatures": [
-    {"creature": "anthias", "count": 140},
-    {"creature": "reef_shark", "count": 3},
-    {"creature": "barracuda", "count": 7},
-    {"creature": "jack", "count": 35},
-    {"creature": "sardine", "count": 140},
-    {"creature": "manta_ray", "count": 4},
-    {"creature": "moon_jelly", "count": 21},
-    {"creature": "whale_shark", "count": 1},
-    {"creature": "reef_manta", "count": 4}
+    {"creature": "anthias", "count": 154},
+    {"creature": "reef_shark", "count": 3.3},
+    {"creature": "barracuda", "count": 7.7},
+    {"creature": "jack", "count": 38.5},
+    {"creature": "sardine", "count": 154},
+    {"creature": "manta_ray", "count": 4.4},
+    {"creature": "moon_jelly", "count": 23.1},
+    {"creature": "whale_shark", "count": 1.1},
+    {"creature": "reef_manta", "count": 4.4}
   ]
 }

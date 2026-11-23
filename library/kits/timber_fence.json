@@ -2,12 +2,12 @@
   "name": "timber_fence",
   "version": 1,
   "introduced_by": "routing engine",
-  "notes": "A post-and-rail fence following the ground: oak posts every 2.5 m with two rails between them, 1.2 m high. Width 0, so it is a line and not a surface.",
+  "notes": "A post-and-rail fence following the ground: oak posts every 2.5 m, 1.2 m high, with two rails between them, the top one a voxel under the post tops. Width 0, so it is a line and not a surface.",
   "ground": "follow",
   "width": 0.0,
   "rails": [
     {"side": "centre", "out": 0.0, "from": 0.5, "to": 0.7, "thick": 0.25, "mat": "stick_wood"},
-    {"side": "centre", "out": 0.0, "from": 0.95, "to": 1.15, "thick": 0.25, "mat": "stick_wood"}
+    {"side": "centre", "out": 0.0, "from": 0.85, "to": 1.05, "thick": 0.25, "mat": "stick_wood"}
   ],
   "posts": [{"side": "centre", "out": 0.0, "every": 2.5, "size": [0.25, 1.2, 0.5], "mat": "oak_post"}],
   "tags": ["fence"]

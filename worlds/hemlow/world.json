@@ -1,14 +1,23 @@
 {
   "name": "hemlow",
-  "blurb": "A stone village above a small river on a midsummer evening, with a faerie wood past the last hedge.",
-  "size_m": 1024,
-  "height_m": 128,
-  "sea_level_m": 12,
-  "tide": {"range": 2.5, "high": 8.0},
-  "surf": {"height": 0.7},
-  "underwater": {"visibility": 9, "light": 0.18},
+  "blurb": "A stone village above a small river on a midsummer evening, with a faerie wood past the last hedge, a wool town to the north, redwoods to the south and a cliff to the east with something older on top.",
+  "size_m": 1536,
+  "height_m": 256,
+  "sea_level_m": 34,
+  "neighbours": {
+    "south": {
+      "world": "gannet",
+      "offset": 0
+    }
+  },
+  "underwater": {
+    "visibility": 9,
+    "light": 0.18
+  },
   "seed": 621,
-  "sun": {"latitude": 48},
+  "sun": {
+    "latitude": 48
+  },
   "seeds": 1,
   "rock": [
     [
@@ -17,11 +26,16 @@
     ]
   ],
   "spawn": [
-    360,
-    478
+    990,
+    872
   ],
-  "spawn_bearing": 90,
-  "seasons": ["spring", "summer", "autumn", "winter"],
+  "spawn_bearing": 180,
+  "seasons": [
+    "spring",
+    "summer",
+    "autumn",
+    "winter"
+  ],
   "start_season": "summer",
   "weather": {
     "sun": 1.3,
@@ -51,40 +65,49 @@
     "edge_hanger",
     "lantern_spout",
     "hob_clearing",
-    "beach",
     "seabed",
-    "kelp_forest",
-    "dunes"
+    "gh_redwood",
+    "gh_redwood_grove",
+    "gh_faewood",
+    "grimwold",
+    "gh_orchard",
+    "pucklands",
+    "hem_heath"
   ],
   "strata": [
     [
       "oolite",
-      0
+      30
     ],
     [
       "oolite_cream",
-      21
+      51
     ],
     [
       "oolite",
-      22.2
+      52.2
     ],
     [
       "oolite_cream",
-      27
+      57
     ],
     [
       "oolite",
-      27.6
+      57.6
     ],
     [
       "oolite_cream",
-      33
+      63
     ],
     [
       "oolite",
-      34
+      64
     ]
   ],
-  "moss": 1.2
+  "moss": 1.2,
+  "glide": {
+    "thermals": 0.8,
+    "ridge_from": 265,
+    "ridge_speed": 8
+  }
 }

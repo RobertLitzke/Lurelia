@@ -1,0 +1,17 @@
+{
+  "name": "grim_moss",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "The Grimwold's floor: deep cold moss and old litter, dark grey-green, with low tufts.",
+  "smooth": true,
+  "sprites": "grass",
+  "texture": {
+    "pattern": "noise",
+    "base": [50, 66, 46],
+    "alt": [44, 58, 42],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [54, 70, 50], "alt": [48, 62, 46]}
+  },
+  "grass": {"sparse": 0.2, "dense": 0.7, "short": 1.2}
+}

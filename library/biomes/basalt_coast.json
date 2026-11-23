@@ -22,13 +22,13 @@
   ],
   "creatures": [
     {"creature": "gull", "count": 3},
-    {"creature": "rabbit", "count": 3},
+    {"creature": "rabbit", "count": 3.3},
     {"creature": "eagle", "count": 1},
-    {"creature": "harbor_seal", "count": 3},
-    {"creature": "sea_lion", "count": 3},
+    {"creature": "harbor_seal", "count": 3.3},
+    {"creature": "sea_lion", "count": 3.3},
     {"creature": "puffin", "count": 8},
     {"creature": "cormorant", "count": 3},
-    {"creature": "bumblebee", "count": 3},
+    {"creature": "bumblebee", "count": 3.3},
     {"creature": "sea_eagle", "count": 1}
   ],
   "sound": {"ground": "stone", "wind": 1.2},

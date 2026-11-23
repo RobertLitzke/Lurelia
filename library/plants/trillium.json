@@ -1,0 +1,12 @@
+{
+  "name": "trillium",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Western trillium: three broad leaves and one white flower, scattered on the redwood floor.",
+  "form": "herb",
+  "height": [0.3, 0.45],
+  "crown_radius": [0.2, 0.3],
+  "bark": "dead_wood",
+  "leaf": "trillium",
+  "max_slope": 0.9
+}

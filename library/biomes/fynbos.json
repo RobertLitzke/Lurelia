@@ -35,13 +35,20 @@
       "density": 0.02,
       "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.0, "max": 1.0}}
     },
-    {"plant": "rock_lichen", "density": 0.25, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "rock_lichen", "density": 0.25, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "silver_tree",
+      "density": 0.003,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.1, "max": 1.0}}
+    }
   ],
   "creatures": [
-    {"creature": "rock_hyrax", "count": 10},
+    {"creature": "rock_hyrax", "count": 11},
     {"creature": "eagle", "count": 1},
     {"creature": "raven", "count": 2},
-    {"creature": "lizard", "count": 4},
-    {"creature": "bee", "count": 6}
+    {"creature": "lizard", "count": 4.4},
+    {"creature": "bee", "count": 6.6},
+    {"creature": "nightjar", "count": 2.2},
+    {"creature": "tortoise", "count": 2.2}
   ]
 }

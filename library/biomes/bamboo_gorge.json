@@ -22,14 +22,21 @@
       "density": 0.002,
       "placement": {"verb": "gradient", "params": {"min": 1.2, "max": 4.0}, "field": "slope"}
     },
-    {"plant": "rock_moss", "density": 0.1}
+    {"plant": "rock_moss", "density": 0.1},
+    {
+      "plant": "karst_pine",
+      "density": 0.01,
+      "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.3, "max": 0.55}}
+    }
   ],
   "creatures": [
-    {"creature": "panda", "count": 6},
-    {"creature": "kite_ray", "count": 6},
-    {"creature": "dragonfly", "count": 6},
+    {"creature": "panda", "count": 6.6},
+    {"creature": "kite_ray", "count": 6.6},
+    {"creature": "dragonfly", "count": 6.6},
     {"creature": "kingfisher", "count": 2},
-    {"creature": "monkey", "count": 6}
+    {"creature": "monkey", "count": 6.6},
+    {"creature": "fruit_bat", "count": 4.4},
+    {"creature": "serow", "count": 5.5}
   ],
   "sound": {"wind": 0.6, "leaves": 1.3, "notes": "Bamboo knocks and rattles more than leaves rustle."},
   "mist": 0.4

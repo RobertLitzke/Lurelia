@@ -206,6 +206,29 @@ pub fn vehicle(fx: &mut Fx, car: &crate::vehicle::Vehicle, ev: &crate::vehicle::
     }
 }
 
+/// A kart drifting: smoke off its back wheels, and once the drift has
+/// charged a boost, sparks, blue for the first and orange for the second,
+/// so you can see when to let go.
+pub fn drift(fx: &mut Fx, car: &crate::vehicle::Vehicle, dt: f32) {
+    if !fx.on || car.drift.is_none() || car.b.vel.length() < 4.0 {
+        return;
+    }
+    let up = car.up();
+    let back = -car.forward();
+    let r = car.spec.wheel_radius;
+    let tier = car.drift_tier();
+    for w in car.wheels.iter().filter(|w| w.rear && w.down) {
+        let patch = car.pos() + car.b.rot * w.mount - up * (w.t + r);
+        let throw = back * 0.8 + Vec3::Y * 0.6;
+        fx.trickle("drift_smoke", patch + Vec3::Y * 0.1, throw, 0, 22.0, dt);
+        match tier {
+            0 => {}
+            1 => fx.trickle("drift_sparks", patch + Vec3::Y * 0.05, back + Vec3::Y * 0.5, 0, 30.0, dt),
+            _ => fx.trickle("drift_sparks_hot", patch + Vec3::Y * 0.05, back + Vec3::Y * 0.5, 0, 45.0, dt),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

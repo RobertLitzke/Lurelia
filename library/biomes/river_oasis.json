@@ -1,0 +1,44 @@
+{
+  "name": "river_oasis",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "A sandbar standing out of a desert lake or river, watered from underneath: palms, figs and reeds in a green tuft, and the animals that swam out to it.",
+  "priority": 9,
+  "rules": {"region": "oasis", "elev": [-0.5, 6]},
+  "surface": "shore_sand",
+  "subsurface": "shore_sand",
+  "map_color": [120, 168, 92],
+  "plants": [
+    {
+      "plant": "cabbage_palm",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.25, "max": 0.6}}
+    },
+    {"plant": "small_fig", "density": 0.008, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "willow", "density": 0.004, "placement": {"verb": "lone", "params": {"spacing": 12}}},
+    {
+      "plant": "papyrus",
+      "density": 0.08,
+      "placement": {"verb": "clustered", "params": {"size": 5, "min": 0.3, "max": 0.6}}
+    },
+    {
+      "plant": "common_reed",
+      "density": 0.06,
+      "placement": {"verb": "clustered", "params": {"size": 6, "min": 0.3, "max": 0.6}}
+    },
+    {
+      "plant": "fern",
+      "density": 0.05,
+      "placement": {"verb": "clustered", "params": {"size": 6, "min": 0.3, "max": 0.55}}
+    }
+  ],
+  "creatures": [
+    {"creature": "water_buffalo", "count": 2.2},
+    {"creature": "macaque", "count": 3.3},
+    {"creature": "otter", "count": 1.1},
+    {"creature": "green_tree_snake", "count": 1.1},
+    {"creature": "kingfisher", "count": 1},
+    {"creature": "canyon_bat", "count": 4.4}
+  ],
+  "mist": 0.3
+}

@@ -7,7 +7,7 @@
 //! ground stops being its street's, and a house stands in it (`frontage`).
 
 use super::graph::seg_foot;
-use super::{rank, Boundary, Building, Districts, Edge, Ground, Kind, Plan, Rng, Roof, Spec, Style, Way};
+use super::{rank, Boundary, Building, Districts, Edge, Ground, Kind, Plan, Rng, Roof, Spec, Style, Tree, Way};
 use glam::Vec2;
 
 const FREE: u8 = 0;
@@ -17,7 +17,7 @@ const OPEN: u8 = 3;
 const WET: u8 = 4;
 /// Under a structure an earlier event placed (`Ground::taken`): never built
 /// on, and never claimed by a square, park or street mark, so a church
-/// cannot stand in the Rotunda's door.
+/// cannot stand in an older landmark's door.
 const TAKEN: u8 = 5;
 
 /// The town on a one-metre raster: who owns each cell and what is on it.
@@ -217,7 +217,8 @@ pub fn build(plan: &mut Plan, dist: &Districts, spec: &Spec, ground: &dyn Ground
     for &p in &plan.turnings.clone() {
         mark_disc(&mut r, p, 8.0, STREET);
     }
-    // The plaza.
+    // The market and the squares at the busiest junctions of the dense
+    // districts.
     for sq in plan.plazas.clone() {
         mark_square(&mut r, &sq, OPEN);
     }
@@ -227,11 +228,6 @@ pub fn build(plan: &mut Plan, dist: &Districts, spec: &Spec, ground: &dyn Ground
         for &p in &b.pts {
             mark_disc(&mut r, p, 3.2, OPEN);
         }
-    }
-
-    // Squares at the busiest junctions of the dense districts.
-    for sq in plan.plazas.iter().skip(1).copied().collect::<Vec<_>>() {
-        mark_square(&mut r, &sq, OPEN);
     }
 
     // Churches on the squares, facing into them, the market's first.
@@ -269,12 +265,11 @@ pub fn build(plan: &mut Plan, dist: &Districts, spec: &Spec, ground: &dyn Ground
                 }
                 mark_disc(&mut r, p, pr, OPEN);
                 plan.parks.push((p, pr));
-                for t in 0..(pr * pr * 0.02) as usize {
+                for _ in 0..(pr * pr * 0.02) as usize {
                     let a = rng.f() * std::f32::consts::TAU;
                     let q = p + Vec2::new(a.cos(), a.sin()) * pr * rng.f().sqrt() * 0.85;
-                    let _ = t;
                     if r.idx(q).is_some_and(|i| r.used[i] == OPEN) {
-                        plan.trees.push((q, 1));
+                        plan.trees.push((q, Tree::Park));
                     }
                 }
                 break;
@@ -321,7 +316,7 @@ pub fn build(plan: &mut Plan, dist: &Districts, spec: &Spec, ground: &dyn Ground
             for side in [1.0f32, -1.0] {
                 let q = p + n * side * (way.half + 0.6);
                 if r.idx(q).is_some_and(|i| r.used[i] != WET) && dist.at(q).is_some() && !way.wet.iter().any(|&x| x) {
-                    plan.trees.push((q, 0));
+                    plan.trees.push((q, Tree::Street));
                 }
             }
             s += 15.0;
@@ -414,7 +409,6 @@ fn quad_cells(r: &Raster, q: &[Vec2; 4]) -> Option<Vec<usize>> {
 }
 
 #[allow(clippy::too_many_arguments)]
-#[allow(clippy::too_many_arguments)]
 fn frontage(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, way: &Way, wi: usize, side: f32, ground: &dyn Ground, rng: &mut Rng) {
     let len: f32 = way.pts.windows(2).map(|w| w[0].distance(w[1])).sum();
     let me = wi as u32 * 2 + (side > 0.0) as u32;
@@ -425,7 +419,7 @@ fn frontage(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, way:
         let (_, t0) = point_at(&way.pts, s + 1.0);
         let probe = p_mid + Vec2::new(-t0.y, t0.x) * side * (way.half + way.walk + 3.0);
         let Some(d) = dist.at(probe) else {
-            plan.stats[0] += 1;
+            plan.stats.outside += 1;
             s += 4.0;
             row_floors = None;
             continue;
@@ -445,10 +439,8 @@ fn frontage(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, way:
         let mut house: Option<(usize, u8, Vec2)> = None;
         if detached && !spec.features.houses.is_empty() {
             let face = -Vec2::new(-t0.y, t0.x) * side;
-            let turns = ((crate::util::bearing(face).to_degrees() + 45.0).rem_euclid(360.0) / 90.0) as u8 % 4;
-            let b = turns as f32 * std::f32::consts::FRAC_PI_2;
-            let axis = Vec2::new(b.sin(), -b.cos());
-            let mis = face.angle_to(axis).abs();
+            let turns = super::quarter_turns(face);
+            let mis = face.angle_to(super::quarter_axis(turns)).abs();
             if mis < 20f32.to_radians() {
                 let k = (rng.f() * spec.features.houses.len() as f32) as usize % spec.features.houses.len();
                 let sz = spec.features.houses[k].size;
@@ -498,7 +490,7 @@ fn frontage(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, way:
         }
         depth -= 0.5;
         if depth < (ls.depth.0 * 0.5).max(5.5) {
-            plan.stats[1] += 1;
+            plan.stats.shallow += 1;
             s += 1.0;
             row_floors = None;
             continue;
@@ -518,19 +510,18 @@ fn frontage(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, way:
             let h = ws * 0.5 + Vec2::splat(0.3);
             let quad = [at - h, Vec2::new(at.x + h.x, at.y - h.y), at + h, Vec2::new(at.x - h.x, at.y + h.y)];
             let fits = quad_cells(r, &quad).filter(|c| !c.is_empty() && c.iter().all(|&i| r.used[i] == FREE && r.owner[i] == me));
-            let hs: Vec<f32> = quad.iter().map(|&q| ground.height(q)).collect();
-            let fall = hs.iter().cloned().fold(f32::MIN, f32::max) - hs.iter().cloned().fold(f32::MAX, f32::min);
+            let fall = super::fall(ground, &quad);
             match fits {
                 Some(cells) if fall <= ls.fall + 0.5 => {
                     for &i in &cells {
                         r.used[i] = BUILT;
                     }
                     plan.sites.push(super::Site { id: spec.features.houses[k].id, at, turns, size: ws });
-                    plan.stats[5] += 1;
+                    plan.stats.built += 1;
                     s += wdt;
                 }
                 _ => {
-                    plan.stats[3] += 1;
+                    plan.stats.taken += 1;
                     s += 1.5;
                 }
             }
@@ -544,20 +535,19 @@ fn frontage(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, way:
         }
         let quad = [a0, a1, a1 + n * bd, a0 + n * bd];
         let Some(cells) = quad_cells(r, &quad) else {
-            plan.stats[2] += 1;
+            plan.stats.edge += 1;
             s += 1.0;
             continue;
         };
         if cells.is_empty() || cells.iter().any(|&i| r.used[i] != FREE) {
-            plan.stats[3] += 1;
+            plan.stats.taken += 1;
             s += 1.0;
             row_floors = None;
             continue;
         }
-        let hs: Vec<f32> = quad.iter().map(|&q| ground.height(q)).collect();
-        let fall = hs.iter().cloned().fold(f32::MIN, f32::max) - hs.iter().cloned().fold(f32::MAX, f32::min);
+        let fall = super::fall(ground, &quad);
         if fall > ls.fall {
-            plan.stats[4] += 1;
+            plan.stats.steep += 1;
             s += 2.0;
             row_floors = None;
             continue;
@@ -579,32 +569,7 @@ fn frontage(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, way:
             _ if terraced => Kind::Row,
             _ => Kind::House,
         };
-        let roof = match style {
-            Style::Maze => {
-                if rng.f() < 0.85 {
-                    Roof::Gable
-                } else {
-                    Roof::Hip
-                }
-            }
-            Style::Radial => match rng.f() {
-                x if x < 0.45 => Roof::Hip,
-                x if x < 0.75 => Roof::Flat,
-                _ => Roof::Gable,
-            },
-            Style::Grid => match rng.f() {
-                x if x < 0.4 && far < 0.6 => Roof::Flat,
-                x if x < 0.75 => Roof::Gable,
-                _ => Roof::Hip,
-            },
-            _ => {
-                if rng.f() < 0.6 {
-                    Roof::Gable
-                } else {
-                    Roof::Hip
-                }
-            }
-        };
+        let roof = roof_for(style, far, rng);
         let mut poly = quad.to_vec();
         if style == Style::Suburb {
             // A garage beside the house, set back a little, with a drive
@@ -633,7 +598,7 @@ fn frontage(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, way:
             // A tree on most front lawns.
             if rng.f() < 0.6 && setback > 4.5 {
                 let side_t = if rng.f() < 0.5 { 0.25 } else { 0.75 };
-                plan.trees.push((f0.lerp(f1, side_t) - n * (setback * 0.5), 1));
+                plan.trees.push((f0.lerp(f1, side_t) - n * (setback * 0.5), Tree::Park));
             }
             if spec.features.yards {
                 let back = depth + 0.5;
@@ -662,7 +627,7 @@ fn frontage(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, way:
             ridge: None,
             tone: rng.f().to_bits(),
         });
-        plan.stats[5] += 1;
+        plan.stats.built += 1;
         s += wdt;
     }
 }
@@ -706,8 +671,7 @@ fn church(plan: &mut Plan, r: &mut Raster, dist: &Districts, pc: Vec2, pr: f32, 
                 if cells.iter().any(|&i| r.used[i] != FREE && r.used[i] != OPEN) || dist.at(front + out * len).is_none() {
                     continue;
                 }
-                let hs: Vec<f32> = quad.iter().map(|&q| ground.height(q)).collect();
-                if hs.iter().cloned().fold(f32::MIN, f32::max) - hs.iter().cloned().fold(f32::MAX, f32::min) > 3.0 {
+                if super::fall(ground, &quad) > 3.0 {
                     continue;
                 }
                 for &i in &cells {
@@ -799,12 +763,7 @@ fn dense_at(dist: &Districts, p: Vec2) -> Option<(Style, f32)> {
     let d = dist.at(p)?;
     let style = dist.style(d);
     let far = dist.far(p);
-    let dense = match style {
-        Style::Maze | Style::Radial => true,
-        Style::Grid => true,
-        _ => false,
-    };
-    dense.then_some((style, far))
+    matches!(style, Style::Maze | Style::Radial | Style::Grid).then_some((style, far))
 }
 
 /// `dense_at`, and the waterfront too: within 40 m of the water a suburb
@@ -819,6 +778,18 @@ fn dense_cell(dist: &Districts, r: &Raster, p: Vec2) -> Option<(Style, f32)> {
 }
 
 /// Convex hull (monotone chain), counter-clockwise.
+/// The tidied convex hull of a set of raster cells, corner to corner.
+fn cell_hull(r: &Raster, cells: &[usize]) -> Vec<Vec2> {
+    let mut pts = Vec::with_capacity(cells.len() * 4);
+    for &i in cells {
+        let c = r.centre(i);
+        for d in [Vec2::new(-0.5, -0.5), Vec2::new(0.5, -0.5), Vec2::new(0.5, 0.5), Vec2::new(-0.5, 0.5)] {
+            pts.push(c + d);
+        }
+    }
+    tidy(hull(pts))
+}
+
 fn hull(mut pts: Vec<Vec2>) -> Vec<Vec2> {
     pts.sort_by(|a, b| a.x.total_cmp(&b.x).then(a.y.total_cmp(&b.y)));
     pts.dedup();
@@ -910,7 +881,7 @@ fn roof_for(style: Style, far: f32, rng: &mut Rng) -> Roof {
 /// width apart; a strip is the cells whose nearest street is that one and
 /// whose foot on it falls in that stretch, so plots meet their neighbours
 /// exactly, and the two part-strips that meet at a corner join into one
-/// corner building. With `regular`, a corner building is cut back to the
+/// corner building. Without `spec.irregular`, a corner building is cut back to the
 /// largest rectangle square to its street instead of filling the corner.
 fn perimeter(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, ground: &dyn Ground, rng: &mut Rng) {
     use crate::util::FxHashMap as HashMap;
@@ -1039,14 +1010,7 @@ fn perimeter(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, gro
             continue;
         }
         let ls = lot_style(style, way.rank, far);
-        let mut pts = Vec::with_capacity(cells.len() * 4);
-        for &i in cells {
-            let c = r.centre(i);
-            for d in [Vec2::new(-0.5, -0.5), Vec2::new(0.5, -0.5), Vec2::new(0.5, 0.5), Vec2::new(-0.5, 0.5)] {
-                pts.push(c + d);
-            }
-        }
-        let mut poly = tidy(hull(pts));
+        let mut poly = cell_hull(r, cells);
         let fill = cells.len() as f32 / area(&poly).max(1.0);
         // A hull much bigger than its cells reaches over the plots beside
         // it; square it off whatever `irregular` says.
@@ -1102,9 +1066,8 @@ fn perimeter(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, gro
         if poly.len() < 3 || area(&poly) < 22.0 {
             continue;
         }
-        let hs: Vec<f32> = poly.iter().map(|&q| ground.height(q)).collect();
-        if hs.iter().cloned().fold(f32::MIN, f32::max) - hs.iter().cloned().fold(f32::MAX, f32::min) > ls.fall {
-            plan.stats[4] += 1;
+        if super::fall(ground, &poly) > ls.fall {
+            plan.stats.steep += 1;
             continue;
         }
         // The front: the wall nearest the street.
@@ -1190,7 +1153,7 @@ fn perimeter(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, gro
             // Most take their street's tone.
             tone: if rng.f() < 0.85 { crate::world::noise::hash32(key.0 / 2 ^ spec.seed) } else { rng.f().to_bits() },
         });
-        plan.stats[5] += 1;
+        plan.stats.built += 1;
     }
     // Back buildings at the far end of the deepest yards.
     let mut ykeys: Vec<(u32, u32)> = yards.keys().copied().collect();
@@ -1202,14 +1165,7 @@ fn perimeter(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, gro
         }
         let p0 = r.centre(cells[0]);
         let Some((style, _)) = dense_cell(dist, r, p0) else { continue };
-        let mut pts = Vec::with_capacity(cells.len() * 4);
-        for &i in &cells {
-            let c = r.centre(i);
-            for d in [Vec2::new(-0.5, -0.5), Vec2::new(0.5, -0.5), Vec2::new(0.5, 0.5), Vec2::new(-0.5, 0.5)] {
-                pts.push(c + d);
-            }
-        }
-        let poly = tidy(hull(pts));
+        let poly = cell_hull(r, &cells);
         if poly.len() < 3 || area(&poly) < 18.0 || (cells.len() as f32) < area(&poly) * 0.75 {
             continue;
         }
@@ -1351,7 +1307,7 @@ fn landmarks(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, gro
                             let (p, t) = point_at(&w.pts, s);
                             for side in [-1.0f32, 1.0] {
                                 let n = Vec2::new(-t.y, t.x) * side;
-                                let turns = ((crate::util::bearing(-n).to_degrees() + 45.0).rem_euclid(360.0) / 90.0) as u8 % 4;
+                                let turns = super::quarter_turns(-n);
                                 let ws = if turns % 2 == 1 { Vec2::new(lm.size.y, lm.size.x) } else { lm.size };
                                 let reach = (ws.x * n.x).abs() * 0.5 + (ws.y * n.y).abs() * 0.5;
                                 let at = p + n * (w.half + w.walk + 1.2 + reach);
@@ -1359,8 +1315,7 @@ fn landmarks(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, gro
                                 if sd > -2.0 || (lm.near == Near::Edge && sd < -0.35 * dist.radius) {
                                     continue;
                                 }
-                                let b = turns as f32 * std::f32::consts::FRAC_PI_2;
-                                let mis = (-n).angle_to(Vec2::new(b.sin(), -b.cos())).abs();
+                                let mis = (-n).angle_to(super::quarter_axis(turns)).abs();
                                 if mis < 20f32.to_radians() {
                                     square.push((at, p));
                                 } else {
@@ -1406,7 +1361,7 @@ fn landmarks(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, gro
             // The quarter turn whose front (-Z unturned) points nearest the
             // thing it faces.
             let to = face - at;
-            let turns = ((crate::util::bearing(to).to_degrees() + 45.0).rem_euclid(360.0) / 90.0) as u8 % 4;
+            let turns = super::quarter_turns(to);
             let size = if turns % 2 == 1 { Vec2::new(lm.size.y, lm.size.x) } else { lm.size };
             let h = size * 0.5 + Vec2::splat(0.5);
             let quad = [at - h, Vec2::new(at.x + h.x, at.y - h.y), at + h, Vec2::new(at.x - h.x, at.y + h.y)];
@@ -1415,8 +1370,7 @@ fn landmarks(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, gro
             if cells.is_empty() || cells.iter().any(|&i| r.used[i] != FREE && !(on_square && r.used[i] == OPEN)) || dist.at(at).is_none() {
                 continue;
             }
-            let hs: Vec<f32> = quad.iter().map(|&q| ground.height(q)).collect();
-            if hs.iter().cloned().fold(f32::MIN, f32::max) - hs.iter().cloned().fold(f32::MAX, f32::min) > 2.5 {
+            if super::fall(ground, &quad) > 2.5 {
                 continue;
             }
             for &i in &cells {

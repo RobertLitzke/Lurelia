@@ -6,7 +6,7 @@
 //! suspension and letting go pops, and popping at a lip adds to the jump.
 //! Ctrl tucks: lower drag and a harder pull downhill, and a descent taken
 //! tucked stores a charge that the next jump spends as a lighter, floatier
-//! arc. Boost tokens (boost.rs) lie along sparse trails and refill the meter.
+//! arc.
 //!
 //! Gliding (glide.rs) is the one way to fly: an energy glider with real-ish
 //! lift and drag, thermals and ridge lift, rolled rather than steered flat,
@@ -18,7 +18,6 @@
 //! a sprung eye that takes landings, a radial blur) and a chase camera whose
 //! follow point trails the rider a little, so jumps and swings read as arcs.
 
-mod boost;
 mod climb;
 mod drive;
 mod glide;
@@ -66,7 +65,7 @@ const BIKE_DRAG: f32 = 0.0058;
 const CRUISE: f32 = 9.4;
 /// ...and W pedals it up to this. Both are about a tenth below where they
 /// used to sit: the bike picks up as fast as before but tops out lower, so
-/// the speed worth having comes from the hills, a tuck or a token.
+/// the speed worth having comes from the hills or a tuck.
 const PEDAL: f32 = 12.2;
 /// Seconds to fold into a full tuck, and to come out of one.
 const TUCK_IN: f32 = 0.28;
@@ -136,6 +135,9 @@ pub struct Ride {
     /// Controls a bot chose for the player's car this step, in place of the
     /// keys (a race's autopilot, for headless runs). Taken each step.
     pub auto: Option<crate::vehicle::Controls>,
+    /// How hard the controller should shake, 0..1, from this step's knocks.
+    /// main.rs takes it each frame (src/pad.rs).
+    pub rumble: f32,
     pub mode: Mode,
     /// The modes this world allows (world.json `modes`).
     pub allowed: Allowed,
@@ -164,16 +166,25 @@ pub struct Ride {
     /// The charge the jump under way was launched with: how much lighter the
     /// air is, 0 to 1.
     float: f32,
-    /// A token just taken, for the glow and the HUD; counts down in seconds.
-    token_t: f32,
-    /// The boost tokens in the world (boost.rs); planned while riding.
-    trail: boost::Trail,
     /// Streaks at the rim of the view, eased, 0 to 1.
     streaks: f32,
     /// Boost meter used up, 0 (full) to 1 (empty).
     spent: f32,
     /// Emptied the meter: no boost until Shift is let go.
     boost_lock: bool,
+    /// A race's rules for the meter, set by the race every step: seconds of
+    /// boost when full, seconds to refill, and whether it may be used now
+    /// (only with no item carried; while it may not, it doesn't refill
+    /// either). None is the ride's own meter.
+    pub race_boost: Option<(f32, f32, bool)>,
+    /// The car drawn lit up this frame: a race sets it while the player's
+    /// kart blinks after taking damage.
+    pub flash: bool,
+    /// The car not drawn, and showing no lights: a race's kart past the
+    /// finish.
+    pub hide: bool,
+    /// The view turned to look behind (a race's look-behind, held).
+    pub look_back: bool,
     pub boosting: bool,
     boost_glow: f32,
     // Gliding.
@@ -567,6 +578,12 @@ impl Ride {
         }
     }
 
+    /// Chase camera on or off while driving.
+    pub fn set_drive_chase(&mut self, on: bool) {
+        let i = Self::idx(Mode::Drive);
+        self.chase_flip[i] = CHASE_DEFAULT[i] != on;
+    }
+
     pub fn toggle_chase(&mut self) {
         if self.mode != Mode::Foot {
             let i = Self::idx(self.mode);
@@ -617,17 +634,24 @@ impl Ride {
             Mode::Kayak => input.forward,
             _ => false,
         };
+        let (secs, race_refill, may) = self.race_boost.unwrap_or((BOOST_SECS, 0.0, true));
         let start_ok = self.boosting || self.spent < 0.85;
-        self.boosting = input.sprint && traction && !self.boost_lock && start_ok;
+        self.boosting = input.sprint && traction && !self.boost_lock && start_ok && may;
         if self.boosting {
-            self.spent += dt / BOOST_SECS;
+            self.spent += dt / secs;
             if self.spent >= 1.0 {
                 self.spent = 1.0;
                 self.boost_lock = true;
                 self.boosting = false;
             }
-        } else if !input.sprint || !matches!(self.mode, Mode::Bike | Mode::Wing | Mode::Kayak | Mode::Drive) {
-            let refill = if self.mode == Mode::Wing { BOOST_REFILL_WING } else { BOOST_REFILL };
+        } else if may && (!input.sprint || !matches!(self.mode, Mode::Bike | Mode::Wing | Mode::Kayak | Mode::Drive)) {
+            let refill = if self.race_boost.is_some() {
+                race_refill
+            } else if self.mode == Mode::Wing {
+                BOOST_REFILL_WING
+            } else {
+                BOOST_REFILL
+            };
             self.spent = (self.spent - dt / refill).max(0.0);
         }
         self.boost_glow += (self.boosting as i32 as f32 - self.boost_glow) * (dt * 6.0).min(1.0);
@@ -690,26 +714,6 @@ impl Ride {
             self.retune_t = 1.0;
             self.retune();
         }
-        // Boost tokens: planned, drawn and taken only while the bike or a
-        // car is out. A car takes one anywhere across its width.
-        if matches!(self.mode, Mode::Bike | Mode::Drive) {
-            self.trail.step(store, p.pos, sea, slopes, dt);
-            let reach = self.car.as_ref().map_or(boost::GRAB.0, |c| c.spec.track * 0.5 + 0.6);
-            if self.trail.take(p.pos, reach) {
-                self.spent = 0.0;
-                self.boost_lock = false;
-                if let Some(car) = self.car.as_mut().filter(|_| self.mode == Mode::Drive) {
-                    let f = car.forward();
-                    car.b.vel += f * 3.2;
-                } else {
-                    self.speed += 3.2;
-                }
-                self.boost_glow = 1.0;
-                self.token_t = 1.6;
-                self.note = Some("BOOST".into());
-            }
-        }
-        self.token_t = (self.token_t - dt).max(0.0);
 
         // After using the rope, a moment on the ground on foot puts it away.
         if self.mode == Mode::Foot && p.body.on_ground && self.rope_out && self.rope_used {
@@ -1065,7 +1069,7 @@ impl Ride {
         let st = if self.mode == Mode::Foot {
             0.0
         } else {
-            (smoothstep(13.0, 26.0, spd) + 0.3 * self.boost_glow + 0.5 * self.token_t.min(1.0)).min(1.0)
+            (smoothstep(13.0, 26.0, spd) + 0.3 * self.boost_glow).min(1.0)
         };
         self.streaks += (st - self.streaks) * (1.0 - (-3.0 * dt).exp());
         if self.mode == Mode::Foot {
@@ -1130,7 +1134,8 @@ impl Ride {
         } else {
             0.0
         };
-        let yaw = p.yaw + behind + jitter.x;
+        let back = if self.look_back && self.mode == Mode::Drive { std::f32::consts::PI } else { 0.0 };
+        let yaw = p.yaw + behind + back + jitter.x;
         let pitch = (p.pitch + tip + jitter.y).clamp(-1.55, 1.55);
         let (sy, cy) = yaw.sin_cos();
         let (sp, cp) = pitch.sin_cos();
@@ -1353,8 +1358,6 @@ impl Ride {
         }
     }
 
-    /// The boost tokens standing near the rider (boost.rs). Nothing off the
-    /// bike: the trail shows itself to a rider and no one else.
     /// The moored kayak, rocking on the swell where it was left.
     pub fn moored_instance(&self, time: f32, first: usize, models: &[Model], out: &mut Vec<(usize, Instance)>) {
         let Some((at, heading)) = self.moored else { return };
@@ -1374,20 +1377,6 @@ impl Ride {
                 glow: [0.0; 4],
             },
         ));
-    }
-
-    pub fn tokens(&self, first: usize, models: &[Model], out: &mut Vec<(usize, Instance)>) {
-        if !matches!(self.mode, Mode::Bike | Mode::Drive) {
-            return;
-        }
-        if let Some(md) = models.get(first + TOKEN) {
-            self.trail.instances(first + TOKEN, md, out);
-        }
-    }
-
-    /// The world's seed, for the token trails.
-    pub fn set_seed(&mut self, seed: u32) {
-        self.trail.seed = seed;
     }
 
     /// Boost left, 0 to 1, and whether it is firing; None unless biking or gliding.
@@ -1459,10 +1448,8 @@ pub const WING_FP_R: usize = 8;
 pub const KAYAK_RIDER: usize = 9;
 pub const KAYAK_HULL: usize = 10;
 pub const PADDLE: usize = 11;
-/// A speed token on a trail (boost.rs).
-pub const TOKEN: usize = 12;
 /// The kayak with nobody in it, moored.
-pub const KAYAK_EMPTY: usize = 13;
+pub const KAYAK_EMPTY: usize = 12;
 /// Length of one rope segment model, metres.
 const ROPE_SEG: f32 = 0.5;
 
@@ -1481,8 +1468,6 @@ pub(crate) const BOOT: u8 = 58;
 const CORD: u8 = 59;
 const HULL: u8 = 60;
 const BLADE: u8 = 61;
-const TOKEN_RING: u8 = 62;
-const TOKEN_CORE: u8 = 63;
 
 /// The ride models' colours, in their palette slots (48..64).
 pub fn palette(p: &mut [[f32; 4]]) {
@@ -1501,9 +1486,6 @@ pub fn palette(p: &mut [[f32; 4]]) {
     p[CORD as usize] = srgb(236, 200, 64, 0.0);
     p[HULL as usize] = srgb(118, 60, 48, 0.0);
     p[BLADE as usize] = srgb(150, 124, 70, 0.0);
-    // The tokens glow a little so they read against grass at a distance.
-    p[TOKEN_RING as usize] = srgb(70, 210, 230, 0.35);
-    p[TOKEN_CORE as usize] = srgb(240, 252, 255, 0.8);
 }
 
 /// Fill every voxel within `r` of the segment a-b (model voxel coordinates).
@@ -1708,24 +1690,6 @@ fn glove(g: &mut Grid) {
 /// Where the glove sits in its model, from the pivot (metres).
 const GLOVE_AT: Vec3 = Vec3::new(0.0, 20.0 / 64.0, -6.0 / 64.0);
 
-/// A speed token: a ring with a chevron inside, about 0.75 m across, its
-/// middle half a metre above the pivot. 1/22 m voxels.
-fn token(g: &mut Grid) {
-    let (cx, cy) = (16.0, 11.0);
-    for y in 0..32 {
-        for x in 0..32 {
-            let d = ((x as f32 + 0.5 - cx).powi(2) + (y as f32 + 0.5 - cy).powi(2)).sqrt();
-            if (6.6..8.2).contains(&d) {
-                g.fill([x, y, 15], [x + 1, y + 1, 18], TOKEN_RING);
-            }
-        }
-    }
-    // A chevron pointing up: the way the rider is meant to be going.
-    for arm in [-1.0f32, 1.0] {
-        seg(g, [cx, cy + 2.6, 16.5], [cx + 4.0 * arm, cy - 1.8, 16.5], 1.0, TOKEN_CORE);
-    }
-}
-
 /// One rope segment: 0.5 m of cord along +Y from the pivot (1/64 m voxels).
 fn rope_seg(g: &mut Grid) {
     g.fill([15, 0, 15], [17, 32, 17], CORD);
@@ -1783,11 +1747,6 @@ pub fn models() -> Vec<Model> {
             let mut m = k.build(2.2 / 32.0, 0.1, 0.5);
             kayak::paddle_pivot(&mut m);
             m
-        },
-        {
-            let mut k = Grid::new();
-            token(&mut k);
-            k.build(1.0 / 22.0, 0.4, 0.9)
         },
         {
             let mut k = Grid::new();

@@ -1,0 +1,24 @@
+{
+  "name": "skunk",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Striped skunk: black with two white stripes from crown to a big plumed tail, ambling through field edges and open woods at night and hardly bothering to get out of your way.",
+  "colors": {
+    "coat": [26, 24, 24],
+    "belly": [20, 18, 18],
+    "white": [30, 28, 28],
+    "dark": [18, 16, 16],
+    "stripe": [236, 232, 224]
+  },
+  "behaviour": {"walk_speed": 0.6, "flee_speed": 2.2, "wary": 4, "flightiness": 0.3, "spawn_chance": 0.4, "off_hours": 0.04},
+  "like": "badger",
+  "scale": 0.85,
+  "extra_ops": [
+    {"op": "ellipsoid", "centre": [16, 9, 26], "radius": [2.6, 3.4, 3.0], "mat": "coat", "part": "tail"},
+    {"op": "recolour", "at": [15, 7, 2], "until": [17, 11, 10], "from": "white", "to": "stripe"},
+    {"op": "recolour", "at": [12, 8, 10], "until": [15, 11, 24], "from": "coat", "to": "stripe"},
+    {"op": "recolour", "at": [17, 8, 10], "until": [20, 11, 24], "from": "coat", "to": "stripe"},
+    {"op": "recolour", "at": [14, 10, 24], "until": [18, 13, 29], "from": "coat", "to": "stripe"}
+  ],
+  "vary": {"size": 0.08, "shade": 0.03}
+}

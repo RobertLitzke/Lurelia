@@ -1,0 +1,21 @@
+{
+  "notes": "Ribshore's grey northern coast: a road of rolled grey sand, kerbs banded in basalt black and bone white, basalt walls and decks, bone posts on the gantry, and Ribshore's cool, low-colour light.",
+  "story": "wet sand, grassy dunes and old bones on a grey northern coast",
+  "road": "shore_hardpack",
+  "kerb": "shore_kerb",
+  "wall": "basalt",
+  "deck": "basalt",
+  "gate_post": "titan_bone",
+  "world": {
+    "rock": [["basalt", 0.7], ["stone_dark", 0.3]],
+    "biomes": ["rib_plain", "rib_dunes", "rib_blowout", "rib_wrack", "rib_beach", "rib_shoals", "rib_kelp", "rib_shelf"],
+    "default_biome": "rib_plain",
+    "seabed_biome": "rib_shelf",
+    "seasons": ["autumn", "summer"],
+    "weather": {"fog": 0.7, "clouds": 1.4, "sun": 0.8, "rain": 0.9},
+    "start_weather": "clouds",
+    "weathering": 1.0,
+    "moss": 0.6
+  },
+  "look": "ribshore"
+}

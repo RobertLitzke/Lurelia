@@ -1,0 +1,21 @@
+{
+  "name": "hedgerow",
+  "version": 1,
+  "introduced_by": "townlab",
+  "notes": "A field hedge of hawthorn with holly in it, about a metre and a half across and as high, lumpy along its top. From above it is the dark line that cuts English farmland into fields.",
+  "ground": "follow",
+  "width": 0.0,
+  "rails": [
+    {
+      "side": "centre",
+      "out": 0.0,
+      "from": 0.0,
+      "to": 1.7,
+      "thick": 1.6,
+      "mat": "hedge_leaves",
+      "mat2": "holly_leaves",
+      "rubble": 0.25
+    }
+  ],
+  "tags": ["hedge", "fence"]
+}

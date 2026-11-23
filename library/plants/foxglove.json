@@ -1,0 +1,12 @@
+{
+  "name": "foxglove",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Foxglove: tall spikes of pink-purple bells in wood clearings and at the wood's edge; folklore calls them fairy gloves.",
+  "form": "herb",
+  "height": [0.9, 1.5],
+  "crown_radius": [0.3, 0.45],
+  "bark": "dead_wood",
+  "leaf": "foxglove",
+  "max_slope": 0.9
+}

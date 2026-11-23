@@ -8,6 +8,7 @@
 
 use super::kit::{Ground, Kit};
 use crate::util::FxHashMap as HashMap;
+use crate::world::chronicle::geom::seg_dist;
 use crate::world::fields::BUCKET;
 use crate::world::material::{AIR, KEEP_AIR};
 use glam::{Vec2, Vec3};
@@ -46,13 +47,6 @@ const ID_MASK: u32 = PIER_BIT - 1;
 
 fn bucket(v: f32) -> i32 {
     (v / BUCKET).floor() as i32
-}
-
-fn seg_dist(a: Vec2, b: Vec2, p: Vec2) -> (f32, f32) {
-    let ab = b - a;
-    let l2 = ab.length_squared().max(1e-6);
-    let t = ((p - a).dot(ab) / l2).clamp(0.0, 1.0);
-    (p.distance(a + ab * t), t)
 }
 
 impl Ribbons {

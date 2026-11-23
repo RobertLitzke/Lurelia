@@ -1,10 +1,21 @@
 {
   "name": "fieldstone_wall",
-  "version": 1,
+  "version": 2,
   "introduced_by": "gannet",
-  "notes": "A New England field wall: grey fieldstone a metre high and half a metre thick, heaped where the ploughs turned it up, following the ground over every hump.",
+  "notes": "A New England field wall: grey fieldstone heaped where the ploughs turned it up, about a metre high and a metre across at the foot, narrowing upward, its top ragged; separate stones in courses, some lichened. Follows the ground over every hump.",
   "ground": "follow",
   "width": 0.0,
-  "rails": [{"side": "centre", "out": 0.0, "from": 0.0, "to": 1.0, "thick": 0.5, "mat": "fieldstone"}],
+  "rails": [
+    {
+      "side": "centre",
+      "out": 0.0,
+      "from": 0.0,
+      "to": 1.05,
+      "thick": 1.0,
+      "mat": "field_rubble",
+      "mat2": "lichened_stone",
+      "rubble": 0.4
+    }
+  ],
   "tags": ["fence", "wall"]
 }

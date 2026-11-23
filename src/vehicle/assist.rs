@@ -5,7 +5,7 @@
 use super::body::Body;
 use super::spec::Spec;
 use super::Controls;
-use glam::Vec3;
+use glam::{Quat, Vec3};
 
 /// A counter-torque on yaw once the car turns faster than its steering and
 /// speed call for: it takes the snap out of a slide without taking the slide.
@@ -54,7 +54,7 @@ pub fn upright(spec: &Spec, b: &Body, n: Vec3) -> Vec3 {
 }
 
 /// In the air: W/S pitch and A/D roll, both damped, and a weak pull toward
-/// the slope the car is coming down on.
+/// the slope the car is coming down on, `air_tilt` degrees nose-up.
 pub fn air(spec: &Spec, b: &Body, c: &Controls, ground_n: Option<Vec3>) -> Vec3 {
     let right = b.rot * Vec3::X;
     let back = b.rot * Vec3::Z;
@@ -67,10 +67,22 @@ pub fn air(spec: &Spec, b: &Body, c: &Controls, ground_n: Option<Vec3>) -> Vec3 
     let w_r = b.ang.dot(right);
     let w_b = b.ang.dot(back);
     t -= right * (w_r * spec.air_damp * i.x) + back * (w_b * spec.air_damp * i.z);
+    // A tilt aims nose-up: the ground's up turned back about the right axis.
+    let tilt = spec.air_tilt.to_radians();
+    let ground_n = if tilt != 0.0 { Some(Quat::from_axis_angle(right, tilt) * ground_n.unwrap_or(Vec3::Y)) } else { ground_n };
     if let Some(n) = ground_n {
-        if spec.air_level > 0.0 && c.pitch == 0.0 && c.roll == 0.0 {
+        if spec.air_level > 0.0 {
             let axis = up.cross(n);
-            t += right * (axis.dot(right) * spec.air_level * i.x) + back * (axis.dot(back) * spec.air_level * i.z);
+            // Without a tilt any key takes over from the pull; with one the
+            // pitch pull holds and W/S push against it.
+            let free = c.pitch == 0.0 && c.roll == 0.0;
+            let tilted = tilt != 0.0;
+            if free || tilted {
+                t += right * (axis.dot(right) * spec.air_level * i.x);
+            }
+            if free || (tilted && c.roll == 0.0) {
+                t += back * (axis.dot(back) * spec.air_level * i.z);
+            }
         }
     }
     t

@@ -34,7 +34,13 @@ pub struct Lamp {
     pub pos: [f32; 4],
     /// Linear colour, with the strength in `w`.
     pub color: [f32; 4],
+    /// A spot's direction (unit), with the cosine of its cone's half-angle
+    /// in `w`; `w` of `POINT` is a lamp that lights all round.
+    pub dir: [f32; 4],
 }
+
+/// `Lamp::dir`'s `w` for a lamp that lights all round (no cosine is this low).
+pub const POINT: f32 = -2.0;
 
 /// The lamps lighting this frame, nearest first.
 #[derive(Default)]
@@ -53,6 +59,18 @@ impl Lamps {
         self.list.push(Lamp {
             pos: [pos.x, pos.y, pos.z, reach],
             color: [color[0], color[1], color[2], strength],
+            dir: [0.0, 0.0, 0.0, POINT],
+        });
+    }
+
+    /// A spot: a lamp that lights only within `half` radians of `dir`, with
+    /// a soft edge (a kart's headlights).
+    pub fn push_spot(&mut self, pos: Vec3, dir: Vec3, half: f32, reach: f32, color: [f32; 3], strength: f32) {
+        let d = dir.normalize_or(Vec3::NEG_Z);
+        self.list.push(Lamp {
+            pos: [pos.x, pos.y, pos.z, reach],
+            color: [color[0], color[1], color[2], strength],
+            dir: [d.x, d.y, d.z, half.cos()],
         });
     }
 

@@ -14,18 +14,20 @@
     {"plant": "fern", "density": 0.14, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "hanging_vine", "density": 0.3, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "shelf_fungus", "density": 0.25, "placement": {"verb": "scatter", "params": {}}},
-    {"plant": "tree_moss", "density": 0.3, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "tree_moss", "density": 0.3, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "liana", "density": 0.15, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "giant_kapok", "density": 0.0002, "placement": {"verb": "lone", "params": {"spacing": 40}}}
   ],
   "creatures": [
-    {"creature": "macaque", "count": 10},
-    {"creature": "fruit_bat", "count": 12},
+    {"creature": "macaque", "count": 11},
+    {"creature": "fruit_bat", "count": 13.2},
     {"creature": "pileated_woodpecker", "count": 4},
     {"creature": "kingfisher", "count": 4},
     {"creature": "bee_eater", "count": 8},
-    {"creature": "frog", "count": 10},
-    {"creature": "firefly", "count": 30},
-    {"creature": "monkey", "count": 8},
-    {"creature": "giraffe", "count": 2}
+    {"creature": "frog", "count": 11},
+    {"creature": "firefly", "count": 33},
+    {"creature": "monkey", "count": 8.8},
+    {"creature": "giraffe", "count": 2.2}
   ],
   "sound": {"wind": 0.65, "leaves": 1.15}
 }

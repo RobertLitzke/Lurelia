@@ -6,6 +6,10 @@
 //! - terrain.rs: ground, water and sea-bed queries the movers share.
 //! - spawn.rs: keeping each biome's creatures around the player.
 //! - walk.rs, herd.rs: walkers and their family groups.
+//! - crowd.rs: walkers as capsules, kept out of each other.
+//! - tracked.rs: large animals remembered where the player left them.
+//! - trample.rs: big walkers flattening the shrubs in their way, and the
+//!   shrubs growing back.
 //! - circle.rs, flock.rs, flit.rs: birds (and moths).
 //! - swim.rs: fish and whales.
 //! - snake.rs: snakes on the ground, in trees and in the water.
@@ -26,6 +30,7 @@ pub mod birds;
 pub mod carry;
 pub mod census;
 pub mod circle;
+pub mod crowd;
 pub mod diel;
 pub mod flit;
 pub mod flock;
@@ -42,8 +47,10 @@ pub mod sign;
 pub mod snake;
 pub mod spawn;
 pub mod startle;
+pub mod trample;
 pub mod swim;
 pub mod terrain;
+pub mod tracked;
 pub mod walk;
 pub mod woodpecker;
 
@@ -87,10 +94,23 @@ pub struct Species {
     pub aged_tint: [f32; 3],
 }
 
+/// A walker this tall or taller is a large animal unless its entry says
+/// otherwise (`Species::large`), metres: an elephant, a bison, a giraffe,
+/// a gallimimus and every big dinosaur, not a horse or an elk.
+pub const LARGE_M: f32 = 2.5;
+
 impl Species {
     /// How it moves (locomotion.rs).
     pub fn verb(&self) -> &'static locomotion::Verb {
         locomotion::verb(&self.beh.movement)
+    }
+
+    /// Whether it is a large animal: a walker seen, kept and spawned twice
+    /// as far off as the rest (spawn.rs `LARGE_REACH`), so a herd can be
+    /// watched across a valley. `behaviour.large` decides; left out, its
+    /// height does (`LARGE_M`).
+    pub fn large(&self, models: &[crate::models::Model]) -> bool {
+        matches!(self.verb().mover, locomotion::Mover::Walk { .. }) && self.beh.large.unwrap_or_else(|| models.get(self.model).is_some_and(|m| m.height >= LARGE_M))
     }
 }
 
@@ -239,6 +259,22 @@ pub struct Pathing {
     /// Walker-steps where a neighbour bolting pressed hardest (startle.rs
     /// `Threat::alarm_of`): the alarm spreading through a herd.
     pub alarmed_by_herd: u32,
+    /// Walker-steps spent standing in another walker and pushed out of it
+    /// (crowd.rs): two to a pair, a step at a time.
+    pub jostled: u32,
+    /// Shrubs the big walkers have flattened (creatures/trample.rs).
+    pub trampled: u32,
+    /// Heavy footfalls the player felt through the ground (game.rs
+    /// `feel_steps`).
+    pub thumps_felt: u32,
+    /// Large animals put back where the player left them, and how many are
+    /// remembered now (tracked.rs).
+    pub large_restored: u32,
+    pub large_remembered: u32,
+    /// Large animals about now, and those of them past full detail (128 m),
+    /// walking the generator's ground.
+    pub large_about: u32,
+    pub large_far: u32,
     /// Snake-steps (creatures/snake.rs), and those up a tree.
     pub snake_steps: u32,
     pub snakes_in_trees: u32,

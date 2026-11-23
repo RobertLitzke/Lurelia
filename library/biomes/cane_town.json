@@ -14,6 +14,11 @@
     {"plant": "spanish_moss", "density": 0.8, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "cabbage_palm", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}
   ],
-  "creatures": [{"creature": "crow", "count": 4}, {"creature": "starling", "count": 20}],
+  "creatures": [
+    {"creature": "crow", "count": 4},
+    {"creature": "starling", "count": 20},
+    {"creature": "raccoon", "count": 2.2},
+    {"creature": "bat", "count": 3.3}
+  ],
   "collectibles": [{"item": "settler_coin", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}]
 }

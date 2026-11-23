@@ -1,0 +1,37 @@
+{
+  "name": "cane_town",
+  "version": 1,
+  "introduced_by": "lowmouth",
+  "notes": "A cane-country town on the levee: packed-dirt streets and lanes, white board houses under tin, wire fences, live oaks. Meant for a town that stands its world's own cottages on its plots (`houses`, `footprints: false`); the walls and roofs here only dress the odd footprint house.",
+  "like": "old_town",
+  "deck": "weathered_planks",
+  "deck_top": "weathered_planks",
+  "rail": "timber_frame",
+  "town": {
+    "walls": {"village": ["white_siding"], "ribbon": ["white_siding"]},
+    "roofs": {"village": ["corrugated_tin"], "ribbon": ["corrugated_tin"]},
+    "trims": ["trim_white", "trim_dark"],
+    "streets": {
+      "main": "packed_dirt",
+      "ring": "packed_dirt",
+      "street": "packed_dirt",
+      "lane": "packed_dirt",
+      "close": "packed_dirt",
+      "alley": "packed_dirt",
+      "country": "packed_dirt",
+      "village_main": "packed_dirt",
+      "village_street": "packed_dirt",
+      "ribbon_main": "packed_dirt",
+      "drive": "packed_dirt"
+    },
+    "plaza": "packed_dirt",
+    "flat_roof": "corrugated_tin",
+    "church": "white_siding",
+    "trees": ["live_oak"],
+    "field_wall": "wire_fence",
+    "rail": "timber_fence",
+    "town_wall": "wire_fence",
+    "garden": "garden_fence",
+    "hedge": "hedgerow"
+  }
+}

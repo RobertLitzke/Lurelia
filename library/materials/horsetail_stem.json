@@ -1,0 +1,16 @@
+{
+  "name": "horsetail_stem",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Giant horsetail: jointed green stems ringed black at every node. Passable: you push through.",
+  "smooth": false,
+  "passable": true,
+  "texture": {
+    "pattern": "strata",
+    "base": [56, 82, 50],
+    "alt": [32, 40, 30],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [60, 86, 54], "alt": [36, 44, 34]}
+  }
+}

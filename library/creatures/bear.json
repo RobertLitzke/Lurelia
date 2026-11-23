@@ -16,7 +16,7 @@
     "flightiness": 0.3,
     "juvenile_flightiness": 0.5,
     "flees_from": ["player"],
-    "spawn_chance": 0.001,
+    "spawn_chance": 0.00133,
     "swims": true,
     "active": "crepuscular",
     "off_hours": 0.3

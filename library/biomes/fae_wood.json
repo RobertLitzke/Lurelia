@@ -12,11 +12,11 @@
     {"plant": "salal", "density": 0.04, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "moss_bear", "count": 1},
-    {"creature": "moss_tortoise", "count": 2},
-    {"creature": "sky_ray", "count": 3},
+    {"creature": "moss_bear", "count": 1.1},
+    {"creature": "moss_tortoise", "count": 2.2},
+    {"creature": "sky_ray", "count": 3.3},
     {"creature": "pileated_woodpecker", "count": 1},
-    {"creature": "fae_badger", "count": 1}
+    {"creature": "fae_badger", "count": 2.2}
   ],
   "sound": {"wind": 0.6},
   "like": "city_wood"

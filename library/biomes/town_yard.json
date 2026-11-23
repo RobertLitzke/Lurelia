@@ -1,0 +1,18 @@
+{
+  "name": "town_yard",
+  "version": 1,
+  "introduced_by": "townlab",
+  "notes": "Back gardens and the green between a generated town's houses: lawn, a few fruit trees and shrubs, kept low so the roofs read from above.",
+  "priority": 12,
+  "rules": {"region": "town"},
+  "surface": "lawn_grass",
+  "subsurface": "dirt",
+  "fringe": 0,
+  "map_color": [128, 158, 98],
+  "plants": [
+    {"plant": "apple", "density": 0.0012, "placement": {"verb": "lone", "params": {"spacing": 12}}},
+    {"plant": "hazel", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "birch", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 18}}}
+  ],
+  "creatures": []
+}

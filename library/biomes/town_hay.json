@@ -1,0 +1,9 @@
+{
+  "name": "town_hay",
+  "version": 1,
+  "introduced_by": "townlab",
+  "notes": "A generated town's field (region hay): gh_hayfield, with its edge exactly at the wall instead of ragged.",
+  "priority": 14,
+  "rules": {"region": "hay", "crisp": true},
+  "like": "gh_hayfield"
+}

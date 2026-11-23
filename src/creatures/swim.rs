@@ -126,6 +126,8 @@ pub struct Fish {
     /// Burrow: its hole in the sand, and how far out of it it stands (0 to 1).
     anchor: Vec3,
     ext: f32,
+    /// A `back_float` swimmer: how far over on its back it lies, 0 to 1.
+    back: f32,
 }
 
 /// The height a fish of species `sp` living as `habit` swims at, over bed `bed`
@@ -137,6 +139,11 @@ pub struct Fish {
 fn big_swimmer(sp: &Species, m: &crate::models::Model) -> bool {
     sp.is_water_form || m.height > 0.6
 }
+
+/// How fast a big swimmer's heading can swing, radians a second: a seal or
+/// a walrus turns in arcs, so the shoal and rock checks below steer it
+/// round rather than flick it about on the spot.
+const BIG_TURN: f32 = 1.6;
 
 fn band_y(sp: &Species, habit: Habit, bed: f32, top: f32, lane: f32) -> f32 {
     let room = (top - 0.3).max(bed + 0.1);
@@ -184,6 +191,35 @@ pub struct Whale {
 
 fn rest_anim(models: &[crate::models::Model], model: usize) -> Option<crate::anim::Anim> {
     models[model].rig.as_ref().map(|r| crate::anim::Anim::hold(crate::anim::Pose::rest(r.bones.len())))
+}
+
+/// Blend `pose` toward an otter lying on its back at the surface, `t` of the
+/// way (0 belly down, 1 on its back): rolled over about the body's middle,
+/// head raised to look along its chest, forepaws folded on it and hind feet
+/// up. Rotations are in the body's frame, which is upside down once rolled,
+/// so a raised head is a negative pitch.
+pub fn back_pose(rig: &crate::anim::Rig, pose: &mut crate::anim::Pose, t: f32, wag: f32) {
+    if t <= 0.0 {
+        return;
+    }
+    let t = t.min(1.0);
+    let ease = t * t * (3.0 - 2.0 * t);
+    let mix = |v: &mut Vec3, to: Vec3| *v = v.lerp(to, ease);
+    let n = pose.bones.len();
+    for (i, b) in rig.bones.iter().enumerate().take(n) {
+        let upper = crate::anim::motors::upper_leg(rig, i);
+        let v = &mut pose.bones[i];
+        match b.role {
+            // A slow sway on the swell.
+            _ if i == 0 => mix(v, Vec3::new(0.0, 0.0, PI + (wag * 0.13).sin() * 0.12)),
+            Role::Neck => mix(v, Vec3::new(-0.45, 0.0, 0.0)),
+            Role::Head => mix(v, Vec3::new(-0.25, 0.0, 0.0)),
+            Role::Leg if upper && b.pair == 0 => mix(v, Vec3::new(1.0, 0.0, b.side * 0.35)),
+            Role::Leg if upper => mix(v, Vec3::new(-0.35, 0.0, 0.0)),
+            Role::Tail => mix(v, Vec3::new(0.15, (wag * 0.2).sin() * 0.1, 0.0)),
+            _ => {}
+        }
+    }
 }
 
 /// How deep a fish swims in water `depth` deep: near the surface, deeper in
@@ -252,6 +288,7 @@ pub fn spawn_school(world: &mut hecs::World, s: usize, species: &[Species], mode
                 lane: rng.unit(),
                 anchor: pos,
                 ext: 1.0,
+                back: if sp.beh.back_float { 1.0 } else { 0.0 },
             },
             Creature {
                 species: ms,
@@ -339,12 +376,25 @@ pub fn update(
     // with the tide and the swell on it (`Terrain::sea_at`).
     let surf = |x: f32, z: f32| terrain.inland_water(x, z).map_or_else(|| terrain.sea_at(x, z), |w| w.0.max(sea));
     let in_river = |x: f32, z: f32| terrain.inland_water(x, z).is_some_and(|w| w.0 > sea);
-    // Beyond the world's edge counts as dry, so nothing swims off it.
+    // Beyond the world's edge counts as dry, so nothing swims off it. Under
+    // a roof (a sea cave) the height field holds the land overhead, so the
+    // depth is down to the floor under the surface there, and rock at the
+    // surface is dry.
     let depth = |x: f32, z: f32| {
         if x < 20.0 || z < 20.0 || x > size - 20.0 || z > size - 20.0 {
             0.0
         } else {
-            surf(x, z) - bed(x, z)
+            let (s, b) = (surf(x, z), bed(x, z));
+            if b > s {
+                let p = Vec3::new(x, s - 0.3, z);
+                if terrain.in_rock(p) {
+                    0.0
+                } else {
+                    s - terrain.bed_under(p)
+                }
+            } else {
+                s - b
+            }
         }
     };
     // The player only startles fish from the water or the water's edge.
@@ -507,6 +557,7 @@ pub fn update(
         l.begin_step();
         stats.fish += 1;
         let sp = &species[me.species];
+        let big = big_swimmer(sp, &models[l.model]);
         let g = &groups[me.species];
         let (goal, fleeing, habit, paused, hiding) = schools.get(&f.school).copied().unwrap_or((l.pos, false, Habit::Open, false, false));
         let (pace, _) = crate::variety::pace(morph);
@@ -635,7 +686,22 @@ pub fn update(
                     }
                 }
             }
+            let before = Vec3::new(f.vel.x, 0.0, f.vel.z);
             f.vel += acc * dt;
+            if big {
+                let after = Vec3::new(f.vel.x, 0.0, f.vel.z);
+                if before.length() > 0.05 && after.length() > 0.05 {
+                    let a0 = before.x.atan2(before.z);
+                    let d = crate::util::wrap_angle(after.x.atan2(after.z) - a0);
+                    let most = BIG_TURN * dt * if fleeing { 1.6 } else { 1.0 };
+                    if d.abs() > most {
+                        let a = a0 + d.clamp(-most, most);
+                        let s = after.length();
+                        f.vel.x = a.sin() * s;
+                        f.vel.z = a.cos() * s;
+                    }
+                }
+            }
             let flat = Vec3::new(f.vel.x, 0.0, f.vel.z).length();
             if flat > top {
                 f.vel.x *= top / flat;
@@ -655,7 +721,7 @@ pub fn update(
             // seal keeps most of itself under, back awash at most: kept only
             // under the surface by its belly, a walrus rode on top of the
             // water like a log.
-            let under = models[l.model].height * if big_swimmer(sp, &models[l.model]) { 0.75 } else { 0.0 };
+            let under = models[l.model].height * if big { 0.75 } else { 0.0 };
             l.pos.y = l.pos.y.clamp(b + 0.1, (top - 0.12 - under).max(b + 0.1));
             // The bed is the floor under the fish (`bed_under`), but the
             // rock beside it is not in that: a step into a solid voxel is
@@ -663,8 +729,18 @@ pub fn update(
             // in rock, set down there by the spawner, may swim out.)
             if terrain.in_rock(l.pos) && !terrain.in_rock(p) {
                 l.pos = p;
-                f.vel.x = -f.vel.x;
-                f.vel.z = -f.vel.z;
+                if big {
+                    // A big body swings aside toward the deeper side and
+                    // slows, rather than flicking straight back.
+                    let side = Vec3::new(-f.vel.z, 0.0, f.vel.x).normalize_or_zero();
+                    let k = if depth(p.x + side.x * 2.0, p.z + side.z * 2.0) >= depth(p.x - side.x * 2.0, p.z - side.z * 2.0) { 1.0 } else { -1.0 };
+                    let s = Vec3::new(f.vel.x, 0.0, f.vel.z).length() * 0.6;
+                    f.vel.x = side.x * k * s;
+                    f.vel.z = side.z * k * s;
+                } else {
+                    f.vel.x = -f.vel.x;
+                    f.vel.z = -f.vel.z;
+                }
             }
             // A leap now and then, more often when scattering.
             let rate = sp.beh.leap.max(0.0) / 60.0 * if fleeing { 4.0 } else { 1.0 };
@@ -686,7 +762,8 @@ pub fn update(
             l.yaw = crate::util::turn_toward(l.yaw, want, (dt * 2.0).min(1.0));
         } else if flat.length() > 0.05 {
             let want = flat.x.atan2(flat.z) + PI;
-            l.yaw = crate::util::turn_toward(l.yaw, want, (dt * 8.0).min(1.0));
+            let rate = if big { 4.0 } else { 8.0 };
+            l.yaw = crate::util::turn_toward(l.yaw, want, (dt * rate).min(1.0));
         }
         if let (Some(a), Some(rig)) = (anim, models[l.model].rig.as_ref()) {
             let speed = f.vel.length();
@@ -696,32 +773,44 @@ pub fn update(
             // down must not stand it on its nose. A big body (a seal, a
             // walrus, a shark) tips only a little: it pivots on its belly, so
             // a fish's tilt stood a walrus up on its tail.
-            let lim = if big_swimmer(sp, &models[l.model]) { 0.3 } else { 1.0 };
+            let lim = if big { 0.3 } else { 1.0 };
             let pitch = f.vel.y.atan2(flat.length().max(0.6)).clamp(-lim, lim);
-            a.pose.bones[0] = Vec3::new(pitch, 0.0, 0.0);
+            a.pose.bones[0] = Vec3::new(pitch - sp.beh.swim_pitch, 0.0, 0.0);
+            if sp.beh.back_float {
+                // An otter drifts and dozes on its back, and rolls over onto
+                // its belly to swim off when something comes too close.
+                let want = if fleeing || f.air { 0.0 } else { 1.0 };
+                f.back += (want - f.back).clamp(-dt * 1.5, dt * 0.5);
+                // Its pose is made afresh each step: the swim below, then
+                // the back float blended over it by `f.back`.
+                a.pose.bones.iter_mut().skip(1).for_each(|v| *v = Vec3::ZERO);
+            }
             if rig.plan == Some(Plan::Ray) {
                 // Mantas: a slow ripple out along the wings, quicker when fast.
                 let mut p = crate::anim::Pose::rest(rig.bones.len());
                 crate::anim::motors::undulate(rig, &mut p, f.wag / std::f32::consts::TAU * 0.2, 0.32, 1.0);
                 p.bones[0].x += pitch;
                 a.pose = p;
-                continue;
-            }
-            for (i, b) in rig.bones.iter().enumerate() {
-                if b.role == Role::Tail {
-                    let amp = if f.air { 0.15 } else { 0.35 + speed * 0.1 };
-                    a.pose.bones[i] = Vec3::new(0.0, f.wag.sin() * amp.min(0.6), 0.0);
-                } else if b.role == Role::Leg && b.side != 0.0 && crate::anim::motors::upper_leg(rig, i) {
-                    // Flippers: the front pair beat slowly up and down and
-                    // sweep back (a turtle's flight through water); the hind
-                    // pair trail and steer.
-                    let ph = f.wag * 0.3;
-                    a.pose.bones[i] = if b.pair == 0 {
-                        Vec3::new(0.0, -b.side * 0.35 * (ph + 1.2).sin(), -b.side * 0.6 * ph.sin())
-                    } else {
-                        Vec3::new(0.0, -b.side * 0.5, -b.side * 0.15 * (ph * 0.5).sin())
-                    };
+            } else {
+                for (i, b) in rig.bones.iter().enumerate() {
+                    if b.role == Role::Tail {
+                        let amp = if f.air { 0.15 } else { 0.35 + speed * 0.1 };
+                        a.pose.bones[i] = Vec3::new(0.0, f.wag.sin() * amp.min(0.6), 0.0);
+                    } else if b.role == Role::Leg && b.side != 0.0 && crate::anim::motors::upper_leg(rig, i) {
+                        // Flippers: the front pair beat slowly up and down
+                        // and sweep back (a turtle's flight through water);
+                        // the hind pair trail and steer.
+                        let ph = f.wag * 0.3;
+                        a.pose.bones[i] = if b.pair == 0 {
+                            Vec3::new(0.0, -b.side * 0.35 * (ph + 1.2).sin(), -b.side * 0.6 * ph.sin())
+                        } else {
+                            Vec3::new(0.0, -b.side * 0.5, -b.side * 0.15 * (ph * 0.5).sin())
+                        };
+                    }
                 }
+            }
+            if sp.beh.back_float {
+                back_pose(rig, &mut a.pose, f.back, f.wag);
             }
         }
     }

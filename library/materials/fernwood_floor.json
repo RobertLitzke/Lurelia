@@ -1,0 +1,17 @@
+{
+  "name": "fernwood_floor",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "The Fernwood floor: fern litter and moss over dark soil, a warmer green than the Grimwold, with low tufts.",
+  "smooth": true,
+  "sprites": "grass",
+  "texture": {
+    "pattern": "noise",
+    "base": [64, 76, 44],
+    "alt": [56, 66, 40],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [72, 86, 52], "alt": [62, 76, 46]}
+  },
+  "grass": {"sparse": 0.25, "dense": 0.75, "short": 1.3}
+}

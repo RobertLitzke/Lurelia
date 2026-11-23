@@ -29,7 +29,7 @@ pub fn animate(world: &mut hecs::World, species: &[Species], dt: f32, models: &[
             continue;
         }
         let m = &models[look.model];
-        let Some(rig) = m.rig.as_ref().filter(|r| r.plan == Some(Plan::Bird) || r.plan == Some(Plan::Ray)) else {
+        let Some(rig) = m.rig.as_ref().filter(|r| r.plan == Some(Plan::Bird) || r.plan == Some(Plan::Ray) || r.spreads()) else {
             continue;
         };
         let beh = &species[me.species].beh;

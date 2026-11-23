@@ -1,0 +1,17 @@
+{
+  "name": "grey_ash",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "Cinderhorn's ash three centuries on: dull grey, darker where the rain has packed it, a little green coming through.",
+  "smooth": true,
+  "sprites": "grass",
+  "texture": {
+    "pattern": "noise",
+    "base": [92, 88, 84],
+    "alt": [106, 102, 96],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [100, 96, 90], "alt": [114, 110, 104]}
+  },
+  "grass": {"sparse": 0.02, "dense": 0.18, "short": 0.8}
+}

@@ -1,0 +1,96 @@
+{
+  "name": "ribstrand",
+  "title": "RIBSTRAND",
+  "blurb": "A fast lap of a grey northern coast: half a kilometre of wet beach at the water's edge under the sea stacks, a tangle of small bends through the dunes past the bones of a giant's calf, three jumps over the dune crests, and back down the beach through the middle of a titan's ribcage to the line.",
+  "size_m": 768.0,
+  "height_m": 128,
+  "sea_level_m": 26,
+  "tide": {
+    "range": 1.0
+  },
+  "surf": {
+    "height": 0.9
+  },
+  "seed": 6794,
+  "underwater": {
+    "visibility": 20,
+    "light": 0.35
+  },
+  "sun": {
+    "latitude": 46
+  },
+  "modes": [
+    "walk",
+    "drive",
+    "race",
+    "screenshot",
+    "camera"
+  ],
+  "games": [
+    "race"
+  ],
+  "vehicles": [
+    "kart"
+  ],
+  "start_hour": 11.0,
+  "rock": [
+    [
+      "basalt",
+      0.7
+    ],
+    [
+      "stone_dark",
+      0.3
+    ]
+  ],
+  "biomes": [
+    "rib_plain",
+    "rib_dunes",
+    "rib_blowout",
+    "rib_wrack",
+    "rib_beach",
+    "rib_shoals",
+    "rib_kelp",
+    "rib_shelf"
+  ],
+  "default_biome": "rib_plain",
+  "seabed_biome": "rib_shelf",
+  "seasons": [
+    "autumn",
+    "summer"
+  ],
+  "weather": {
+    "fog": 0.7,
+    "clouds": 1.4,
+    "sun": 0.8,
+    "rain": 0.9
+  },
+  "start_weather": "clouds",
+  "weathering": 1.0,
+  "moss": 0.6,
+  "start_season": "autumn",
+  "spawn": [
+    200,
+    300
+  ],
+  "spawn_bearing": 179,
+  "race": {
+    "circuit": "ribstrand_ring",
+    "track": "track.json",
+    "laps": 3,
+    "rivals": 5,
+    "vehicle": "kart"
+  },
+  "water": {
+    "shallow": [
+      84,
+      112,
+      110
+    ],
+    "deep": [
+      30,
+      54,
+      62
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "line_black",
+  "version": 1,
+  "introduced_by": "kestrel",
+  "notes": "The black squares of a circuit's start/finish chequer, on the road and on the gantry's banner (event circuit's gate). Grips as the road does (surface rock).",
+  "smooth": true,
+  "crisp": true,
+  "surface": "rock",
+  "texture": {
+    "pattern": "speckle",
+    "base": [26, 26, 28],
+    "alt": [34, 34, 36],
+    "scale": 8,
+    "contrast": 0.3,
+    "calm": {"base": [28, 28, 30], "alt": [36, 36, 38]}
+  }
+}

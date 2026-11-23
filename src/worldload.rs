@@ -118,12 +118,10 @@ pub fn library_for(name: &str) -> (Library, Vec<String>) {
     let dir = world_dir(name);
     // The noise island has no chronicle, and draws nothing out of the
     // library: its ground is the built-in stone, dirt, sand and snow and its
-    // trees the built-in bark and leaves. It used to reach every material
-    // for want of a world file to read, which left no id free for the grain
-    // copies of the last wood and built a texture layer for all 273. It now
-    // reaches what the engine names in code, as any world does, and nothing
-    // else (`reach` starts from ENGINE_MATERIALS, and finds no world.json or
-    // chronicle.json to add to it).
+    // trees the built-in bark and leaves. It reaches what the engine names
+    // in code, as any world does, and nothing else (`reach` starts from
+    // ENGINE_MATERIALS, and finds no world.json or chronicle.json to add to
+    // it), which leaves its ids free for the woods' grain copies.
     let mut r = reach(&root.join("library"), &dir, &lib);
     lib.reach_coats(&mut r);
     for m in lib.assign_ids(Some(r)) {
@@ -161,7 +159,7 @@ fn round_edges_for_world(dir: &std::path::Path, lib: &mut Library) -> Vec<String
 }
 
 /// Library materials the engine names in code, reached by every world.
-pub const ENGINE_MATERIALS: [&str; 19] = [
+pub const ENGINE_MATERIALS: [&str; 20] = [
     "dry_bunchgrass",
     "mossy_stone",
     "basalt",
@@ -182,6 +180,8 @@ pub const ENGINE_MATERIALS: [&str; 19] = [
     "sludge",
     // The colour an autumn vine's leaf cards take (mesh/sprites.rs).
     "maple_red",
+    // The colour of the leaf cards along an ocotillo's canes (mesh/sprites.rs).
+    "ocotillo_leaves",
 ];
 
 /// Every library name world `dir` can reach: any string in its world.json
@@ -189,8 +189,10 @@ pub const ENGINE_MATERIALS: [&str; 19] = [
 /// entries' files, and so on (a biome's plants, a plant's bark, a structure's
 /// slots, a sign style's post, a parent named by `like`), and any string in a
 /// .json data file the world names (a city import). The biomes are the world's `biomes` list
-/// (all of them when it has none). Over-counting is harmless: it only costs
-/// ids; a name missed still gets an id when there is room.
+/// (all of them when it has none). Names the engine holds in code come three
+/// ways: `ENGINE_MATERIALS` for every world, `chronicle::event_defaults` for
+/// what an event falls back on, and a city kit's own defaults. Over-counting
+/// only costs ids; a material missed gets no id and is not drawn.
 pub fn reach(lib_dir: &std::path::Path, dir: &std::path::Path, lib: &Library) -> std::collections::HashSet<String> {
     use serde_json::Value;
     fn strings(v: &Value, out: &mut Vec<String>) {
@@ -216,6 +218,15 @@ pub fn reach(lib_dir: &std::path::Path, dir: &std::path::Path, lib: &Library) ->
     }
     if let Some(c) = read(dir.join("chronicle.json")) {
         strings(&c, &mut todo);
+        // What each event falls back on for the fields it leaves out is
+        // named in code, not in the file.
+        for e in c.get("events").and_then(|e| e.as_array()).into_iter().flatten() {
+            todo.extend(chronicle::event_defaults(e, lib).into_iter().map(String::from));
+        }
+    }
+    // The same for a race track (world.json `race.track`).
+    if world.get("race").and_then(|r| r.get("track")).is_some_and(|t| !t.is_null()) {
+        todo.extend(chronicle::race_track::DEFAULTS.map(String::from));
     }
     // A world that lists no biomes may use any of them. The noise island
     // has no world.json at all and uses none: its ground is the built-in
@@ -242,6 +253,10 @@ pub fn reach(lib_dir: &std::path::Path, dir: &std::path::Path, lib: &Library) ->
     while let Some(n) = todo.pop() {
         if !seen.insert(n.clone()) {
             continue;
+        }
+        // A city kit's roles have defaults its file may leave out.
+        if let Some(kit) = lib.city_kit(&n) {
+            todo.extend(kit.names().cloned());
         }
         for k in kinds {
             let p = lib_dir.join(k).join(format!("{n}.json"));
@@ -402,6 +417,7 @@ pub fn creatures(world: &World) -> (Vec<Model>, Vec<Species>, Vec<ItemModel>, Ve
         colors: &'a HashMap<String, Vec<f32>>,
         ops: &'a [crate::library::Op],
         voxel: f32,
+        grid: [i32; 3],
         half_w: f32,
         height: f32,
         rig: Option<&'a crate::anim::RigDef>,
@@ -419,6 +435,7 @@ pub fn creatures(world: &World) -> (Vec<Model>, Vec<Species>, Vec<ItemModel>, Ve
             colors: &c.colors,
             ops: &c.ops,
             voxel: c.voxel,
+            grid: c.grid,
             half_w: c.half_w,
             height: c.height,
             rig: c.rig.as_ref(),
@@ -430,6 +447,7 @@ pub fn creatures(world: &World) -> (Vec<Model>, Vec<Species>, Vec<ItemModel>, Ve
             colors: &c.colors,
             ops: &c.ops,
             voxel: c.voxel,
+            grid: [32, 32, 32],
             half_w: 0.15,
             height: 0.2,
             rig: None,
@@ -470,12 +488,16 @@ pub fn creatures(world: &World) -> (Vec<Model>, Vec<Species>, Vec<ItemModel>, Ve
             }
             slot.get(n).copied()
         };
-        let s = shape::compile(c.ops, [32, 32, 32], &resolve);
-        let mut model = models::from_cells(&s.mat, c.voxel, c.half_w, c.height);
+        let dims = crate::anim::slice::Dims(c.grid);
+        let s = shape::compile(c.ops, c.grid, &resolve);
+        let mut model = models::from_grid(&s.mat, dims, c.voxel, c.half_w, c.height);
         model.block = block;
+        model.reach = crate::creatures::crowd::measure_reach(&s.mat, dims, c.voxel, c.half_w);
         if let Some(def) = c.rig {
             // Part models go after every whole model (see below).
-            let sliced = crate::anim::slice::slice(def, c.ops, &s.mat, &|n| resolve(n).is_some(), c.voxel, c.half_w, c.height);
+            let sliced = crate::anim::slice::slice(def, c.ops, &s.mat, dims, &|n| resolve(n).is_some(), c.voxel, c.half_w, c.height);
+            problems.extend(sliced.oversize.iter().map(|b| crate::anim::slice::oversize_problem(&c.name, b)));
+            model.reach = crate::creatures::crowd::trunk_reach(model.reach, &sliced.rig, dims.pivot().z, c.voxel, c.half_w);
             let base = sliced.rig.clone();
             // Anything big enough to leave bones gets the skeleton inside it
             // derived from the same voxels (anim/bones.rs).

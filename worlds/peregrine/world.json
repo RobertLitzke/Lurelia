@@ -9,6 +9,20 @@
   "sun": {
     "latitude": 50
   },
+  "modes": [
+    "walk",
+    "drive",
+    "race",
+    "screenshot",
+    "camera"
+  ],
+  "games": [
+    "race"
+  ],
+  "vehicles": [
+    "kart"
+  ],
+  "start_hour": 16.5,
   "rock": [
     [
       "chalk_white",
@@ -19,45 +33,34 @@
       0.25
     ]
   ],
-  "spawn": [
-    118.0,
-    448.0
+  "biomes": [
+    "chalk_down",
+    "feathergrass_sea",
+    "seabed"
   ],
-  "spawn_bearing": 92,
-  "modes": [
-    "walk",
-    "drive",
-    "race",
-    "screenshot",
-    "camera"
-  ],
-  "games": ["race"],
-  "vehicles": [
-    "kart"
-  ],
-  "race": {
-    "circuit": "peregrine_ring",
-    "laps": 3,
-    "rivals": 3,
-    "vehicle": "kart"
-  },
+  "default_biome": "chalk_down",
+  "seabed_biome": "seabed",
   "seasons": [
     "summer"
   ],
-  "start_season": "summer",
   "weather": {
     "sun": 1.0,
     "clouds": 0.6
   },
   "start_weather": "sun",
-  "start_hour": 16.5,
-  "default_biome": "chalk_down",
-  "seabed_biome": "seabed",
   "weathering": 0.4,
   "moss": 0.2,
-  "biomes": [
-    "chalk_down",
-    "feathergrass_sea",
-    "seabed"
-  ]
+  "start_season": "summer",
+  "spawn": [
+    118,
+    448
+  ],
+  "spawn_bearing": 96,
+  "race": {
+    "circuit": "peregrine_ring",
+    "track": "track.json",
+    "laps": 3,
+    "rivals": 3,
+    "vehicle": "kart"
+  }
 }

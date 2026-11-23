@@ -1,6 +1,6 @@
 {
   "name": "motu",
-  "version": 1,
+  "version": 2,
   "introduced_by": "underwater",
   "notes": "A motu: a low islet of coral sand on an atoll's ring, a few palms and scrub on it.",
   "priority": 20,
@@ -17,5 +17,10 @@
       "placement": {"verb": "clustered", "params": {"size": 8, "min": 0.3, "max": 0.6}}
     }
   ],
-  "creatures": [{"creature": "gull", "count": 4}, {"creature": "sea_turtle", "count": 1}, {"creature": "sanderling", "count": 10}]
+  "creatures": [
+    {"creature": "gull", "count": 4},
+    {"creature": "sea_turtle", "count": 1.1},
+    {"creature": "sanderling", "count": 10},
+    {"creature": "snowy_plover", "count": 6}
+  ]
 }

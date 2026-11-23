@@ -66,6 +66,12 @@ pub struct Critter {
     /// and which foot that was.
     pub walked: f32,
     pub left: bool,
+    /// A `back_float` swimmer idling afloat: how far over on its back it
+    /// lies, 0 to 1.
+    pub back: f32,
+    /// Whether it stood on the generator's ground, past full detail, when
+    /// it was last stepped (terrain.rs `far_ground`).
+    pub far: bool,
 }
 
 /// A short flight from one spot to another: up, across, down.
@@ -93,13 +99,47 @@ impl Critter {
             alarm: 0.0,
             walked: 0.0,
             left: false,
+            back: 0.0,
+            far: false,
         }
     }
+}
+
+/// How fast a walker small enough not to have turning inertia swings round
+/// to its heading: a share of the way each second, which reads as instant.
+const FREE_TURN: f32 = 8.0;
+/// The height at which turning starts to take time, metres.
+const TURN_FROM_M: f32 = 1.5;
+/// The slowest a big walker goes while turning hard: it creeps forward
+/// round the arc instead of standing to spin.
+const TURN_CRAWL: f32 = 0.2;
+
+/// How fast a walker `height` metres tall can turn, radians a second, or
+/// `FREE_TURN` for one that turns at once. Falls off a little faster than
+/// height: a 3 m elephant or triceratops turns about 1.6 rad/s at a walk, a
+/// 6 m brachiosaur 0.6. Bolting, it throws itself round half again as hard.
+fn turn_rate(height: f32, mood: Mood) -> f32 {
+    if height <= TURN_FROM_M {
+        return FREE_TURN;
+    }
+    let base = 4.5 * (TURN_FROM_M / height).powf(1.5);
+    let urge = match mood {
+        Mood::Flee | Mood::Chase => 1.6,
+        _ => 1.0,
+    };
+    (base * urge).clamp(0.4, FREE_TURN - 0.01)
 }
 
 /// Footfalls are only reported this close to the player: further out nobody
 /// will find them before they wear away, and the walkers out there are few.
 const MARKS_M: f32 = 90.0;
+
+/// How far off a hunter notices what it eats: 14 m for a fox or a raptor,
+/// further for a big animal whose head is high off the ground (a
+/// tyrannosaur sees a hadrosaur 30 m off).
+fn hunt_sight(height: f32) -> f32 {
+    (height * 8.0).max(14.0)
+}
 
 /// Can a body this size walk `dist` metres along `dir` from feet at `pos`:
 /// nothing taller than a step in the way (trunks, walls, cliffs, low
@@ -123,6 +163,42 @@ fn walkable(terrain: &Terrain, pos: Vec3, dir: Vec3, dist: f32, half_w: f32, hei
             return false;
         }
         if terrain.inland_water(p.x, p.z).is_some_and(|w| w.1 > max_depth) {
+            return false;
+        }
+        y = gy;
+    }
+    true
+}
+
+/// `walkable` for a large animal out past full detail, on the generator's
+/// ground (terrain.rs `far_ground`): no climb or drop of more than 1.6 m a
+/// sample, nothing under the water line or in a river deeper than
+/// `max_depth`, and no tree trunk within `half_w` of the line. Voxels that
+/// are loaded along the way are read as voxels.
+#[allow(clippy::too_many_arguments)]
+fn far_walkable(terrain: &Terrain, plants: &super::plants::Flora, pos: Vec3, dir: Vec3, dist: f32, half_w: f32, sea: f32, max_depth: f32) -> bool {
+    let store = terrain.store;
+    let mut y = pos.y;
+    let n = (dist / 1.0).ceil().max(1.0) as i32;
+    for k in 1..=n {
+        let p = pos + dir * (dist * k as f32 / n as f32);
+        if p.x < 8.0 || p.z < 8.0 || p.x > terrain.size() - 8.0 || p.z > terrain.size() - 8.0 {
+            return false;
+        }
+        let gy = match super::terrain::far_ground(store, p.x, p.z) {
+            Some(g) => g,
+            None => match voxel_ground(store, p.x, p.z, y + 2.0) {
+                Some((g, m)) if !crate::mesh::sprites::leafy(m) && !water_voxel(m) => g,
+                _ => return false,
+            },
+        };
+        if gy < sea + 0.2 || (gy - y).abs() > 1.6 {
+            return false;
+        }
+        if terrain.inland_water(p.x, p.z).is_some_and(|w| w.1 > max_depth) {
+            return false;
+        }
+        if plants.near(p.x, p.z, half_w + 1.5, None).any(|t| t.trunk > super::trample::TRUNK_M && Vec3::new(t.pos.x - p.x, 0.0, t.pos.z - p.z).length() < half_w + t.trunk + 0.3) {
             return false;
         }
         y = gy;
@@ -198,6 +274,7 @@ pub fn update(
     stats: &mut Pathing,
     cues: &mut Vec<crate::fx::Cue>,
     steps: &mut Vec<super::sign::Step>,
+    crush: &mut Vec<Vec3>,
 ) {
     let player = threat.pos;
     let thirst = thirst(hour);
@@ -261,6 +338,14 @@ pub fn update(
                             yaw: look.yaw,
                             foot,
                             height: body.height,
+                            // Only the big ones shake the ground: the
+                            // square root of height times breadth, 1 for
+                            // an elephant.
+                            weight: if super::trample::big(body.half_w, body.height) {
+                                (body.height * body.half_w / 2.4).sqrt() * morph.map_or(1.0, |m| m.scale)
+                            } else {
+                                0.0
+                            },
                         });
                     }
                 }
@@ -366,7 +451,7 @@ pub fn update(
                 if s.flees.contains(os) && d < wary && hunter.is_none_or(|t| d < t.0) {
                     hunter = Some((d, *op, *ov));
                 }
-                if s.hunts.contains(os) && d < 14.0 && prey.is_none_or(|t| d < t.0) && crit.fed <= 0.0 {
+                if s.hunts.contains(os) && d < hunt_sight(body.height) && prey.is_none_or(|t| d < t.0) && crit.fed <= 0.0 {
                     prey = Some((d, *op, *oe));
                 }
             }
@@ -477,7 +562,7 @@ pub fn update(
                     crit.timer = crit.timer.max(0.6);
                     // Close enough to take it. No model for the pounce: it is
                     // in the predator's mouth from here (creatures/carry.rs).
-                    if d < super::carry::catch_m() && body.on_ground {
+                    if d < super::carry::catch_m().max(body.height * 0.6) && body.on_ground {
                         kills.push((ent, pe));
                         crit.mood = Mood::Feed;
                         crit.fed = super::carry::CARRY_S;
@@ -652,6 +737,49 @@ pub fn update(
         // Steer round trunks, walls, drops and water: if the way ahead is
         // blocked, take the nearest clear heading, trying first the side
         // it last went round.
+        // A big animal walks through low brush: the shrubs on its line are
+        // flattened (creatures/trample.rs) and it does not steer round them.
+        // Past full detail (terrain.rs `far_ground`) there are no voxels to
+        // walk on. Any walker standing out there walks the generator's
+        // ground instead, keeping off drops, deep water and tree trunks.
+        let far = super::terrain::far_ground(store, look.pos.x, look.pos.z).is_some();
+        let was_far = std::mem::replace(&mut crit.far, far);
+        // True only while a shrub ahead is one `Trample::flatten` will take
+        // down (`trample::standing`), so it never holds its line into
+        // something that stays.
+        let mut crushing = false;
+        if speed > 0.0 && !far && sp.is_some() && super::trample::big(body.half_w, body.height) && dist < super::trample::NEAR_M && body.on_ground {
+            let reach = (0.8 + speed * 0.45).clamp(1.2, 3.5);
+            let tall = super::trample::shoulder(body.height);
+            let sh = super::crowd::Shape::of_walker(look, body, models, morph);
+            let way = glam::Vec2::new(crit.heading.sin(), crit.heading.cos());
+            // The end of its spine toward where it is going, run on by the
+            // distance it looks ahead.
+            let (tip, tail) = if (sh.a - sh.mid()).dot(way) >= 0.0 { (sh.a, sh.b) } else { (sh.b, sh.a) };
+            let path = super::crowd::Shape {
+                a: tail,
+                b: tip + way * reach,
+                ..sh
+            };
+            let mid = path.mid();
+            for p in plants.near(mid.x, mid.y, path.bound() + super::trample::TALL_M, None) {
+                if p.height > tall || p.trunk > super::trample::TRUNK_M || (p.pos.y - look.pos.y).abs() > 1.0 {
+                    continue;
+                }
+                let q = glam::Vec2::new(p.pos.x, p.pos.z);
+                if path.spine_dist(q) > sh.r + p.crown * 0.6 {
+                    continue;
+                }
+                let bark = super::trample::bark_of(terrain.land, p.plant);
+                if !super::trample::standing(store, p.pos, p.height, p.crown, bark) {
+                    continue;
+                }
+                crush.push(p.pos);
+                // Only a shrub ahead of the body is a reason to keep the
+                // line: one already under it is being walked off.
+                crushing |= (q - tip).dot(way) > -sh.r;
+            }
+        }
         if speed > 0.0 {
             let reach = (0.8 + speed * 0.45).clamp(1.2, 3.5);
             // The collision box is a square the width of the body; a long
@@ -665,8 +793,15 @@ pub fn update(
             let wade_m = (body.height * 0.35).max(0.3).max(if wades { 0.6 } else { 0.0 });
             let water_line = sea - (wade_m - 0.2).max(0.0);
             let max_depth = if swims { f32::INFINITY } else { wade_m };
-            let clear = |a: f32| walkable(terrain, look.pos, Vec3::new(a.sin(), 0.0, a.cos()), reach, wide, body.height, water_line, max_depth);
-            if !clear(crit.heading) {
+            let clear = |a: f32| {
+                let d = Vec3::new(a.sin(), 0.0, a.cos());
+                if far {
+                    far_walkable(terrain, plants, look.pos, d, reach + body.half_w, body.half_w, water_line, max_depth)
+                } else {
+                    walkable(terrain, look.pos, d, reach, wide, body.height, water_line, max_depth)
+                }
+            };
+            if !crushing && !clear(crit.heading) {
                 stats.turned += 1;
                 let mut found = None;
                 'fan: for k in 1..=7 {
@@ -683,7 +818,14 @@ pub fn update(
                     // reach and the body's own width: an animal that has
                     // walked into a gap between two trees can creep out of
                     // it instead of spinning on the spot.
-                    let tight = |a: f32| walkable(terrain, look.pos, Vec3::new(a.sin(), 0.0, a.cos()), reach * 0.5, body.half_w, body.height, water_line, max_depth);
+                    let tight = |a: f32| {
+                        let d = Vec3::new(a.sin(), 0.0, a.cos());
+                        if far {
+                            far_walkable(terrain, plants, look.pos, d, reach * 0.5, body.half_w, water_line, max_depth)
+                        } else {
+                            walkable(terrain, look.pos, d, reach * 0.5, body.half_w, body.height, water_line, max_depth)
+                        }
+                    };
                     'tight: for k in 1..=9 {
                         for s in [crit.side, -crit.side] {
                             let off = s * k as f32 * 0.35;
@@ -719,6 +861,23 @@ pub fn update(
             _ => speed,
         };
         let dir = Vec3::new(crit.heading.sin(), 0.0, crit.heading.cos());
+        // Turning has inertia, the more so the bigger the body: a deer
+        // swings round in a stride, a triceratops leans into a wide arc. A
+        // big walker turns toward its heading at its own rate and goes the
+        // way it faces, slowing into a sharp turn rather than pivoting on
+        // the spot or sliding sideways while its body catches up.
+        let rate = turn_rate(body.height, crit.mood);
+        let heavy = rate < FREE_TURN && !afloat && crit.air.is_none();
+        let (dir, speed) = if heavy && speed > 0.0 {
+            let want = crit.heading + std::f32::consts::PI;
+            let off = crate::util::wrap_angle(want - look.yaw);
+            look.yaw += off.clamp(-rate * dt, rate * dt);
+            let facing = Vec3::new(-look.yaw.sin(), 0.0, -look.yaw.cos());
+            let lined_up = (facing.dot(dir) + 1.0) * 0.5;
+            (facing, speed * (lined_up * lined_up).max(TURN_CRAWL))
+        } else {
+            (dir, speed)
+        };
         let target = dir * speed;
         let k = (dt * if body.on_ground { 10.0 } else { 2.0 }).min(1.0);
         body.vel.x += (target.x - body.vel.x) * k;
@@ -728,7 +887,26 @@ pub fn update(
             body.vel.y = 3.6;
         }
         let before = look.pos;
-        let res = move_body(store, &mut look.pos, body, body.vel * dt, 0.5);
+        let res = if let Some(gy) = far.then(|| super::terrain::far_ground(store, look.pos.x + body.vel.x * dt, look.pos.z + body.vel.z * dt)).flatten() {
+            // Out in the distance: straight along the ground, no voxels to
+            // meet. The steering above has kept it off drops and trunks.
+            look.pos = Vec3::new(look.pos.x + body.vel.x * dt, gy, look.pos.z + body.vel.z * dt);
+            body.vel.y = 0.0;
+            body.on_ground = true;
+            crate::physics::MoveResult { stepped: 0.0, blocked: false }
+        } else {
+            // The first step on voxels after generator ground: the two can
+            // differ by a step, so come up out of them rather than start
+            // inside.
+            if was_far && crate::physics::hits(store, look.pos, body.half_w, body.height) {
+                if let Some((gy, _)) = voxel_ground(store, look.pos.x, look.pos.z, look.pos.y + 2.0) {
+                    if gy > look.pos.y && gy - look.pos.y < 2.0 {
+                        look.pos.y = gy + 0.01;
+                    }
+                }
+            }
+            move_body(store, &mut look.pos, body, body.vel * dt, 0.5)
+        };
         // Afloat: held at the surface and carried by the current.
         if swims {
             if let Some((level, depth)) = terrain.inland_water(look.pos.x, look.pos.z) {
@@ -747,7 +925,7 @@ pub fn update(
             stats.moving += 1;
             stats.blocked += res.blocked as u32;
         }
-        if res.blocked && body.on_ground && speed > 0.0 {
+        if res.blocked && body.on_ground && speed > 0.0 && !crushing {
             // Jump only onto a low ledge with room above it, never up a
             // trunk or a wall.
             let up = look.pos + Vec3::Y * 1.0;
@@ -771,11 +949,11 @@ pub fn update(
         if let Some((_, m)) = voxel_ground(store, look.pos.x, look.pos.z, look.pos.y + 0.1) {
             stats.on_foliage += crate::mesh::sprites::leafy(m) as u32;
         }
-        if speed > 0.1 {
+        if speed > 0.1 && !heavy {
             let want = dir.x.atan2(dir.z) + std::f32::consts::PI;
-            look.yaw = crate::util::turn_toward(look.yaw, want, (dt * 8.0).min(1.0));
+            look.yaw = crate::util::turn_toward(look.yaw, want, (dt * FREE_TURN).min(1.0));
         }
-        if !slopes || afloat {
+        if !slopes || afloat || far {
             look.lift = 0.0;
         } else if body.on_ground {
             let target = drawn_ground_lift(store, look.pos);
@@ -786,7 +964,7 @@ pub fn update(
         if let (Some(a), Some(rig)) = (anim, models[look.model].rig.as_ref()) {
             look.bob = 0.0;
             let from_y = look.pos.y + 1.5;
-            let ground = |x: f32, z: f32| voxel_ground(store, x, z, from_y).map(|g| g.0);
+            let ground = |x: f32, z: f32| voxel_ground(store, x, z, from_y).map(|g| g.0).or_else(|| super::terrain::far_ground(store, x, z));
             a.step(
                 rig,
                 models[look.model].voxel,
@@ -803,8 +981,17 @@ pub fn update(
                     ground: &ground,
                     water: water_surface(terrain, look.pos),
                     hide: hiding,
+                    pivot: models[look.model].pivot,
+                    scale: morph.map_or(1.0, |m| m.scale),
                 },
             );
+            // An otter idling or asleep in the river drifts on its back with
+            // the current, and rolls over as soon as it moves off.
+            if sp.is_some_and(|s| s.beh.back_float) {
+                let want = if afloat && crit.mood == Mood::Idle { 1.0 } else { 0.0 };
+                crit.back += (want - crit.back).clamp(-dt * 1.5, dt * 0.5);
+                super::swim::back_pose(rig, &mut a.pose, crit.back, look.pos.x * 3.0 + look.pos.z * 2.0);
+            }
         }
     }
     super::carry::take(world, species, models, &kills, now);
@@ -892,9 +1079,16 @@ mod tests {
     use crate::creatures::startle::Threat;
     use crate::ride::Mode;
 
-    /// A flat world of solid ground at y = 0, 40 m on a side.
+    /// A flat world of solid ground 1 m thick, 40 m on a side. Its chunks
+    /// are loaded first: `Store::set` drops a voxel in a chunk that is not,
+    /// and an unloaded chunk reads as solid.
     fn flat_store() -> crate::world::store::Store {
         let mut store = crate::world::store::Store::default();
+        for cx in -1..=5 {
+            for cz in -1..=5 {
+                store.insert_column(cx, cz, 2, 0, Vec::new());
+            }
+        }
         for vx in -8..168 {
             for vz in -8..168 {
                 for vy in 0..4 {
@@ -912,6 +1106,7 @@ mod tests {
             pivot: Vec3::ZERO,
             half_w: 0.28,
             height: 1.4,
+            reach: [-0.28, 0.28],
             rig: None,
             skeleton: None,
             block: 0,
@@ -971,6 +1166,7 @@ mod tests {
                 &Default::default(),
                 step as f32 * dt,
                 &mut stats,
+                &mut Vec::new(),
                 &mut Vec::new(),
                 &mut Vec::new(),
             );
@@ -1050,6 +1246,7 @@ mod tests {
                     &mut stats,
                     &mut Vec::new(),
                     &mut Vec::new(),
+                    &mut Vec::new(),
                 );
                 if world.get::<&Critter>(e).unwrap().mood == Mood::Flee {
                     return Some(step as f32 * dt);
@@ -1062,6 +1259,119 @@ mod tests {
         let far = run(Some(Vec3::new(0.0, 1.0, 9.5))).unwrap_or(f32::MAX);
         assert!(near < 2.0, "fox at 4 m took {near}s");
         assert!(far > near, "fox at 9.5 m {far}s, at 4 m {near}s");
+    }
+
+    /// A walker `half_w` by `height` set walking +Z for five seconds at a
+    /// shrub 7 m ahead: a 1.5 m bush of solid leaf voxels 1.6 m across. How
+    /// far it got, whether it asked for the shrub to be flattened, and how
+    /// many times it turned aside.
+    fn walk_at_a_shrub(half_w: f32, height: f32, length: f32) -> (f32, usize, u32) {
+        let mut store = flat_store();
+        let shrub = Vec3::new(0.0, 1.0, 5.0);
+        for vy in 4..10 {
+            for vz in 17..23 {
+                for vx in -3..3 {
+                    store.set(vx, vy, vz, crate::world::material::LEAVES);
+                }
+            }
+        }
+        let flora = crate::creatures::plants::Flora::from_refs(vec![crate::creatures::plants::PlantRef {
+            pos: shrub,
+            plant: 0,
+            height: 1.5,
+            crown: 0.8,
+            trunk: 0.0,
+            affords: Default::default(),
+        }]);
+        let species = vec![one_species(0.0, 0.0)];
+        let mut model = one_model();
+        (model.half_w, model.height, model.reach) = (half_w, height, [-length * 0.5, length * 0.5]);
+        let models = vec![model];
+        let mut world = hecs::World::new();
+        let mut c = Critter::new(0.0, 99.0, 7, 1.0);
+        c.mood = Mood::Walk;
+        let e = world.spawn((c, Body::new(half_w, height), Look::new(0, Vec3::new(0.0, 1.0, -2.0), std::f32::consts::PI), Creature::of(0)));
+        let terrain = Terrain {
+            store: &store,
+            land: None,
+            sea: -100.0,
+        };
+        let threat = Threat::new(Vec3::new(0.0, 1.0, -30.0), Vec3::ZERO, Mode::Foot);
+        let dt = 1.0 / 30.0;
+        let mut stats = Pathing::default();
+        let mut crush = Vec::new();
+        for step in 0..150 {
+            update(
+                &mut world,
+                &species,
+                &flora,
+                &terrain,
+                dt,
+                &threat,
+                false,
+                &models,
+                12.0,
+                &Default::default(),
+                step as f32 * dt,
+                &mut stats,
+                &mut Vec::new(),
+                &mut Vec::new(),
+                &mut crush,
+            );
+        }
+        let z = world.get::<&Look>(e).unwrap().pos.z;
+        (z, crush.len(), stats.turned)
+    }
+
+    #[test]
+    fn a_big_walker_keeps_its_line_through_a_shrub_and_a_deer_goes_round() {
+        let (_, crushed, turned) = walk_at_a_shrub(1.1, 3.0, 8.0);
+        assert!(crushed > 0, "a triceratops asked for nothing to be flattened");
+        assert_eq!(turned, 0, "a triceratops steered round a bush");
+        let (z, crushed, turned) = walk_at_a_shrub(0.28, 1.4, 1.6);
+        assert_eq!(crushed, 0, "a deer flattened a bush");
+        assert!(turned > 0 && z < 4.0, "a deer walked into a bush: at z {z}, turned {turned} times");
+    }
+
+    /// Heading the opposite way to where it faces, a big walker swings
+    /// round over a second or more and keeps creeping forward as it does;
+    /// a small one is round at once.
+    #[test]
+    fn a_big_walker_turns_in_an_arc_and_a_small_one_on_the_spot() {
+        let store = flat_store();
+        let terrain = Terrain {
+            store: &store,
+            land: None,
+            sea: -100.0,
+        };
+        let species = vec![one_species(0.0, 0.0)];
+        let threat = Threat::new(Vec3::new(0.0, 1.0, -30.0), Vec3::ZERO, Mode::Foot);
+        let dt = 1.0 / 30.0;
+        let turn = |half_w: f32, height: f32| {
+            let mut model = one_model();
+            (model.half_w, model.height) = (half_w, height);
+            let models = vec![model];
+            let mut world = hecs::World::new();
+            // Facing +Z (yaw PI), told to walk -Z.
+            let mut c = Critter::new(std::f32::consts::PI, 99.0, 7, 1.0);
+            c.mood = Mood::Walk;
+            let e = world.spawn((c, Body::new(half_w, height), Look::new(0, Vec3::new(10.0, 1.0, 10.0), std::f32::consts::PI), Creature::of(0)));
+            let mut stats = Pathing::default();
+            let mut quickest = 0.0f32;
+            for step in 0..30 {
+                let before = world.get::<&Look>(e).unwrap().yaw;
+                update(&mut world, &species, &Default::default(), &terrain, dt, &threat, false, &models, 12.0, &Default::default(), step as f32 * dt, &mut stats, &mut Vec::new(), &mut Vec::new(), &mut Vec::new());
+                let after = world.get::<&Look>(e).unwrap().yaw;
+                quickest = quickest.max(crate::util::wrap_angle(after - before).abs() / dt);
+            }
+            let yaw = world.get::<&Look>(e).unwrap().yaw;
+            (quickest, crate::util::wrap_angle(yaw).abs())
+        };
+        let (big_rate, big_yaw) = turn(1.1, 3.0);
+        assert!(big_rate < 2.0, "a triceratops turned at {big_rate} rad/s");
+        assert!(big_yaw > 1.0, "a triceratops came round in a second");
+        let (_, small_yaw) = turn(0.28, 1.4);
+        assert!(small_yaw < 0.2, "a deer was still {small_yaw} rad off after a second");
     }
 
     #[test]

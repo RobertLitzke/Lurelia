@@ -1,6 +1,6 @@
 {
   "name": "salt_shore",
-  "version": 1,
+  "version": 2,
   "introduced_by": "windbarrow",
   "notes": "Round Saltmere: a white crust of salt in plates over grey mud, low grey scrub back from it, and nothing else growing.",
   "priority": 15,
@@ -25,12 +25,13 @@
     {"creature": "goose", "count": 10},
     {"creature": "heron", "count": 3},
     {"creature": "swan", "count": 2},
-    {"creature": "saiga", "count": 2},
-    {"creature": "przewalski_horse", "count": 1},
+    {"creature": "saiga", "count": 2.2},
+    {"creature": "przewalski_horse", "count": 1.1},
     {"creature": "crow", "count": 4},
     {"creature": "starling", "count": 10},
-    {"creature": "wind_skate", "count": 2},
-    {"creature": "meadowhawk", "count": 4}
+    {"creature": "wind_skate", "count": 2.2},
+    {"creature": "meadowhawk", "count": 4.4},
+    {"creature": "snowy_plover", "count": 8}
   ],
   "collectibles": [{"item": "flint_blade", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}],
   "water": {"shallow": [152, 168, 156], "deep": [86, 104, 100]}

@@ -1,6 +1,6 @@
 {
   "name": "beach",
-  "version": 1,
+  "version": 2,
   "introduced_by": "glassfall",
   "priority": 5,
   "rules": {"coast": [0, 9], "elev": [0, 2.5]},
@@ -17,12 +17,12 @@
   "features": [{"structure": "flat_rock", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}],
   "creatures": [
     {"creature": "gull", "count": 4},
-    {"creature": "sea_turtle", "count": 2},
-    {"creature": "harbor_seal", "count": 2},
+    {"creature": "sea_turtle", "count": 2.2},
+    {"creature": "harbor_seal", "count": 2.2},
     {"creature": "goose", "count": 6},
     {"creature": "mallard", "count": 4},
     {"creature": "sanderling", "count": 24},
-    {"creature": "snowy_plover", "count": 6},
+    {"creature": "snowy_plover", "count": 16},
     {"creature": "annas_hummingbird", "count": 1}
   ],
   "collectibles": [{"item": "seashell", "density": 0.004, "placement": {"verb": "scatter", "params": {}}}]

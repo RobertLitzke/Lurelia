@@ -58,7 +58,8 @@ is one file plus a registry line ("Adding an event" in `reference.md`).
    "Rules"). Before editing an entry, check it has no `_generated_by`; if it
    has, change the script instead. When done, run
    `python tools/libfmt.py --catalogue` so the files are canonical and the
-   catalogue is current.
+   catalogue is current. To draw several new buildings, or rework old ones,
+   hand them to Sonnet subagents with the `model-rework` skill.
 
 4. **Write `world.json` and `chronicle.json`.** Generate the land, do not
    draw it: a `terrain` sketch, then `drainage` (and `glaciate` in ice

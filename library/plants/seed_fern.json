@@ -1,0 +1,19 @@
+{
+  "name": "seed_fern",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Seed fern: a Mesozoic shrub of arching woody stems clad in big fern fronds, head high, in tangles under the monkey-puzzles.",
+  "form": "canes",
+  "height": [1.8, 3.2],
+  "trunk_radius": [0.06, 0.08],
+  "crown_radius": [1.0, 1.6],
+  "bark": "tree_fern_trunk",
+  "leaf": "tree_fern_frond",
+  "canopy": "tufts",
+  "max_slope": 1.0,
+  "stems": [5, 9],
+  "cane_lean": 0.6,
+  "cane_bend": 0.14,
+  "cane_spurs": 0.3,
+  "cane_leaves": 1.0
+}

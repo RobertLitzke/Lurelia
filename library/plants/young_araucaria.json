@@ -1,0 +1,14 @@
+{
+  "name": "young_araucaria",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "A young monkey-puzzle under 15 m: a narrow cone clothed to near the ground in whorls of dark, up-curving scaly branches. The Fernwood's future canopy.",
+  "form": "conifer",
+  "height": [6, 14],
+  "trunk_radius": [0.15, 0.3],
+  "crown_radius": [2.2, 3.2],
+  "bark": "grey_brown_bark",
+  "leaf": "araucaria_needles",
+  "max_slope": 0.6,
+  "crown_base": 0.08
+}

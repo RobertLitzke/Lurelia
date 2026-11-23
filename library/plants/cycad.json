@@ -1,0 +1,12 @@
+{
+  "name": "cycad",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Cycad: a stiff rosette of dark glossy fronds springing from a squat scaly stump, waist to head high (drawn as sprites).",
+  "form": "herb",
+  "height": [1.2, 2.2],
+  "crown_radius": [1.0, 1.5],
+  "bark": "palm_trunk",
+  "leaf": "cycad_frond",
+  "max_slope": 0.8
+}

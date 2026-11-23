@@ -1,0 +1,19 @@
+{
+  "name": "dipper",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Dipper: a dumpy dark brown bird with a white bib that bobs on the stones of fast water and walks in under it. On the Hem, the Wend and the Fleece Brook.",
+  "colors": {
+    "body": [58, 44, 36],
+    "head": [76, 56, 42],
+    "beak": [30, 26, 24],
+    "wing": [52, 40, 34],
+    "tail": [48, 38, 32],
+    "legs": [120, 100, 90],
+    "breast": [236, 232, 224],
+    "head_cap": [80, 58, 44]
+  },
+  "behaviour": {"flightiness": 1.0},
+  "like": "sparrow",
+  "scale": 1.0
+}

@@ -1,0 +1,15 @@
+{
+  "name": "tile_terracotta",
+  "version": 1,
+  "introduced_by": "townlab",
+  "notes": "Orange clay roof tiles. Smoothed, so a roof at an angle to the grid is a slope rather than a staircase.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [176, 96, 64],
+    "alt": [156, 82, 54],
+    "scale": 5,
+    "contrast": 0.7,
+    "calm": {"base": [182, 102, 70], "alt": [162, 88, 60]}
+  }
+}

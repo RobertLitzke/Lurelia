@@ -1,0 +1,31 @@
+{
+  "name": "sau_spray",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "The spray ground at the foot of the Veil: always wet, deep moss, ferns and dripping tree ferns.",
+  "priority": 12,
+  "rules": {"region": "spray"},
+  "surface": "moss_grass",
+  "subsurface": "dirt",
+  "fringe": 6,
+  "map_color": [70, 130, 96],
+  "plants": [
+    {
+      "plant": "fern",
+      "density": 0.6,
+      "placement": {"verb": "clustered", "params": {"size": 8, "min": 0.2, "max": 1.0}}
+    },
+    {
+      "plant": "tree_fern",
+      "density": 0.05,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.3, "max": 1.0}}
+    },
+    {"plant": "hanging_vine", "density": 0.01, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "dipper", "count": 3},
+    {"creature": "pteranodon", "count": 4},
+    {"creature": "dragonfly", "count": 6},
+    {"creature": "compsognathus", "count": 1}
+  ]
+}

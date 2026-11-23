@@ -28,9 +28,9 @@
     }
   ],
   "creatures": [
-    {"creature": "reef_chromis", "count": 105},
-    {"creature": "angelfish", "count": 4},
-    {"creature": "grouper", "count": 4},
-    {"creature": "moon_jelly", "count": 14}
+    {"creature": "reef_chromis", "count": 115.5},
+    {"creature": "angelfish", "count": 4.4},
+    {"creature": "grouper", "count": 4.4},
+    {"creature": "moon_jelly", "count": 15.4}
   ]
 }

@@ -167,9 +167,23 @@
         "mat": {
           "type": "string"
         },
+        "mat2": {
+          "default": null,
+          "description": "A second stone, every other one or so, for a rubble rail.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "out": {
           "default": 0.0,
           "description": "Metres outward from the surface edge; negative pulls it in.",
+          "format": "float",
+          "type": "number"
+        },
+        "rubble": {
+          "default": 0.0,
+          "description": "0 for a smooth bar. Above 0 the rail is a heap of stones: laid in\ncourses of separate stones, narrowing upward, its top ragged by up to\nthis fraction of its height; a field wall rather than a kerb.",
           "format": "float",
           "type": "number"
         },

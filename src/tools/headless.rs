@@ -48,6 +48,7 @@ pub fn ride_demo(game: &mut Game, renderer: &mut Renderer, kind: &str, args: &Ar
         r.toggle_bike(&mut game.player);
     }
     r.set_chase(args.chase);
+    game.settings.drive_chase = args.chase;
     game.ride = r;
     let input = MoveInput {
         forward: !wing && kind != "race",
@@ -84,6 +85,14 @@ pub fn ride_demo(game: &mut Game, renderer: &mut Renderer, kind: &str, args: &Ar
                 }
                 if i % 60 == 0 {
                     println!("race {}", rc.status());
+                }
+                // Everyone home: each kart's finish, for a lineup of brains
+                // (race/brain.rs), and the run is over.
+                if rc.all_home() {
+                    for line in rc.result_lines() {
+                        println!("{line}");
+                    }
+                    break;
                 }
             }
         }
@@ -282,6 +291,14 @@ pub fn run_headless(args: Args) {
                     } else {
                         println!("EDIT: no pose called {want}");
                     }
+                }
+                // VG_EDIT_ROLL=n shows the nth roll of the subject instead of
+                // the first: another tree of the same plant, as ROLL does.
+                if let Some(n) = std::env::var("VG_EDIT_ROLL").ok().and_then(|v| v.parse::<u32>().ok()) {
+                    for _ in 0..n {
+                        pair.0.regen();
+                    }
+                    crate::editor::apply(&mut pair.0, &mut pair.1, &mut game, aspect);
                 }
                 if let Ok(spec) = std::env::var("VG_EDIT_ORBIT") {
                     let v: Vec<f32> = spec.split(',').filter_map(|x| x.trim().parse().ok()).collect();
@@ -517,6 +534,11 @@ pub fn run_headless(args: Args) {
         game.ents.met = Some(Default::default());
     }
     let mut tour_t = 0.0f32;
+    let away: Option<(f32, f32, f32, f32)> = std::env::var("VG_AWAY").ok().and_then(|v| {
+        let n: Vec<f32> = v.split(',').filter_map(|x| x.trim().parse().ok()).collect();
+        (n.len() == 4).then(|| (n[0], n[1], n[2], n[3]))
+    });
+    let mut home: Option<(Vec3, f32, f32)> = None;
     let mut frame_times = Vec::new();
     let mut last = FrameTiming::default();
     let mut parts = [0.0f32; 4];
@@ -531,6 +553,27 @@ pub fn run_headless(args: Args) {
             let (p, yaw, pitch) = b.camera(&game);
             game.set_camera(p, yaw, pitch, true);
             b.t += game::STEP;
+        }
+        // Dev hook: VG_AWAY=x,z,from,to puts the camera at (x, z), facing
+        // away from where it was, between `from` and `to` seconds into the
+        // run and back where it was after,
+        // to check that a large animal's herd is still there on the return
+        // (creatures/tracked.rs).
+        if let Some(&(x, z, from, to)) = away.as_ref() {
+            let t = frame as f32 * game::STEP;
+            if frame == 0 {
+                home = Some((game.player.pos, game.player.yaw, game.player.pitch));
+            }
+            if (t - from).abs() < game::STEP * 0.5 {
+                let y = game.generator().height(x, z).max(game.generator().spec.sea_level_m) + 30.0;
+                // Facing away from where it was, as someone walking off would.
+                let back = home.map_or(Vec3::ZERO, |h| h.0) - Vec3::new(x, 0.0, z);
+                game.set_camera(Vec3::new(x, y, z), back.x.atan2(back.z), game.player.pitch, true);
+            } else if (t - to).abs() < game::STEP * 0.5 {
+                if let Some((p, yaw, pitch)) = home {
+                    game.set_camera(p, yaw, pitch, true);
+                }
+            }
         }
         if args.tour.is_some() {
             // A circle 30% of the world's width out from its middle, at 5 m/s.
@@ -560,7 +603,7 @@ pub fn run_headless(args: Args) {
                 menu::draw_menu(
                     &mut hud,
                     &mut Menu::default(),
-                    "OPEN WORLD",
+                    "PLAY",
                     &items,
                     "LEFT AND RIGHT TO CHANGE, ENTER TO GO",
                     Place::Centre,
@@ -594,7 +637,7 @@ pub fn run_headless(args: Args) {
             }
             if args.show_menu.as_deref() == Some("pause") {
                 hud.clear();
-                menu::draw_menu(&mut hud, &mut Menu::default(), "PAUSED", &menu::pause_items(), "ESC TO RESUME", Place::Centre, w as f32, h as f32);
+                menu::draw_menu(&mut hud, &mut Menu::default(), "PAUSED", &menu::pause_items(false), "ESC TO RESUME", Place::Centre, w as f32, h as f32);
             }
             // The LOOK page over the world: "look", or a group by name, or
             // "look-pick" with the picker open on the first ramp stop.
@@ -782,6 +825,8 @@ pub fn run_headless(args: Args) {
     // Outside json!: one more key there passes its recursion limit.
     report["drawlist_ms"] = serde_json::json!(last.stats.drawlist_ms);
     report["sprites_drawn"] = last.stats.sprites.into();
+    report["entities_drawn"] = last.stats.entities.into();
+    report["entity_quads"] = last.stats.entity_quads.into();
     // How the match went, when one was being played: the one way to see
     // from outside whether the bots actually fought (src/shooter).
     if let Some(sh) = game.activity.as_ref().and_then(|a| a.shooter()) {
@@ -965,7 +1010,7 @@ fn menu_shot(gpu: &Gpu, target: &wgpu::Texture, view: &wgpu::TextureView, format
             let items = menu::launch_items(&l, None);
             let foot = items.get(1).map(|i| i.help).unwrap_or("");
             m.at = 1;
-            menu::draw_menu(&mut hud, &mut m, "OPEN WORLD", &items, foot, Place::Left, wf, hf);
+            menu::draw_menu(&mut hud, &mut m, "PLAY", &items, foot, Place::Left, wf, hf);
             if which == "launch-open" {
                 // The world list: the second row, under the game.
                 let anchor = m.drops.get(1).copied().unwrap_or([0.0; 4]);
@@ -996,6 +1041,31 @@ fn menu_shot(gpu: &Gpu, target: &wgpu::Texture, view: &wgpu::TextureView, format
             let mut round = crate::shooter::round::Round::new(15);
             round.after_kill(1, 0, &board);
             round.draw(&mut hud, wf, hf, menu::scale(hf), &board);
+        }
+        // The race's screens (racemenu.rs), on the world on the line.
+        "race-courses" | "race-karts" | "race" => {
+            let mut l = crate::launch::Launch::default();
+            crate::racemenu::set_course(&mut l, &world);
+            let recs = crate::race::records::Records::load(&args.save_dir);
+            m.at = crate::racemenu::courses().iter().position(|c| c.world == l.world).unwrap_or(0);
+            match which {
+                "race-courses" => {
+                    let pick = m.at;
+                    crate::racemenu::draw_courses(&mut hud, &mut m, &recs, None, pick, &crate::racemenu::summary(&l), wf, hf)
+                }
+                "race-karts" => {
+                    m.at = 1;
+                    crate::racemenu::draw_karts(&mut hud, &mut m, wf, hf)
+                }
+                _ => {
+                    m.at = crate::racemenu::race_items(&l).iter().position(|i| i.choice == menu::Choice::Start).unwrap_or(0);
+                    let img = crate::racemenu::track_picture(&world).and_then(|p| menu::load_picture_at(&p, crate::render::hud::IMAGE_PX, crate::render::hud::IMAGE_PX));
+                    if let Some(img) = &img {
+                        renderer.upload_map(img);
+                    }
+                    crate::racemenu::draw_race(&mut hud, &mut m, &l, &recs, img.is_some(), wf, hf)
+                }
+            }
         }
         "controls" => {
             crate::game::draw_help(&mut hud, crate::modes::Allowed::all(), wf, hf, menu::scale(hf), "H, Esc or a click to go back");

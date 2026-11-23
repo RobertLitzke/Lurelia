@@ -1,0 +1,13 @@
+{
+  "name": "track_shape",
+  "version": 1,
+  "introduced_by": "kestrel",
+  "notes": "One `add` or `carve` shape of a race track (track.json `shapes`): a tunnel's block and its hollow, an arch, a grandstand, a spire. Its voxels come from the track file (chronicle/race_track.rs); this entry only names the placement. `base: rim` keeps it where the track put it.",
+  "size": [1, 1, 1],
+  "anchor": [0, 0, 0],
+  "level": false,
+  "decays": false,
+  "base": "rim",
+  "tags": ["landmark"],
+  "ops": []
+}

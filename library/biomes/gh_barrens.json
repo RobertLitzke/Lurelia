@@ -17,7 +17,7 @@
   ],
   "features": [{"structure": "boulder", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}],
   "creatures": [
-    {"creature": "rabbit", "count": 4},
+    {"creature": "rabbit", "count": 4.4},
     {"creature": "sparrow", "count": 6},
     {"creature": "crow", "count": 2},
     {"creature": "annas_hummingbird", "count": 2}

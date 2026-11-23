@@ -5,6 +5,7 @@
   "notes": "Lion: a heavy tawny cat with a dark mane over its shoulders and a tufted tail. Lives in prides, so it walks in twos and threes.",
   "colors": {"coat": [206, 170, 112], "belly": [226, 212, 184], "mane": [122, 84, 44], "muzzle": [226, 212, 184]},
   "behaviour": {
+    "sleeps_on_side": true,
     "walk_speed": 1.1,
     "flee_speed": 8.0,
     "wary": 22,

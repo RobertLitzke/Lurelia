@@ -1,0 +1,21 @@
+{
+  "notes": "Red rock country after Redrock: a road of rolled red clay with oxide and cream kerbs, laid sandstone blocks for walls, parapets and decks, wash sand on the run-off, banded Wingate and Navajo sandstone for the rock, and Redrock's dusty Western light.",
+  "story": "red sandstone, sand and sagebrush under a hard blue sky",
+  "road": "canyon_hardpack",
+  "kerb": "canyon_kerb",
+  "wall": "red_stone",
+  "deck": "red_stone",
+  "gate_post": "rust_iron",
+  "world": {
+    "rock": [["wingate_sandstone", 0.6], ["navajo_sandstone", 0.4]],
+    "biomes": ["red_desert", "slickrock", "canyon_floor", "arch_country"],
+    "default_biome": "red_desert",
+    "seabed_biome": "lake_bed",
+    "seasons": ["summer"],
+    "weather": {"sun": 1.5, "heat": 1.2, "clouds": 0.5, "fog": 0.05},
+    "start_weather": "sun",
+    "weathering": 0.2,
+    "moss": 0.0
+  },
+  "look": "redrock"
+}

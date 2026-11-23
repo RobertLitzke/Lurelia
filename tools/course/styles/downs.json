@@ -1,0 +1,21 @@
+{
+  "notes": "Chalk downs under feather grass: asphalt, red and white kerbs, chalk walls and decks, open verges.",
+  "story": "chalk downs and short grass",
+  "road": "road_asphalt",
+  "kerb": "track_kerb",
+  "wall": "chalk_white",
+  "deck": "chalk_white",
+  "gate_post": "bridge_steel",
+  "world": {
+    "rock": [["chalk_white", 0.75], ["chalk_grey", 0.25]],
+    "biomes": ["chalk_down", "feathergrass_sea", "seabed"],
+    "default_biome": "chalk_down",
+    "seabed_biome": "seabed",
+    "seasons": ["summer"],
+    "weather": {"sun": 1.0, "clouds": 0.6},
+    "start_weather": "sun",
+    "weathering": 0.4,
+    "moss": 0.2
+  },
+  "look": null
+}

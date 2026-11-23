@@ -12,9 +12,9 @@
     {"creature": "brown_pelican", "count": 8},
     {"creature": "gull", "count": 10},
     {"creature": "cormorant", "count": 4},
-    {"creature": "herring", "count": 30},
-    {"creature": "sea_turtle", "count": 4},
-    {"creature": "stingray", "count": 1},
-    {"creature": "barracuda", "count": 1}
+    {"creature": "herring", "count": 33},
+    {"creature": "sea_turtle", "count": 4.4},
+    {"creature": "stingray", "count": 1.1},
+    {"creature": "barracuda", "count": 1.1}
   ]
 }

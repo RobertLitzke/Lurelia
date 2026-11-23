@@ -13,15 +13,25 @@
     {"plant": "cottonwood", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 18}}},
     {"plant": "willow", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 10}}},
     {"plant": "spanish_moss", "density": 0.9, "placement": {"verb": "scatter", "params": {}}},
-    {"plant": "buttonbush", "density": 0.002, "placement": {"verb": "riparian", "params": {"width": 8}}}
+    {"plant": "buttonbush", "density": 0.002, "placement": {"verb": "riparian", "params": {"width": 8}}},
+    {
+      "plant": "switchcane",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.5, "max": 0.7}}
+    }
   ],
   "creatures": [
-    {"creature": "deer", "count": 3},
-    {"creature": "coyote", "count": 2},
+    {"creature": "deer", "count": 3.3},
+    {"creature": "coyote", "count": 2.2},
     {"creature": "crow", "count": 6},
     {"creature": "starling", "count": 30},
     {"creature": "sandhill_crane", "count": 3},
-    {"creature": "great_horned_owl", "count": 1},
-    {"creature": "killdeer", "count": 3}
+    {"creature": "great_horned_owl", "count": 2},
+    {"creature": "killdeer", "count": 3},
+    {"creature": "raccoon", "count": 3.3},
+    {"creature": "skunk", "count": 1.1},
+    {"creature": "bat", "count": 4.4},
+    {"creature": "firefly", "count": 22},
+    {"creature": "capybara", "count": 1.1}
   ]
 }

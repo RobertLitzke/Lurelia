@@ -385,6 +385,7 @@ mod tests {
                 model: 0,
                 side: 0.0,
                 pair: 0,
+                spread: None,
             })
             .collect();
         let rig = Rig {
@@ -443,6 +444,7 @@ mod tests {
             model: 0,
             side: 0.0,
             pair: 0,
+            spread: None,
         };
         let rig = Rig {
             soft: None,

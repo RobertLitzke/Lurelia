@@ -1,0 +1,16 @@
+{
+  "name": "lava_glow",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "Lava still running in the channels at the bottom of the flow: orange under a dark skin, lit from inside.",
+  "smooth": true,
+  "glow": 1.2,
+  "texture": {
+    "pattern": "cracks",
+    "base": [236, 108, 30],
+    "alt": [120, 34, 18],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [240, 128, 44], "alt": [140, 46, 24]}
+  }
+}

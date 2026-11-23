@@ -4,7 +4,15 @@
   "introduced_by": "jadewater",
   "notes": "graze: Giant panda: white with black legs, shoulders, ears and eye patches. Sits in the bamboo eating; slow, and not much bothered by people.",
   "colors": {"bear": [240, 236, 228], "muzzle": [240, 236, 228], "dark": [36, 28, 24]},
-  "behaviour": {"walk_speed": 0.5, "flee_speed": 2.5, "wary": 4, "flightiness": 0.15, "spawn_chance": 1, "active": "any"},
+  "behaviour": {
+    "sleeps_on_side": true,
+    "walk_speed": 0.5,
+    "flee_speed": 2.5,
+    "wary": 4,
+    "flightiness": 0.15,
+    "spawn_chance": 1,
+    "active": "any"
+  },
   "like": "bear",
   "scale": 0.95,
   "extra_ops": [

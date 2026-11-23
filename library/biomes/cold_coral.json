@@ -16,5 +16,10 @@
     },
     {"plant": "sea_fan_red", "density": 0.03, "placement": {"verb": "scatter", "params": {}}}
   ],
-  "creatures": [{"creature": "cod", "count": 3}, {"creature": "moon_jelly", "count": 6}, {"creature": "herring", "count": 30}]
+  "creatures": [
+    {"creature": "cod", "count": 3.3},
+    {"creature": "moon_jelly", "count": 6.6},
+    {"creature": "herring", "count": 33},
+    {"creature": "giant_octopus", "count": 1.1}
+  ]
 }

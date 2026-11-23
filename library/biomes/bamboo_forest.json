@@ -30,13 +30,13 @@
     {"plant": "tree_moss", "density": 0.3}
   ],
   "creatures": [
-    {"creature": "panda", "count": 8},
-    {"creature": "deer", "count": 4},
+    {"creature": "panda", "count": 8.8},
+    {"creature": "deer", "count": 4.4},
     {"creature": "sparrow", "count": 8},
-    {"creature": "tiger", "count": 1},
-    {"creature": "langur", "count": 5},
-    {"creature": "fruit_bat", "count": 4},
-    {"creature": "green_tree_snake", "count": 3}
+    {"creature": "tiger", "count": 1.1},
+    {"creature": "langur", "count": 5.5},
+    {"creature": "fruit_bat", "count": 4.4},
+    {"creature": "green_tree_snake", "count": 3.3}
   ],
   "sound": {"leaves": 1.3, "wind": 0.75, "notes": "Bamboo knocks and rattles more than leaves rustle."},
   "mist": 0.5

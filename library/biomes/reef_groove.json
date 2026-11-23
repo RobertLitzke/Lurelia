@@ -15,8 +15,8 @@
     {"plant": "finger_coral", "density": 0.005, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "garden_eel", "count": 84},
-    {"creature": "stingray", "count": 4},
-    {"creature": "reef_chromis", "count": 70}
+    {"creature": "garden_eel", "count": 92.4},
+    {"creature": "stingray", "count": 4.4},
+    {"creature": "reef_chromis", "count": 77}
   ]
 }

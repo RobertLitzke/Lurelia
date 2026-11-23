@@ -1,0 +1,16 @@
+{
+  "name": "rowan_leaves",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Rowan: feathery leaves of many small leaflets, fresh mid-green.",
+  "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "narrow"},
+  "texture": {
+    "pattern": "blotch",
+    "base": [86, 130, 56],
+    "alt": [106, 150, 66],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [93, 139, 62], "alt": [114, 160, 72]}
+  }
+}

@@ -52,6 +52,29 @@ pub struct Watercourse {
     /// It comes in from beyond the world: carried back to the nearest edge.
     #[serde(default)]
     from_edge: bool,
+    /// Patches of a second bed (eelgrass in a slow stretch) over part of
+    /// the trunk.
+    #[serde(default)]
+    weed: Option<Weed>,
+}
+
+/// Patches of `mat` over about `share` of the bed, from the trunk's head to
+/// `until` of the way to its mouth (0 to 1).
+#[derive(Deserialize, Debug)]
+struct Weed {
+    mat: String,
+    #[serde(default = "default_weed_share")]
+    share: f32,
+    #[serde(default = "default_weed_until")]
+    until: f32,
+}
+
+fn default_weed_share() -> f32 {
+    0.4
+}
+
+fn default_weed_until() -> f32 {
+    1.0
 }
 
 #[derive(Deserialize, Debug)]
@@ -110,6 +133,7 @@ impl Process for Watercourse {
         let fall = cx.f.height(a.x, a.y) - cx.f.height(b.x, b.y);
         let grown = super::river::head(cx, &self.name, &trunk, self.width, self.depth, bed, bank, self.floor, self.rise);
         cut(cx, &self.name, &trunk[grown..], self.width, self.depth, bed, bank, self.floor);
+        let weeded = self.weed.as_ref().map_or(0, |w| weed(cx, w, &trunk, self.width, bed));
         // The trunk's ground is dear to a branch: a distributary that fell
         // straight back into it would not be one.
         grid.take(&trunk, self.width * 0.5 + 2.0);
@@ -134,16 +158,52 @@ impl Process for Watercourse {
         }
         let len: f32 = trunk.windows(2).map(|w| w[0].distance(w[1])).sum();
         format!(
-            "{}: {len:.0} m found down a fall of {fall:.1} m, {width} m wide{}",
+            "{}: {len:.0} m found down a fall of {fall:.1} m, {width} m wide{}{}",
             self.name,
             if cut_branches == 0 {
                 String::new()
             } else {
                 format!("; {cut_branches} distributaries ({})", names.join(", "))
             },
+            if weeded > 0 { format!("; {weeded} m2 of {}", self.weed.as_ref().map_or("", |w| w.mat.as_str())) } else { String::new() },
             width = self.width,
         )
     }
+}
+
+/// Lay the patches of a second bed over the trunk's bed from its head to
+/// `until` of its length, in noise blobs a few metres across; the cells
+/// changed.
+fn weed(cx: &mut EventCtx, w: &Weed, trunk: &[Vec2], width: f32, bed: u8) -> usize {
+    let mat = cx.mat(&w.mat);
+    let total: f32 = trunk.windows(2).map(|p| p[0].distance(p[1])).sum();
+    let stop = total * w.until.clamp(0.0, 1.0);
+    let cut = 1.0 - 2.0 * w.share.clamp(0.0, 1.0);
+    let seed = cx.seed ^ 0x3ee1;
+    let r = (width * 0.5 + 1.0).ceil() as i32;
+    let f = &mut cx.f;
+    let mut n = 0;
+    let mut run = 0.0;
+    for p in trunk.windows(2) {
+        if run > stop {
+            break;
+        }
+        run += p[0].distance(p[1]);
+        for dz in -r..=r {
+            for dx in -r..=r {
+                let (x, z) = (p[0].x + dx as f32, p[0].y + dz as f32);
+                if x < 0.0 || z < 0.0 || x >= f.size || z >= f.size {
+                    continue;
+                }
+                let i = f.idx(x, z);
+                if f.surface[i] == bed && crate::world::noise::perlin2(x * 0.15, z * 0.15, seed) > cut {
+                    f.surface[i] = mat;
+                    n += 1;
+                }
+            }
+        }
+    }
+    n
 }
 
 /// Carve a channel and register it, so the water settles into it after the

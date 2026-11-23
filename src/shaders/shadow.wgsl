@@ -35,7 +35,8 @@ struct ShadowEntityOut {
 fn vs_shadow_entity(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -> ShadowEntityOut {
     var out: ShadowEntityOut;
     let q = equads[vi / 6u];
-    let qv = decode_quad(q, vi % 6u);
+    let k = quad_vertex_corner(q, vi % 6u);
+    let qv = decode_corner(q, k);
     let inst = einst[ii];
     // shift.w 2: drawn but casting nothing (the first-person cut of the
     // player's body; ride.rs `stand_in` casts the whole one instead).
@@ -45,12 +46,7 @@ fn vs_shadow_entity(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii:
         out.pos = vec4<f32>(0.0, 0.0, -2.0, 1.0);
         return out;
     }
-    let s = inst.info.x;
-    let r = qrot(inst.rot, (qv.local - inst.info.yzw) * s);
-    let l = r + flesh_offset(r, inst.flesh);
-    let c = cos(inst.pos_yaw.w);
-    let sn = sin(inst.pos_yaw.w);
-    let world = inst.pos_yaw.xyz + vec3<f32>(l.x * c + l.z * sn, l.y, -l.x * sn + l.z * c);
+    let world = entity_world(q, k, qv.local, inst);
     out.pos = cascade.light_view_proj * vec4<f32>(world, 1.0);
     return out;
 }

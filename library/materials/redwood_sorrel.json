@@ -1,0 +1,16 @@
+{
+  "name": "redwood_sorrel",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Redwood sorrel (drawn as sprites): a carpet of bright clover-like leaves on the redwood floor.",
+  "smooth": false,
+  "sprites": "heather",
+  "texture": {
+    "pattern": "blotch",
+    "base": [92, 150, 60],
+    "alt": [116, 170, 74],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [99, 160, 66], "alt": [124, 180, 80]}
+  }
+}

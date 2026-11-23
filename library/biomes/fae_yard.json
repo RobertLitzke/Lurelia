@@ -43,18 +43,18 @@
     }
   ],
   "creatures": [
-    {"creature": "deer", "count": 6},
-    {"creature": "mossback_deer", "count": 5},
-    {"creature": "rabbit", "count": 12},
-    {"creature": "fox", "count": 4, "morph": {"red": 3, "silver": 1}},
+    {"creature": "deer", "count": 6.6},
+    {"creature": "mossback_deer", "count": 5.5},
+    {"creature": "rabbit", "count": 13.2},
+    {"creature": "fox", "count": 4.4, "morph": {"red": 3, "silver": 1}},
     {"creature": "sparrow", "count": 14},
     {"creature": "dusk_wren", "count": 16},
     {"creature": "starling", "count": 50},
     {"creature": "crow", "count": 3},
-    {"creature": "glassmoth", "morph": "lantern", "count": 50},
+    {"creature": "glassmoth", "morph": "lantern", "count": 55},
     {"creature": "heron", "count": 2},
     {"creature": "eagle", "count": 1},
-    {"creature": "bumblebee", "count": 4},
+    {"creature": "bumblebee", "count": 4.4},
     {"creature": "woodpecker", "count": 1}
   ],
   "like": "city_yard"

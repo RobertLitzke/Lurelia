@@ -16,6 +16,7 @@ pub mod occlusion;
 pub mod overlay;
 pub mod particles;
 pub mod plates;
+pub mod polish;
 pub mod recipes;
 pub mod shaders;
 pub mod signs;
@@ -276,7 +277,8 @@ pub struct Globals {
     /// (shallow, deep); w = 1 where set. The mist map's b and a hold each
     /// alternate's share.
     water: [[f32; 4]; 6],
-    /// x = how many lamps are in the lamp buffer this frame (render/lamps.rs).
+    /// x = how many lamps are in the lamp buffer this frame (render/lamps.rs);
+    /// y = 1 while the polish map has marks (polish.rs).
     lamps: [f32; 4],
     /// The weather (world/weather.rs `Sky::uniform`): x = cloud cover added
     /// to the deck, y = rain, z = snow, w = the wind's multiplier.
@@ -424,6 +426,8 @@ pub struct FrameParams<'a> {
     pub highlight: Option<(Vec3, Vec3)>,
     /// Lines a mode draws into the world this frame (overlay.rs).
     pub overlay: &'a overlay::Overlay,
+    /// A race's polished racing line, every mark so far (polish.rs).
+    pub polish: &'a polish::Marks,
     /// Sign boards and lettering near the camera (plates.rs).
     pub plates: &'a plates::Plates,
     /// Prints and trampled grass (creatures/sign.rs, signs.rs).
@@ -504,6 +508,9 @@ pub struct FrameStats {
     pub chunks_visible: u32,
     /// Grass, flower and leaf sprites drawn (see foliage.rs).
     pub sprites: u64,
+    /// Creature and other entity models drawn, and their quads in total.
+    pub entities: u32,
+    pub entity_quads: u64,
     pub cpu_ms: f32,
     /// Of `cpu_ms`, the time spent deciding what to draw: the walk over the
     /// loaded chunks and the sort (render/drawlist.rs).
@@ -848,8 +855,15 @@ pub struct Renderer {
     palette_buf: wgpu::Buffer,
     mist_tex: wgpu::Texture,
     horizon_tex: wgpu::Texture,
+    /// The polish map, which race its marks are of, and how many are sent.
+    polish_tex: wgpu::Texture,
+    polish_race: u32,
+    polish_sent: usize,
     mist_base: Vec<f32>,
     water: [[f32; 4]; 6],
+    /// Each biome water colour's share per cell (Generator::water_grid), and
+    /// cells across: what colours the water round a swimmer.
+    water_shares: (Vec<[f32; 2]>, usize),
     /// True once a world with misty biomes has set the mist map.
     mist_any: bool,
     air: daylight::Air,
@@ -995,6 +1009,8 @@ struct SceneRes<'a> {
     plates: &'a wgpu::Buffer,
     font_atlas: &'a wgpu::TextureView,
     font_samp: &'a wgpu::Sampler,
+    /// A race's polished line (polish.rs).
+    polish: &'a wgpu::TextureView,
 }
 
 fn scene_bind_group(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, r: &SceneRes) -> wgpu::BindGroup {
@@ -1086,11 +1102,39 @@ fn scene_bind_group(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, r: &S
                 binding: 20,
                 resource: r.sprays.as_entire_binding(),
             },
+            wgpu::BindGroupEntry {
+                binding: 21,
+                resource: wgpu::BindingResource::TextureView(r.polish),
+            },
         ],
     })
 }
 
 /// The block texture array, one layer per `matlib::layer_count`.
+/// The colour of the water round a swimmer, shallow and deep, in a world
+/// that sets none (world.json `water`). The shaders have them from the
+/// prelude (shaders.rs) as `uw_shallow` and `uw_deep`'s fallbacks.
+pub const WATER_SHALLOW: [f32; 3] = [0.10, 0.42, 0.42];
+pub const WATER_DEEP: [f32; 3] = [0.02, 0.09, 0.15];
+
+/// A blank polish map `side` texels square (polish.rs).
+fn polish_texture(device: &wgpu::Device, side: u32) -> wgpu::Texture {
+    device.create_texture(&wgpu::TextureDescriptor {
+        label: Some("polish"),
+        size: wgpu::Extent3d {
+            width: side,
+            height: side,
+            depth_or_array_layers: 1,
+        },
+        mip_level_count: 1,
+        sample_count: 1,
+        dimension: wgpu::TextureDimension::D2,
+        format: wgpu::TextureFormat::Rgba8Unorm,
+        usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+        view_formats: &[],
+    })
+}
+
 fn make_blocks(device: &wgpu::Device, layers: u32) -> wgpu::Texture {
     device.create_texture(&wgpu::TextureDescriptor {
         label: Some("blocks"),
@@ -1377,6 +1421,10 @@ impl Renderer {
             view_formats: &[],
         });
         let mist_view = mist_tex.create_view(&Default::default());
+        // A race's polished line (polish.rs): one blank texel until a race
+        // lays some (`upload_polish`).
+        let polish_tex = polish_texture(&device, 1);
+        let polish_view = polish_tex.create_view(&Default::default());
 
         // The land's skyline per compass direction, and how much sky each
         // cell of the world can see (horizon.rs). Baked in set_world; until
@@ -1561,6 +1609,7 @@ impl Renderer {
                 bgl_entry(18, tex_ty(Dim::D2Array, true)),
                 bgl_entry(19, storage_ro()),
                 bgl_entry(20, storage_ro()),
+                bgl_entry(21, tex_ty(Dim::D2, true)),
             ],
         });
         let shadow_in_bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -1700,6 +1749,7 @@ impl Renderer {
                 font_samp: &mip_samp,
                 grade_strip: &grade_tex.create_view(&Default::default()),
                 grade: &grade_buf,
+                polish: &polish_view,
             },
         );
         let shadow_in_bg = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -1954,8 +2004,12 @@ impl Renderer {
             prof: if gpu.timestamps { Some(gpuprof::GpuProf::new(&device, &queue)) } else { None },
             mist_tex,
             horizon_tex,
+            polish_tex,
+            polish_race: u32::MAX,
+            polish_sent: 0,
             mist_base,
             water: [[0.0; 4]; 6],
+            water_shares: (Vec::new(), 0),
             mist_any: false,
             air: daylight::apply(look(Style::Classic), &Sun::default(), crate::world::clock::START).2,
             looks: [look(Style::Classic), look(Style::Saturated)],
@@ -2287,6 +2341,8 @@ impl Renderer {
     /// of the last world is dropped; call set_tide, set_surf, set_mist and
     /// set_models after.
     pub fn set_world(&mut self, heights: &[f32], shore: &[[f32; 3]], world_size: f32, sea_level: f32) {
+        // The last world's polish goes at the next frame.
+        self.polish_race = u32::MAX;
         let n = HEIGHTS_N;
         assert_eq!(heights.len(), (n * n) as usize, "heightmap must be HEIGHTS_N square");
         let texels: Vec<f32> = heights
@@ -2468,9 +2524,43 @@ impl Renderer {
         self.under = [u.visibility.max(1.0), u.light.max(0.0)];
     }
 
+    /// The water colours with the world's own leaned toward the biome
+    /// colours the water at `cam` takes (a grotto's pool), for a swimmer:
+    /// the colour round them is drawn from the world's pair.
+    fn water_round(&self, cam: Vec3) -> [[f32; 4]; 6] {
+        let mut w = self.water;
+        let (shares, n) = (&self.water_shares.0, self.water_shares.1);
+        if n == 0 || self.world_size <= 0.0 {
+            return w;
+        }
+        let cell = |v: f32| ((v / self.world_size * n as f32) as i32).clamp(0, n as i32 - 1) as usize;
+        let Some(s) = shares.get(cell(cam.z) * n + cell(cam.x)) else {
+            return w;
+        };
+        // The engine's own colours where the world sets none.
+        let own = |c: [f32; 3]| [c[0], c[1], c[2], 1.0];
+        let mut sh = if w[0][3] > 0.5 { w[0] } else { own(WATER_SHALLOW) };
+        let mut dp = if w[1][3] > 0.5 { w[1] } else { own(WATER_DEEP) };
+        for (k, share) in s.iter().enumerate() {
+            let (a, b) = (w[2 + k * 2], w[3 + k * 2]);
+            if a[3] > 0.5 && *share > 0.0 {
+                for c in 0..3 {
+                    sh[c] += (a[c] - sh[c]) * share;
+                    dp[c] += (b[c] - dp[c]) * share;
+                }
+            }
+        }
+        sh[3] = 1.0;
+        dp[3] = 1.0;
+        w[0] = sh;
+        w[1] = dp;
+        w
+    }
+
     pub fn set_mist(&mut self, mist: &[f32], n: usize, water: ([[f32; 4]; 6], Vec<[f32; 2]>)) {
         self.water = water.0;
         let shares = water.1;
+        self.water_shares = (shares.clone(), n);
         let m = MIST_N as usize;
         let mut px = vec![0u16; m * m * 4];
         for z in 0..m {
@@ -2522,7 +2612,7 @@ impl Renderer {
     }
 
     /// Make the scene bind group again, after one of the resources in it
-    /// was replaced (the block array, the palette).
+    /// was replaced (the block array, the palette, the polish map).
     fn rebuild_scene_bg(&mut self) {
         {
             let blocks = blocks_view(&self.blocks);
@@ -2557,9 +2647,58 @@ impl Renderer {
                     font_samp: &self.font_samp,
                     grade_strip: &self.grade_tex.create_view(&Default::default()),
                     grade: &self.tl.grade_buf,
+                    polish: &self.polish_tex.create_view(&Default::default()),
                 },
             );
         }
+    }
+
+    /// Send the GPU the polish marks it hasn't had (polish.rs): all of them
+    /// over a blank map when a new race (or a new world) started. The map
+    /// is one blank texel until there is a mark to draw, and then a texel
+    /// to the metre of this world (`polish::side`).
+    fn upload_polish(&mut self, m: &polish::Marks) {
+        if m.race != self.polish_race || m.marks.len() < self.polish_sent {
+            self.polish_race = m.race;
+            self.polish_sent = 0;
+            if self.polish_tex.width() != 1 {
+                self.polish_tex = polish_texture(&self.device, 1);
+                self.rebuild_scene_bg();
+            }
+        }
+        if self.polish_sent == m.marks.len() {
+            return;
+        }
+        let side = polish::side(self.world_size, self.device.limits().max_texture_dimension_2d);
+        if self.polish_tex.width() != side {
+            self.polish_tex = polish_texture(&self.device, side);
+            self.rebuild_scene_bg();
+        }
+        for mark in &m.marks[self.polish_sent..] {
+            let Some(([x0, x1], [z0, z1])) = polish::texels(mark, self.world_size, side) else { continue };
+            let (w, h) = (x1 - x0, z1 - z0);
+            let px: Vec<u8> = std::iter::repeat_n(polish::texel(mark), (w * h) as usize).flatten().collect();
+            self.queue.write_texture(
+                wgpu::TexelCopyTextureInfo {
+                    texture: &self.polish_tex,
+                    mip_level: 0,
+                    origin: wgpu::Origin3d { x: x0, y: z0, z: 0 },
+                    aspect: wgpu::TextureAspect::All,
+                },
+                &px,
+                wgpu::TexelCopyBufferLayout {
+                    offset: 0,
+                    bytes_per_row: Some(w * 4),
+                    rows_per_image: Some(h),
+                },
+                wgpu::Extent3d {
+                    width: w,
+                    height: h,
+                    depth_or_array_layers: 1,
+                },
+            );
+        }
+        self.polish_sent = m.marks.len();
     }
 
     /// Upload the entity palette alone: the fixed block and every model's
@@ -2608,6 +2747,7 @@ impl Renderer {
         let mut stats = FrameStats::default();
         let view_proj = p.proj * p.view;
         let shadows = p.shadows;
+        self.upload_polish(p.polish);
         if crate::world::matlib::generation() != self.mat_gen {
             self.mat_gen = crate::world::matlib::generation();
             self.queue.write_buffer(&self.mat_buf, 0, bytemuck::cast_slice(&material_rows()));
@@ -3097,8 +3237,10 @@ impl Renderer {
             mist: [self.air.mist_scale, self.air.mist_floor, MIST_HEIGHT, if self.mist_any { 1.0 } else { 0.0 }],
             shadow_layers,
             shadow_blend: [blend[0], blend[1], 0.0, 0.0],
-            water: self.water,
-            lamps: [self.lamp_n as f32, 0.0, 0.0, 0.0],
+            water: if p.underwater { self.water_round(p.cam_pos) } else { self.water },
+            // y: the polish map has marks (`upload_polish` makes it wider
+            // than its one blank texel for the first of them).
+            lamps: [self.lamp_n as f32, if self.polish_tex.width() > 1 { 1.0 } else { 0.0 }, 0.0, 0.0],
             weather: p.sky.uniform(),
             season: p.season.uniform(),
             aurora: au,
@@ -3129,6 +3271,8 @@ impl Renderer {
                 _ => runs.push((*m, i as u32, 1, glass)),
             }
         }
+        stats.entities = n_inst as u32;
+        stats.entity_quads = runs.iter().map(|&(m, _, n, _)| self.models.get(m).map_or(0, |r| r.count as u64) * n as u64).sum();
 
         // HUD.
         let n_hud = self.upload_hud(hud);

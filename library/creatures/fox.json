@@ -1,6 +1,6 @@
 {
   "name": "fox",
-  "version": 3,
+  "version": 4,
   "introduced_by": "base",
   "notes": "Red fox; hunts rabbits.",
   "voxel": 0.05,
@@ -50,6 +50,7 @@
     {"op": "ellipsoid", "centre": [16, 10, 29.5], "radius": [1.6, 1.6, 1.8], "mat": "white", "part": "tail"}
   ],
   "rig": {
+    "slope": true,
     "plan": "quadruped",
     "bones": [
       {"name": "body", "role": "root"},

@@ -19,6 +19,9 @@ pub enum Handling {
     /// Grip that peaks and slides: the buggy, an ATV.
     #[default]
     Slip,
+    /// The four tyres as one, with grip near total: steering asks for a
+    /// yaw rate and gets it up to what the grip allows (kart.rs).
+    Kart,
 }
 
 /// How the keys and mouse steer.
@@ -56,7 +59,7 @@ pub struct Spec {
     pub _notes: String,
     pub handling: Handling,
     pub steering: Steering,
-    /// The drawn model (draw.rs): "sand_rail" or "beach_buggy".
+    /// The drawn model (draw.rs): "sand_rail", "beach_buggy", "kart" or "atv".
     pub model: String,
 
     // The body.
@@ -80,6 +83,10 @@ pub struct Spec {
     pub tyre_width: f32,
     /// Wheel travel, metres.
     pub travel: f32,
+    /// The most the ground under a wheel may rise in a step beyond the slope
+    /// it was on, metres: more is a kerb or a wall the tyre meets, not ground
+    /// it rolls onto. 0 lets a wheel climb voxel steps, as the buggy's do.
+    pub climb: f32,
     /// Ride frequency front and rear, Hz.
     pub freq_front: f32,
     pub freq_rear: f32,
@@ -101,7 +108,9 @@ pub struct Spec {
     /// nose held about `drift_angle` degrees into the turn. Every
     /// `drift_charge` seconds of drift is a tier of boost, up to two, each
     /// `drift_boost` m/s on letting go. 0 boost is no drift: Space hops as
-    /// on any car.
+    /// on any car. On `handling: kart` the drift turns the kart's path with
+    /// up to `drift_grip` of its grip (more than 1 turns tighter than the
+    /// steering can), and charges fastest steered into the turn.
     pub drift_charge: f32,
     pub drift_boost: f32,
     pub drift_angle: f32,
@@ -146,6 +155,13 @@ pub struct Spec {
     pub yaw_damp: f32,
     /// Down-force with three or more wheels down, N per (m/s)².
     pub downforce: f32,
+    /// Extra gravity, m/s², for the first half-second off the ground while
+    /// the ground is close under the wheels: a kerb or a crest is a hop, not
+    /// a flight, as kart games keep their karts on the road.
+    pub stick: f32,
+    /// Off the throttle, the rolling and air drag times this: above 1, the
+    /// car loses its speed faster when let roll, as an engine braking does.
+    pub coast: f32,
     /// Air control: pitch and roll acceleration from the keys, rad/s², and
     /// the damping on both, per second.
     pub air_pitch: f32,
@@ -153,6 +169,11 @@ pub struct Spec {
     pub air_damp: f32,
     /// How hard the body is turned toward the ground it will land on.
     pub air_level: f32,
+    /// Degrees nose-up that the air pull aims for over the ground below,
+    /// so the rear wheels land a moment before the front (the ATV). When
+    /// it is set the pull holds through the W/S keys, which add to it, and
+    /// with no ground in reach the car is turned toward level plus this.
+    pub air_tilt: f32,
     /// The hop: upward speed for a quick tap and for a fully loaded one, m/s.
     pub hop: f32,
     pub hop_loaded: f32,
@@ -167,6 +188,10 @@ pub struct Spec {
 
     /// Chassis collision spheres, [x, y, z, radius] in the body frame.
     pub collide: Vec<[f32; 4]>,
+    /// The footprint other karts meet (vehicle/touch.rs), width and length,
+    /// metres, where the body is bigger than its wheels; None takes it from
+    /// the wheelbase, track and tyres.
+    pub bump_box: Option<[f32; 2]>,
     /// The driver's eye in the body frame.
     pub eye: [f32; 3],
     /// Chase camera distance and height.
@@ -199,6 +224,7 @@ impl Default for Spec {
             wheel_radius: 0.38,
             tyre_width: 0.3,
             travel: 0.45,
+            climb: 0.0,
             freq_front: 1.6,
             freq_rear: 1.8,
             damp_bump: 0.3,
@@ -229,16 +255,20 @@ impl Default for Spec {
             steer_rate: 160.0,
             yaw_damp: 1.5,
             downforce: 0.6,
+            stick: 0.0,
+            coast: 1.0,
             air_pitch: 4.0,
             air_roll: 4.0,
             air_damp: 1.5,
             air_level: 1.2,
+            air_tilt: 0.0,
             hop: 2.6,
             hop_loaded: 5.0,
             clean_impact: 4.5,
             clean_kick: 1.5,
             visual_roll: 0.06,
             visual_pitch: 0.04,
+            bump_box: None,
             collide: vec![
                 // The ground sits 0.33 m under the centre of mass at rest,
                 // so the belly is above it: the mass is carried lower than

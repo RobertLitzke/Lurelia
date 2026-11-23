@@ -40,7 +40,9 @@
       "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.4, "max": 0.6}}
     },
     {"plant": "shelf_fungus", "density": 0.1},
-    {"plant": "tree_moss", "density": 0.4}
+    {"plant": "tree_moss", "density": 0.4},
+    {"plant": "strangler_fig", "density": 0.0002, "placement": {"verb": "lone", "params": {"spacing": 30}}},
+    {"plant": "liana", "density": 0.15, "placement": {"verb": "scatter", "params": {}}}
   ],
   "features": [
     {"structure": "shrine_ruin", "density": 0.0002, "placement": {"verb": "lone", "params": {"spacing": 110}}},
@@ -48,21 +50,21 @@
     {"structure": "stone_lantern", "density": 0.0003, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "boar", "count": 8},
-    {"creature": "deer", "count": 8},
+    {"creature": "boar", "count": 8.8},
+    {"creature": "deer", "count": 8.8},
     {"creature": "sparrow", "count": 14},
     {"creature": "pileated_woodpecker", "count": 3},
-    {"creature": "kite_ray", "count": 6},
+    {"creature": "kite_ray", "count": 6.6},
     {"creature": "glossy_starling", "count": 20},
-    {"creature": "jaguar", "count": 1},
-    {"creature": "water_buffalo", "count": 3},
-    {"creature": "macaque", "count": 6},
-    {"creature": "otter", "count": 1},
-    {"creature": "elephant", "count": 2},
-    {"creature": "fruit_bat", "count": 5},
-    {"creature": "green_tree_snake", "count": 4},
+    {"creature": "jaguar", "count": 2.2},
+    {"creature": "water_buffalo", "count": 3.3},
+    {"creature": "macaque", "count": 6.6},
+    {"creature": "otter", "count": 1.1},
+    {"creature": "elephant", "count": 2.2},
+    {"creature": "fruit_bat", "count": 5.5},
+    {"creature": "green_tree_snake", "count": 4.4},
     {"creature": "kingfisher", "count": 2},
-    {"creature": "tiger", "count": 1}
+    {"creature": "tiger", "count": 1.1}
   ],
   "sound": {"wind": 0.55, "leaves": 1.2, "notes": "Big loose leaves under a closed canopy."},
   "mist": 0.25

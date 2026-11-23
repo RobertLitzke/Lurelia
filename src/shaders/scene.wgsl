@@ -1,5 +1,9 @@
 // Main pass: sky, terrain, entities, water and the highlight box.
 
+// A race's polished racing line (render/polish.rs): r how much darker the
+// ground facing up is, g and b the road's height there in quarter metres.
+@group(0) @binding(21) var polishmap: texture_2d<f32>;
+
 @group(1) @binding(0) var shadow_map: texture_depth_2d_array;
 @group(1) @binding(1) var shadow_samp: sampler_comparison;
 
@@ -957,6 +961,25 @@ fn fs_terrain(in: TerrainOut) -> @location(0) vec4<f32> {
     } else if ((m.w & (M_UNDERSTORY | M_CALM_MEADOW)) != 0u) {
         albedo = strawed(albedo);
     }
+    // A race's polished line: darker where more karts have been, on ground
+    // facing up within reach of the road it was laid on, so a bridge and the
+    // road under it keep their own. `g.lamps.y` is 1 while the map has a
+    // mark in it, so a world with no race never reads the map.
+    if (g.lamps.y > 0.5 && n_light.y > 0.6) {
+        let pdim = vec2<i32>(textureDimensions(polishmap));
+        // Texels a metre, as `polish::texels` has it: 1 when the map is a
+        // texel to the metre, so a tile's edge is a texel's edge exactly.
+        let pc = vec2<i32>(floor(in.world.xz * (vec2<f32>(pdim) / g.fog.w)));
+        if (all(pc >= vec2<i32>(0)) && all(pc < pdim)) {
+            let pm = textureLoad(polishmap, pc, 0);
+            if (pm.r > 0.0) {
+                let ph = (round(pm.g * 255.0) * 256.0 + round(pm.b * 255.0)) * 0.25;
+                if (abs(in.world.y - ph) < 1.2) {
+                    albedo *= 1.0 - pm.r;
+                }
+            }
+        }
+    }
     // What the weather has left (world/damp.rs): wet ground goes dark, and
     // standing water lies on level bare ground. Plants and leaves darken
     // less and never hold a puddle.
@@ -1021,24 +1044,35 @@ struct EntityOut {
     @location(5) @interpolate(flat) inst: u32,
 };
 
-fn entity_transform(qv: QuadVert, inst: EntityInst) -> mat2x3<f32> {
-    let s = inst.info.x;
-    let r = qrot(inst.rot, (qv.local - inst.info.yzw) * s);
-    let l = r + flesh_offset(r, inst.flesh);
+fn entity_transform(q: vec4<u32>, k: u32, qv: QuadVert, inst: EntityInst) -> mat2x3<f32> {
+    let world = entity_world(q, k, qv.local, inst);
     let c = cos(inst.pos_yaw.w);
     let sn = sin(inst.pos_yaw.w);
-    let world = inst.pos_yaw.xyz + vec3<f32>(l.x * c + l.z * sn, l.y, -l.x * sn + l.z * c);
-    let n = qrot(inst.rot, qv.normal);
-    let nr = vec3<f32>(n.x * c + n.z * sn, n.y, -n.x * sn + n.z * c);
+    var n = qrot(inst.rot, qv.normal);
+    var nr = vec3<f32>(n.x * c + n.z * sn, n.y, -n.x * sn + n.z * c);
+    // A sloped creature part's face (rounded, not a tube: anim/slope.rs) is
+    // lit by its diagonals as drawn, stretched and all, not by the square
+    // face it was cut from.
+    if (qv.rounded == 1u && ((q.x >> Q_TUBE_BIT) & 1u) == 0u) {
+        let c0 = entity_world(q, 0u, decode_corner(q, 0u).local, inst);
+        let c1 = entity_world(q, 1u, decode_corner(q, 1u).local, inst);
+        let c2 = entity_world(q, 2u, decode_corner(q, 2u).local, inst);
+        let c3 = entity_world(q, 3u, decode_corner(q, 3u).local, inst);
+        let pn = cross(c2 - c0, c3 - c1);
+        if (dot(pn, pn) > 1e-12) {
+            nr = normalize(pn);
+        }
+    }
     return mat2x3<f32>(world, nr);
 }
 
 @vertex
 fn vs_entity(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -> EntityOut {
     let q = equads[vi / 6u];
-    let qv = decode_quad(q, vi % 6u);
+    let k = quad_vertex_corner(q, vi % 6u);
+    let qv = decode_corner(q, k);
     let inst = einst[ii];
-    let t = entity_transform(qv, inst);
+    let t = entity_transform(q, k, qv, inst);
     var out: EntityOut;
     out.clip = g.view_proj * vec4<f32>(t[0], 1.0);
     // shift.w 1: a shadow caster only (ride.rs `stand_in`), never seen.
@@ -1435,6 +1469,24 @@ fn vs_water(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) ->
     return out;
 }
 
+// How far this point of the sea is under a roof of land, 0 to 1: the land
+// stands well over it here and a few metres off on all four sides. A cliff's
+// foot, a stack or a narrow inlet has the open sea on at least one side.
+// `centre` is `ground_height(world.xz)`; where the land there is not well
+// over the water the answer is 0 and the four sides are not read.
+fn sea_cave(world: vec3<f32>, centre: f32) -> f32 {
+    if (centre - world.y <= 1.5) {
+        return 0.0;
+    }
+    let r = 3.5;
+    var lo = centre;
+    lo = min(lo, ground_height(world.xz + vec2<f32>(r, 0.0)));
+    lo = min(lo, ground_height(world.xz - vec2<f32>(r, 0.0)));
+    lo = min(lo, ground_height(world.xz + vec2<f32>(0.0, r)));
+    lo = min(lo, ground_height(world.xz - vec2<f32>(0.0, r)));
+    return smoothstep(1.5, 4.0, lo - world.y);
+}
+
 fn ground_height(xz: vec2<f32>) -> f32 {
     let size = g.fog.w;
     let dims = vec2<f32>(textureDimensions(heightmap));
@@ -1502,45 +1554,6 @@ fn surf_at(xz: vec2<f32>, t: f32, sh: vec2<f32>) -> vec2<f32> {
 // Vertices along a side of the open sea's mesh with a swell (render
 // SEA_GRID, the same).
 const SEA_GRID: u32 = 192u;
-
-// The swell at `xz` (world/surf.rs `swell`, the same): x = how far it lifts
-// the sea, yz = its slope (d/dx, d/dz). A few long waves running in from the
-// open sea, gone in shallow water and in sheltered water (`open`, from
-// `shore_at`); a wave shorter than a few `spacing`s (the mesh's, or a
-// pixel's) is left out, not aliased.
-fn swell(xz: vec2<f32>, t: f32, depth: f32, spacing: f32, open: f32) -> vec3<f32> {
-    // Most of the mesh is too coarse to hold even the longest wave: nothing
-    // to read there.
-    if (spacing >= g.swell.w * 0.25) {
-        return vec3<f32>(0.0);
-    }
-    let a = g.swell.z * 0.5 * clamp(g.weather.w, 0.5, 2.0) * open * smoothstep(0.4, 4.0, depth);
-    if (a <= 0.0) {
-        return vec3<f32>(0.0);
-    }
-    var ls = array<f32, 3>(1.0, 0.63, 0.41);
-    var turn = array<f32, 3>(0.0, 0.47, -0.66);
-    var share = array<f32, 3>(0.5, 0.3, 0.2);
-    var y = 0.0;
-    var slope = vec2<f32>(0.0);
-    for (var i = 0; i < 3; i++) {
-        let len = g.swell.w * ls[i];
-        let keep = 1.0 - smoothstep(len * 0.12, len * 0.25, spacing);
-        if (keep <= 0.0) {
-            continue;
-        }
-        let k = 6.2831853 / len;
-        let w = sqrt(9.81 * k);
-        let sn = sin(turn[i]);
-        let cs = cos(turn[i]);
-        let d = vec2<f32>(g.swell.x * cs - g.swell.y * sn, g.swell.x * sn + g.swell.y * cs);
-        let phase = k * dot(d, xz) - w * t + f32(i) * 1.7;
-        let amp = a * share[i] * keep;
-        y += amp * cos(phase);
-        slope -= d * (amp * k * sin(phase));
-    }
-    return vec3<f32>(y, slope);
-}
 
 // Lacy foam: the noise's ridges, broken up, drifting in with the swell
 // (which runs toward the land).
@@ -1650,6 +1663,14 @@ fn fs_water(in: WaterOut, @builtin(front_facing) front: bool) -> @location(0) ve
         let tilt = clamp((n.x * 0.8 + n.z * 0.6) * 5.0, -1.0, 1.0);
         let mirror = underwater_color() * (0.8 + 0.35 * tilt) + uw_shallow() * 0.25 * pow(rip, 4.0);
         var c = mix(mirror, sky * mix(uw_shallow(), vec3<f32>(1.0), 0.6) * (0.78 + 0.6 * pow(rip, 5.0)), window) + uw_shallow() * rim;
+        // Under a roof the window shows the dark rock over the water.
+        var cv = 0.0;
+        if (!river) {
+            cv = sea_cave(in.world, ground_height(in.world.xz));
+        }
+        if (cv > 0.0) {
+            c = mix(c, mirror * 0.5 + lamp_light(in.world, vec3<f32>(0.0, -1.0, 0.0)) * 0.2, cv);
+        }
         // Froth floating on top: lit from above, so pale from below too.
         let froth = select(surface_froth(in.world.xz, t), 0.0, river);
         let lit = g.sun_color.rgb * g.sun_color.w * 0.35 + g.sky_ambient.rgb * 0.5;
@@ -1657,7 +1678,17 @@ fn fs_water(in: WaterOut, @builtin(front_facing) front: bool) -> @location(0) ve
         return vec4<f32>(apply_fog(c, in.world), max(mix(0.95, 0.85, window), froth));
     }
     let top = select(g.fog.y, g.tide.z, in.basin == 1u);
-    let depth = select(max(top - ground_height(in.world.xz), 0.0), max(in.world.y - in.river.x, 0.0), river);
+    let ground = ground_height(in.world.xz);
+    var depth = select(max(top - ground, 0.0), max(in.world.y - in.river.x, 0.0), river);
+    // The sea in a cave (a passage carved under the land): the height map
+    // holds the land over it, so it reads as a film over the shore, white
+    // with foam and mirroring the sky. Land high over it on every side is a
+    // roof, where a cliff's foot has the open sea on one side.
+    var cave = 0.0;
+    if (!river) {
+        cave = sea_cave(in.world, ground);
+    }
+    depth = max(depth, cave * 3.0);
     // Surf (world/surf.rs): the swell shows as moving bands of slope that
     // steepen over the shallows; where the water is about as shallow as the
     // wave is high it breaks, white on its face and crest, with foam left
@@ -1699,6 +1730,13 @@ fn fs_water(in: WaterOut, @builtin(front_facing) front: bool) -> @location(0) ve
     if (g.water[1].w > 1.5) {
         refl *= 0.6;
     }
+    // Under a roof it mirrors the dark rock and whatever lamps are near.
+    // Only a cave uses the lamps, so only a cave reads them.
+    var lamps = vec3<f32>(0.0);
+    if (cave > 0.0) {
+        lamps = lamp_light(in.world, vec3<f32>(0.0, 1.0, 0.0));
+    }
+    refl = mix(refl, vec3<f32>(0.035, 0.04, 0.045) + lamps * 0.35, cave);
     var shallow = select(vec3<f32>(0.10, 0.38, 0.36), vec3<f32>(0.10, 0.37, 0.38), calm);
     var deep = select(vec3<f32>(0.015, 0.075, 0.13), vec3<f32>(0.02, 0.09, 0.15), calm);
     // The world's own water colour, and biomes that colour theirs (mist map b, a).
@@ -1720,7 +1758,8 @@ fn fs_water(in: WaterOut, @builtin(front_facing) front: bool) -> @location(0) ve
     // ambient instead of a fixed floor, or a shallow flood glows white
     // under a night sky darker than the water.
     let amb = max(max(g.sky_ambient.r, g.sky_ambient.g), g.sky_ambient.b);
-    let lightk = max(dot(sun, vec3<f32>(0.0, 1.0, 0.0)), 0.0) * g.sun_color.w * 0.45 + clamp(amb * 0.9, 0.05, 0.35);
+    let open_k = max(dot(sun, vec3<f32>(0.0, 1.0, 0.0)), 0.0) * g.sun_color.w * 0.45 + clamp(amb * 0.9, 0.05, 0.35);
+    let lightk = mix(open_k, 0.08 + dot(lamps, vec3<f32>(0.3, 0.5, 0.2)) * 0.6, cave);
     if (river) {
         // River water: clear and a little green over its stones, never the
         // sea's turquoise shallows.
@@ -1728,16 +1767,24 @@ fn fs_water(in: WaterOut, @builtin(front_facing) front: bool) -> @location(0) ve
         deep = mix(deep, vec3<f32>(0.02, 0.06, 0.06), 0.5);
     }
     var body = mix(shallow, deep, 1.0 - exp(-depth * select(0.22, 0.6, river))) * lightk;
-    let spec = pow(max(dot(reflect(view, n), sun), 0.0), 260.0) * g.sun_color.rgb * 6.0;
+    // A cave pool whose biome colours its water glows with that colour, the
+    // way daylight coming in under the rock lights a sea grotto from below;
+    // dim at night.
+    let tinted = max(select(0.0, wm.b, g.water[2].w > 0.5), select(0.0, wm.a, g.water[4].w > 0.5));
+    body = mix(body, shallow * 0.4 * clamp(open_k * 2.0, 0.12, 1.0), cave * tinted);
+    // No sun under a roof: no highlight and no glints.
+    let spec = pow(max(dot(reflect(view, n), sun), 0.0), 260.0) * g.sun_color.rgb * 6.0 * (1.0 - cave);
     var col = mix(body, refl, fres) + spec;
     // No glints on the thin film where the plane runs just over low shore
     // land: only where there is real water under them.
-    let glint = water_glints(in.world.xz, t, view, n, max(0.18, footprint * 2.0)) * smoothstep(0.08, 0.35, depth);
+    let glint = water_glints(in.world.xz, t, view, n, max(0.18, footprint * 2.0)) * smoothstep(0.08, 0.35, depth) * (1.0 - cave);
     col += g.sun_color.rgb * g.sun_color.w * glint * 14.0;
     // Clear enough to see fish a couple of metres down; rivers clearer still.
     var alpha = clamp(1.0 - exp(-depth * select(select(0.75, 0.5, river), 2.6, still)), 0.0, 1.0);
     alpha = max(alpha, min(glint * 4.0, 1.0));
     alpha = max(alpha, fres);
+    // The lit pool is clear: the coral shows through it.
+    alpha = mix(alpha, max(0.5, fres), cave * tinted);
     // Foam along the shore.
     var fn_ = f32(hash3u(vec3<i32>(vec3<f32>(floor(in.world.x * 4.0), 0.0, floor(in.world.z * 4.0)))) & 255u) / 255.0;
     if (calm) {
@@ -1772,7 +1819,7 @@ fn fs_water(in: WaterOut, @builtin(front_facing) front: bool) -> @location(0) ve
             foam_all = max(foam_all, churn * (boil * 0.75 + churn * 0.45));
         }
     }
-    foam_all = max(foam_all, surf_foam);
+    foam_all = max(foam_all, surf_foam * (1.0 - cave));
     col = mix(col, vec3<f32>(0.92, 0.95, 0.96) * lightk * 1.6, foam_all * 0.8);
     alpha = max(alpha, foam_all * 0.85);
     if (in.river.w > 1.5) {

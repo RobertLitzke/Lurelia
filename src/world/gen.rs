@@ -149,6 +149,12 @@ pub struct Tree {
     /// line of voxels and meshed as a smooth tube along their own line
     /// (stamp.rs, mesh/lean.rs), whatever the bark. 0 for none.
     pub sticks: f32,
+    /// How much of its radius the trunk loses from its foot to the crown,
+    /// 0 to 1 (`flora::TRUNK_TAPER` unless the plant sets `trunk_taper`).
+    pub taper: f32,
+    /// Its sticks stay smooth tubes while it is in leaf (plant
+    /// `tube_limbs`); otherwise a tree in leaf hides them in a voxel line.
+    pub tube_limbs: bool,
 }
 
 pub const NO_PLANT: u16 = u16::MAX;
@@ -424,7 +430,11 @@ impl Generator {
     pub fn column(&self, x: f32, z: f32) -> Column {
         if let Some(w) = &self.world {
             let f = &w.f;
-            let ripple = if w.city.is_empty() { 1.0 } else { 1.0 - f.occupied_share(x, z) };
+            // No ripple on a city's streets and lots, or on a race track's
+            // road and kerbs (a kart meets a step over 0.1 m as a kerb).
+            let city = if w.city.is_empty() { 0.0 } else { f.occupied_share(x, z) };
+            let track = if w.circuits.is_empty() { 0.0 } else { f.path_share(x, z) };
+            let ripple = 1.0 - city.max(track);
             let h = f.height(x, z) + fbm2(x * 0.11, z * 0.11, 2, self.seeds[S_DETAIL]) * 0.12 * ripple;
             return Column {
                 h,
@@ -571,6 +581,8 @@ impl Generator {
                     autumn: 0,
                     flower: 0,
                     sticks: 0.0,
+                    taper: crate::world::flora::TRUNK_TAPER,
+                    tube_limbs: false,
                     pos: base,
                     kind,
                     trunk_h,
@@ -602,6 +614,8 @@ impl Generator {
                     autumn: 0,
                     flower: 0,
                     sticks: 0.0,
+                    taper: crate::world::flora::TRUNK_TAPER,
+                    tube_limbs: false,
                     pos: base,
                     kind,
                     trunk_h,
@@ -645,6 +659,8 @@ impl Generator {
                     autumn: 0,
                     flower: 0,
                     sticks: 0.0,
+                    taper: crate::world::flora::TRUNK_TAPER,
+                    tube_limbs: false,
                     pos: base,
                     kind,
                     trunk_h,
@@ -711,7 +727,7 @@ impl Generator {
             let tube = matlib::tubes(t.bark);
             // A deciduous tree in leaf hides its twigs: their thin line of
             // voxels stays, but the tubes wait for the leaves to fall.
-            let hidden = !tube && t.autumn != AIR && t.leaf != AIR;
+            let hidden = !tube && !t.tube_limbs && t.autumn != AIR && t.leaf != AIR;
             for &(a, b, r) in &t.branches {
                 if !tube && (hidden || r >= t.sticks) {
                     continue;
@@ -1353,6 +1369,10 @@ impl Generator {
                                                 m = t.moss;
                                             }
                                         }
+                                    }
+                                    // The tide band, its top edge ragged.
+                                    if t.tide != 0 && rocky && margin < 0.8 && ym < t.tide_top + perlin3(xm * 0.2, ym * 0.1, zm * 0.2, sd[S_STRATA] + 27) * 0.7 {
+                                        m = t.tide;
                                     }
                                     // Irregular cover: broad drifts broken up by a finer,
                                     // up-and-down noise, so it hangs in ragged sheets.
@@ -2328,6 +2348,9 @@ fn draw_structures(w: &super::fields::World, list: &[u32], v: &mut [u8; PAD3], o
         let p = &w.placed[k as usize];
         let s = &w.shapes[p.shape];
         let def = &w.lib.structures[p.def];
+        // A race track's tunnel (tag `bore`) is drawn whole under the
+        // ground: its lining and road replace the rock it is bored through.
+        let bore = def.tags.iter().any(|t| t == "bore");
         let (x0, z0, x1, z1) = p.footprint(&w.shapes);
         let found = def.foundation;
         let age = p.age * w.def.weathering;
@@ -2412,7 +2435,7 @@ fn draw_structures(w: &super::fields::World, list: &[u32], v: &mut [u8; PAD3], o
                     }
                     // Buried by later deposits: leave the ground. A building's
                     // own underground part (below its anchor) is drawn anyway.
-                    if ym < ground - 0.05 && v[i] != AIR && !(def.level && ly < def.anchor[1]) {
+                    if ym < ground - 0.05 && v[i] != AIR && !(def.level && ly < def.anchor[1]) && !bore {
                         continue;
                     }
                     // Decayed, or fallen with what held it up (`standing_map`).

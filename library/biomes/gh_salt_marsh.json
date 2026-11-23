@@ -1,6 +1,6 @@
 {
   "name": "gh_salt_marsh",
-  "version": 1,
+  "version": 2,
   "introduced_by": "gannet",
   "notes": "Salt marsh at the calm south-east corner of Mercy Bay: cordgrass and glasswort on mud the tide covers.",
   "priority": 8,
@@ -14,6 +14,11 @@
     {"plant": "common_reed", "density": 0.02, "placement": {"verb": "clustered", "params": {"size": 14}}}
   ],
   "features": [],
-  "creatures": [{"creature": "heron", "count": 2}, {"creature": "great_egret", "count": 2}, {"creature": "mallard", "count": 6}],
+  "creatures": [
+    {"creature": "heron", "count": 2},
+    {"creature": "great_egret", "count": 2},
+    {"creature": "mallard", "count": 6},
+    {"creature": "snowy_plover", "count": 6}
+  ],
   "collectibles": []
 }

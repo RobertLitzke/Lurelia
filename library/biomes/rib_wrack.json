@@ -1,6 +1,6 @@
 {
   "name": "rib_wrack",
-  "version": 1,
+  "version": 2,
   "introduced_by": "ribshore",
   "notes": "The wrack line at the dune foot: dry sand, driftwood thrown up by the storms, and the last of the dunegrass.",
   "priority": 5,
@@ -48,12 +48,12 @@
     {"creature": "gull", "count": 4},
     {"creature": "raven", "count": 2},
     {"creature": "crow", "count": 2},
-    {"creature": "walrus", "count": 6},
-    {"creature": "bone_crab", "count": 2},
+    {"creature": "walrus", "count": 6.6},
+    {"creature": "bone_crab", "count": 2.2},
     {"creature": "black_oystercatcher", "count": 3},
     {"creature": "eagle", "count": 1},
     {"creature": "sanderling", "count": 12},
-    {"creature": "snowy_plover", "count": 10},
+    {"creature": "snowy_plover", "count": 18},
     {"creature": "annas_hummingbird", "count": 2}
   ],
   "collectibles": [{"item": "seashell", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}]

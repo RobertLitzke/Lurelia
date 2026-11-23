@@ -1,0 +1,16 @@
+{
+  "name": "holly_leaves",
+  "version": 1,
+  "introduced_by": "hemlow",
+  "notes": "Holly: stiff, glossy, very dark green leaves with spined edges.",
+  "smooth": false,
+  "sprites": {"rule": "leaves", "shape": "pointed"},
+  "texture": {
+    "pattern": "blotch",
+    "base": [24, 58, 34],
+    "alt": [40, 80, 46],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [28, 64, 39], "alt": [45, 87, 51]}
+  }
+}

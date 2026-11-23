@@ -124,6 +124,15 @@ fn veg_tint(albedo: vec3<f32>, mat: u32, world: vec3<f32>) -> vec3<f32> {
 // GRASS_FADE, LEAF_FADE and FILL_FADE (the distances over which each kind
 // shrinks away) come from the prelude, set in render/foliage.rs.
 
+// The level a kelp canopy floats at, at `xz`: a hand under the sea as it
+// stands now (`fog.y`, which the tide moves), and down into each trough of
+// the swell as it passes (scene.wgsl draws the sea with the same `swell`),
+// but not up onto the crests, so the waves pass over the canopy instead of
+// cutting through it, near or far.
+fn kelp_top(xz: vec2<f32>) -> f32 {
+    return g.fog.y - 0.06 + min(swell(xz, g.cam_pos.w, 8.0, 0.0, 1.0).x, 0.0);
+}
+
 // Kelp (mesh/sprites.rs STRAND): where a strand `len` metres long from a
 // holdfast at `root`, heading `angle`, is a share `tt` of the way along, in
 // the sea as it stands now (`fog.y`, which the tide moves). Where the water
@@ -134,7 +143,7 @@ fn veg_tint(albedo: vec3<f32>, mat: u32, world: vec3<f32>) -> vec3<f32> {
 // the air. The surge rocks the whole of it slowly.
 fn kelp_at(root: vec3<f32>, len: f32, angle: f32, tt: f32, time: f32) -> vec3<f32> {
     let head = vec3<f32>(cos(angle), 0.0, sin(angle));
-    let d = max(g.fog.y - 0.05 - root.y, 0.1);
+    let d = max(g.fog.y - 0.06 - root.y, 0.1);
     let dv = min(d, len * 0.97);
     // 0 standing free under the surface, 1 reaching it with a metre to spare.
     let ks = smoothstep(0.0, 1.0, len - d);
@@ -155,6 +164,7 @@ fn kelp_at(root: vec3<f32>, len: f32, angle: f32, tt: f32, time: f32) -> vec3<f3
         let turn = angle + 0.35 * sin(time * 0.07 + ph) + 0.3 * sin(r * 0.45 + angle * 5.0);
         p += mix(vec3<f32>(0.0, r, 0.0), vec3<f32>(cos(turn), 0.0, sin(turn)) * r, ks);
     }
+    p.y = min(p.y, kelp_top(p.xz));
     return p;
 }
 
@@ -279,7 +289,6 @@ fn vs_sprite(@builtin(vertex_index) vi: u32) -> SpriteOut {
         let len = f32((q.z >> 16u) & 255u) / 8.0;
         let part = (q.w >> 8u) & 3u;
         let index = f32((q.w >> 10u) & 255u);
-        let sea = g.fog.y;
         let eye = normalize(root - g.cam_pos.xyz);
         if (part == 0u) {
             // A length of stipe from one joint to the next, a ribbon turned
@@ -308,21 +317,21 @@ fn vs_sprite(@builtin(vertex_index) vi: u32) -> SpriteOut {
             let head = vec3<f32>(cos(angle), 0.0, sin(angle));
             let side = vec3<f32>(-head.z, 0.0, head.x);
             let flutter = sin(t * 0.9 + seed * 0.37 + tb * 6.0) * 0.3;
-            let flat = 1.0 - smoothstep(0.15, 0.7, sea - pa.y);
+            let flat = 1.0 - smoothstep(0.15, 0.7, kelp_top(pa.xz) + 0.06 - pa.y);
             let under = normalize(tan * 0.8 + out_dir * 0.4 + side * flutter);
-            let lying = normalize(vec3<f32>(out_dir.x * 0.3 + head.x + side.x * flutter, 0.0, out_dir.z * 0.3 + head.z + side.z * flutter));
+            let lying = normalize(vec3<f32>(out_dir.x * 0.15 + head.x + side.x * flutter, 0.0, out_dir.z * 0.15 + head.z + side.z * flutter));
             let dir = normalize(mix(under, lying, flat));
             var across = mix(cross(dir, eye), cross(dir, vec3<f32>(0.0, 1.0, 0.0)), flat);
             across = select(vec3<f32>(1.0, 0.0, 0.0), normalize(across), dot(across, across) > 1e-6);
             let wave = across * sin(v * 5.0 + t * 1.4 + seed) * 0.12 * v * bl;
             world = pa + (dir * v * bl + across * (u - 0.5) * w + wave) * f;
-            world.y = min(world.y, sea - 0.03);
+            world.y = min(world.y, kelp_top(world.xz));
             normal = normalize(mix(normalize(vec3<f32>(0.0, 1.0, 0.0) - eye * 0.6), vec3<f32>(0.0, 1.0, 0.0), flat));
         } else {
             // The float on the strand's end, a bulb facing the camera, its
             // top just breaking the surface when it reaches it.
             var pe = kelp_at(root, len, angle, 1.0, t);
-            pe.y = min(pe.y, sea - w * 0.15);
+            pe.y = min(pe.y, kelp_top(pe.xz) - w * 0.1);
             var right = cross(eye, vec3<f32>(0.0, 1.0, 0.0));
             right = select(vec3<f32>(1.0, 0.0, 0.0), normalize(right), dot(right, right) > 1e-6);
             let up = cross(right, eye);

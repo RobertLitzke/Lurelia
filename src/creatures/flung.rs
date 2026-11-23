@@ -24,6 +24,9 @@ pub const FLUNG: f32 = 1.5;
 /// a body that has stopped against a ledge may still be given a shove by the
 /// next burst.
 const QUIET_S: f32 = 0.4;
+/// Seconds of stillness after which a body whose limbs are still moving is
+/// finished off in one go rather than stepped further.
+const GIVE_UP_S: f32 = 6.0;
 
 /// A carcass still moving: the box it fell with, and how long it has been
 /// still. Dropped from the entity once it has settled.
@@ -49,12 +52,16 @@ pub fn update(world: &mut hecs::World, models: &[Model], store: &Store, dt: f32)
         let was = flung.body.vel;
         let moving = physics::tumble(store, &mut look.pos, &mut flung.body, dt);
         flung.quiet = if moving { 0.0 } else { flung.quiet + dt };
-        if flung.quiet > QUIET_S {
+        // Still as a box is not still as a body: nothing else steps a
+        // carcass, so it is kept until its ragdoll has settled too, or
+        // `GIVE_UP_S` has passed.
+        let limp = anim.as_ref().and_then(|a| a.ragdoll.as_ref()).is_none_or(|r| r.settled());
+        if flung.quiet > QUIET_S && (limp || flung.quiet > GIVE_UP_S) {
             done.push(e);
         }
         // The lift that puts feet on drawn, smoothed ground is set by the
-        // mover, and a carcass has none: left as it was, a body that died on
-        // a slope and slid onto the flat kept the slope's lift and hovered.
+        // mover, and a carcass has none, so it is set here for the ground
+        // the body is on now.
         look.lift = match flung.body.on_ground {
             true => physics::drawn_ground_lift(store, look.pos),
             false => 0.0,
@@ -75,6 +82,19 @@ pub fn update(world: &mut hecs::World, models: &[Model], store: &Store, dt: f32)
     }
     for e in done {
         let _ = world.remove_one::<Flung>(e);
+        // Whatever motion is left is run out here, so the pose it is left in
+        // is one a body lies in.
+        let rig = world.get::<&Look>(e).ok().and_then(|l| models.get(l.model)).and_then(|m| m.rig.as_ref());
+        if let (Some(rig), Ok(mut anim)) = (rig, world.get::<&mut crate::anim::Anim>(e)) {
+            let Some(r) = anim.ragdoll.as_mut() else { continue };
+            if r.settled() {
+                continue;
+            }
+            r.aloft(false);
+            r.run_out(rig);
+            anim.step_ragdoll(rig, crate::anim::ragdoll::SETTLE_DT, Vec3::ZERO);
+            anim.prev = anim.pose.clone();
+        }
     }
 }
 

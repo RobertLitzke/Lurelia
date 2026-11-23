@@ -1,0 +1,15 @@
+{
+  "name": "roof_tile_red",
+  "version": 1,
+  "introduced_by": "townlab",
+  "notes": "Old clay roof tiles gone a deep red-brown. For telling one terraced house's roof from the next. Smoothed, so a roof at an angle to the grid is a slope rather than a staircase.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [150, 70, 50],
+    "alt": [132, 60, 44],
+    "scale": 5,
+    "contrast": 0.6,
+    "calm": {"base": [162, 80, 58], "alt": [144, 70, 52]}
+  }
+}

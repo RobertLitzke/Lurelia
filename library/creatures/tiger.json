@@ -5,6 +5,7 @@
   "notes": "Tiger: the cougar's frame half again as big, orange over a white belly and barred head to tail, walking the bamboo alone.",
   "colors": {"coat": [218, 128, 44], "belly": [240, 236, 228], "stripe": [36, 28, 24], "muzzle": [240, 236, 228]},
   "behaviour": {
+    "sleeps_on_side": true,
     "walk_speed": 1.2,
     "flee_speed": 8.5,
     "wary": 22,

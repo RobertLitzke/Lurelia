@@ -64,6 +64,11 @@ pub struct Behaviour {
     /// long. Over shallows or land it waits.
     #[serde(default)]
     pub plunge: bool,
+    /// Radians the body is tipped nose-down while swimming (an `in_water`
+    /// block): an animal modelled sitting up on the beach (a walrus propped
+    /// on its foreflippers) lies level in the water. 0: as modelled.
+    #[serde(default)]
+    pub swim_pitch: f32,
     /// How often it leaps clear of the water: for `school`, leaps per fish
     /// per minute; for `breach`, the chance that a dive ends in a breach.
     #[serde(default)]
@@ -76,6 +81,12 @@ pub struct Behaviour {
     /// of the water instead of under it (crocodiles).
     #[serde(default)]
     pub awash: bool,
+    /// Lies on its back at the surface when drifting or asleep, belly and
+    /// forepaws out of the water, and rolls over to swim off when startled
+    /// (otters). For a `school` swimmer, whenever it is not fleeing; for a
+    /// walker that `swims`, while it idles afloat.
+    #[serde(default)]
+    pub back_float: bool,
     /// Swimmers (`school`): the least water, metres, they keep to and are
     /// found in. Default 2 at sea and 1.2 in rivers; a marsh swimmer 0.6.
     #[serde(default)]
@@ -106,6 +117,12 @@ pub struct Behaviour {
     /// (anim/ragdoll.rs). Dogs, cats and seals do; deer and cattle don't.
     #[serde(default)]
     pub sleeps_on_side: bool,
+    /// Walkers: a large animal, seen from twice as far off as the rest --
+    /// found, kept and walked out to about 260 m rather than 130, so a herd
+    /// can be watched from a ridge (creatures/mod.rs `Species::large`). Left
+    /// out, anything 2.5 m tall or more is large.
+    #[serde(default)]
+    pub large: Option<bool>,
     /// Snakes: holds its ground and warns — coiled, head up, tail buzzing —
     /// while anything presses on it, instead of leaving (a rattlesnake).
     #[serde(default)]
@@ -332,6 +349,9 @@ pub(super) fn coats(morphs: &[MorphDef]) -> Vec<Coat> {
         .collect()
 }
 
+pub(super) fn default_grid() -> [i32; 3] {
+    [32, 32, 32]
+}
 pub(super) fn default_walk() -> f32 {
     1.2
 }
@@ -351,8 +371,16 @@ pub struct CreatureDef {
     #[serde(default)]
     #[allow(dead_code)] // read by tools/libfmt.py
     pub introduced_by: String,
-    /// Model voxel edge, metres (the model grid is 32 voxels on a side).
+    /// Model voxel edge, metres (the model grid is `grid` voxels, 32 on a
+    /// side unless it says otherwise).
     pub voxel: f32,
+    /// The model grid's size in voxels along x, y and z: 32 to 96 each. A
+    /// grid bigger than 32^3 is for the big animals (a sauropod, a
+    /// tyrannosaur) and needs a rig, since each part is meshed in a 32^3
+    /// window of its own (anim/slice.rs); `--validate` says which part is too
+    /// big for one.
+    #[serde(default = "default_grid")]
+    pub grid: [i32; 3],
     pub half_w: f32,
     pub height: f32,
     /// Colour name -> sRGB, with optional emissive strength as a fourth value.

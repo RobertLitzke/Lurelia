@@ -1,0 +1,15 @@
+{
+  "name": "tile_slate",
+  "version": 1,
+  "introduced_by": "townlab",
+  "notes": "Blue-grey roofing slate. Smoothed, so a roof at an angle to the grid is a slope rather than a staircase.",
+  "smooth": true,
+  "texture": {
+    "pattern": "noise",
+    "base": [62, 68, 80],
+    "scale": 8,
+    "contrast": 0.6,
+    "alt": [84, 90, 104],
+    "calm": {"base": [86, 92, 110], "alt": [98, 104, 122]}
+  }
+}

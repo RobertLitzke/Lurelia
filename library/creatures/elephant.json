@@ -15,6 +15,7 @@
   },
   "behaviour": {
     "movement": "graze",
+    "sleeps_on_side": true,
     "walk_speed": 0.8,
     "flee_speed": 5.0,
     "wary": 16,

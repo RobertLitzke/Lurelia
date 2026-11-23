@@ -1,0 +1,18 @@
+{
+  "name": "basalt_crater",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "The floor and inner walls of a young cone's crater: black basalt the last lava froze into, broken columns, fallen blocks, and the mouths of the tubes it drained through. Nothing grows yet.",
+  "priority": 8,
+  "rules": {"region": "crater"},
+  "surface": "basalt",
+  "subsurface": "basalt",
+  "map_color": [34, 30, 32],
+  "plants": [],
+  "features": [
+    {"structure": "basalt_columns", "density": 0.004, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "basalt_boulder", "density": 0.003, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "creatures": [{"creature": "lizard", "count": 2.2}],
+  "sound": {"wind": 1.25}
+}

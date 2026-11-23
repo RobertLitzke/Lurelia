@@ -4,7 +4,7 @@
   "introduced_by": "redrock",
   "notes": "Feral burro: the miners' donkeys, turned loose when Harlow emptied. Grey-brown with a pale muzzle and belly, long ears and a dark cross on the shoulders. Small herds round the old town; curious, slow to run.",
   "colors": {"coat": [140, 118, 96], "belly": [210, 196, 176], "mane": [74, 58, 40], "muzzle": [210, 196, 176]},
-  "behaviour": {"walk_speed": 0.9, "flee_speed": 6.0, "wary": 8, "flightiness": 0.2},
+  "behaviour": {"sleeps_on_side": true, "walk_speed": 0.9, "flee_speed": 6.0, "wary": 8, "flightiness": 0.2},
   "ops": [
     {"op": "ellipsoid", "centre": [16, 16, 17], "radius": [3.6, 3.8, 8.2], "mat": "coat"},
     {"op": "recolour_below", "y": 13, "from": "coat", "to": "belly"},

@@ -16,12 +16,12 @@
     {"structure": "titan_tooth", "density": 8e-05, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "rockfish", "count": 20},
-    {"creature": "cod", "count": 4},
-    {"creature": "moon_jelly", "count": 4},
-    {"creature": "giant_octopus", "count": 2},
-    {"creature": "sixgill_shark", "count": 1},
-    {"creature": "bone_crab", "count": 2}
+    {"creature": "rockfish", "count": 22},
+    {"creature": "cod", "count": 4.4},
+    {"creature": "moon_jelly", "count": 4.4},
+    {"creature": "giant_octopus", "count": 2.2},
+    {"creature": "sixgill_shark", "count": 1.1},
+    {"creature": "bone_crab", "count": 2.2}
   ],
   "collectibles": []
 }

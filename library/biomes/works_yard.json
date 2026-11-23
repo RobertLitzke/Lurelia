@@ -10,6 +10,6 @@
   "fringe": 0,
   "map_color": [122, 120, 116],
   "plants": [],
-  "creatures": [{"creature": "squirrel", "count": 4}],
+  "creatures": [{"creature": "squirrel", "count": 4.4}],
   "collectibles": []
 }

@@ -64,10 +64,11 @@ mouth, Bayou Noir from the swamp out to the sound.
 
 The people who stayed moved up the old channel to where it leaves the swamp, and
 built on posts over the water. That is Lowmouth: board houses and fishing camps
-on cypress posts two metres up, a plank boardwalk called Front Street running
-across the village with the Big Bridge humped over the old channel, high enough
-to paddle under, a back walk to the camps, a net shed at the bend, two
-houseboats tied up in the channel. Everyone has a boat. The quickest way to
+on cypress posts two metres up, in rows along plank boardwalks laid out like
+streets. Front Street runs east and west across the village and on over the old
+channel to the bank, the Back Walk crosses it north and south, and short walks
+branch off both, each house with a gangway to its door. The net sheds stand at
+the edges, and houseboats are tied up in the channel. Everyone has a boat. The quickest way to
 anywhere is by water.
 
 Up on the levee there is still a shell road from the west fields to the landing

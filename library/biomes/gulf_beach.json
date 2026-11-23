@@ -1,6 +1,6 @@
 {
   "name": "gulf_beach",
-  "version": 1,
+  "version": 2,
   "introduced_by": "lowmouth",
   "notes": "The Gulf shore of the chenier: oyster shell and pale sand, wrack along the tide line.",
   "priority": 11,
@@ -11,9 +11,9 @@
   "creatures": [
     {"creature": "gull", "count": 8},
     {"creature": "brown_pelican", "count": 4},
-    {"creature": "sea_turtle", "count": 1},
+    {"creature": "sea_turtle", "count": 1.1},
     {"creature": "sanderling", "count": 24},
-    {"creature": "snowy_plover", "count": 6}
+    {"creature": "snowy_plover", "count": 16}
   ],
   "collectibles": [{"item": "seashell", "density": 0.0008, "placement": {"verb": "scatter", "params": {}}}]
 }

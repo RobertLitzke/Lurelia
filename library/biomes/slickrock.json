@@ -12,16 +12,22 @@
   "plants": [
     {"plant": "juniper", "density": 0.001, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "dead_juniper", "density": 0.0004, "placement": {"verb": "scatter", "params": {}}},
-    {"plant": "rock_lichen", "density": 0.1}
+    {"plant": "rock_lichen", "density": 0.1},
+    {
+      "plant": "pinyon",
+      "density": 0.003,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.35, "max": 0.6}}
+    }
   ],
   "creatures": [
-    {"creature": "lizard", "count": 8},
-    {"creature": "bighorn", "count": 4},
+    {"creature": "lizard", "count": 8.8},
+    {"creature": "bighorn", "count": 4.4},
     {"creature": "condor", "count": 1},
-    {"creature": "cougar", "count": 1},
-    {"creature": "canyon_bat", "count": 4},
-    {"creature": "rattlesnake", "count": 2},
-    {"creature": "raven", "count": 2}
+    {"creature": "cougar", "count": 1.1},
+    {"creature": "canyon_bat", "count": 4.4},
+    {"creature": "rattlesnake", "count": 2.2},
+    {"creature": "raven", "count": 2},
+    {"creature": "kangaroo_rat", "count": 2.2}
   ],
   "sound": {"ground": "stone"}
 }

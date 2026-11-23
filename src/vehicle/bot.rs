@@ -10,10 +10,6 @@
 //! from its curvature and a grip the driver trusts, and the car must be able
 //! to brake down to it in the distance left; the lowest of those is the
 //! target now.
-//!
-//! Nothing in the game drives with it yet (the lap test does), so it is
-//! kept from the dead-code warning until a race does.
-#![allow(dead_code)]
 
 use super::{Controls, Vehicle};
 use glam::{Vec2, Vec3};
@@ -32,6 +28,15 @@ pub struct Track {
     /// The road's height at each point, where known (`with_heights`):
     /// what tells a driver about crests and descents.
     pub heights: Vec<f32>,
+    /// The road's width at each point where it varies (`with_widths`);
+    /// empty: `width` all round.
+    pub widths: Vec<f32>,
+    /// Boost pads (`with_pads`): where each starts round the lap, its middle
+    /// in metres right of the centreline, and its length.
+    pub pads: Vec<(f32, f32, f32)>,
+    /// Jumps (from, to round the lap): crests meant to be flown, which a
+    /// driver doesn't slow for.
+    pub jumps: Vec<(f32, f32)>,
 }
 
 /// Where a car is on the track.
@@ -77,7 +82,60 @@ impl Track {
             width,
             curve,
             heights: Vec::new(),
+            widths: Vec::new(),
+            pads: Vec::new(),
+            jumps: Vec::new(),
         }
+    }
+
+    /// A world's circuit as a race drives it: its heights, its widths and
+    /// its boost pads, each pad's middle in metres off the centreline from
+    /// its share of the way to the edge (as race_track.rs paints it).
+    pub fn of(circuit: &crate::world::fields::Circuit) -> Track {
+        let track = Track::new(circuit.points.clone(), circuit.width).with_heights(circuit.heights.clone()).with_widths(circuit.widths.clone());
+        let pads = circuit.pads.iter().map(|p| (p.s, p.side.clamp(-1.0, 1.0) * (track.width_at(p.s + p.len * 0.5) * 0.5 - 2.0).max(0.0), p.len)).collect();
+        let mut track = track.with_pads(pads);
+        track.jumps = circuit.jumps.clone();
+        track
+    }
+
+    /// Whether `s` round the lap is on a jump: its ramp, its lip or where
+    /// karts fly and come down.
+    pub fn on_jump(&self, s: f32) -> bool {
+        let s = s.rem_euclid(self.length);
+        self.jumps.iter().any(|&(a, b)| if a <= b { (a..b).contains(&s) } else { s >= a || s < b })
+    }
+
+    /// The same track with the road's width at each point; `width` becomes
+    /// the widest.
+    pub fn with_widths(mut self, widths: Vec<f32>) -> Track {
+        if widths.len() == self.points.len() {
+            self.width = widths.iter().copied().fold(0.0f32, f32::max);
+            self.widths = widths;
+        }
+        self
+    }
+
+    /// The same track with boost pads: (start round the lap, metres right of
+    /// the centreline, length).
+    pub fn with_pads(mut self, pads: Vec<(f32, f32, f32)>) -> Track {
+        self.pads = pads;
+        self
+    }
+
+    /// The road's width `s` metres round.
+    pub fn width_at(&self, s: f32) -> f32 {
+        if self.widths.is_empty() {
+            self.width
+        } else {
+            self.widths[self.index(s)]
+        }
+    }
+
+    /// Whether a car at `place` is on a boost pad: within its length and
+    /// 1.5 m of its middle.
+    pub fn on_pad(&self, place: Place) -> bool {
+        self.pads.iter().any(|&(s, side, len)| (place.s - s).rem_euclid(self.length) < len && (place.off - side).abs() < 1.5)
     }
 
     /// The same track, knowing the road's height at each point.
@@ -111,6 +169,11 @@ impl Track {
         ((c - a) / (2.0 * gap), (a - 2.0 * b + c) / (gap * gap))
     }
 
+    /// The road's height `s` metres round, where the heights are known.
+    pub fn height_at(&self, s: f32) -> Option<f32> {
+        (!self.heights.is_empty()).then(|| self.heights[self.index(s)])
+    }
+
     /// The point `s` metres round the loop, and the direction there.
     pub fn at(&self, s: f32) -> (Vec2, Vec2) {
         let s = s.rem_euclid(self.length);
@@ -136,7 +199,8 @@ impl Track {
     }
 
     /// Where `p` is, searching near `hint` (the last place) first; the
-    /// whole loop when `hint` is None.
+    /// whole loop when `hint` is None. Height counts where the road's heights
+    /// are known, so a car at a crossing is placed on its own stretch.
     pub fn place(&self, p: Vec3, hint: Option<Place>) -> Place {
         let q = Vec2::new(p.x, p.z);
         let n = self.points.len();
@@ -152,11 +216,16 @@ impl Track {
             let t = ((q - a).dot(d) / (len * len)).clamp(0.0, 1.0);
             let on = a + d * t;
             let dist = (q - on).length_squared();
-            if dist < best.0 {
+            // Where the road's heights are known, a stretch far above or
+            // below the car counts as further away: at a crossing the car is
+            // on the stretch at its own height, not the one over or under it.
+            let rise = self.heights.get(i).map_or(0.0, |h| ((p.y - h).abs() - 2.0).max(0.0));
+            let score = dist + rise * rise * 4.0;
+            if score < best.0 {
                 let side = d.perp_dot(q - a);
                 // perp_dot positive is to the right of the way round in (x, z).
                 best = (
-                    dist,
+                    score,
                     Place {
                         seg: i,
                         s: self.along[i] + t * len,
@@ -188,6 +257,14 @@ pub struct Style {
     /// metres, and how far to the side it passes, metres.
     pub pass_look: f32,
     pub pass_side: f32,
+    /// Over to a boost pad coming up when nobody is to be passed.
+    pub pads: bool,
+    /// Drift through bends at least this tight, 1/m (0 never): hop into the
+    /// bend and let go for the boost as it opens (`Driver::drift`).
+    pub drift: f32,
+    /// Sit in the slipstream of a kart close ahead on a straight before
+    /// pulling out to pass.
+    pub draft: bool,
 }
 
 impl Default for Style {
@@ -202,6 +279,9 @@ impl Default for Style {
             plan: 120.0,
             pass_look: 16.0,
             pass_side: 3.2,
+            pads: true,
+            drift: 0.0,
+            draft: false,
         }
     }
 }
@@ -251,6 +331,22 @@ impl Style {
     }
 }
 
+impl Style {
+    /// A kart driver fitted to the kart it drives:
+    /// trusting `SHARE` of the sideways grip its tyres give at 22 m/s
+    /// (`kart::reach`), and braking as `Style::kart` does, scaled by its grip
+    /// against the plain kart's. So a heavier kart's driver brakes sooner and
+    /// a grippier one corners faster, without a style bred for each.
+    pub fn for_kart(spec: &super::Spec) -> Style {
+        const SHARE: f32 = 0.8;
+        /// The grip of the reference kart (library/vehicles/kart.json) that
+        /// `Style::kart()` was tuned on.
+        const KART_GRIP: f32 = 1.6;
+        let k = Style::kart();
+        Style { corner_g: SHARE * super::kart::reach(spec, 22.0), brake_g: k.brake_g * spec.grip / KART_GRIP, ..k }
+    }
+}
+
 /// A bot at the wheel of one car.
 #[derive(Clone, Debug, Default)]
 pub struct Driver {
@@ -261,6 +357,12 @@ pub struct Driver {
     /// How far right of the centreline it is driving, metres; it moves over
     /// to pass.
     pub lane: f32,
+    /// Where the race would have it drive when nobody is to be passed
+    /// (metres right of the centreline, over to an item box), set before
+    /// each step.
+    pub goal: Option<f32>,
+    /// In a drift it started: seconds in it.
+    pub drifting: Option<f32>,
 }
 
 impl Driver {
@@ -268,7 +370,8 @@ impl Driver {
         Driver { style, ..Default::default() }
     }
 
-    /// The controls for this step, alone on the track.
+    /// The controls for this step, alone on the track (the lap test's).
+    #[cfg(test)]
     pub fn drive(&mut self, car: &Vehicle, track: &Track) -> Controls {
         self.race(car, track, &[])
     }
@@ -281,12 +384,19 @@ impl Driver {
         let place = track.place(car.pos(), self.place);
         self.place = Some(place);
         let v = car.v_fwd();
-        let half = track.width * 0.5 - 1.5;
+        let half = track.width_at(place.s) * 0.5 - 1.5;
 
         let mut lane_to = 0.0f32;
         let mut hold: Option<f32> = None;
         let ahead = |r: &Rival| (r.place.s - place.s).rem_euclid(track.length);
-        if let Some(r) = rivals
+        // Drafting: on a straight, a kart 4 to 12 m ahead going about as fast
+        // is followed in its lane (its slipstream, race/feel.rs), and only
+        // passed once it is close.
+        let straight = (0..6).all(|k| track.curve_at(place.s + k as f32 * 8.0).abs() < 1.0 / 80.0);
+        let tow = rivals.iter().filter(|r| st.draft && straight && r.speed > 12.0 && (4.0..12.0).contains(&ahead(r)) && (r.place.off - place.off).abs() < 3.0).min_by(|a, b| ahead(a).total_cmp(&ahead(b)));
+        if let Some(r) = tow {
+            lane_to = r.place.off;
+        } else if let Some(r) = rivals
             .iter()
             .filter(|r| ahead(r) < st.pass_look && (r.place.off - self.lane).abs() < 2.4)
             .min_by(|a, b| ahead(a).total_cmp(&ahead(b)))
@@ -298,6 +408,12 @@ impl Driver {
             if ahead(r) < 7.0 && r.speed < v {
                 hold = Some(r.speed + 1.0);
             }
+        } else if let Some(g) = self.goal {
+            // Nobody to pass: where the race wants it (an item box).
+            lane_to = g;
+        } else if let Some(&(_, side, _)) = track.pads.iter().filter(|_| st.pads).find(|p| (2.0..45.0).contains(&(p.0 - place.s).rem_euclid(track.length))) {
+            // Nobody to pass: over to the boost pad coming up.
+            lane_to = side;
         }
         let lane_to = lane_to.clamp(-half, half);
         self.lane += (lane_to - self.lane).clamp(-0.06, 0.06);
@@ -328,7 +444,7 @@ impl Driver {
             let k = track.curve_at(place.s + d).abs().max(1e-4);
             let (grade, bend) = track.grade_at(place.s + d);
             let mut limit = (st.corner_g / k).sqrt();
-            if bend < -1e-4 {
+            if bend < -1e-4 && !track.on_jump(place.s + d) {
                 limit = limit.min((0.6 * g / -bend).sqrt());
             }
             let brake = (st.brake_g + g * grade.min(0.0)).max(4.0);
@@ -347,11 +463,64 @@ impl Driver {
         } else {
             (0.0, ((-gap - 0.5) / 3.0).clamp(0.0, 1.0))
         };
+        let hop = self.drift(car, track, place, look, steer, brake);
+        let steer = match (self.drifting, car.drift) {
+            // In a drift the keys say how tight: into the turn to tighten it,
+            // out of it to open the line, as the pursuit asks.
+            (Some(_), Some(d)) => d.dir * ((steer * d.dir - 0.45) * 2.5).clamp(-1.0, 1.0),
+            _ => steer,
+        };
         Controls {
             throttle,
             brake,
             steer,
+            hop,
             ..Default::default()
+        }
+    }
+
+    /// Whether to hold the hop (a kart's drift) this step. A drift starts
+    /// in a bend at least `Style::drift` tight that runs on for a second or
+    /// more, at speed and not braking, steered the bend's way; it is let go
+    /// as the bend opens out ahead, once it has charged a tier (or if it has
+    /// gone wrong: the kart off its line or slowed right down).
+    fn drift(&mut self, car: &Vehicle, track: &Track, place: Place, look: f32, steer: f32, brake: f32) -> bool {
+        let k_min = self.style.drift;
+        if k_min <= 0.0 || car.spec.drift_boost <= 0.0 {
+            self.drifting = None;
+            return false;
+        }
+        let v = car.v_fwd();
+        let dt = crate::game::STEP;
+        let k_now = track.curve_at(place.s + look * 0.3);
+        let half = track.width_at(place.s) * 0.5;
+        match self.drifting {
+            None => {
+                // A bend this tight, for at least a second of travel ahead.
+                let run = (0..6).all(|i| {
+                    let k = track.curve_at(place.s + v * i as f32 * 0.2);
+                    k.abs() > k_min && k.signum() == k_now.signum()
+                });
+                // Right is positive steer; a left bend is positive curvature.
+                let way = -k_now.signum();
+                let go = run && v > 12.0 && brake <= 0.0 && steer * way > 0.3 && car.drift.is_none() && place.off.abs() < half - 1.0;
+                if go {
+                    self.drifting = Some(0.0);
+                }
+                go
+            }
+            Some(t) => {
+                let t = t + dt;
+                self.drifting = Some(t);
+                let charged = car.drift_tier() >= 1;
+                let opens = track.curve_at(place.s + v * 0.35).abs() < k_min * 0.6;
+                let wrong = place.off.abs() > half - 0.6 || v < 9.0 || t > 4.0 || (t > 0.2 && car.drift.is_none());
+                let hold = !(wrong || (charged && opens));
+                if !hold {
+                    self.drifting = None;
+                }
+                hold
+            }
         }
     }
 }
@@ -390,5 +559,44 @@ mod tests {
         assert!((p.off - 5.0).abs() < 0.1, "{}", p.off);
         let p = t.place(Vec3::new(45.0, 0.0, 0.0), None);
         assert!((p.off + 5.0).abs() < 0.1, "{}", p.off);
+    }
+
+    /// A figure-eight with the second loop on a bridge over the first where
+    /// they cross: a car driven round it on the road is placed on its own
+    /// stretch all the way, so its distance round only ever grows, through
+    /// the crossing too, and from a cold start at the crossing on either
+    /// level.
+    #[test]
+    fn a_crossing_is_placed_by_height() {
+        let n = 400;
+        let (mut pts, mut hs) = (Vec::new(), Vec::new());
+        for i in 0..n {
+            let a = i as f32 / n as f32 * std::f32::consts::TAU;
+            // A lemniscate: it crosses itself at the origin, at a = pi/2 and
+            // a = 3 pi/2.
+            let (s, c) = a.sin_cos();
+            let k = 60.0 / (1.0 + s * s);
+            pts.push(Vec2::new(k * c, k * s * c));
+            // Up to 8 m over the first crossing, level over the second.
+            hs.push(10.0 + 8.0 * (a - std::f32::consts::FRAC_PI_2).cos().max(0.0).powi(2));
+        }
+        let t = Track::new(pts.clone(), 10.0).with_heights(hs.clone());
+        let (mut last, mut hint) = (None::<f32>, None);
+        for i in 0..n {
+            let p = Vec3::new(pts[i].x, hs[i] + 0.3, pts[i].y);
+            let pl = t.place(p, hint);
+            if let Some(l) = last {
+                let ds = (pl.s - l).rem_euclid(t.length);
+                assert!(ds < 3.0, "jumped {ds} m round at point {i}");
+            }
+            last = Some(pl.s);
+            hint = Some(pl);
+        }
+        // Cold, at the crossing: on the bridge, and under it.
+        let up = t.place(Vec3::new(0.0, 18.3, 0.0), None);
+        let down = t.place(Vec3::new(0.0, 10.3, 0.0), None);
+        let near = |s: f32, want: f32| ((s - want).rem_euclid(t.length)).min((want - s).rem_euclid(t.length)) < 5.0;
+        assert!(near(up.s, t.along[n / 4]), "on the bridge placed at {} not {}", up.s, t.along[n / 4]);
+        assert!(near(down.s, t.along[3 * n / 4]), "under it placed at {} not {}", down.s, t.along[3 * n / 4]);
     }
 }

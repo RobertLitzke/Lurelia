@@ -1,0 +1,17 @@
+{
+  "name": "canyon_hardpack",
+  "version": 1,
+  "introduced_by": "vermilion",
+  "notes": "A graded racing road of red clay and crushed sandstone, rolled hard and oiled against the dust: darker and browner than the sand beside it, with a fine pale grit. Grips like rock under a kart (surface hardpack).",
+  "smooth": true,
+  "crisp": true,
+  "surface": "hardpack",
+  "texture": {
+    "pattern": "speckle",
+    "base": [128, 74, 54],
+    "alt": [146, 92, 68],
+    "scale": 8,
+    "contrast": 0.8,
+    "calm": {"base": [138, 86, 64], "alt": [154, 102, 78]}
+  }
+}

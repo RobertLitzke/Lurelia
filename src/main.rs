@@ -23,12 +23,14 @@ mod menu;
 mod mesh;
 mod models;
 mod modes;
+mod pad;
 mod pacing;
 mod physics;
 mod platforms;
 mod player;
 mod portals;
 mod race;
+mod racemenu;
 mod render;
 mod ride;
 mod rig;
@@ -134,6 +136,12 @@ pub(crate) fn new_game(args: &Args) -> Result<Game, String> {
     if let Some(g) = args.mode.as_deref().and_then(games::get) {
         chosen.set_game(g);
     }
+    if args.rivals.is_some() {
+        chosen.rivals = args.rivals;
+    }
+    if args.laps.is_some() {
+        chosen.laps = args.laps;
+    }
     // A season asked for on the command line is part of the launch, not
     // something done to the world afterwards: the first columns are then
     // built in it and nothing has to be built twice.
@@ -149,6 +157,7 @@ pub(crate) fn new_game(args: &Args) -> Result<Game, String> {
         slopes: !args.blocky,
         show_stats: true,
         minimap: false,
+        drive_chase: args.drive_chase.unwrap_or(crate::game::Settings::default().drive_chase),
     };
     let mut game = Game::new(args.save_dir.clone(), args.view, args.threads, args.fresh || args.headless, chosen, settings)?;
     if let Some(f) = args.full_detail {
@@ -190,6 +199,16 @@ struct Running {
     /// and written back into `actions` every frame. Without this a minigun
     /// fires one round per click however long the button is down.
     held: (bool, bool),
+    /// The Xbox controller (src/pad.rs), and what it holds this frame: the
+    /// held part of `MoveInput`, merged with the keyboard's when the world
+    /// steps, and the triggers as the mouse buttons on foot.
+    pad: pad::Pad,
+    pad_input: MoveInput,
+    pad_fire: (bool, bool),
+    /// The last thing used was the controller, not the keyboard or mouse.
+    pad_on: bool,
+    /// A held direction in a menu, and how long until it steps again.
+    pad_repeat: (u32, f32),
     /// Screenshots and camera photos being written to disk.
     writing: Vec<std::thread::JoinHandle<Result<PathBuf, String>>>,
     last: Instant,
@@ -247,10 +266,18 @@ struct Running {
     /// comes back to the same place, and how far its list was scrolled.
     launch_at: usize,
     launch_top: usize,
+    /// The course card picked on the race's first step. Kept apart from the
+    /// highlight, which the mouse can move onto the buttons under the row.
+    race_pick: usize,
+    /// The player's best times, for the race's course cards: read when
+    /// those screens open.
+    race_records: race::records::Records,
     /// Which world's pictures are behind the menus, if only one world's are
     /// (the launch screen shows the world on the line; the title screen
     /// shows them all).
     slides_world: Option<String>,
+    /// The world whose track picture the page image holds, and whether it had one.
+    track_pic: Option<(String, bool)>,
     /// The window is hidden (minimized, or covered on a compositor that says
     /// so). Nothing is drawn and the swapchain is left alone until it is back.
     hidden: bool,
@@ -288,6 +315,12 @@ enum Screen {
     Settings {
         back: Back,
     },
+    /// The race's own launch screens (racemenu.rs): `step` 0 the course
+    /// cards, 1 the kart cards, 2 the race's options and GO.
+    Race {
+        back: Back,
+        step: u8,
+    },
     /// The LOOK page: `page` 0 is the group list, 1-3 a group; `pick` is the
     /// swatch whose colour the picker is on.
     Look {
@@ -318,7 +351,7 @@ impl Screen {
     fn over_world(&self) -> bool {
         match self {
             Screen::Playing | Screen::Paused => true,
-            Screen::Launch { back, .. } | Screen::Settings { back } | Screen::Look { back, .. } | Screen::Edit { back, .. } | Screen::Help { back } => *back != Back::Title,
+            Screen::Launch { back, .. } | Screen::Race { back, .. } | Screen::Settings { back } | Screen::Look { back, .. } | Screen::Edit { back, .. } | Screen::Help { back } => *back != Back::Title,
             Screen::Title | Screen::Loading => false,
         }
     }
@@ -352,6 +385,32 @@ fn refresh_interval(window: &Window) -> Option<f32> {
     (mhz > 0).then(|| 1000.0 / mhz as f32)
 }
 
+/// The keyboard's held input with the controller's on top: either one
+/// holding a key holds it, and the sticks and triggers come from the pad.
+fn merge(k: &MoveInput, p: &MoveInput) -> MoveInput {
+    let keys = k.forward || k.back || k.left || k.right;
+    MoveInput {
+        forward: k.forward || p.forward,
+        back: k.back || p.back,
+        left: k.left || p.left,
+        right: k.right || p.right,
+        jump: k.jump || p.jump,
+        sprint: k.sprint || p.sprint,
+        down: k.down || p.down,
+        hook: k.hook || p.hook,
+        look: k.look || p.look,
+        focus_near: k.focus_near || p.focus_near,
+        focus_far: k.focus_far || p.focus_far,
+        vehicle: k.vehicle || p.vehicle,
+        // A direction key pressed beside the stick wins: the stick only
+        // counts on its own.
+        stick: if keys { glam::Vec2::ZERO } else { p.stick },
+        throttle: p.throttle,
+        brake: p.brake,
+        pad: p.pad,
+    }
+}
+
 /// How many frames the swapchain may queue ahead of the display. Under vsync
 /// each queued frame is another refresh between moving the mouse and seeing
 /// it, and the GPU frame is a few milliseconds, so one is enough. Without
@@ -359,6 +418,16 @@ fn refresh_interval(window: &Window) -> Option<f32> {
 /// came in uneven pairs and averaged 120 to 190 fps; with three they ran an
 /// even 260 (field route, 1080p, shadows on).
 /// `VOXEL_FRAME_LATENCY=N` overrides it for comparisons.
+/// The key that steps along a row of cards: Some(true) for the next card
+/// (D, S, right, down), Some(false) for the one before (A, W, left, up).
+fn row_step(code: KeyCode) -> Option<bool> {
+    match code {
+        KeyCode::KeyA | KeyCode::ArrowLeft | KeyCode::KeyW | KeyCode::ArrowUp => Some(false),
+        KeyCode::KeyD | KeyCode::ArrowRight | KeyCode::KeyS | KeyCode::ArrowDown => Some(true),
+        _ => None,
+    }
+}
+
 fn frame_latency(mode: wgpu::PresentMode) -> u32 {
     if let Some(n) = std::env::var("VOXEL_FRAME_LATENCY").ok().and_then(|v| v.parse().ok()) {
         return n;
@@ -420,13 +489,21 @@ impl Running {
         self.prefs.save(&args.save_dir);
     }
 
-    /// Copy the settings the in-game keys change (G, T, B, F3) into the prefs.
+    /// Copy the settings the in-game keys change (G, T, B, F3, F6) into the
+    /// prefs. `frame` does the same after each tick, for the car's view (V).
     fn prefs_from_game(&mut self, args: &Args) {
         if let Some(g) = &self.game {
             if self.prefs.settings != g.settings {
                 self.prefs.settings = g.settings;
                 self.save_prefs(args);
             }
+        }
+    }
+
+    /// Put the race being run, if there is one, back on its grid.
+    fn restart_race(&mut self) {
+        if let Some(r) = self.game.as_mut().and_then(|g| g.activity.as_mut()).and_then(|a| a.race_mut()) {
+            r.restart();
         }
     }
 
@@ -485,6 +562,7 @@ impl Running {
         a.style = Some(self.prefs.settings.style);
         a.shadows = self.prefs.settings.shadows;
         a.blocky = !self.prefs.settings.slopes;
+        a.drive_chase = Some(self.prefs.settings.drive_chase);
         a.view = self.prefs.view;
         let job = std::thread::Builder::new().name("load world".into()).spawn(move || new_game(&a)).expect("load thread");
         let mut pics = menu::picture_paths(Some(name));
@@ -586,7 +664,10 @@ impl Running {
     fn items(&self) -> Vec<menu::Item> {
         match &self.screen {
             Screen::Title => menu::title_items(&self.prefs),
-            Screen::Paused => menu::pause_items(),
+            Screen::Paused => menu::pause_items(self.in_race()),
+            Screen::Race { step: 0, .. } => racemenu::course_items(self.race_pick),
+            Screen::Race { step: 1, .. } => racemenu::kart_items(),
+            Screen::Race { .. } => racemenu::race_items(&self.prefs.last),
             Screen::Launch { open: Some(which), .. } => menu::drop_items(&self.prefs.last, *which),
             Screen::Launch { .. } => {
                 let here = self.game.as_ref().map(|_| worldload::selected());
@@ -616,11 +697,38 @@ impl Running {
         }
     }
 
+    /// Whether the world on screen is in a race.
+    fn in_race(&self) -> bool {
+        self.game.as_ref().and_then(|g| g.activity.as_ref()).is_some_and(|a| a.id() == modes::ModeId::Race)
+    }
+
+    /// Onto one of the race's screens, with what is picked on it highlighted.
+    fn race_step(&mut self, back: Back, step: u8) {
+        self.set_screen(Screen::Race { back, step });
+        let l = &self.prefs.last;
+        self.menu.at = match step {
+            0 => racemenu::courses().iter().position(|c| c.world == l.world).unwrap_or(0),
+            1 => racemenu::kart_at(l).unwrap_or(0),
+            // GO, so Enter races what the lines already say.
+            _ => racemenu::race_items(l).iter().position(|i| i.choice == Choice::Start).unwrap_or(0),
+        };
+        if step == 0 {
+            self.race_pick = self.menu.at;
+        }
+    }
+
+    /// Onto the race's step `step`, from a click on its name; the kart step
+    /// is passed over where the course isn't raced in karts.
+    fn race_tab(&mut self, back: Back, step: u8) {
+        let step = if step == 1 && racemenu::kart_at(&self.prefs.last).is_none() { 2 } else { step };
+        self.race_step(back, step);
+    }
+
     fn back_from(&self) -> Back {
         match &self.screen {
             Screen::Title => Back::Title,
             Screen::Playing => Back::Playing,
-            Screen::Launch { back, .. } | Screen::Settings { back } | Screen::Look { back, .. } | Screen::Edit { back, .. } | Screen::Help { back } => *back,
+            Screen::Launch { back, .. } | Screen::Race { back, .. } | Screen::Settings { back } | Screen::Look { back, .. } | Screen::Edit { back, .. } | Screen::Help { back } => *back,
             _ => Back::Paused,
         }
     }
@@ -664,6 +772,14 @@ impl Running {
             }
             Screen::Paused => Screen::Playing,
             Screen::Title => return,
+            // The race's steps back out one at a time, each onto what was
+            // picked on it.
+            Screen::Race { back, step } if *step > 0 => {
+                let (back, step) = (*back, *step);
+                let to = if step == 2 && racemenu::kart_at(&self.prefs.last).is_some() { 1 } else { 0 };
+                self.race_step(back, to);
+                return;
+            }
             // The picker closes onto the line it was opened from; a group of
             // the LOOK page closes onto the group list.
             Screen::Look { page, pick: Some(_), back } => {
@@ -880,6 +996,44 @@ impl Running {
                 }
             }
             Choice::LaunchReset => self.prefs.last.reset(),
+            Choice::RaceSetup => {
+                self.race_records = race::records::Records::load(&args.save_dir);
+                if !racemenu::courses().iter().any(|c| c.world == self.prefs.last.world) {
+                    if let Some(c) = racemenu::courses().first() {
+                        self.prefs.last.set_world(&c.world);
+                    }
+                }
+                self.prefs.last.set_game(racemenu::GAME);
+                self.race_step(back, 0);
+            }
+            Choice::RaceCourse(i) => {
+                if let Some(c) = racemenu::courses().get(i as usize) {
+                    racemenu::set_course(&mut self.prefs.last, &c.world);
+                    self.choose(args, Choice::Start, 0);
+                }
+            }
+            Choice::RaceOptions(i) => {
+                if let Some(c) = racemenu::courses().get(i as usize) {
+                    racemenu::set_course(&mut self.prefs.last, &c.world);
+                    self.race_tab(back, 1);
+                }
+            }
+            Choice::RaceShift(right) => {
+                let n = racemenu::courses().len();
+                self.race_pick = if right { (self.race_pick + 1).min(n.saturating_sub(1)) } else { self.race_pick.saturating_sub(1) };
+                self.menu.at = self.race_pick;
+            }
+            Choice::RaceKart(i) => {
+                let opts = launch::options(&self.prefs.last.world, self.prefs.last.def());
+                if let (Some(o), Some((_, title))) = (opts.iter().find(|o| o.id == "kart"), launch::KARTS.get(i as usize)) {
+                    self.prefs.last.set(o, title);
+                }
+                self.race_step(back, 2);
+            }
+            Choice::RaceRestart => {
+                self.restart_race();
+                self.set_screen(Screen::Playing);
+            }
             Choice::ChooseWorld(i) => {
                 let list = self.prefs.last.world_rows();
                 if let Some(name) = list.get(i as usize).map(|r| r.world.clone()) {
@@ -902,8 +1056,12 @@ impl Running {
             }
             Choice::Start => {
                 let chosen = self.prefs.last.resolve();
-                // Already in that world, with the same rules? Just go back to it.
+                // Already in that world, with the same rules? Just go back to
+                // it; from the race's own screens, back to the grid.
                 if self.game.is_some() && chosen.world == worldload::selected() && self.game.as_ref().is_some_and(|g| g.launch.same_run(&chosen)) {
+                    if matches!(self.screen, Screen::Race { .. }) {
+                        self.restart_race();
+                    }
                     self.set_screen(Screen::Playing);
                 } else {
                     self.start_load(args, chosen, false);
@@ -1272,6 +1430,26 @@ impl Running {
         let items = self.items();
         let n = items.len();
         let at = self.menu.at.min(n.saturating_sub(1));
+        // The course cards: the arrows move the pick along the row (not onto
+        // the buttons under it), and Tab goes on to the kart and options.
+        if matches!(self.screen, Screen::Race { step: 0, .. }) {
+            let cards = racemenu::courses().len();
+            if let Some(right) = row_step(code) {
+                self.menu.at = self.race_pick.min(cards.saturating_sub(1));
+                self.menu.nav(cards, right);
+                self.race_pick = self.menu.at;
+                return;
+            }
+            if code == KeyCode::Tab {
+                return self.choose(args, Choice::RaceOptions(self.race_pick as u8), 0);
+            }
+        }
+        // The kart cards stand in a row: left and right move along it.
+        if matches!(self.screen, Screen::Race { step: 1, .. }) {
+            if let Some(right) = row_step(code) {
+                return self.menu.nav(n, right);
+            }
+        }
         match code {
             KeyCode::KeyW | KeyCode::ArrowUp => {
                 self.menu.nav(n, false);
@@ -1335,6 +1513,13 @@ impl Running {
         if matches!(self.screen, Screen::Help { .. }) {
             self.go_back();
             return;
+        }
+        // The race's step names along the top.
+        if let Screen::Race { back, .. } = self.screen {
+            let (x, y) = self.cursor;
+            if let Some(s) = self.menu.tabs.iter().position(|r| x >= r[0] && x < r[0] + r[2] && y >= r[1] && y < r[1] + r[3]) {
+                return self.race_tab(back, s as u8);
+            }
         }
         let Some(i) = self.menu.hit(self.cursor.0, self.cursor.1) else {
             // A click off an open list shuts it, as a dropdown should.
@@ -1416,6 +1601,152 @@ impl Running {
             _ => return false,
         }
         true
+    }
+
+    /// Read the controller and act on it for this frame: in the world its
+    /// buttons become the keys they stand for and its sticks and triggers
+    /// fill `pad_input`; on a menu it moves the choice and picks.
+    fn pad_frame(&mut self, args: &Args, dt: f32) {
+        use pad::*;
+        let playing = self.screen == Screen::Playing;
+        let kick = self.game.as_mut().map_or(0.0, |g| std::mem::take(&mut g.ride.rumble));
+        let Some(s) = self.pad.poll(dt) else {
+            self.pad_input = MoveInput::default();
+            self.pad_fire = (false, false);
+            return;
+        };
+        // A press, or a stick or trigger moved well off centre, hands the
+        // game to the pad until a key or mouse button is pressed.
+        if s.pressed != 0 || s.left.length() > 0.3 || s.right.length() > 0.3 || s.rt > 0.3 || s.lt > 0.3 {
+            self.pad_on = true;
+        }
+        self.pad.rumble(kick, playing && self.focused && self.pad_on, dt);
+        if !playing {
+            self.pad_input = MoveInput::default();
+            self.pad_fire = (false, false);
+            if self.screen == Screen::Loading {
+                return;
+            }
+            // Directions from the d-pad or the left stick, held to repeat.
+            let dirs = [
+                (UP as u32, s.left.y > 0.6, KeyCode::ArrowUp),
+                (DOWN as u32, s.left.y < -0.6, KeyCode::ArrowDown),
+                (LEFT as u32, s.left.x < -0.6, KeyCode::ArrowLeft),
+                (RIGHT as u32, s.left.x > 0.6, KeyCode::ArrowRight),
+            ];
+            match dirs.iter().find(|(b, st, _)| s.down(*b) || *st) {
+                Some(&(b, _, code)) => {
+                    let (was, t) = self.pad_repeat;
+                    if was != b {
+                        self.pad_repeat = (b, 0.4);
+                        self.key(args, code, true);
+                    } else if t - dt <= 0.0 {
+                        self.pad_repeat = (b, 0.08);
+                        self.key(args, code, true);
+                    } else {
+                        self.pad_repeat.1 = t - dt;
+                    }
+                }
+                None => self.pad_repeat = (0, 0.0),
+            }
+            let presses = [
+                (A as u32, KeyCode::Enter),
+                (B as u32, KeyCode::Escape),
+                (START as u32, KeyCode::Escape),
+                (LB as u32, KeyCode::PageUp),
+                (RB as u32, KeyCode::PageDown),
+            ];
+            for (b, code) in presses {
+                if s.hit(b) {
+                    self.key(args, code, true);
+                    if self.screen == Screen::Playing {
+                        // That press went back into the world; the rest is for it.
+                        break;
+                    }
+                }
+            }
+            return;
+        }
+        self.pad_repeat = (0, 0.0);
+        // Buttons that stand for a key pressed once (or, for U, held).
+        let keys = [
+            (X as u32, KeyCode::KeyU),
+            (Y as u32, KeyCode::KeyV),
+            (START as u32, KeyCode::Escape),
+            (BACK as u32, KeyCode::KeyH),
+            (UP as u32, KeyCode::KeyC),
+            (DOWN as u32, KeyCode::KeyK),
+            (LEFT as u32, KeyCode::KeyX),
+            (RIGHT as u32, KeyCode::KeyF),
+        ];
+        for (b, code) in keys {
+            if s.pressed & b != 0 {
+                self.key(args, code, true);
+            } else if s.released & b != 0 {
+                self.key(args, code, false);
+            }
+            if self.screen != Screen::Playing {
+                // Paused, or the help: the pad's held keys let go.
+                self.pad_input = MoveInput::default();
+                self.pad_fire = (false, false);
+                return;
+            }
+        }
+        if s.hit(A as u32) {
+            // "Go on" where something waits: another race, another match.
+            self.actions.accept = true;
+        }
+        let driving = self.game.as_ref().is_some_and(|g| g.ride.car().is_some());
+        // In a race, the usual kart-racing layout: A or RT
+        // drives, B or LT brakes, RB hops and, held into a turn, drifts; LB
+        // or X uses the item (and LB, with nothing carried, is the small
+        // boost). X is for a thumb kept on the face buttons.
+        let racing = driving && self.in_race();
+        let l = s.left;
+        let press = |b: u16| if s.down(b as u32) { 1.0f32 } else { 0.0 };
+        let common = MoveInput {
+            forward: l.y > 0.5,
+            back: l.y < -0.5,
+            left: l.x < -0.5,
+            right: l.x > 0.5,
+            sprint: s.down((LB | L_STICK) as u32),
+            look: s.down(R_STICK as u32),
+            stick: l,
+            pad: self.pad_on,
+            ..Default::default()
+        };
+        self.pad_input = if racing {
+            MoveInput {
+                jump: s.down(RB as u32),
+                throttle: s.rt.max(press(A)),
+                brake: s.lt.max(press(B)),
+                ..common
+            }
+        } else {
+            MoveInput {
+                jump: s.down((A | RB) as u32),
+                down: s.down(B as u32),
+                throttle: s.rt,
+                brake: s.lt,
+                ..common
+            }
+        };
+        // On foot the triggers are the mouse buttons: dig and build, fire.
+        // In a race LB is the left button: it uses the item.
+        self.pad_fire = if racing {
+            (s.down((LB | X) as u32), false)
+        } else if driving {
+            (false, false)
+        } else {
+            (s.rt > 0.5, s.lt > 0.5)
+        };
+        // The right stick looks round, faster the further it is pushed.
+        if let (Some(g), true) = (&mut self.game, s.right != glam::Vec2::ZERO) {
+            let k = g.fov() / game::FOV_Y;
+            let r = s.right * s.right.length();
+            g.player.yaw -= r.x * 3.2 * k * dt;
+            g.player.pitch = (g.player.pitch + r.y * 2.2 * k * dt).clamp(-1.55, 1.55);
+        }
     }
 
     fn key(&mut self, args: &Args, code: KeyCode, down: bool) {
@@ -1633,6 +1964,24 @@ impl Running {
         }
     }
 
+    /// The race world on the line's overhead track picture into the page
+    /// image, once per world; whether there is one to draw.
+    fn track_picture(&mut self) -> bool {
+        let world = self.prefs.last.world.clone();
+        if self.track_pic.as_ref().map(|(w, _)| w) != Some(&world) {
+            let img = racemenu::track_picture(&world).and_then(|p| menu::load_picture_at(&p, render::hud::IMAGE_PX, render::hud::IMAGE_PX));
+            if let Some(img) = &img {
+                self.renderer.upload_map(img);
+                // A book page drawn before is gone from the image: drawn again.
+                if let Some(g) = &mut self.game {
+                    g.camera.page_dirty = true;
+                }
+            }
+            self.track_pic = Some((world, img.is_some()));
+        }
+        self.track_pic.as_ref().is_some_and(|(_, ok)| *ok)
+    }
+
     /// Put one world's pictures behind the menus, or every world's. Nothing
     /// happens while it is already showing the right set, and a world with
     /// no pictures of its own falls back to all of them rather than to a
@@ -1659,7 +2008,7 @@ impl Running {
             // The launch screen shows the world on the line, the way the
             // loading screen does; everywhere else shows them all.
             let world = match self.screen {
-                Screen::Launch { .. } => Some(self.prefs.last.world.clone()),
+                Screen::Launch { .. } | Screen::Race { .. } => Some(self.prefs.last.world.clone()),
                 _ => None,
             };
             self.show_pictures(world.as_deref(), t);
@@ -1696,6 +2045,30 @@ impl Running {
                     g.build_tune(&mut self.hud, w, h, true);
                 }
             }
+            Screen::Race { step, .. } => match *step {
+                0 => {
+                    // The card under the mouse is the one picked; the
+                    // buttons and arrows past the cards leave the pick be.
+                    let cards = racemenu::courses().len();
+                    if self.menu.at < cards {
+                        self.race_pick = self.menu.at;
+                    }
+                    // What RACE starts: the picked course with what was last
+                    // chosen for it.
+                    let mut l = self.prefs.last.clone();
+                    if let Some(c) = racemenu::courses().get(self.race_pick) {
+                        racemenu::set_course(&mut l, &c.world);
+                    }
+                    let laps = launch::options(&l.world, l.def()).iter().find(|o| o.id == "laps").and_then(|o| l.value(o).parse().ok());
+                    let summary = racemenu::summary(&l);
+                    racemenu::draw_courses(&mut self.hud, &mut self.menu, &self.race_records, laps, self.race_pick, &summary, w, h)
+                }
+                1 => racemenu::draw_karts(&mut self.hud, &mut self.menu, w, h),
+                _ => {
+                    let pic = self.track_picture();
+                    racemenu::draw_race(&mut self.hud, &mut self.menu, &self.prefs.last, &self.race_records, pic, w, h)
+                }
+            },
             Screen::Launch { open, .. } => {
                 let open = *open;
                 // With a list open, the screen behind it is drawn as it was
@@ -1718,7 +2091,7 @@ impl Running {
                     ..Menu::default()
                 };
                 let menu = if open.is_some() { &mut behind } else { &mut self.menu };
-                menu::draw_menu(&mut self.hud, menu, "OPEN WORLD", &base_items, foot, place, w, h);
+                menu::draw_menu(&mut self.hud, menu, "PLAY", &base_items, foot, place, w, h);
                 if let Some(which) = open {
                     let anchor = behind.drops.get(which as usize).copied().unwrap_or([0.0; 4]);
                     let in_force = menu::drop_at(&self.prefs.last, which);
@@ -1813,6 +2186,8 @@ impl Running {
         if self.screen == Screen::Loading {
             self.loading_step(args);
         }
+        self.pad_frame(args, dt);
+        let input = merge(&self.input, &self.pad_input);
         let (w, h) = (self.config.width, self.config.height);
         let in_world = self.game.is_some() && self.screen.over_world();
         self.hud.clear();
@@ -1838,12 +2213,18 @@ impl Running {
                 // A held button is put back every frame, whoever took it out
                 // of `actions` last frame (see `held`).
                 if self.screen == Screen::Playing {
-                    self.actions.dig |= self.held.0;
-                    self.actions.place |= self.held.1;
+                    self.actions.dig |= self.held.0 || self.pad_fire.0;
+                    self.actions.place |= self.held.1 || self.pad_fire.1;
                 }
                 let tr = trace::start();
-                g.tick(dt, &self.input, &mut self.actions);
+                g.tick(dt, &input, &mut self.actions);
                 trace::end("tick", tr);
+                // A setting the tick changed (V in a car) is in the prefs
+                // before a menu can copy the prefs over the game's.
+                if self.prefs.settings != g.settings {
+                    self.prefs.settings = g.settings;
+                    self.prefs.save(&args.save_dir);
+                }
             }
             let tr = trace::start();
             g.stream(&mut self.renderer.terrain, Duration::from_millis(3));
@@ -1859,6 +2240,8 @@ impl Running {
             }
             if let Some(img) = g.take_map_image() {
                 self.renderer.upload_map(&img);
+                // The track picture shared this image: load it again when asked.
+                self.track_pic = None;
             }
         }
         if matches!(self.screen, Screen::Edit { .. }) {
@@ -2138,6 +2521,11 @@ impl ApplicationHandler for App {
             writing: Vec::new(),
             actions: Actions::default(),
             held: (false, false),
+            pad: pad::Pad::new(),
+            pad_input: MoveInput::default(),
+            pad_fire: (false, false),
+            pad_on: false,
+            pad_repeat: (0, 0.0),
             last: Instant::now(),
             pacer: Pacer::new(refresh, std::env::var("VOXEL_PACING").is_ok_and(|v| v == "0")),
             trace: std::env::var("VOXEL_TRACE").is_ok(),
@@ -2165,8 +2553,11 @@ impl ApplicationHandler for App {
             cam_drag: None,
             cam_last: (0.0, 0.0),
             launch_at: 0,
+            race_records: race::records::Records::default(),
             launch_top: 0,
+            race_pick: 0,
             slides_world: None,
+            track_pic: None,
             hidden: false,
             focused: true,
             quit: false,
@@ -2219,6 +2610,9 @@ impl ApplicationHandler for App {
             WindowEvent::KeyboardInput { event, .. } => {
                 if let PhysicalKey::Code(code) = event.physical_key {
                     let pressed = event.state == ElementState::Pressed;
+                    if pressed {
+                        r.pad_on = false;
+                    }
                     if !event.repeat || !pressed {
                         r.key(args, code, pressed);
                     } else if r.screen != Screen::Playing
@@ -2268,6 +2662,9 @@ impl ApplicationHandler for App {
             }
             WindowEvent::MouseInput { state, button, .. } => {
                 let down = state == ElementState::Pressed;
+                if down {
+                    r.pad_on = false;
+                }
                 match r.screen {
                     Screen::Playing => match button {
                         MouseButton::Left => {

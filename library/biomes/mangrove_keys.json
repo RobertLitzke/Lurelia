@@ -26,11 +26,11 @@
     {"creature": "roseate_spoonbill", "count": 6},
     {"creature": "great_egret", "count": 4},
     {"creature": "cormorant", "count": 4},
-    {"creature": "crocodile", "count": 10},
-    {"creature": "sea_turtle", "count": 3},
-    {"creature": "alligator_gar", "count": 3},
+    {"creature": "crocodile", "count": 11},
+    {"creature": "sea_turtle", "count": 3.3},
+    {"creature": "alligator_gar", "count": 3.3},
     {"creature": "heron", "count": 4},
-    {"creature": "herring", "count": 24}
+    {"creature": "herring", "count": 26.4}
   ],
   "collectibles": [{"item": "seashell", "density": 0.0003, "placement": {"verb": "scatter", "params": {}}}],
   "sound": {"wind": 0.85, "ground": "water"}

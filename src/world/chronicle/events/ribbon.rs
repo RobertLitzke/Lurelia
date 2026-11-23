@@ -11,7 +11,12 @@ use serde::Deserialize;
 /// event only says where the line goes.
 #[derive(Deserialize, Debug)]
 pub struct Ribbon {
+    #[serde(default)]
     path: Vec<Pos>,
+    /// In place of `path`: a line beside the race track
+    /// (`race_track::AlongRun`).
+    #[serde(default)]
+    along: Option<crate::world::chronicle::race_track::AlongRun>,
     kit: String,
     /// Join the last point back to the first (a yard, a pasture, a ring road).
     #[serde(default)]
@@ -43,7 +48,10 @@ fn default_smooth() -> f32 {
 
 impl Process for Ribbon {
     fn apply(&self, cx: &mut EventCtx) -> String {
-        let pts: Vec<Vec2> = self.path.iter().map(|p| cx.pos(p)).collect();
+        let pts: Vec<Vec2> = match &self.along {
+            Some(a) => crate::world::chronicle::race_track::along_run(cx, a),
+            None => self.path.iter().map(|p| cx.pos(p)).collect(),
+        };
         if pts.len() < 2 {
             return "skipped: a ribbon needs two points".into();
         }

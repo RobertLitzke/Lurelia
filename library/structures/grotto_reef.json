@@ -1,0 +1,350 @@
+{
+  "name": "grotto_reef",
+  "version": 1,
+  "introduced_by": "gannet",
+  "notes": "A clump of reef in a sea cave's pool, about 10 m across and 3 m high: brain domes, staghorn thickets with pale tips, table corals and sea fans on a bed of coral sand. Place with `height` at the pool floor.",
+  "size": [40, 16, 40],
+  "anchor": [20, 0, 20],
+  "level": false,
+  "decays": false,
+  "tags": ["gannet", "cave", "reef"],
+  "ops": [
+    {"op": "ellipsoid", "centre": [11.4, 0, 20.6], "radius": [4.2, 2.5, 5.5], "mat": "coral_sand", "part": "stone"},
+    {"op": "ellipsoid", "centre": [23.2, 0, 17.1], "radius": [5.6, 2.1, 4.1], "mat": "coral_sand", "part": "stone"},
+    {"op": "ellipsoid", "centre": [19.1, 0, 16.5], "radius": [6.2, 2.4, 4.1], "mat": "coral_sand", "part": "stone"},
+    {"op": "ellipsoid", "centre": [17.2, 0, 15.9], "radius": [6.9, 2.0, 4.3], "mat": "coral_sand", "part": "stone"},
+    {"op": "ellipsoid", "centre": [23.0, 0, 25.7], "radius": [4.2, 1.6, 6.3], "mat": "coral_sand", "part": "stone"},
+    {"op": "ellipsoid", "centre": [26.0, 0, 22.2], "radius": [5.4, 1.8, 5.5], "mat": "coral_sand", "part": "stone"},
+    {"op": "ellipsoid", "centre": [16.8, 2.0, 14.6], "radius": [3.6, 2.1, 2.7], "mat": "coral_brain", "part": "stone"},
+    {"op": "ellipsoid", "centre": [15.6, 1.9, 22.3], "radius": [2.7, 2.3, 2.5], "mat": "coral_gold", "part": "stone"},
+    {"op": "ellipsoid", "centre": [14.5, 1.1, 23.9], "radius": [3.1, 3.1, 3.0], "mat": "coral_brain", "part": "stone"},
+    {"op": "ellipsoid", "centre": [19.2, 2.0, 11.4], "radius": [2.8, 3.4, 3.6], "mat": "coral_gold", "part": "stone"},
+    {"op": "ellipsoid", "centre": [9.4, 1.3, 16.5], "radius": [3.0, 2.3, 3.4], "mat": "coral_brain", "part": "stone"},
+    {
+      "op": "segment",
+      "points": [[18.5, 1, 31.0], [14.4, 6.0, 29.3]],
+      "radius": 0.7,
+      "mat": "coral_rose",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[14.4, 6.0, 29.3], [12.2, 8.0, 29.7]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[18.5, 1, 31.0], [18.0, 6.1, 29.2]],
+      "radius": 0.7,
+      "mat": "coral_rose",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[18.0, 6.1, 29.2], [18.0, 8.1, 27.0]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[18.5, 1, 31.0], [16.5, 6.0, 29.1]],
+      "radius": 0.7,
+      "mat": "coral_rose",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[16.5, 6.0, 29.1], [16.3, 8.0, 26.9]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[18.5, 1, 31.0], [16.9, 6.0, 30.2]],
+      "radius": 0.7,
+      "mat": "coral_rose",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[16.9, 6.0, 30.2], [14.8, 8.0, 30.8]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[18.5, 1, 31.0], [20.8, 5.6, 32.1]],
+      "radius": 0.7,
+      "mat": "coral_rose",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[20.8, 5.6, 32.1], [22.3, 7.6, 33.7]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[18.5, 1, 31.0], [20.6, 8.7, 31.6]],
+      "radius": 0.7,
+      "mat": "coral_rose",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[20.6, 8.7, 31.6], [22.8, 10.7, 32.0]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[18.5, 1, 31.0], [19.0, 5.7, 27.1]],
+      "radius": 0.7,
+      "mat": "coral_rose",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[19.0, 5.7, 27.1], [20.3, 7.7, 25.3]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[8.3, 1, 9.0], [11.3, 6.9, 4.8]],
+      "radius": 0.7,
+      "mat": "coral_brain",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[11.3, 6.9, 4.8], [12.2, 8.9, 2.8]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[8.3, 1, 9.0], [10.5, 8.1, 8.7]],
+      "radius": 0.7,
+      "mat": "coral_brain",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[10.5, 8.1, 8.7], [12.6, 10.1, 9.4]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[8.3, 1, 9.0], [3.0, 6.1, 9.4]],
+      "radius": 0.7,
+      "mat": "coral_brain",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[3.0, 6.1, 9.4], [0.8, 8.1, 9.2]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[8.3, 1, 9.0], [9.6, 8.4, 11.6]],
+      "radius": 0.7,
+      "mat": "coral_brain",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[9.6, 8.4, 11.6], [8.8, 10.4, 13.7]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[8.3, 1, 9.0], [7.3, 6.1, 10.2]],
+      "radius": 0.7,
+      "mat": "coral_brain",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[7.3, 6.1, 10.2], [5.7, 8.1, 11.8]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[8.3, 1, 9.0], [11.7, 5.0, 10.9]],
+      "radius": 0.7,
+      "mat": "coral_brain",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[11.7, 5.0, 10.9], [13.9, 7.0, 11.5]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[8.3, 1, 9.0], [10.6, 7.4, 10.1]],
+      "radius": 0.7,
+      "mat": "coral_brain",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[10.6, 7.4, 10.1], [12.8, 9.4, 9.5]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[21.9, 1, 16.5], [21.4, 7.9, 19.1]],
+      "radius": 0.7,
+      "mat": "coral_rose",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[21.4, 7.9, 19.1], [19.6, 9.9, 20.4]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[21.9, 1, 16.5], [23.9, 8.3, 18.9]],
+      "radius": 0.7,
+      "mat": "coral_rose",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[23.9, 8.3, 18.9], [26.0, 10.3, 19.5]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[21.9, 1, 16.5], [22.3, 5.1, 13.3]],
+      "radius": 0.7,
+      "mat": "coral_rose",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[22.3, 5.1, 13.3], [21.0, 7.1, 11.5]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[21.9, 1, 16.5], [20.8, 6.3, 18.0]],
+      "radius": 0.7,
+      "mat": "coral_rose",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[20.8, 6.3, 18.0], [21.0, 8.3, 20.2]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[21.9, 1, 16.5], [24.9, 6.2, 13.9]],
+      "radius": 0.7,
+      "mat": "coral_rose",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[24.9, 6.2, 13.9], [25.6, 8.2, 11.8]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[21.9, 1, 16.5], [19.6, 6.8, 17.8]],
+      "radius": 0.7,
+      "mat": "coral_rose",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[19.6, 6.8, 17.8], [19.1, 8.8, 19.9]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[21.9, 1, 16.5], [17.9, 6.5, 16.0]],
+      "radius": 0.7,
+      "mat": "coral_rose",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[17.9, 6.5, 16.0], [15.7, 8.5, 16.2]],
+      "radius": 0.6,
+      "mat": "coral_tip",
+      "part": "stone"
+    },
+    {
+      "op": "segment",
+      "points": [[31.3, 0, 30.1], [31.3, 5.1, 30.1]],
+      "radius": 0.8,
+      "mat": "coral_teal",
+      "part": "stone"
+    },
+    {"op": "ellipsoid", "centre": [31.3, 5.1, 30.1], "radius": [4.8, 0.7, 4.8], "mat": "coral_teal", "part": "stone"},
+    {
+      "op": "segment",
+      "points": [[14.9, 0, 26.4], [14.9, 4.8, 26.4]],
+      "radius": 0.8,
+      "mat": "coral_teal",
+      "part": "stone"
+    },
+    {"op": "ellipsoid", "centre": [14.9, 4.8, 26.4], "radius": [4.4, 0.7, 3.9], "mat": "coral_teal", "part": "stone"},
+    {
+      "op": "segment",
+      "points": [[14.1, 0, 30.5], [14.1, 3.5, 30.5]],
+      "radius": 0.8,
+      "mat": "coral_violet",
+      "part": "stone"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [14.1, 3.5, 30.5],
+      "radius": [3.5, 0.7, 4.0],
+      "mat": "coral_violet",
+      "part": "stone"
+    },
+    {"op": "ellipsoid", "centre": [19.9, 5, 12.3], "radius": [2.7, 5, 4.6], "mat": "coral_violet", "part": "stone"},
+    {"op": "ellipsoid", "centre": [22.6, 5, 19.9], "radius": [4.2, 5, 3.2], "mat": "coral_rose", "part": "stone"}
+  ]
+}

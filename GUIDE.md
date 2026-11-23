@@ -24,8 +24,8 @@ cargo run --release
 The first build takes about a minute; later builds take 5 to 20 seconds.
 
 The game opens on the title screen (borderless fullscreen, or a maximized
-window with fullscreen off): RETURN (the world you were last in, as you left
-it), OPEN WORLD, settings, controls, or quit. OPEN WORLD is the one screen
+window with fullscreen off): CONTINUE (the world you were last in, as you left
+it), PLAY, settings, controls, or quit. PLAY is the one screen
 that sets a run up: the game and the world are dropdowns, the lines under them
 are what this game and this world put on offer, and GO and BACK stand at the
 foot of the screen. The game comes first, and the world list is then the
@@ -58,7 +58,7 @@ shown by where the folder name is not it, and `"listed": false` keeps a bench
 or a test off the list while `--world` still opens it. Behind the menu it cycles through the
 pictures in `screenshots/` and `photos/` (yours) and each world's `pictures/`
 folder (bundled, any file name), cropped to 16:9 and cross-faded. The title
-screen shows every world's; once a world is on the line, OPEN WORLD shows only
+screen shows every world's; once a world is on the line, PLAY shows only
 that world's, crossfading as you step through them, and falls back to all of
 them for a world with none of its own. A world loads behind a loading screen
 showing that world's pictures: first the land is built on a worker thread, then the
@@ -88,7 +88,8 @@ for comparing. The in-game
 keys G, T, B, F3, F6 and F11 change the same settings. Flags such as `--style`,
 `--no-shadows`, `--blocky`, `--view`, `--msaa` and `--vsync` override them for the run
 (and are saved if a setting changes). Headless, `--show-menu` with
-`title|settings|worlds|loading|pause` draws a menu screen into `--screenshot`,
+`title|settings|worlds|loading|pause|race-courses|race-karts|race` draws a menu screen into `--screenshot`
+(`--rivals N` and `--laps N` set a race's field for a headless `--ride race`),
 `--edit NAME` draws the EDIT page over its studio (see "The EDIT page"),
 and `--show-menu look`, `look-light`,
 `look-ramp`, `look-tint`, `look-map`, `look-grade` or `look-pick` draws the
@@ -149,6 +150,31 @@ sound device) at 0.16.0 for the same reason: 0.17 and later depend on
 | F11 | Fullscreen (saved in the settings) |
 | Esc | Pause menu |
 
+### Xbox controller
+
+Any XInput controller (an Xbox One or Series pad, wired or over the
+wireless adapter or Bluetooth) works without setup; plug it in at any time.
+The game reads the first one connected. Pressing a key or mouse button hands
+control back to the keyboard, and touching the pad takes it again.
+
+| Button | Action |
+|---|---|
+| Left stick | Move; in the car, steer (finer near the centre); in the air, pitch and roll |
+| Right stick | Look |
+| RT / LT | Throttle / brake, then reverse. On foot: dig and build, or fire and the other fire mode |
+| A, RB | Jump; in the car, hop, and held through a turn, drift. A also races again after a finish |
+| B | Crouch; handbrake in the car |
+| LB, left stick click | Sprint; boost in the car |
+| X | Get in or out of the vehicle; held, put it back on its wheels |
+| Y | First person or chase camera |
+| D-pad up / down / left / right | Glide / kayak / bike / take the camera out |
+| Right stick click | Look around without steering while gliding |
+| Start / Back | Pause menu / help |
+
+In the menus the d-pad or left stick moves, A picks, B or Start goes back,
+and LB and RB page through a long list. The pad shakes when the car lands
+hard or hits something.
+
 Saves go to `saves/<world>/`: `edits.bin` (every voxel you changed) and
 `progress.json` (position, finds, film and tasks, the chosen style and whether
 slopes are on). `--fresh` starts without edits or progress, and `--save DIR`
@@ -177,7 +203,7 @@ The mountain bike (X) follows the drawn ground and leaves it wherever the
 ground falls away faster than gravity can follow, so any lip or crest taken at
 speed is a jump. It rolls along on its own at about 9.4 m/s (34 km/h); W
 pedals it to 12.2 m/s and S brakes. On the flat that is its top speed: the
-speed worth having comes from a hill, a tuck or a token. It turns toward where you look as fast as
+speed worth having comes from a hill or a tuck. It turns toward where you look as fast as
 its grip allows (A and D turn the view too, winding up to 2 rad/s over about
 a tenth of a second and back down on release, so a tap nudges the view); look
 far to the side and it keeps going straight. Shift is a sprint out of the saddle: a burst of about 1.4 s
@@ -199,17 +225,7 @@ a lip or off a pop, the whole charge is spent at once: a kick up and about a
 third less gravity for the length of that jump, which is a noticeably longer,
 floatier arc. Landing clears it.
 
-Speed tokens lie along trails across the world, and only show while the bike
-is out (`src/ride/boost.rs`). About half of the 384 m cells carry a trail: a
-chain of eight to fourteen rings 26 m apart along a wandering line, whose
-places come from the world seed, so a trail is where it was last ride. Each
-ring waits for the ground under it to stream in before it stands up, and a
-spot that turns out to be a cliff, under water or built over is dropped, so
-what is left is somewhere a bike can get to. Riding through one fills the
-sprint meter, adds about 3 m/s, and the ring comes back a minute later.
-
-Going fast enough (upwards of 13 m/s, and more so sprinting or just after a
-token), thin streaks run outward at the rim of the view (post.wgsl, driven by
+Going fast enough (upwards of 13 m/s, and more so sprinting), thin streaks run outward at the rim of the view (post.wgsl, driven by
 `Camera::streaks`), on top of the radial blur. They
 lighten a dark view and darken a bright one, relative to the pixel under them
 and blended between the two, so they show against sky as well as ground
@@ -331,10 +347,18 @@ paddler.
 
 ## Driving
 
-A world that lists `"vehicles"` in its `world.json` can be driven. Ribshore
-has a sand rail and an older beach buggy (`library/vehicles/`), and Redrock
-has the buggy for the desert floor; the launch
-screen picks which one U brings, and its DRIVE switch takes driving out.
+A world can be driven wherever its `modes` allow `drive`. Its `world.json`
+names the vehicles in `"vehicles"` (`library/vehicles/`): Ribshore and Gannet
+have a sand rail and an older beach buggy, Redrock has the buggy for the
+desert floor, and the kart circuits have karts. A world that names none has
+the ATV, and `"vehicles": []` turns driving off. The launch screen picks which
+one U brings, and its DRIVE switch takes driving out.
+
+The ATV is a quad bike on the kart's handling, tuned from the heavy kart: A
+and D steer, Space hops and drifts as on a kart. It is bigger and rides on
+long soft travel, so it rolls up voxel steps and over rough ground a kart
+can't take. It gets more air than a kart, and in the air its nose is held
+about 8 degrees up over the ground below so the rear wheels land first.
 
 U gets in. The first time it sets the car down at your feet, facing the way
 you look; after that it is wherever you left it, and U within 5 m of it gets
@@ -353,12 +377,11 @@ the cab. In the air W and S pitch the nose and A and D roll; four wheels down at
 once off a jump of half a second or more is a clean landing, which gives back
 a little speed and some boost. A car on its side or roof and nearly stopped
 rights itself after a second. The chase camera is the default (V for the
-driver's seat, hands on the wheel).
+driver's seat, hands on the wheel). The ATV and the beach buggy each keep the
+view you last drove them in, from one run to the next (settings.json).
 
 On Ribshore the wet beach below the tide line is the fast line, and the dune
-ridges behind it are 40 to 54 m apart, so at 70 km/h each crest is a jump. The boost-token trails
-(`ride/boost.rs`) show for the car as they do for the bike, and a car takes a
-token anywhere across its width. Most animals bolt from an engine long before
+ridges behind it are 40 to 54 m apart, so at 70 km/h each crest is a jump. Most animals bolt from an engine long before
 it arrives; one that doesn't is pushed aside unharmed and the car loses some
 speed for it, more for a big one.
 Shrubs under 1.8 m (sagebrush, rabbitbrush, small cacti) are flattened as the car
@@ -409,25 +432,143 @@ up to 15%, kept only if it passes a bump, rough-ground and drift check);
 even rounds do the same for the bots' styles. `SEED=` and `ROUNDS=` vary it.
 It prints each round's points and what changed, then the final tunes as JSON
 lines to paste into a vehicle file and the final bot styles.
-The physics is in `src/vehicle/` and the design in `notes/WHEELS_PLAN.md`.
+The physics is in `src/vehicle/`.
 
 ## Kart racing
 
-The Kestrel Ice Ring (`worlds/kestrel`) is a kart circuit in a canyon of ice,
-and RACE is its mode on the launch screen (`--world kestrel` opens it that
-way). You start at the back of a grid of four karts: three bots, blue, green
-and yellow, and you in red. Three laps, 1.3 km round between ice walls, over
-the shoulder of Beacon Hill and down through the hollow. W drives, S brakes, A and D steer. Space hops; held with the
+Three worlds are kart circuits, and RACE is their mode on the launch screen
+(`--world peregrine` opens one that way). Peregrine Ridge (`worlds/peregrine`)
+is 1.4 km across the chalk downs with open verges: a long straight, a banked
+climb up Falcon Crest, a ridge hairpin, a drop into the Chalk Bowl and
+S-bends over West Knoll. Vermilion Mesa (`worlds/vermilion`) is a 1.9 km
+figure-eight in red rock country: along a canyon floor, up switchbacks
+through aspens, across the mesa top through pines, down through fallen
+boulders and back through a long tunnel under the road it has just driven.
+Ribstrand (`worlds/ribstrand`) is 1.65 km on Ribshore's grey coast: south
+down the wet beach at the water's edge with sea stacks offshore, a tangle of
+small bends through the dunes past a giant's calf, north over three jumps
+laid along the dune crests at a slant, and back down the beach through the
+middle of a titan's ribcage to the line.
+You start at the back of a grid of four karts: three bots, blue, green and
+yellow, and you in red, under a chequered gantry with the grid boxes painted
+on the road. W drives, S brakes, A and D steer. Space hops; held with the
 steering over at speed it drifts, and every 0.8 s of drift charges a tier
-of boost, up to two, that fires when you let go. The HUD shows your place,
-the lap, the race clock and your speed. A kart that is stuck, over, or well
-off the track for three seconds is put back on it. When you finish, the
+of boost, up to two, that fires when you let go. Let off the throttle and
+the kart slows a fifth quicker than drag alone would (`coast` in
+`kart.json`). Past the kerb it is dragged down toward 60% of its top speed
+(`verge` in `src/race/laps.rs`). Karts that touch push each other apart by
+mass, rub off a little speed side by side, and turn without spinning
+(`src/vehicle/touch.rs`).
+
+The HUD has your place top right, with the lap (FINAL LAP on the last), the
+race clock, and your last and best laps under it, then the running order
+with each kart's gap to the one ahead, timed at checkpoints about every
+100 m round the course (ticks on the minimap), so a gap changes as the
+checkpoints are passed rather than with every twitch of speed. The circuit
+is drawn small in the bottom right corner with every kart on it in its
+colour. Your speed and the
+drift's charge are bottom centre, each lap's time shows as you cross the
+line, and WRONG WAY flashes after a second going backwards. The F3 stats
+stay in the top left, but the wheel readout and the tuning panel are off in
+a race. Past the kerb the HUD says OFF TRACK; a kart only goes back on the
+track when it is far out of bounds (15 m past the kerb, or 6 m below the
+road), after a three-second RETURN TO TRACK countdown, set down where it
+left the road. A kart on its side rights itself where it is, and a bot that
+is stuck backs out. The countdown beeps, each lap ends with a chime, and the
+time to a third and two thirds of the lap shows against your best. When you finish, the
 results come in as the others do; Enter races again.
 
-A new course is a `.course` text file: the land, its hills, and the
-centreline as a list of points, in a few dozen lines. `tools/course/FORMAT.md`
-describes it and `tools/course/course_file.py` builds the world from it;
-Kestrel is `tools/course/maps/kestrel.course`.
+KART RACE on the title screen opens a card for each course
+(`src/racemenu.rs`): the circuit drawn, its length, laps, rivals and
+crossings, your best race and best lap on it with the kart you set them in
+(`records.json` in the save folder; a race the autopilot drives sets none),
+and what the course is. Arrows either side of the row say how many more
+courses are off it. Enter (or RACE) starts the picked course with the kart and
+options last used on it, which the line at the foot spells out. Tab (or KART
+AND OPTIONS) goes on to a card for each kart, with bars for top speed,
+pick-up, grip and weight against the other two, and then to the race's own
+list, with the course's card beside it and GO picked. Esc steps back, and the
+step names along the top can be clicked. The pause menu in a race has RESTART
+RACE and CHANGE COURSE. The PLAY screen still offers the
+same choices as lines of its list: the course (every world that offers
+RACE), your KART (the plain kart; a heavy one, fastest on the straights and
+the winner of any shove; a quick one, first off the line), how many RIVALS (1
+to 7, so eight on the grid), LAPS, DIFFICULTY (how hard the rivals drive;
+nothing slows the leaders to wait for you), CONDITIONS (the weather, held for
+the race: rain and then snow make the road slippery for everyone), and the
+TIME of day. RIVALS, LAPS, CONDITIONS and TIME start on Default, the course's
+own, with what that comes to written under it. At night, and by day in rain, snow, fog or a storm, every kart has headlights and tail lights, its lamps
+glowing on the model; the tail lights brighten while it brakes, by day too (`src/vehicle/lights.rs`). A
+course with `lights` has lamps on posts along the road. Rivals drive all three karts,
+each driver fitted to its kart's grip (`Style::for_kart`). `KART_ARMS=off`
+races with no item boxes, for timing.
+
+The racing line polishes in. The road is cut into metre tiles, and every
+kart whose wheels pass over a tile makes it 0.5% faster for whoever comes
+after, for the rest of the race: seven karts on one line make it 3.5%
+quicker for the seventh, and three laps of it 10.5% by the end. A kart's
+top speed and drive are scaled by the polish under its wheels (POLISH on
+the HUD under your speed), and polished tiles darken in four steps as they
+wear in, at 1, 3, 5 and 8 passes, so you can see the line. Nothing about it
+is random (`src/race/polish.rs`), and rivals out of sight, carried round
+where the world isn't loaded, polish the line as much as those you can see.
+The darkening is never written into the world: it is a map of the world the
+terrain shader reads (`src/render/polish.rs`), so a race full of polish
+costs no voxel edits and no remeshing. A new race clears it, and wipes what
+the last one did to the world (goo, blocks) the way an arena is mended
+between matches (`wants_world_clean`).
+
+Rows of pickups stand across the road on the straights, each one you can
+see before you reach it: the shooter's ammunition for a weapon, the blue
+breastplate for a shield, a green cross for a wrench, a lit blob for a boost
+or overdrive. Steer for the one you want. Which stands where is fixed by the
+row, nothing random, the same whatever your place. With nothing carried you
+take it into the slot bottom left; carrying something, you drive through and
+leave it for the next kart. A wrench mends 5% of your damage at once. The
+left mouse button uses what you carry. The weapons are the shooter's, retuned for karts: a machine gun
+along the nose that bends onto a kart near its line, a guided rocket that
+follows where you look or a kart near the middle of the view, goo and a block
+dropped behind, and a disc up the road that bounces off the edge of the track
+wall or no wall. A heavy hit (a rocket, a disc, goo) spins a kart out for a
+second; machine-gun rounds slow it and a burst spins it; a block slows it.
+Hits also do damage, which stays for the race: a damaged kart's top speed
+and drive are down by the damage, up to 15% at the most, and a rocket does
+about 2% (the bar under the slot). Goo goes off in a green puff when a kart
+touches it. The rest: a boost, a shield (a blue bubble round the kart,
+flickering as it runs out) that turns every hit for ten seconds, and
+overdrive, six seconds faster with nothing able to spin you. With nothing carried, Shift is a short
+boost that takes eight seconds to come back. `KART_ARMS=all` gives every
+kart every weapon, refilled, with 1 to 5 picking yours, for trying them out
+(`src/race/arms.rs`). S held as you use an item fires it behind (the gun and
+rocket out of the back, the disc back down the road), and Alt held looks
+behind, and fires behind too. Karts are drawn 1.3 times the size of their
+physics, and are that much bigger to hit; they handle as before.
+
+The rivals are a third a little faster (2% more top speed and drive), a
+third a little slower (3% less), dealt afresh each race, the rest as their
+kart is. They drift the tighter bends, ride a slipstream before passing,
+fire back at a kart close behind and throw goo or a block ahead onto a
+kart's line (`src/race/brain.rs`, bred in bot tournaments, `tools/kart_brains/`).
+
+On a controller a race uses the layout most kart racers share: A or RT drives, B or LT brakes, the left stick steers,
+RB hops and, held into a turn, drifts; LB or X uses the item (LB, with
+nothing carried, boosts), the left stick held back while using one fires
+behind and held forward throws goo or a block ahead, the right stick pressed
+looks behind, and A races again (see "Xbox controller"). A drifting kart smokes
+off its back wheels, then sparks blue once the drift has charged its first
+boost and orange for the second, so you can see when to let go.
+
+A new track is a `.track` text file: the land, its hills, and the centreline
+as a list of points, in a few dozen lines, with road heights where you want
+them exact (so the road rises onto bridges and crosses itself), stretches of
+other surfaces, widths and walls, pickup rows, boost pads, jumps,
+checkpoints, and the arena format's `add` and `carve` shapes for tunnels,
+arches and grandstands. `track_file.py` resolves it into the world's
+`track.json`, which the engine stamps after the world's own chronicle, so the
+world round the track (a coast, a village, a castle) can be anything and the
+road stays exact. `tools/course/FORMAT.md` describes it all. The three
+circuits are `tools/course/maps/peregrine.track`, `vermilion.track` and
+`ribstrand.track`.
 
 The pieces underneath, for a race built some other way:
 
@@ -438,10 +579,10 @@ The pieces underneath, for a race built some other way:
   at each path point (up to about 3 m above the ground, or it leaves a gap),
   and `wall` stands walls that high along both sides. It keeps its centreline
   and heights for the race.
-- world.json `race` names the circuit, the laps, how many rivals (1 to 3) and
-  the vehicle. The world's `vehicles` should list that vehicle first, since
+- world.json `race` names the circuit, the track file (`track`), the laps,
+  how many rivals and the vehicle. The world's `vehicles` should list that vehicle first, since
   the wheel model is sized from it.
-- `src/race.rs` runs it. The rivals drive with `vehicle::bot` (`Style::kart`
+- `src/race/` runs it. The rivals drive with `vehicle::bot` (`Style::for_kart`
   for karts, `Style::racer` otherwise), see crests and descents through the
   circuit's heights, pass a slower car ahead, and bump off each other and
   you. A rival out where the world isn't loaded is carried round the
@@ -449,7 +590,7 @@ The pieces underneath, for a race built some other way:
 
 To watch a whole race without a window, with a bot driving your kart:
 
-    lurelia --world kestrel --headless --ride race --ride-secs 200 --chase --screenshot out.png
+    lurelia --world peregrine --headless --ride race --ride-secs 200 --chase --screenshot out.png
 
 It prints the standings every second. To tune the kart against the bots on
 the test circuit, made smooth: `BUMPS=0 TUNE=kart cargo test --release
@@ -1288,7 +1429,7 @@ banks the camera for a headless shot.
 ## Seasons
 
 The part of the year the whole world is in (`src/world/season.rs`), turning
-over about every two days. Four seasons -- **spring**, **summer**, **autumn**
+over about once a day. Four seasons -- **spring**, **summer**, **autumn**
 and **winter** -- of which a world has one or more: a world names the ones it
 gets and the year goes round only those. Summer is what the looks were tuned
 in, so its row of numbers is all ones and zeroes, and a world of nothing but
@@ -1317,11 +1458,11 @@ twenty-five minutes rather than crossing it in a line. A turn between two
 seasons whose trees look the same -- and every turn in a one-season world --
 costs no rebuilding at all.
 
-**When a season turns.** It lasts two days on average and is not fixed: most
+**When a season turns.** It lasts a day on average and is not fixed: most
 turns are pulled into the small hours, where the leaves can change without
 being watched, and the rest are left to fall where they will, so a season can
 end at any time of day. The pull picks the night before or the night after in
-the proportion that leaves the average exactly two days. A world opening in
+the proportion that leaves the average exactly one day. A world opening in
 the afternoon is therefore about a quarter of the way through its season.
 
 **Dry grass.** world.json `straw` (0 to 1, default 0) holds the grass that far
@@ -1389,8 +1530,9 @@ nothing is called, and any start that is not one of its own.
 it at once rather than turning into it over half a season; the stats panel (G)
 shows the day, the hour, the season and the weather. `--season NAME` opens a
 headless shot in one. The launch screen offers SEASON (a world with more than
-one) and TIME: picking either holds it there for the run, and leaving SEASON
-on Turning lets the year go round. The season and the day are kept in the
+one) and TIME: picking either holds it there for the run. SEASON starts on
+Cycle, which lets the year go round and lists the seasons it goes through;
+TIME starts on Default, the world's own hour, written under it. The season and the day are kept in the
 save, so coming back to a world is not always the season it opens in.
 
 ## Slopes
@@ -1998,7 +2140,7 @@ two:
   the creatures, shells in flight, bursts that damage and push everything they
   can see -- the shooter included, which is the rocket jump. It knows nothing
   about why anyone is shooting.
-- `src/shooter.rs` is one set of rules: health, armour, dying, respawning,
+- `src/shooter/` is one set of rules: health, armour, dying, respawning,
   score, and the HUD. A sniper game would be a second set of rules over the
   same two layers below.
 
@@ -2432,6 +2574,21 @@ it is strung out on: Thornpan's Sedge runs down the spine of a sand island,
 and a few degrees out puts the houses in the water. The `settlement` event
 scatters houses in a disc instead, all facing the middle.
 
+`town` grows a whole town or city from a centre, a radius and the roads
+that come in from the country (`gates`): a core and districts round it, each
+`grid`, `radial`, `maze`, `suburb`, `village` or `ribbon`; closed blocks of
+terraces in the dense ones and houses in gardens elsewhere, drawn from their
+footprints like an imported city; squares, churches, parks, a wall,
+landmarks from the library; quays and bridges where there is water; and
+fields laid off the roads with walls and hedges. It can stand the world's
+own cottages on its plots (`houses`) and keep its market as a village green
+(`green`), or stand on stilts over a swamp with boardwalks for streets
+(`walkways`). What it is made of comes from a city kit's `town` section
+(`old_town`, `harbor_town`, `cotswold_village`, `settler_village`, `cane_town`). The `fields` event lays the
+same farmland in an outline with no town, off the roads already there.
+`docs/TOWNS.md` has the rest, including how to replace a hand-placed
+village with a town.
+
 ### Names and signs
 
 A world can name its ground and write on it (`src/world/places.rs`).
@@ -2690,9 +2847,10 @@ bottle tree; the red mangroves of the new mouth on their prop roots
 (`mangrove` form) with the sunk shrimp boat; and the chenier on the south
 point with live oaks, the parish tombs and the light.
 
-More places: Mire, a cane town of two dozen board cottages, a store and a
-filling station in the middle of the cane fields with dirt trails out through
-the cane; dirt trails linking the sugar house, the landing, the mound grounds,
+More places: Mire, a cane town in the middle of the cane fields (a `town`
+event): two dozen board cottages on piers in rows along a crossroads of dirt
+streets, a store, a chapel and a school, a filling station where its street
+meets the levee road, and dirt trails out through the cane; dirt trails linking the sugar house, the landing, the mound grounds,
 the woods east of the river, the east hammocks and the chenier; the sugar house's brick quarters, cistern and lone walls; the Bird Mound,
 a 12 m effigy mound with spread wings on the central plain (`earthwork`), and
 the low half rings east of it; Mother Ruth's camp deep in the swamp among
@@ -2926,7 +3084,7 @@ rhythm whatever the sea is doing. Its chronicle is edited as JSON.
 The coast north of Ribshore, 1.5 km across, built to meet Ribshore's north
 edge: its world.json names `"neighbours": {"south": {"world": "ribshore"}}`,
 and the build takes a strip off Ribshore's edge and blends its own land, coast
-distances and trees into it (`world/seam.rs`; `notes/UBERWORLD_PLAN.md`). Its
+distances and trees into it (`world/seam.rs`). Its
 south edge therefore runs on into Ribshore's beach, dunes and spruce, and the
 two will walk as one once worlds can be joined at runtime. It shares
 Ribshore's sea level, tide, surf, sky and weather; its grade is Ribshore's
@@ -2965,7 +3123,65 @@ New entries: fourteen `gh_` biomes, the `fieldstone_wall` kit, the `whaler` in t
 (moored, careened on a marine railway, buried), small craft, the New England houses and
 waterfront buildings, the rope walk, a covered bridge, the station ruins, and the gannet,
 salmon, lobster, banana slug, razorbill, apple, lowbush blueberry and cordgrass
-(`notes/GANNET_HARBOR.md` lists them all).
+(the catalogue lists them all under Gannet).
+
+### Saurischia
+
+The old high country east of Hemlow, 1.5 km across, built to meet Hemlow's
+east edge (`"neighbours": {"west": {"world": "hemlow"}}`): the top of Raven
+Scar, where the Grimwold carries on over the seam. Behind it the great
+animals never died out, and people came and stayed to live beside them. It
+shares Hemlow's sea level, height, latitude and seasons.
+
+The land is a `terrain` upland tilted up to the east, cut by `drainage` and
+crossed by the Steps: four staggered `escarpment` fault blocks (26, 17,
+12 and 9 m), two overlapping at the front, with beds tilted by a `dip`,
+rims weathered by `erode_rims` and two side `canyon`s cut back into the
+faces (`region` `high_country` behind). The Saur comes in over the east
+edge, drops over the back and middle blocks in short falls, winds along
+the bench between them and goes over the front block at the Veil (22 m),
+where pteranodons nest on ledges (`cliff_nest`) in the face beside the
+falls, then cascades into a pool and on into Cascade Mere, a lake 510 m
+across round an island. The mere spills two ways: the
+Wend west through the Fernwood and the Grimwold to Hemlow, where it goes
+over Raven Scar at Wend Force, and the Lessa south off the map. Cinderhorn,
+a young `volcano`, stands near the south edge, its lava (`sau_lava`, with
+`lava_glow` channels from `path` events) running off toward the next tile,
+ash north-east of it and hot springs on its west flank.
+
+Cascadelle, the city, is a `mesa` island in the mere (capped in
+`city_flags`). Four stone bridges in the Charles Bridge manner cross to the
+shores, each a chain of `bridge_bay` arches (pier, arch, parapets, a saint
+over each pier) hung at deck height, with a gothic `bridge_tower` at the
+shore end and a `sauropod_gate` at the island end. The city is a radial `village` of Venetian
+palazzi, canal houses, mansard blocks and wedge, trapezoid, crescent,
+L-shaped and narrow infill buildings, the Rotunda and a campanile. The
+Grand and North canals are long narrow `steep` lakes held a little above
+the mere, with a `canal_lock` at each outer end. The mere uses the lake's `keep_islands`, added for it: without
+it the bowl is dug again at the end over the island,
+and the lake holds the level it had when it was dug. A `mesa` raised out
+of a lake's bowl now clears the cells' water flag, so a `village` can lay
+streets on the island (every other world's map is unchanged).
+
+Round the city: walled upper farms and fenced lower farms with stone
+farmhouses, great barns and granaries; Ferncross, a timber town of stilt
+houses on the north road; the Parkland and Thunderfield, open grass with
+long-necks, horned and crested herds, gallimimus flocks and
+quetzalcoatlus; the Fernwood, split into high forest, stream brakes, the
+Titan Stand, fern glades, a horsetail marsh and a dawn redwood swamp; a
+corner of Hemlow's faerie wood in the south-west with toadstool rings.
+The Wend leaves at Hemlow's bed height because a negative river `floor`
+now holds a bed above the sea through settling as well as carving.
+Roads meet Hemlow's cliff-top track at the edge at z 392 and z 1108.
+Bones: the Sleeper (a 55 m sauropod on its side with its neck curled
+round to its back) and Ashjaw (a tyrannosaur half sunk in the ash) are
+`skeleton` events of the `sauropod` and `theropod` kinds, added for them;
+the Arch (a diplodocus neck) and the triceratops skulls of Hornbone Gully
+are voxel structures. New creatures:
+stegosaurus, ankylosaurus, gallimimus, quetzalcoatlus. New plants:
+dawn redwood, titan and young monkey-puzzles, plane tree; araucaria moved
+to the `branching` form. Anomalies: why the animals lived on here, and the
+size of the Sleeper.
 
 ### Saltmirror
 
@@ -3116,7 +3332,7 @@ cargo run --release -- --headless --screenshot shot.png --stats stats.json
 - `--tour S` walks a loop round the island for S seconds and reports every
   creature met, by species.
 - `--hud` shots take `--show-help` (the key help over the view) and
-  `--show-worlds` (the OPEN WORLD screen for the current world).
+  `--show-worlds` (the PLAY screen for the current world).
 - The bot and weapon benches: `--duel N` (with `--duel-seconds S` and
   `--duel-weapon NAME` for one gun's row) is the weapon bench under
   "Shooters"; `--tourney N` (with `--tourney-seconds S`) the movement
@@ -3136,6 +3352,14 @@ comparisons and debugging:
 - `VOXEL_TIMING=1` prints how long the horizon map took to bake.
 - `VOXEL_TEX_SHEET=out.png` writes the material texture sheet as it is
   built.
+- `VG_CROWD=1` prints, once a second, how many walkers stand in each other,
+  the deepest overlap and the fastest big walker's turn; `VG_CROWD=still`
+  measures without pushing them apart. `VG_THUMP=k` scales the view's jolt
+  at a big animal's footfall (0: off). See docs/CREATURES.md, "Big bodies
+  in a herd".
+- `VG_AWAY=x,z,from,to` (headless) moves the camera to (x, z), facing away,
+  between `from` and `to` seconds and back after: are the large animals
+  still there on the return (docs/CREATURES.md, "Large animals").
 - `VG_SPAWN_WET=1` lets `VG_SPAWN` set walkers down in rivers, to test
   swimming; `VG_CATCH_M=12` lets a hunter take prey across a clearing and
   prints each kill.

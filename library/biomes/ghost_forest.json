@@ -18,14 +18,15 @@
       "plant": "cattail",
       "density": 0.7,
       "placement": {"verb": "clustered", "params": {"size": 22, "min": 0.66, "max": 0.675}}
-    }
+    },
+    {"plant": "cordgrass", "density": 0.14, "placement": {"verb": "clustered", "params": {"size": 16}}}
   ],
   "creatures": [
     {"creature": "anhinga", "count": 6},
     {"creature": "cormorant", "count": 6},
     {"creature": "heron", "count": 2},
     {"creature": "crow", "count": 4},
-    {"creature": "alligator", "count": 2}
+    {"creature": "alligator", "count": 2.2}
   ],
   "mist": 0.35
 }

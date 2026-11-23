@@ -26,6 +26,7 @@ fn env_on(var: &str) -> bool {
 
 fn prelude() -> String {
     let v2 = |v: [f32; 2]| format!("vec2<f32>({:?}, {:?})", v[0], v[1]);
+    let v3 = |v: [f32; 3]| format!("vec3<f32>({:?}, {:?}, {:?})", v[0], v[1], v[2]);
     let w = crate::world::WIND;
     [
         "// Generated in render/shaders.rs from the Rust constants.".to_string(),
@@ -106,7 +107,10 @@ fn prelude() -> String {
         format!("const Q_BLOCK_BIT: u32 = {}u;", quad::BLOCK_BIT),
         format!("const Q_TUBE_BIT: u32 = {}u;", quad::TUBE_BIT),
         format!("const Q_AO_SHIFT: u32 = {}u;", quad::AO_SHIFT),
+        format!("const Q_SEAM_SHIFT: u32 = {}u;", quad::SEAM_SHIFT),
         format!("const Q_BLEND_SHIFT: u32 = {}u;", quad::BLEND_SHIFT),
+        format!("const WATER_SHALLOW: vec3<f32> = {};", v3(super::WATER_SHALLOW)),
+        format!("const WATER_DEEP: vec3<f32> = {};", v3(super::WATER_DEEP)),
     ]
     .join("\n")
 }

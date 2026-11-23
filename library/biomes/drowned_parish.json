@@ -12,8 +12,9 @@
   "creatures": [
     {"creature": "brown_pelican", "count": 4},
     {"creature": "anhinga", "count": 3},
-    {"creature": "alligator", "count": 2},
-    {"creature": "alligator_gar", "count": 4}
+    {"creature": "alligator", "count": 2.2},
+    {"creature": "alligator_gar", "count": 4.4},
+    {"creature": "raccoon", "count": 2.2}
   ],
   "collectibles": [{"item": "settler_coin", "density": 4e-05, "placement": {"verb": "scatter", "params": {}}}]
 }

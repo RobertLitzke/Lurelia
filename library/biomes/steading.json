@@ -16,19 +16,22 @@
       "density": 0.012,
       "placement": {"verb": "clustered", "params": {"size": 8, "min": 0.0, "max": 0.6}}
     },
-    {"plant": "hawthorn", "density": 0.0008, "placement": {"verb": "lone", "params": {"spacing": 22}}}
+    {"plant": "hawthorn", "density": 0.0008, "placement": {"verb": "lone", "params": {"spacing": 22}}},
+    {"plant": "elder", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "cow", "count": 6},
-    {"creature": "steppe_sheep", "count": 10},
-    {"creature": "przewalski_horse", "count": 2},
+    {"creature": "cow", "count": 6.6},
+    {"creature": "steppe_sheep", "count": 11},
+    {"creature": "przewalski_horse", "count": 2.2},
     {"creature": "goose", "count": 6},
-    {"creature": "rabbit", "count": 2},
+    {"creature": "rabbit", "count": 2.2},
     {"creature": "sparrow", "count": 12},
     {"creature": "starling", "count": 16},
     {"creature": "crow", "count": 4},
-    {"creature": "bee", "count": 6},
-    {"creature": "barn_owl", "count": 1}
+    {"creature": "bee", "count": 6.6},
+    {"creature": "barn_owl", "count": 2},
+    {"creature": "bat", "count": 4.4},
+    {"creature": "hedgehog", "count": 2.2}
   ],
   "collectibles": [
     {"item": "pottery_shard", "density": 0.002, "placement": {"verb": "scatter", "params": {}}},

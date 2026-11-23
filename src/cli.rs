@@ -72,6 +72,9 @@ pub struct Args {
     /// (headless) draw a menu screen: title, settings, worlds, loading or pause.
     pub show_menu: Option<String>,
     pub world: Option<String>,
+    /// A race's rivals (1 to 7) and laps, as the race's own screens set them.
+    pub rivals: Option<u32>,
+    pub laps: Option<u32>,
     pub hour: Option<f32>,
     /// Hold the weather at one kind (world/weather.rs): sun, heat, clouds,
     /// rain, snow or fog. It stops drifting, as `--hour` stops the clock.
@@ -101,6 +104,9 @@ pub struct Args {
     pub ride: Option<String>,
     pub ride_secs: f32,
     pub chase: bool,
+    /// The view a car opens in, true for the chase camera: the player's
+    /// saved one when the window starts a world. None takes the default.
+    pub drive_chase: Option<bool>,
     pub boost: bool,
     /// (headless) hold Ctrl while riding: the bike's tuck.
     pub tuck: bool,
@@ -233,6 +239,7 @@ Headless (no window):
   --keep                (headless) with --shoot, keep a photo that did no task as well
   --book N              (headless) show the logbook (0) or scrapbook page N
   --chase               (headless) chase camera while riding
+  --rivals N, --laps N  a race's rivals (1 to 7) and laps
   --boost               (headless) hold Shift while riding
   --tuck                (headless) hold Ctrl while riding: the bike tucks, which stores
                         a charge on a descent and floats the next jump
@@ -278,6 +285,8 @@ pub fn parse_args() -> Args {
         view_set: false,
         full_detail: None,
         save_dir: PathBuf::from("saves"),
+        rivals: None,
+        laps: None,
         fresh: false,
         bench: false,
         bench_route: crate::tools::bench::Route::Fly,
@@ -325,6 +334,7 @@ pub fn parse_args() -> Args {
         ride: None,
         ride_secs: 4.0,
         chase: false,
+        drive_chase: None,
         boost: false,
         tuck: false,
         vehicle: None,
@@ -473,6 +483,8 @@ pub fn parse_args() -> Args {
             "--show-worlds" => a.show_worlds = true,
             "--show-menu" => a.show_menu = Some(val(&mut i)),
             "--hour" => a.hour = Some(span(&mut i, 0.0, 24.0)),
+            "--rivals" => a.rivals = Some(span(&mut i, 1.0, 7.0) as u32),
+            "--laps" => a.laps = Some(span(&mut i, 1.0, 9.0) as u32),
             "--weather" => a.weather = Some(val(&mut i)),
             "--season" => a.season = Some(val(&mut i)),
             "--gazetteer" => a.gazetteer = true,

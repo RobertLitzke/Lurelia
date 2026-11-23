@@ -33,7 +33,7 @@
   "moss": 0.0,
   "round_edges": ["dish_paint", "concrete", "trim_white", "shingle_dark"],
   "water": {"shallow": [214, 182, 178], "deep": [170, 128, 128]},
-  "modes": ["walk", "glide", "climb", "rope", "screenshot", "camera"],
+  "modes": ["walk", "drive", "glide", "climb", "rope", "screenshot", "camera"],
   "biomes": [
     "mirror_salt",
     "brine_flat",

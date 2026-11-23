@@ -159,7 +159,7 @@ impl Ride {
 
         // Strokes: the paddle turns over while paddling or sweeping; each
         // stroke pushes hardest mid-way, so the boat surges a little with each.
-        let keys = input.right as i32 as f32 - input.left as i32 as f32;
+        let keys = input.side();
         let working = input.forward || input.back || keys != 0.0 || self.steer.abs() > 0.25;
         let cadence = CADENCE * if self.boosting { 1.35 } else { 1.0 };
         if working {

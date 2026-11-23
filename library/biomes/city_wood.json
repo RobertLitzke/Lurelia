@@ -14,11 +14,21 @@
     {"plant": "bigleaf_maple", "density": 0.006, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "fern", "density": 0.05, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "salal", "density": 0.03, "placement": {"verb": "scatter", "params": {}}},
-    {"plant": "shelf_fungus", "density": 0.1}
+    {"plant": "shelf_fungus", "density": 0.1},
+    {
+      "plant": "sapling_maple",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 22, "min": 0.45, "max": 0.62}}
+    }
   ],
   "creatures": [
     {"creature": "pileated_woodpecker", "count": 1},
     {"creature": "woodpecker", "count": 1},
-    {"creature": "squirrel", "count": 4}
+    {"creature": "squirrel", "count": 4.4},
+    {"creature": "raccoon", "count": 3.3},
+    {"creature": "skunk", "count": 1.1},
+    {"creature": "bat", "count": 3.3},
+    {"creature": "great_horned_owl", "count": 1},
+    {"creature": "banana_slug", "count": 3.3}
   ]
 }

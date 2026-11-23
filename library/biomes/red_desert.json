@@ -43,29 +43,36 @@
       "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.45, "max": 0.62}}
     },
     {"plant": "agave", "density": 0.0018, "placement": {"verb": "scatter", "params": {}}},
-    {"plant": "ephedra", "density": 0.006, "placement": {"verb": "scatter", "params": {}}}
+    {"plant": "ephedra", "density": 0.006, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "pinyon",
+      "density": 0.003,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.35, "max": 0.6}}
+    }
   ],
   "features": [
     {"structure": "red_boulder", "density": 0.00015, "placement": {"verb": "scatter", "params": {}}},
     {"structure": "slickrock_dome", "density": 6e-05, "placement": {"verb": "scatter", "params": {}}}
   ],
   "creatures": [
-    {"creature": "pronghorn", "count": 6},
-    {"creature": "jackrabbit", "count": 6},
-    {"creature": "coyote", "count": 2},
-    {"creature": "lizard", "count": 6},
+    {"creature": "pronghorn", "count": 6.6},
+    {"creature": "jackrabbit", "count": 6.6},
+    {"creature": "coyote", "count": 2.2},
+    {"creature": "lizard", "count": 6.6},
     {"creature": "eagle", "count": 1},
     {"creature": "sparrow", "count": 4},
-    {"creature": "desert_tortoise", "count": 4},
-    {"creature": "javelina", "count": 5},
+    {"creature": "desert_tortoise", "count": 4.4},
+    {"creature": "javelina", "count": 5.5},
     {"creature": "condor", "count": 1},
-    {"creature": "bee", "count": 4},
-    {"creature": "desert_toad", "count": 2},
-    {"creature": "canyon_bat", "count": 4},
-    {"creature": "rattlesnake", "count": 3},
+    {"creature": "bee", "count": 4.4},
+    {"creature": "desert_toad", "count": 2.2},
+    {"creature": "canyon_bat", "count": 4.4},
+    {"creature": "rattlesnake", "count": 3.3},
     {"creature": "roadrunner", "count": 2},
     {"creature": "annas_hummingbird", "count": 2},
-    {"creature": "gambels_quail", "count": 16}
+    {"creature": "gambels_quail", "count": 16},
+    {"creature": "kangaroo_rat", "count": 3.3},
+    {"creature": "donkey", "count": 2.2}
   ],
   "collectibles": [{"item": "arrowhead", "density": 4e-05, "placement": {"verb": "scatter", "params": {}}}]
 }

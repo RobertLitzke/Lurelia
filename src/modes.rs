@@ -191,6 +191,10 @@ pub trait Activity: Send {
     fn shooter_mut(&mut self) -> Option<&mut crate::shooter::Shooter> {
         None
     }
+    /// Calls `f` with each car the activity drives itself (a race's rivals),
+    /// for their lights and their drift smoke.
+    fn each_race_kart(&self, _f: &mut dyn FnMut(&crate::vehicle::Vehicle)) {}
+
     /// The race, when this is one: `Game` hands it the ride after each
     /// fixed step, which the activity's context does not carry.
     fn race_mut(&mut self) -> Option<&mut crate::race::Race> {

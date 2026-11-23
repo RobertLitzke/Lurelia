@@ -1,0 +1,13 @@
+{
+  "name": "race_deck",
+  "version": 1,
+  "introduced_by": "kestrel",
+  "notes": "A piece of a circuit's deck: road on a slab with kerbs and parapets, on pillars, where the road stands over the ground or crosses over itself. Its voxels are built by the `circuit` event; this entry only names the placement. `base: rim` keeps it where the event put it.",
+  "size": [1, 1, 1],
+  "anchor": [0, 0, 0],
+  "level": false,
+  "decays": false,
+  "base": "rim",
+  "tags": ["landmark"],
+  "ops": []
+}

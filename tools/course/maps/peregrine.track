@@ -1,0 +1,49 @@
+# Peregrine Ridge: a fast, undulating kart circuit across the chalk downs.
+# Units in metres: x east, z south, from the world's north-west corner.
+track peregrine size 512 style downs
+title PEREGRINE RIDGE
+blurb A fast, flowing circuit across the chalk downs: a long drafting straight, a banked climb up Falcon Crest, a tight ridge hairpin, a plunge into the Chalk Bowl, and technical S-bends over West Knoll.
+race laps 3 rivals 3 vehicle kart
+road 12 bank 1.25
+land 32 5
+hour 16.5
+
+hill 410 315 150 18     # Falcon Crest: +18 m eastern ridge climbed after Turn 1
+hill 280 230 95 -8      # The Chalk Bowl: -8 m hollow in the central valley
+hill 125 135 110 10     # West Knoll: +10 m hill feeding the downhill S-bends
+
+# Centreline in race order; first point is the start/finish line heading east.
+# Third value is RISE (metres above/below smoothed terrain, kept within ±2.8 m).
+
+# Sector 1: Main Straight & Skyline Sweeper
+point 118 448           # start / finish line, heading east
+point 176 450 -0.5      # subtle compression mid-straight
+point 236 450           # high-speed drafting zone
+point 296 448           # braking and turn-in zone
+point 354 438 0.6       # Skyline Sweeper entry
+point 406 412 1.0       # long banked left-hander to charge drift boost
+point 444 368 1.5       # climbing the flank of Falcon Crest
+point 458 312 1.8       # cresting the eastern ridge
+point 448 256 1.0       # fast ridge run
+
+# Sector 2: Ridge Hairpin & The Chalk Bowl Plunge
+point 430 206 0.2       # leveling out before braking so karts hold the apex
+point 418 166           # Ridge Hairpin entry
+point 384 148           # Ridge Hairpin apex (~17 m radius)
+point 352 174 -0.4      # hairpin exit diving toward the valley
+point 322 218 -0.8      # steep descent into the Chalk Bowl
+point 280 240 -1.2      # bottom of the hollow (high-G compression curve)
+point 232 224 0.4       # slingshot climb out of the bowl (built up to ease the grade)
+point 198 180 1.2       # transition toward West Knoll (embankment under the climb)
+
+# Sector 3: The Feather Esses & Final Chicane
+point 174 130 0.6       # S-bend entry climbing West Knoll
+point 138 96 0.8        # crest at the top of the Esses
+point 92 108 0.8        # alternating mid-S switchback
+point 68 150            # lower S-bend exit
+point 84 200 -0.5       # downhill acceleration zone
+point 102 256           # western back-straight
+point 96 314 0.6        # mid-straight crest before braking
+point 74 368            # Quarry Chicane entry (left)
+point 64 412            # final corner apex (right)
+point 86 440            # exit onto the main straight
