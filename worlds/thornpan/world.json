@@ -9,6 +9,7 @@
     "light": 0.3
   },
   "seed": 1964,
+  "plants": "v2",
   "sun": {
     "latitude": 30
   },

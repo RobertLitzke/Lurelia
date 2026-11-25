@@ -1,0 +1,16 @@
+{
+  "name": "blood_puff",
+  "version": 1,
+  "introduced_by": "zombies",
+  "notes": "A small dark-red mist where a round goes into a zombie, thinning in a moment.",
+  "shape": "puff",
+  "count": [3, 5],
+  "speed": [0.4, 1.4],
+  "cone_deg": 50,
+  "life": [0.25, 0.5],
+  "size": [0.06, 0.22],
+  "gravity": 1.5,
+  "drag": 4.0,
+  "color": [96, 10, 12],
+  "alpha": 0.75
+}

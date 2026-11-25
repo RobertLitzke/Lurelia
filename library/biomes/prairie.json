@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "glassfall",
   "notes": "What a forest becomes for a lifetime after fire.",
+  "habitat": "dry_grassland",
   "priority": 8,
   "rules": {"burn_age": [0, 150]},
   "surface": "prairie_grass",
   "subsurface": "dirt",
+  "soil": 0.6,
   "map_color": [200, 172, 90],
   "plants": [
     {"plant": "snag", "density": 0.0025, "placement": {"verb": "scatter", "params": {}}},

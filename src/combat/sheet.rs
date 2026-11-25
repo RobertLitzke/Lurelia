@@ -17,7 +17,7 @@
 //! It wants a frame wider than it is tall. The grid is about square, and the
 //! slack either side is where the names go.
 
-use super::viewmodel::{self, SHAPES};
+use super::viewmodel;
 use crate::entities::{Entities, Look};
 use crate::library::Library;
 use crate::render::hud::Hud;
@@ -52,15 +52,25 @@ pub struct Sheet {
     d: f32,
     across: f32,
     down: f32,
-    cols: usize,
+    angles: Vec<f32>,
+}
+
+/// One row of the sheet: a shape and what to call it.
+pub struct Row {
+    pub shape: usize,
+    pub name: String,
+}
+
+/// How long a shape is, muzzle to butt, metres.
+fn length(shape: usize) -> f32 {
+    viewmodel::real(shape).map_or(0.6, |r| r.cm / 100.0)
 }
 
 /// How far in front of the camera the sheet hangs: far enough back that the
 /// whole grid is in frame, with the width and the height each asking for a
 /// distance and the larger one winning.
-fn depth() -> f32 {
-    let span = 32.0 * viewmodel::VOXEL;
-    (span * 1.25 * ANGLES.len() as f32 * 0.62).max(span * 0.95 * SHAPES.len() as f32 * 0.72) + 0.7
+fn depth(across: f32, down: f32, cols: usize, rows: usize) -> f32 {
+    (across * cols as f32 * 0.62).max(down * rows as f32 * 0.72) + 0.7
 }
 
 /// Where to stand to shoot it: raised until the sheet is not half
@@ -68,8 +78,9 @@ fn depth() -> f32 {
 /// sheet will hang. A world with no wall in front of the camera, and a room
 /// too low to rise in, each leave it where it was -- the sheet still works,
 /// it is just photographed in a room.
-pub fn place(store: &Store, eye: Vec3, yaw: f32) -> Vec3 {
-    let d = depth();
+pub fn place(store: &Store, eye: Vec3, yaw: f32, rows: &[Row]) -> Vec3 {
+    let (across, down, angles) = layout(rows);
+    let d = depth(across, down, angles.len(), rows.len());
     let lift = d * 0.5;
     let head = store.ray(eye, Vec3::Y, lift + 1.0, |m| m != AIR).map_or(lift, |h| (h.t - 1.0).max(0.0));
     let eye = eye + Vec3::Y * head;
@@ -81,51 +92,68 @@ pub fn place(store: &Store, eye: Vec3, yaw: f32) -> Vec3 {
     }
 }
 
-/// Stand the sheet up in front of a camera at `eye` looking along `yaw`.
-/// `base` is where the weapon models start in the model list
-/// (`Game::weapon_models`), and `names` is what to call the rows.
-/// What to call each row: the weapon wearing that shape, or the shape
-/// itself where no weapon in this library wears it -- which is also how an
-/// unused shape announces itself. Taken before the sheet is built, because
-/// the library and the entities are the same `Game`.
-pub fn names(lib: Option<&Library>) -> Vec<String> {
-    SHAPES
-        .iter()
-        .map(|shape| {
-            lib.and_then(|l| l.weapons.iter().find(|w| w.view == **shape))
-                .map_or_else(|| shape.to_uppercase(), |w| w.display.to_uppercase())
-        })
-        .collect()
+/// Column and row spacing, and the angles shown. The sheet is spaced by
+/// the longest gun on it, so every one is seen at the same scale and a
+/// pistol is as small beside a rifle as it is in the hand.
+fn layout(rows: &[Row]) -> (f32, f32, Vec<f32>) {
+    let span = rows.iter().map(|r| length(r.shape)).fold(0.3, f32::max);
+    (span * 1.08, (span * 0.68).max(0.42), ANGLES.to_vec())
 }
 
-pub fn spawn(ents: &mut Entities, names: Vec<String>, base: usize, eye: Vec3, yaw: f32) -> Sheet {
-    let span = 32.0 * viewmodel::VOXEL;
-    let (across, down) = (span * 1.25, span * 0.95);
-    let (rows, cols) = (SHAPES.len(), ANGLES.len());
-    let d = depth();
+/// What goes on the sheet: a kit's guns in slot order (the arena's when no
+/// kit is named), each row the model its weapon file wears. `only` keeps the
+/// guns named in it.
+pub fn rows(lib: Option<&Library>, kit: Option<&str>, only: &[String]) -> Vec<Row> {
+    let kit = crate::weapon_kit::get(kit.unwrap_or(crate::weapon_kit::DEFAULT));
+    let mut out = Vec::new();
+    for (role, _, _) in crate::weapon_kit::ROLES {
+        for gun in kit.and_then(|k| k.roles.get(role)).into_iter().flatten() {
+            if !only.is_empty() && !only.iter().any(|o| o == gun) {
+                continue;
+            }
+            let w = lib.and_then(|l| l.weapons.iter().find(|w| w.name == *gun));
+            if let Some(shape) = w.and_then(|w| viewmodel::shape_of(&w.view)) {
+                out.push(Row { shape, name: w.map_or_else(|| gun.to_uppercase(), |w| w.display.to_uppercase()) });
+            }
+        }
+    }
+    out
+}
+
+pub fn spawn(ents: &mut Entities, rows: &[Row], base: usize, eye: Vec3, yaw: f32) -> Sheet {
+    let (across, down, angles) = layout(rows);
+    let (n, cols) = (rows.len(), angles.len());
+    let d = depth(across, down, cols, n);
     let fwd = Vec3::new(-yaw.sin(), 0.0, -yaw.cos());
     let right = Vec3::new(yaw.cos(), 0.0, -yaw.sin());
     // Broadside: a gun seen down its own barrel is a dot, so that is the
     // angle the sheet starts from rather than the one it shows first.
     let broadside = yaw + std::f32::consts::FRAC_PI_2;
-    for r in 0..rows {
-        for (c, turn) in ANGLES.iter().enumerate() {
-            let at = eye + fwd * d + right * ((c as f32 - (cols as f32 - 1.0) * 0.5) * across) + Vec3::Y * (((rows as f32 - 1.0) * 0.5 - r as f32) * down - BUILT_AT * viewmodel::VOXEL);
-            ents.world.spawn((Look::new(base + r, at, broadside + turn.to_radians()),));
+    for (r, row) in rows.iter().enumerate() {
+        // A gun is placed by its grip, which is not its middle:
+        // each is slid along its own length so its middle is on the column.
+        let shift = (viewmodel::muzzle(row.shape).z - 16.0) * viewmodel::VOXEL + length(row.shape) * 0.5;
+        for (c, turn) in angles.iter().enumerate() {
+            let a = broadside + turn.to_radians();
+            // The model's +z, turned by `a` about y.
+            let back = Vec3::new(a.sin(), 0.0, a.cos());
+            let at = eye + fwd * d + right * ((c as f32 - (cols as f32 - 1.0) * 0.5) * across) + Vec3::Y * (((n as f32 - 1.0) * 0.5 - r as f32) * down - BUILT_AT * viewmodel::VOXEL)
+                - back * shift;
+            ents.world.spawn((Look::new(base + row.shape, at, a),));
             // The minigun's barrels are a model of their own on an axis of
             // their own, and a minigun drawn without them is a box with a
             // hole in it.
-            if r == viewmodel::MINIGUN {
-                // The barrels carry a pivot of their own, up on their axis
-                // so that they can spin without swinging the gun round with
-                // them, so they have to be lifted by it to sit in the body
-                // they turn inside.
-                let axis = Vec3::Y * viewmodel::BARREL_AXIS * viewmodel::VOXEL;
-                ents.world.spawn((Look::new(base + viewmodel::BARRELS, at + axis, broadside + turn.to_radians()),));
+            if viewmodel::spins(row.shape) {
+                // The barrels carry a pivot of their own, on their axis so
+                // that they can spin without swinging the gun round with
+                // them, so they are placed at that axis in the gun.
+                let o = (viewmodel::spin_axis() - Vec3::new(16.0, 0.0, 16.0)) * viewmodel::VOXEL;
+                let side = Vec3::new(a.cos(), 0.0, -a.sin());
+                ents.world.spawn((Look::new(base + viewmodel::BARRELS, at + side * o.x + Vec3::Y * o.y + back * o.z, a),));
             }
         }
     }
-    Sheet { rows: names, d, across, down, cols }
+    Sheet { rows: rows.iter().map(|r| r.name.clone()).collect(), d, across, down, angles }
 }
 
 impl Sheet {
@@ -139,14 +167,15 @@ impl Sheet {
         let ink = [0.96, 0.97, 0.95, 0.95];
         let faint = [0.96, 0.97, 0.95, 0.5];
         let rows = self.rows.len() as f32;
-        let left = cx - ((self.cols as f32 - 1.0) * 0.5 * self.across + self.across * 0.6) * k;
+        let cols = self.angles.len() as f32;
+        let left = cx - ((cols - 1.0) * 0.5 * self.across + self.across * 0.6) * k;
         for (r, name) in self.rows.iter().enumerate() {
             let y = cy - ((rows - 1.0) * 0.5 - r as f32) * self.down * k;
             hud.label(left - Hud::text_width(name, size), y - size * 6.5, size, ink, name);
         }
         let top = cy - ((rows - 1.0) * 0.5 * self.down + self.down * 0.8) * k;
-        for (c, turn) in ANGLES.iter().enumerate() {
-            let x = cx + (c as f32 - (self.cols as f32 - 1.0) * 0.5) * self.across * k;
+        for (c, turn) in self.angles.iter().enumerate() {
+            let x = cx + (c as f32 - (cols - 1.0) * 0.5) * self.across * k;
             let text = format!("{turn:.0}");
             hud.label(x - Hud::text_width(&text, size) * 0.5, top, size, faint, &text);
         }
@@ -157,8 +186,8 @@ impl Sheet {
         let mut out = vec![format!(
             "gun sheet: {} weapons down, {} angles across ({})",
             self.rows.len(),
-            self.cols,
-            ANGLES.iter().map(|a| format!("{a:.0}")).collect::<Vec<_>>().join(", ")
+            self.angles.len(),
+            self.angles.iter().map(|a| format!("{a:.0}")).collect::<Vec<_>>().join(", ")
         )];
         for (r, name) in self.rows.iter().enumerate() {
             out.push(format!("  row {}: {name}", r + 1));

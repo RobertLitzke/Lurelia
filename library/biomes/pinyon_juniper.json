@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "redrock",
   "notes": "The bench between the Red and White Cliffs: pinyon and juniper woodland over sage.",
+  "habitat": "dry_woodland",
   "priority": 4,
   "rules": {"elev": [48, 78]},
   "surface": "red_sand",
   "subsurface": "red_sand",
+  "soil": 0.55,
   "map_color": [150, 130, 86],
   "plants": [
     {

@@ -1,0 +1,37 @@
+{
+  "name": "kh_cloud",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Cloud forest on the upper bench and the back face of the Steps, inside the cloud most afternoons: tree ferns, podocarps and laurels dripping with moss, bromeliads up every trunk.",
+  "habitat": "cloud_forest",
+  "priority": 5,
+  "rules": {"region": "bench", "elev": [140, 172]},
+  "surface": "grim_moss",
+  "subsurface": "dirt",
+  "soil": 0.35,
+  "map_color": [60, 110, 90],
+  "plants": [
+    {"plant": "tree_fern", "density": 0.04, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "canopy_laurel", "density": 0.008, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "podocarp",
+      "density": 0.012,
+      "placement": {"verb": "clustered", "params": {"size": 15, "min": 0, "max": 1}}
+    },
+    {"plant": "fern", "density": 0.1, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "tree_moss", "density": 0.8, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "bromeliad", "density": 0.6, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "spanish_moss", "density": 0.4, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "hanging_vine", "density": 0.2, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "shelf_fungus", "density": 0.1, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [{"structure": "mossy_log", "density": 0.0006}],
+  "creatures": [
+    {"creature": "quetzal", "count": 6},
+    {"creature": "morpho", "count": 12},
+    {"creature": "poison_frog", "count": 12},
+    {"creature": "annas_hummingbird", "count": 3}
+  ],
+  "sound": {"wind": 0.6},
+  "mist": 0.9
+}

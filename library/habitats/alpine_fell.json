@@ -1,0 +1,13 @@
+{
+  "name": "alpine_fell",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Cold high or northern ground: dwarf shrubs, lichen and stone.",
+  "wet": 0.4,
+  "soil": 0.35,
+  "shade": 0.0,
+  "rock": 0.4,
+  "disturbed": 0.0,
+  "open": 0.95,
+  "forage": ["graze"]
+}

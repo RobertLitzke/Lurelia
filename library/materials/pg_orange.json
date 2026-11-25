@@ -1,0 +1,15 @@
+{
+  "name": "pg_orange",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Pelagos Outpost's safety orange after fifty years at sea: faded, blotched and streaked with rust.",
+  "like": "pg_gold",
+  "texture": {
+    "pattern": "blotch",
+    "base": [204, 104, 44],
+    "alt": [128, 66, 40],
+    "scale": 3,
+    "contrast": 0.8,
+    "calm": {"base": [210, 114, 56], "alt": [136, 74, 48]}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "flax_bloom",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Flax in flower (drawn as sprites): sky-blue flowers on thin grey-green stems.",
+  "smooth": false,
+  "sprites": "flower",
+  "texture": {
+    "pattern": "noise",
+    "base": [104, 128, 88],
+    "alt": [118, 150, 214],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [110, 132, 94], "alt": [132, 160, 220]}
+  }
+}

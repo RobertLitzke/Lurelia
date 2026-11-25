@@ -17,5 +17,6 @@
   "autumn": "rowan_autumn",
   "thin_limbs": 0.14,
   "flower": "red_berries",
-  "flower_seasons": ["autumn"]
+  "flower_seasons": ["autumn"],
+  "site": {"wet": [0.25, 0.95]}
 }

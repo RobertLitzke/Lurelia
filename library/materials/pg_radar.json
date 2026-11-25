@@ -1,0 +1,16 @@
+{
+  "name": "pg_radar",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "An amber radar or terminal screen, still glowing.",
+  "smooth": false,
+  "glow": 1.3,
+  "texture": {
+    "pattern": "speckle",
+    "base": [230, 150, 40],
+    "alt": [255, 196, 90],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [236, 160, 52], "alt": [255, 204, 100]}
+  }
+}

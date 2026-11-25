@@ -21,6 +21,7 @@ mod hud;
 pub mod pickup;
 pub mod round;
 pub mod teams;
+pub mod zombies;
 
 use crate::anim::figure;
 use crate::brain::{self, avatar, duel, nav, person, Bot, Fighter, Foe, Me, Pilot, Score};
@@ -42,10 +43,12 @@ use hold::Hold;
 /// How much narrower each wheel step makes the view down a sight, and how
 /// many steps there are: the sniper rifle's 0.3 goes down to about 0.07.
 const SIGHT_STEP: f32 = 0.7;
+/// How much of a hit's flash a zombie shows: it bleeds instead (`Cue::Flesh`).
+const ZOMBIE_FLASH: f32 = 0.25;
 const SIGHT_STEPS: u8 = 4;
 /// How fast the view settles back after recoil, degrees a second.
 /// Damage a corpse takes for each piece shot off it: about a fifth of a
-/// second of minigun, and a sixth of the pulse beam.
+/// second of minigun, and a sixth of the arc gun's beam.
 const CHIP_HP: f32 = 15.0;
 /// How near a round has to pass to a part of a corpse to land on it, metres.
 const CHIP_REACH: f32 = 0.4;
@@ -227,6 +230,14 @@ pub struct Shooter {
     /// When each fighter last died (0 the player, then the bots), for the
     /// team brain's count of enemies just killed.
     died_at: Vec<f32>,
+    /// The zombie round (zombies.rs), when this match is one.
+    pub(crate) zed: Option<Box<zombies::Run>>,
+    /// The terrain class the player last stood on, where the game paces by
+    /// terrain (`pace_over_ground`); for the headless report.
+    pub(crate) me_ground: &'static str,
+    /// The player's velocity and footing last step, for the crosshair to
+    /// open with the spread the move adds (`FireDef::move_spread`).
+    pub(crate) me_motion: (Vec3, bool),
 }
 
 /// How tall a pickup's column of light stands on a pad of the middle size,
@@ -260,7 +271,7 @@ const BEACON_NEAR_M: f32 = 2.5;
 /// that a headless run repeats; but a seed from the world is the same seed
 /// every time you press play, and then every match on a map opens in the
 /// same corner, which is the thing this is meant to stop.
-fn spawn_seed(seed: u32) -> u32 {
+pub(crate) fn spawn_seed(seed: u32) -> u32 {
     let now = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(1, |d| d.as_nanos() as u32);
     crate::world::noise::hash32(seed ^ now) | 1
 }
@@ -366,6 +377,9 @@ impl Shooter {
             team_brains: Default::default(),
             tweaks: [0; 2],
             died_at: Vec::new(),
+            zed: None,
+            me_ground: "",
+            me_motion: (Vec3::ZERO, true),
         };
         let want = rules.bots.clone();
         let mut taken: Vec<Vec3> = Vec::new();
@@ -913,10 +927,19 @@ impl Shooter {
             // widening that one would only mean being shot by a bot that
             // missed.
             let lag = b.pos().distance(b.body.prev_pos).min(0.25);
+            // A zombie crawler lies along the way it faces with its head out
+            // ahead of the hips, where the body stands: the upright box is
+            // moved forward and widened to take in the head and shoulders.
+            let (foot, wide) = if b.figure.walk == crate::anim::figure::Walk::Crawler {
+                let f = b.body.forward();
+                (b.pos() + Vec3::new(f.x, 0.0, f.z).normalize_or_zero() * 0.25, 0.45)
+            } else {
+                (b.pos(), b.half_w())
+            };
             out.push(Hitbox {
-                foot: b.pos(),
+                foot,
                 height: b.height(),
-                half_w: b.half_w() + lag,
+                half_w: wide + lag,
                 alive: b.fighter.alive(),
                 team: b.fighter.team,
             });
@@ -1079,7 +1102,7 @@ impl Shooter {
         crate::anim::forward(&av.rig, &pose, av.voxel, av.pivot, &mut fk);
         let yq = Quat::from_rotation_y(b.body.yaw);
         let seed = (i as u32 + 1).wrapping_mul(0x2545_f491) ^ b.fighter.score.deaths.wrapping_mul(0x9e37_79b9);
-        let life = self.rules.respawn_s * CORPSE_LIFE;
+        let life = if self.zed.is_some() { zombies::CORPSE_S } else { self.rules.respawn_s * CORPSE_LIFE };
         if !blast {
             // Down whole: a body of its own, which falls the way the blow
             // sends it and lies there after the bot has come back.
@@ -1104,7 +1127,7 @@ impl Shooter {
     /// towards the next piece, and every `CHIP_HP` of it knocks one off: the
     /// outermost part left nearest where the fire is landing (a hand before
     /// its forearm, a forearm before the arm), which flies off along the
-    /// shot and lies where it lands. Hold a minigun or a pulse beam on one
+    /// shot and lies where it lands. Hold a minigun or an arc gun's beam on one
     /// and it comes apart a bit at a time until nothing is left.
     ///
     /// The dead are not hitboxes, so nothing here stops a round: it goes on
@@ -1197,6 +1220,7 @@ impl Shooter {
             self.break_lamps(who - 1, fling, blast);
         }
         let respawn = self.rules.respawn_s;
+        self.zombie_down(who);
         if self.died_at.len() <= who {
             self.died_at.resize(who + 1, f32::NEG_INFINITY);
         }
@@ -1221,8 +1245,11 @@ impl Shooter {
             } else if let Some(k) = self.bots.get_mut(by - 1) {
                 k.fighter.score.kills += 1;
             }
-            let line = format!("{} KILLED {}", self.name_of(by), self.name_of(who));
-            self.say(line);
+            // A zombie going down is not news; one of the party is.
+            if !self.is_zombie(who) {
+                let line = format!("{} KILLED {}", self.name_of(by), self.name_of(who));
+                self.say(line);
+            }
             if by == 0 {
                 self.killed_one(who);
             }
@@ -1330,6 +1357,11 @@ impl Shooter {
     /// Only one entry per shooter at a time: a minigun would otherwise put
     /// six hundred noises a minute in here and every one of them says the
     /// same thing.
+    /// Shots heard lately (`heard`), for the live grid (game/live.rs).
+    pub fn noises(&self) -> &[brain::Noise] {
+        &self.noises
+    }
+
     fn heard(&mut self, at: Vec3, by: usize) {
         let when = self.now;
         if let Some(n) = self.noises.iter_mut().find(|n| n.by == by) {
@@ -1418,6 +1450,19 @@ impl Shooter {
     /// on and through the same function. This is the claim the whole bot
     /// design rests on: a bot can do what the player can do and no more,
     /// because there is only one piece of movement code.
+    /// The game's pace by terrain class (`ShooterDef::terrain_pace`), for the
+    /// player and every bot; nothing at all in a game that sets none.
+    fn pace_over_ground(&mut self, player: &mut Player, store: &Store, land: Option<&crate::world::fields::World>) {
+        let Some(s) = land.and_then(|w| w.survey.as_ref()).filter(|_| !self.rules.terrain_pace.is_empty()) else { return };
+        let pace = |p: Vec3| *self.rules.terrain_pace.get(crate::world::survey::terrain::at(s, store, p).name()).unwrap_or(&1.0);
+        player.ground_pace = pace(player.pos);
+        self.me_ground = crate::world::survey::terrain::at(s, store, player.pos).name();
+        let paces: Vec<f32> = self.bots.iter().map(|b| if b.fighter.alive() { pace(b.body.pos) } else { 1.0 }).collect();
+        for (b, p) in self.bots.iter_mut().zip(paces) {
+            b.body.ground_pace = p;
+        }
+    }
+
     fn step_bodies(&mut self, store: &Store, sea: f32, land: Option<&crate::world::fields::World>, slopes: bool) {
         for b in &mut self.bots {
             if !b.fighter.alive() {
@@ -1483,6 +1528,7 @@ impl Shooter {
                 crouch: b.body.crouch,
                 sprint: b.pilot.mv.sprint,
                 holding: b.fighter.arsenal.current().is_some(),
+                grasp: b.fighter.arsenal.current().map_or_else(Default::default, |g| viewmodel::grasp(viewmodel::shape(&g.def.view))),
             };
             b.figure.step(&self.avatar.body(b.build).rig, self.avatar.body(b.build).voxel, &d);
         }
@@ -1497,9 +1543,10 @@ impl Shooter {
             let trigger = self.bots[i].pilot.trigger;
             self.bots[i].fighter.arsenal.share();
             let shot = self.bots[i].fighter.arsenal.current_mut().map_or(Default::default(), |g| g.pull(trigger, dt));
+            let (vel, ground) = (self.bots[i].body.body.vel, self.bots[i].body.body.on_ground);
             let mode = self.bots[i].fighter.arsenal.current().and_then(|g| {
                 g.fired_mode(&shot, trigger).cloned().map(|mut f| {
-                    f.spread_deg += g.bloom();
+                    f.spread_deg += g.bloom() + f.move_spread.map_or(0.0, |m| m.degrees(vel, ground));
                     f
                 })
             });
@@ -1842,6 +1889,18 @@ impl Shooter {
             if friend && !h.risky {
                 h.damage *= self.rules.friendly_fire.clamp(0.0, 1.0);
             }
+            if self.zed.is_some() {
+                // The zombie round: a bot's stray round never hurts the
+                // party, and any blow to a zombie's head drops it, unless it
+                // wears a hard hat.
+                if friend && h.by != 0 {
+                    h.damage = 0.0;
+                }
+                let hatted = self.bots.get(h.who.wrapping_sub(1)).is_some_and(|b| self.avatar.body(b.build).hard_head);
+                if h.head && self.is_zombie(h.who) && !hatted && h.damage > 0.0 {
+                    h.damage = h.damage.max(zombies::HEADSHOT);
+                }
+            }
             if h.push.length_squared() > 0.0 {
                 if h.who == 0 {
                     player.body.vel += h.push;
@@ -1928,7 +1987,7 @@ fn b_index(bots: &[Bot], b: &Bot) -> usize {
 /// The weapons a world hands out, complaining about names it does not know.
 fn arsenal(lib: &Library, rules: &ShooterDef) -> Arsenal {
     let mut bad = Vec::new();
-    let a = Arsenal::new(lib, &rules.weapons, rules.give_all, |n| bad.push(n.to_string()));
+    let a = Arsenal::tuned(lib, &rules.weapons, rules.give_all, &rules.weapon_tune, |n| bad.push(n.to_string()));
     for n in &bad {
         eprintln!("world.json shooter: no weapon called {n}");
     }
@@ -1943,12 +2002,17 @@ impl Activity for Shooter {
     /// The keys, once a frame: the trigger is held and kept for the steps,
     /// and a press (a weapon, a reload, another match) is taken here so it
     /// lands once however many steps the frame holds.
-    fn frame(&mut self, _cx: &mut ActivityCtx, _input: &MoveInput, actions: &mut Actions, _dt: f32) {
+    fn frame(&mut self, cx: &mut ActivityCtx, _input: &MoveInput, actions: &mut Actions, _dt: f32) {
         // The mouse buttons are the trigger here, so nothing digs the arena
         // out from under itself.
         self.held = (std::mem::take(&mut actions.dig), std::mem::take(&mut actions.place));
         actions.tilt_left = false;
         self.again |= std::mem::take(&mut actions.accept);
+        // In the zombie round the bike's key (there is no bike) tells the
+        // party to hold where you stand, or to follow again.
+        if self.zed.is_some() && std::mem::take(&mut actions.bike_toggle) {
+            self.toggle_hold(cx.player.pos);
+        }
         if !self.me.alive() {
             actions.select = None;
             actions.brush_delta = 0;
@@ -2012,7 +2076,7 @@ impl Activity for Shooter {
         self.settle_pads(store, player);
         self.pickups.platforms(store, edits);
         self.stand_me(player, store);
-        if std::mem::take(&mut self.bots_to_the_field) {
+        if std::mem::take(&mut self.bots_to_the_field) && self.zed.is_none() {
             // Standing them on ground that has finally arrived. Not a
             // respawn: nobody gets their health back for this.
             for i in 1..=self.bots.len() {
@@ -2020,10 +2084,14 @@ impl Activity for Shooter {
             }
         }
         self.plan_teams(player, dt);
+        self.direct_zombies(player, store, land, dt);
         let foes = self.foes(player);
         self.think(store, &foes, dt);
+        self.pace_over_ground(player, store, land);
         self.step_bodies(store, sea, land, slopes);
         self.unstack(store, player);
+        self.zombie_vaults(player, store, STEP);
+        self.zombie_strikes(player);
         self.collect(player, dt);
         let boxes = self.hitboxes(player);
         self.bots_fire(store, ents, models, &boxes, dt);
@@ -2067,9 +2135,12 @@ impl Activity for Shooter {
             self.sighted = alt && self.me.arsenal.current().is_some_and(|g| g.def.zoom > 0.0);
             self.me.arsenal.share();
             let shot = self.me.arsenal.current_mut().map_or(Default::default(), |g| g.pull(trigger, dt));
+            let (vel, ground) = (player.body.vel, player.body.on_ground);
+            self.me_motion = (vel, ground);
             let mode = self.me.arsenal.current().and_then(|g| {
                 g.fired_mode(&shot, trigger).cloned().map(|mut f| {
-                    f.spread_deg += g.bloom();
+                    // Aim that suffers on the move, where the game says so.
+                    f.spread_deg += g.bloom() + f.move_spread.map_or(0.0, |m| m.degrees(vel, ground));
                     f
                 })
             });
@@ -2225,7 +2296,12 @@ impl Activity for Shooter {
     }
 
     fn bodies(&mut self, each: &mut dyn FnMut(&mut crate::player::Player)) {
-        for b in &mut self.bots {
+        let zombies = self.zed.as_ref().map(|z| z.party);
+        for (i, b) in self.bots.iter_mut().enumerate() {
+            // A zombie slot not in play is no body at all: it opens no door.
+            if zombies.is_some_and(|p| i >= p) && !b.fighter.alive() {
+                continue;
+            }
             each(&mut b.body);
         }
     }
@@ -2260,6 +2336,7 @@ impl Activity for Shooter {
                     shift: [0.0; 4],
                     flesh: [[0.0; 4]; 3],
                     glow: [0.0; 4],
+                    fade: [0.0; 4],
                 },
             ));
         }
@@ -2268,7 +2345,7 @@ impl Activity for Shooter {
         // gives you with it. Drawing a corpse is not the same as being able
         // to shoot one -- `hitboxes` still says only the living are there.
         let mut fk = Vec::new();
-        for b in &self.bots {
+        for (k, b) in self.bots.iter().enumerate() {
             let av = self.avatar.body(b.build);
             let alive = b.fighter.alive();
             if !alive && b.fighter.respawn <= 0.0 {
@@ -2281,7 +2358,10 @@ impl Activity for Shooter {
             let side = b.fighter.team.map_or(b.tint, |t| teams::tint(t, 0));
             let lit = avatar::lamp_colour(side, b.whole());
             let at = b.body.prev_pos.lerp(b.body.pos, alpha);
-            let tint = [b.tint[0], b.tint[1], b.tint[2], b.fighter.hurt / brain::HURT_S];
+            // A hit shows as a flash of the body; on a zombie, which shows
+            // its hits in blood instead, only a faint one.
+            let flash = if self.is_zombie(k + 1) { ZOMBIE_FLASH } else { 1.0 };
+            let tint = [b.tint[0], b.tint[1], b.tint[2], b.fighter.hurt / brain::HURT_S * flash];
             let gun = b.fighter.arsenal.current().map(|g| viewmodel::shape(&g.def.view));
             draw_bot(av, &b.figure, at, b.body.yaw, alpha, tint, lit, gun, base, models, &mut fk, out);
         }
@@ -2346,7 +2426,7 @@ impl Activity for Shooter {
                 }
                 (pickup::Kind::Weapon, Some(g)) => {
                     // The gun itself, so you can tell a rocket launcher from a
-                    // flak hopper without reading anything.
+                    // scrap gun without reading anything.
                     let shape = viewmodel::shape(&g.def.view);
                     let up = p.at + Vec3::Y * (avatar::PAD_RISE + 0.16) + bob;
                     out.extend(glass(hold::placed(base + shape, models, up, spin, Quat::from_rotation_x(0.35), [1.0; 3]), PICKUP_A));
@@ -2369,15 +2449,16 @@ impl Activity for Shooter {
         }
         let Some(g) = self.me.arsenal.current() else { return };
         let shape = viewmodel::shape(&g.def.view);
-        let grip = hold::grip(&self.hold, player, alpha);
+        let grip = hold::grip(&self.hold, player, alpha, shape);
         out.extend(grip.instance(base + shape, models, grip.pos, Quat::IDENTITY));
-        if shape == viewmodel::MINIGUN {
+        if viewmodel::spins(shape) {
             // The barrels turn about their own axis, which is where their
             // model's pivot is.
-            let at = grip.at(Vec3::new(16.0, 13.0, 16.0));
+            let at = grip.at(viewmodel::spin_axis());
             out.extend(grip.instance(base + viewmodel::BARRELS, models, at, Quat::from_rotation_z(self.hold.spin)));
         }
-        if self.hold.flash > 0.0 {
+        // A blade or a shovel has no muzzle to flash.
+        if self.hold.flash > 0.0 && !matches!(viewmodel::hands(shape), crate::combat::real::Hands::One | crate::combat::real::Hands::Haft) {
             let at = grip.at(viewmodel::muzzle(shape) - Vec3::Z * 4.0);
             out.extend(grip.instance(base + viewmodel::FLASH, models, at, Quat::IDENTITY));
         }
@@ -2389,6 +2470,9 @@ impl Activity for Shooter {
     /// the player is the one carrying. The same things the team brain is
     /// allowed to know, so the player is told no more and no less.
     fn marks(&self, player: &Player) -> Vec<crate::modes::Mark> {
+        if self.zed.is_some() {
+            return self.zombie_marks(player);
+        }
         let Some(mine) = self.me.team else { return Vec::new() };
         if self.flags.is_empty() || self.round.frozen() {
             return Vec::new();
@@ -2482,19 +2566,22 @@ pub(crate) fn draw_bot(
     crate::anim::push_parts_at(&body.base, shells, &pose, models, body.voxel, 1.0, 1.0, body.pivot, at, yaw, plain, [0.0; 3], fk, out);
     crate::anim::push_parts_at(&body.paint, shells, &pose, models, body.voxel, 1.0, 1.0, body.pivot, at, yaw, avatar::plate(tint), [0.0; 3], fk, out);
     // Its lamps, front and back: how much of it is left.
-    for lamp in body.lamps(fig, at, yaw, alpha) {
+    for lamp in body.lamps(fig, at, yaw, alpha).into_iter().filter(|_| body.lit) {
         out.extend(hold::placed(shells + avatar::LAMP_M, models, lamp.at, 0.0, lamp.rot, lit));
     }
     if let Some(shape) = gun {
         let (gat, gyaw, grot) = fig.grip(&body.rig, body.voxel, 1.0, body.pivot, at, yaw, 0.0, alpha);
-        out.extend(hold::sized(base + shape, models, gat, gyaw, grot, [1.0; 3], BOT_GUN));
+        out.extend(hold::placed(base + shape, models, gat, gyaw, grot, [1.0; 3]));
+        // The minigun's barrels are a model of their own, placed at their
+        // axis in the gun.
+        if viewmodel::spins(shape) {
+            let o = (viewmodel::spin_axis() - Vec3::new(16.0, 0.0, 16.0)) * viewmodel::VOXEL;
+            let at = gat + Quat::from_rotation_y(gyaw) * (grot * o);
+            out.extend(hold::placed(base + viewmodel::BARRELS, models, at, gyaw, grot, [1.0; 3]));
+        }
     }
 }
 
-/// How much larger a gun is drawn in a bot's hands than in the player's.
-/// The guns are built to be seen half a metre from the eye, where a third
-/// of the screen is plenty; on a body twenty metres off they read as toys.
-pub(crate) const BOT_GUN: f32 = 1.35;
 
 #[cfg(test)]
 mod tests {
@@ -2535,6 +2622,7 @@ mod tests {
         ShooterDef {
             max_bots: None,
             weapons: vec!["rocket_launcher".into()],
+            kit: None,
             spoil: None,
             health: 100.0,
             armour: 0.0,
@@ -2556,6 +2644,8 @@ mod tests {
             target_score: 0,
             void_m: None,
             friendly_fire: 0.0,
+            weapon_tune: Default::default(),
+            terrain_pace: Default::default(),
             player_team: None,
             teams: false,
             ctf: None,

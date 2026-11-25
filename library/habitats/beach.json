@@ -1,0 +1,12 @@
+{
+  "name": "beach",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Sand or shingle at the water's edge.",
+  "wet": 0.4,
+  "soil": 0.65,
+  "shade": 0.0,
+  "rock": 0.05,
+  "disturbed": 0.1,
+  "open": 1.0
+}

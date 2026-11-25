@@ -13,23 +13,36 @@ use crate::models::{Instance, Model};
 use crate::player::Player;
 use glam::{Quat, Vec2, Vec3};
 
-/// Where the gun is held when standing still: metres right, up and forward
-/// from the eye to the foot of its grip.
+
+/// The nearest a shouldered gun's butt comes to the eye, metres ahead.
+const BUTT_CLEAR: f32 = 0.45;
+/// How far down the frame a gun's bore sits, as a share of the way from the
+/// middle to the bottom edge.
+const BORE_LOW: f32 = 0.95;
+
+/// Where a shape's grip is held, from the eye: right, up, ahead, metres.
 ///
-/// The arithmetic matters here, because a gun held at arm's length is a
-/// product shot and not a weapon. A shape is 32 voxels at `viewmodel::VOX`,
-/// so its muzzle sits 0.33 m in front of the grip's foot and its breech
-/// 0.28 m behind it, and the view is 70 degrees vertical (`game::FOV_Y`),
-/// which puts the bottom of the frame at 0.70 of the distance to it.
-///
-/// So: the forward term is under 0.28, which leaves the breech at or behind
-/// the eye, where the near plane eats it -- that is the "most of it off the
-/// screen". The muzzle is then 0.57 m out, where the frame reaches 0.40 m
-/// down, and the barrel axis rides 0.28 m above the grip's foot: at -0.33
-/// the barrel is a third of the way up the lower half of the screen and the
-/// body it is bolted to is under the edge. The sideways term keeps the
-/// gearbox out past the right edge at the depth it sits at.
-const HOLD: Vec3 = Vec3::new(0.40, -0.60, 0.76);
+/// Every gun is placed by its bore rather than its grip: the line it shoots
+/// along sits low in the frame (`BORE_LOW` of the way from the middle to the
+/// bottom edge at the grip's distance) and to the right, so the grip and the
+/// hand are below the bottom of the screen and what shows is the top of the
+/// gun reaching in from the corner. A long gun's grip sits further out, its
+/// butt `BUTT_CLEAR` ahead of the eye, so the stock never fills the view; a
+/// pistol is closer in and nearer the middle, a rocket tube higher on the
+/// shoulder. A knife or a shovel is low on the right.
+fn hold_at(shape: usize) -> Vec3 {
+    use crate::combat::real::Hands;
+    // The bottom edge of the view at one metre out.
+    let edge = (crate::game::FOV_Y * 0.5).tan();
+    let bore = (viewmodel::muzzle(shape).y) * viewmodel::VOXEL;
+    let at = |right: f32, low: f32, z: f32| Vec3::new(right * z, -low * edge * z - bore, z);
+    match viewmodel::hands(shape) {
+        Hands::Pistol => at(0.3, 0.72, 0.5),
+        Hands::One | Hands::Haft => Vec3::new(0.34, -0.40, 0.58),
+        Hands::Tube => at(0.6, 0.95, (BUTT_CLEAR + viewmodel::butt(shape).z).max(1.0)),
+        Hands::Shoulder => at(0.55, BORE_LOW, (BUTT_CLEAR + viewmodel::butt(shape).z).max(0.7)),
+    }
+}
 /// How far the muzzle is turned in toward the middle of the screen, radians:
 /// a gun held parallel to the view points off to the side of everything the
 /// crosshair is on.
@@ -124,6 +137,7 @@ pub fn placed(model: usize, models: &[Model], at: Vec3, yaw: f32, rot: Quat, tin
             shift: [0.0; 4],
             flesh: [[0.0; 4]; 3],
             glow: [0.0; 4],
+            fade: [0.0; 4],
         },
     ))
 }
@@ -155,19 +169,24 @@ impl Grip {
 }
 
 /// Where the player's gun is held this frame.
-pub fn grip(h: &Hold, player: &Player, alpha: f32) -> Grip {
+pub fn grip(h: &Hold, player: &Player, alpha: f32, shape: usize) -> Grip {
     let (yaw, pitch) = (player.yaw, player.pitch);
     let fwd = player.forward();
     let right = Vec3::new(yaw.cos(), 0.0, -yaw.sin());
     let up = right.cross(fwd).normalize_or(Vec3::Y);
-    let o = HOLD + h.bob + Vec3::new(h.sway.x, h.sway.y, -h.kick) + LOWER * h.lowered;
+    let o = hold_at(shape) + h.bob + Vec3::new(h.sway.x, h.sway.y, -h.kick) + LOWER * h.lowered;
     let pos = player.eye(alpha) + right * o.x + up * o.y + fwd * o.z;
-    // The kick lifts the muzzle and the sprint drops it.
-    let tilt = h.kick * 2.6 - h.lowered * 0.5;
+    // The kick lifts the muzzle and the sprint drops it. A blade or a shovel
+    // has no recoil: the same spring is its swing, down and across to the
+    // left and back.
+    let swung = matches!(viewmodel::hands(shape), crate::combat::real::Hands::One | crate::combat::real::Hands::Haft);
+    let swing = if swung { (h.kick * 50.0).min(1.0) } else { 0.0 };
+    // Between swings the blade rests raised a little, ready to come down.
+    let tilt = if swung { 0.3 - swing * 1.4 } else { h.kick * 2.6 } - h.lowered * 0.5;
     // The model's own yaw is the view's, turned in a little; `ax` and `az`
     // must be that same yaw, or the muzzle this works out would not be the
     // muzzle that is drawn.
-    let gy = yaw + TOE_IN - h.lowered * 0.25;
+    let gy = yaw + TOE_IN - h.lowered * 0.25 + swing * 0.6;
     Grip {
         pos,
         yaw: gy,
@@ -181,5 +200,5 @@ pub fn grip(h: &Hold, player: &Player, alpha: f32) -> Grip {
 /// here and not from the eye: a tracer down the line of sight is end-on and
 /// invisible, and one that starts anywhere else looks wrong.
 pub fn muzzle(h: &Hold, player: &Player, alpha: f32, shape: usize) -> Vec3 {
-    grip(h, player, alpha).at(viewmodel::muzzle(shape))
+    grip(h, player, alpha, shape).at(viewmodel::muzzle(shape))
 }

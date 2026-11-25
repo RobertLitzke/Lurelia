@@ -1,0 +1,15 @@
+{
+  "name": "bone_block",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Cut titan bone: dense grey-ivory blocks squared off with saws, stacked in the bone yards and laid as footings.",
+  "smooth": false,
+  "texture": {
+    "pattern": "coursed",
+    "base": [196, 188, 170],
+    "alt": [172, 164, 148],
+    "scale": 3,
+    "contrast": 0.7,
+    "calm": {"base": [204, 196, 178], "alt": [180, 172, 156]}
+  }
+}

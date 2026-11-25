@@ -14,6 +14,10 @@ pub enum Route {
     /// spawn that is the West Field, with sheep, horses and cattle round it:
     /// the creatures, grass and sound that a flight high over them misses.
     Field,
+    /// A race on autopilot (`--bench-route race`, windowed): the camera is
+    /// the race's own, a bot drives the player's kart, and the run ends when
+    /// everyone is home. For the hitches that only show in a race.
+    Race,
 }
 
 impl Route {
@@ -21,6 +25,7 @@ impl Route {
         match s {
             "fly" => Some(Route::Fly),
             "field" => Some(Route::Field),
+            "race" => Some(Route::Race),
             _ => None,
         }
     }
@@ -39,7 +44,17 @@ pub struct Bench {
     pub duration: f32,
     pub loading_frames: u32,
     pub max_queue: usize,
+    /// Whether the race's autopilot has been switched on (`Route::Race`).
+    pub piloted: bool,
+    /// Each windowed frame's work and wait for the display, ms.
+    pub work: Vec<(f32, f32)>,
+    /// The slowest frames' work, wait and parts (`trace::line`), kept as they
+    /// come so a long run doesn't hold a line for every frame.
+    pub worst: Vec<(f32, f32, String)>,
 }
+
+/// Slow frames kept with their parts.
+const WORST: usize = 16;
 
 impl Bench {
     pub fn new(start: Vec3, route: Route) -> Self {
@@ -52,6 +67,20 @@ impl Bench {
             duration: 30.0,
             loading_frames: 0,
             max_queue: 0,
+            piloted: false,
+            work: Vec::new(),
+            worst: Vec::new(),
+        }
+    }
+
+    /// A windowed frame's work, its wait for the display and its parts.
+    pub fn frame(&mut self, work: f32, wait: f32, parts: impl FnOnce() -> String) {
+        self.work.push((work, wait));
+        let total = work + wait;
+        if self.worst.len() < WORST || total > self.worst.last().map_or(0.0, |w| w.0 + w.1) {
+            self.worst.push((work, wait, parts()));
+            self.worst.sort_by(|a, b| (b.0 + b.1).total_cmp(&(a.0 + a.1)));
+            self.worst.truncate(WORST);
         }
     }
     pub fn camera(&self, game: &Game) -> (Vec3, f32, f32) {
@@ -107,6 +136,26 @@ impl Bench {
             "frames_still_loading": self.loading_frames,
             "max_queue": self.max_queue,
         });
+        if !self.work.is_empty() {
+            let mut w: Vec<f32> = self.work.iter().map(|f| f.0).collect();
+            w.sort_by(|a, b| a.total_cmp(b));
+            let m = w.len();
+            let med = w[m / 2];
+            out["work_p50_ms"] = med.into();
+            out["work_p99_ms"] = w[(m * 99 / 100).min(m - 1)].into();
+            // A frame with twice the usual work shows as a hitch at any frame
+            // rate, though at 140 fps it never reaches the 16 ms of `trace`.
+            out["work_over_2x_median"] = w.iter().filter(|&&x| x > 2.0 * med).count().into();
+            // Frames held up by the display or the GPU rather than by work.
+            out["wait_over_8ms"] = self.work.iter().filter(|f| f.1 > 8.0).count().into();
+            out["frames_over_12ms"] = self.work.iter().filter(|f| f.0 + f.1 > 12.0).count().into();
+            out["worst"] = self
+                .worst
+                .iter()
+                .map(|(work, wait, l)| format!("{work:.1} work {wait:.1} wait: {l}"))
+                .collect::<Vec<_>>()
+                .into();
+        }
         if self.steps.len() > 1 {
             // The mean change in step from one frame to the next: 0 is
             // perfectly even motion.

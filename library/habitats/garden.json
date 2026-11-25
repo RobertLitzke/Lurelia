@@ -1,0 +1,13 @@
+{
+  "name": "garden",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Orchards, parks and gardens: planted trees and lawns.",
+  "wet": 0.5,
+  "soil": 0.6,
+  "shade": 0.25,
+  "rock": 0.0,
+  "disturbed": 0.5,
+  "open": 0.7,
+  "forage": ["fruit", "nectar", "graze"]
+}

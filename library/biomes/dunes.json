@@ -2,10 +2,12 @@
   "name": "dunes",
   "version": 2,
   "introduced_by": "glassfall",
+  "habitat": "dunes",
   "priority": 4,
   "rules": {"coast": [0, 40], "elev": [0, 9]},
   "surface": "shore_grass",
   "subsurface": "sand",
+  "soil": 0.45,
   "map_color": [190, 186, 120],
   "plants": [
     {"plant": "umbrella_pine", "density": 0.003, "placement": {"verb": "clustered", "params": {"size": 40}}},

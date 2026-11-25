@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "ribshore",
   "notes": "The wide flat beach: wet grey-brown sand that holds the sky, as far as you can see each way.",
+  "habitat": "beach",
   "priority": 6,
   "rules": {"coast": [0, 210], "elev": [0, 3.2]},
   "surface": "wet_sand",
   "subsurface": "sand",
+  "soil": 0.5,
   "map_color": [150, 142, 128],
   "plants": [],
   "features": [

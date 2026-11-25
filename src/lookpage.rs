@@ -332,6 +332,17 @@ pub const KNOBS: &[KnobDef] = &[
         |_, g| g.vignette,
         |_, g, v| g.vignette = v,
     ),
+    knob(
+        5,
+"SITE LUSHNESS",
+        0.0,
+        3.0,
+        0.05,
+        0,
+        "How strongly the ground's site shows in grassy ground: greener and taller grass in wet, shaded hollows, ochre and shorter on dry, sunny, wind-cut ground. 1 as tuned, 0 off. The colour follows at once; the grass height a moment after you let go, as the land round you is built again.",
+        |_, g| g.site_lush,
+        |_, g, v| g.site_lush = v,
+    ),
 ];
 
 /// Move knob `i` one step and keep it in range.

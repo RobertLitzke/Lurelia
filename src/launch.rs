@@ -31,6 +31,9 @@ pub enum Mode {
     Ctf,
     /// Laps against bots, on a world with a `race` block (src/race.rs).
     Race,
+    /// A party of four crossing an explore world to a refuge through
+    /// zombies (src/shooter/zombies.rs, notes/ZOMBIES.md).
+    Zombies,
 }
 
 impl Default for Mode {
@@ -47,12 +50,19 @@ impl Mode {
             Mode::Team => "team",
             Mode::Ctf => "ctf",
             Mode::Race => "race",
+            Mode::Zombies => "zombies",
         }
     }
 
     /// A match of some kind: the gun is out and the shooter's rules run.
     pub fn is_match(self) -> bool {
         matches!(self, Mode::Fps | Mode::Team | Mode::Ctf)
+    }
+
+    /// The shooter's rules run: an arena match, or the zombie round, which
+    /// plays them on an open world and keeps the world's own movement.
+    pub fn is_shooter(self) -> bool {
+        self.is_match() || self == Mode::Zombies
     }
 
     /// Opens on the world as built and its spawn, not where the last visit
@@ -69,6 +79,7 @@ impl Mode {
             Mode::Team => "TEAM DEATHMATCH",
             Mode::Ctf => "CAPTURE THE FLAG",
             Mode::Race => "RACE",
+            Mode::Zombies => "ZOMBIES",
         }
     }
 
@@ -88,6 +99,7 @@ impl Mode {
             Mode::Fps | Mode::Team => "a shooter block",
             Mode::Ctf => "a shooter block with a ctf block",
             Mode::Race => "a race block",
+            Mode::Zombies => "a world to explore (no shooter block)",
         }
     }
 }
@@ -245,7 +257,7 @@ pub fn options(world: &str, game: &crate::games::GameDef) -> Vec<Opt> {
         let names: Vec<&str> = names.iter().map(|s| s.as_str()).collect();
         out.push(Opt::pick("vehicle", "VEHICLE", "Which of this world's vehicles U brings.", &names, 0));
     }
-    if mode.is_match() {
+    if mode.is_shooter() {
         // The levels are shown in the menu's own voice (one capital), and
         // lowercased again on the way back to `brain::person::level`.
         let levels: Vec<String> = crate::brain::person::NAMES.iter().map(|n| capitalise(n)).collect();
@@ -262,12 +274,49 @@ pub fn options(world: &str, game: &crate::games::GameDef) -> Vec<Opt> {
         ));
         // Zero to as many as the world says it holds, and no more than there
         // are names for.
-        let most = info.max_bots.min(BOT_NAMES.len());
+        let zombies = mode == Mode::Zombies;
+        let most = if zombies { 3 } else { info.max_bots.min(BOT_NAMES.len()) };
         let counts: Vec<String> = (0..=most).map(|n| n.to_string()).collect();
         let counts: Vec<&str> = counts.iter().map(|s| s.as_str()).collect();
-        let bots = if info.bots > 0 { info.bots.min(most) } else { 3.min(most) };
-        out.push(Opt::pick("bots", "BOTS", "How many of them are in the match.", &counts, bots));
-        if mode == Mode::Ctf {
+        // A zombie round is tuned for one bot at your side.
+        let bots = if zombies { 1 } else if info.bots > 0 { info.bots.min(most) } else { 3.min(most) };
+        let help = if zombies { "How many bots cross with you. They follow you, or hold where you tell them (X)." } else { "How many of them are in the match." };
+        out.push(Opt::pick("bots", "BOTS", help, &counts, bots));
+        // The weapon kit: which guns fill the map's weapon spots. Default is
+        // the one the game or the map names, the arena's own where neither
+        // does.
+        let kits = &crate::weapon_kit::catalogue().kits;
+        if kits.len() > 1 {
+            let mut values = vec![DEFAULT.to_string()];
+            values.extend(kits.iter().map(|k| k.title.clone()));
+            let values: Vec<&str> = values.iter().map(|v| v.as_str()).collect();
+            let own = crate::weapon_kit::chosen(None, game.kit.as_deref(), info.kit.as_deref());
+            let own = kits.iter().find(|k| k.name == own).map_or_else(|| own.to_string(), |k| k.title.clone());
+            out.push(
+                Opt::pick(
+                    "kit",
+                    "WEAPONS",
+                    "Which guns lie on the map. Each kit puts its own gun of the same kind on every weapon spot: the arena's, or real firearms.",
+                    &values,
+                    0,
+                )
+                .under(own),
+            );
+        }
+        if mode == Mode::Zombies {
+            // Nothing to play to: the round ends at the extraction. What it
+            // is played in instead: the weather, the hour, and what they do
+            // to sight, sound and scent.
+            let mut values = vec!["Random"];
+            values.extend(crate::shooter::zombies::Condition::ALL.iter().map(|c| c.title()));
+            out.push(Opt::pick(
+                "condition",
+                "CONDITION",
+                "What the round is played in. Night and fog shorten sight both ways, rain halves how far a shot carries, a dry windstorm carries your scent twice as far. Random rolls one when the round starts.",
+                &values,
+                0,
+            ));
+        } else if mode == Mode::Ctf {
             out.push(Opt::pick("captures", "CAPTURES", "Flags carried home that win the match.", &CAPTURES, game.captures.and_then(|c| CAPTURES.iter().position(|v| *v == c.to_string())).unwrap_or(1)));
             out.push(Opt::pick("minutes", "TIME LIMIT", "Minutes a match lasts; the side ahead when it runs out wins.", &MINUTES, 2));
         } else {
@@ -283,7 +332,7 @@ pub fn options(world: &str, game: &crate::games::GameDef) -> Vec<Opt> {
                 game.target.and_then(|t| TARGETS.iter().position(|v| *v == t.to_string())).unwrap_or(if mode == Mode::Team { 3 } else { 2 }),
             ));
         }
-        if mode != Mode::Fps {
+        if mode != Mode::Fps && mode != Mode::Zombies {
             out.push(Opt::pick("side", "YOUR SIDE", "Which side you play on. Either puts you on the shorter one.", &SIDES, 0));
         }
     }
@@ -293,6 +342,7 @@ pub fn options(world: &str, game: &crate::games::GameDef) -> Vec<Opt> {
     if mode == Mode::Race {
         out.push(Opt::pick("rivals", "RIVALS", "How many karts race you. Default is as many as the course is written for.", &RIVALS, 0).under(format!("{} rival{}", info.race_rivals, if info.race_rivals == 1 { "" } else { "s" })));
         out.push(Opt::pick("laps", "LAPS", "Laps of the course. Default is as many as the course is written for.", &LAPS, 0).under(format!("{} lap{}", info.race_laps, if info.race_laps == 1 { "" } else { "s" })));
+        out.push(Opt::switch("cup", "CUP", "Three races on three courses, starting on this one, with points for each place and the table after each race.", false));
         // The course's own weather is where it starts; it may change where
         // the climate has more than one kind of day.
         let sky = capitalise(info.start_sky.name());
@@ -345,8 +395,13 @@ pub const RACE_LEVEL_SHARE: [f32; 3] = [0.88, 0.94, 1.0];
 /// has the blocks for, as every world was before the list existed.
 pub fn games(world: &str) -> Vec<&'static crate::games::GameDef> {
     let i = info(world);
-    let listed: Vec<_> = i.games.iter().filter_map(|n| crate::games::get(n)).filter(|g| i.hosts(g.kind)).collect();
+    let mut listed: Vec<_> = i.games.iter().filter_map(|n| crate::games::get(n)).filter(|g| i.hosts(g.kind)).collect();
     if !listed.is_empty() {
+        // A world to explore can always be crossed with zombies in it,
+        // whether or not its list says so.
+        if listed.iter().any(|g| g.kind == Mode::Explore) && !listed.iter().any(|g| g.kind == Mode::Zombies) && i.hosts(Mode::Zombies) {
+            listed.push(crate::games::base(Mode::Zombies));
+        }
         return listed;
     }
     crate::games::KINDS.into_iter().filter(|m| i.hosts(*m)).map(crate::games::base).collect()
@@ -618,12 +673,30 @@ impl Launch {
             .into_iter()
             .filter(|m| opts.iter().any(|o| o.id == format!("travel.{}", m.name())) && !on(&format!("travel.{}", m.name())))
             .collect();
+        // A cup: from this course on through the next in the race menu's
+        // order, with as many rivals in every race as this course has.
+        let cup = on("cup").then(|| {
+            let all: Vec<String> = crate::racemenu::courses().iter().map(|c| c.world.clone()).collect();
+            crate::race::Cup::new(&self.world, &all)
+        });
+        let rivals = pick("rivals").and_then(|v| v.parse().ok()).or_else(|| cup.as_ref().map(|_| info(&self.world).race_rivals));
+        // A zombie round's condition, rolled here when the screen leaves it
+        // to chance, and the weather and hour it is held at.
+        let condition = (game.kind == Mode::Zombies).then(|| {
+            let v = pick("condition").unwrap_or_default();
+            crate::shooter::zombies::Condition::parse(&v).unwrap_or_else(|| {
+                let t = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(0, |d| d.subsec_nanos());
+                let all = crate::shooter::zombies::Condition::ALL;
+                all[(crate::world::noise::hash32(t) as usize) % all.len()]
+            })
+        });
+        let held = condition.map(|c| c.sky());
         Chosen {
             world: self.world.clone(),
             mode: game.kind,
             game: game.name.clone(),
             animals: on_or("animals", true),
-            day_night: on_or("day_night", false),
+            day_night: on_or("day_night", false) && condition.is_none(),
             weather: on_or("weather", true),
             off,
             difficulty: opts.iter().find(|o| o.id == "difficulty").map_or_else(|| "average".to_string(), |o| self.value(o).to_lowercase()),
@@ -638,12 +711,15 @@ impl Launch {
                 .and_then(|k| k.checked_sub(1))
                 .map(|k| k as u8),
             season: pick("season").and_then(|v| crate::world::season::Season::parse(&v.to_lowercase())).map(|s| s.name().to_string()),
-            hour: pick("hour").and_then(|v| crate::world::clock::PRESETS.iter().find(|(_, n)| n.eq_ignore_ascii_case(&v)).map(|(h, _)| *h)),
+            hour: held.map(|h| h.1).or_else(|| pick("hour").and_then(|v| crate::world::clock::PRESETS.iter().find(|(_, n)| n.eq_ignore_ascii_case(&v)).map(|(h, _)| *h))),
             vehicle: opts.iter().find(|o| o.id == "vehicle").map(|o| self.value(o).to_lowercase().replace(' ', "_")),
             kart: opts.iter().find(|o| o.id == "kart").and_then(|o| KARTS.iter().find(|(_, n)| *n == self.value(o))).map(|(k, _)| k.to_string()),
-            rivals: pick("rivals").and_then(|v| v.parse().ok()),
+            rivals,
             laps: pick("laps").and_then(|v| v.parse().ok()),
-            sky: pick("sky").map(|v| v.to_lowercase()),
+            sky: held.map(|h| h.0.to_string()).or_else(|| pick("sky").map(|v| v.to_lowercase())),
+            cup,
+            condition: condition.map(|c| c.title().to_string()),
+            kit: pick("kit").and_then(|t| crate::weapon_kit::catalogue().kits.iter().find(|k| k.title == t)).map(|k| k.name.clone()),
         }
     }
 }
@@ -688,6 +764,15 @@ pub struct Chosen {
     /// A race's weather, held (world/weather.rs `Kind`, by name); None takes
     /// the course's own, drifting as the launch screen says.
     pub sky: Option<String>,
+    /// The cup this race is one of (race/cup.rs), which goes on to the next
+    /// course with it.
+    pub cup: Option<crate::race::Cup>,
+    /// The weapon kit for a match (`library/weapon_kits/`); None takes the
+    /// game's, else the map's.
+    pub kit: Option<String>,
+    /// A zombie round's condition (`shooter::zombies::Condition`), by title;
+    /// already rolled where the screen left it to chance.
+    pub condition: Option<String>,
 }
 
 /// Names and shell colours for the bots a match is asked for, in the order
@@ -751,7 +836,7 @@ impl Chosen {
             // The world's own roster, so a match started from the command
             // line is the one the world was written for.
             difficulty: info.skill.clone().unwrap_or_else(|| "average".to_string()),
-            bots: if info.bots > 0 { info.bots } else { 3 },
+            bots: if game.kind == Mode::Zombies { 1 } else if info.bots > 0 { info.bots } else { 3 },
             target: game.target.unwrap_or(15),
             // Nothing: the world's own capture count and clock.
             captures: 0,
@@ -764,6 +849,9 @@ impl Chosen {
             rivals: None,
             laps: None,
             sky: None,
+            cup: None,
+            kit: None,
+            condition: None,
         }
     }
 
@@ -824,6 +912,11 @@ impl Chosen {
         if self.mode != Mode::Race {
             a = a.without(ModeId::Race);
         }
+        // On foot for now: no wheels, no wingsuit or glider, and nothing
+        // that leaves the party behind on the water.
+        if self.mode == Mode::Zombies {
+            a = a.without(ModeId::Drive).without(ModeId::Bike).without(ModeId::Kayak).without(ModeId::Glide);
+        }
         a
     }
 }
@@ -864,6 +957,8 @@ pub struct Info {
     /// the match the world was written for.
     pub bots: usize,
     pub skill: Option<String>,
+    /// The weapon kit its shooter rules name (`ShooterDef::kit`).
+    pub kit: Option<String>,
     /// The most bots the launch screen offers (`ShooterDef::max_bots`).
     pub max_bots: usize,
     /// Whether its shooter rules carry a `ctf` block.
@@ -914,6 +1009,10 @@ impl Info {
             Mode::Fps | Mode::Team => self.shooter,
             Mode::Ctf => self.ctf,
             Mode::Race => self.race,
+            // An explore world: it carries a survey, which the director
+            // places everything by. Not an arena, and not a world whose own
+            // list leaves exploring out.
+            Mode::Zombies => !self.shooter && !self.space && (self.games.is_empty() || self.games.iter().any(|g| g == "explore" || g == "zombies")),
         }
     }
 
@@ -1056,6 +1155,8 @@ struct PeekShooter {
     ctf: Option<serde_json::Value>,
     #[serde(default)]
     max_bots: Option<usize>,
+    #[serde(default)]
+    kit: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -1132,6 +1233,7 @@ pub fn info(world: &str) -> Info {
                 bots: p.shooter.as_ref().map_or(0, |sh| sh.bots.len()),
                 skill: p.shooter.as_ref().and_then(|sh| sh.bots.first().and_then(|b| b.skill.clone())),
                 ctf: p.shooter.as_ref().is_some_and(|sh| sh.ctf.is_some()),
+                kit: p.shooter.as_ref().and_then(|sh| sh.kit.clone()),
             }
         }
         // The random island, and a world whose world.json will not parse: the
@@ -1149,6 +1251,7 @@ pub fn info(world: &str) -> Info {
             seasons: vec![crate::world::season::Season::Summer],
             bots: 0,
             skill: None,
+            kit: None,
             max_bots: DEFAULT_MAX_BOTS,
             ctf: false,
             title: None,
@@ -1297,7 +1400,8 @@ mod tests {
         assert_eq!(modes("sluice"), [Mode::Ctf, Mode::Team]);
         assert_eq!(modes("porch"), [Mode::Fps, Mode::Team]);
         assert_eq!(modes("peregrine"), [Mode::Race]);
-        assert_eq!(modes("glassfall"), [Mode::Explore], "a world with no list and no blocks is one to explore");
+        // Any world to explore can be crossed with zombies in it too.
+        assert_eq!(modes("glassfall"), [Mode::Explore, Mode::Zombies], "a world with no list and no blocks is one to explore");
     }
 
     /// Picking a world keeps the game where the world offers it and takes

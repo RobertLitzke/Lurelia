@@ -3,10 +3,12 @@
   "version": 3,
   "introduced_by": "jadewater",
   "notes": "The lowland between the Old Wall and the lagoon: banyans over oak and alder, ferns, vines on everything.",
+  "habitat": "tropical_forest",
   "priority": 1,
   "rules": {},
   "surface": "jungle_floor",
   "subsurface": "jungle_floor",
+  "soil": 0.65,
   "map_color": [70, 120, 60],
   "plants": [
     {

@@ -1,0 +1,36 @@
+{
+  "name": "cloth_cairn",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A dry-stone cairn 2 m across, its stones heaped 1.6 m high, with a wooden pole rising to 3.5 m and strips of red, saffron and white cloth tied round the pole and the stones, streaming toward +X. It has no front.",
+  "size": [12, 15, 12],
+  "anchor": [6, 0, 6],
+  "foundation": 1,
+  "level": false,
+  "tags": ["marker", "cloth"],
+  "slots": {
+    "stone": "fieldstone",
+    "pole": "weathered_planks",
+    "red": "kite_cloth_red",
+    "saffron": "kite_cloth_saffron",
+    "white": "kite_cloth_white"
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [6, 1.5, 6], "radius": [4, 2, 4], "mat": "stone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [6, 3.5, 6], "radius": [3, 1.8, 3], "mat": "stone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [6, 5, 6], "radius": [2, 1.5, 2], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [6, 4, 6], "to": [7, 14, 7], "mat": "pole", "part": "timber"},
+    {"op": "box", "from": [7, 12, 6], "to": [11, 13, 7], "mat": "red", "part": "cloth"},
+    {"op": "box", "from": [11, 11, 6], "to": [12, 12, 7], "mat": "red", "part": "cloth"},
+    {"op": "box", "from": [7, 10, 6], "to": [10, 11, 7], "mat": "saffron", "part": "cloth"},
+    {"op": "box", "from": [10, 9, 6], "to": [11, 10, 7], "mat": "saffron", "part": "cloth"},
+    {"op": "box", "from": [2, 11, 6], "to": [6, 12, 7], "mat": "white", "part": "cloth"},
+    {"op": "box", "from": [1, 10, 6], "to": [2, 11, 7], "mat": "white", "part": "cloth"},
+    {"op": "box", "from": [5, 13, 6], "to": [6, 14, 7], "mat": "red", "part": "cloth"},
+    {"op": "box", "from": [4, 13, 6], "to": [5, 14, 7], "mat": "saffron", "part": "cloth"},
+    {"op": "box", "from": [9, 2, 6], "to": [11, 3, 7], "mat": "white", "part": "cloth"},
+    {"op": "box", "from": [11, 1, 6], "to": [12, 2, 7], "mat": "white", "part": "cloth"},
+    {"op": "box", "from": [6, 2, 1], "to": [7, 3, 3], "mat": "red", "part": "cloth"},
+    {"op": "box", "from": [6, 1, 0], "to": [7, 2, 1], "mat": "red", "part": "cloth"}
+  ]
+}

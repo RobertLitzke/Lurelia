@@ -76,6 +76,9 @@ pub struct ChaseSpec {
 const AIM_AT: f32 = 80.0;
 /// How far the follow point may trail the body before it is held, metres.
 const MAX_TRAIL: f32 = 2.5;
+/// How far either side of the line to the camera it looks round something
+/// in the way, metres: anything narrower than twice this is let through.
+const THIN: f32 = 0.6;
 
 /// A chase camera's own state: the follow point that trails the body, which
 /// has to be kept between frames because it is smoothed.
@@ -126,13 +129,25 @@ impl Chase {
         let target = self.prev_pt.lerp(self.pt, alpha);
         let back = (-fwd + Vec3::Y * 0.25).normalize_or(-fwd);
         // Keep the camera out of the ground and the trees.
-        let reach = match store.raycast(target, back, dist) {
+        let reach_from = |from: Vec3| match store.raycast(from, back, dist) {
             Some((h, _)) => {
                 let c = Vec3::new(h[0] as f32 + 0.5, h[1] as f32 + 0.5, h[2] as f32 + 0.5) / 4.0;
-                ((c - target).dot(back) - 0.35).clamp(0.4, dist)
+                ((c - from).dot(back) - 0.35).clamp(0.4, dist)
             }
             None => dist,
         };
+        let mut reach = reach_from(target);
+        if reach < dist {
+            // Something thin across the line (a lamp post, a sign's pole, a
+            // trunk) that rays either side pass: the camera goes on through
+            // it rather than jumping in to the subject's back for the few
+            // frames it takes to go by.
+            let side = back.cross(Vec3::Y).normalize_or(Vec3::X) * THIN;
+            let round = reach_from(target + side).min(reach_from(target - side));
+            if round > reach + 1.0 {
+                reach = round;
+            }
+        }
         let eye = target + back * reach;
         // The subject aims from its own body, not from the camera: a camera
         // that merely looked along `fwd` put the screen's centre a metre or
@@ -224,5 +239,37 @@ mod tests {
         let along = (want - c.eye).dot(c.fwd);
         let miss = (want - (c.eye + c.fwd * along)).length();
         assert!(miss < 1e-3, "the aim missed by {miss} m");
+    }
+
+    /// A post between the subject and the camera is looked past; a wall
+    /// across the whole view still brings the camera in.
+    #[test]
+    fn a_post_is_looked_past_but_a_wall_is_not() {
+        use crate::world::store::Voxels;
+        use crate::world::material::{AIR, STONE};
+        let scene = |wall: bool| {
+            let mut s = Store::default();
+            for cx in 0..2 {
+                for cz in 0..2 {
+                    s.chunks.insert((cx, 0, cz), Voxels::Uniform(AIR));
+                }
+            }
+            // At z 10 m, 2.4 m behind a body at z 8 looking north.
+            let xs = if wall { 0..64 } else { 31..33 };
+            for x in xs {
+                for y in 0..24 {
+                    s.set(x, y, 40, STONE);
+                }
+            }
+            s
+        };
+        let mut ch = Chase::default();
+        ch.follow(Vec3::new(8.0, 0.0, 8.0), SPEC, 0, 1.0 / 60.0);
+        ch.begin_step();
+        let target = Vec3::new(8.0, SPEC.height, 8.0);
+        let post = ch.camera(Vec3::NEG_Z, Vec3::Y, SPEC.dist, &scene(false), 1.0, 1.0, 0.0, 0.0);
+        assert!((post.eye - target).length() > SPEC.dist - 0.01, "pulled in for a post: {:?}", post.eye);
+        let wall = ch.camera(Vec3::NEG_Z, Vec3::Y, SPEC.dist, &scene(true), 1.0, 1.0, 0.0, 0.0);
+        assert!((wall.eye - target).length() < 2.5, "not pulled in for a wall: {:?}", wall.eye);
     }
 }

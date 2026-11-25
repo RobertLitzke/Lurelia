@@ -18,5 +18,6 @@
   "max_slope": 0.8,
   "standing_water": [-1.0, 1.3],
   "autumn": "maple_red",
-  "thin_limbs": 0.12
+  "thin_limbs": 0.12,
+  "site": {"wet": [0.6, 1.0]}
 }

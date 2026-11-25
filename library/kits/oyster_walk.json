@@ -1,0 +1,15 @@
+{
+  "name": "oyster_walk",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "The plank catwalk out to the oyster and drift-bell pens: 1.5 m of planks on driftwood posts a metre over high water, a rope rail on one side.",
+  "ground": "deck",
+  "width": 1.5,
+  "mat": "weathered_planks",
+  "lift": 1.0,
+  "deck": {"thick": 0.25, "mat": "weathered_planks", "under": "silver_deadwood"},
+  "rails": [{"side": "right", "out": 0.0, "from": 0.9, "to": 1.0, "thick": 0.12, "mat": "silver_deadwood"}],
+  "posts": [{"side": "right", "out": 0.0, "every": 3.0, "size": [0.25, 1.0, 0.25], "mat": "silver_deadwood"}],
+  "piers": {"every": 3.0, "radius": 0.25, "mat": "silver_deadwood", "min_drop": 0.3},
+  "tags": ["walkway"]
+}

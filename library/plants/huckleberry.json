@@ -16,5 +16,6 @@
   "cane_spurs": 0.6,
   "flower": "red_berries",
   "flower_seasons": ["summer"],
-  "autumn": "leaves_autumn"
+  "autumn": "leaves_autumn",
+  "site": {"wet": [0.25, 0.9], "soil": [0.0, 0.5], "shade": [0.1, 1.0]}
 }

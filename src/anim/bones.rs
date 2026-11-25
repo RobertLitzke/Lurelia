@@ -22,6 +22,20 @@ use glam::Vec3;
 
 const NONE: u8 = u8::MAX;
 
+/// The points each bone of a skeleton lies on (slice.rs `hulls`): only the
+/// voxels of bone in `cells`, the grid `skeletonise` returns.
+pub fn hulls(sliced: &Sliced, cells: &[u8]) -> Vec<Vec<Vec3>> {
+    let joints: Vec<Vec3> = sliced.rig.bones.iter().map(|b| b.joint).collect();
+    super::slice::hulls(sliced.dims, &sliced.owner, &|i| cells[i] != 0, &joints)
+}
+
+/// Give a skeleton's rig the points its bones lie on.
+pub fn set_hulls(rig: &mut Rig, hulls: Vec<Vec<Vec3>>) {
+    for (b, h) in rig.bones.iter_mut().zip(hulls) {
+        b.hull = h;
+    }
+}
+
 /// How often a rib ring is kept along the body, in voxels.
 const RIB_EVERY: i32 = 3;
 

@@ -1,0 +1,27 @@
+{
+  "name": "fw_flat",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "The crest and flat of Frondwell's ring, a metre or two under the sea: bull kelp in the surge, anemones and sea stars in the pools, mussels where it breaks the surface.",
+  "habitat": "rocky_shore",
+  "priority": 21,
+  "rules": {"underwater": true, "region": "frondwell_reef_flat"},
+  "surface": "reef_rock",
+  "subsurface": "basalt",
+  "map_color": [90, 130, 110],
+  "plants": [
+    {"plant": "bull_kelp", "density": 0.05, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "kelp", "density": 0.01, "placement": {"verb": "clustered", "params": {}}}
+  ],
+  "features": [
+    {"structure": "anemone_bed", "density": 0.002},
+    {"structure": "sea_stars", "density": 0.002},
+    {"structure": "mussel_bed", "density": 0.0008},
+    {"structure": "sea_palms", "density": 0.001}
+  ],
+  "creatures": [
+    {"creature": "kelp_perch", "count": 20},
+    {"creature": "sea_otter", "count": 4},
+    {"creature": "harbor_seal", "count": 2}
+  ]
+}

@@ -10,27 +10,47 @@
     "muzzle": [24, 24, 30],
     "stripe": [24, 24, 30]
   },
-  "behaviour": {"sleeps_on_side": true, "wary": 14, "flightiness": 1.0},
+  "forms": {"juvenile": "zebra_juvenile"},
+  "behaviour": {
+    "displays": [
+      {"kind": "roll"},
+      {"kind": "rear_strike"},
+      {"kind": "groom", "params": {"style": "mutual"}},
+      {"kind": "play"},
+      {"kind": "gallop"}
+    ],
+    "sleeps_on_side": true,
+    "wary": 14,
+    "flightiness": 1.0,
+    "voice": {
+      "size": 0.9,
+      "calls": [
+        {"cry": "bray", "on": "idle", "every_s": [200, 600], "chorus": 0.4, "chorus_m": 300},
+        {"cry": "snort", "on": "flee", "size": 1.3, "chance": 0.6},
+        {"cry": "scream", "on": "display:rear_strike", "size": 0.5}
+      ]
+    }
+  },
   "like": "horse",
   "scale": 0.92,
   "extra_ops": [
     {
       "op": "repeat",
       "count": 8,
-      "step": [0, 0, 2],
-      "ops": [{"op": "recolour", "at": [10, 9, 9], "until": [23, 21, 10], "from": "coat", "to": "stripe"}]
+      "step": [0, 0, 3],
+      "ops": [{"op": "recolour", "at": [7, 14, 16], "until": [27, 32, 18], "from": "coat", "to": "stripe"}]
     },
     {
       "op": "repeat",
       "count": 4,
-      "step": [0, 2, 0],
-      "ops": [{"op": "recolour", "at": [10, 13, 6], "until": [23, 14, 11], "from": "coat", "to": "stripe"}]
+      "step": [0, 3, 0],
+      "ops": [{"op": "recolour", "at": [7, 20, 12], "until": [27, 21, 19], "from": "coat", "to": "stripe"}]
     },
     {
       "op": "repeat",
       "count": 5,
-      "step": [0, 2, 0],
-      "ops": [{"op": "recolour", "at": [12, 2, 9], "until": [21, 3, 25], "from": "coat", "to": "stripe"}]
+      "step": [0, 3, 0],
+      "ops": [{"op": "recolour", "at": [10, 3, 16], "until": [24, 5, 41], "from": "coat", "to": "stripe"}]
     }
   ]
 }

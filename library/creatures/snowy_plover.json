@@ -1,9 +1,10 @@
 {
   "name": "snowy_plover",
-  "version": 1,
+  "version": 2,
   "introduced_by": "ribshore",
   "notes": "patter: Snowy plover: a round little sand-coloured plover with a big head and a stub of a bill, almost invisible on dry sand until it moves. Runs a few metres on twinkling legs, stops dead, tips forward to peck, runs again; scattered loose flocks on the upper beach, the wrack line, dunes and salt flats, out of the surf's way. The base of the plovers (killdeer is like it).",
-  "voxel": 0.009,
+  "voxel": 0.006,
+  "grid": [38, 32, 38],
   "half_w": 0.06,
   "height": 0.12,
   "colors": {
@@ -19,6 +20,7 @@
     "legs": [88, 86, 86]
   },
   "behaviour": {
+    "displays": [{"kind": "broken_wing"}],
     "movement": "patter",
     "walk_speed": 1.3,
     "flee_speed": 8,
@@ -33,42 +35,49 @@
     "off_hours": 0.4,
     "wind": 0.8,
     "rain": 0.6,
-    "winter": 0.9
+    "winter": 0.9,
+    "voice": {
+      "size": 0.8,
+      "calls": [{"cry": "pipe", "on": "takeoff", "chance": 0.8}, {"cry": "pipe", "on": "display:broken_wing"}]
+    }
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [16, 9, 16], "radius": [3.2, 3.2, 5.5], "mat": "back"},
-    {"op": "recolour_below", "y": 9, "from": "back", "to": "belly"},
-    {"op": "ellipsoid", "centre": [16, 12, 10], "radius": [2.7, 2.6, 2.7], "mat": "head", "part": "head"},
-    {"op": "recolour_below", "y": 11, "from": "head", "to": "belly"},
-    {"op": "box", "from": [13, 12, 9], "to": [14, 13, 11], "mat": "patch", "part": "head"},
-    {"op": "box", "from": [18, 12, 9], "to": [19, 13, 11], "mat": "patch", "part": "head"},
-    {"op": "set", "at": [13, 9, 12], "mat": "patch"},
-    {"op": "set", "at": [18, 9, 12], "mat": "patch"},
-    {"op": "set", "at": [13, 10, 12], "mat": "patch"},
-    {"op": "set", "at": [18, 10, 12], "mat": "patch"},
-    {"op": "set", "at": [14, 13, 8], "mat": "eye", "part": "head"},
-    {"op": "set", "at": [17, 13, 8], "mat": "eye", "part": "head"},
-    {"op": "box", "from": [15, 11, 5], "to": [17, 12, 8], "mat": "bill", "part": "head"},
-    {"op": "box", "from": [11, 11, 13], "to": [15, 12, 19], "mat": "wing", "part": "wing_l"},
-    {"op": "box", "from": [5, 11, 14], "to": [11, 12, 18], "mat": "tip", "part": "wing_l_tip"},
-    {"op": "box", "from": [17, 11, 13], "to": [21, 12, 19], "mat": "wing", "part": "wing_r"},
-    {"op": "box", "from": [21, 11, 14], "to": [27, 12, 18], "mat": "tip", "part": "wing_r_tip"},
-    {"op": "box", "from": [15, 10, 21], "to": [17, 11, 24], "mat": "tail", "part": "tail"},
-    {"op": "box", "from": [14, 2, 15], "to": [15, 7, 16], "mat": "legs", "part": "leg_l"},
-    {"op": "box", "from": [17, 2, 15], "to": [18, 7, 16], "mat": "legs", "part": "leg_r"}
+    {"op": "ellipsoid", "centre": [19, 13.5, 20], "radius": [5.0, 4.8, 8.0], "mat": "back"},
+    {"op": "ellipsoid", "centre": [19, 14.2, 14], "radius": [4.5, 4.3, 4.5], "mat": "back"},
+    {"op": "recolour_below", "y": 13, "from": "back", "to": "belly"},
+    {"op": "ellipsoid", "centre": [19, 18.2, 10.5], "radius": [4.2, 4.0, 4.2], "mat": "head", "part": "head"},
+    {"op": "recolour_below", "y": 16, "from": "head", "to": "belly"},
+    {"op": "recolour", "at": [14, 14, 14], "until": [16, 16, 16], "from": "back", "to": "patch"},
+    {"op": "recolour", "at": [22, 14, 14], "until": [24, 16, 16], "from": "back", "to": "patch"},
+    {"op": "recolour", "at": [14, 17, 11], "until": [17, 19, 13], "from": "head", "to": "patch"},
+    {"op": "recolour", "at": [21, 17, 11], "until": [24, 19, 13], "from": "head", "to": "patch"},
+    {"op": "recolour", "at": [16, 21, 6], "until": [22, 23, 9], "from": "head", "to": "patch"},
+    {"op": "segment", "points": [[19, 17.4, 7.0], [19, 17.2, 4.6]], "radius": 1.3, "mat": "bill", "part": "head"},
+    {"op": "segment", "points": [[19, 17.2, 4.6], [19, 17.0, 2.8]], "radius": 0.9, "mat": "bill", "part": "head"},
+    {"op": "ellipsoid", "centre": [15.5, 19.0, 8.6], "radius": [1.2, 1.2, 1.2], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [22.5, 19.0, 8.6], "radius": [1.2, 1.2, 1.2], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [14.8, 15.2, 21], "radius": [2.0, 2.8, 7.0], "mat": "wing", "part": "wing_l"},
+    {"op": "ellipsoid", "centre": [15.2, 15.0, 27.5], "radius": [1.7, 1.8, 3.6], "mat": "tip", "part": "wing_l_tip"},
+    {"op": "ellipsoid", "centre": [23.2, 15.2, 21], "radius": [2.0, 2.8, 7.0], "mat": "wing", "part": "wing_r"},
+    {"op": "ellipsoid", "centre": [22.8, 15.0, 27.5], "radius": [1.7, 1.8, 3.6], "mat": "tip", "part": "wing_r_tip"},
+    {"op": "ellipsoid", "centre": [19, 14.8, 29.5], "radius": [2.4, 1.3, 3.6], "mat": "tail", "part": "tail"},
+    {"op": "segment", "points": [[17, 9.6, 19], [16.8, 4.6, 18.4]], "radius": 1.1, "mat": "legs", "part": "leg_l"},
+    {"op": "ellipsoid", "centre": [16.8, 3.4, 17.4], "radius": [1.6, 1.0, 2.5], "mat": "legs", "part": "leg_l"},
+    {"op": "segment", "points": [[21, 9.6, 19], [21.2, 4.6, 18.4]], "radius": 1.1, "mat": "legs", "part": "leg_r"},
+    {"op": "ellipsoid", "centre": [21.2, 3.4, 17.4], "radius": [1.6, 1.0, 2.5], "mat": "legs", "part": "leg_r"}
   ],
   "rig": {
     "plan": "bird",
     "bones": [
       {"name": "body", "role": "root"},
-      {"name": "head", "role": "head", "parent": "body", "joint": [16, 11.5, 12.5]},
-      {"name": "wing_l", "role": "wing", "parent": "body", "joint": [15, 11.5, 16], "side": "l"},
-      {"name": "wing_l_tip", "role": "wing", "parent": "wing_l", "joint": [11, 11.5, 16], "side": "l"},
-      {"name": "wing_r", "role": "wing", "parent": "body", "joint": [17, 11.5, 16], "side": "r"},
-      {"name": "wing_r_tip", "role": "wing", "parent": "wing_r", "joint": [21, 11.5, 16], "side": "r"},
-      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 10.5, 21]},
-      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [14.5, 7, 15.5], "side": "l", "pair": 0},
-      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [17.5, 7, 15.5], "side": "r", "pair": 0}
+      {"name": "head", "role": "head", "parent": "body", "joint": [19, 16.5, 13.5]},
+      {"name": "wing_l", "role": "wing", "parent": "body", "joint": [16.5, 16.5, 16.5], "side": "l"},
+      {"name": "wing_l_tip", "role": "wing", "parent": "wing_l", "joint": [15.2, 15.2, 25.0], "side": "l"},
+      {"name": "wing_r", "role": "wing", "parent": "body", "joint": [21.5, 16.5, 16.5], "side": "r"},
+      {"name": "wing_r_tip", "role": "wing", "parent": "wing_r", "joint": [22.8, 15.2, 25.0], "side": "r"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [19, 14.8, 26.5]},
+      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [16.75, 10.5, 18.25], "side": "l", "pair": 0},
+      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [21.25, 10.5, 18.25], "side": "r", "pair": 0}
     ]
   },
   "vary": {"size": 0.06}

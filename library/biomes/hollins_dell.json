@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "The wet hollows of the Hollins: alder, willow and birch over fern to the waist, every trunk green, mist lying in it by evening and lights in the mist.",
+  "habitat": "swamp_forest",
   "priority": 4,
   "rules": {"moist": [0.62, 1.0]},
   "surface": "moss_grass",
   "subsurface": "peat",
+  "soil": 0.4,
   "map_color": [70, 142, 96],
   "plants": [
     {

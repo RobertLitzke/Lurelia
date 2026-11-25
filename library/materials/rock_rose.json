@@ -1,0 +1,16 @@
+{
+  "name": "rock_rose",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Common rock-rose (drawn as sprites): sprawling grey-green stems with five-petalled yellow flowers, on short chalk turf.",
+  "smooth": false,
+  "sprites": "flower",
+  "texture": {
+    "pattern": "noise",
+    "base": [96, 108, 70],
+    "alt": [232, 198, 64],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [102, 114, 76], "alt": [236, 206, 84]}
+  }
+}

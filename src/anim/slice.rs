@@ -99,6 +99,72 @@ pub fn oversize_problem(who: &str, bone: &str) -> String {
     format!("{who}: part {bone} is bigger than one 32^3 window; split it into more bones")
 }
 
+/// For each bone, the voxels furthest out from its joint in fourteen
+/// directions (the six faces of a box and its eight corners) and the one
+/// furthest from the joint of all, model voxel units, centres of voxels.
+/// These are what a limp body lies on (anim/limp.rs): a ribcage on its flank
+/// rests on the outside of the flank, not on the line of its spine.
+///
+/// `keep` picks which of the bone's voxels count: all of them for the
+/// animal, only the bone voxels for its skeleton.
+pub fn hulls(dims: Dims, owner: &[u8], keep: &dyn Fn(usize) -> bool, joints: &[Vec3]) -> Vec<Vec<Vec3>> {
+    const R: f32 = 0.577_350_3;
+    const DIRS: [Vec3; 14] = [
+        Vec3::X,
+        Vec3::NEG_X,
+        Vec3::Y,
+        Vec3::NEG_Y,
+        Vec3::Z,
+        Vec3::NEG_Z,
+        Vec3::new(R, R, R),
+        Vec3::new(R, R, -R),
+        Vec3::new(R, -R, R),
+        Vec3::new(R, -R, -R),
+        Vec3::new(-R, R, R),
+        Vec3::new(-R, R, -R),
+        Vec3::new(-R, -R, R),
+        Vec3::new(-R, -R, -R),
+    ];
+    let n = joints.len();
+    // Per bone: the best voxel and its score in each direction, then the
+    // furthest one from the joint.
+    let mut best: Vec<[(f32, Vec3); 15]> = vec![[(f32::MIN, Vec3::ZERO); 15]; n];
+    for (i, &o) in owner.iter().enumerate() {
+        let b = o as usize;
+        if b >= n || !keep(i) {
+            continue;
+        }
+        let (x, y, z) = dims.at(i);
+        let v = Vec3::new(x as f32 + 0.5, y as f32 + 0.5, z as f32 + 0.5);
+        let d = v - joints[b];
+        let slot = &mut best[b];
+        for (k, dir) in DIRS.iter().enumerate() {
+            let s = d.dot(*dir);
+            if s > slot[k].0 {
+                slot[k] = (s, v);
+            }
+        }
+        let far = d.length_squared();
+        if far > slot[14].0 {
+            slot[14] = (far, v);
+        }
+    }
+    best.iter()
+        .enumerate()
+        .map(|(b, slot)| {
+            let mut out: Vec<Vec3> = Vec::new();
+            for &(s, v) in slot {
+                // Nothing found, on the joint itself, or next to one already kept.
+                if s == f32::MIN || v.distance(joints[b]) < 1.0 || out.iter().any(|o| o.distance(v) < 1.5) {
+                    continue;
+                }
+                out.push(v);
+            }
+            out
+        })
+        .collect()
+}
+
 /// `whole` is the compiled colour grid (`dims`, x fastest, then z, then y, 0
 /// = empty, else palette slot + 1, as `models::from_cells` takes it);
 /// `colour_ok` says whether an op's material resolved in that compile.
@@ -177,17 +243,14 @@ pub fn slice(def: &RigDef, ops: &[Op], whole: &[u8], dims: Dims, colour_ok: &dyn
     };
     let joints: Vec<Vec3> = def.bones.iter().enumerate().map(|(b, bd)| bd.joint.map(Vec3::from).unwrap_or_else(|| centre(b))).collect();
 
-    let slope = super::slope::wanted(def.slope);
-    let body = slope.then(|| super::slope::Body::new(dims, whole, &owner, &parent));
     let mut parts = Vec::with_capacity(def.bones.len());
     let mut bones = Vec::with_capacity(def.bones.len());
     let mut origins = Vec::with_capacity(def.bones.len());
     let mut oversize = Vec::new();
     for (b, bd) in def.bones.iter().enumerate() {
         let mut mine: Vec<bool> = owner.iter().map(|&o| o == b as u8).collect();
-        // Overlap: grow into the parent's voxels, a layer at a time. A
-        // sloped part needs none: it stretches to its parent instead.
-        if let Some(p) = parent[b].filter(|_| !slope) {
+        // Overlap: grow into the parent's voxels, a layer at a time.
+        if let Some(p) = parent[b] {
             for _ in 0..bd.overlap {
                 let prev = mine.clone();
                 for y in 0..ny {
@@ -214,10 +277,7 @@ pub fn slice(def: &RigDef, ops: &[Op], whole: &[u8], dims: Dims, colour_ok: &dyn
             oversize.push(bd.name.clone());
         }
         let cells = dims.cut(whole, origin, &|i| mine[i]);
-        let mut m = models::from_cells(&cells, voxel, half_w, height);
-        if let Some(body) = &body {
-            m.mesh = body.mesh(b, origin);
-        }
+        let mut m = models::from_cells(&cells, voxel, half_w, height).for_lod(&cells);
         m.pivot = joints[b] - Vec3::new(origin[0] as f32, origin[1] as f32, origin[2] as f32);
         parts.push(m);
         origins.push(origin);
@@ -234,7 +294,13 @@ pub fn slice(def: &RigDef, ops: &[Op], whole: &[u8], dims: Dims, colour_ok: &dyn
             },
             pair: bd.pair.unwrap_or(0),
             spread: bd.spread.map(Vec3::from),
+            rigid: bd.rigid,
+            loose: bd.loose,
+            hull: Vec::new(),
         });
+    }
+    for (b, h) in hulls(dims, &owner, &|_| true, &joints).into_iter().enumerate() {
+        bones[b].hull = h;
     }
     let floor = (0..ny).find(|&y| (0..nz).any(|z| (0..nx).any(|x| owner[idx(x, y, z)] != NONE))).unwrap_or(0) as f32;
     // The soft body: the bones with flesh and the box their voxels fill.
@@ -263,6 +329,7 @@ pub fn slice(def: &RigDef, ops: &[Op], whole: &[u8], dims: Dims, colour_ok: &dyn
             activities: def.activities.clone(),
             floor,
             soft,
+            sit_up: def.sit_up.unwrap_or(0.0),
         },
         parts,
         owner,

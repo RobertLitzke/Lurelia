@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "lowmouth",
   "notes": "The delta's ordinary ground: low wet woods of tupelo and oak along the old levees, palmettos under them, moss hanging everywhere.",
+  "habitat": "swamp_forest",
   "priority": 4,
   "rules": {"elev": [-0.5, 20]},
   "surface": "marsh_grass",
   "subsurface": "silt",
+  "soil": 0.7,
   "map_color": [104, 140, 80],
   "plants": [
     {"plant": "live_oak", "density": 0.0006, "placement": {"verb": "lone", "params": {"spacing": 34}}},

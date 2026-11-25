@@ -98,6 +98,7 @@ pub fn row(def: &CreatureDef, lib: &Library, model: usize, index: usize, bones: 
         morphs: Vec::new(),
         ages,
         aged_tint: crate::variety::aged_tint(&def.colors.values().map(|v| [0, 1, 2].map(|i| models::linear_colour(v)[i])).collect::<Vec<_>>()),
+        forms: Default::default(),
     }
 }
 
@@ -134,16 +135,17 @@ pub fn creature(def: &CreatureDef, lib: &Library, model_base: usize, block: u32,
             .then(|| crate::anim::bones::skeletonise(&sliced, bone, bone_dark, def.voxel, def.half_w, def.height))
             .and_then(|(cells, built)| {
                 let n = crate::anim::bones::voxels(&cells);
-                (n >= crate::anim::bones::MIN_BONE_VOXELS).then_some(built)
+                (n >= crate::anim::bones::MIN_BONE_VOXELS).then(|| (crate::anim::bones::hulls(&sliced, &cells), built))
             });
         let mut rig = base.clone();
         rig.offset_models(model_base + 1 + parts.len());
         parts.extend(sliced.parts);
         model.rig = Some(rig);
-        if let Some(bones) = skeleton {
+        if let Some((hulls, bones)) = skeleton {
             let mut srig = base;
-            // Bones do not sag.
+            // Bones do not sag, and lie on bone rather than on flesh.
             srig.soft = None;
+            crate::anim::bones::set_hulls(&mut srig, hulls);
             srig.offset_models(model_base + 1 + parts.len());
             parts.extend(bones);
             model.skeleton = Some(srig);

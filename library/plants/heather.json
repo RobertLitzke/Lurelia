@@ -9,5 +9,6 @@
   "bark": "dead_wood",
   "leaf": "heather",
   "max_slope": 1.0,
-  "affords": ["nectar"]
+  "affords": ["nectar"],
+  "site": {"soil": [0.0, 0.45], "wet": [0.0, 0.8], "shade": [0.0, 0.3]}
 }

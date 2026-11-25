@@ -1,13 +1,20 @@
 {
   "name": "frog",
-  "version": 2,
+  "version": 3,
   "introduced_by": "base",
-  "notes": "Green frog: sits at the water edge with its eyes up over the surface and hops in when you come near.",
-  "voxel": 0.011,
+  "notes": "Green frog: sits at the water edge with its eyes up over the surface and hops in when you come near. Gold eyes on bulges, folded hind legs, flat webbed feet.",
+  "voxel": 0.005,
+  "grid": [32, 32, 42],
   "half_w": 0.05,
   "height": 0.1,
-  "colors": {"coat": [92, 140, 62], "belly": [226, 220, 196], "dark": [36, 28, 24], "mark": [58, 92, 44]},
+  "colors": {"coat": [92, 140, 62], "belly": [226, 220, 196], "dark": [36, 28, 24], "mark": [58, 92, 44], "eye": [206, 164, 44]},
   "behaviour": {
+    "displays": [
+      {
+        "kind": "call",
+        "params": {"posture": "sit", "pitch": 0.2, "jaw": 0.1, "pump": 0.12, "call_s": 1.0, "calls": [3, 6]}
+      }
+    ],
     "movement": "splash",
     "walk_speed": 0.6,
     "flee_speed": 3.0,
@@ -16,33 +23,77 @@
     "flees_from": ["player"],
     "swims": true,
     "active": "nocturnal",
-    "off_hours": 0.2
+    "off_hours": 0.2,
+    "voice": {
+      "calls": [
+        {"cry": "croak", "on": "display:call", "chorus": 0.6, "chorus_m": 60},
+        {
+          "cry": "croak",
+          "on": "idle",
+          "hours": "night",
+          "every_s": [8, 40],
+          "rain": true,
+          "chorus": 0.5,
+          "chorus_m": 50
+        }
+      ]
+    }
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [16, 4, 17], "radius": [4.0, 3.0, 5.6], "mat": "coat"},
-    {"op": "ellipsoid", "centre": [16, 4, 11], "radius": [3.6, 2.8, 3.6], "mat": "coat", "part": "head"},
-    {"op": "recolour_below", "y": 2, "from": "coat", "to": "belly"},
-    {"op": "recolour", "at": [12, 4, 13], "until": [20, 8, 15], "from": "coat", "to": "mark"},
-    {"op": "recolour", "at": [12, 4, 18], "until": [20, 8, 20], "from": "coat", "to": "mark"},
-    {"op": "ellipsoid", "centre": [13.5, 6, 9.5], "radius": [1.8, 1.6, 1.8], "mat": "coat", "part": "head"},
-    {"op": "ellipsoid", "centre": [18.5, 6, 9.5], "radius": [1.8, 1.6, 1.8], "mat": "coat", "part": "head"},
-    {"op": "set", "at": [13, 7, 9], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [18, 7, 9], "mat": "dark", "part": "head"},
-    {"op": "box", "from": [11, 0, 17], "to": [13, 4, 22], "mat": "coat", "part": "leg_hl"},
-    {"op": "box", "from": [19, 0, 17], "to": [21, 4, 22], "mat": "coat", "part": "leg_hr"},
-    {"op": "box", "from": [12, 0, 11], "to": [14, 3, 13], "mat": "coat", "part": "leg_fl"},
-    {"op": "box", "from": [18, 0, 11], "to": [20, 3, 13], "mat": "coat", "part": "leg_fr"}
+    {"op": "ellipsoid", "centre": [16, 9, 23.5], "radius": [8.8, 6.8, 11.5], "mat": "coat"},
+    {"op": "ellipsoid", "centre": [16, 8.6, 10.5], "radius": [8, 5.8, 8.5], "mat": "coat", "part": "head"},
+    {"op": "recolour_below", "y": 4, "from": "coat", "to": "belly"},
+    {"op": "recolour", "at": [7, 9, 14], "until": [25, 18, 19], "from": "coat", "to": "mark"},
+    {"op": "recolour", "at": [7, 9, 25], "until": [25, 18, 30], "from": "coat", "to": "mark"},
+    {"op": "ellipsoid", "centre": [10.4, 13, 7.5], "radius": [3.4, 3.2, 3.4], "mat": "coat", "part": "head"},
+    {"op": "ellipsoid", "centre": [9.8, 14.6, 5.6], "radius": [2.2, 2.2, 1.9], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [9.4, 14.8, 4.6], "radius": [1.3, 1.5, 1.1], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [21.6, 13, 7.5], "radius": [3.4, 3.2, 3.4], "mat": "coat", "part": "head"},
+    {"op": "ellipsoid", "centre": [22.2, 14.6, 5.6], "radius": [2.2, 2.2, 1.9], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [22.6, 14.8, 4.6], "radius": [1.3, 1.5, 1.1], "mat": "dark", "part": "head"},
+    {"op": "segment", "points": [[7.5, 7.5, 26], [6.5, 6.3, 29]], "radius": 3.2, "mat": "coat", "part": "leg_hl"},
+    {"op": "segment", "points": [[6.5, 6.3, 29], [5.5, 5.2, 32.5]], "radius": 2.5, "mat": "coat", "part": "leg_hl"},
+    {
+      "op": "segment",
+      "points": [[5.5, 5.2, 32.5], [6.3, 3.5, 29.5], [7, 2.2, 27]],
+      "radius": 1.8,
+      "mat": "coat",
+      "part": "leg_hl"
+    },
+    {"op": "ellipsoid", "centre": [7.5, 1.2, 24.5], "radius": [2.4, 1.2, 4.2], "mat": "coat", "part": "leg_hl"},
+    {"op": "segment", "points": [[10, 7, 12.5], [9.6, 4.5, 11.6]], "radius": 2.4, "mat": "coat", "part": "leg_fl"},
+    {"op": "segment", "points": [[9.6, 4.5, 11.6], [9.2, 2.5, 10.8]], "radius": 1.8, "mat": "coat", "part": "leg_fl"},
+    {"op": "ellipsoid", "centre": [9, 1.2, 9], "radius": [2.2, 1.2, 2.8], "mat": "coat", "part": "leg_fl"},
+    {"op": "segment", "points": [[24.5, 7.5, 26], [25.5, 6.3, 29]], "radius": 3.2, "mat": "coat", "part": "leg_hr"},
+    {"op": "segment", "points": [[25.5, 6.3, 29], [26.5, 5.2, 32.5]], "radius": 2.5, "mat": "coat", "part": "leg_hr"},
+    {
+      "op": "segment",
+      "points": [[26.5, 5.2, 32.5], [25.7, 3.5, 29.5], [25, 2.2, 27]],
+      "radius": 1.8,
+      "mat": "coat",
+      "part": "leg_hr"
+    },
+    {"op": "ellipsoid", "centre": [24.5, 1.2, 24.5], "radius": [2.4, 1.2, 4.2], "mat": "coat", "part": "leg_hr"},
+    {"op": "segment", "points": [[22, 7, 12.5], [22.4, 4.5, 11.6]], "radius": 2.4, "mat": "coat", "part": "leg_fr"},
+    {
+      "op": "segment",
+      "points": [[22.4, 4.5, 11.6], [22.8, 2.5, 10.8]],
+      "radius": 1.8,
+      "mat": "coat",
+      "part": "leg_fr"
+    },
+    {"op": "ellipsoid", "centre": [23, 1.2, 9], "radius": [2.2, 1.2, 2.8], "mat": "coat", "part": "leg_fr"}
   ],
   "vary": {"size": 0.12, "shade": 0.1, "hue": 0.06},
   "rig": {
     "plan": "hopper",
     "bones": [
       {"name": "body", "role": "root"},
-      {"name": "head", "role": "head", "parent": "body", "joint": [16, 4, 13.5]},
-      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [13, 3, 12], "side": "l", "pair": 0},
-      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [19, 3, 12], "side": "r", "pair": 0},
-      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [12, 3, 18], "side": "l", "pair": 1},
-      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [20, 3, 18], "side": "r", "pair": 1}
+      {"name": "head", "role": "head", "parent": "body", "joint": [16.0, 8.8, 15.5]},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [9.4, 6.6, 12.2], "side": "l", "pair": 0},
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [22.6, 6.6, 12.2], "side": "r", "pair": 0},
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [7.2, 6.6, 25.4], "side": "l", "pair": 1},
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [24.8, 6.6, 25.4], "side": "r", "pair": 1}
     ]
   }
 }

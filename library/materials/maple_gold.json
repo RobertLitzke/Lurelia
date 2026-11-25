@@ -1,0 +1,17 @@
+{
+  "name": "maple_gold",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A maple turned ochre gold in autumn, the bigleaf maple's usual colour: amber rather than lemon, so it sits beside the reds without jumping out. One of the autumn coats maples draw from (plants/maple.json morphs).",
+  "smooth": false,
+  "foliage": true,
+  "sprites": {"rule": "leaves", "shape": "maple"},
+  "texture": {
+    "pattern": "blotch",
+    "base": [198, 136, 34],
+    "alt": [226, 170, 58],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [204, 146, 44], "alt": [222, 172, 66]}
+  }
+}

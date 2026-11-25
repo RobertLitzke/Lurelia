@@ -5,6 +5,7 @@
   "height_m": 160,
   "sea_level_m": 12,
   "seed": 1971,
+  "plants": "v2",
   "sun": {"latitude": 27},
   "rock": [["quartzite", 0.7], ["quartzite_dark", 0.3]],
   "strata": [

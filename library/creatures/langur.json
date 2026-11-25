@@ -4,7 +4,25 @@
   "introduced_by": "base",
   "notes": "Langur: pale silver-grey with a black face and hands, and a tail longer than it is, carried in a high loop.",
   "colors": {"coat": [182, 178, 166], "belly": [222, 218, 206], "face": [36, 28, 24], "dark": [36, 28, 24]},
-  "behaviour": {"wary": 12, "walk_speed": 1.3},
+  "behaviour": {
+    "wary": 12,
+    "walk_speed": 1.3,
+    "voice": {
+      "calls": [
+        {
+          "cry": "whoop",
+          "on": "idle",
+          "hours": "dawn",
+          "size": 1.2,
+          "every_s": [120, 400],
+          "boost": 3,
+          "chorus": 0.4,
+          "chorus_m": 300
+        },
+        {"cry": "chatter", "on": "flee", "size": 1.4}
+      ]
+    }
+  },
   "like": "monkey",
   "scale": 1.0,
   "extra_ops": [

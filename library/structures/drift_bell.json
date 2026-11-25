@@ -1,0 +1,115 @@
+{
+  "name": "drift_bell",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "A tethered drift-bell, drawn as a platform that rides the tide: a ribbed dome 1.6 m across and 1.2 m high over a frilled skirt and short tentacles, 2.25 m tall in all. Not placed by the chronicle; world.json's platforms draw it.",
+  "size": [17, 10, 17],
+  "anchor": [8, 0, 8],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {},
+  "ops": [
+    {"op": "ellipsoid", "centre": [8, 6.5, 8], "radius": [3.2, 2.4, 3.2], "mat": "drift_bell_dome", "part": "wall"},
+    {"op": "box", "from": [4, 4, 4], "to": [13, 5, 13], "mat": "air", "part": "wall"},
+    {
+      "op": "segment",
+      "points": [[11.1, 4.6, 8.0], [10.6, 7.3, 8.0], [8, 8.9, 8]],
+      "radius": 0.4,
+      "mat": "drift_bell_rib",
+      "part": "wall"
+    },
+    {
+      "op": "segment",
+      "points": [[9.55, 4.6, 10.6847], [9.3, 7.3, 10.2517], [8, 8.9, 8]],
+      "radius": 0.4,
+      "mat": "drift_bell_rib",
+      "part": "wall"
+    },
+    {
+      "op": "segment",
+      "points": [[6.45, 4.6, 10.6847], [6.7, 7.3, 10.2517], [8, 8.9, 8]],
+      "radius": 0.4,
+      "mat": "drift_bell_rib",
+      "part": "wall"
+    },
+    {
+      "op": "segment",
+      "points": [[4.9, 4.6, 8.0], [5.4, 7.3, 8.0], [8, 8.9, 8]],
+      "radius": 0.4,
+      "mat": "drift_bell_rib",
+      "part": "wall"
+    },
+    {
+      "op": "segment",
+      "points": [[6.45, 4.6, 5.31532], [6.7, 7.3, 5.74833], [8, 8.9, 8]],
+      "radius": 0.4,
+      "mat": "drift_bell_rib",
+      "part": "wall"
+    },
+    {
+      "op": "segment",
+      "points": [[9.55, 4.6, 5.31532], [9.3, 7.3, 5.74833], [8, 8.9, 8]],
+      "radius": 0.4,
+      "mat": "drift_bell_rib",
+      "part": "wall"
+    },
+    {"op": "cylinder", "base": [8, 4, 8], "radius": 3.3, "height": 1, "mat": "drift_bell_rib", "part": "wall"},
+    {
+      "op": "segment",
+      "points": [[10.2928, 4, 8.70925], [9.65067, 2, 9.12928], [9.4737, 0, 8.62307]],
+      "radius": 0.3,
+      "mat": "drift_bell_rib",
+      "part": "wall"
+    },
+    {
+      "op": "segment",
+      "points": [[9.11975, 4, 10.1228], [8.36868, 2, 9.96573], [8.60148, 0, 9.48264]],
+      "radius": 0.3,
+      "mat": "drift_bell_rib",
+      "part": "wall"
+    },
+    {
+      "op": "segment",
+      "points": [[7.29075, 4, 10.2928], [6.87072, 2, 9.65067], [7.37693, 0, 9.4737]],
+      "radius": 0.3,
+      "mat": "drift_bell_rib",
+      "part": "wall"
+    },
+    {
+      "op": "segment",
+      "points": [[5.87723, 4, 9.11975], [6.03427, 2, 8.36868], [6.51736, 0, 8.60148]],
+      "radius": 0.3,
+      "mat": "drift_bell_rib",
+      "part": "wall"
+    },
+    {
+      "op": "segment",
+      "points": [[5.70719, 4, 7.29075], [6.34933, 2, 6.87072], [6.5263, 0, 7.37693]],
+      "radius": 0.3,
+      "mat": "drift_bell_rib",
+      "part": "wall"
+    },
+    {
+      "op": "segment",
+      "points": [[6.88025, 4, 5.87723], [7.63132, 2, 6.03427], [7.39852, 0, 6.51736]],
+      "radius": 0.3,
+      "mat": "drift_bell_rib",
+      "part": "wall"
+    },
+    {
+      "op": "segment",
+      "points": [[8.70925, 4, 5.70719], [9.12928, 2, 6.34933], [8.62307, 0, 6.5263]],
+      "radius": 0.3,
+      "mat": "drift_bell_rib",
+      "part": "wall"
+    },
+    {
+      "op": "segment",
+      "points": [[10.1228, 4, 6.88025], [9.96573, 2, 7.63132], [9.48264, 0, 7.39852]],
+      "radius": 0.3,
+      "mat": "drift_bell_rib",
+      "part": "wall"
+    }
+  ]
+}

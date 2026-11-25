@@ -10,5 +10,6 @@
   "max_slope": 0.5,
   "like": "redwood",
   "crown_base": 0.5,
-  "whorls": [14, 20]
+  "whorls": [14, 20],
+  "site": {"wet": [0.25, 1.0], "exposure": [0.0, 0.6]}
 }

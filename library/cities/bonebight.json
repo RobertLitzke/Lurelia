@@ -1,0 +1,51 @@
+{
+  "name": "bonebight",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Bonebight: houses and workshops of silver-weathered cedar shingle on footings of cut titan bone, a few roofs patched with new red shingle, lanes of trodden sand and shell, a market square of bone-grit gravel. Meant for a town that stands its own shingled houses, bone sheds and boat sheds among the footprint houses.",
+  "like": "old_town",
+  "glass": "window_dark",
+  "deck": "bone_block",
+  "deck_top": "packed_dirt",
+  "town": {
+    "walls": {
+      "maze": ["cedar_shingle_silver", "cedar_shingle_silver", "weathered_planks"],
+      "radial": ["cedar_shingle_silver", "cedar_shingle_silver", "weathered_planks"],
+      "grid": ["cedar_shingle_silver", "cedar_shingle_silver", "weathered_planks"],
+      "suburb": ["cedar_shingle_silver", "cedar_shingle_silver", "weathered_planks"],
+      "village": ["cedar_shingle_silver", "cedar_shingle_silver", "weathered_planks"],
+      "ribbon": ["cedar_shingle_silver", "cedar_shingle_silver", "weathered_planks"]
+    },
+    "roofs": {
+      "maze": ["cedar_shingle_silver", "roof_shingle_brown", "cedar_shingle_silver"],
+      "radial": ["cedar_shingle_silver", "roof_shingle_brown", "cedar_shingle_silver"],
+      "grid": ["cedar_shingle_silver", "roof_shingle_brown", "cedar_shingle_silver"],
+      "suburb": ["cedar_shingle_silver", "roof_shingle_brown", "cedar_shingle_silver"],
+      "village": ["cedar_shingle_silver", "roof_shingle_brown", "cedar_shingle_silver"],
+      "ribbon": ["cedar_shingle_silver", "roof_shingle_brown", "cedar_shingle_silver"]
+    },
+    "trims": ["trim_white", "weathered_planks", "trim_dark"],
+    "streets": {
+      "main": "road_gravel",
+      "ring": "packed_dirt",
+      "street": "packed_dirt",
+      "lane": "path_dirt",
+      "close": "path_dirt",
+      "alley": "path_dirt",
+      "country": "road_gravel",
+      "quay": "weathered_planks",
+      "maze_main": "road_gravel",
+      "maze_street": "packed_dirt",
+      "maze_lane": "path_dirt",
+      "maze_alley": "path_dirt",
+      "village_main": "road_gravel",
+      "village_street": "path_dirt",
+      "ribbon_main": "road_gravel",
+      "drive": "path_dirt"
+    },
+    "plaza": "packed_dirt",
+    "flat_roof": "roof_tar",
+    "church": "cedar_shingle_silver",
+    "trees": ["shore_pine"]
+  }
+}

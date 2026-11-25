@@ -50,6 +50,7 @@
   "hop_loaded": 1.6,
   "clean_impact": 3.5,
   "clean_kick": 1,
+  "wade": 0.5,
   "drift_charge": 0.8,
   "drift_boost": 3,
   "drift_angle": 18,

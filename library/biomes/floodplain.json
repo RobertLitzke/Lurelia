@@ -2,10 +2,12 @@
   "name": "floodplain",
   "version": 3,
   "introduced_by": "glassfall",
+  "habitat": "riparian",
   "priority": 6,
   "rules": {"river": [0, 70], "elev": [0, 14], "slope": [0, 0.35]},
   "surface": "meadow_grass",
   "subsurface": "silt",
+  "soil": 0.8,
   "map_color": [120, 170, 80],
   "plants": [
     {"plant": "hanging_vine", "density": 0.25, "placement": {"verb": "scatter", "params": {}}},

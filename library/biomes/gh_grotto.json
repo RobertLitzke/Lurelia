@@ -3,6 +3,7 @@
   "version": 1,
   "introduced_by": "gannet",
   "notes": "Hogback over the grotto: the island's turf above, and below it the cave pool, lit blue by the sea coming in under the rock, with reef fish round its coral.",
+  "habitat": "pasture",
   "priority": 7,
   "rules": {"region": "grotto"},
   "creatures": [

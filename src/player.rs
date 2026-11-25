@@ -16,7 +16,7 @@ use glam::Vec3;
 
 pub const EYE: f32 = 1.62;
 /// Standing height of the body, metres, and crouched.
-const STAND_H: f32 = 1.75;
+pub const STAND_H: f32 = 1.75;
 const CROUCH_H: f32 = 1.05;
 /// How far the eye drops into a full crouch, metres.
 const CROUCH_DROP: f32 = 0.62;
@@ -148,6 +148,16 @@ pub struct Player {
     /// and more than one jump. Set off the world's modes (`update`) for the
     /// player, and by the shooter for a bot, which walks and never rides.
     pub arena: bool,
+    /// A pace of its own without Shift, metres a second, in place of the
+    /// 5 m/s walk: a zombie's shamble, between a walk and a sprint. None for
+    /// everybody else.
+    pub walk_speed: Option<f32>,
+    /// What share of its pace the body keeps, 1 for all of it: the zombie
+    /// round slows somebody a zombie has hold of (`zombies::GRAB_S`).
+    pub slowed: f32,
+    /// What share of its pace the ground lets it keep, 1 for all of it: a
+    /// game's `terrain_pace` (`crate::tune`), so 1 everywhere else.
+    pub ground_pace: f32,
     /// The boost meter: 0 full, 1 empty.
     spent: f32,
     /// Emptied it: no boost until Shift is let go.
@@ -164,6 +174,9 @@ pub struct Player {
     dodge_jump: f32,
     /// Scuba: under the water and swimming free (player/dive.rs).
     pub dive: dive::Dive,
+    /// The body's height standing, metres: `STAND_H`, or less for a body
+    /// that goes about low (a zombie crawler, zombies.rs).
+    pub stand_h: f32,
 }
 
 impl Player {
@@ -190,6 +203,9 @@ impl Player {
             jumps: 0,
             air_jumps: 1,
             arena: false,
+            walk_speed: None,
+            slowed: 1.0,
+            ground_pace: 1.0,
             spent: 0.0,
             boost_lock: false,
             boosting: false,
@@ -197,14 +213,20 @@ impl Player {
             tap_was: [false; 4],
             dodge_jump: 0.0,
             dive: dive::Dive::default(),
+            stand_h: STAND_H,
         }
+    }
+
+    /// The body's height `crouch` of the way down (0 standing, 1 crouched).
+    fn crouched_h(&self, crouch: f32) -> f32 {
+        self.stand_h - (self.stand_h - CROUCH_H.min(self.stand_h)) * crouch
     }
 
     /// Out of a crouch at once: riding and the free camera never crouch.
     fn stand_up(&mut self) {
         self.crouch = 0.0;
         self.prev_crouch = 0.0;
-        self.body.height = STAND_H;
+        self.body.height = self.stand_h;
     }
 
     /// Put the eye exactly where a camera that owns it says, with nothing
@@ -253,7 +275,10 @@ impl Player {
     pub fn eye(&self, alpha: f32) -> Vec3 {
         let off = self.prev_eye_offset + (self.eye_offset - self.prev_eye_offset) * alpha;
         let crouch = self.prev_crouch + (self.crouch - self.prev_crouch) * alpha;
-        self.prev_pos.lerp(self.pos, alpha) + Vec3::new(0.0, EYE - CROUCH_DROP * crouch + off, 0.0)
+        // A body lower than a person's standing (a crawler) has its eye as
+        // far under its top as a person's is.
+        let low = STAND_H - self.stand_h;
+        self.prev_pos.lerp(self.pos, alpha) + Vec3::new(0.0, EYE - low - CROUCH_DROP * crouch + off, 0.0)
     }
 
     /// `slopes`: the ground is drawn sloped, so the eye follows the drawn
@@ -353,12 +378,12 @@ impl Player {
             self.crouch = (self.crouch + CROUCH_RATE * dt).min(1.0);
         } else if want < self.crouch {
             let up = (self.crouch - CROUCH_RATE * dt).max(0.0);
-            let h = STAND_H - (STAND_H - CROUCH_H) * up;
+            let h = self.crouched_h(up);
             if !hits_wet(store, self.pos, self.body.half_w, h) {
                 self.crouch = up;
             }
         }
-        self.body.height = STAND_H - (STAND_H - CROUCH_H) * self.crouch;
+        self.body.height = self.crouched_h(self.crouch);
         // Wading: water over the knees slows the walk.
         let wading = !self.swimming && self.pos.y + 0.45 < level;
         let mut speed = self.pace(input, dt);
@@ -552,7 +577,7 @@ impl Player {
     fn pace(&mut self, input: &MoveInput, dt: f32) -> f32 {
         if !self.arena {
             self.boosting = false;
-            return if input.sprint { SPRINT } else { WALK };
+            return self.slowed * self.ground_pace * if input.sprint { SPRINT } else { self.walk_speed.unwrap_or(WALK) };
         }
         if !input.sprint {
             self.boost_lock = false;
@@ -573,7 +598,7 @@ impl Player {
             // meter does not top it up a sliver at a time and stutter.
             self.spent = (self.spent - dt / BOOST_REFILL).max(0.0);
         }
-        SPRINT * if self.boosting { BOOST } else { 1.0 }
+        self.slowed * self.ground_pace * SPRINT * if self.boosting { BOOST } else { 1.0 }
     }
 
     /// The boost meter: how much is left and whether it is being spent, or

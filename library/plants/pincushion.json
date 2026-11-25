@@ -18,5 +18,6 @@
   "flower": "pincushion_flower",
   "flower_tips": true,
   "flower_seasons": ["spring", "summer"],
-  "affords": ["nectar"]
+  "affords": ["nectar"],
+  "site": {"soil": [0.0, 0.4], "wet": [0.0, 0.6], "sun": [0.4, 1.0]}
 }

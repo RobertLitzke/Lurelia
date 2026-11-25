@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "gannet",
   "notes": "Salt marsh at the calm south-east corner of Mercy Bay: cordgrass and glasswort on mud the tide covers.",
+  "habitat": "salt_marsh",
   "priority": 8,
   "rules": {"region": "marsh", "elev": [-1.5, 2.0], "amphibious": true},
   "surface": "marsh_grass",
   "subsurface": "dirt",
+  "soil": 0.65,
   "map_color": [126, 140, 92],
   "plants": [
     {"plant": "cordgrass", "density": 0.14, "placement": {"verb": "clustered", "params": {"size": 16}}},

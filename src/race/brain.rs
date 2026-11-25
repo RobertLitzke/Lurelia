@@ -33,6 +33,10 @@ pub struct Brain {
     /// Drift through bends at least this tight (1/m; 0 never), letting go
     /// for the boost as the bend opens.
     pub drift: f32,
+    /// `drift` is for the plain kart; each kart drifts the bends as tight
+    /// for it (`Style::drift_fit`): the heavy kart more of them, the quick
+    /// kart fewer.
+    pub drift_fit: bool,
     /// Tuck in behind a kart close ahead on a straight to ride its
     /// slipstream, rather than pull out to pass at once.
     pub draft: bool,
@@ -58,19 +62,25 @@ pub struct Brain {
     pub shield_react: bool,
     /// Overdrive kept for a straight, as the boost is.
     pub over_straight: bool,
+    /// With a rocket locked on it, the shield or overdrive used at once
+    /// (both turn the hit), or a block dropped behind into its path. A kart
+    /// can't steer out of a rocket's way: it turns faster than a kart can
+    /// move aside.
+    pub rocket_dodge: bool,
 }
 
 impl Default for Brain {
-    /// What five rounds of three brains bred from the original (notes/
+    /// What six rounds of three brains bred from the original (notes/done/
     /// KART_BRAINS.md): it fires back and throws ahead, shields against an
-    /// armed kart behind, drifts the tighter bends, rides slipstreams, and
-    /// trusts 12% more grip and 6% more braking than the style fitted to its
-    /// kart.
+    /// armed kart behind, drifts the bends as tight for its kart as 1/62 m
+    /// is for the plain kart, rides slipstreams, and trusts 12% more grip
+    /// and 6% more braking than the style fitted to its kart.
     fn default() -> Brain {
         Brain {
             corner: 1.12,
             brake: 1.06,
             drift: 0.016,
+            drift_fit: true,
             draft: true,
             rear_fire: true,
             throw_ahead: true,
@@ -93,6 +103,7 @@ impl Brain {
             pads: true,
             boxes: 0.0,
             drift: 0.0,
+            drift_fit: false,
             draft: false,
             rear_fire: false,
             throw_ahead: false,
@@ -103,6 +114,7 @@ impl Brain {
             shield_hold: 4.0,
             shield_react: false,
             over_straight: false,
+            rocket_dodge: false,
         }
     }
 

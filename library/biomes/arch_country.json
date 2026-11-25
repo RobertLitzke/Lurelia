@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "redrock",
   "notes": "The slickrock bench east of the canyon where the fins stand: bare sandstone and red sand worn into arches, windows and potholes. Few plants.",
+  "habitat": "bare_rock",
   "priority": 3,
   "rules": {"region": "arches"},
   "surface": "red_sand",
   "subsurface": "navajo_sandstone",
+  "soil": 0.45,
   "map_color": [214, 110, 70],
   "plants": [
     {"plant": "juniper", "density": 0.0012, "placement": {"verb": "scatter", "params": {}}},

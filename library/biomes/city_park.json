@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "city",
   "notes": "City parks: lawn under big scattered trees.",
+  "habitat": "garden",
   "priority": 9,
   "rules": {"region": "city_park"},
   "surface": "lawn_grass",
   "subsurface": "dirt",
   "fringe": 0,
+  "soil": 0.5,
   "map_color": [110, 170, 90],
   "plants": [
     {"plant": "bigleaf_maple", "density": 0.0015, "placement": {"verb": "lone", "params": {"spacing": 18}}},

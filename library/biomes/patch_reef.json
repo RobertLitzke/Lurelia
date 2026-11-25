@@ -3,12 +3,14 @@
   "version": 1,
   "introduced_by": "underwater",
   "notes": "A patch reef standing up out of the lagoon sand to a metre or two of the surface: a knot of staghorn, tables and brain coral.",
+  "habitat": "coral_reef",
   "priority": 21,
   "rules": {"underwater": true, "region": "patch_reef"},
   "surface": "reef_lime",
   "subsurface": "reef_lime",
   "rock": "reef_lime",
   "fringe": 0,
+  "soil": 0.5,
   "map_color": [200, 150, 160],
   "plants": [
     {

@@ -4,7 +4,26 @@
   "introduced_by": "base",
   "notes": "Bullfrog: twice the frog and olive-dark, sitting heavy in the shallows of a swamp or a slow river.",
   "colors": {"coat": [74, 104, 52], "belly": [214, 206, 170], "mark": [52, 74, 40]},
-  "behaviour": {"walk_speed": 0.5, "wary": 6},
+  "behaviour": {
+    "walk_speed": 0.5,
+    "wary": 6,
+    "voice": {
+      "size": 3.0,
+      "calls": [
+        {"cry": "croak", "on": "display:call", "boost": 3, "chorus": 0.4, "chorus_m": 100},
+        {
+          "cry": "croak",
+          "on": "idle",
+          "hours": "night",
+          "every_s": [20, 90],
+          "boost": 3,
+          "rain": true,
+          "chorus": 0.4,
+          "chorus_m": 100
+        }
+      ]
+    }
+  },
   "like": "frog",
   "scale": 1.9
 }

@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saltmirror",
   "notes": "The rock islands: low knolls of grey quartzite standing out of the salt, the only dry rock on the pan, crowded with cardon and saguaro and ocotillo, and lizards on every warm face.",
+  "habitat": "desert_scrub",
   "priority": 12,
   "rules": {"region": "islands", "elev": [0.8, 60]},
   "surface": "fan_gravel",
   "subsurface": "fan_gravel",
   "rock": "quartzite",
+  "soil": 0.4,
   "map_color": [150, 150, 128],
   "plants": [
     {

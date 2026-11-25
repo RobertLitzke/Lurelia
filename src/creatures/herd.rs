@@ -33,6 +33,9 @@ const TURN: f32 = 1.1;
 /// A member drifting this much further out than the herd's own footprint
 /// stops grazing and walks back in.
 const STRAY: f32 = 1.35;
+/// How hard a walking member is drawn toward its herd's next waypoint
+/// (roam.rs), against the boid rules.
+const GOAL_PULL: f32 = 0.9;
 
 /// One member as its neighbours see it.
 struct Member {
@@ -50,8 +53,9 @@ struct Group {
 }
 
 /// Steer every group: boids among themselves, and when one bolts the rest
-/// within reach bolt the same way.
-pub fn update(world: &mut hecs::World, species: &[Species], models: &[crate::models::Model], dt: f32) {
+/// within reach bolt the same way. A herd on its way somewhere (`goals`,
+/// from roam.rs) draws its walking members toward the next waypoint.
+pub fn update(world: &mut hecs::World, species: &[Species], models: &[crate::models::Model], dt: f32, goals: &HashMap<u32, Vec3>) {
     let mut groups: HashMap<u32, Group> = HashMap::default();
     for (e, kin, crit, look, body, morph) in world.query::<(hecs::Entity, &Kin, &Critter, &Look, &crate::physics::Body, Option<&crate::variety::Morph>)>().iter() {
         let g = groups.entry(kin.group).or_insert(Group { members: Vec::new(), flee: None });
@@ -62,27 +66,55 @@ pub fn update(world: &mut hecs::World, species: &[Species], models: &[crate::mod
             walking: crit.mood == Mood::Walk,
             shape: Shape::of_walker(look, body, models, morph),
         });
-        if crit.mood == Mood::Flee && g.flee.is_none() {
+        // Only a member that bolted on its own sets the herd off.
+        if crit.mood == Mood::Flee && !crit.herded && g.flee.is_none() {
             g.flee = Some((look.pos, crit.heading));
         }
     }
-    for (ent, kin, crit, look, me) in world.query_mut::<(hecs::Entity, &Kin, &mut Critter, &Look, Option<&Creature>)>() {
+    for (ent, kin, crit, look, me, show, insp) in world
+        .query_mut::<(
+            hecs::Entity,
+            &Kin,
+            &mut Critter,
+            &Look,
+            Option<&Creature>,
+            Option<&super::display::Show>,
+            Option<&mut super::inspect::Inspect>,
+        )>()
+        .without::<&super::zoo::Kept>()
+    {
+        if crit.mood != Mood::Flee {
+            crit.herded = false;
+        }
         let Some(g) = groups.get(&kin.group) else {
             continue;
         };
         if g.members.len() < 2 {
+            // A lone hunter (roam.rs) has no herd to keep with, only its way.
+            if let (Some(goal), Mood::Walk) = (goals.get(&kin.group), crit.mood) {
+                if show.is_none() {
+                    let heading = (goal.x - look.pos.x).atan2(goal.z - look.pos.z);
+                    crit.heading = crate::util::turn_toward(crit.heading, heading, (dt * TURN * GOAL_PULL).min(1.0));
+                }
+            }
             continue;
         }
         let grp = me.and_then(|c| species[c.species].beh.group.clone()).unwrap_or_default();
         if let Some((at, heading)) = g.flee {
             if crit.mood != Mood::Flee && (look.pos - at).length() < grp.range * 1.5 {
+                if let Some(i) = insp {
+                    i.why(format!("flee: herd running, one {:.0} m off", (look.pos - at).length()));
+                }
                 crit.mood = Mood::Flee;
+                crit.herded = true;
                 crit.heading = heading + ((crit.rng.state & 255) as f32 / 255.0 - 0.5) * 0.4;
                 crit.timer = 1.4;
             }
             continue;
         }
-        if matches!(crit.mood, Mood::Flee | Mood::Chase | Mood::Feed) {
+        // Running, hunting, or in a display (creatures/display): the herd
+        // doesn't steer it.
+        if matches!(crit.mood, Mood::Flee | Mood::Chase | Mood::Feed | Mood::Eat) || show.is_some() {
             continue;
         }
         let spacing = grp.spacing.max(0.5);
@@ -125,7 +157,10 @@ pub fn update(world: &mut hecs::World, species: &[Species], models: &[crate::mod
         // spacing, loosened by how many there are and how weakly they hold.
         let footprint = spacing * (1.2 + n.sqrt() * 0.45) / grp.cohesion.max(0.2);
         let pull = (out / footprint).min(1.6) * grp.cohesion;
-        let want = push * SEPARATION + to_centre.normalize_or_zero() * pull + dir.normalize_or_zero() * grp.alignment * 0.7;
+        let mut want = push * SEPARATION + to_centre.normalize_or_zero() * pull + dir.normalize_or_zero() * grp.alignment * 0.7;
+        if let (Some(goal), Mood::Walk) = (goals.get(&kin.group), crit.mood) {
+            want += Vec3::new(goal.x - look.pos.x, 0.0, goal.z - look.pos.z).normalize_or_zero() * GOAL_PULL;
+        }
         let force = want.length();
         if force < 0.05 {
             continue;
@@ -133,6 +168,9 @@ pub fn update(world: &mut hecs::World, species: &[Species], models: &[crate::mod
         // A grazer that has drifted right out of the herd walks back in;
         // otherwise it keeps doing what it was doing, aimed a little better.
         if out > footprint * STRAY && crit.mood == Mood::Idle {
+            if let Some(i) = insp {
+                i.why(format!("walk: strayed {out:.0} m from the herd"));
+            }
             crit.mood = Mood::Walk;
             crit.timer = crit.timer.max(1.0);
         }

@@ -1,0 +1,8 @@
+{
+  "name": "pg_teal",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Faded 1970s teal on doors and the submersible's casing.",
+  "like": "pg_gold",
+  "texture": {"base": [52, 128, 130], "alt": [46, 114, 116], "calm": {"base": [64, 138, 140], "alt": [56, 124, 126]}}
+}

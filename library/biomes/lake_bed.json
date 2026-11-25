@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "redrock",
   "notes": "Mud under the reservoir.",
+  "habitat": "shallow_water_bed",
   "priority": 1,
   "rules": {"underwater": true},
   "surface": "lake_mud",
   "subsurface": "lake_mud",
+  "soil": 0.5,
   "map_color": [70, 110, 120],
   "creatures": [
     {"creature": "trout", "count": 11},

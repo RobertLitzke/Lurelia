@@ -26,16 +26,29 @@
     "juvenile_flightiness": 0.8,
     "fly_height": 38,
     "hunts": ["gull", "herring", "mallard", "puffin", "trout", "rabbit"],
-    "group": null
+    "group": null,
+    "voice": {"size": 0.9, "calls": [{"cry": "screech", "on": "idle", "hours": "day", "every_s": [120, 400], "boost": 2}]}
   },
   "like": "hawk",
   "scale": 1.6,
   "extra_ops": [
-    {"op": "box", "from": [31, 14, 8], "to": [33, 16, 9], "mat": "beak", "part": "head"},
-    {"op": "box", "from": [31, 12, 8], "to": [33, 14, 9], "mat": "beak", "part": "head"},
-    {"op": "ellipsoid", "centre": [29.4, 17.6, 13.4], "radius": [2.1, 1.0, 1.7], "mat": "brow", "part": "head"},
-    {"op": "ellipsoid", "centre": [34.6, 17.6, 13.4], "radius": [2.1, 1.0, 1.7], "mat": "brow", "part": "head"},
-    {"op": "set", "at": [29, 16, 13], "mat": "eye", "part": "head"},
-    {"op": "set", "at": [34, 16, 13], "mat": "eye", "part": "head"}
+    {"op": "box", "from": [35, 15, 8], "to": [37, 17, 9], "mat": "beak", "part": "head"},
+    {"op": "box", "from": [35, 13, 8], "to": [37, 15, 9], "mat": "beak", "part": "head"},
+    {
+      "op": "ellipsoid",
+      "centre": [33.227, 18.773, 13.96],
+      "radius": [2.24, 1.067, 1.813],
+      "mat": "brow",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [38.773, 18.773, 13.96],
+      "radius": [2.24, 1.067, 1.813],
+      "mat": "brow",
+      "part": "head"
+    },
+    {"op": "box", "from": [33, 17, 14], "to": [34, 18, 15], "mat": "eye", "part": "head"},
+    {"op": "box", "from": [38, 17, 14], "to": [39, 18, 15], "mat": "eye", "part": "head"}
   ]
 }

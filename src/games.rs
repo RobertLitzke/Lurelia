@@ -45,7 +45,7 @@ pub struct GameDef {
     #[serde(default)]
     #[allow(dead_code)]
     like: Option<String>,
-    /// Which code runs it: explore, deathmatch, team, ctf or race.
+    /// Which code runs it: explore, deathmatch, team, ctf, race or zombies.
     pub kind: Mode,
     /// How the launch screen shows it.
     pub title: String,
@@ -58,6 +58,10 @@ pub struct GameDef {
     /// the map's; a gun the map has no pads for is only ever handed out.
     #[serde(default)]
     pub weapons: Option<Vec<String>>,
+    /// The weapon kit this game is played with (`library/weapon_kits/`),
+    /// over the map's own. The launch screen may name another.
+    #[serde(default)]
+    pub kit: Option<String>,
     #[serde(default)]
     pub health: Option<f32>,
     #[serde(default)]
@@ -75,6 +79,12 @@ pub struct GameDef {
     pub ammo_without_gun: Option<bool>,
     #[serde(default)]
     pub friendly_fire: Option<f32>,
+    /// This game's changes to the guns and to how bodies move over the
+    /// ground (`crate::tune`). Left out, the library's guns and one pace.
+    #[serde(default)]
+    pub weapon_tune: std::collections::BTreeMap<String, serde_json::Value>,
+    #[serde(default)]
+    pub terrain_pace: std::collections::BTreeMap<String, f32>,
     /// `false` plays the map with nothing lying on its floor.
     #[serde(default)]
     pub pickups: Option<bool>,
@@ -98,6 +108,9 @@ pub struct GameDef {
     pub laps: Option<u32>,
     #[serde(default)]
     pub rivals: Option<u32>,
+    /// The numbers the items and weapons go by (race/arms.rs `ItemRules`).
+    #[serde(default)]
+    pub items: Option<crate::race::ItemRules>,
 }
 
 impl GameDef {
@@ -115,6 +128,7 @@ impl GameDef {
             title: kind.title().to_string(),
             help: String::new(),
             weapons: None,
+            kit: None,
             health: None,
             health_max: None,
             armour: None,
@@ -123,6 +137,8 @@ impl GameDef {
             give_all: None,
             ammo_without_gun: None,
             friendly_fire: None,
+            weapon_tune: Default::default(),
+            terrain_pace: Default::default(),
             pickups: None,
             target: None,
             captures: None,
@@ -130,6 +146,7 @@ impl GameDef {
             need_home: None,
             laps: None,
             rivals: None,
+            items: None,
         }
     }
 
@@ -144,6 +161,7 @@ impl GameDef {
         if let Some(w) = &self.weapons {
             r.weapons = w.clone();
         }
+        r.kit = Some(crate::weapon_kit::chosen(run.kit.as_deref(), self.kit.as_deref(), map.kit.as_deref()).to_string());
         if let Some(v) = self.health {
             r.health = v;
         }
@@ -167,6 +185,13 @@ impl GameDef {
         }
         if let Some(v) = self.friendly_fire {
             r.friendly_fire = v;
+        }
+        r.weapon_tune = self.weapon_tune.clone();
+        r.terrain_pace = self.terrain_pace.clone();
+        for k in self.terrain_pace.keys() {
+            if !crate::world::survey::terrain::Terrain::ALL.iter().any(|t| t.name() == k) {
+                eprintln!("game {}: terrain_pace names no class called {k}", self.name);
+            }
         }
         if self.pickups == Some(false) {
             r.pickups.clear();
@@ -218,6 +243,9 @@ impl GameDef {
         if let Some(v) = self.rivals {
             r.rivals = v;
         }
+        if let Some(v) = &self.items {
+            r.items = Some(v.clone());
+        }
         r
     }
 }
@@ -228,9 +256,8 @@ pub struct Catalogue {
     pub errors: Vec<String>,
 }
 
-/// The five kinds, in the order a world with no `games` list is offered
-/// them.
-pub const KINDS: [Mode; 5] = [Mode::Explore, Mode::Fps, Mode::Team, Mode::Ctf, Mode::Race];
+/// The kinds, in the order a world with no `games` list is offered them.
+pub const KINDS: [Mode; 6] = [Mode::Explore, Mode::Zombies, Mode::Fps, Mode::Team, Mode::Ctf, Mode::Race];
 
 fn read(dir: &Path) -> Catalogue {
     let mut entries = Vec::new();

@@ -1,0 +1,11 @@
+{
+  "name": "kh_ribbon_red",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A buried stream bed under the Plain with paintbrush through the tan grass.",
+  "rules": {"region": "ribbon_red"},
+  "surface": "kh_ribbon_paintbrush",
+  "soil": 0.6,
+  "map_color": [180, 120, 110],
+  "like": "kh_ribbon"
+}

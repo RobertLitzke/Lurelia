@@ -1,0 +1,8 @@
+{
+  "name": "va_awning_saffron",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "A striped shade canopy, white and saffron.",
+  "like": "va_awning_blue",
+  "texture": {"alt": [216, 156, 44], "calm": {"alt": [220, 164, 58]}}
+}

@@ -1,37 +1,39 @@
 {
   "name": "chalk_down",
-  "version": 2,
+  "version": 3,
   "introduced_by": "windbarrow",
   "notes": "The crowns and steeper flanks of the downs, grazed short: thin green-gold turf with the chalk coming through, thyme and juniper, no tall grass.",
+  "habitat": "dry_grassland",
   "priority": 6,
   "rules": {"slope": [0.34, 1.5]},
   "surface": "downland_grass",
   "subsurface": "chalk_white",
   "rock": null,
+  "soil": 0.85,
   "map_color": [176, 178, 120],
   "plants": [
     {
       "plant": "juniper",
-      "density": 0.0016,
+      "density": 0.0028,
       "placement": {"verb": "clustered", "params": {"size": 20, "min": 0.0, "max": 0.9}}
     },
     {"plant": "hawthorn", "density": 0.0009, "placement": {"verb": "lone", "params": {"spacing": 26}}},
     {
-      "plant": "heather",
+      "plant": "wild_thyme",
       "density": 0.01,
       "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.2, "max": 1.0}}
+    },
+    {
+      "plant": "rock_rose",
+      "density": 0.005,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.3, "max": 1.0}}
     },
     {
       "plant": "feather_tussock",
       "density": 0.012,
       "placement": {"verb": "clustered", "params": {"size": 16, "min": 0.0, "max": 0.7}}
     },
-    {"plant": "rock_lichen", "density": 0.3, "placement": {"verb": "scatter", "params": {}}},
-    {
-      "plant": "broom",
-      "density": 0.004,
-      "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.3, "max": 1.0}}
-    }
+    {"plant": "rock_lichen", "density": 0.3, "placement": {"verb": "scatter", "params": {}}}
   ],
   "features": [{"structure": "boulder", "density": 0.0002}, {"structure": "rock_outcrop", "density": 8e-05}],
   "creatures": [

@@ -1,0 +1,14 @@
+{
+  "name": "bloom",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "What the skystone changed: glassy, pale and faintly lit life spreading from where it fell.",
+  "habitats": {
+    "meadow": {"plants": [{"plant": "glassbloom", "density": 0.004}]},
+    "parkland": {"plants": [{"plant": "glassbloom", "density": 0.004}, {"plant": "pale_birch", "density": 0.001}]},
+    "broadleaf_forest": {"plants": [{"plant": "pale_birch", "density": 0.002}]},
+    "conifer_forest": {"plants": [{"plant": "spiral_pine", "density": 0.002}]}
+  },
+  "ground": {"meadow_grass": "pale_grass", "wildflower_grass": "pale_grass"},
+  "mist": 0.1
+}

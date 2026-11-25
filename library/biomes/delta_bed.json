@@ -3,10 +3,12 @@
   "version": 3,
   "introduced_by": "lowmouth",
   "notes": "The sound round the delta and the floor of every open water: soft grey mud under a metre or so of brown water, with rafts of lily pads drifting on the quieter reaches.",
+  "habitat": "shallow_water_bed",
   "priority": 0,
   "rules": {"underwater": true},
   "surface": "delta_mud",
   "subsurface": "silt",
+  "soil": 0.5,
   "map_color": [86, 120, 132],
   "creatures": [
     {"creature": "brown_pelican", "count": 8},

@@ -14,5 +14,6 @@
   "stems": [14, 24],
   "cane_lean": 0.25,
   "cane_bend": 0.03,
-  "cane_spurs": 0.3
+  "cane_spurs": 0.3,
+  "site": {"wet": [0.5, 1.0]}
 }

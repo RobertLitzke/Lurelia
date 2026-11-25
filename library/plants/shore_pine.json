@@ -12,5 +12,6 @@
   "squash": 0.55,
   "spread": 1.0,
   "max_slope": 1.0,
-  "lean": 0.35
+  "lean": 0.35,
+  "site": {"exposure": [0.5, 1.0], "soil": [0.0, 0.5]}
 }

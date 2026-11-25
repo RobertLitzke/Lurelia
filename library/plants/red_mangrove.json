@@ -13,5 +13,6 @@
   "stems": [7, 11],
   "standing_water": [0.05, 1.7],
   "affords": ["perch", "cover"],
-  "thin_limbs": 0.16
+  "thin_limbs": 0.16,
+  "site": {"wet": [0.8, 1.0]}
 }

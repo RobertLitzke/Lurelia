@@ -232,7 +232,37 @@ fn key(rig: &Rig, level: u8, leg_m: f32) -> Pose {
         }
         _ => p.root.y = -0.72 * leg_m,
     }
+    if level == 1 && !sprawl && rig.sit_up > 0.45 {
+        sit_up(rig, &mut p, leg_m);
+    }
     p
+}
+
+/// Sitting bolt upright on the haunches (`Rig::sit_up`): the body tipped
+/// back, the hind legs folded flat under it, the fore paws drawn up to the
+/// chest, the head and tail turned back against the tip so the animal looks
+/// level and its tail lies on the ground.
+fn sit_up(rig: &Rig, p: &mut Pose, leg_m: f32) {
+    let tip = rig.sit_up;
+    p.bones[0].x = tip;
+    p.root.y = -0.45 * leg_m;
+    for i in 0..rig.bones.len() {
+        let b = &rig.bones[i];
+        let fr = front(rig, i);
+        let e = &mut p.bones[i];
+        if upper_leg(rig, i) {
+            // Every leg turns with the body; the hind ones are swung back
+            // down to lie folded on the ground, the fore ones a little
+            // forward of hanging, paws in front of the chest.
+            e.x = if fr { -tip * 0.55 } else { 1.4 - tip * 0.85 };
+        } else if lower_leg(rig, i) {
+            e.x = if fr { 1.1 } else { -1.9 };
+        } else if b.role == Role::Head || b.role == Role::Neck {
+            e.x = -tip * if b.role == Role::Head { 0.8 } else { 0.4 };
+        } else if b.role == Role::Tail {
+            e.x = -tip * 0.85;
+        }
+    }
 }
 
 /// A biped's key postures. Standing is not the rest pose: a person at ease

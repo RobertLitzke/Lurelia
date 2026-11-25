@@ -5,6 +5,7 @@
   "notes": "Kelp perch: small bronze fish in clouds round the kelp stipes, slipping in among them when startled.",
   "colors": {"herring": [150, 118, 64], "silver": [206, 184, 132], "fin": [150, 118, 64]},
   "behaviour": {
+    "displays": [{"kind": "bait_ball"}],
     "habit": "cloud",
     "walk_speed": 0.6,
     "flee_speed": 2.5,

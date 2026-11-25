@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "A glade in the Hollins: a ring of open grass and flowers the trees stop at, with nothing anyone can point to that keeps them out.",
+  "habitat": "meadow",
   "priority": 6,
   "rules": {"region": "glade"},
   "surface": "wildflower_grass",
   "subsurface": "dirt",
+  "soil": 0.55,
   "map_color": [156, 200, 110],
   "plants": [
     {"plant": "hawthorn", "density": 0.002, "placement": {"verb": "edge", "params": {"width": 10, "inner": 0.0}}},

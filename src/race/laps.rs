@@ -12,6 +12,9 @@ pub(super) const AWAY_SECS: f32 = 3.0;
 pub(super) const FAR_OFF: f32 = 15.0;
 /// ...or this many below the road.
 pub(super) const FAR_DOWN: f32 = 6.0;
+/// Seconds off the road and barely moving before the far-out countdown
+/// starts (`follow`'s `beached`).
+pub(super) const BEACHED_SECS: f32 = 5.0;
 /// Seconds a car put back on the track passes through the others.
 pub(super) const GHOST_SECS: f32 = 1.0;
 
@@ -34,12 +37,15 @@ pub(super) struct Laps {
     pub(super) ghost: f32,
     /// Checkpoints passed since the start, counting every lap's.
     pub(super) passed: u32,
+    /// The furthest it has got, and seconds since it got any further.
+    pub(super) best: f32,
+    pub(super) idle: f32,
 }
 
 impl Laps {
     pub(super) fn start(s: f32, length: f32) -> Laps {
         let s0 = s.rem_euclid(length);
-        Laps { progress: s, last_s: s0, road_s: s0, ..Default::default() }
+        Laps { progress: s, last_s: s0, road_s: s0, best: s, ..Default::default() }
     }
 
     /// Follow the car to `place`, counting a lap each time the line is
@@ -56,19 +62,21 @@ impl Laps {
     /// progress waits at the checkpoint until it comes back to the road,
     /// and whatever it skipped it drives again.
     #[allow(clippy::too_many_arguments)]
-    pub(super) fn follow(&mut self, place: Place, car: &Vehicle, length: f32, width: f32, road_y: Option<f32>, checks: &[f32], dt: f32) -> bool {
+    pub(super) fn follow(&mut self, place: Place, car: &Vehicle, length: f32, width: f32, beyond: f32, road_y: Option<f32>, checks: &[f32], dt: f32, flying: bool) -> bool {
         let mut ds = place.s - self.last_s;
         if ds < -length * 0.5 {
             ds += length;
         } else if ds > length * 0.5 {
             ds -= length;
         }
-        if ds <= car.b.vel.length() * dt + 4.0 {
+        // A kart gliding (course.rs) may come down further round, over a
+        // loop of road below it: the glide is the shortcut, and it counts.
+        if ds <= car.b.vel.length() * dt + 4.0 || (flying && ds > 0.0 && ds < 400.0) {
             let mut to = self.progress + ds;
             if !checks.is_empty() {
                 let next = self.next_check(checks, length);
                 if to >= next {
-                    if far(place.off, width, car.pos().y, road_y) {
+                    if far(place.off, width, beyond, car.pos().y, road_y) {
                         to = to.min(next - 0.01).max(self.progress);
                     } else {
                         self.passed += 1;
@@ -83,7 +91,18 @@ impl Laps {
             self.road_s = place.s;
         }
         self.slow = if car.b.vel.length() < 1.0 { self.slow + dt } else { 0.0 };
-        self.away = if far(place.off, width, car.pos().y, road_y) { self.away + dt } else { 0.0 };
+        // Far out of bounds, or drowned: the engine stalled in water too
+        // deep to drive out of (a missed jump into a flooded channel).
+        // Or off the road and stuck there: a kart beached on a bank it can't
+        // climb back up is put back too, once it has tried for a while.
+        if self.progress > self.best + 1.0 {
+            self.best = self.progress;
+            self.idle = 0.0;
+        } else {
+            self.idle += dt;
+        }
+        let beached = place.off.abs() > width * 0.5 + 1.0 && self.idle > BEACHED_SECS;
+        self.away = if !flying && (far(place.off, width, beyond, car.pos().y, road_y) || car.stalled || beached) { self.away + dt } else { 0.0 };
         self.ghost = (self.ghost - dt).max(0.0);
         self.away > AWAY_SECS
     }
@@ -98,6 +117,8 @@ impl Laps {
     /// the other cars.
     pub(super) fn clear(&mut self) {
         self.slow = 0.0;
+        self.idle = 0.0;
+        self.best = self.progress;
         self.away = 0.0;
         self.ghost = GHOST_SECS;
     }
@@ -108,10 +129,21 @@ impl Laps {
 }
 
 /// Whether a car `off` metres from the centreline of a road `width` wide, at
-/// height `y`, is far out of bounds: well past the kerb, or fallen well
-/// below the road.
-pub(super) fn far(off: f32, width: f32, y: f32, road_y: Option<f32>) -> bool {
-    off.abs() > width * 0.5 + 1.0 + FAR_OFF || road_y.is_some_and(|r| y < r - FAR_DOWN)
+/// height `y`, is far out of bounds: more than `beyond` metres past the
+/// kerb (`FAR_OFF` on an open road, just behind the wall where there is
+/// one), or fallen well below the road.
+pub(super) fn far(off: f32, width: f32, beyond: f32, y: f32, road_y: Option<f32>) -> bool {
+    off.abs() > width * 0.5 + 1.0 + beyond || road_y.is_some_and(|r| y < r - FAR_DOWN)
+}
+
+/// How far past the kerb a car is out of bounds where the wall beside the
+/// road is `wall` high: just behind it, or `FAR_OFF` with none.
+pub(super) fn beyond(wall: f32) -> f32 {
+    if wall > 0.5 {
+        2.4
+    } else {
+        FAR_OFF
+    }
 }
 
 /// Put `car` back on the centreline `s` metres round, facing the way round,
@@ -166,11 +198,11 @@ mod tests {
         let mut l = Laps::start(-6.0, length);
         let at = |s: f32| Place { seg: 0, s, off: 0.0 };
         for s in [96.0, 99.0, 2.0, 30.0, 60.0, 90.0, 5.0] {
-            l.follow(at(s), &car, length, 12.0, None, &[], 0.1);
+            l.follow(at(s), &car, length, 12.0, FAR_OFF, None, &[], 0.1, false);
         }
         assert!((l.progress - 105.0).abs() < 1e-3, "{}", l.progress);
         assert_eq!(l.lap(length, 3), 2);
-        l.follow(at(98.0), &car, length, 12.0, None, &[], 0.1);
+        l.follow(at(98.0), &car, length, 12.0, FAR_OFF, None, &[], 0.1, false);
         assert!((l.progress - 98.0).abs() < 1e-3, "{}", l.progress);
     }
 
@@ -203,32 +235,38 @@ mod tests {
         car.b.vel = Vec3::new(0.0, 0.0, -25.0);
         let mut l = Laps::start(100.0, length);
         let dt = 1.0 / 60.0;
-        l.follow(Place { seg: 0, s: 100.4, off: 9.0 }, &car, length, 12.0, None, &[], dt);
+        l.follow(Place { seg: 0, s: 100.4, off: 9.0 }, &car, length, 12.0, FAR_OFF, None, &[], dt, false);
         // Across the verge, the nearest road is suddenly 300 m further on.
-        l.follow(Place { seg: 0, s: 400.0, off: -5.0 }, &car, length, 12.0, None, &[], dt);
-        l.follow(Place { seg: 0, s: 400.4, off: -4.0 }, &car, length, 12.0, None, &[], dt);
+        l.follow(Place { seg: 0, s: 400.0, off: -5.0 }, &car, length, 12.0, FAR_OFF, None, &[], dt, false);
+        l.follow(Place { seg: 0, s: 400.4, off: -4.0 }, &car, length, 12.0, FAR_OFF, None, &[], dt, false);
         assert!((l.progress - 100.8).abs() < 1e-3, "{}", l.progress);
     }
 
-    /// Only far out of bounds puts a car back: not upside down, not stuck,
-    /// not 10 m past the kerb.
+    /// What puts a car back: far out of bounds, or off the road and getting
+    /// nowhere (beached). Not upside down or stuck on the road, and not
+    /// driving on 10 m past the kerb.
     #[test]
     fn only_far_out_of_bounds_puts_a_car_back() {
         let length = 1000.0;
         let dt = 0.1;
-        let run = |off: f32, y: f32, upset: bool| {
+        let run = |off: f32, y: f32, upset: bool, moving: bool| {
             let mut car = Vehicle::new(Spec::default(), Vec3::new(0.0, y, 0.0), 0.0);
             if upset {
                 car.b.rot = glam::Quat::from_rotation_z(std::f32::consts::PI);
             }
+            car.b.vel = Vec3::new(0.0, 0.0, if moving { -20.0 } else { 0.0 });
             let mut l = Laps::start(50.0, length);
-            (0..100).any(|_| l.follow(Place { seg: 0, s: 50.0, off }, &car, length, 12.0, Some(30.0), &[], dt))
+            (0..100).any(|k| {
+                let s = if moving { 50.0 + k as f32 * 2.0 } else { 50.0 };
+                l.follow(Place { seg: 0, s, off }, &car, length, 12.0, FAR_OFF, Some(30.0), &[], dt, false)
+            })
         };
-        assert!(!run(0.0, 30.0, true), "upside down on the road");
-        assert!(!run(0.0, 30.0, false), "stuck on the road");
-        assert!(!run(17.0, 30.0, false), "10 m past the kerb");
-        assert!(run(25.0, 30.0, false), "18 m past the kerb");
-        assert!(run(0.0, 20.0, false), "fallen 10 m below the road");
+        assert!(!run(0.0, 30.0, true, false), "upside down on the road");
+        assert!(!run(0.0, 30.0, false, false), "stuck on the road");
+        assert!(!run(17.0, 30.0, false, true), "driving on 10 m past the kerb");
+        assert!(run(17.0, 30.0, false, false), "beached 10 m past the kerb");
+        assert!(run(25.0, 30.0, false, false), "18 m past the kerb");
+        assert!(run(0.0, 20.0, false, false), "fallen 10 m below the road");
     }
 
     /// Past a checkpoint far out of bounds a car's progress waits at the
@@ -244,7 +282,7 @@ mod tests {
             let mut s = from;
             while s < to {
                 s += 2.0;
-                l.follow(Place { seg: 0, s: s.rem_euclid(length), off }, &car, length, 12.0, None, &checks, dt);
+                l.follow(Place { seg: 0, s: s.rem_euclid(length), off }, &car, length, 12.0, FAR_OFF, None, &checks, dt, false);
             }
         };
         // On the road all the way: both passed, a lap counted.

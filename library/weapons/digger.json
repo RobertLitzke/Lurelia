@@ -2,7 +2,7 @@
   "name": "digger",
   "version": 1,
   "introduced_by": "slagdeck",
-  "notes": "A skeleton-frame caulk gun off a shelf in the works, with the cartridge swapped for something that goes off and a spade welded under the nozzle. No bore, no rounds, nothing to run out of: you squeeze the handle and about three metres in front of you ceases to be a problem. Because it takes none of its own blast you can put the nozzle against the floor and ride the shove onto the gantry, which is the only way up there that costs you no health. The spade bites whatever the nozzle is against while the handle is squeezed, at the rate a shovel works out in the world, so a body down a borer hole can cut its own way out rather than be killed in it. The right button is a shorter, weaker squeeze that throws whoever it catches much further: a shove for getting somebody off a ledge rather than for killing them.",
+  "notes": "A pneumatic blast hammer off a shelf in the works: a ram that slams whatever its head is pressed against, with a spade welded under the head. No bore, no rounds, nothing to run out of: you squeeze the handle and about three metres in front of you ceases to be a problem. Because it takes none of its own blast you can put the head against the floor and ride the shove onto the gantry, which is the only way up there that costs you no health. The spade bites whatever the head is against while the handle is squeezed, at the rate a shovel works out in the world, so a body down a borer hole can cut its own way out rather than be killed in it. The right button is a shorter, weaker squeeze that throws whoever it catches much further: a shove for getting somebody off a ledge rather than for killing them.",
   "display": "DIGGER",
   "slot": 1,
   "ammo_max": 0,
@@ -31,5 +31,6 @@
   },
   "dig": {"radius": 0.45, "rpm": 430.0, "range": 3.0},
   "view": "digger",
-  "tint": [0.62, 0.6, 0.58]
+  "tint": [0.62, 0.6, 0.58],
+  "role": "melee"
 }

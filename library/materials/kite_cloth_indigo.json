@@ -1,0 +1,8 @@
+{
+  "name": "kite_cloth_indigo",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Kitehold's indigo cloth: awnings, kites and flags.",
+  "like": "canvas",
+  "texture": {"base": [58, 70, 124], "alt": [50, 60, 108], "calm": {"base": [74, 86, 138], "alt": [64, 76, 124]}}
+}

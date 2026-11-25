@@ -5,6 +5,7 @@
   "notes": "undulate: Wind skate: a straw-pale ray a metre across that rides the wind over the feathergrass, a hand above the awns, wings rippling. Nobody knows what it eats.",
   "colors": {"back": [186, 170, 112], "belly": [230, 222, 196], "glow": [214, 198, 136]},
   "behaviour": {
+    "displays": [{"kind": "barrel_roll"}],
     "movement": "undulate",
     "walk_speed": 2.4,
     "flee_speed": 4.6,
@@ -12,7 +13,11 @@
     "fly_height": 2.2,
     "flight": "flap",
     "wingbeat": 0.6,
-    "group": null
+    "group": null,
+    "voice": {
+      "size": 0.4,
+      "calls": [{"cry": "moan", "on": "idle", "every_s": [60, 240], "chance": 0.5, "chorus": 0.3, "chorus_m": 300}]
+    }
   },
   "like": "sky_ray",
   "scale": 0.82,

@@ -6,13 +6,20 @@
   "half_w": 0.2,
   "height": 0.25,
   "behaviour": {
+    "displays": [{"kind": "tumble"}, {"kind": "cache", "food": "acorn"}],
     "movement": "circle",
     "fly_height": 7,
     "walk_speed": 1.2,
     "flee_speed": 6.0,
     "wary": 8.0,
     "flightiness": 0.9,
-    "group": null
+    "group": null,
+    "voice": {
+      "calls": [
+        {"cry": "caw", "on": "idle", "hours": "day", "every_s": [30, 120], "chorus": 0.3, "chorus_m": 150},
+        {"cry": "caw", "on": "display:tumble"}
+      ]
+    }
   },
   "like": "starling",
   "scale": 1.70068

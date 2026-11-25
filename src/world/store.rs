@@ -204,7 +204,13 @@ impl Store {
         if y < 0 {
             return Cell::Solid;
         }
-        match self.get(x, y, z) {
+        self.cell_of(y, self.get(x, y, z))
+    }
+
+    /// How a voxel at height `y` holding `m` (None: not loaded) behaves.
+    #[inline]
+    pub fn cell_of(&self, y: i32, m: Option<u8>) -> Cell {
+        match m {
             None if y < self.top_vox() => Cell::Solid,
             None | Some(AIR) => Cell::Open,
             Some(m) if passable(m) => Cell::Passable,
@@ -381,6 +387,171 @@ impl Store {
             (axis, t) = (a, tmax[a]);
             tmax[a] += inv[a];
         }
+    }
+}
+
+
+/// Reading voxels for movement: the store itself, or a `Window` copied out
+/// of it. Physics that reads the same few thousand voxels many times a step
+/// (a car's wheels) takes either.
+pub trait VoxelRead {
+    fn get(&self, x: i32, y: i32, z: i32) -> Option<u8>;
+    fn store(&self) -> &Store;
+    /// How voxel (x, y, z) behaves for movement (see `Cell`).
+    #[inline]
+    fn cell(&self, x: i32, y: i32, z: i32) -> Cell {
+        if y < 0 {
+            return Cell::Solid;
+        }
+        self.store().cell_of(y, self.get(x, y, z))
+    }
+    #[inline]
+    fn ground_vox(&self, x: i32, z: i32) -> Option<f32> {
+        self.store().ground_vox(x, z)
+    }
+    /// The drawn ground's height under (x, z) near y, all in voxels
+    /// (`mesh::ground_height_h`).
+    fn ground_height(&self, x: f32, z: f32, y: f32) -> Option<f32> {
+        let at = |x: isize, y: isize, z: isize| self.get(x as i32, y as i32, z as i32).unwrap_or(AIR);
+        crate::mesh::ground_height_h(at, |x, z| self.ground_vox(x as i32, z as i32), x, z, y)
+    }
+}
+
+impl VoxelRead for Store {
+    #[inline]
+    fn get(&self, x: i32, y: i32, z: i32) -> Option<u8> {
+        Store::get(self, x, y, z)
+    }
+    #[inline]
+    fn store(&self) -> &Store {
+        self
+    }
+}
+
+/// A box of the store's voxels copied into one flat array, so reading one
+/// is an index rather than a hash lookup. Reads outside the box, and inside
+/// it where a chunk isn't loaded, go to the store, so a window answers
+/// exactly as the store does and its size only decides how fast. It is
+/// left empty where there are moving platforms, which the chunks don't hold.
+pub struct Window<'a> {
+    store: &'a Store,
+    lo: [i32; 3],
+    dim: [u32; 3],
+    vox: Vec<u8>,
+    /// Chunks in the box that aren't loaded.
+    missing: Vec<(i32, i32, i32)>,
+    /// The drawn ground's corners worked out so far, per lattice point of
+    /// the box's columns: the surface height they are for, and the offset.
+    /// Neighbouring ground samples share most of their corners, and each
+    /// corner reads sixteen columns.
+    corners: std::cell::RefCell<Vec<(i32, f32)>>,
+}
+
+/// A `Window`'s buffers, kept for the next one.
+#[derive(Default)]
+pub struct WindowBuf {
+    vox: Vec<u8>,
+    corners: Vec<(i32, f32)>,
+}
+
+/// A corner not yet worked out.
+const NO_CORNER: i32 = i32::MIN;
+
+impl<'a> Window<'a> {
+    /// The voxels from `lo` to `hi` inclusive, copied into `buf`, which is
+    /// reused: `into_buf` hands it back.
+    pub fn new(store: &'a Store, lo: [i32; 3], hi: [i32; 3], bufs: WindowBuf) -> Self {
+        let WindowBuf { vox: mut buf, mut corners } = bufs;
+        buf.clear();
+        corners.clear();
+        let mut w = Window { store, lo, dim: [0; 3], vox: Vec::new(), missing: Vec::new(), corners: Default::default() };
+        if !store.platforms.is_empty() || (0..3).any(|a| hi[a] < lo[a]) {
+            w.vox = buf;
+            w.corners = corners.into();
+            return w;
+        }
+        let dim = [0, 1, 2].map(|a| (hi[a] - lo[a] + 1) as usize);
+        buf.resize(dim[0] * dim[1] * dim[2], AIR);
+        for cy in lo[1] >> 5..=hi[1] >> 5 {
+            for cz in lo[2] >> 5..=hi[2] >> 5 {
+                for cx in lo[0] >> 5..=hi[0] >> 5 {
+                    let Some(c) = store.chunks.get(&(cx, cy, cz)) else {
+                        w.missing.push((cx, cy, cz));
+                        continue;
+                    };
+                    // This chunk's part of the box, a row along x at a time.
+                    let (x0, x1) = ((cx << 5).max(lo[0]), ((cx << 5) + 31).min(hi[0]));
+                    let n = (x1 - x0 + 1) as usize;
+                    for y in (cy << 5).max(lo[1])..=((cy << 5) + 31).min(hi[1]) {
+                        for z in (cz << 5).max(lo[2])..=((cz << 5) + 31).min(hi[2]) {
+                            let i = ((y - lo[1]) as usize * dim[2] + (z - lo[2]) as usize) * dim[0] + (x0 - lo[0]) as usize;
+                            let row = &mut buf[i..i + n];
+                            match c {
+                                Voxels::Uniform(m) => row.fill(*m),
+                                Voxels::Data(d) => {
+                                    let s = cidx((x0 & 31) as usize, (y & 31) as usize, (z & 31) as usize);
+                                    row.copy_from_slice(&d[s..s + n]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        w.dim = dim.map(|d| d as u32);
+        w.vox = buf;
+        corners.resize(dim[0] * dim[2], (NO_CORNER, 0.0));
+        w.corners = corners.into();
+        w
+    }
+
+    /// Water in the window read as air: for a vehicle that wades (a kart in
+    /// a ford), whose wheels and chassis go through water voxels to the bed.
+    pub fn dry(&mut self) {
+        for v in &mut self.vox {
+            if *v != AIR && super::matlib::has(*v, super::matlib::flag::WATER) {
+                *v = AIR;
+            }
+        }
+    }
+
+    /// The buffers, for the next window.
+    pub fn into_buf(self) -> WindowBuf {
+        WindowBuf { vox: self.vox, corners: self.corners.into_inner() }
+    }
+}
+
+impl VoxelRead for Window<'_> {
+    #[inline]
+    fn get(&self, x: i32, y: i32, z: i32) -> Option<u8> {
+        let (i, j, k) = (x.wrapping_sub(self.lo[0]) as u32, y.wrapping_sub(self.lo[1]) as u32, z.wrapping_sub(self.lo[2]) as u32);
+        if i < self.dim[0] && j < self.dim[1] && k < self.dim[2] && (self.missing.is_empty() || !self.missing.contains(&(x >> 5, y >> 5, z >> 5))) {
+            return Some(self.vox[(j as usize * self.dim[2] as usize + k as usize) * self.dim[0] as usize + i as usize]);
+        }
+        self.store.get(x, y, z)
+    }
+    #[inline]
+    fn store(&self) -> &Store {
+        self.store
+    }
+    fn ground_height(&self, x: f32, z: f32, y: f32) -> Option<f32> {
+        let at = |x: isize, y: isize, z: isize| self.get(x as i32, y as i32, z as i32).unwrap_or(AIR);
+        let colh = |x: isize, z: isize| self.ground_vox(x as i32, z as i32);
+        let corner = |px: isize, pz: isize, t: isize| {
+            let (i, k) = ((px as i32).wrapping_sub(self.lo[0]) as u32, (pz as i32).wrapping_sub(self.lo[2]) as u32);
+            if i >= self.dim[0] || k >= self.dim[2] {
+                return crate::mesh::ground_corner(&at, &colh, px, pz, t);
+            }
+            let slot = k as usize * self.dim[0] as usize + i as usize;
+            let (mt, v) = self.corners.borrow()[slot];
+            if mt == t as i32 {
+                return v;
+            }
+            let v = crate::mesh::ground_corner(&at, &colh, px, pz, t);
+            self.corners.borrow_mut()[slot] = (t as i32, v);
+            v
+        };
+        crate::mesh::ground_height_with(&at, corner, x, z, y)
     }
 }
 

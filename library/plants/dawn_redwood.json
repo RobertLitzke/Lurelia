@@ -17,5 +17,7 @@
   "affords": ["perch"],
   "sweep": "ragged",
   "whorls": [12, 20],
-  "lean": 0.04
+  "lean": 0.04,
+  "site": {"wet": [0.3, 1.0], "soil": [0.3, 0.9]},
+  "realms": ["dinosaur"]
 }

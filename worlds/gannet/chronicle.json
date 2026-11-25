@@ -1248,7 +1248,7 @@
   {
    "year": 1701,
    "event": "network",
-   "cause": "the farm lanes: from the crossroads in the uplands north over the Cold River and into the redwoods",
+   "cause": "the farm lanes: from the crossroads in the uplands north to the Cold River, over it by the covered bridge, and into the redwoods",
    "nodes": {
     "cross": [
      1160,
@@ -1261,6 +1261,14 @@
     "north_end": [
      1030,
      1
+    ],
+    "bridge_s": [
+     1010,
+     282
+    ],
+    "bridge_n": [
+     1010,
+     240
     ]
    },
    "links": [
@@ -1271,6 +1279,11 @@
     },
     {
      "from": "ford",
+     "to": "bridge_s",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "bridge_n",
      "to": "north_end",
      "kit": "dirt_lane"
     }
@@ -2188,7 +2201,7 @@
    "structure": "covered_bridge",
    "at": [
     1010,
-    249
+    261
    ],
    "bearing": 350,
    "poi": "the covered bridge"

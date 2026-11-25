@@ -428,7 +428,10 @@ impl Ride {
             let spec = self.catalogue.get(&car.spec.name);
             car.retune(spec);
         }
-        self.note = Some("VEHICLE TUNE RELOADED".into());
+        self.note = Some(match self.catalogue.errors.len() {
+            0 => "VEHICLE TUNE RELOADED".into(),
+            n => format!("VEHICLE TUNE RELOADED, {n} FILE(S) KEPT LAST GOOD TUNE"),
+        });
     }
 
     /// The cars to draw: the one being driven (with its driver in the chase

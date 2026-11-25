@@ -1,0 +1,41 @@
+{
+  "name": "shotgun",
+  "version": 1,
+  "introduced_by": "realistic",
+  "notes": "Nine pellets of buckshot at a time: across a room it kills, across a hall it stings. The left button is the pump, one shot and rack it; the right fires a slug, one heavy ball that holds together to range. Eight in the tube, loaded a shell at a time.",
+  "display": "SHOTGUN",
+  "slot": 8,
+  "ammo_max": 48,
+  "ammo_start": 24,
+  "mag": 8,
+  "reload_s": 2.4,
+  "fire": {
+    "kind": "hitscan",
+    "rpm": 70.0,
+    "damage": 11.0,
+    "pellets": 9,
+    "spread_deg": 4.5,
+    "range": 40.0,
+    "falloff": 0.15,
+    "head_mult": 1.3,
+    "kick": 1.6,
+    "tracer": [1.0, 0.86, 0.6],
+    "tracer_s": 0.05
+  },
+  "alt": {
+    "kind": "hitscan",
+    "rpm": 70.0,
+    "damage": 60.0,
+    "spread_deg": 0.4,
+    "range": 90.0,
+    "falloff": 0.5,
+    "head_mult": 1.5,
+    "kick": 1.9,
+    "tracer": [1.0, 0.86, 0.6],
+    "tracer_s": 0.05
+  },
+  "view": "sg_pump",
+  "tint": [0.4, 0.3, 0.22],
+  "role": "spread",
+  "ammo_type": "shells"
+}

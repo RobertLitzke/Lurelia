@@ -14,7 +14,14 @@
       "colors": {"herring": [[206, 160, 48], [222, 176, 58]], "silver": [[238, 208, 114], [248, 220, 126]]}
     }
   ],
-  "behaviour": {"walk_speed": 1.0, "flee_speed": 4.0, "leap": 1.2, "group": {"size": [3, 6], "spacing": 1.0, "range": 5}},
+  "behaviour": {
+    "displays": [{"kind": "bait_ball"}, {"kind": "leap"}],
+    "walk_speed": 1.0,
+    "flee_speed": 4.0,
+    "leap": 1.2,
+    "group": {"size": [3, 6], "spacing": 1.0, "range": 5},
+    "voice": {"size": 0.6, "calls": [{"cry": "splash", "on": "display:leap"}]}
+  },
   "like": "herring",
   "scale": 1.5
 }

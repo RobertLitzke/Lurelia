@@ -1,0 +1,16 @@
+{
+  "name": "cushion_bog",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Cushion bog on the páramo: hard domed mats of tiny-leaved plants, bright green and olive, that hold water like a sponge.",
+  "smooth": true,
+  "sprites": "none",
+  "texture": {
+    "pattern": "blotch",
+    "base": [92, 124, 52],
+    "alt": [134, 140, 60],
+    "scale": 3,
+    "contrast": 1.0,
+    "calm": {"base": [100, 130, 60], "alt": [138, 142, 70]}
+  }
+}

@@ -14,6 +14,7 @@
     "head_cap": [128, 96, 60]
   },
   "behaviour": {
+    "displays": [{"kind": "song_flight", "params": {"climb": [3, 7], "hang": [2, 4]}}],
     "movement": "flit",
     "walk_speed": 5,
     "flee_speed": 9,
@@ -21,12 +22,18 @@
     "flightiness": 1.7,
     "fly_height": 0,
     "flight": "bound",
-    "group": {"size": [2, 6], "spacing": 1.0, "range": 8, "alignment": 1.0, "cohesion": 1.0}
+    "group": {"size": [2, 6], "spacing": 1.0, "range": 8, "alignment": 1.0, "cohesion": 1.0},
+    "voice": {
+      "calls": [
+        {"cry": "song", "on": "idle", "hours": "day", "every_s": [15, 60]},
+        {"cry": "flap", "on": "takeoff", "size": 0.3}
+      ]
+    }
   },
   "like": "starling",
   "scale": 0.85,
   "extra_ops": [
-    {"op": "ellipsoid", "centre": [16, 7, 13.5], "radius": [1.9, 1.5, 3], "mat": "breast"},
-    {"op": "box", "from": [15, 10, 9], "to": [17, 11, 12], "mat": "head_cap", "part": "head"}
+    {"op": "ellipsoid", "centre": [45.0, 19.6, 24.0], "radius": [5.32, 4.2, 8.4], "mat": "breast"},
+    {"op": "box", "from": [42, 28, 11], "to": [48, 31, 20], "mat": "head_cap", "part": "head"}
   ]
 }

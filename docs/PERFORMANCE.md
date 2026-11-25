@@ -258,8 +258,74 @@ target/release/lurelia --world hemlow --bench-route field --view 256 --no-shadow
 ```
 
 At 1080p with no MSAA, headless frames there are 5.0 ms at p50 and 7.7 ms at
-p99; the window caught one hitch a run, a GPU wait of about 130 ms on the
-first frame after loading.
+p99. The window used to catch one hitch a run, 130-240 ms on the first frame
+after loading. That frame painted every material's texture (`textures::build`,
+250-300 ms of CPU), because the renderer starts in the classic style and the
+world loads in another, and with new materials and a new style in the same
+frame it could paint them twice. The loading thread now paints them
+(`textures::prebuild`) and the renderer takes them if they are for the
+material table and style it needs, and a frame paints at most once. The first
+frame is now under 20 ms in the window. Headless, the first frame still waits
+about 250 ms on the GPU: headless loading never submits, so every chunk
+uploaded while loading is copied then.
+
+`--bench-route race`, on a world with a race (Ribstrand, Peregrine,
+Vermilion), drives the race on autopilot to the finish with the race's own
+camera. A race is the most streaming the game does: the kart goes round a
+768 m world at 100 km/h, and the columns behind it unload and stream in again
+next lap, so the world is still loading for over half the race. The report
+adds the work under the 16 ms the tracer looks for: `work_p50_ms`,
+`frames_over_12ms`, `wait_over_8ms` (frames held up by the display or the
+GPU, not by work), and `worst`, the sixteen slowest frames with their parts.
+At 300 fps a 12 ms frame shows, though the tracer never names it.
+
+```bash
+VOXEL_TRACE=1 target/release/lurelia --world ribstrand --bench --bench-route race
+```
+
+That race found the main thread losing its core. Frames with 1 ms of work
+waited 10-40 ms; a streamer step that takes 0.5 ms took 50; command encoding
+took 79 ms once. None of it showed in the GPU timestamps (no frame's passes
+over 8 ms). The chunk workers ran below normal priority, but most likely
+Windows lifted them for a moment each time they woke from a wait, which puts a
+below-normal worker level with the main thread, and the main thread then sat
+behind one for a whole quantum. Three
+laps, 1920x1080, shadows on, no MSAA, vsync off, i5-13500 with 8 workers:
+
+| | frames over 12 ms | over 16 ms | waits over 8 ms | p99 |
+|---|---|---|---|---|
+| workers below normal | 134 | 53 | 10 | 9.5 ms |
+| main thread above normal | 6 | 4 | 2 | 7.2 ms |
+| workers lowest | 1 | 2 | 1 | 6.4 ms |
+| both (now) | 1 | 2 | 0 | 5.4 ms |
+| both, 14 busy processes beside it | 11 | 5 | 0 | 7.5 ms |
+
+The frame left over 12 ms is the race putting the karts on the grid, once,
+during the countdown. The workers now run at the lowest priority and the main
+thread above normal (`util::set_thread_priority`), so a build running beside
+the game no longer takes the main thread's core either. The sound device's
+thread is time-critical, above both. Columns load at about the same rate.
+
+The karts' own physics was two thirds of a race's tick. Each wheel reads the
+ground at a dozen points every substep, and each point is the drawn slope
+(`mesh::ground_height_h`), whose four corners each read sixteen columns of
+the store: about 50,000 voxel reads a kart a step, each a hash lookup. Now
+`Vehicle::step` copies the voxels the step can reach into a flat box first
+(`store::Window`), and the window remembers each ground corner it has worked
+out, which the points under one wheel and the four substeps mostly share.
+The kart lab (`vehicle/lab.rs`, three laps, four karts, headless) times
+`Vehicle::step` and prints a fingerprint of where the karts end up, which
+did not change by a bit:
+
+| | Ribstrand, kart | Vermilion, heavy kart |
+|---|---|---|
+| store reads | 0.42 ms a kart-step | 0.53 ms |
+| window | 0.33 ms | |
+| window and corners | 0.09 ms | 0.07 ms |
+
+```bash
+WORLD=ribstrand TUNE=kart cargo test --release kart_lab -- --ignored --nocapture
+```
 
 What shadows and antialiasing cost, from `VOXEL_GPU_PROFILE=1` at 1920x1080,
 256 m view (GPU ms a frame, average over each run):
@@ -295,6 +361,30 @@ the same thread's pieces again), the rest under 0.6 ms together. Eight
 workers is about right on a 14-core i5-13500: sixteen generated 24% more
 columns, each a third slower, since past six they share the hyperthreads
 and the efficiency cores.
+
+Most of what was left of the leaning stems was `anchor`, which finds the
+plain voxel face a tube's quad hangs from and the turn of its corners that
+needs the least move. It worked out each turn's cost several times over
+inside `min_by`, and was called in full where only part was wanted: `owned`
+needs only the face's voxel, and the refining of a thread's pieces (`fits`)
+only whether some turn fits, which it can stop at. The test below meshes the
+49 columns round a spot on one thread and hashes every quad; the hashes are
+the same before and after, on Saurischia, Hemlow, Redrock and Kitehold.
+
+| Columns, single thread | lean before | after | meshing before | after |
+|---|---|---|---|---|
+| Saurischia marsh (470, 735) | 6.25 ms | 3.25 ms | 8.67 ms | 5.48 ms |
+| Saurischia Fernwood (330, 600) | 1.50 ms | 1.01 ms | 3.60 ms | 3.13 ms |
+| Hemlow spawn | 0.30 ms | 0.20 ms | 1.32 ms | 1.27 ms |
+
+```bash
+WORLD=saurischia AT=470,735 cargo test --release lean_world -- --ignored --nocapture
+```
+
+In the marsh what is left of the lean stage is drawing the threads' faces
+(about 1.3 ms, each face hung by `anchor` in full), refining them (0.7 ms,
+each chunk a thread crosses refining it again) and finding their voxels and
+joins (0.5 ms).
 
 ## Building a world
 

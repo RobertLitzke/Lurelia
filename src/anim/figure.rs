@@ -20,6 +20,7 @@
 //! here, because none of it means anything to an animal.
 
 use super::motors::{self, Gait};
+pub use super::undead::Walk;
 use super::{ragdoll::Ragdoll, Pose, Rig};
 use crate::anim::{Plan, Role};
 use glam::{Quat, Vec2, Vec3};
@@ -54,6 +55,45 @@ pub struct Drive {
     pub sprint: bool,
     /// A weapon is out and up. A sprint drops it on its own.
     pub holding: bool,
+    /// How the weapon is held.
+    pub grasp: Grasp,
+}
+
+/// How a body holds what is in its hands, in metres of the gun's own frame
+/// (x right, y up, -z toward the muzzle) from the foot of its grip.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Grasp {
+    pub style: Style,
+    /// The bore's height above the grip's foot.
+    pub bore: f32,
+    /// How far the grip is ahead of where the gun is braced: the butt in the
+    /// shoulder for a long gun, the chest for a pistol held out.
+    pub reach: f32,
+    /// Where the left hand goes; None leaves it free.
+    pub fore: Option<Vec3>,
+}
+
+/// The ways a weapon is carried.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Style {
+    /// Butt in the right shoulder, left hand forward under the barrel.
+    Shoulder,
+    /// Over the shoulder, sighted along the top: a rocket tube.
+    Tube,
+    /// Both arms out, both hands round the grip.
+    Pistol,
+    /// The right hand only, held out and a little low: a knife.
+    One,
+    /// Both hands on a haft, swung: a shovel.
+    Haft,
+}
+
+impl Default for Grasp {
+    /// The arena's guns: shouldered, the left hand fifteen centimetres
+    /// ahead of the grip under the barrel.
+    fn default() -> Grasp {
+        Grasp { style: Style::Shoulder, bore: GUN_BORE, reach: GUN_REACH, fore: Some(Vec3::new(-0.02, GUN_BORE - 0.06, -0.15)) }
+    }
 }
 
 impl Default for Drive {
@@ -67,6 +107,7 @@ impl Default for Drive {
             crouch: 0.0,
             sprint: false,
             holding: true,
+            grasp: Grasp::default(),
         }
     }
 }
@@ -75,6 +116,8 @@ impl Default for Drive {
 pub struct Figure {
     pub pose: Pose,
     pub prev: Pose,
+    /// How it walks: a person's walk, or one of a zombie's (`undead.rs`).
+    pub walk: Walk,
     /// Where it is in the stride, in cycles.
     phase: f32,
     gait: Gait,
@@ -114,6 +157,11 @@ pub struct Figure {
     /// turned. This step's and the last, for drawing between them.
     gun: (Vec3, Quat),
     gun_prev: (Vec3, Quat),
+    /// Climbing over something, 0 to 1 through the climb, or None. The body
+    /// is moved by whoever started it (the zombie round's `vault`); this is
+    /// only the limbs: hands up to the top, a knee up, over on the hands,
+    /// legs down for the drop.
+    pub vault: Option<f32>,
 }
 
 impl Figure {
@@ -123,6 +171,7 @@ impl Figure {
         Self {
             pose: Pose::rest(n),
             prev: Pose::rest(n),
+            walk: Walk::Upright,
             phase: s,
             gait: Gait::Walk,
             from: Gait::Walk,
@@ -146,6 +195,7 @@ impl Figure {
             last_vel: Vec3::ZERO,
             gun: (Vec3::new(0.15, 1.1, -0.3), Quat::IDENTITY),
             gun_prev: (Vec3::new(0.15, 1.1, -0.3), Quat::IDENTITY),
+            vault: None,
         }
     }
 
@@ -172,6 +222,7 @@ impl Figure {
     /// Back on its feet, whole.
     pub fn revive(&mut self) {
         self.ragdoll = None;
+        self.vault = None;
         self.last_vel = Vec3::ZERO;
         self.land = 0.0;
         self.jump = 0.0;
@@ -228,7 +279,8 @@ impl Figure {
             self.gait = g;
             self.mix = 1.0;
         }
-        self.phase += speed * dt / (self.gait.cycle_for(Some(Plan::Biped)) * leg_m).max(0.05);
+        let cadence = self.walk.stride().1;
+        self.phase += speed * dt / (self.gait.cycle_for(Some(Plan::Biped)) * leg_m * cadence).max(0.05);
         if self.phase >= 1.0 {
             self.phase = self.phase.fract();
             if g != self.gait {
@@ -285,10 +337,11 @@ impl Figure {
         let speed = self.mv.length();
         let (fwd, side) = if speed > 1e-3 { (self.mv.y / speed, self.mv.x / speed) } else { (1.0, 0.0) };
         let w = self.stride_w * (1.0 - self.crouch * 0.45);
-        let phase = if fwd < 0.0 { -self.phase } else { self.phase };
-        motors::gait(rig, &mut p, self.gait, phase, w * fwd.abs() * self.mix, leg_m);
-        motors::gait(rig, &mut p, self.from, phase, w * fwd.abs() * (1.0 - self.mix), leg_m);
-        side_step(rig, &mut p, self.phase, w * side.abs(), side.signum(), leg_m);
+        let phase = self.walk.bend(if fwd < 0.0 { -self.phase } else { self.phase });
+        let amp = self.walk.stride().0;
+        motors::gait(rig, &mut p, self.gait, phase, w * amp * fwd.abs() * self.mix, leg_m);
+        motors::gait(rig, &mut p, self.from, phase, w * amp * fwd.abs() * (1.0 - self.mix), leg_m);
+        side_step(rig, &mut p, self.phase, w * amp * side.abs(), side.signum(), leg_m);
         // Backing up: the body leans away from where it is going and the
         // steps are shorter, which is most of what tells a backpedal apart
         // from a walk seen from behind.
@@ -297,8 +350,13 @@ impl Figure {
         }
 
         crouch(rig, &mut p, self.crouch, leg_m);
-        airborne(rig, &mut p, self.air, self.jump, d.vel.y, leg_m);
-        absorb(rig, &mut p, self.land, leg_m);
+        match self.vault {
+            Some(v) => vault(rig, &mut p, v),
+            None => {
+                airborne(rig, &mut p, self.air, self.jump, d.vel.y, leg_m);
+                absorb(rig, &mut p, self.land, leg_m);
+            }
+        }
         // Leaning into a turn, and into a hard strafe.
         p.bones[0].z += (self.turn * 0.07 + side * w * 0.10).clamp(-0.3, 0.3);
 
@@ -313,6 +371,9 @@ impl Figure {
             }
         }
 
+        // A zombie's way of walking, over all of that.
+        super::undead::pose(rig, &mut p, self.walk, phase, self.stride_w, self.t, self.seed, leg_m);
+
         motors::breathe(&mut p, self.t, 2.2, leg_m);
         // Standing still, the weight shifts from one foot to the other: a
         // figure that holds perfectly still reads as a prop.
@@ -325,7 +386,7 @@ impl Figure {
         }
         // The gun last, once the trunk is wherever everything else put it:
         // the arms are solved onto it rather than swinging.
-        let gun = d.holding.then(|| weapon(rig, &mut p, voxel, self.hold, self.pitch, self.kick));
+        let gun = d.holding.then(|| weapon(rig, &mut p, voxel, self.hold, self.pitch, self.kick, &d.grasp));
         (p, gun)
     }
 
@@ -424,6 +485,39 @@ fn airborne(rig: &Rig, p: &mut Pose, air: f32, jump: f32, vy: f32, leg_m: f32) {
     }
     lean(rig, p, 0.18 * tuck - 0.05 * reach);
     p.root.y += 0.08 * leg_m * jump;
+}
+
+/// Over a hedge or a wall, `v` of the way through: both hands reach up to
+/// the top and one knee comes up onto it, then the body goes over on its
+/// hands with the legs tucked under, then the legs reach down for the drop.
+fn vault(rig: &Rig, p: &mut Pose, v: f32) {
+    let ease = |a: f32, b: f32| {
+        let u = ((v - a) / (b - a)).clamp(0.0, 1.0);
+        u * u * (3.0 - 2.0 * u)
+    };
+    let reach = ease(0.0, 0.15) * (1.0 - ease(0.4, 0.55));
+    let knee = ease(0.08, 0.25) * (1.0 - ease(0.4, 0.55));
+    let over = ease(0.35, 0.5) * (1.0 - ease(0.65, 0.8));
+    let drop = ease(0.7, 0.8) * (1.0 - ease(0.92, 1.0));
+    for i in 0..rig.bones.len() {
+        let b = &rig.bones[i];
+        let (role, side, dep) = (b.role, b.side, motors::depth(rig, i));
+        // The leading leg is the right one.
+        let lead = if side > 0.0 { 1.0 } else { 0.4 };
+        let e = &mut p.bones[i];
+        match (role, dep) {
+            (Role::Arm, 0) => {
+                e.x -= 2.3 * reach + 0.9 * over;
+                e.z += side * 0.35 * drop;
+            }
+            (Role::Arm, 1) => e.x += 0.4 * reach + 0.25 * over,
+            (Role::Leg, 0) => e.x += 1.4 * lead * knee + 1.5 * over + 0.3 * drop,
+            (Role::Leg, 1) => e.x -= 1.8 * lead * knee + 2.0 * over + 0.25 * drop,
+            (Role::Leg, 2) => e.x += 0.4 * over,
+            _ => {}
+        }
+    }
+    lean(rig, p, 0.25 * reach + 0.65 * over);
 }
 
 /// Taking a landing: the knees give, the hips drop and come back up.
@@ -534,7 +628,7 @@ fn side_step(rig: &Rig, p: &mut Pose, phase: f32, w: f32, dir: f32, leg_m: f32) 
 /// which is what this did before, left the gun level whatever the arms
 /// were doing and the forearms low, and any change to the body moved the
 /// gun off the line it shoots along.
-fn weapon(rig: &Rig, p: &mut Pose, voxel: f32, w: f32, pitch: f32, kick: f32) -> (Vec3, Quat) {
+fn weapon(rig: &Rig, p: &mut Pose, voxel: f32, w: f32, pitch: f32, kick: f32, h: &Grasp) -> (Vec3, Quat) {
     let mut fk = Vec::new();
     super::forward(rig, p, voxel, Vec3::ZERO, &mut fk);
     // The arm bones by side and depth: 0 the upper arm, 2 the hand.
@@ -547,24 +641,46 @@ fn weapon(rig: &Rig, p: &mut Pose, voxel: f32, w: f32, pitch: f32, kick: f32) ->
     // The shoulder pocket, in from the right shoulder joint and in front of
     // the chest. Lowered when the gun is down.
     let low = 1.0 - w;
-    let pocket = fk[sr].0 + cq * Vec3::new(-GUN_IN, -0.03 - 0.10 * low, -0.13);
+    // Where the gun is braced: the shoulder pocket for a long gun, higher
+    // for a tube laid over the shoulder, and for a pistol or a blade the
+    // middle of the chest, from which the arms push it out.
+    let brace = match h.style {
+        Style::Shoulder => Vec3::new(-GUN_IN, -0.03 - 0.10 * low, -0.13),
+        Style::Tube => Vec3::new(-GUN_IN * 0.5, 0.06 - 0.10 * low, -0.10),
+        Style::Pistol => Vec3::new(-0.17, -0.08 - 0.12 * low, -0.12),
+        Style::One => Vec3::new(-0.02, -0.18 - 0.10 * low, -0.10),
+        Style::Haft => Vec3::new(-0.08, -0.22 - 0.10 * low, -0.12),
+    };
+    let pocket = fk[sr].0 + cq * brace;
     // Along the aim, or pointed at the floor ahead at a sprint, and kicked
     // up and back by a shot.
-    let aim = pitch * w + LOW_READY * low + kick * 0.5;
-    let g = Quat::from_rotation_x(aim);
-    let grip = pocket + g * Vec3::new(0.0, -GUN_BORE, -GUN_REACH + kick * 0.25);
+    // A blade or a bat has no recoil to take: the same spring is its swing,
+    // a chop down and across the body to the left, pushed out at the arm's
+    // full reach, and back.
+    let swung = matches!(h.style, Style::One | Style::Haft);
+    let swing = if swung { (kick * 30.0).min(1.0) } else { 0.0 };
+    let recoil = if swung { 0.0 } else { kick };
+    // Between swings a blade or a haft rests raised, ready to come down.
+    let rest = if swung { 0.8 * w } else { 0.0 };
+    let aim = pitch * w + LOW_READY * low + recoil * 0.5 + rest - swing * (1.3 + rest);
+    let g = Quat::from_rotation_y(swing * 0.7) * Quat::from_rotation_x(aim);
+    let grip = pocket + g * Vec3::new(0.0, -h.bore, -h.reach - swing * 0.12 + recoil * 0.25);
     // The wrists: the right one at the top of the grip so the hand hangs
     // down it, the left under the barrel with the hand pointing along it.
     let right = (grip + g * Vec3::new(0.0, WRIST_UP, 0.0), g);
-    let left = (grip + g * Vec3::new(-0.02, GUN_BORE - 0.06, -0.15), g * Quat::from_rotation_x(1.1));
-    for (side, (target, hand)) in [(true, right), (false, left)] {
+    // A pistol's left hand closes round the right one, under and to the left.
+    let left = h.fore.map(|f| {
+        let turn = if h.style == Style::Pistol { Quat::from_rotation_z(-0.6) } else { Quat::from_rotation_x(1.1) };
+        (grip + g * f, g * turn)
+    });
+    for (side, (target, hand)) in [(true, Some(right)), (false, left)].into_iter().filter_map(|(s, t)| t.map(|t| (s, t))) {
         let (Some(a0), Some(a1), Some(a2)) = (arm(side, 0), arm(side, 1), arm(side, 2)) else { continue };
         let pole = if side { Vec3::new(0.8, -1.0, 0.25) } else { Vec3::new(-0.6, -1.0, 0.15) };
         let parent = rig.bones[a0].parent.map_or(Quat::IDENTITY, |k| fk[k].1);
         two_bone(rig, p, voxel, [a0, a1, a2], fk[a0].0, parent, target, hand, pole);
     }
     // The shoulders take the shot too.
-    lean(rig, p, -kick * 0.2 * w);
+    lean(rig, p, (swing * 0.3 - recoil * 0.2) * w);
     (grip, g)
 }
 
@@ -615,11 +731,14 @@ mod tests {
     use super::*;
     use crate::library::Library;
 
-    /// The robot's rig, sliced from the library as the loader does it.
+    /// The humanoid's pivot: the bottom centre of its 40x96x40 grid.
+    const PIVOT: Vec3 = Vec3::new(20.0, 0.0, 20.0);
+
+    /// The humanoid's rig, sliced from the library as the loader does it.
     fn robot() -> (Rig, f32) {
         let (lib, errors) = Library::load(&crate::library::data_root());
         assert!(errors.is_empty(), "{errors:?}");
-        let c = lib.creatures.iter().find(|c| c.name == "robot").expect("robot");
+        let c = lib.creatures.iter().find(|c| c.name == "humanoid").expect("humanoid");
         let names: Vec<&String> = c.colors.keys().collect();
         let resolve = |n: &str| {
             if n == "air" {
@@ -770,7 +889,7 @@ mod tests {
         // yaw -- while being strictly more sideways than before.
         let feet = |p: &Pose| -> Vec<Vec3> {
             let mut fk = Vec::new();
-            crate::anim::forward(&rig, p, voxel, Vec3::new(16.0, 0.0, 16.0), &mut fk);
+            crate::anim::forward(&rig, p, voxel, PIVOT, &mut fk);
             (0..rig.bones.len())
                 .filter(|&i| rig.bones[i].role == Role::Leg && motors::depth(&rig, i) == 2)
                 .map(|i| fk[i].0)
@@ -846,7 +965,7 @@ mod tests {
     #[test]
     fn the_aim_carries_the_hands() {
         let (rig, voxel) = robot();
-        let pivot = Vec3::new(16.0, 0.0, 16.0);
+        let pivot = PIVOT;
         let hand = |pitch: f32| -> Vec3 {
             let mut f = Figure::new(&rig, 2);
             let d = Drive { pitch, ..Default::default() };
@@ -886,7 +1005,7 @@ mod tests {
             run(&mut f, &rig, voxel, down, 30);
             let over = f.pose.bones[0].x.abs().max(f.pose.bones[0].z.abs());
             let mut fk = Vec::new();
-            crate::anim::forward(&rig, &f.pose, voxel, Vec3::new(16.0, 0.0, 16.0), &mut fk);
+            crate::anim::forward(&rig, &f.pose, voxel, PIVOT, &mut fk);
             let high = fk.iter().map(|(p, _)| p.y).fold(f32::MIN, f32::max);
             let low = fk.iter().map(|(p, _)| p.y).fold(f32::MAX, f32::min);
             assert!(over > 0.8, "{air} steps in the air: still upright a second and a half after landing ({:?})", f.pose.bones[0]);
@@ -918,7 +1037,7 @@ mod tests {
         // there at the time and says nothing about whether the body is in
         // the ground -- and a body in the ground passed it comfortably.
         let mut fk = Vec::new();
-        crate::anim::forward(&rig, &f.pose, voxel, Vec3::new(16.0, 0.0, 16.0), &mut fk);
+        crate::anim::forward(&rig, &f.pose, voxel, PIVOT, &mut fk);
         let low = fk.iter().map(|(p, _)| p.y).fold(f32::MAX, f32::min);
         let high = fk.iter().map(|(p, _)| p.y).fold(f32::MIN, f32::max);
         assert!(low > -0.05, "the body settled {low} m into the floor");
@@ -941,7 +1060,7 @@ mod tests {
     fn a_runner_leans_forward() {
         let (rig, voxel) = robot();
         let head = rig.bones.iter().position(|b| b.role == Role::Head).expect("a head");
-        let pivot = Vec3::new(16.0, 0.0, 16.0);
+        let pivot = PIVOT;
         for (what, d) in [
             (
                 "running",
@@ -961,12 +1080,52 @@ mod tests {
         }
     }
 
+    /// Each zombie walk reads as itself: a crawler is down on its front
+    /// with its head low and ahead of its hips and its hands out in front, a
+    /// lurcher has both hands out ahead at shoulder height, and a shambler's
+    /// head hangs ahead of its hips with the hands at its sides.
+    #[test]
+    fn the_zombie_walks_are_what_they_say() {
+        let (rig, voxel) = robot();
+        let head = rig.bones.iter().position(|b| b.role == Role::Head).expect("a head");
+        let hands: Vec<usize> = (0..rig.bones.len()).filter(|&i| rig.bones[i].role == Role::Arm && motors::depth(&rig, i) == 2).collect();
+        let foot_of = |w: Walk, speed: f32| {
+            let mut f = Figure::new(&rig, 3);
+            f.walk = w;
+            let d = Drive { vel: Vec3::new(0.0, 0.0, -speed), holding: false, ..Default::default() };
+            run(&mut f, &rig, voxel, d, 70);
+            let mut fk = Vec::new();
+            crate::anim::forward(&rig, &f.at(1.0), voxel, PIVOT, &mut fk);
+            assert!(fk.iter().all(|(p, q)| p.is_finite() && q.is_finite()), "{w}: a bone went off to infinity");
+            fk
+        };
+        for speed in [0.0, 0.8] {
+            let fk = foot_of(Walk::Crawler, speed);
+            assert!(fk[head].0.y < 0.6, "crawler at {speed}: head {} m up", fk[head].0.y);
+            assert!(fk[head].0.z < fk[0].0.z - 0.3, "crawler at {speed}: head not ahead of the hips");
+            for &h in &hands {
+                assert!(fk[h].0.z < fk[0].0.z - 0.2, "crawler at {speed}: a hand is not out ahead");
+                assert!(fk[h].0.y > -0.05, "crawler at {speed}: a hand {} m into the floor", fk[h].0.y);
+            }
+        }
+        let fk = foot_of(Walk::Lurch, 1.6);
+        for &h in &hands {
+            assert!(fk[h].0.z < fk[0].0.z - 0.35, "lurch: a hand is not held out ahead");
+            assert!(fk[h].0.y > 1.0, "lurch: a hand hangs at {} m", fk[h].0.y);
+        }
+        let fk = foot_of(Walk::Shamble, 1.1);
+        assert!(fk[head].0.z < fk[0].0.z - 0.06, "shamble: the head does not hang forward");
+        for &h in &hands {
+            assert!(fk[h].0.y < 1.0, "shamble: a hand is raised to {} m", fk[h].0.y);
+        }
+    }
+
     /// The gun is held, not hung: the right wrist ends up on the top of the
     /// grip, the left one near the barrel, and the gun points along the aim.
     #[test]
     fn both_hands_are_on_the_gun() {
         let (rig, voxel) = robot();
-        let pivot = Vec3::new(16.0, 0.0, 16.0);
+        let pivot = PIVOT;
         let arm = |right: bool| {
             (0..rig.bones.len())
                 .filter(|&i| rig.bones[i].role == Role::Arm && (rig.bones[i].side > 0.0) == right)
@@ -984,7 +1143,9 @@ mod tests {
             assert!(wrist.distance(want) < 0.03, "pitch {pitch}: the right wrist is {} m off the grip", wrist.distance(want));
             let left = fk[arm(false)].0;
             assert!(
-                left.distance(grip) < 0.45 && (left - grip).dot(rot * Vec3::NEG_Z) > 0.08,
+                // 0.06: the 2026-11-24 humanoid's forearms are shorter
+                // against its upper arms than the old figurine's were.
+                left.distance(grip) < 0.45 && (left - grip).dot(rot * Vec3::NEG_Z) > 0.06,
                 "pitch {pitch}: the left hand is not out along the barrel: {left:?} vs grip {grip:?}"
             );
             let muzzle = rot * Vec3::NEG_Z;

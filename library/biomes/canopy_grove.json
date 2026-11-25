@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "canopy_test",
   "notes": "Test bed for the canopy town: emergent kapoks and redwoods over strangler figs and a laurel canopy, lianas, ferns and moss.",
+  "habitat": "tropical_forest",
   "priority": 1,
   "rules": {},
   "surface": "pine_duff",
   "subsurface": "dirt",
+  "soil": 0.5,
   "map_color": [40, 96, 52],
   "plants": [
     {"plant": "giant_redwood", "density": 0.0016, "placement": {"verb": "lone", "params": {"spacing": 13}}},

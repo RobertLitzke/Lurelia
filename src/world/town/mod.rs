@@ -164,11 +164,21 @@ pub struct Features {
     /// suburb plots), picked in turn where they fit: a world's own
     /// cottages instead of footprint houses. `near` is ignored.
     pub houses: Vec<Landmark>,
+    /// Up to this many more library houses on the ground the frontages
+    /// leave free (back plots, odd corners), each turned to face its
+    /// nearest street and kept reachable by a footpath.
+    pub infill: u32,
+    /// A footpath from every library house's door to the nearest street,
+    /// square or path, round the buildings (`Plan::paths`).
+    pub paths: bool,
+    /// Footprint houses are drawn on the plots no library house takes;
+    /// false leaves those plots for `infill`.
+    pub footprints: bool,
 }
 
 impl Default for Features {
     fn default() -> Self {
-        Features { market: true, squares: 0, churches: 1, parks: 0, alleys: true, yards: true, landmarks: Vec::new(), houses: Vec::new() }
+        Features { market: true, squares: 0, churches: 1, parks: 0, alleys: true, yards: true, landmarks: Vec::new(), houses: Vec::new(), infill: 0, paths: false, footprints: true }
     }
 }
 
@@ -314,6 +324,8 @@ pub struct Plan {
     pub piers: Vec<(Vec2, Vec2)>,
     /// Driveways: from the kerb to a garage door.
     pub drives: Vec<(Vec2, Vec2)>,
+    /// Footpaths from library houses' doors to the streets, door first.
+    pub paths: Vec<Vec<Vec2>>,
     /// Turning circles at the ends of closes.
     pub turnings: Vec<Vec2>,
     /// Parks, likewise.
@@ -324,6 +336,8 @@ pub struct Plan {
     pub trees: Vec<(Vec2, Tree)>,
     /// Which crop each patch of farmland grows (the event names crops).
     pub crops: country::Crops,
+    /// A corner of each field, for its shed (`country::Corner`).
+    pub corners: Vec<country::Corner>,
     /// How far the farmland reaches from the centre, metres.
     pub farm: f32,
     pub districts: Districts,

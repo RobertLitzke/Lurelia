@@ -77,6 +77,18 @@ pub fn ride_demo(game: &mut Game, renderer: &mut Renderer, kind: &str, args: &Ar
                 game.ride.vehicle_key(&mut game.player, &game.store);
             }
         }
+        // A headless race runs many times faster than the streamer can load
+        // the road ahead, and the player's kart stops dead at the edge of the
+        // loaded world (`Vehicle::waiting`) while the clock and the rivals
+        // run on. Wait for the world here instead, as a real frame rate
+        // would, so the autopilot's times mean something.
+        if kind == "race" {
+            let t0 = Instant::now();
+            while game.ride.car().is_some_and(|c| !c.ground_loaded(&game.store)) && t0.elapsed() < Duration::from_secs(20) {
+                game.stream(&mut renderer.terrain, Duration::from_millis(20));
+                std::thread::sleep(Duration::from_millis(1));
+            }
+        }
         game.tick(game::STEP, &inp, &mut actions);
         if kind == "race" {
             if let Some(rc) = game.activity.as_mut().and_then(|a| a.race_mut()) {
@@ -169,6 +181,22 @@ pub fn run_headless(args: Args) {
         }
     };
     game.persist = false;
+    // A headless run starts fresh; VG_LOAD_HERDS=1 reads the herds a
+    // VG_SAVE_HERDS run left in the --save folder (creatures/roster.rs).
+    if std::env::var_os("VG_LOAD_HERDS").is_some() {
+        eprintln!("herds: {}", if game.load_herds() { "read from the save folder" } else { "none read; seeding" });
+    }
+    // --eco-soak: the records alone, for days of game time (ANIMAL_SIM C5).
+    if let Some(hours) = args.eco_soak {
+        if let Some(h) = args.hour {
+            game.ents.hour = crate::world::clock::wrap(h);
+        }
+        let t = Instant::now();
+        let game = &mut game;
+        game.ents.eco_soak(&game.store, &game.models, hours, 6.0, |line| println!("{line}"));
+        eprintln!("eco-soak: {hours} game hours in {:.1} s", t.elapsed().as_secs_f32());
+        std::process::exit(0);
+    }
     // A headless run is a measurement, so it has to repeat.
     game.repeat = true;
     game.gpu_name = gpu.describe();
@@ -177,7 +205,7 @@ pub fn run_headless(args: Args) {
     show_world(&mut renderer, &game);
     let init_ms = t_game.elapsed().as_secs_f32() * 1000.0;
     let mut hud = Hud::default();
-    let input = MoveInput::default();
+    let mut input = MoveInput::default();
     let mut actions = Actions::default();
     let mut bench = if args.bench { Some(Bench::new(game.player.pos + Vec3::Y * 2.0, args.bench_route)) } else { None };
 
@@ -218,21 +246,26 @@ pub fn run_headless(args: Args) {
         // lens with nothing but wall behind it, and the body under it
         // cannot settle, duck or fall during the frames that follow.
         let yaw = game.player.yaw;
-        let eye = crate::combat::sheet::place(&game.store, game.eye(1.0), yaw);
+        let rows = crate::combat::sheet::rows(game.library(), args.kit.as_deref(), &args.sheet_guns);
+        let eye = crate::combat::sheet::place(&game.store, game.eye(1.0), yaw, &rows);
         game.set_camera(eye, yaw, 0.0, true);
         let eye = game.eye(1.0);
         let base = game.weapon_models;
-        let names = crate::combat::sheet::names(game.library());
-        let sheet = crate::combat::sheet::spawn(&mut game.ents, names, base, eye, yaw);
+        let sheet = crate::combat::sheet::spawn(&mut game.ents, &rows, base, eye, yaw);
         sheet.lines().iter().for_each(|l| println!("{l}"));
         gun_sheet = Some(sheet);
     }
-    if args.bot_sheet {
+    if args.bot_sheet || args.zombie_sheet {
         let eye = game.eye(1.0);
         let yaw = game.player.yaw;
         let mut palette = crate::models::palette();
-        let av = crate::brain::avatar::build(game.library(), &mut palette);
-        let sheet = crate::brain::sheet::spawn(&av, eye, yaw);
+        let av = crate::brain::avatar::build_drawn(game.library(), &mut palette);
+        let guns: Vec<usize> = args
+            .sheet_guns
+            .iter()
+            .filter_map(|n| game.library().and_then(|l| l.weapons.iter().find(|w| w.name == *n)).and_then(|w| crate::combat::viewmodel::shape_of(&w.view)))
+            .collect();
+        let sheet = if args.zombie_sheet { crate::brain::sheet::spawn_zombies(&av, eye, yaw) } else { crate::brain::sheet::spawn(&av, eye, yaw, &guns) };
         sheet.lines().iter().for_each(|l| println!("{l}"));
         let mut out = Vec::new();
         sheet.instances(&av, game.weapon_models, &game.models, &mut out);
@@ -441,7 +474,9 @@ pub fn run_headless(args: Args) {
     }
     if let Some(h) = args.hour {
         game.hour = crate::world::clock::wrap(h);
-        game.clock_running = false;
+        // VG_CLOCK_RUN=1 starts the clock at that hour and lets it run, for
+        // watching dusk or dawn go by.
+        game.clock_running = std::env::var_os("VG_CLOCK_RUN").is_some();
     }
     if let Some(w) = args.weather.as_deref() {
         match crate::world::weather::Kind::parse(w) {
@@ -534,6 +569,44 @@ pub fn run_headless(args: Args) {
         game.ents.met = Some(Default::default());
     }
     let mut tour_t = 0.0f32;
+    // The animal debug view (game/eco.rs): the map in the shot, a pinned
+    // animal, and a JSON line of every animal now and then.
+    if let Some(l) = args.eco_map.as_deref() {
+        match crate::game::eco::Layer::parse(l) {
+            Some(layer) => {
+                game.eco.layer = layer;
+                game.eco.on = true;
+                game.eco.map = true;
+                // VG_ECO_VIEW=x,z,zoom: the map's view; VG_ECO_CURSOR=sx,sy:
+                // a mouse over the map, for the hover box.
+                let nums = |k: &str| std::env::var(k).ok().map(|v| v.split(',').filter_map(|x| x.trim().parse::<f32>().ok()).collect::<Vec<f32>>());
+                if let Some(v) = nums("VG_ECO_VIEW").filter(|v| v.len() == 3) {
+                    game.eco.centre = Some((v[0], v[1]));
+                    game.eco.zoom = v[2];
+                }
+                if let Some(v) = nums("VG_ECO_CURSOR").filter(|v| v.len() == 2) {
+                    game.eco.cursor = Some((v[0], v[1]));
+                }
+            }
+            None => {
+                eprintln!("--eco-map: no such layer as {l} (there are {})", crate::game::eco::Layer::names());
+                std::process::exit(1);
+            }
+        }
+    }
+    game.eco.pin_wanted = args.eco_pin.clone();
+    game.eco.on |= args.eco_pin.is_some() || std::env::var_os("VG_ECO_FREEZE").is_some();
+    let eco_walk: Option<f32> = std::env::var("VG_ECO_WALK").ok().and_then(|v| v.trim().parse().ok());
+    let eco_run = std::env::var_os("VG_ECO_RUN").is_some();
+    // VG_ECO_FREEZE=S: freeze the animals (O) S seconds in.
+    let eco_freeze: Option<u32> = std::env::var("VG_ECO_FREEZE").ok().and_then(|v| v.trim().parse::<f32>().ok()).map(|s| (s / game::STEP) as u32);
+    let mut eco_dump = args.eco_dump.as_ref().map(|p| {
+        let f = std::fs::File::create(p).unwrap_or_else(|e| {
+            eprintln!("--eco-dump {}: {e}", p.display());
+            std::process::exit(1);
+        });
+        (std::io::BufWriter::new(f), 0.0f32)
+    });
     let away: Option<(f32, f32, f32, f32)> = std::env::var("VG_AWAY").ok().and_then(|v| {
         let n: Vec<f32> = v.split(',').filter_map(|x| x.trim().parse().ok()).collect();
         (n.len() == 4).then(|| (n[0], n[1], n[2], n[3]))
@@ -585,7 +658,31 @@ pub fn run_headless(args: Args) {
             game.set_camera(Vec3::new(x, y, z), (-(-a.sin())).atan2(-a.cos()), -0.1, true);
             tour_t += game::STEP;
         }
+        if eco_freeze == Some(frame) {
+            game.eco_freeze();
+        }
+        // VG_ECO_WALK=S: from S seconds in, walk at the pinned animal.
+        if let (Some(from), Some(at)) = (eco_walk, game.eco_pinned_pos()) {
+            let go = frame as f32 * game::STEP >= from;
+            let d = at - game.player.pos;
+            if go && Vec3::new(d.x, 0.0, d.z).length() > 1.5 {
+                game.player.yaw = (-d.x).atan2(-d.z);
+                input.forward = true;
+                input.sprint = eco_run;
+            } else {
+                input.forward = false;
+                input.sprint = false;
+            }
+        }
         game.tick(game::STEP, &input, &mut actions);
+        if let Some((out, next)) = eco_dump.as_mut() {
+            let t = frame as f32 * game::STEP;
+            if t >= *next {
+                use std::io::Write;
+                let _ = writeln!(out, "{}", game.eco_snapshot());
+                *next += args.eco_every;
+            }
+        }
         let t1 = ft.elapsed().as_secs_f32();
         game.stream(&mut renderer.terrain, Duration::from_millis(4));
         let t2 = ft.elapsed().as_secs_f32();
@@ -743,6 +840,15 @@ pub fn run_headless(args: Args) {
         }
         last = FrameTiming { stats };
     }
+    // VG_SAVE_HERDS=1: write the world's herds (creatures/roster.rs) to the
+    // save folder at the end, as a save would, so a second run can read
+    // them back. Use it with --save naming a test folder.
+    if std::env::var_os("VG_SAVE_HERDS").is_some() {
+        match game.save_herds() {
+            Ok(n) => eprintln!("herds: {n} written"),
+            Err(e) => eprintln!("herds: could not write: {e}"),
+        }
+    }
 
     if args.screenshot_mode {
         let path = screenshot::next_path(std::path::Path::new("screenshots"), &worldload::selected());
@@ -837,6 +943,7 @@ pub fn run_headless(args: Args) {
             "scores": sh.scores().iter().map(|(n, c)| serde_json::json!({ "who": n, "kills": c.kills, "deaths": c.deaths, "shots": c.shots, "hits": c.hits, "dealt": c.dealt, "scalded": c.scalded, "scald_deaths": c.scald_deaths })).collect::<Vec<_>>(),
             "bots": sh.bot_report(),
             "nav_audit": sh.nav_audit(),
+            "zombies": sh.zombie_report(),
         });
     }
     // Where every platform ended up, how far it travelled and how often it

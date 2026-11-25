@@ -13,12 +13,19 @@
     "beak": [36, 28, 24]
   },
   "behaviour": {
+    "displays": [{"kind": "wheel", "params": {"time": [6, 10]}}],
     "movement": "flock",
     "walk_speed": 7.0,
     "flee_speed": 13.0,
     "wary": 10,
     "flightiness": 1.4,
-    "group": {"size": [14, 40], "spacing": 1.4, "range": 12, "separation": 1.0, "alignment": 0.9, "cohesion": 1.0}
+    "group": {"size": [14, 40], "spacing": 1.4, "range": 12, "separation": 1.0, "alignment": 0.9, "cohesion": 1.0},
+    "voice": {
+      "calls": [
+        {"cry": "song", "on": "idle", "hours": "day", "size": 1.2, "every_s": [20, 80], "chorus": 0.3, "chorus_m": 60},
+        {"cry": "flap", "on": "takeoff", "size": 0.3}
+      ]
+    }
   },
   "like": "sparrow",
   "scale": 1.1

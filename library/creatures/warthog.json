@@ -17,7 +17,8 @@
     "wary": 14,
     "flightiness": 1.5,
     "group": {"size": [2, 6], "spacing": 1.8, "range": 12, "alignment": 1.0, "cohesion": 1.1},
-    "active": "diurnal"
+    "active": "diurnal",
+    "voice": {"size": 1.2, "calls": [{"cry": "grunt", "on": "idle", "every_s": [60, 200], "chorus": 0.2, "chorus_m": 40}]}
   },
   "like": "boar",
   "scale": 1.05

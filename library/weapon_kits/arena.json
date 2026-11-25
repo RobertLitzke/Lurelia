@@ -1,0 +1,39 @@
+{
+  "name": "arena",
+  "version": 1,
+  "introduced_by": "realistic",
+  "notes": "The arena's own guns, each in the role its map was written round. A map played with this kit is the map as it was written.",
+  "title": "Arena",
+  "roles": {
+    "melee": [
+      "digger"
+    ],
+    "sidearm": [
+      "sidearm"
+    ],
+    "lobber": [
+      "goo_gun"
+    ],
+    "breacher": [
+      "bore"
+    ],
+    "stream": [
+      "arc_gun"
+    ],
+    "midrange": [
+      "skipjack"
+    ],
+    "heavy": [
+      "minigun"
+    ],
+    "spread": [
+      "scrap_gun"
+    ],
+    "explosive": [
+      "rocket_launcher"
+    ],
+    "marksman": [
+      "sniper_rifle"
+    ]
+  }
+}

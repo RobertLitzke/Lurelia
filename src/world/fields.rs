@@ -39,6 +39,16 @@ pub fn default_vehicles() -> Vec<String> {
     vec!["atv".into()]
 }
 
+/// A world's `zoo` block (src/creatures/zoo.rs).
+#[derive(Deserialize, Clone, Debug, Default)]
+pub struct ZooDef {
+    /// Creatures to pen, by name or by the name of an ancestor (`like`):
+    /// "deer" takes in the elk and the mule deer. Empty is every creature.
+    /// `VG_ZOO=name,name` overrides it.
+    #[serde(default)]
+    pub only: Vec<String>,
+}
+
 /// A world's own settings file (`worlds/<name>/world.json`).
 #[derive(Deserialize, Clone, Debug)]
 pub struct WorldDef {
@@ -169,6 +179,11 @@ pub struct WorldDef {
     /// A race here (`RaceDef`): the launch screen offers RACE, and starts it.
     #[serde(default)]
     pub race: Option<RaceDef>,
+    /// A zoo here (src/creatures/zoo.rs): every library creature (or the
+    /// ones `only` names) in a pen of its own, in place of the biomes'
+    /// animals.
+    #[serde(default)]
+    pub zoo: Option<ZooDef>,
     /// Height (m) above which ground turns to snow; default 72. A warm world
     /// with tall towers sets it out of reach.
     #[serde(default)]
@@ -178,6 +193,32 @@ pub struct WorldDef {
     /// degrees up at noon.
     #[serde(default)]
     pub sun: Option<SunDef>,
+    /// How plants are placed: "v1" (or left out) by each biome's list in
+    /// order; "v2" by the ground each plant suits, tallest layer first, each
+    /// layer shading the next (flora.rs `place_by_site`, docs/PLANTS.md).
+    #[serde(default)]
+    pub plants: Option<String>,
+    /// Fill (placement v2 only): on top of what each biome lists, plants
+    /// from the world's own pool (every plant some biome here lists) that
+    /// suit the biome's habitat join it, at this share of its listed
+    /// density, layer by layer. 0 or unset, the default: lists only.
+    #[serde(default)]
+    pub fill: Option<f32>,
+    /// Draw each realm's look where it comes through (`RealmDef::ground`,
+    /// `mist`): ground swaps in blobs, mist. Off unless set.
+    #[serde(default)]
+    pub realm_looks: bool,
+    /// The realm the chronicle's strangeness (`Fields::strange`) stands
+    /// for in this world: `bloom` (the skystone; the default), or `fae`
+    /// where it is the faerie change (Hemlow), `dinosaur` where it is the
+    /// old country (Saurischia).
+    #[serde(default)]
+    pub strange_realm: Option<String>,
+    /// Which worlds its life comes from, as shares (`library/realms/`):
+    /// `{"real": 0.5, "dinosaur": 0.5}`. Unset: all `real`. Read by fill,
+    /// which draws only species of a biome's realms into it.
+    #[serde(default)]
+    pub realms: Option<std::collections::BTreeMap<String, f32>>,
     /// The glider's air here: `{"thermals": 0.2, "ridge_from": 180,
     /// "ridge_speed": 9}`. Thermals scale the engine's (1, the default);
     /// `ridge_from` is the bearing the ridge wind blows from, for a world
@@ -370,8 +411,14 @@ pub struct ShooterDef {
     /// Worth keeping within the spawn points, or bots share them.
     #[serde(default)]
     pub max_bots: Option<usize>,
-    /// Library weapon names, in any order; each takes its own digit.
+    /// Library weapon names, in any order; each takes its own digit. Each
+    /// stands for its role (`WeaponDef::role`), which the match's weapon kit
+    /// fills (src/weapon_kit.rs).
     pub weapons: Vec<String>,
+    /// The weapon kit this map is played with unless the game or the launch
+    /// screen names another (`library/weapon_kits/`). Left out, the arena kit.
+    #[serde(default)]
+    pub kit: Option<String>,
     /// The material a weapon that throws spoil lays down (`FireDef::spoil_r`,
     /// the bore's right button). Left out, it is the world's first bedrock
     /// (`rock`): what a bore shows you when it has gone deep enough.
@@ -431,6 +478,14 @@ pub struct ShooterDef {
     /// a teammate's rocket still lifts you. Only read when there are teams.
     #[serde(default)]
     pub friendly_fire: f32,
+    /// A game's changes to the guns (`crate::tune`): set from the game file,
+    /// never by a map.
+    #[serde(default)]
+    pub weapon_tune: std::collections::BTreeMap<String, serde_json::Value>,
+    /// A game's pace by terrain class (`crate::tune`); empty, the ground is
+    /// all one.
+    #[serde(default)]
+    pub terrain_pace: std::collections::BTreeMap<String, f32>,
     /// The player's side in a team match, set by the launch screen; None is
     /// the smaller side (src/shooter/teams.rs).
     #[serde(default)]
@@ -502,6 +557,11 @@ pub struct PickupDef {
     /// an arena a map rather than a room.
     #[serde(default)]
     pub respawn_s: Option<f32>,
+    /// The gun the map named here, when a weapon kit put another gun of the
+    /// same role in its place. The platform keeps that gun's colour, so a spot
+    /// reads the same whichever kit is in play. Never in a file.
+    #[serde(skip)]
+    pub pad_of: Option<String>,
 }
 
 impl PickupDef {
@@ -513,7 +573,7 @@ impl PickupDef {
         match self.kind.as_str() {
             "health" => Some("pickup_pad_health".into()),
             "armour" | "armor" => Some("pickup_pad_armour".into()),
-            "ammo" | "weapon" => self.weapon.as_ref().map(|w| format!("weapon_pad_{w}")),
+            "ammo" | "weapon" => self.pad_of.as_ref().or(self.weapon.as_ref()).map(|w| format!("weapon_pad_{w}")),
             _ => None,
         }
     }
@@ -994,7 +1054,13 @@ pub struct Fields {
     pub moist: Vec<f32>,
     /// Year of the last fire, or i32::MIN.
     pub burn_year: Vec<i32>,
+    /// Strangeness, 0 to 1 (the `impact` and `bloom` events): read as the
+    /// `bloom` realm's overlay when the site fields are built
+    /// (`realm_map`), and directly by the biome rules and plant placement.
     pub strange: Vec<f32>,
+    /// `realm` chronicle events, painted onto the site grid's realm
+    /// overlays when it is built (`realm_map::RealmMap`).
+    pub realm_paint: Vec<super::realm_map::Paint>,
     /// 0 none, 1 open water (a river or lake), 2 old river bed, 3 path.
     pub water: Vec<u8>,
     /// Surface material override (0 none): crater glass, river bed, paths.
@@ -1101,6 +1167,7 @@ impl Fields {
             moist: vec![0.5; nn],
             burn_year: vec![i32::MIN; nn],
             strange: vec![0.0; nn],
+            realm_paint: Vec::new(),
             water: vec![0; nn],
             surface: vec![0; nn],
             // Allocated on the first buried layer: cities never lay any, and at
@@ -1450,6 +1517,86 @@ pub struct Circuit {
     /// past where a kart at full speed comes down. A driver takes these
     /// flat out, where any other crest it would ease over.
     pub jumps: Vec<(f32, f32)>,
+    /// The gantry over the line, if it has one: how far its beam stands
+    /// clear above the road, metres. The race hangs its countdown lights on
+    /// the beam.
+    pub gate: Option<f32>,
+    /// Stretches where the race changes how a kart drives (wind, gravity,
+    /// a flood that rises lap by lap): track.json `zones`.
+    pub zones: Vec<Zone>,
+    /// Props a kart smashes through: track.json `smash`.
+    pub smash: Vec<Smash>,
+    /// The wall's height beside the road at each point (empty: none
+    /// anywhere): a kart behind one is out of bounds.
+    pub walls: Vec<f32>,
+}
+
+/// A stretch of road, `from` to `to` round the lap (it may wrap past the
+/// line), where the race changes something (tools/course/FORMAT.md):
+/// `wind` pushes karts toward `bearing` (degrees clockwise from north) at
+/// `value` m/s², in gusts of `gust` seconds if given; `gravity` is `value`
+/// times the kart's own; `flood` has water `laps[k]` metres deep over the
+/// road on lap k + 1 (the box `area` it fills, in voxels).
+#[derive(Deserialize, Clone, Debug, Default)]
+pub struct Zone {
+    pub from: f32,
+    pub to: f32,
+    pub kind: String,
+    #[serde(default)]
+    pub value: f32,
+    #[serde(default)]
+    pub bearing: f32,
+    #[serde(default)]
+    pub gust: f32,
+    #[serde(default)]
+    pub laps: Vec<f32>,
+    /// For a flood: the voxel boxes `[x0, y0, z0, x1, y1, z1]` (y the
+    /// floor; the water stands from there up to the lap's depth over the
+    /// road at `level`), and the road's height there.
+    #[serde(default)]
+    pub area: Vec<[i32; 6]>,
+    #[serde(default)]
+    pub level: f32,
+    /// For a flood, the water it is made of (default `river_water`).
+    #[serde(default)]
+    pub mat: String,
+    /// For a `herd`: the creature, `value` of them put down along the
+    /// stretch as the race comes up to it each lap, `laps[k]` metres either
+    /// side of the centreline on lap k + 1 (0: across the road itself; a
+    /// negative value puts none down that lap).
+    #[serde(default)]
+    pub species: String,
+    /// For a `thermal`: where it rises, `[x, z, radius, base]`, metres
+    /// (`base` the height its dust starts from); `value` is its lift, m/s².
+    #[serde(default)]
+    pub at: Vec<f32>,
+}
+
+impl Zone {
+    /// Whether lap distance `s` is on it.
+    pub fn on(&self, s: f32) -> bool {
+        if self.from <= self.to {
+            s >= self.from && s < self.to
+        } else {
+            s >= self.from || s < self.to
+        }
+    }
+}
+
+/// A prop beside or on the road that a kart smashes (track.json `smash`):
+/// voxel boxes `[x0, y0, z0, x1, y1, z1]` (world voxels, ends exclusive) of
+/// a passable copy of `mat`, gone once a kart drives into them, which costs
+/// it `slow` of its speed (0.85 keeps 85%).
+#[derive(Deserialize, Clone, Debug)]
+pub struct Smash {
+    pub boxes: Vec<[i32; 6]>,
+    pub mat: String,
+    #[serde(default = "smash_slow")]
+    pub slow: f32,
+}
+
+fn smash_slow() -> f32 {
+    0.88
 }
 
 /// A row of pickups across the road `s` metres round: `across` of them, of
@@ -1500,6 +1647,10 @@ pub struct RaceDef {
     pub rivals: u32,
     /// The library vehicle everyone drives.
     pub vehicle: String,
+    /// The numbers the items and weapons go by (race/arms.rs `ItemRules`);
+    /// the game's own (`library/games/race.json`) replace the map's.
+    #[serde(default)]
+    pub items: Option<crate::race::ItemRules>,
 }
 
 fn three() -> u32 {
@@ -1570,6 +1721,21 @@ pub struct World {
     pub ribbons: super::route::ribbon::Ribbons,
     /// Racing circuits (event `circuit`): their centrelines, for a race.
     pub circuits: Vec<Circuit>,
+    /// Flag lines and kites in the wind (events `flags`, `kites`; world/cloth.rs).
+    pub cloth: super::cloth::Cloth,
+    /// Holes that empty at dusk (event `roost`; creatures/roost.rs).
+    pub roosts: Vec<crate::creatures::roost::RoostDef>,
+    /// What the ground offers, measured once (world/survey): set when the
+    /// game loads a world it can be explored in, None otherwise.
+    pub survey: Option<super::survey::Survey>,
+    /// What each patch of ground offers a plant (world/site.rs), measured
+    /// before the plants are placed.
+    pub site: Option<super::site::Site>,
+    /// Realm looks (`WorldDef::realm_looks`): ground swaps as (realm, by
+    /// its index in the site's realm table, material from, material to),
+    /// and each realm's mist. Empty unless the world asks for them.
+    pub realm_swaps: Vec<(u8, u8, u8)>,
+    pub realm_mist: Vec<(u8, f32)>,
     pub spawn: Vec3,
     pub spawn_yaw: f32,
     /// What each event did, in order, for the gazetteer and `--validate`.
@@ -1579,6 +1745,54 @@ pub struct World {
 }
 
 impl World {
+    /// Gather the realm looks this world draws (`WorldDef::realm_looks`),
+    /// once the site fields and their realm map are built.
+    pub fn realm_looks(&mut self) {
+        if !self.def.realm_looks {
+            return;
+        }
+        let Some(site) = self.site.as_ref() else { return };
+        for (k, name) in site.realms.names.iter().enumerate().skip(1) {
+            let Some(r) = self.lib.realms.iter().find(|r| &r.name == name) else { continue };
+            for (a, b) in &r.ground {
+                if let (Some(a), Some(b)) = (self.lib.material(a), self.lib.material(b)) {
+                    self.realm_swaps.push((k as u8, a, b));
+                }
+            }
+            if r.mist > 0.0 {
+                self.realm_mist.push((k as u8, r.mist));
+            }
+        }
+    }
+
+    /// The ground material at 1 m cell `i`, after any realm look: a realm
+    /// that turns `mat` into another does so where its share of the cell
+    /// passes a threshold that wanders with a slow noise, so the changed
+    /// ground comes in blobs rather than along cell lines.
+    pub fn realm_ground(&self, i: usize, mat: u8) -> u8 {
+        if self.realm_swaps.is_empty() {
+            return mat;
+        }
+        let Some(site) = self.site.as_ref() else { return mat };
+        let cell = self.f.size / self.f.n as f32;
+        let (x, z) = ((i % self.f.n) as f32 * cell, (i / self.f.n) as f32 * cell);
+        let shares = site.realms.shares(site.realms.idx(x, z));
+        let bar = 0.3 + 0.4 * (super::noise::fbm2(x / 14.0, z / 14.0, 2, self.def.seed ^ 0x7265_616c) * 0.5 + 0.5);
+        for &(r, from, to) in &self.realm_swaps {
+            if from == mat && shares.iter().any(|s| s.0 == r && s.1 > bar) {
+                return to;
+            }
+        }
+        mat
+    }
+
+    /// Mist from realm looks at world point (x, z), 0 to 1.
+    pub fn realm_mist_at(&self, x: f32, z: f32) -> f32 {
+        let Some(site) = self.site.as_ref().filter(|_| !self.realm_mist.is_empty()) else { return 0.0 };
+        let shares = site.realms.shares(site.realms.idx(x, z));
+        self.realm_mist.iter().map(|&(r, m)| m * shares.iter().filter(|s| s.0 == r).map(|s| s.1).sum::<f32>()).fold(0.0, f32::max)
+    }
+
     pub fn index(&mut self) {
         self.city.index();
         self.placed_grid.clear();

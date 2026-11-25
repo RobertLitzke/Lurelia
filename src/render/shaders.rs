@@ -79,6 +79,8 @@ fn prelude() -> String {
         // Distant canopies broken into clumps of sun and shade (scene.wgsl);
         // VOXEL_DAPPLE=0 for comparisons.
         format!("const DAPPLE_ON: bool = {};", std::env::var("VOXEL_DAPPLE").map(|v| v != "0").unwrap_or(true)),
+        // VOXEL_CROWN_TINT=0 for comparisons.
+        format!("const CROWN_TINT_ON: bool = {};", std::env::var("VOXEL_CROWN_TINT").map(|v| v != "0").unwrap_or(true)),
         // Per-voxel jitter for the classic style's texture set (render/texsets.rs).
         format!("const TEX_JITTER: f32 = {:?};", super::texsets::JITTER),
         // Material flags in mats[m].w (world/matlib.rs flag).
@@ -107,7 +109,6 @@ fn prelude() -> String {
         format!("const Q_BLOCK_BIT: u32 = {}u;", quad::BLOCK_BIT),
         format!("const Q_TUBE_BIT: u32 = {}u;", quad::TUBE_BIT),
         format!("const Q_AO_SHIFT: u32 = {}u;", quad::AO_SHIFT),
-        format!("const Q_SEAM_SHIFT: u32 = {}u;", quad::SEAM_SHIFT),
         format!("const Q_BLEND_SHIFT: u32 = {}u;", quad::BLEND_SHIFT),
         format!("const WATER_SHALLOW: vec3<f32> = {};", v3(super::WATER_SHALLOW)),
         format!("const WATER_DEEP: vec3<f32> = {};", v3(super::WATER_DEEP)),

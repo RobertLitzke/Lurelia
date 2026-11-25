@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "lowmouth",
   "notes": "Mire, the cane town: mown yards between the cottages, a few live oaks hung with moss, dirt lanes.",
+  "habitat": "settlement",
   "priority": 9,
   "rules": {"region": "mire"},
   "surface": "meadow_grass",
   "subsurface": "silt",
   "fringe": 0,
+  "soil": 0.6,
   "map_color": [200, 180, 140],
   "plants": [
     {"plant": "live_oak", "density": 0.0008, "placement": {"verb": "lone", "params": {"spacing": 30}}},

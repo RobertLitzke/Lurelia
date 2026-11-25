@@ -6,6 +6,7 @@
   "sea_level_m": 10,
   "underwater": {"visibility": 8, "light": 0.2},
   "seed": 1929,
+  "plants": "v2",
   "sun": {"latitude": 37},
   "seeds": 1,
   "rock": [["wingate_sandstone", 1.0]],

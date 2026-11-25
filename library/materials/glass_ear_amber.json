@@ -1,0 +1,17 @@
+{
+  "name": "glass_ear_amber",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "A glass-ear's shelf: a translucent-looking amber fungus that grows only on titan bone and glows at night.",
+  "smooth": true,
+  "glow": 1.6,
+  "texture": {
+    "pattern": "blotch",
+    "base": [226, 150, 52],
+    "alt": [250, 200, 110],
+    "scale": 4,
+    "contrast": 0.7,
+    "calm": {"base": [230, 160, 64], "alt": [252, 206, 120]}
+  },
+  "round": true
+}

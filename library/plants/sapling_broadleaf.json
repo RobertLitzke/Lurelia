@@ -1,0 +1,16 @@
+{
+  "name": "sapling_broadleaf",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A young broadleaf near the tree that seeded it (placement v2 stand structure): a thin stem and a small open crown, head high to twice that. It wears its parent's bark, leaves and autumn colour, so one shape stands for every broadleaf's young.",
+  "form": "branching",
+  "height": [1.8, 4.0],
+  "trunk_radius": [0.04, 0.07],
+  "crown_radius": [0.5, 0.9],
+  "bark": "bark",
+  "leaf": "leaves",
+  "leader": 0.7,
+  "fill": 0.6,
+  "spread": 0.3,
+  "max_slope": 0.8
+}

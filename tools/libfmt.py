@@ -29,7 +29,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LIB = os.path.join(ROOT, "library")
-KINDS = ["materials", "plants", "structures", "kits", "cities", "creatures", "collectibles", "biomes", "signs", "weapons", "fx"]
+KINDS = ["materials", "plants", "structures", "kits", "cities", "creatures", "collectibles", "biomes", "habitats", "realms", "signs", "weapons", "fx"]
 WIDTH = 118
 
 FIRST = ["name", "version", "introduced_by", "_generated_by", "notes"]
@@ -39,9 +39,10 @@ ORDER = {
     "structures": ["size", "anchor", "foundation", "level", "decays", "base", "vines", "tags", "slots", "ops"],
     "kits": ["ground", "width", "mat", "shoulder", "margin", "lift", "sag", "clear", "max_span", "walk", "deck", "rails", "posts", "piers", "braces", "span"],
     "cities": ["like", "road", "pavement", "glass", "metal", "deck", "deck_top", "rail", "chimney", "porch_floor", "doors", "plinths", "ivy", "ivy_mat", "tree_boost", "remap"],
-    "creatures": ["voxel", "grid", "half_w", "height", "colors", "morphs", "behaviour", "in_water", "ops"],
+    "creatures": ["voxel", "grid", "half_w", "height", "colors", "morphs", "forms", "behaviour", "in_water", "ops"],
     "collectibles": ["display", "voxel", "spin", "colors", "ops"],
-    "biomes": ["priority", "rules", "surface", "subsurface", "rock", "fringe", "map_color", "plants", "features", "creatures", "collectibles", "sound"],
+    "habitats": ["wet", "soil", "shade", "rock", "disturbed", "open", "forage"],
+    "biomes": ["habitat", "priority", "rules", "surface", "subsurface", "rock", "fringe", "soil", "map_color", "plants", "features", "creatures", "collectibles", "sound"],
     "signs": ["post", "board", "centre_m", "offset_m", "thickness", "face", "edge", "ink", "cap_m", "border_m", "letters", "two_sided", "bare"],
     "weapons": ["display", "slot", "ammo_max", "ammo_start", "mag", "reload_s", "zoom", "fire", "alt", "dig", "view", "grip", "tint"],
     "fx": ["shape", "count", "speed", "cone_deg", "life", "size", "size_jitter", "gravity", "drag", "wind", "settle", "flutter", "color",
@@ -286,6 +287,11 @@ def world_uses(lib):
                     hit.add(("creatures", parent))
                 if c.get("rarity", 0) > 0 and parent and ("creatures", parent) in hit:
                     hit.add(("creatures", name))
+                # A form drawn with another entry's model (the lioness).
+                if ("creatures", name) in hit:
+                    for f in (c.get("forms") or {}).values():
+                        if f in lib["creatures"]:
+                            hit.add(("creatures", f))
         for key in hit:
             uses.setdefault(key, []).append(wname)
     return uses

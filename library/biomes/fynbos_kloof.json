@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saltmirror",
   "notes": "The ravines in the range: deeper soil and the little water there is, silver trees standing in it and the fynbos taller round them.",
+  "habitat": "heath_moor",
   "priority": 11,
   "rules": {"elev": [8, 400], "moist": [0.55, 1.0]},
   "surface": "fynbos_grass",
   "subsurface": "dirt",
   "rock": "quartzite",
+  "soil": 0.25,
   "map_color": [132, 150, 124],
   "plants": [
     {

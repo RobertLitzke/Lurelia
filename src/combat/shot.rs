@@ -3,7 +3,7 @@
 //! and the damage either leaves behind.
 
 use super::Scene;
-use crate::anim::{ragdoll::Ragdoll, Anim};
+use crate::anim::Anim;
 use crate::creatures::age::Age;
 use crate::creatures::walk::Critter;
 use crate::creatures::{Creature, Look};
@@ -311,20 +311,24 @@ fn kill(scene: &mut Scene, e: hecs::Entity, fling: Vec3) {
     let _ = world.remove_one::<Hurt>(e);
     let thrown = fling * carries(height);
     match rig {
-        Some(rig) => {
-            let mut limp = Ragdoll::new(rig, scene.models[model].voxel, e.id() ^ 0x5add);
-            let speed = thrown.length();
-            if speed > crate::creatures::flung::FLUNG {
-                limp.hurl(rig, speed, e.id() ^ 0x5add);
+        Some(rig) if crate::creatures::carcass::go_limp(world, e, &scene.models) => {
+            if let Ok(mut anim) = world.get::<&mut Anim>(e) {
+                if let Some(l) = anim.limp.as_mut() {
+                    // Over where it stood, and tumbling as hard as it was hit.
+                    l.topple(rig, e.id() ^ 0x5add);
+                    let speed = thrown.length();
+                    if speed > crate::creatures::flung::FLUNG {
+                        l.tumble(speed * 0.6, e.id() ^ 0x5add);
+                    }
+                }
             }
-            let mut anim = Anim::hold(limp.pose.clone());
-            anim.ragdoll = Some(Box::new(limp));
-            let _ = world.insert(e, (Age::fresh_kill(now), anim));
+            let at = world.get::<&Look>(e).map(|l| l.pos).unwrap_or_default();
+            let _ = world.insert(e, (Age::fresh_kill(now), crate::creatures::carcass::Carcass::fresh(height, at)));
         }
         // Nothing rigged to go limp (an insect, a bird drawn as one piece):
         // it simply stops and fades with the rest of the carcasses. It still
         // falls: a bird shot out of the air used to hang there.
-        None => {
+        _ => {
             let _ = world.remove_one::<Anim>(e);
             let _ = world.insert_one(e, Age::fresh_kill(now));
         }
@@ -456,7 +460,8 @@ impl Shell {
                 break;
             }
             let dir = delta / d;
-            let wall = scene.store.ray(self.pos, dir, d, |m| m != AIR);
+            // Passable voxels (vines, a race's lamp posts) don't stop it.
+            let wall = scene.store.ray(self.pos, dir, d, |m| m != AIR && !crate::world::store::passable(m));
             let mut reach = wall.as_ref().map_or(d, |h| h.t);
             // A body in the way goes off on the body, not behind it.
             // Its owner is in the way too, once it has bounced and if it
@@ -603,6 +608,7 @@ mod tests {
             tracer: [1.0; 3],
             tracer_s: 0.05,
             look: String::new(),
+            move_spread: None,
         };
         assert!((falloff(&f, 0.0) - 10.0).abs() < 1e-4);
         assert!((falloff(&f, 50.0) - 6.25).abs() < 1e-4);

@@ -8,6 +8,7 @@
   "surf": {"height": 0.9},
   "underwater": {"visibility": 16, "light": 0.13},
   "seed": 7,
+  "plants": "v2",
   "seeds": 1,
   "rock": [["basalt", 0.55], ["tuff", 0.3], ["stone_dark", 0.15]],
   "spawn": [812, 641],

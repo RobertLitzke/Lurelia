@@ -1,0 +1,27 @@
+{
+  "name": "eider_female",
+  "version": 1,
+  "introduced_by": "kaldvik",
+  "notes": "The eider's female form (eider `forms`): the duck, warm brown barred darker across the body, with the eider's long sloping bill. Only its model is used; it spawns as an eider.",
+  "colors": {
+    "body": [142, 100, 62],
+    "head": [136, 96, 60],
+    "neck": [136, 96, 60],
+    "white": [142, 100, 62],
+    "breast": [146, 104, 66],
+    "wing": [112, 78, 48],
+    "tail": [100, 72, 46],
+    "bar": [84, 58, 38]
+  },
+  "like": "eider",
+  "extra_ops": [
+    {"op": "recolour", "at": [28, 6, 22], "until": [39, 20, 23], "from": "body", "to": "bar"},
+    {"op": "recolour", "at": [28, 6, 25], "until": [39, 20, 26], "from": "body", "to": "bar"},
+    {"op": "recolour", "at": [28, 6, 28], "until": [39, 20, 29], "from": "body", "to": "bar"},
+    {"op": "recolour", "at": [28, 6, 31], "until": [39, 20, 32], "from": "body", "to": "bar"},
+    {"op": "recolour", "at": [28, 6, 34], "until": [39, 20, 35], "from": "body", "to": "bar"},
+    {"op": "recolour", "at": [28, 6, 37], "until": [39, 20, 38], "from": "body", "to": "bar"},
+    {"op": "recolour", "at": [28, 6, 40], "until": [39, 20, 41], "from": "body", "to": "bar"},
+    {"op": "recolour", "at": [28, 6, 43], "until": [39, 20, 44], "from": "body", "to": "bar"}
+  ]
+}

@@ -551,11 +551,19 @@ pub struct Arsenal {
 impl Arsenal {
     /// The named weapons out of the library, in their own slot order. Names
     /// the library does not know are reported and skipped.
-    pub fn new(lib: &crate::library::Library, names: &[String], full: bool, mut unknown: impl FnMut(&str)) -> Arsenal {
+    pub fn new(lib: &crate::library::Library, names: &[String], full: bool, unknown: impl FnMut(&str)) -> Arsenal {
+        Arsenal::tuned(lib, names, full, &std::collections::BTreeMap::new(), unknown)
+    }
+
+    /// `new`, each gun as a game's `weapon_tune` changes it (`crate::tune`).
+    pub fn tuned(lib: &crate::library::Library, names: &[String], full: bool, tune: &std::collections::BTreeMap<String, serde_json::Value>, mut unknown: impl FnMut(&str)) -> Arsenal {
         let mut guns: Vec<Held> = Vec::new();
         for n in names {
             match lib.weapon(n) {
-                Some(i) => guns.push(Held::new(Arc::new(lib.weapons[i].clone()), full)),
+                Some(i) => {
+                    let def = crate::tune::weapon(lib, n, tune).unwrap_or_else(|| lib.weapons[i].clone());
+                    guns.push(Held::new(Arc::new(def), full));
+                }
                 None => unknown(n),
             }
         }
@@ -786,6 +794,7 @@ mod tests {
             introduced_by: String::new(),
             display: "TEST".into(),
             slot: 1,
+            role: "melee".into(),
             ammo_max: ammo,
             ammo_start: ammo,
             mag: 0,
@@ -832,6 +841,7 @@ mod tests {
                 stick_s: 0.0,
                 head_mult: 1.0,
                 look: String::new(),
+                move_spread: None,
             },
             alt: None,
             view: String::new(),

@@ -10,5 +10,7 @@
   "bark": "tree_fern_trunk",
   "leaf": "tree_fern_frond",
   "squash": 0.4,
-  "max_slope": 0.8
+  "max_slope": 0.8,
+  "site": {"wet": [0.2, 1.0], "shade": [0.1, 1.0]},
+  "realms": ["dinosaur"]
 }

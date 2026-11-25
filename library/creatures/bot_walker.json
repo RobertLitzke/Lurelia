@@ -1,0 +1,226 @@
+{
+  "name": "bot_walker",
+  "version": 1,
+  "introduced_by": "shooter",
+  "notes": "Reverse-knee walker: the thigh runs forward and down to a knee in front of the body, the shin back and down to an ankle 0.35 m up, and a long metatarsal to a three-toed foot. Torso pitched forward, long arms, a narrow sensor head with a crest. Modelled standing at rest; the knees bend the other way.",
+  "ops": [
+    {"op": "ellipsoid", "centre": [20, 50, 22.4], "radius": [5.6, 5.0, 5.0], "mat": "body"},
+    {"op": "ellipsoid", "centre": [20, 57.5, 20.6], "radius": [5.0, 5.8, 4.4], "mat": "limb", "part": "spine"},
+    {"op": "ellipsoid", "centre": [20, 67, 18.6], "radius": [6.0, 8.6, 5.2], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 75.5, 17.6], "radius": [7.6, 4.5, 4.6], "mat": "body", "part": "chest"},
+    {"op": "segment", "points": [[20, 80, 16.0], [20, 84, 12.0]], "radius": 2.5, "mat": "limb", "part": "neck"},
+    {"op": "ellipsoid", "centre": [20, 87, 10.0], "radius": [2.9, 3.6, 5.8], "mat": "face", "part": "head"},
+    {"op": "ellipsoid", "centre": [20, 87.6, 14.4], "radius": [3.1, 3.7, 3.3], "mat": "face", "part": "head"},
+    {"op": "ellipsoid", "centre": [20, 90.6, 16.0], "radius": [1.3, 2.8, 6.8], "mat": "dark", "part": "head"},
+    {
+      "op": "segment",
+      "points": [[20, 90.0, 9.5], [20, 92.8, 14.5], [20, 92.6, 19.0], [20, 90.0, 23.5]],
+      "radius": 1.3,
+      "mat": "dark",
+      "part": "head"
+    },
+    {"op": "ellipsoid", "centre": [20, 83.4, 8.8], "radius": [2.1, 1.5, 3.4], "mat": "face", "part": "jaw"},
+    {"op": "ellipsoid", "centre": [11.0, 74, 17.6], "radius": [3.0, 3.4, 3.0], "mat": "uniform", "part": "arm_l"},
+    {"op": "ellipsoid", "centre": [29.0, 74, 17.6], "radius": [3.0, 3.4, 3.0], "mat": "uniform", "part": "arm_r"},
+    {"op": "segment", "points": [[10.8, 72.5, 17.6], [10.2, 64, 18.4]], "radius": 2.4, "mat": "limb", "part": "arm_l"},
+    {"op": "segment", "points": [[29.2, 72.5, 17.6], [29.8, 64, 18.4]], "radius": 2.4, "mat": "limb", "part": "arm_r"},
+    {"op": "segment", "points": [[10.2, 64, 18.4], [9.8, 58, 18.6]], "radius": 2.1, "mat": "limb", "part": "arm_l"},
+    {"op": "segment", "points": [[29.8, 64, 18.4], [30.2, 58, 18.6]], "radius": 2.1, "mat": "limb", "part": "arm_r"},
+    {"op": "segment", "points": [[9.6, 57, 18.6], [9.0, 46, 17.2]], "radius": 1.9, "mat": "limb", "part": "fore_l"},
+    {"op": "segment", "points": [[30.4, 57, 18.6], [31.0, 46, 17.2]], "radius": 1.9, "mat": "limb", "part": "fore_r"},
+    {"op": "segment", "points": [[9.0, 46, 17.2], [8.6, 38, 15.6]], "radius": 1.6, "mat": "limb", "part": "fore_l"},
+    {"op": "segment", "points": [[31.0, 46, 17.2], [31.4, 38, 15.6]], "radius": 1.6, "mat": "limb", "part": "fore_r"},
+    {"op": "ellipsoid", "centre": [8.6, 32.5, 14.8], "radius": [1.7, 4.4, 2.2], "mat": "foot", "part": "hand_l"},
+    {"op": "ellipsoid", "centre": [31.4, 32.5, 14.8], "radius": [1.7, 4.4, 2.2], "mat": "foot", "part": "hand_r"},
+    {"op": "segment", "points": [[7.6, 29, 14.0], [6.6, 24, 12.4]], "radius": 1.1, "mat": "foot", "part": "hand_l"},
+    {"op": "segment", "points": [[32.4, 29, 14.0], [33.4, 24, 12.4]], "radius": 1.1, "mat": "foot", "part": "hand_r"},
+    {
+      "op": "segment",
+      "points": [[8.6, 28.5, 13.6], [8.6, 23.5, 12.0]],
+      "radius": 1.1,
+      "mat": "foot",
+      "part": "hand_l"
+    },
+    {
+      "op": "segment",
+      "points": [[31.4, 28.5, 13.6], [31.4, 23.5, 12.0]],
+      "radius": 1.1,
+      "mat": "foot",
+      "part": "hand_r"
+    },
+    {"op": "segment", "points": [[9.8, 29, 14.0], [10.6, 24, 12.4]], "radius": 1.1, "mat": "foot", "part": "hand_l"},
+    {"op": "segment", "points": [[30.2, 29, 14.0], [29.4, 24, 12.4]], "radius": 1.1, "mat": "foot", "part": "hand_r"},
+    {"op": "segment", "points": [[15.2, 49, 21.4], [15.1, 43, 17.6]], "radius": 3.6, "mat": "limb", "part": "thigh_l"},
+    {"op": "segment", "points": [[24.8, 49, 21.4], [24.9, 43, 17.6]], "radius": 3.6, "mat": "limb", "part": "thigh_r"},
+    {
+      "op": "segment",
+      "points": [[15.1, 43, 17.6], [15.0, 37.5, 13.0]],
+      "radius": 3.1,
+      "mat": "limb",
+      "part": "thigh_l"
+    },
+    {
+      "op": "segment",
+      "points": [[24.9, 43, 17.6], [25.0, 37.5, 13.0]],
+      "radius": 3.1,
+      "mat": "limb",
+      "part": "thigh_r"
+    },
+    {"op": "ellipsoid", "centre": [15.0, 36.6, 11.8], "radius": [2.8, 3.0, 2.8], "mat": "dark", "part": "shin_l"},
+    {"op": "ellipsoid", "centre": [25.0, 36.6, 11.8], "radius": [2.8, 3.0, 2.8], "mat": "dark", "part": "shin_r"},
+    {
+      "op": "segment",
+      "points": [[15.0, 36.5, 12.8], [15.1, 28, 18.0]],
+      "radius": 2.6,
+      "mat": "seam",
+      "part": "shin_l"
+    },
+    {
+      "op": "segment",
+      "points": [[25.0, 36.5, 12.8], [24.9, 28, 18.0]],
+      "radius": 2.6,
+      "mat": "seam",
+      "part": "shin_r"
+    },
+    {"op": "segment", "points": [[15.1, 28, 18.0], [15.2, 20, 22.0]], "radius": 2.0, "mat": "seam", "part": "shin_l"},
+    {"op": "segment", "points": [[24.9, 28, 18.0], [24.8, 20, 22.0]], "radius": 2.0, "mat": "seam", "part": "shin_r"},
+    {"op": "ellipsoid", "centre": [15.2, 19.5, 22.4], "radius": [2.3, 2.6, 2.4], "mat": "dark", "part": "shin_l"},
+    {"op": "ellipsoid", "centre": [24.8, 19.5, 22.4], "radius": [2.3, 2.6, 2.4], "mat": "dark", "part": "shin_r"},
+    {"op": "segment", "points": [[15.2, 19, 22.2], [15.2, 10, 20.4]], "radius": 1.9, "mat": "dark", "part": "foot_l"},
+    {"op": "segment", "points": [[24.8, 19, 22.2], [24.8, 10, 20.4]], "radius": 1.9, "mat": "dark", "part": "foot_r"},
+    {"op": "segment", "points": [[15.2, 10, 20.4], [15.2, 3.8, 18.8]], "radius": 1.7, "mat": "foot", "part": "foot_l"},
+    {"op": "segment", "points": [[24.8, 10, 20.4], [24.8, 3.8, 18.8]], "radius": 1.7, "mat": "foot", "part": "foot_r"},
+    {"op": "ellipsoid", "centre": [15.2, 2.2, 18.0], "radius": [2.8, 2.2, 2.8], "mat": "foot", "part": "foot_l"},
+    {"op": "ellipsoid", "centre": [24.8, 2.2, 18.0], "radius": [2.8, 2.2, 2.8], "mat": "foot", "part": "foot_r"},
+    {"op": "segment", "points": [[15.2, 2.4, 17.6], [15.2, 1.8, 9.6]], "radius": 1.5, "mat": "foot", "part": "foot_l"},
+    {"op": "segment", "points": [[24.8, 2.4, 17.6], [24.8, 1.8, 9.6]], "radius": 1.5, "mat": "foot", "part": "foot_r"},
+    {
+      "op": "segment",
+      "points": [[15.2, 2.4, 17.6], [11.6, 1.8, 10.8]],
+      "radius": 1.4,
+      "mat": "foot",
+      "part": "foot_l"
+    },
+    {
+      "op": "segment",
+      "points": [[24.8, 2.4, 17.6], [28.4, 1.8, 10.8]],
+      "radius": 1.4,
+      "mat": "foot",
+      "part": "foot_r"
+    },
+    {
+      "op": "segment",
+      "points": [[15.2, 2.4, 17.6], [18.8, 1.8, 10.8]],
+      "radius": 1.4,
+      "mat": "foot",
+      "part": "foot_l"
+    },
+    {
+      "op": "segment",
+      "points": [[24.8, 2.4, 17.6], [21.2, 1.8, 10.8]],
+      "radius": 1.4,
+      "mat": "foot",
+      "part": "foot_r"
+    },
+    {"op": "recolour", "at": [17, 86, 3], "until": [23, 88, 12], "from": "face", "to": "visor"},
+    {"op": "recolour", "at": [13, 62, 12], "until": [27, 74, 18], "from": "body", "to": "uniform"},
+    {"op": "recolour", "at": [19, 62, 12], "until": [21, 74, 18], "from": "uniform", "to": "seam"},
+    {"op": "recolour", "at": [13, 61, 12], "until": [27, 63, 28], "from": "limb", "to": "seam"},
+    {"op": "recolour", "at": [7, 57, 14], "until": [13, 59, 24], "from": "limb", "to": "seam"},
+    {"op": "recolour", "at": [27, 57, 14], "until": [33, 59, 24], "from": "limb", "to": "seam"},
+    {"op": "recolour", "at": [8, 45, 12], "until": [13, 46, 22], "from": "limb", "to": "seam"},
+    {"op": "recolour", "at": [27, 45, 12], "until": [32, 46, 22], "from": "limb", "to": "seam"},
+    {"op": "recolour", "at": [14, 74, 10], "until": [26, 79, 28], "from": "body", "to": "dark"},
+    {"op": "recolour", "at": [14, 74, 10], "until": [26, 79, 28], "from": "uniform", "to": "dark"}
+  ],
+  "like": "bot",
+  "rig": {
+    "plan": "biped",
+    "bones": [
+      {"name": "pelvis", "role": "root", "joint": [20, 50, 22.4]},
+      {"name": "spine", "role": "spine", "parent": "pelvis", "joint": [20, 54.5, 21.4], "overlap": 1},
+      {"name": "chest", "role": "spine", "parent": "spine", "joint": [20, 62, 19.4], "overlap": 1},
+      {"name": "neck", "role": "neck", "parent": "chest", "joint": [20, 79, 16.0], "overlap": 1},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [20, 83, 12.6], "overlap": 1},
+      {"name": "jaw", "role": "jaw", "parent": "head", "joint": [20, 84.5, 12.5]},
+      {
+        "name": "arm_l",
+        "role": "arm",
+        "parent": "chest",
+        "joint": [11.0, 73.5, 17.6],
+        "side": "l",
+        "overlap": 1,
+        "loose": true
+      },
+      {"name": "fore_l", "role": "arm", "parent": "arm_l", "joint": [10.2, 58.0, 18.6], "side": "l", "overlap": 1},
+      {"name": "hand_l", "role": "arm", "parent": "fore_l", "joint": [9.0, 35.5, 15.0], "side": "l", "overlap": 1},
+      {
+        "name": "arm_r",
+        "role": "arm",
+        "parent": "chest",
+        "joint": [29.0, 73.5, 17.6],
+        "side": "r",
+        "overlap": 1,
+        "loose": true
+      },
+      {"name": "fore_r", "role": "arm", "parent": "arm_r", "joint": [29.8, 58.0, 18.6], "side": "r", "overlap": 1},
+      {"name": "hand_r", "role": "arm", "parent": "fore_r", "joint": [31.0, 35.5, 15.0], "side": "r", "overlap": 1},
+      {
+        "name": "thigh_l",
+        "role": "leg",
+        "parent": "pelvis",
+        "joint": [15.2, 50, 21.6],
+        "side": "l",
+        "pair": 0,
+        "overlap": 1,
+        "loose": true
+      },
+      {
+        "name": "shin_l",
+        "role": "leg",
+        "parent": "thigh_l",
+        "joint": [15.0, 36.8, 12.8],
+        "side": "l",
+        "pair": 0,
+        "overlap": 1
+      },
+      {
+        "name": "foot_l",
+        "role": "leg",
+        "parent": "shin_l",
+        "joint": [15.2, 19.2, 22.2],
+        "side": "l",
+        "pair": 0,
+        "overlap": 1
+      },
+      {
+        "name": "thigh_r",
+        "role": "leg",
+        "parent": "pelvis",
+        "joint": [24.8, 50, 21.6],
+        "side": "r",
+        "pair": 0,
+        "overlap": 1,
+        "loose": true
+      },
+      {
+        "name": "shin_r",
+        "role": "leg",
+        "parent": "thigh_r",
+        "joint": [25.0, 36.8, 12.8],
+        "side": "r",
+        "pair": 0,
+        "overlap": 1
+      },
+      {
+        "name": "foot_r",
+        "role": "leg",
+        "parent": "shin_r",
+        "joint": [24.8, 19.2, 22.2],
+        "side": "r",
+        "pair": 0,
+        "overlap": 1
+      }
+    ]
+  }
+}

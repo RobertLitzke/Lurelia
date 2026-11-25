@@ -1,0 +1,13 @@
+{
+  "name": "heath_moor",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Heather, gorse and fynbos on poor acid ground, open to the wind.",
+  "wet": 0.4,
+  "soil": 0.2,
+  "shade": 0.0,
+  "rock": 0.15,
+  "disturbed": 0.05,
+  "open": 0.9,
+  "forage": ["browse", "nectar"]
+}

@@ -1,11 +1,13 @@
 //! A carcass with nothing holding it up.
 //!
 //! A shot animal stops being an animal: `combat::shot::kill` takes its mover
-//! away and gives it a limp ragdoll, and what is left is a thing with mass.
-//! This is what happens to that thing -- it falls, a blast throws it, it hits
-//! the wall and comes off it, and it slides to a stop (`physics::tumble`),
-//! with the body's own acceleration fed to the ragdoll as `shake` so the
-//! limbs trail and a landing throws them forward.
+//! away and makes it a limp body (anim/limp.rs), and what is left is a thing
+//! with mass. This is what happens to that thing -- it falls, a blast throws
+//! it, it hits the wall and comes off it, and it slides to a stop
+//! (`physics::tumble`). The limp body rides along in the box's frame with the
+//! box's own acceleration turned round on every point, so in free fall the
+//! limbs float where they are, and hitting the ground throws them down and
+//! forward onto it.
 //!
 //! Before this, a carcass stayed exactly where the animal was standing when
 //! it died, so a bird shot out of the air hung there and a goat shot on a
@@ -15,7 +17,7 @@ use super::Look;
 use crate::models::Model;
 use crate::physics::{self, Body};
 use crate::world::store::Store;
-use glam::Vec3;
+use glam::Quat;
 
 /// Metres a second below which a blow is not worth throwing a body with: it
 /// drops where it stood.
@@ -24,12 +26,14 @@ pub const FLUNG: f32 = 1.5;
 /// a body that has stopped against a ledge may still be given a shove by the
 /// next burst.
 const QUIET_S: f32 = 0.4;
-/// Seconds of stillness after which a body whose limbs are still moving is
-/// finished off in one go rather than stepped further.
-const GIVE_UP_S: f32 = 6.0;
+/// The hardest the box's acceleration is passed on to the body, metres a
+/// second squared: a landing is one step from falling to stopped, and all
+/// of it at once would fling the limbs through the floor.
+const SHAKE_MOST: f32 = 120.0;
 
 /// A carcass still moving: the box it fell with, and how long it has been
-/// still. Dropped from the entity once it has settled.
+/// still. Dropped from the entity once it has settled; carcass.rs steps
+/// the body from there.
 pub struct Flung {
     pub body: Body,
     pub quiet: f32,
@@ -39,7 +43,13 @@ pub struct Flung {
 pub fn update(world: &mut hecs::World, models: &[Model], store: &Store, dt: f32) {
     let mut done: Vec<hecs::Entity> = Vec::new();
     for (e, look, flung, anim, held) in world
-        .query::<(hecs::Entity, &mut Look, &mut Flung, Option<&mut crate::anim::Anim>, Option<&super::carry::Carried>)>()
+        .query::<(
+            hecs::Entity,
+            &mut Look,
+            &mut Flung,
+            Option<&mut crate::anim::Anim>,
+            Option<&super::carry::Carried>,
+        )>()
         .iter()
     {
         // Something else is holding it: a hunter has it in its mouth, and
@@ -52,11 +62,7 @@ pub fn update(world: &mut hecs::World, models: &[Model], store: &Store, dt: f32)
         let was = flung.body.vel;
         let moving = physics::tumble(store, &mut look.pos, &mut flung.body, dt);
         flung.quiet = if moving { 0.0 } else { flung.quiet + dt };
-        // Still as a box is not still as a body: nothing else steps a
-        // carcass, so it is kept until its ragdoll has settled too, or
-        // `GIVE_UP_S` has passed.
-        let limp = anim.as_ref().and_then(|a| a.ragdoll.as_ref()).is_none_or(|r| r.settled());
-        if flung.quiet > QUIET_S && (limp || flung.quiet > GIVE_UP_S) {
+        if flung.quiet > QUIET_S {
             done.push(e);
         }
         // The lift that puts feet on drawn, smoothed ground is set by the
@@ -70,37 +76,21 @@ pub fn update(world: &mut hecs::World, models: &[Model], store: &Store, dt: f32)
         let Some(rig) = models.get(look.model).and_then(|m| m.rig.as_ref()) else {
             continue;
         };
-        if let Some(r) = anim.ragdoll.as_mut() {
-            r.aloft(!flung.body.on_ground);
-        }
-        // What the body is doing to the limbs hanging off it, in its own
-        // frame: hitting the ground is what throws them forward.
-        let acc = (flung.body.vel - was) / dt.max(1e-4);
-        let (sy, cy) = look.yaw.sin_cos();
-        let shake = Vec3::new(acc.x * cy - acc.z * sy, acc.y, -acc.x * sy - acc.z * cy).clamp_length_max(crate::anim::figure::SHAKE_MOST);
-        anim.step_ragdoll(rig, dt, shake);
+        // What the box is doing, felt by everything riding in it.
+        let acc = ((flung.body.vel - was) / dt.max(1e-4)).clamp_length_max(SHAKE_MOST);
+        let push = Quat::from_rotation_y(-look.yaw) * -acc;
+        let ground = super::carcass::frame_ground(store, None, look.pos, look.yaw);
+        anim.step_limp(rig, dt, &ground, push);
     }
     for e in done {
         let _ = world.remove_one::<Flung>(e);
-        // Whatever motion is left is run out here, so the pose it is left in
-        // is one a body lies in.
-        let rig = world.get::<&Look>(e).ok().and_then(|l| models.get(l.model)).and_then(|m| m.rig.as_ref());
-        if let (Some(rig), Ok(mut anim)) = (rig, world.get::<&mut crate::anim::Anim>(e)) {
-            let Some(r) = anim.ragdoll.as_mut() else { continue };
-            if r.settled() {
-                continue;
-            }
-            r.aloft(false);
-            r.run_out(rig);
-            anim.step_ragdoll(rig, crate::anim::ragdoll::SETTLE_DT, Vec3::ZERO);
-            anim.prev = anim.pose.clone();
-        }
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use glam::Vec3;
     use crate::world::material::STONE;
     use crate::world::store::Voxels;
 

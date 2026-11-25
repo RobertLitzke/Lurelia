@@ -1,0 +1,8 @@
+{
+  "name": "kite_cloth_saffron",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Kitehold's saffron cloth: awnings, kites and flags.",
+  "like": "canvas",
+  "texture": {"base": [204, 148, 52], "alt": [186, 132, 44], "calm": {"base": [212, 160, 72], "alt": [196, 146, 62]}}
+}

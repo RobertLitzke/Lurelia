@@ -10,5 +10,7 @@
   "bark": "grey_brown_bark",
   "leaf": "araucaria_needles",
   "max_slope": 0.6,
-  "crown_base": 0.08
+  "crown_base": 0.08,
+  "site": {"wet": [0.2, 0.9]},
+  "realms": ["dinosaur"]
 }

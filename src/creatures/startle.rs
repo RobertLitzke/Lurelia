@@ -329,8 +329,35 @@ pub fn pressure(n: &Nerve, at: Vec3, facing: Vec3, threat: &Threat, cover: impl 
 /// `pressure` for an animal whose head is `head_down` (0 up and looking, 1
 /// down in the grass or at the water): it sees much less of what moves.
 pub fn pressure_on(n: &Nerve, at: Vec3, facing: Vec3, head_down: f32, threat: &Threat, cover: impl FnOnce() -> bool) -> f32 {
+    senses_on(n, at, facing, head_down, threat, cover).total()
+}
+
+/// `pressure_on` split by sense, nerve per second each: what the inspector
+/// (game/eco.rs) shows of why an animal is getting jumpy.
+#[derive(Clone, Copy, Default, Debug, PartialEq)]
+pub struct Senses {
+    pub sight: f32,
+    pub noise: f32,
+    pub close: f32,
+    pub scent: f32,
+}
+
+impl Senses {
+    pub fn total(&self) -> f32 {
+        self.sight + self.noise + self.close + self.scent
+    }
+
+    /// The sense pressing hardest, and how hard.
+    pub fn strongest(&self) -> (&'static str, f32) {
+        [("sight", self.sight), ("noise", self.noise), ("closeness", self.close), ("scent", self.scent)]
+            .into_iter()
+            .fold(("nothing", 0.0), |a, b| if b.1 > a.1 { b } else { a })
+    }
+}
+
+pub fn senses_on(n: &Nerve, at: Vec3, facing: Vec3, head_down: f32, threat: &Threat, cover: impl FnOnce() -> bool) -> Senses {
     if !n.minds_people() {
-        return 0.0;
+        return Senses::default();
     }
     // How far off the player is, height included: a glider twenty metres up
     // is twenty metres away even when it passes right overhead, and so is
@@ -346,7 +373,7 @@ pub fn pressure_on(n: &Nerve, at: Vec3, facing: Vec3, head_down: f32, threat: &T
         0.0
     };
     if dist >= n.dist {
-        return scent;
+        return Senses { scent, ..Senses::default() };
     }
     // Steeply toward the animal, and doubled for someone standing over it.
     let prox = (1.0 - dist / n.dist).clamp(0.0, 1.0).powf(1.3);
@@ -359,7 +386,13 @@ pub fn pressure_on(n: &Nerve, at: Vec3, facing: Vec3, head_down: f32, threat: &T
     let sight = SIGHT * eyes * threat.motion(at) * hidden;
     let noise = NOISE * threat.noise;
     let close = CLOSE * prox;
-    BASE * n.flightiness * prox * near * threat.menace * (sight + noise + close) + scent
+    let k = BASE * n.flightiness * prox * near * threat.menace;
+    Senses {
+        sight: k * sight,
+        noise: k * noise,
+        close: k * close,
+        scent,
+    }
 }
 
 /// Add this step's `pressure` to an animal's built-up alarm and say whether

@@ -1,0 +1,25 @@
+{
+  "name": "koi",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Koi in Kagami Pond, put there by whoever built the temple: carp half a metre long in red and white, gold, or plain white, cruising slowly near the surface in small groups.",
+  "colors": {"herring": [212, 72, 42], "silver": [238, 234, 226], "fin": [226, 120, 70]},
+  "morphs": [
+    {
+      "name": "kohaku",
+      "weight": 5,
+      "colors": {"herring": [[200, 60, 36], [224, 84, 48]], "silver": [[234, 230, 222], [244, 240, 234]]}
+    },
+    {
+      "name": "ogon",
+      "weight": 3,
+      "colors": {"herring": [[220, 160, 52], [236, 184, 76]], "silver": [[236, 206, 130], [246, 222, 160]]}
+    },
+    {
+      "name": "shiro",
+      "weight": 2,
+      "colors": {"herring": [[226, 222, 214], [240, 236, 228]], "silver": [[240, 238, 232], [250, 248, 244]]}
+    }
+  ],
+  "like": "trout"
+}

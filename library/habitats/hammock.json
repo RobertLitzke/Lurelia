@@ -1,0 +1,13 @@
+{
+  "name": "hammock",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Low wooded rises in wet country: palms and oaks over the marsh.",
+  "wet": 0.55,
+  "soil": 0.6,
+  "shade": 0.5,
+  "rock": 0.0,
+  "disturbed": 0.0,
+  "open": 0.4,
+  "forage": ["browse", "fruit"]
+}

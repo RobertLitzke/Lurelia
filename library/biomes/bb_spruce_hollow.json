@@ -1,0 +1,31 @@
+{
+  "name": "bb_spruce_hollow",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "The wet hollows of the spruce wood along Mirror Creek: alder and red osier among the spruce, ferns knee-deep, moss on everything.",
+  "priority": 4,
+  "rules": {"elev": [3, 200], "coast": [300, 5000], "moist": [0.62, 1.0]},
+  "map_color": [60, 96, 70],
+  "plants": [
+    {"plant": "sitka_spruce", "density": 0.016, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "alder", "density": 0.02, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "red_osier", "density": 0.01, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "fern", "density": 0.1, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "salal", "density": 0.04, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "tree_moss", "density": 0.5, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "snag", "density": 0.0012, "placement": {"verb": "lone", "params": {"spacing": 20}}}
+  ],
+  "creatures": [
+    {"creature": "elk", "count": 5.5},
+    {"creature": "raven", "count": 2},
+    {"creature": "douglas_squirrel", "count": 4.4},
+    {"creature": "great_horned_owl", "count": 2},
+    {"creature": "deer", "count": 3.3},
+    {"creature": "eagle", "count": 2},
+    {"creature": "raccoon", "count": 1.1},
+    {"creature": "bat", "count": 3.3},
+    {"creature": "banana_slug", "count": 6.6},
+    {"creature": "wolf", "count": 10}
+  ],
+  "like": "rib_spruce"
+}

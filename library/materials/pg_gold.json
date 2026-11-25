@@ -1,0 +1,15 @@
+{
+  "name": "pg_gold",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Harvest-gold paint on the outpost's panels and railings, 1970s, chalky now.",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [212, 164, 54],
+    "alt": [196, 150, 48],
+    "scale": 4,
+    "contrast": 0.5,
+    "calm": {"base": [216, 172, 66], "alt": [200, 158, 58]}
+  }
+}

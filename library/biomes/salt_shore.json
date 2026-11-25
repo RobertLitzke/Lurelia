@@ -3,11 +3,13 @@
   "version": 2,
   "introduced_by": "windbarrow",
   "notes": "Round Saltmere: a white crust of salt in plates over grey mud, low grey scrub back from it, and nothing else growing.",
+  "habitat": "salt_flat",
   "priority": 15,
   "rules": {"region": "saltmere"},
   "surface": "salt_crust",
   "subsurface": "salt_mud",
   "rock": null,
+  "soil": 0.6,
   "map_color": [222, 216, 200],
   "plants": [
     {

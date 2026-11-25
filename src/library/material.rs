@@ -46,6 +46,17 @@ pub struct CalmColours {
     pub scale: Option<f32>,
 }
 
+/// One flower through a ground's grass (`bloom` in its file).
+#[derive(Deserialize, Debug, Clone, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct BloomDef {
+    /// `white` (daisy), `blue` (lupine), `yellow` (balsamroot), `red`
+    /// (paintbrush) or `orange` (poppy).
+    pub flower: String,
+    /// Share of the tufts that flower, on average.
+    pub share: f32,
+}
+
 /// How grass grows on a ground material (`grass` in its file). The defaults
 /// are what every grass material had before: thin cover in the bare patches,
 /// thick in the lush ones, and tufts from about a hand to knee high.
@@ -217,6 +228,13 @@ pub struct MaterialDef {
     /// other ground that has one grows short dry tufts in its own colour.
     #[serde(default)]
     pub grass: Option<GrassDef>,
+    /// One kind of wildflower standing through this ground's own grass: a
+    /// `share` of the tufts (0 to 1, thicker and thinner in drifts) drawn as
+    /// that `flower` instead. Kitehold's buried stream beds are prairie grass
+    /// with lupine, paintbrush or poppies through it, so they read as waves
+    /// of one colour in the tan grass, not as a different ground.
+    #[serde(default)]
+    pub bloom: Option<BloomDef>,
     /// Leaves or needles: the bike brushes through and a rope won't hold.
     /// Default: a plant material whose name says leaf, needle, frond,
     /// canopy, bush or shrub.

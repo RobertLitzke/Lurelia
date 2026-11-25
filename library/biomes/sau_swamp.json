@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saurischia",
   "notes": "A dawn redwood swamp in the wet bottom west of the Lessa: buttressed red trunks over ferns and wet moss.",
+  "habitat": "swamp_forest",
   "priority": 8,
   "rules": {"region": "swamp"},
   "surface": "moss_grass",
   "subsurface": "lake_mud",
   "fringe": 10,
+  "soil": 0.4,
   "map_color": [52, 86, 66],
   "plants": [
     {"plant": "dawn_redwood", "density": 0.006, "placement": {"verb": "lone", "params": {"spacing": 10}}},
@@ -33,5 +35,6 @@
     {"creature": "compsognathus", "count": 1},
     {"creature": "firefly", "count": 22},
     {"creature": "crocodile", "count": 2.2}
-  ]
+  ],
+  "realm": {"dinosaur": 1.0}
 }

@@ -1,0 +1,16 @@
+{
+  "name": "bb_dunes",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Bonebight's dunes: Ribshore's dune grass and buckthorn, with teeth and loose vertebrae of the broken-up titan lying where the storms dropped them.",
+  "map_color": [214, 200, 150],
+  "features": [
+    {"structure": "drift_log", "density": 0.0004},
+    {"structure": "drift_log_b", "density": 0.0002},
+    {"structure": "drift_log_c", "density": 0.00015},
+    {"structure": "titan_tooth", "density": 5e-05},
+    {"structure": "bb_vertebra", "density": 2e-05},
+    {"structure": "bb_vertebra_b", "density": 3e-05}
+  ],
+  "like": "rib_dunes"
+}

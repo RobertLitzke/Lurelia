@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saurischia",
   "notes": "The spray ground at the foot of the Veil: always wet, deep moss, ferns and dripping tree ferns.",
+  "habitat": "riparian",
   "priority": 12,
   "rules": {"region": "spray"},
   "surface": "moss_grass",
   "subsurface": "dirt",
   "fringe": 6,
+  "soil": 0.4,
   "map_color": [70, 130, 96],
   "plants": [
     {

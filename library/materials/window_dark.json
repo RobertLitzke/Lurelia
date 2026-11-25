@@ -1,0 +1,9 @@
+{
+  "name": "window_dark",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Old window glass gone dark with salt and dust: no glint, just a deep grey-blue pane.",
+  "like": "window_glass",
+  "glints": false,
+  "texture": {"pattern": "noise", "base": [44, 54, 62], "alt": [56, 66, 74], "calm": {"base": [54, 64, 72], "alt": [64, 74, 82]}}
+}

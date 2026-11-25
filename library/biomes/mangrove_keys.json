@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "lowmouth",
   "notes": "The new mouth: red mangroves on their prop roots in the shallows, black mangroves on the mud keys, channels winding between, the river's silt settling.",
+  "habitat": "mangrove",
   "priority": 10,
   "rules": {"region": "mouth", "amphibious": true},
   "surface": "delta_mud",
   "subsurface": "silt",
+  "soil": 0.55,
   "map_color": [60, 120, 90],
   "plants": [
     {

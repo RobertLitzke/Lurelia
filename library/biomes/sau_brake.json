@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saurischia",
   "notes": "Tree-fern brakes and horsetail beds along the streams of the Fernwood, under dawn redwoods, with eelgrass in the slow water, trout and pond turtles in it and gulls come up from the mere.",
+  "habitat": "riparian",
   "priority": 4,
   "rules": {"river": [0, 22]},
   "surface": "moss_grass",
   "subsurface": "dirt",
   "fringe": 6,
+  "soil": 0.4,
   "map_color": [58, 104, 64],
   "plants": [
     {
@@ -41,5 +43,6 @@
     {"creature": "gull", "count": 3},
     {"creature": "pond_turtle", "count": 5},
     {"creature": "compsognathus", "count": 2}
-  ]
+  ],
+  "realm": {"dinosaur": 1.0}
 }

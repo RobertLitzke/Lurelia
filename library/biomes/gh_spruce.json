@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "gannet",
   "notes": "Ribshore's Sitka spruce carried on along Gannet Harbor's east edge, where the bay brings the coast too near for the spruce rule to hold.",
+  "habitat": "conifer_forest",
   "priority": 3,
   "rules": {"region": "spruce", "elev": [3, 200]},
   "surface": "pine_duff",
   "subsurface": "dirt",
+  "soil": 0.3,
   "map_color": [42, 66, 54],
   "plants": [
     {"plant": "sitka_spruce", "density": 0.028, "placement": {"verb": "clustered", "params": {"size": 40}}},

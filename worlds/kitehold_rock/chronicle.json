@@ -1,0 +1,196 @@
+{
+  "events": [
+    {
+      "year": -1000000,
+      "event": "heightmap",
+      "file": "ground.bin",
+      "cause": "the land the track is laid over, fitted to the road by tools/course/track_file.py"
+    },
+    {
+      "year": -999999,
+      "event": "terrain",
+      "mode": "add",
+      "base": 0,
+      "hills": 2.0,
+      "ridges": 0,
+      "rough": 1,
+      "vary": 0.4,
+      "warp": 30,
+      "cause": "rolling over the fitted land"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Plain",
+      "kind": "plain",
+      "along": {
+        "from": 0,
+        "to": 400,
+        "left": [
+          0,
+          90
+        ]
+      },
+      "cause": "the Plain"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Rock",
+      "kind": "plain",
+      "along": {
+        "from": 920,
+        "to": 1260,
+        "left": [
+          0,
+          40
+        ]
+      },
+      "cause": "the Rock"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "Kitehold",
+      "kind": "plain",
+      "along": {
+        "from": 1260,
+        "to": 1390,
+        "left": [
+          0,
+          30
+        ]
+      },
+      "cause": "Kitehold"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Glide",
+      "kind": "plain",
+      "along": {
+        "from": 1390,
+        "to": 1700,
+        "right": [
+          0,
+          60
+        ]
+      },
+      "cause": "the Glide"
+    },
+    {
+      "year": 1250,
+      "event": "place",
+      "cause": "a house of the wind town on the rock",
+      "structure": "kh_house",
+      "at": [
+        392,
+        372
+      ],
+      "bearing": 0
+    },
+    {
+      "year": 1251,
+      "event": "place",
+      "cause": "a house of the wind town on the rock",
+      "structure": "kh_house_b",
+      "at": [
+        450,
+        374
+      ],
+      "bearing": 0
+    },
+    {
+      "year": 1260,
+      "event": "place",
+      "cause": "a wind tower over the town's roofs",
+      "structure": "kh_wind_tower",
+      "at": [
+        421,
+        384
+      ],
+      "bearing": 0
+    },
+    {
+      "year": 1262,
+      "event": "place",
+      "cause": "the plaza mast",
+      "structure": "kh_flag_mast",
+      "at": [
+        408,
+        362
+      ],
+      "bearing": 0
+    },
+    {
+      "year": 1270,
+      "event": "flags",
+      "cause": "the plaza mast's flag lines",
+      "mast": "kh_flag_mast",
+      "fan": 10,
+      "fan_radius": 14,
+      "fan_up": 1.2,
+      "size": [
+        0.34,
+        0.44
+      ]
+    },
+    {
+      "year": 1271,
+      "event": "flags",
+      "cause": "flags strung from roof to roof across the street",
+      "link": [
+        "kh_house",
+        "kh_house_b",
+        "kh_wind_tower",
+        "kh_tower_mill"
+      ],
+      "near": [
+        420,
+        360
+      ],
+      "radius": 50,
+      "within": 20,
+      "per": 2,
+      "below": 0.6
+    },
+    {
+      "year": 1272,
+      "event": "kites",
+      "cause": "kites flown from the rim every day there is wind, straining sideways in the gusts",
+      "around": [
+        420,
+        360
+      ],
+      "radius": 48,
+      "count": 14,
+      "height": [
+        30,
+        80
+      ],
+      "size": [
+        1.5,
+        2.6
+      ]
+    },
+    {
+      "year": 1273,
+      "event": "kites",
+      "cause": "kites flown over the plain from the stakes along the straight",
+      "around": [
+        400,
+        660
+      ],
+      "radius": 80,
+      "count": 8,
+      "height": [
+        20,
+        50
+      ],
+      "size": [
+        1.4,
+        2.2
+      ]
+    }
+  ]
+}

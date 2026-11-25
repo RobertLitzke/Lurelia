@@ -1,0 +1,8 @@
+{
+  "name": "kite_cloth_white",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Kitehold's undyed cloth, bleached: awnings, kites and flags.",
+  "like": "canvas",
+  "texture": {"base": [226, 220, 204], "alt": [208, 200, 182], "calm": {"base": [232, 226, 210], "alt": [216, 208, 190]}}
+}

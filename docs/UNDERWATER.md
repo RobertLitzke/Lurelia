@@ -173,7 +173,7 @@ fifth. The ring is `ring` metres wide (24): the crest on its outer edge, a reef 
 - `blue_hole` (radius, 0 for none) puts a round shaft in the lagoon, down to the floor of the
   world, with a reef lip round it and two rings of capsules that open it out below the mouth.
 
-Caves are cut under the outer wall all the way round.
+Caves are cut under the outer wall all the way round. `regions` prefixes every region it paints (`"frondwell"` gives `frondwell_reef_flat`, `frondwell_lagoon`, `frondwell_motu`), so a world's own biomes claim the zones and the tropical reef biomes, which are named after the plain regions, stay out of its reach along with their corals (Bonebight's cold-water ring).
 
 ### `cenote`
 

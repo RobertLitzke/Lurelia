@@ -18,5 +18,6 @@
   "flower": "blueberries",
   "flower_seasons": ["summer"],
   "autumn": "blueberry_red",
-  "affords": ["nectar", "cover"]
+  "affords": ["nectar", "cover"],
+  "site": {"soil": [0.0, 0.45], "wet": [0.1, 0.9], "shade": [0.0, 0.6]}
 }

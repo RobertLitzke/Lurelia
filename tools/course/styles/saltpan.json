@@ -1,0 +1,22 @@
+{
+  "notes": "Saltmirror's pan and range: a salt-crust road, quartzite kerbs and walls, the dishes' grey paint.",
+  "story": "a salt pan under abandoned radio dishes",
+  "road": "salt_crust",
+  "kerb": "quartzite",
+  "wall": "quartzite",
+  "deck": "quartzite",
+  "gate_post": "quartzite",
+  "pad": "boost_pad",
+  "world": {
+    "rock": [["quartzite", 0.7], ["quartzite_dark", 0.3]],
+    "biomes": ["mirror_salt", "brine_flat", "brine_edge", "white_dunes", "gravel_fan", "fynbos", "fynbos_kloof", "camp_yard", "rock_island"],
+    "default_biome": "mirror_salt",
+    "seabed_biome": "brine_flat",
+    "seasons": ["summer", "autumn", "winter", "spring"],
+    "weather": {"sun": 1.5, "heat": 1.3, "clouds": 0.5, "rain": 0.2, "storm": 0.6},
+    "start_weather": "sun",
+    "weathering": 0.3,
+    "moss": 0.0
+  },
+  "look": "saltmirror"
+}

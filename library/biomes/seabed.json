@@ -3,10 +3,12 @@
   "version": 3,
   "introduced_by": "glassfall",
   "notes": "Under the sea.",
+  "habitat": "sea_floor",
   "priority": 0,
   "rules": {"underwater": true},
   "surface": "sand",
   "subsurface": "sand",
+  "soil": 0.5,
   "map_color": [60, 110, 160],
   "creatures": [
     {"creature": "herring", "count": 33},

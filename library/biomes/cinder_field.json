@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "redrock",
   "notes": "Black cinders around the young cone; a few pines and nothing else.",
+  "habitat": "volcanic_barren",
   "priority": 7,
   "rules": {"region": "cinder"},
   "surface": "cinders",
   "subsurface": "cinders",
+  "soil": 0.3,
   "map_color": [60, 50, 52],
   "plants": [
     {"plant": "ponderosa", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 40}}},

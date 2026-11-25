@@ -15,5 +15,7 @@
   "cane_lean": 0.6,
   "cane_bend": 0.14,
   "cane_spurs": 0.3,
-  "cane_leaves": 1.0
+  "cane_leaves": 1.0,
+  "site": {"wet": [0.2, 1.0], "shade": [0.03, 1.0]},
+  "realms": ["dinosaur"]
 }

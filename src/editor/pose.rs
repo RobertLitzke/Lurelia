@@ -29,6 +29,9 @@ pub enum Pose {
     Look,
     Sit,
     Lie,
+    /// Let go where it stood and settled limp on the floor (anim/limp.rs):
+    /// a fresh carcass.
+    Dead,
     /// Birds: on the wing, and down off it.
     Fly,
     Perch,
@@ -46,6 +49,7 @@ impl Pose {
             Pose::Look => "look about",
             Pose::Sit => "sit",
             Pose::Lie => "lie down",
+            Pose::Dead => "dead",
             Pose::Fly => "fly",
             Pose::Perch => "perch",
         }
@@ -73,6 +77,7 @@ pub fn choices(verb: &Verb, rig: bool) -> Vec<Pose> {
     if !rig {
         return out;
     }
+    out.push(Pose::Dead);
     if verb.flies() {
         out.extend([Pose::Fly, Pose::Perch]);
     } else {
@@ -110,6 +115,9 @@ pub fn build(pose: Pose, sp: &Species, model: &Model, seed: u32) -> Option<Anim>
     if pose == Pose::Rest || pose == Pose::Live {
         return Some(Anim::hold(crate::anim::Pose::rest(rig.bones.len())));
     }
+    if pose == Pose::Dead {
+        return Some(Anim::hold(crate::anim::limp::settled(rig, model.voxel, model.pivot, seed)));
+    }
     let verb = sp.verb();
     if verb.flies() {
         let pattern = sp.beh.flight.as_deref().and_then(flight::Pattern::parse).unwrap_or(verb.flight);
@@ -130,7 +138,7 @@ pub fn build(pose: Pose, sp: &Species, model: &Model, seed: u32) -> Option<Anim>
 /// the spot, which is what a studio is for.
 pub fn drive(anim: &mut Anim, model: &Model, sp: &Species, pose: Pose, at: Vec3, yaw: f32, dt: f32) {
     let Some(rig) = model.rig.as_ref() else { return };
-    if pose == Pose::Rest {
+    if pose == Pose::Rest || pose == Pose::Dead {
         return;
     }
     if anim.flight.is_some() {

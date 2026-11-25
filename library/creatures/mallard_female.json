@@ -1,0 +1,17 @@
+{
+  "name": "mallard_female",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "The mallard's female form (mallard `forms`): the hen, mottled brown all over with a darker crown, an orange-brown bill and no neck ring. Only its model is used; it spawns as a mallard.",
+  "colors": {
+    "body": [146, 110, 74],
+    "head": [126, 94, 62],
+    "neck": [150, 114, 78],
+    "white": [150, 114, 78],
+    "breast": [158, 120, 82],
+    "wing": [104, 80, 56],
+    "tail": [118, 90, 62],
+    "beak": [200, 132, 58]
+  },
+  "like": "mallard"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "ice_age",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "The world of the last glaciation: mammoths, cave lions, steppe bison and the cold grassland they grazed.",
+  "habitats": {
+    "dry_grassland": {
+      "plants": [{"plant": "feather_tussock", "density": 0.006}],
+      "creatures": [{"creature": "mammoth", "count": 1}, {"creature": "saiga", "count": 3}]
+    },
+    "alpine_fell": {"plants": [{"plant": "dwarf_birch", "density": 0.004}], "creatures": [{"creature": "mammoth", "count": 1}]}
+  },
+  "ground": {"meadow_grass": "steppe_grass"}
+}

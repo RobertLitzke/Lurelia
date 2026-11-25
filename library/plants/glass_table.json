@@ -10,5 +10,6 @@
   "bark": "glass_coral_violet",
   "leaf": "glass_coral_violet",
   "max_slope": 1.4,
-  "water_depth": [1.5, 22]
+  "water_depth": [1.5, 22],
+  "realms": ["bloom"]
 }

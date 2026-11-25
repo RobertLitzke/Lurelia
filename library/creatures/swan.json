@@ -18,27 +18,43 @@
     "flightiness": 0.8,
     "wingbeat": 1.9,
     "spawn_chance": 0.3,
-    "group": {"size": [1, 2], "spacing": 2.0, "range": 8, "separation": 1.0, "alignment": 1.0, "cohesion": 1.0}
+    "group": {"size": [1, 2], "spacing": 2.0, "range": 8, "separation": 1.0, "alignment": 1.0, "cohesion": 1.0},
+    "voice": {
+      "size": 1.6,
+      "calls": [
+        {"cry": "honk", "on": "takeoff", "boost": 2},
+        {"cry": "honk", "on": "idle", "every_s": [120, 400], "chorus": 0.3, "chorus_m": 200},
+        {"cry": "hiss", "on": "chase", "size": 0.8}
+      ]
+    }
   },
   "like": "goose",
   "scale": 1.45,
   "extra_ops": [
-    {"op": "box", "from": [29, 12, 8], "to": [36, 38, 24], "mat": "air", "part": "head"},
+    {"op": "box", "from": [29, 15, 6], "to": [38, 48, 26], "mat": "air", "part": "head"},
     {
       "op": "segment",
-      "points": [[32, 10.5, 21], [32, 14, 20.2], [32, 19, 19.4]],
-      "radius": 2.1,
+      "points": [[33.0, 13.23, 22.22], [33.0, 17.64, 21.212], [33.0, 23.94, 20.204]],
+      "radius": 2.646,
       "mat": "neck",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[32, 19, 19.4], [32, 25, 20.2], [32, 30, 18.4], [32, 32.4, 16.8]],
-      "radius": 1.6,
+      "points": [[33.0, 23.94, 20.204], [33.0, 31.5, 21.212], [33.0, 37.8, 18.944], [33.0, 40.824, 16.928]],
+      "radius": 2.016,
       "mat": "neck",
       "part": "head"
     },
-    {"op": "ellipsoid", "centre": [32, 33.4, 15.6], "radius": [1.8, 1.6, 2.5], "mat": "head", "part": "head"},
-    {"op": "box", "from": [31, 32, 10], "to": [33, 33, 14], "mat": "beak", "part": "head"}
+    {
+      "op": "ellipsoid",
+      "centre": [33.0, 42.084, 15.416],
+      "radius": [2.268, 2.016, 3.15],
+      "mat": "head",
+      "part": "head"
+    },
+    {"op": "box", "from": [32, 40, 8], "to": [34, 42, 13], "mat": "beak", "part": "head"},
+    {"op": "ellipsoid", "centre": [31.1, 42.6, 14.3], "radius": [1.0, 1.0, 1.0], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [34.9, 42.6, 14.3], "radius": [1.0, 1.0, 1.0], "mat": "eye", "part": "head"}
   ]
 }

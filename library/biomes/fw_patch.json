@@ -1,0 +1,9 @@
+{
+  "name": "fw_patch",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Rocky knolls in Frondwell's lagoon, crowned with kelp.",
+  "habitat": "kelp_forest",
+  "rules": {"underwater": true, "region": "frondwell_patch_reef"},
+  "like": "fw_flat"
+}

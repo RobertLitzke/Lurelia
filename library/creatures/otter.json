@@ -1,13 +1,21 @@
 {
   "name": "otter",
-  "version": 2,
+  "version": 3,
   "introduced_by": "base",
   "notes": "River otter: a long low swimmer with a thick tapering tail, up on the bank to eat and back in the water as soon as it sees you.",
-  "voxel": 0.032,
+  "voxel": 0.0233,
+  "grid": [32, 32, 46],
   "half_w": 0.14,
   "height": 0.34,
-  "colors": {"coat": [96, 72, 52], "belly": [168, 140, 104], "muzzle": [210, 196, 176], "dark": [36, 28, 24]},
+  "colors": {
+    "coat": [96, 72, 52],
+    "belly": [168, 140, 104],
+    "muzzle": [210, 196, 176],
+    "dark": [36, 28, 24],
+    "eye": [12, 10, 10]
+  },
   "behaviour": {
+    "displays": [{"kind": "float_play"}],
     "movement": "wade",
     "walk_speed": 1.1,
     "flee_speed": 5.0,
@@ -17,40 +25,69 @@
     "swims": true,
     "back_float": true,
     "active": "crepuscular",
-    "off_hours": 0.3
+    "off_hours": 0.3,
+    "voice": {"calls": [{"cry": "pipe", "on": "idle", "size": 1.2, "every_s": [120, 400], "chorus": 0.3, "chorus_m": 40}]}
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [16, 5.5, 15], "radius": [3.2, 3.2, 7.6], "mat": "coat"},
-    {"op": "recolour_below", "y": 4, "from": "coat", "to": "belly"},
-    {"op": "box", "from": [14, 5, 6], "to": [18, 8, 9], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16, 7, 5.5], "radius": [2.8, 2.4, 3.0], "mat": "coat", "part": "head"},
-    {"op": "box", "from": [15, 5, 1], "to": [18, 7, 4], "mat": "muzzle", "part": "head"},
-    {"op": "set", "at": [16, 6, 1], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [14, 8, 3], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [18, 8, 3], "mat": "dark", "part": "head"},
-    {"op": "box", "from": [13, 8, 6], "to": [14, 9, 7], "mat": "coat", "part": "ear_l"},
-    {"op": "box", "from": [18, 8, 6], "to": [19, 9, 7], "mat": "coat", "part": "ear_r"},
-    {"op": "box", "from": [13, 0, 9], "to": [15, 3, 12], "mat": "dark", "part": "leg_fl"},
-    {"op": "box", "from": [17, 0, 9], "to": [19, 3, 12], "mat": "dark", "part": "leg_fr"},
-    {"op": "box", "from": [13, 0, 18], "to": [15, 3, 21], "mat": "dark", "part": "leg_hl"},
-    {"op": "box", "from": [17, 0, 18], "to": [19, 3, 21], "mat": "dark", "part": "leg_hr"},
-    {"op": "ellipsoid", "centre": [16, 4.5, 24], "radius": [2.2, 2.0, 5.0], "mat": "coat", "part": "tail"},
-    {"op": "ellipsoid", "centre": [16, 4, 29], "radius": [1.2, 1.2, 1.6], "mat": "coat", "part": "tail"}
+    {"op": "ellipsoid", "centre": [16, 8, 22.5], "radius": [4.7, 4.6, 10.8], "mat": "coat"},
+    {"op": "recolour_below", "y": 5, "from": "coat", "to": "belly"},
+    {"op": "segment", "points": [[16, 8.6, 14], [16, 9.4, 10.5]], "mat": "coat", "part": "neck", "radius": 3.3},
+    {"op": "ellipsoid", "centre": [16, 9.8, 7.6], "radius": [4.1, 3.5, 4.6], "mat": "coat", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 8.4, 4.0], "radius": [2.7, 2.1, 2.5], "mat": "muzzle", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 9.2, 1.7], "radius": [1.5, 1.1, 1.1], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [12.6, 10.8, 5.9], "radius": [1.1, 1.1, 1.2], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [19.4, 10.8, 5.9], "radius": [1.1, 1.1, 1.2], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [12.2, 12.2, 9.6], "radius": [1.4, 1.6, 1.7], "mat": "coat", "part": "ear_l"},
+    {"op": "ellipsoid", "centre": [19.8, 12.2, 9.6], "radius": [1.4, 1.6, 1.7], "mat": "coat", "part": "ear_r"},
+    {
+      "op": "segment",
+      "points": [[13.3, 4.4, 15.5], [13.3, 1.8, 15.9]],
+      "radius": 2.0,
+      "mat": "dark",
+      "part": "leg_fl"
+    },
+    {"op": "ellipsoid", "centre": [13.3, 1.0, 14.9], "radius": [2.1, 1.0, 2.7], "mat": "dark", "part": "leg_fl"},
+    {
+      "op": "segment",
+      "points": [[18.7, 4.4, 15.5], [18.7, 1.8, 15.9]],
+      "radius": 2.0,
+      "mat": "dark",
+      "part": "leg_fr"
+    },
+    {"op": "ellipsoid", "centre": [18.7, 1.0, 14.9], "radius": [2.1, 1.0, 2.7], "mat": "dark", "part": "leg_fr"},
+    {
+      "op": "segment",
+      "points": [[13.0, 4.4, 28.0], [13.0, 1.8, 28.4]],
+      "radius": 2.4,
+      "mat": "dark",
+      "part": "leg_hl"
+    },
+    {"op": "ellipsoid", "centre": [13.0, 1.0, 27.4], "radius": [2.5, 1.0, 2.7], "mat": "dark", "part": "leg_hl"},
+    {
+      "op": "segment",
+      "points": [[19.0, 4.4, 28.0], [19.0, 1.8, 28.4]],
+      "radius": 2.4,
+      "mat": "dark",
+      "part": "leg_hr"
+    },
+    {"op": "ellipsoid", "centre": [19.0, 1.0, 27.4], "radius": [2.5, 1.0, 2.7], "mat": "dark", "part": "leg_hr"},
+    {"op": "segment", "points": [[16, 6.6, 30], [16, 5.9, 37]], "radius": 3.1, "mat": "coat", "part": "tail"},
+    {"op": "segment", "points": [[16, 5.9, 37], [16, 5.2, 43]], "radius": 2.0, "mat": "coat", "part": "tail"}
   ],
   "vary": {"size": 0.1, "shade": 0.08},
   "rig": {
     "plan": "quadruped",
     "bones": [
       {"name": "body", "role": "root"},
-      {"name": "neck", "role": "neck", "parent": "body", "joint": [16, 6, 8.5]},
-      {"name": "head", "role": "head", "parent": "neck", "joint": [16, 6.5, 6.5]},
-      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [13.5, 8, 6.5], "side": "l"},
-      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [18.5, 8, 6.5], "side": "r"},
-      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14, 3, 10.5], "side": "l", "pair": 0},
-      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [18, 3, 10.5], "side": "r", "pair": 0},
-      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14, 3, 19.5], "side": "l", "pair": 1},
-      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [18, 3, 19.5], "side": "r", "pair": 1},
-      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 5, 20.5]}
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16, 8.6, 13.5]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16, 9.2, 10.5]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [12.4, 11.5, 9.6], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [19.6, 11.5, 9.6], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [13.253, 4.5, 15.446], "side": "l", "pair": 0},
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [18.747, 4.5, 15.446], "side": "r", "pair": 0},
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [13.0, 4.5, 28], "side": "l", "pair": 1},
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [19.0, 4.5, 28], "side": "r", "pair": 1},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.0, 6.867, 29.18]}
     ]
   }
 }

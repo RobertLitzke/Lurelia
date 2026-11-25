@@ -20,5 +20,7 @@
   "max_slope": 0.6,
   "trunk_taper": 0.15,
   "thin_limbs": 0.18,
-  "affords": ["perch"]
+  "affords": ["perch"],
+  "site": {"wet": [0.3, 0.8], "soil": [0.0, 0.7]},
+  "realms": ["dinosaur"]
 }

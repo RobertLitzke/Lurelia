@@ -5,6 +5,7 @@
   "notes": "Southern stingray: a sandy diamond a metre and a bit across, lying half buried on the sand of the grooves and the lagoon, gliding off when disturbed.",
   "colors": {"back": [170, 150, 112], "belly": [236, 236, 230], "dark": [120, 104, 78]},
   "behaviour": {
+    "displays": [{"kind": "leap", "params": {"flip": 1, "height": 1.5}}, {"kind": "bury"}],
     "habit": "rest",
     "walk_speed": 0.6,
     "flee_speed": 2.2,
@@ -14,7 +15,8 @@
     "leap": 0,
     "shallows": 1.0,
     "spawn_chance": 1.0,
-    "group": {"size": [1, 1]}
+    "group": {"size": [1, 1]},
+    "voice": {"size": 1.2, "calls": [{"cry": "splash", "on": "display:leap"}]}
   },
   "like": "manta_ray",
   "scale": 0.3

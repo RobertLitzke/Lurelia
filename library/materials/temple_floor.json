@@ -1,0 +1,15 @@
+{
+  "name": "temple_floor",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "The temple's open wooden floors, polished by bare feet: honey brown.",
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [176, 132, 84],
+    "alt": [158, 116, 72],
+    "scale": 4,
+    "contrast": 0.6,
+    "calm": {"base": [182, 140, 92], "alt": [164, 124, 80]}
+  }
+}

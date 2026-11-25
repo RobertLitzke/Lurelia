@@ -1,0 +1,17 @@
+{
+  "name": "black_ice",
+  "version": 1,
+  "introduced_by": "kaldvik_fjord",
+  "notes": "Clear ice over dark ground: a frozen river flat or a meltwater skin on a road, nearly black, with pale cracks. Hardly any grip.",
+  "smooth": true,
+  "crisp": true,
+  "surface": "ice",
+  "texture": {
+    "pattern": "cracks",
+    "base": [52, 62, 74],
+    "alt": [150, 170, 186],
+    "scale": 4,
+    "contrast": 0.7,
+    "calm": {"base": [60, 70, 82], "alt": [160, 178, 192]}
+  }
+}

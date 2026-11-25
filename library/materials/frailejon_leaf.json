@@ -1,0 +1,16 @@
+{
+  "name": "frailejon_leaf",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Frailejón leaves: thick furred blades, silver-green, in a stiff upturned rosette (palmetto fans).",
+  "smooth": false,
+  "sprites": "palmetto",
+  "texture": {
+    "pattern": "grain",
+    "base": [164, 172, 140],
+    "alt": [188, 194, 164],
+    "scale": 7,
+    "contrast": 0.6,
+    "calm": {"base": [172, 180, 148], "alt": [196, 200, 172]}
+  }
+}

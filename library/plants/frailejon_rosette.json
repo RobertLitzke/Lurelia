@@ -1,0 +1,13 @@
+{
+  "name": "frailejon_rosette",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "herb: A young frailejón: a stiff upturned rosette of furred silver-green leaves on a short shaggy stem, knee to chest high, standing in its thousands across the páramo (drawn as sprites).",
+  "form": "herb",
+  "height": [0.8, 1.5],
+  "crown_radius": [0.45, 0.75],
+  "bark": "frailejon_trunk",
+  "leaf": "frailejon_leaf",
+  "max_slope": 0.9,
+  "site": {"wet": [0.15, 1.0], "soil": [0.0, 0.45], "cold": [0.65, 1.0], "shade": [0.0, 0.25]}
+}

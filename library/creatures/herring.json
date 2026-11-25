@@ -1,13 +1,20 @@
 {
   "name": "herring",
-  "version": 2,
+  "version": 3,
   "introduced_by": "glassfall",
-  "notes": "Atlantic herring: a silver fish about 30 cm long with a blue-green back, in schools of ten to twenty near the shore. The base of every schooling fish.",
-  "voxel": 0.0125,
+  "notes": "Atlantic herring: a silver fish about 30 cm long with a blue-green back, in schools of ten to twenty near the shore. The base of every schooling fish. v3: deeper single-ellipsoid body with a pointed head, ellipsoid fins and a forked tail on a tapering peduncle, round eyes.",
+  "voxel": 0.0135,
   "half_w": 0.04,
   "height": 0.08,
-  "colors": {"herring": [62, 92, 104], "silver": [150, 158, 168], "fin": [62, 92, 104], "dark": [36, 28, 24]},
+  "colors": {
+    "herring": [62, 92, 104],
+    "silver": [150, 158, 168],
+    "fin": [62, 92, 104],
+    "dark": [36, 28, 24],
+    "eye": [14, 12, 12]
+  },
   "behaviour": {
+    "displays": [{"kind": "bait_ball"}],
     "movement": "school",
     "walk_speed": 1.2,
     "flee_speed": 3.5,
@@ -19,17 +26,37 @@
     "active": "any"
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [16.5, 6, 14], "radius": [1.7, 2.8, 10], "mat": "herring"},
+    {"op": "ellipsoid", "centre": [16.5, 5.6, 14.4], "radius": [2.2, 3.0, 9.3], "mat": "herring"},
+    {"op": "ellipsoid", "centre": [16.5, 5.4, 8.6], "radius": [1.7, 2.3, 3.0], "mat": "herring"},
     {"op": "recolour_below", "y": 6, "from": "herring", "to": "silver"},
-    {"op": "box", "from": [16, 8, 11], "to": [17, 10, 15], "mat": "fin"},
-    {"op": "set", "at": [15, 7, 7], "mat": "dark"},
-    {"op": "set", "at": [17, 7, 7], "mat": "dark"},
-    {"op": "ellipsoid", "centre": [16.5, 6, 25], "radius": [0.8, 1.4, 2.2], "mat": "silver", "part": "tail"},
-    {"op": "box", "from": [16, 2, 26], "to": [17, 6, 29], "mat": "fin", "part": "tail"},
-    {"op": "box", "from": [16, 7, 26], "to": [17, 11, 29], "mat": "fin", "part": "tail"}
+    {"op": "ellipsoid", "centre": [16.5, 8.4, 14.0], "radius": [0.9, 1.7, 2.6], "mat": "fin"},
+    {"op": "ellipsoid", "centre": [14.5, 4.6, 10.0], "radius": [1.0, 1.0, 1.8], "mat": "fin"},
+    {"op": "ellipsoid", "centre": [18.5, 4.6, 10.0], "radius": [1.0, 1.0, 1.8], "mat": "fin"},
+    {"op": "ellipsoid", "centre": [16.5, 2.7, 17.5], "radius": [0.9, 1.1, 1.8], "mat": "fin"},
+    {"op": "ellipsoid", "centre": [14.9, 6.3, 8.2], "radius": [0.8, 0.9, 0.9], "mat": "eye"},
+    {"op": "ellipsoid", "centre": [18.1, 6.3, 8.2], "radius": [0.8, 0.9, 0.9], "mat": "eye"},
+    {
+      "op": "segment",
+      "points": [[16.5, 5.6, 22.0], [16.5, 5.6, 23.5]],
+      "radius": 1.5,
+      "mat": "silver",
+      "part": "tail"
+    },
+    {
+      "op": "segment",
+      "points": [[16.5, 5.6, 23.5], [16.5, 5.6, 25.5]],
+      "radius": 1.0,
+      "mat": "silver",
+      "part": "tail"
+    },
+    {"op": "ellipsoid", "centre": [16.5, 7.4, 27.0], "radius": [0.9, 2.4, 2.3], "mat": "fin", "part": "tail"},
+    {"op": "ellipsoid", "centre": [16.5, 3.8, 27.0], "radius": [0.9, 2.4, 2.3], "mat": "fin", "part": "tail"}
   ],
   "rig": {
     "plan": "fish",
-    "bones": [{"name": "body", "role": "root"}, {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 6, 23]}]
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.463, 5.556, 22.481]}
+    ]
   }
 }

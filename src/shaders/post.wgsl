@@ -376,8 +376,8 @@ fn scene_depth(uv: vec2<f32>, dims: vec2<f32>) -> f32 {
 // holds a pool or a flooded pan, and the water pass adds its own coverage on
 // top of the bed (render/mod.rs), so alpha - 1 is how much of a mirror a
 // pixel is; nothing else ever writes more than 1. From the water's surface
-// (the sea's level for open water, whose own depth is not in the buffer, or
-// the ground itself for a pool) the view is reflected about straight up and
+// (the sea's level for open water, whose own depth is not in the buffer; a
+// river or lake writes its own, and a pool is the ground itself) the view is reflected about straight up and
 // marched out across the depth buffer; the first thing it passes behind,
 // within a thickness that grows with distance, is what the water shows, over
 // the sky the scene shader already put there. Off the screen or into the sky
@@ -402,16 +402,34 @@ fn mirror(px: vec2<f32>, uv: vec2<f32>, c: vec3<f32>) -> vec3<f32> {
         return c;
     }
     // Open water: the bed is what the buffer holds; the mirror is the surface.
-    if (p.y < post.c.w - 0.02 && cam.y > post.c.w) {
-        p = cam + v * ((post.c.w - cam.y) / v.y);
+    // A camera low on the water (a boat in a trough of the swell) can sit
+    // under the sea's mean level, with no point on its view at that level:
+    // lift the bed straight up instead, or the reflection is cast from the
+    // bed and comes and goes as the boat rides up and down.
+    if (p.y < post.c.w - 0.02) {
+        if (cam.y > post.c.w + 0.05) {
+            p = cam + v * ((post.c.w - cam.y) / v.y);
+        } else {
+            p.y = post.c.w;
+        }
     }
     // A slow ripple, so the image shivers rather than standing like glass.
     let t = post.x.y;
     let rip = vec2<f32>(sin(p.x * 0.9 + t * 1.7) + sin(p.z * 1.3 - t * 1.1), sin(p.z * 0.8 + t * 1.3) + sin(p.x * 1.1 + t * 0.9)) * 0.0035;
     let r = normalize(vec3<f32>(v.x + rip.x, -v.y, v.z + rip.y));
+    // Each time the ray goes from in front of the scene to behind it, close in
+    // on the crossing before judging it: the steps grow to metres long, and a
+    // whole step's worth of gap failed the thickness test on a hillside seen
+    // at a slant, so whole stretches of water flicked between the reflection
+    // and the bare sky as the ripple or the camera moved. A crossing that is
+    // still too deep once found is the ray passing behind something thin
+    // (a trunk, a post): it marches on to whatever stands beyond.
     var tt = 0.6;
     var prev = 0.0;
+    var behind = false;
     var hit = -1.0;
+    // The last point of the march still on the screen, and whether the scene
+    // there was solid (not sky) with the ray in front of it.
     for (var i = 0; i < 44; i++) {
         let q = to_screen(p + r * tt);
         if (q.z <= 0.0 || q.x < 0.0 || q.x > 1.0 || q.y < 0.0 || q.y > 1.0) {
@@ -419,32 +437,53 @@ fn mirror(px: vec2<f32>, uv: vec2<f32>, c: vec3<f32>) -> vec3<f32> {
         }
         let sd = scene_depth(q.xy, dims);
         if (q.z > sd + 0.05) {
-            if (q.z < sd + max(2.0, sd * 0.06) + tt * 0.08) {
-                hit = tt;
+            if (!behind) {
+                var lo = prev;
+                var hi = tt;
+                for (var j = 0; j < 6; j++) {
+                    let mid = (lo + hi) * 0.5;
+                    let qm = to_screen(p + r * mid);
+                    if (qm.z > scene_depth(qm.xy, dims)) {
+                        hi = mid;
+                    } else {
+                        lo = mid;
+                    }
+                }
+                let qh = to_screen(p + r * hi);
+                let sh = scene_depth(qh.xy, dims);
+                if (qh.z < sh + max(2.0, sh * 0.06) + hi * 0.08) {
+                    hit = hi;
+                    break;
+                }
+                behind = true;
             }
-            break;
+        } else {
+            behind = false;
+            prev = tt;
         }
-        prev = tt;
         tt *= 1.22;
     }
     if (hit < 0.0) {
         return c;
     }
-    // Close in on where it crossed.
-    var lo = prev;
-    var hi = hit;
-    for (var i = 0; i < 6; i++) {
-        let mid = (lo + hi) * 0.5;
-        let q = to_screen(p + r * mid);
-        if (q.z > scene_depth(q.xy, dims)) {
-            hi = mid;
-        } else {
-            lo = mid;
-        }
-    }
-    let q = to_screen(p + r * hi);
+    let q = to_screen(p + r * hit);
     let edge = smoothstep(0.0, 0.06, min(min(q.x, 1.0 - q.x), min(q.y, 1.0 - q.y)));
-    let img = textureLoad(hdr, vec2<i32>(clamp(q.xy * dims, vec2<f32>(0.0), dims - 1.0)), 0).rgb;
+    // A slight blur, longer up and down than across, as ripples smear a
+    // reflection, and growing a little with how far off the reflected thing
+    // stands. It also hides the stair-steps of a point-sampled march.
+    let k = dims.y / 1080.0;
+    let ry = clamp(1.5 + hit * 0.04, 1.5, 4.0) * k;
+    let rx = ry * 0.5;
+    let at = q.xy * dims;
+    let hi_px = dims - 1.0;
+    var img = textureLoad(hdr, vec2<i32>(clamp(at, vec2<f32>(0.0), hi_px)), 0).rgb * 2.0;
+    img += textureLoad(hdr, vec2<i32>(clamp(at + vec2<f32>(0.0, ry), vec2<f32>(0.0), hi_px)), 0).rgb;
+    img += textureLoad(hdr, vec2<i32>(clamp(at - vec2<f32>(0.0, ry), vec2<f32>(0.0), hi_px)), 0).rgb;
+    img += textureLoad(hdr, vec2<i32>(clamp(at + vec2<f32>(rx, ry * 2.0), vec2<f32>(0.0), hi_px)), 0).rgb * 0.5;
+    img += textureLoad(hdr, vec2<i32>(clamp(at - vec2<f32>(rx, ry * 2.0), vec2<f32>(0.0), hi_px)), 0).rgb * 0.5;
+    img += textureLoad(hdr, vec2<i32>(clamp(at + vec2<f32>(rx, 0.0), vec2<f32>(0.0), hi_px)), 0).rgb;
+    img += textureLoad(hdr, vec2<i32>(clamp(at - vec2<f32>(rx, 0.0), vec2<f32>(0.0), hi_px)), 0).rgb;
+    img = img / 7.0;
     let cosv = -v.y;
     let fres = 0.02 + 0.98 * pow(1.0 - cosv, 5.0);
     return mix(c, img * 0.92, m * mix(fres, 1.0, 0.15) * edge);

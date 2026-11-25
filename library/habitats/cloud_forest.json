@@ -1,0 +1,13 @@
+{
+  "name": "cloud_forest",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Mountain forest wrapped in cloud: mossy, wet and cool.",
+  "wet": 0.75,
+  "soil": 0.4,
+  "shade": 0.7,
+  "rock": 0.1,
+  "disturbed": 0.0,
+  "open": 0.15,
+  "forage": ["browse", "fruit"]
+}

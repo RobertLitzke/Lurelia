@@ -15,20 +15,22 @@
     }
   ],
   "behaviour": {
+    "displays": [{"kind": "bait_ball"}, {"kind": "leap"}],
     "walk_speed": 0.9,
     "flee_speed": 4.5,
     "wary": 6,
     "flightiness": 1.2,
     "leap": 2.0,
-    "group": {"size": [3, 7], "spacing": 1.2, "range": 6}
+    "group": {"size": [3, 7], "spacing": 1.2, "range": 6},
+    "voice": {"size": 0.8, "calls": [{"cry": "splash", "on": "display:leap"}]}
   },
   "like": "trout",
   "scale": 1.7,
   "extra_ops": [
-    {"op": "set", "at": [16, 8, 9], "mat": "spot"},
-    {"op": "set", "at": [15, 8, 12], "mat": "spot"},
-    {"op": "set", "at": [17, 7, 15], "mat": "spot"},
-    {"op": "set", "at": [16, 8, 18], "mat": "spot"},
-    {"op": "set", "at": [15, 7, 20], "mat": "spot"}
+    {"op": "box", "from": [16, 7, 10], "to": [17, 8, 11], "mat": "spot"},
+    {"op": "box", "from": [15, 7, 12], "to": [16, 8, 13], "mat": "spot"},
+    {"op": "box", "from": [17, 6, 15], "to": [18, 7, 16], "mat": "spot"},
+    {"op": "box", "from": [16, 7, 18], "to": [17, 8, 19], "mat": "spot"},
+    {"op": "box", "from": [15, 6, 20], "to": [16, 7, 21], "mat": "spot"}
   ]
 }

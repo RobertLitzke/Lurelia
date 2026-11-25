@@ -1,0 +1,17 @@
+{
+  "name": "brine_skin",
+  "version": 1,
+  "introduced_by": "saltmirror_array",
+  "notes": "A few centimetres of brine over the salt crust after rain: the sky in it, and hardly any grip.",
+  "smooth": true,
+  "crisp": true,
+  "surface": "ice",
+  "texture": {
+    "pattern": "cracks",
+    "base": [196, 210, 220],
+    "alt": [236, 240, 244],
+    "scale": 5,
+    "contrast": 0.5,
+    "calm": {"base": [204, 216, 226], "alt": [240, 244, 248]}
+  }
+}

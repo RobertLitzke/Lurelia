@@ -49,6 +49,7 @@ runs each verb and with what settings. The movers are in `src/creatures/`:
 | `haulout` | same, close to the sea; lies out on rock or sand, and when it bolts (below) humps to the water and dives with a splash, swimming on in the water form its entry's `in_water` block describes. Seals at sea climb back out onto a low bank about once a minute | harbour seal, sea lion |
 | `plod` | same, slow; instead of running it stops and draws head, legs and tail into its shell while the player is within `wary`, and comes out slowly once you leave (`Pose.tuck`, `motors::retract`; legs that stick out sideways fold back under the rim) | tortoise, desert tortoise, moss tortoise |
 | `bask` | `plod` on a beach, plus: about once every two and a half minutes (when not hiding) it crawls back to the sea at `flee_speed` and swims off in its `in_water` form; swimmers haul out again like seals. Swimmers with legs beat their front flippers and trail the hind pair | sea turtle |
+| `burrow` | same, kept to a home: a structure tagged `burrow` within 18 m of where its group spawns (each member takes its own, nearest first; `burrow_mound` is one), else the spot it was first stepped at, from which it never wanders more than 7 m. When it bolts it runs back there and goes underground, staying down 8 to 20 s and longer while the danger is still near, then comes up at the mouth (`creatures/walk.rs`, `Critter.home`/`under`). Put it in a biome that scatters `burrow_mound` so its home is among mounds | prairie dog |
 | `still` | same, never walks | (none) |
 | `circle` | `circle.rs`: a fixed circle 8 to 22 m across at `fly_height`; with `floats`, now and then it glides down to deep water under its circle, floats 15 to 45 s and goes back up (sooner if you come close); with `plunge` too it comes down by folding its wings and dropping straight in (at least 2.5 m of water under it), goes under for a few seconds, floats, and climbs back to do it again within half a minute | gull, puffin, cormorant (float); gannet (plunge); crow |
 | `flutter` | `circle.rs` with a 1.5 to 4.5 m circle, slower | glassmoth, lantern moth |
@@ -216,9 +217,20 @@ A child starts from its parent's resolved entry (so chains work: a child of a ch
 - `name`, `version`, `introduced_by`, `notes` and `rarity` are never inherited, and nor are
   `morphs`: a morph's colours are absolute, so a parent's coats would paint a child in the
   parent's colours. A child that comes in coats says so itself;
+- `behaviour.voice` is never inherited either, because `like` is mostly about shape: a crow is
+  built on the starling and doesn't sing. A child that calls says so itself;
 - the rig is inherited, so a child animates like its parent for free. Extra ops tagged with a
   bone's `part` move with that bone (the elk's mane moves with the neck, the white deer's horn
   with the head).
+
+The people are one family: `humanoid` (18.5 mm voxels, 95 tall on a 40x96x40 grid, the
+18-bone biped rig) is a plain figure; `bot` and `zombie` are its two classes, and each has
+three builds that give their own `ops` (`bot_courier`, `bot_hardsuit`, `bot_walker`;
+`zombie_office`, `zombie_hiker`, `zombie_labourer`). A build may give its own `rig` to move
+joints, but keeps the bones' names, roles and order, because the shooter poses every bot on
+one rig and drops corpses on it. Bot builds share `bot`'s colours and add none (they share one
+palette block, `brain/avatar.rs`). No biome lists any of them: bots are drawn by the shooter
+and the races, and zombies wait for a zombie mode.
 
 Because the child overrides colour values by name, most variants need no new colour names: the
 pale hare sets `"rabbit"` to lilac-white and every op that was brown fur turns pale.
@@ -470,6 +482,212 @@ library loads, ignoring a tail tip or claw only a voxel or two across.
   `sqrt(height x half_w / 2.4)`: 1 for an elephant, 2 for a brachiosaur). `VG_THUMP=k` scales it,
   0 turns it off.
 
+## Where a herd goes
+
+In a world with a survey (notes/WORLD_SURVEY_PLAN.md), every prey herd (a walking group whose
+species hunts nothing) has a trip, worked out every 2 s in `creatures/roam.rs`:
+
+- The need, in order: away from where it last bolted (for a minute), water at the ends of the
+  day (`walk::thirst` 0.75 and up, not again for 15 minutes after drinking), bed when drowsy
+  (see "Bedding down" below), else food.
+- The goal is the survey anchor of that kind that scores best: what it offers (a grazer reads
+  the anchor's `graze`, anything else `graze` or `browse`), less the way's cost / 600 m, less
+  twice the live threat on it, with a little jitter so herds spread out. Feed is never chosen
+  within 40 m.
+- The way is Dijkstra over the large walker's links from the nearest anchor (within 160 m), each
+  link costing its length times 1 + 4 x the threat at its middle and its far end. Its path is the
+  links' paths joined, as waypoints.
+- The herd is only nudged along: members standing about are set walking toward the next waypoint
+  (3 in 10 a think while feeding along, 6 in 10 for anything else), and herd.rs pulls walkers
+  toward it beside the boid rules. Lying members get up for anything but feeding along, 15 in
+  100 a think, so a herd rises over a minute or so. A herd passes a waypoint within 14 m and
+  arrives within 22 m, then stays (90 s at water, 4 to 8 minutes feeding, till it wakes in bed).
+- A trip is planned again when the need changes, the stay ends, the threat on the rest of the
+  way passes 0.5, or it is taking far too long. A bolt drops the trip at once. With no drink
+  anchor it can reach, a herd (or pack) goes without, as if it had drunk.
+
+The ecology map draws each herd's way in the colour of its need with a ring on the goal, the
+hover box names a herd member's trip, the inspector logs each plan, and `--eco-dump` lines carry
+every trip. On Kitehold at 18:18 every herd on the plain heads for its own drink anchor on the
+river and closes on it (155 -> 46 m, 580 -> 466 m in 2.5 minutes, at 1x).
+
+## Bedding down
+
+ANIMAL_SIM C2. A herd (or pack) sleeps together at a bed it walked to, the night through:
+
+- It goes to bed when its period makes it drowsier than 0.6 (`diel::drowsy`: nightfall for a
+  day animal, daybreak for a lion), and stays until it is under 0.4, so dusk and dawn don't
+  flicker. A predator full from a kill lies up the same way, where it ate.
+- The bed is the best survey anchor within 200 m (not roofed; feed, refuge, focal or vantage):
+  for a grazer that keeps the day's hours (horses, bison, pronghorn, vicuna), open ground with a
+  long view (`open` 0.5 and up, scored by `open` and `sightline`); for the rest (deer, elk,
+  predators), cover (a refuge, or `cover` 0.35 and up). Last night's bed scores 0.6 more, so a
+  herd keeps a bedding ground. A pack beds on its own ground. With no bed in reach, or not there
+  90 s after setting off (a night lasts about four minutes of play), it lies where it is.
+- Each member carries its herd's night (`walk::Sleep`, set every think): going to bed it does not
+  lie down on the way; bedded it lies down 9 times in 10 when it next chooses, for 4 to 12
+  minutes, standing now and then for a stretch; otherwise it naps by its own drowsiness as before
+  (25 to 95 s, drowsiness squared). A herd met at night is drawn bedded and lies down at once.
+- A bolt still gets everyone up and away; the herd goes back to bed once the minute away is over.
+- The spawner's night thinning (`diel::abroad`) no longer touches these herds: they are records,
+  and at night they are at their beds rather than gone.
+
+`VG_CLOCK_RUN=1` with `--hour` lets the clock run in a headless run, to watch dusk or dawn go by.
+
+## Packs
+
+Predators have trips too (`creatures/roam.rs`), on the same graph and the same 2 s think:
+
+- The need, in order: away after a bolt, lying up when full, water, rest when drowsy (most
+  predators keep night or dusk hours), else hunt.
+- Hunting, a pack picks a quarry: the nearest herd of something it `hunts` (any herd with a mind,
+  recorded or not, a pack of another hunter included: velociraptors take compsognathus) within 600 m and on its own ground. Its goal is the anchor nearest the quarry,
+  within 150 m of it, and it plans again when the quarry moves further than that from the goal.
+  Within 120 m it makes straight for the quarry's middle: herd.rs pulls walking members there
+  (a lone hunter too), and the nudge keeps them walking. The chase and the kill are walk.rs's,
+  within its 14 m hunting sight. Not drawn, a pack within 120 m shadows its quarry 25 m short
+  of it, and tries for a kill (below). Out of sight a pack of two or more covers ground 40% faster
+  than a lone hunter while hunting (about 1.1 m/s against 0.8).
+- With no herd of its prey about (compsognathus after lizards, a fox after rabbits, which are not
+  records), it prowls the feed anchors on its ground.
+- Ground: a pack's home is where it was first thought about. Its ground reaches 450 m from home
+  and stops where another pack of its kind's home is nearer by more than 40 m (in that band both
+  hunt). A quarry that crosses off its ground is let go ("let herd ... go, it crossed off its
+  ground"), and a new one is picked on its own ground.
+- After a kill (a member carrying or eating), the pack lies up where it ate for 20 minutes with
+  no trip, before it drinks, while the herd it took from runs and goes on; it leaves that herd
+  alone for 30 minutes. Every drawn member is kept full that long (`Critter::fed`), so none hunts
+  again on its own 3-minute clock, and a pack written back and drawn again is still full. A pack
+  that follows one quarry for 5 minutes without a kill gives it up for 15.
+- Predators route without the live threat (roam.rs `plan`, `fear` 0) and don't replan on it:
+  on their ground it is mostly prey bolting from them.
+
+`VG_ROAM_LOG=1` prints every herd's and pack's decisions, drawn or not, to stderr. The map draws
+predator records as red hollow squares and hunts in red.
+
+### Kills out of sight
+
+ANIMAL_SIM C3 (`roster.rs` `encounters`). Every 3 s, a pack not drawn whose quarry is a herd not
+drawn and whose middle is within 32 m of the herd's rolls for a kill: 2.5% for a lone hunter,
+half as much again for each more in the pack, up to four (a pride of two takes about a minute
+and a half of shadowing). On a kill:
+
+- The herd loses its weakest: a young one if it has one, else an old one, else any (a herd
+  never drawn has a made-up adult of its kind taken). It is shaken and runs (`Need::Away`), and
+  a herd with none left is lost.
+- The pack is fed: it lies up at the kill for 20 minutes and leaves that herd alone for 30.
+- The kill is kept as a `KillSite` until its bones would be gone (age.rs `CARCASS_S` +
+  `BONES_LAST_S`, about 13 minutes). When the player comes within 140 m it is put down as a
+  carcass, a third of its meat left, or as bones if it is older than a minute; so the player
+  walks up on lions lying by what is left of a pronghorn. A carcass the spawner drops far behind
+  is put down again on the way back.
+- Prints and trampled grass are not left yet: the marks go down only on loaded ground.
+
+The map draws kill sites as red crosses, `--eco-dump` lines carry them under `roster.kills`
+(victim, hunter, place, when, whether put down), and `VG_ROAM_LOG` prints each one.
+`VG_KILL_SITE=1` lays a test kill site 20 m east of the player 3 s into a run.
+
+## Wariness
+
+ANIMAL_SIM C4 (`roam.rs` `trouble`). Every herd and pack mind keeps a wariness from -0.3 (used to
+people) to 1 (badly spooked), carried by each member (`Critter::wary`) and saved with the herd.
+
+- It rises when trouble comes: 0.12 for a bolt with the player within 80 m, 0.05 for any other
+  bolt (a predator, the herd itself), 0.35 for a member lost while drawn (shot or taken), and
+  0.15 for a kill out of sight.
+- It fades by about two thirds in 1800 s of game clock (about a game day), and quiet time with
+  the player within 80 m and little threat wears 0.002 off each 2 s think, down to -0.3.
+- It scales every member's flee distance (walk.rs `WARY_REACH`): 1.8 times at 1, 0.76 times at
+  -0.3. A herd that has been shot at runs from a long way off; one you have sat beside quietly
+  lets you closer.
+- Each herd remembers the last four places trouble came to it for 2400 s. Within 120 m of one,
+  goals and links count as dangerous, by 0.5 plus its wariness, as live threat does, so a herd
+  feeds and travels away from where it was shot at.
+
+The hover box shows a member's herd's wariness (`WARY 0.40`), dump records carry `wary`, and
+`VG_ROAM_LOG` prints each trouble.
+
+## Numbers over days
+
+ANIMAL_SIM C5 (`roster.rs` `grow`, every 3 s on the game clock). Each species' target is what
+the biome lists seed. Only records not drawn change, so nothing is born or starves in front of
+the player.
+
+- Young: a herd has 0.35 young a day per animal, times the room left under its species' target
+  (none at or over it), times 0.4 to 1 by the grazing where it stands (survey `graze`). A young
+  one is a juvenile of an adult's kind and coat, sized and built when it is drawn. A pack that
+  hunts herds has 0.12 a day per animal, only while it has eaten in the last 24 game hours; one
+  after prey that is not kept as records (compsognathus after lizards, a fox after rabbits) has
+  0.12 a day regardless.
+- Hunger: a pack that hunts herds loses one each 60 game hours without a meal.
+- Splitting: a herd half again its group's largest (and at least 4) splits; half goes its own way.
+- A lost herd is replaced: 6 game hours after a herd is gone (killed off or starved), one of its
+  kind comes in just inside the map edge nearest the lost herd's home, out of the player's sight,
+  and makes for that home a trip at a time (`Need::Home`, 0.35 m/s unseen, about a game day for
+  600 m), through whatever biomes lie between. It keeps going day and night, before drinking or
+  bedding; only a bolt or a meal stops it. Where the links don't lead nearer, it goes straight
+  across country. Within 120 m of its home it settles and the ground is its own. So each
+  territory keeps its herd, and for a while a herd turns up somewhere it doesn't belong.
+- A floor: a species under half its target has a herd walk in the same way, toward one of the
+  species' seeded homes, at most once in 12 game hours.
+
+`--eco-soak HOURS` runs the records alone, nothing drawn, for HOURS game hours as fast as they
+compute (the D4 plan's 100x clock for Tier 0), and prints each species' animals, records and
+target, and the births, kills, deaths, splits, walk-ins and replacements so far, as a JSON line
+every 6 game hours.
+
+## Herd records
+
+Every prey herd and every predator in a world is kept as a record, drawn or not
+(`creatures/roster.rs`, ANIMAL_SIM C1). Which: walkers that don't wade or burrow and either have
+a `group` block of two or more and hunt nothing (deer, elk, bison, horses, pronghorn, the grazing
+dinosaurs), or hunt anything. A predator whose `group` allows two or more (wolves, hyenas, lions,
+the raptors, compsognathus) is one pack record; one that goes alone (cougar, tiger, fox, coyote)
+is a record of one. `roster::kind` names them herd, pack or lone, and the logs, the hover box and
+the dump use that name. Lone prey, burrowers and waders keep the spawner.
+
+- Seeding: when the world is set, a 64 m grid is walked in a hashed order; each recorded species
+  a cell's biome lists adds its count times the cell's area over the circle the spawner fills
+  (90 m, or 180 m and half as many again for a large animal). Each time a species' total makes
+  up a herd (a size rolled from its `group.size`), one is put at a dry spot a large walker can
+  stand on in that cell. A pack may be one animal (a pride of one to three lions is sometimes
+  one), a herd is two at the least. Kitehold gets 336 herds (1,488 animals) and 126
+  predator records: 31 lion prides (62 lions), 61 compsognathus packs (419, after lizards, which
+  are not records), 33 foxes and a coyote. Kitehold's lions were later halved (`kh_plain` count
+  0.8) and its compsognathus by 30% (count 7.8): it now seeds 13 prides (23 lions) and 36
+  compsognathus packs (231). With packs 40% faster out of sight and hunger after 60 hours, 12
+  lions starved in ten game days (62 before) and pronghorn held at 319-327 of 335. The spawner no longer makes these species.
+- Drawn: a herd is drawn once its middle is within 90% of its species' reach (spawn.rs `reach`):
+  130 m out of view (260 m for a large animal), and in view 250 m (350 m for a large one,
+  `HERD_SEEN_M`), nearer than the old far band's 500 m, since a herd much past 250 m hardly
+  reads. Nearest first, up to 220 animals of recorded herds at once (`MAX_DRAWN`; about 170
+  fill Kitehold's plain) and 3 herds a half second. `VG_HERD_REACH=seen,large` and
+  `VG_HERD_CAP=N` override the reach and the cap for measuring. Its members carry `Recorded` and the herd's number as their
+  `Kin`, so herd.rs and roam.rs steer them as any herd. The first time, the spawner's own
+  `place` and `dress` make the family group.
+- Written back: past 105% of its reach (or the furthest herds when over the cap), each living
+  member's species, age, sex, build, coat and place in the herd go into the record and the
+  animals are taken out. A carcass of the herd is left to its own clock. A herd with no member
+  left is lost.
+- Not drawn, a herd keeps its trip (roam.rs `unseen`, every 3 s): it thinks as a drawn herd
+  does and its middle moves along the way, 0.25 m/s feeding along, 0.8 m/s to water or away.
+- Drawn again, the same animals are set down round wherever the middle has got to.
+
+Checked on Kitehold with `VG_AWAY=1300,300,40,160`: the herds round the start are written back at
+40 s, move on unseen (one 601 -> 630 m east in two minutes, feeding along), and come back at 160 s
+with the same sizes and the same animals (adult, juvenile, adult, adult, adult, juvenile before
+and after).
+
+The roster is saved to `herds.json` in the world's save folder when the player saves (F5, the
+pause menu) and when the world closes (to the menu, to another world, quitting), not on the
+half-minute autosave: drawn herds are written from their animals as they stand, the rest as kept.
+Species go by name, and the file carries the world's survey key, so a world that has been rebuilt
+since is seeded afresh. Trips are not kept; a loaded herd plans a new one. A fresh start, a
+match and the zoo neither read nor write it. Headless: `VG_SAVE_HERDS=1` writes it at the end of
+a run, `VG_LOAD_HERDS=1` reads it at the start (with `--save` naming a test folder). Checked on
+Kitehold: 329 herds written after 30 s, all 329 read back at the same spots, and the 30 that had
+been drawn came back with the same ages and sexes; a file with another key was seeded over.
+
 ## Large animals
 
 A walker 2.5 m tall or more (`creatures::LARGE_M`: elephants, bison, giraffes, gallimimus and
@@ -479,8 +697,9 @@ so a herd can be watched from a ridge:
 
 - The biomes are asked what they want out to 180 m for them, not 45, and each large species is
   wanted half as many again (`LARGE_QUOTA`), since its numbers are spread over four times the
-  ground. Newcomers are set down 30 to 180 m out, behind the player as usual, except in the first
-  three seconds of a world (`FIRST_FILL_S`), so a lookout opens with its herds in view.
+  ground. Newcomers are set down 30 to 180 m out, out of view, except in the first three seconds
+  of a world (`FIRST_FILL_S`), so a lookout opens with its herds in view. In view they come from
+  the far band (below).
 - They are dropped at 260 m out of view and 720 m in view, not 130 and 360.
 - Past full detail (128 m, stream.rs `FULL_DETAIL_M`) there are no voxels to walk on, so out
   there a large animal walks the generator's ground (terrain.rs `far_ground`, which is what the
@@ -503,6 +722,11 @@ Thunderfield's south edge about 80 large animals are about, a third of them past
 the deepest overlap and the fastest any big one is turning; `VG_CROWD=still` measures the same
 without pushing anyone, for comparison. On a brachiosaur and diplodocus herd in the Saurischia
 parkland, overlaps ran to 3 m without the push and stay under 0.4 m with it.
+
+A hunter's sight and catch reach scale with its height (`walk::hunt_sight`), so a tyrannosaur
+sees prey 32 m off and takes it at 2.4 m; animals under about 1.7 m are unchanged. The collision
+box is still a square `half_w` round the middle, so the player can walk through a sauropod's
+neck or tail.
 
 ## Variation within a species
 
@@ -690,6 +914,41 @@ Skeletons are derived from the creature's own voxels rather than authored, so a 
 gets one for nothing, and one too thin to read is dropped at load. The ages, the skeleton and
 the ragdoll that poses it are all in [ANIMATION.md](ANIMATION.md), along with predation.
 
+### Forms by sex and age
+
+`forms` names the entries whose models a creature's females, males or young are drawn
+with, where they look different from the entry's own model:
+
+```json
+"forms": {"female": "deer_female", "juvenile": "deer_juvenile"}
+```
+
+A juvenile takes the `juvenile` form if there is one, else its sex's form; a form left out
+is the entry's own model (`Species::model_for`). Only the model changes: a lioness is a lion
+in every other way, with the lion's behaviour, voice and name. A form entry comes along
+with its creature in `used_entries`, is never spawned or penned on its own
+(`Library::is_form`), and is usually `like` its species so it takes the rig and colours.
+`forms` is never inherited, since an elk's hind is an elk and not a deer.
+
+Each horned or antlered species has a `NAME_female` entry drawn the way the real females
+look: smaller (scale 0.82 to 0.95), hornless where they are in life (deer, elk, mule deer,
+lechwe, saiga, and polled domestic ewes), with the male's horns shrunk toward their bases
+where they carry thinner, shorter ones (bison, cow, aurochs, water buffalo, wildebeest,
+serow), with short spikes (the bighorn ewe) or short prongless horns (the pronghorn doe),
+and the giraffe cow with hair tufts on her ossicones. These were written once by a script
+on 2026-11-24 from each species' own ops and are edited by hand since. The young are
+hornless `NAME_juvenile` entries, the deer, mule deer and elk spotted and the bison calf
+orange-red with no hump yet; the giraffe calf takes its mother's tufted ossicones, and the
+hornless species' young use the female. The triceratops has only a juvenile form, with stub
+horns, since no difference between its sexes is known. The lion has a maneless
+`lion_female` and a spotted, round-eared `lion_juvenile`. Beyond the horned animals: brown
+hens for the mallard, eider (barred) and Gambel's quail, whose own models are the drakes
+and the cock; a bigger, maned `sea_lion_male` with a crested crown; tuskless elephant and
+mammoth calves; a spotted cougar kitten with a ringed tail; a striped boar piglet; and horse
+and zebra foals, whose ops and rig were warped once so the legs keep nearly their full
+length under a short, shallow body (the zebra foal's stripes brown on cream). `NAME:ages` on `--anim-sheet` shows an adult of each sex where
+they differ, and the zoo's sex columns show them too.
+
 Plants vary per tree in their own way: `height`, `trunk_radius` and `crown_radius` are ranges,
 `lean` is a maximum, and `leaf_alt: ["material", chance]` gives a fraction of trees a second
 leaf colour (only the flowering cherry uses it). Autumn colour is not per tree: a plant's
@@ -700,7 +959,7 @@ from a distance. Plant children inherit all of those.
 ## From file to world
 
 1. `src/worldload.rs::used_entries` collects the creatures named by the biomes that the built
-   world actually contains, plus anything those creatures hunt, plus the rare morphs of
+   world actually contains, plus anything those creatures hunt, plus the rare morphs and `forms` entries of
    anything collected. Only these are loaded.
 2. `worldload::creatures` runs each one's ops into its grid (32^3 unless `grid` says otherwise)
    and meshes it into one `Model` (and one part model per bone if it has a rig; a bigger grid
@@ -716,10 +975,11 @@ from a distance. Plant children inherit all of those.
 4. A biome lists creatures with a count: `{"creature": "elk", "count": 3}` means "keep three of
    these around the player while near this biome". `src/creatures/spawn.rs` samples the
    biomes around the player every half second, spawns groups 20 to 90 m away inside a biome
-   that lists the species (behind and beside the player, never in the 140 degrees ahead),
-   rolls each member against the species' rare morphs, and despawns anything beyond 130 m once
-   it is out of view (more than 75 degrees off where the player faces), or beyond 360 m even in
-   view (whales 260 and 600 m). Thinning for the hour and the weather also takes only what is
+   that lists the species (out of view; in view only small animals, 60 to 110 m out, and the
+   far band below), rolls each member against the species' rare morphs, and despawns anything
+   beyond 130 m once it is out of view (more than 75 degrees off where the player faces), or
+   beyond 360 m even in view (500 m for the walkers the far band sets down, whales 260 and
+   600 m). Thinning for the hour and the weather also takes only what is
    out of view, so nothing winks out while it is watched. A group never takes the count past the biome's number (a flock of
    starlings is cut to what is missing), and a rare morph joins its parent's family group and
    counts toward the parent's number (`Creature::spawned_for`).
@@ -731,6 +991,166 @@ So where a creature lives is decided by the biome files, and where biomes are is
 the world's fields (height, moisture, the `strange` field and so on) through each biome's
 `rules` and `priority`. Structures have one more reuse mechanism: `slots` map names to
 materials, so one shape program can be built in different stone or wood.
+
+## Seeing animals far off
+
+A walker at least 0.38 m tall or across its collision box (`creatures::SEEN_FAR_M`: a badger,
+raccoon, hare, fox, coyote and up, not a rabbit, skunk or marmot) is seen from far off
+(`Species::seen_far`). Such walkers turn up in view only in the far band ahead (`spawn::far_band`),
+so a plain has its animals on it when the player looks across it. How far out depends on size
+(`Species::span`, the larger of height and collision width; `spawn::FAR_START`):
+
+| Size | Set down in view from | Examples |
+|---|---|---|
+| 0.4 m | 175 m | badger, raccoon, hare |
+| 1.5 m | 225 m | deer, horse, cow, zebra |
+| 4.1 m and up | 300 m | mammoth, giraffe |
+
+Sizes in between go in step (an elk at 2.3 m about 245 m, an elephant at 3.0 m about 270 m), and
+each is set down anywhere from there to 200 m further (`FAR_DEPTH_M`).
+
+- The biomes across the view at 225, 350 and 450 m are asked what they list, and the band keeps twice
+  that (`DISTANT_QUOTA`), thinned for the hour like the rest, at most 60 animals in all
+  (`DISTANT_MAX`). Its animals carry `spawn::Distant` and are counted apart from the biomes'
+  quotas, so they don't thin the animals round the player. Within 150 m (`JOIN_M`) one joins those
+  and counts toward its biome's number.
+- Out there they walk the generator's ground, as large animals do ("Large animals" above).
+- They are kept in view to 500 m (`DROP_FAR_SEEN_M`), and dropped like any other once out of view
+  past 130 m. Turning round therefore empties the band behind and fills the one ahead over a few
+  seconds.
+
+Anything set down by the spawner dissolves in over 0.6 s (`spawn::APPEAR_S`): the creature
+carries `spawn::Appear`, and `Instance::fade` drops a share of its pixels in a fine
+screen-space noise (scene.wgsl `fs_entity_fade`, in its own pipeline so the discard doesn't cost
+the other creatures their early depth test). The shadow thins with it. An animal walking away
+dissolves out over the last tenth of its in-view reach (`EDGE_SHARE`), so it is gone when it is
+dropped.
+
+On Kitehold's plain the band filled to its 60 within a few seconds (bison, horses, pronghorn,
+jackrabbits, 257 to 437 m out), taking the creatures from 81 to 141. That added about 0.3 ms to
+the tick (2.7 -> 3.0 ms) and 0.02 ms of creature drawing on the GPU, on an RTX 3060 at 1600x900.
+
+## Model resolution and decimation
+
+Every creature is modelled at the same detail for its size, then baked into two decimated
+triangle meshes that are what the game draws. The rule and the steps below apply to a new
+creature and to migrating an old one; Kitehold's animals were the first done this way
+(2026-11-23). Backlog #476 has the measurements behind it.
+
+### The voxel rule
+
+Pick the side to count along:
+
+- Use the body height (the entry's `height`), unless the head-and-body length is more than 1.7
+  times that or less than 1/1.7 of it; then use the longer of the two. Head-and-body is
+  measured as zoologists do: snout to rump, without the tail, wings, bill, antlers or legs.
+  A deer (1.4 m tall, 1.8 m long) goes by height; a lizard (6 cm tall, 15 cm head and body),
+  a snake or an otter by length; a dragonfly by its body length.
+- Put 30 voxels along that side if it is 0.7 m or more, 20 if it is less, and 10 for
+  insects and other small invertebrates and for any animal whose side is under 6 cm. So
+  `voxel = side / 30` for a deer, fox, goose or heron, `side / 20` for a rabbit,
+  squirrel, frog or sparrow, and `side / 10` for a bee, dragonfly, butterfly or mouse.
+
+A long, low animal can cost more than its size deserves at 20; the marmot and rock hyrax are
+drawn at 15 per height instead, and say so in their notes. A child with `scale` keeps its parent's count (scale multiplies `voxel` too), so the rule is
+applied to a family's root. Crossing 1.7, 0.7 m or 6 cm changes the voxel size by up to 2x; if
+two similar species either side of a line look mismatched, blend between the two instead.
+
+### The steps
+
+1. Rescale. `python tools/creature_rescale.py ROOT VOXEL` redraws a family's root at the new
+   voxel size with the same shapes: ops, joints, claims and every descendant's `extra_ops`
+   are mapped about the pivot, and `grid` is resized to hold them. A descendant with both
+   its own `voxel` and its own `ops` keeps its frame (it is given the grid and rig it was
+   using); one with only its own `voxel` has that shrunk with the root's. The originals go
+   to `notes/replaced_creatures/`. `--dry` prints what it would do. Nothing is added at
+   this step, so boxes stay boxes.
+2. Model for decimation (below), at the new resolution.
+3. Preview the bake: `python -I tools/creature_lod/preview.py NAME` writes
+   `shots/creature_lod/p_NAME.png`, the voxel model beside its 1/2 and 1/4 decimated meshes,
+   close up and at 64 and 32 px. Judge the decimated columns: those are what is drawn.
+4. `--validate`, then `--anim-sheet NAME:moves` to check the bones still carry the right
+   pieces. A bigger grid needs a rig, and every bone must fit a 32^3 window: split a long
+   body, tail or neck into more bones where `--validate` says so.
+
+### Modelling for decimation
+
+The decimator keeps silhouettes and colour boundaries and smooths everything else, so the
+voxel steps disappear but the shapes under them don't. What reads well decimated:
+
+- Few, large, overlapping shapes. A body is one long ellipsoid, or two or three that overlap
+  by half their length, not a stack of small ones: each overlap leaves a crease or a bump
+  that the decimated mesh shows as lumps (the deer's v5 body did).
+- `segment` (a capsule along points) for legs, necks and tails, so the limb runs into the body
+  without a step. Taper by giving each segment a smaller radius than the one before.
+- No `box` or `set` on a curved surface. A box stays a cube when decimated: hooves, feet,
+  beaks and ears look like bricks. Use ellipsoids flattened on one axis instead. Boxes are
+  for things that are flat-sided in life.
+- Pattern by `recolour`, never by geometry: a spot drawn as a raised box becomes a bump.
+- Thin parts (ears, legs, bills, wing edges) at least two voxels thick where they join the
+  body, so the decimator has something to keep.
+- Single-voxel details vanish at 1/4. Eyes, nostrils and stripes are colour patches of two
+  voxels or more.
+
+### Baking and level of detail
+
+Every creature in use is baked at world load (`models::bake_all`, on every core; Kitehold's
+take about 340 ms) into two triangle meshes by `src/mesh/decimate.rs`: surface nets over its
+voxels smoothed by Taubin passes, then quadric edge collapse that keeps colour boundaries and
+the volume around each collapse (so legs and necks don't slim), to half and a quarter of the
+square model's triangles. Earlier versions and rejected alternatives are under "What the
+bake replaced" below. A rigged creature is baked as one body and split by bone, with the
+ring where each part meets its parent weighted to follow the parent, so joints bend without
+seams (ANIMATION.md "Smooth parts"); a `loose` bone is baked as a closed surface apart. Each vertex carries a
+smoothed normal and an ambient occlusion read from the voxels around it. The same bake also
+merges the voxels 2x2x2 for voxel mode's far level. The meshes sit beside the quads in the
+entity buffer and draw with `vs_entity_tri`, posed exactly as the quads are.
+
+The renderer picks each instance's level every frame by how many pixels one model voxel covers
+(`render::lod_of`), so a bison and a sparrow switch at the same apparent detail:
+
+| Mode | Near | Far | Switch |
+|---|---|---|---|
+| Smooth (default) | decimated 1/2 | decimated 1/4 | 2 px a voxel (`DECIMATED_SWITCH_PX`) |
+| Voxel | square quads | 2x2x2 quads | 1 px a voxel (`VOXEL_SWITCH_PX`) |
+
+Shadows cast from the far level of whichever mode is on. Instances are sorted by model and level
+before drawing, so the same part of a whole herd is one draw call. The setting is CREATURES
+(Smooth or Voxel) in the settings menu, or `--voxel-creatures` on the command line;
+`LOD_TIMES=1` prints how long the bake took.
+
+On Kitehold's plain at the spawn, 619 creature parts in view cost about 28,000 quads' worth of
+triangles smooth against 42,000 as voxels.
+
+`tools/creature_lod/` is the same bake in Python, with a software renderer for comparison
+sheets (`preview.py`, `lod_sheet.py`); keep the two in step.
+
+### What the bake replaced
+
+The current bake is the second of four rounds (November 2026), each judged on hippo, giraffe,
+flamingo, stegosaurus, deer, rabbit, boar and pond turtle at the same triangle counts.
+
+- The first bake placed corners from 3x3x3 solid counts. It read smooth, but the counts blurred
+  one- and two-voxel parts inward: giraffe and flamingo legs went to needles at far and antlers
+  thinned.
+- Crossings at the voxel faces with crease planes on sharp edges kept the limbs but crumpled the
+  bodies: the crease planes locked the 45-degree voxel staircases in as ridges. The current bake
+  keeps the face crossings and smooths them with Taubin passes instead.
+- Stopping at an error threshold doesn't work on summed quadrics (the error at the 50% point ran
+  from 14 on the boar to 119 on the giraffe). Normalising by each vertex's summed plane weight
+  would be the way to try it again.
+- Normals from a blurred solid grid, edge flips after each decimation, and Taubin that slides
+  colour boundaries along the surface were all judged worse.
+- A blurred field meshed at half resolution gave the smoothest bodies but lost everything under
+  two voxels thick (legs, antlers, the flamingo). Catmull-Clark limit positions left rounded
+  voxel steps.
+- A colour-blind mesh with the voxel colour looked up per pixel looked the same at equal counts.
+  Its gain would be cutting triangles two or three times without blurring markings, which was
+  never tested; it needs a 3D colour texture.
+- Taubin limited by the body's thickness beneath each vertex (0.3 voxels where one thick, up to
+  1.25 where four or more) rounded thick bodies but put faint lumps on deer and boar flanks. It
+  was only tried together with the rejected normals and edge flips; on its own it is the one idea
+  here worth another look.
 
 ## Adding a creature
 
@@ -749,7 +1169,7 @@ changes.
 
 A creature that moves like an existing one is data only: a file in `library/creatures/` (often
 `like` a relative), a line in a biome's `creatures` with a count, then `--validate` and
-`--anim-sheet NAME:family` to look at it.
+`--anim-sheet NAME:family` to look at it. Model it by "Model resolution and decimation" above.
 
 A new verb that an existing mover can run is one row in `VERBS` (`locomotion.rs`): its name,
 the `Mover` with its settings, the default activity table (`Routine`) and the default flight
@@ -767,6 +1187,236 @@ A new kind of motion:
 4. Call its `update` from `Entities::update`.
 5. If it flies and has a bird rig, add it to `Verb::flies` and to the perched and landing
    `match` in `birds.rs`.
+
+## Displays
+
+A display is something rare a species now and then does: a hummingbird's courtship dive,
+two bulls butting heads, a calf nursing, cranes dancing, wolves howling. Each kind is written
+once in Rust under `src/creatures/display/`, and a species opts in from its entry:
+
+```json
+"behaviour": {
+  "displays": [
+    {"kind": "head_butt", "holds": 0, "params": {"backoff": [6, 9]}},
+    {"kind": "nurse", "season": ["spring", "summer"]}
+  ]
+}
+```
+
+- `kind`: one of the kinds below.
+- `rate`: starts an hour per individual. Left out, the kind's default.
+- `season`: when it happens. Empty means all year.
+- `cast`: who takes part, laid over the kind's default:
+  - `from`: `solo`, `same` (its own species near it) or `family` (its own herd, `Kin`).
+  - `count`: `[least, most]`.
+  - `range`: metres from the first member.
+  - `members`: a list of `{"age", "sex"}` filters. The first is the one that starts it, and
+    the last repeats. `"adult"` takes in the aged.
+- `holds`: a multiplier on how much the player unsettles it while it runs. 0 is bison
+  mid-shove, 1 the usual nerves.
+- `on_approach`: started by the player coming within the kind's `near` param, in place
+  of `rate`. `threat` is by default; the others aren't.
+- `params`: numbers the kind reads; each file's header lists them. Give a number, or
+  `[low, high]` for a random pick. A few take a word (`call`'s `posture`, `threat`'s
+  `style`).
+
+| Kind | What it is |
+| --- | --- |
+| `sky_dive` | a hummingbird's U-shaped courtship dive |
+| `head_butt` | two males square up, charge and clash, a few times |
+| `spar` | two males lock horns or antlers and push and twist, no run-up |
+| `nurse` | a juvenile nurses at its mother's flank |
+| `dance` | cranes in a ring, bowing, leaping, spreading their wings |
+| `call` | head up and calling, alone or as a chorus; standing, sitting or lying (wolves howl, lions roar, frogs pump) |
+| `roll` | lies down, rolls on its back with legs pedalling, gets up and shakes |
+| `sentinel` | sits up tall and looks round; a prairie dog's jump-yip with `yip` |
+| `stalk` | fixes on a spot, creeps, freezes, then pounces (`leap`) or stabs (`strike`) |
+| `threat` | answers the player coming close: broadside with a tail swing, a raptor squaring up, a skunk's handstand, a hedgehog curling, a crab's claws |
+| `tumble` | two circlers (crows, ravens) chase round in the air, rolling over and dropping, now and then together |
+| `cache` | comes down, digs, tucks something in, covers it and looks round (crow, raven, Steller's jay) |
+| `bob` | on a perch, swivelling and swaying the head (owls) or dipping the body (dipper); a circler flies to a raised perch first |
+| `song_flight` | climbs singing in a spiral, hangs at the top, drops with wings up and lands where it started (sparrow, skylark) |
+| `rear_strike` | two stallions rear face to face and strike with their fore hooves |
+| `groom` | a pair grooming: horses side by side head to tail (`style` "mutual"), monkeys sitting, one working the other's fur ("one") |
+| `necking` | two males side by side swinging their necks into each other's flanks |
+| `greet` | two of a family meet head to head and rub; `low` and `wag` for wolves |
+| `rub` | walks to a tree and rubs on it: back to the trunk standing up (`style` "back", bears) or the flank ("flank") |
+| `pronk` | stiff-legged bounds, all four feet together, taken up by those near |
+| `play` | the young of a family chase, pounce, roll and face off |
+| `box` | two hares rear up and swat with their fore paws, chase, and go again |
+| `drum` | stamps a hind foot in quick runs |
+| `chase` | two squirrels spiral round each other, round a trunk if one is near |
+| `push_up` | a lizard's push-ups, facing the player if near |
+| `wash` | a raccoon at the water's edge, sitting up, working its paws, a crayfish at its mouth |
+| `fish` | a bear wades into a shallow riffle, watches the water facing upstream, lunges and pins with its fore paws, and now and then carries its `food` (a salmon) to the bank to eat |
+| `dig` | head down, scraping fast with the fore feet |
+| `march` | flamingos in a tight block walking together, wheeling, heads flagging |
+| `pipe` | oystercatchers running side by side, heads down, calling |
+| `sweep` | a spoonbill wading forward swinging its bill through the water |
+| `wing_stretch` | stands and opens its wings wide, holds, shakes and folds |
+| `bask_pose` | a seal on its side with head and hind flippers lifted |
+| `float_play` | an otter afloat spinning on its back and rolling over (water only) |
+| `gallop` | the whole group bursts into a curving run and pulls up |
+| `gesture` | a person or robot waves, stretches, or looks at its hands |
+| `shuttle` | a hummingbird swinging side to side like a pendulum in front of its perch |
+| `sky_dance` | a raptor's string of steep climbs and stoops (circlers and soaring birds); a pair locks talons and cartwheels down at the end |
+| `wing_dry` | a cormorant on a post with its wings held open |
+| `long_call` | a gull settles and calls, head bowed then thrown back; others answer |
+| `billing` | an auk pair on the water rattling bills together |
+| `wing_clap` | a nightjar's looping flight with wing claps and glides |
+| `streamer_flight` | a quetzal's steep climb and swoop back to its perch, tail rippling |
+| `plunge` | a kingfisher hovers, dives in, and beats its catch on the perch |
+| `drum` | also a woodpecker hammering on its trunk |
+| `cache` | also an acorn woodpecker hammering an acorn into the bark |
+| `wheel` | the whole flock turning as one, the turn rippling through it; shorebirds lift first |
+| `sky_point` | an albatross pair on the ground: bills to the sky, bowing, fencing |
+| `broken_wing` | a plover drags a wing and leads the player away (on approach) |
+| `courtship` | a roadrunner runs up to another, tail up, bows, and circles it |
+| `covey_call` | one quail calls from a high point and the covey gathers at its foot |
+| `pair_bow` | a duck, goose or swan pair bowing face to face on the water |
+| `orientation` | a bee's widening arcs in front of the flowers before it leaves |
+| `tandem` | two dragonflies joined, dipping to the water |
+| `swarm` | bats in a rising spiral at dusk |
+| `sync_flash` | glowing insects falling into step and flashing together (`Out::flash`) |
+| `flash_flight` | a morpho's slow deep wingbeats |
+| `bait_ball` | a school pulls into a tight milling ball |
+| `drop` | a reef school drops into the coral at once and comes back up |
+| `leap` | a fish clears the water; mantas somersault (`flip`) |
+| `surface_roll` | a gar or catfish rolls at the surface for air |
+| `patrol` | a big fish cruising a long oval |
+| `bury` | a ray settling and shuffling into the sand |
+| `sway` | a garden eel colony swaying together |
+| `pulse_bloom` | jellies rising together to the surface |
+| `raft` | two sea otters on their backs holding paws |
+| `barrel_roll` | a sky ray rolling round its long axis |
+| `spyhop` | a whale rises head out and looks round; `slaps` adds tail slaps |
+| `snake_dance` | two male snakes raising and twining their fronts |
+| `curl` | a millipede or slug curls up (on approach) |
+| `colour_flash` | an octopus flashing pale; a lobster's claws up (`style` "claws") |
+
+Displays inherit down `like` like the rest of `behaviour`, so one on `bison` also reaches
+cow, aurochs and wildebeest. `--validate` checks the kind, its params, the cast, the bone
+roles it needs and that the species' movement is one the display can drive (the match in
+`display::validate`). Every mover can be driven now.
+
+How it runs: `display::Shows` in `Entities` is the one scheduler. It starts a display only
+where the player could watch it: within 90 m, in front, beyond the animal's `wary` distance,
+and with the animal awake. It keeps at most two going, waits between them, and scales every
+rate and the gap by one dial (`DIAL`, or `VG_DISPLAY_RATE`). The dial starts at 1 with
+fairly high rates so each display is easy to find; turn it down to make them rare.
+
+Each member carries a `Show` while a display runs. Every mover reads its `Drive` and does
+what it says, in place of its own choice (walk.rs, hummer.rs, circle.rs, flit.rs,
+woodpecker.rs, flock.rs, runner.rs, fowl.rs, insects.rs and swim.rs). Snakes and the
+octopus are posed from their own chains, so their displays hold them still and only lay the
+overlay on:
+
+- `Stay`, turned to a yaw
+- `Go` to a point
+- `Back` up without turning (`display::gather` walks a cast to marks and turns them)
+- `Place` at a point, flying, for free movers
+- `Sit` at a point, perched with wings folded, for fliers
+
+When it ends a circler flies back up to its circle and a flitting bird sits or flies to a
+perch. `display::Hop` (an eased flight between two points) and `display::spot` (dry ground
+or a raised perch near a point) are shared by the bird displays, and `display::perch` has
+coming down to sit and the water's surface. birds.rs lays the overlay on fliers. Besides
+the drive and pose, an `Out` can set a glowing creature's brightness (`flash`, fireflies
+in step) and blanch it pale (`pale`, an octopus); entities.rs reads both. It can also
+say its food is held (`held`): a display entry's `food` names a collectible or creature
+(`acorn`, `herring`, `lobster`, `lizard`), and while `held` entities.rs draws that model
+across the mouth, at the front of the jaw or head bone's hull, no taller than a third of
+the creature, a rigged one in its rest pose. worldload.rs builds the food's model in every
+world that has the creature (`used_entries`). `cache`, `wash` (while the paws are at the
+mouth), `plunge` and `courtship` hold it.
+
+`display::apply` lays the `Overlay` over the composed pose by bone role: head pitch and turn,
+jaw, wings, arms, tail, the whole body rearing or rolling, legs pedalling, and a tuck that
+draws the head and legs in, the hind or fore feet stamping (`stamp`, `paw`), and one arm
+raised (`wave`). With `plant`, rearing keeps the low end's legs on the ground, and
+`display::keep_up` lifts a walker whose overlay rolls, tucks or tips it so its hull stays
+above the ground. `Ctx` also
+carries the world's plants (`flora`), for displays that need a trunk. A startled walker bolts, and the display ends for all of it.
+
+Debugging:
+
+- The crosshair readout shows sex, age and what the creature is doing, including the display
+  and its phase.
+- F10 starts a display on the creature under the crosshair, the next kind each press.
+- With the animal debug view on (backquote), I pins the creature under the crosshair: its panel shows the display and phase, and its
+  decision log says why it left one (src/game/eco.rs; GUIDE.md has the keys).
+- `VG_DISPLAY=<kind>` starts that kind whenever a cast can be found, view or not. It does
+  nothing for approach displays, which start when the player comes near anyway.
+- `VG_DISPLAY_LOG=1` logs starts, phases and ends.
+- The headless stats count them under `creature_activities`.
+
+Every individual also has a sex (`creatures/sex.rs`), rolled when it is dressed. A
+creature's `forms` may draw the sexes differently ("Forms by sex and age").
+
+To add a kind, write a file with a `KIND` (defaults, params, roles, `ready`, `start`) and a
+`Run`, and add it to `display::KINDS`.
+
+A species that should not inherit its parent's kinds sets its own `displays` list: unicorn and
+lechwe keep `nurse` without `spar`, raccoon takes `wash` rather than badger's `dig`, kangaroo_rat
+`drum` rather than `box`.
+
+### Known limits
+
+- There is no real contact. Two animals meet when their centres are their two snout reaches
+  apart, so `necking`, `greet` and `groom` touch in the wrong place; each model will want a touch
+  point from a named bone.
+- Birds and fish aren't clamped to the ground the way rolled and tipped walkers are.
+- Rigged food is stiff, in its rest pose. Food placement was checked from logged positions, not by
+  eye.
+- `play` needs juveniles in a family group, which a `VG_SPAWN` test doesn't make.
+- `rub` and `chase` look for a trunk among the placed plants; in open country `rub` doesn't start.
+- Not run end to end: `spyhop` (whales spawn only over 14 m of water) and the frogs' `call` (no
+  frog or toad spawns through `VG_SPAWN` since the frog rework).
+- Crow, raven and nightjar inherit starling's flock of 6 to 140, though a raven should be a pair.
+- Sightings don't go in the logbook, and displays have no sound yet.
+
+## Voices
+
+`behaviour.voice` lists the calls a species makes and what sets each off. The sound is made by
+`src/sound/call.rs` (GUIDE.md, "Animal calls"); `src/creatures/voice.rs` decides when, by
+watching the creatures, so no mover knows about sound.
+
+```json
+"voice": {
+  "size": 1.35,
+  "calls": [
+    {"cry": "howl", "on": "display:call", "at": "jaw", "boost": 8, "chorus": 0.6, "chorus_m": 800},
+    {"cry": "howl", "on": "idle", "hours": "night", "every_s": [600, 1800], "boost": 8, "chorus": 0.7}
+  ]
+}
+```
+
+- `cry` is one of the engine's cries (`sound::call::CRIES`). `size` on the voice or on one
+  call makes it bigger (lower, slower); a juvenile's voice is 0.6 of an adult's, and each
+  individual's differs by up to 8% either way.
+- `on`: `idle` (now and then, every `every_s` seconds per individual, default [60, 240]),
+  `flee` and `chase` (a walker's mood turning to either), `takeoff` (a bird that was
+  sitting, on a perch, the ground, a trunk or the water, flying up, whatever mover flies it),
+  `warn` (a snake that `warns` holding its ground; it calls again as each call ends while the
+  warning lasts), or `display:KIND` (as the display starts, or with `"at": "jaw"` each time the display
+  opens the jaw, so the `call` display's howls come one per raised head).
+- Gates: `hours` (`day`, `night`, `dawn`, `dusk`, `twilight`), `season`, `sex`, `age`, and
+  `chance`. An idle call needs the animal awake (its period's activity over 0.3) unless it
+  names `hours`, and not running, and is quiet in heavy rain unless `"rain": true`. A song's
+  timer runs up to four times faster around sunrise, which is the dawn chorus.
+- `boost` raises a marquee call, in dB. `chorus` is the chance each other of its species
+  within `chorus_m` (300 m) answers a second or a few later; answers don't set off more.
+- At most 12 calls sound at once and 4 of any one species (6 counting answers), and an animal
+  makes one call at a time. Each call follows its animal while it sounds.
+
+185 species have a voice. The rest make no sound worth hearing in life and are left silent
+rather than given one: most fish, sharks, jellies, eels, crabs, lobsters, the octopus, slugs,
+millipedes, lizards, moths, butterflies, fireflies, dragonflies, pelicans, people and bots. Fish
+and rays that leap only splash, rabbits only stamp, and tortoises only hiss. 71 of the 195 displays make a sound: the calling ones, plus head-butt
+clashes, sparring antlers, a horse's squeal, elephants trumpeting in greeting and the like.
+`--validate` checks
+every voice: the cry, the trigger, that a `display:` trigger names a display the species has,
+and the gates.
 
 ## Plants creatures can use
 
@@ -792,6 +1442,41 @@ Nothing reads `perch` or `nest`. To add a consumer, give some plants the afforda
 pass `&ents.plants` into the mover's `update` and steer by the answer (`flit.rs` choosing
 `perch` tops before bare voxel tops). A new affordance is a variant in `Affordance` and its name
 in `AFFORDANCES`.
+
+## The zoo
+
+`--world zoo` is a level lawn with every library creature in a pen of its own, for looking
+at animals that are hard to meet: a juvenile lying down, an aged male drinking, a display
+that turns up once an hour. Pens are laid out family by family (by the root of `like`) from
+the north-west corner; swimmers, waders, seals, ducks and running birds have theirs along the
+sea at the south edge. The code is `src/creatures/zoo.rs`; a world opts in with `"zoo": {}`
+in its world.json, and the biome spawner stands down there.
+
+In a rigged walker's pen each column is one age and sex (juvenile, adult and aged, female
+then male, leaving out the ages the species lacks) and each row holds everyone in it at one
+activity, top to bottom: free (its own choices, kept near home), stand, look, graze, drink,
+sit, lie, walk (pacing a line three cells long) and run (pacing five cells, as fleeing).
+Below the rows each of the species' displays has a stage with a cast built from its `cast`
+filters, and plays again three seconds after it ends. Every other way of moving gets one
+group put down by the spawner's own `place` and left to itself.
+
+Kept animals are tame: they don't mind the player, hunt, or run from each other, so you can
+walk among them. Pens fill within 70 m of the player and empty past 110 m. The top of the
+screen names the pen and row you are in; PageDown and PageUp go to the next and previous pen.
+The crosshair readout and F10 work as anywhere else.
+
+`VG_ZOO=deer,heron` (or `"zoo": {"only": [...]}`) pens only those creatures and their `like`
+descendants, loads only them, and starts the player at the first pen (unless `--pos` pins
+the camera). `VG_ZOO_LOG=1` prints where every pen is:
+
+```bash
+VG_ZOO=deer cargo run --release -- --world zoo
+VG_ZOO=bison cargo run --release -- --headless --world zoo --frames 400 --look 120,-12 --screenshot bison_pen.png
+```
+
+Not done yet: no fences, signs or paths on the ground; non-walkers (birds, insects, snakes,
+fish) are not held to an activity and can stray from their pen; a sitting row shows standing
+animals for a species whose table never sits; there is no sleep apart from lying.
 
 ## Checking
 

@@ -5,15 +5,17 @@
   "notes": "Great Basin gopher snake: cream with dark saddles, longer and slimmer than the rattlesnake it is often mistaken for, and no rattle. It climbs — up a pinyon or a ponderosa in a slow spiral, then out along a limb to lie with its head hanging off it — and comes down to cross open ground to the next tree.",
   "colors": {"skin": [186, 164, 124]},
   "behaviour": {
+    "displays": [{"kind": "snake_dance"}],
     "movement": "climb",
     "walk_speed": 0.6,
     "flee_speed": 2.2,
     "wary": 6,
     "flightiness": 1.0,
     "warns": false,
-    "active": "diurnal"
+    "active": "diurnal",
+    "voice": {"calls": [{"cry": "hiss", "on": "warn", "size": 1.2}]}
   },
   "like": "rattlesnake",
   "scale": 1.12,
-  "extra_ops": [{"op": "box", "from": [15, 1, 27], "to": [17, 4, 28], "mat": "air", "part": "tail"}]
+  "extra_ops": [{"op": "box", "from": [14, 1, 32], "to": [19, 5, 38], "mat": "air", "part": "tail"}]
 }

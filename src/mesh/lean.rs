@@ -359,7 +359,12 @@ fn fits(mut q: [Vec3; 4], n: Vec3) -> bool {
     if (q[1] - q[0]).cross(q[2] - q[0]).dot(n) < 0.0 {
         q.swap(1, 3);
     }
-    anchor(q, n, false).3 <= SLACK
+    // `anchor(q, n, false).3 <= SLACK`, stopping at the first corner order
+    // that fits and the first corner that doesn't. A corner whose reach is
+    // NaN counts as fitting, as `f32::max` drops it there.
+    let (d, p) = face_of(q, n, false);
+    let (na, sign, ua, va) = DIRS[d];
+    (0..4).any(|r| (0..4).all(|k| !(reach(q[(k + r) % 4] - plain(p, na, sign, ua, va, k)) > SLACK)))
 }
 
 /// The plain face a quad hangs from: its direction, its voxel, the turn of
@@ -367,6 +372,29 @@ fn fits(mut q: [Vec3; 4], n: Vec3) -> bool {
 /// what a rounded quad can reach (over 1 does not fit). `clamp` keeps the
 /// voxel inside the chunk, as packing needs.
 fn anchor(q: [Vec3; 4], n: Vec3, clamp: bool) -> (usize, [i32; 3], usize, f32) {
+    let (d, p) = face_of(q, n, clamp);
+    let (na, sign, ua, va) = DIRS[d];
+    // The turn of the corner order (winding kept) that needs the least move:
+    // the first of the least, as `min_by` picks.
+    let cost = |r: usize| (0..4).map(|k| reach(q[(k + r) % 4] - plain(p, na, sign, ua, va, k))).fold(0.0f32, f32::max);
+    let costs = [cost(0), cost(1), cost(2), cost(3)];
+    let mut r = 0;
+    for i in 1..4 {
+        if costs[i].total_cmp(&costs[r]).is_lt() {
+            r = i;
+        }
+    }
+    (d, p, r, costs[r])
+}
+
+/// How far a quad's corner is from a plain face's, as a share of what a
+/// rounded quad can move it (over 1 does not fit).
+fn reach(o: Vec3) -> f32 {
+    (o.x.abs() / 0.94).max(o.y.abs() / 1.94).max(o.z.abs() / 0.94)
+}
+
+/// `anchor`'s direction and voxel, without the corner order.
+fn face_of(q: [Vec3; 4], n: Vec3, clamp: bool) -> (usize, [i32; 3]) {
     let d = (0..6)
         .max_by(|&a, &b| {
             let s = |g: usize| n[DIRS[g].0] * DIRS[g].1 as f32;
@@ -381,11 +409,7 @@ fn anchor(q: [Vec3; 4], n: Vec3, clamp: bool) -> (usize, [i32; 3], usize, f32) {
     p[ua] = (mean[ua] - 0.5).round() as i32;
     p[va] = (mean[va] - 0.5).round() as i32;
     let p = if clamp { p.map(|x| x.clamp(0, 31)) } else { p };
-    // The turn of the corner order (winding kept) that needs the least move.
-    let reach = |o: Vec3| (o.x.abs() / 0.94).max(o.y.abs() / 1.94).max(o.z.abs() / 0.94);
-    let cost = |r: usize| (0..4).map(|k| reach(q[(k + r) % 4] - plain(p, na, sign, ua, va, k))).fold(0.0f32, f32::max);
-    let r = (0..4).min_by(|&a, &b| cost(a).total_cmp(&cost(b))).unwrap_or(0);
-    (d, p, r, cost(r))
+    (d, p)
 }
 
 /// How near two ends have to be to join, voxels.
@@ -630,5 +654,5 @@ fn owned(mut q: [Vec3; 4], n: Vec3) -> bool {
     if (q[1] - q[0]).cross(q[2] - q[0]).dot(n) < 0.0 {
         q.swap(1, 3);
     }
-    anchor(q, n, false).1.iter().all(|&x| (0..32).contains(&x))
+    face_of(q, n, false).1.iter().all(|&x| (0..32).contains(&x))
 }

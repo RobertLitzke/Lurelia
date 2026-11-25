@@ -59,6 +59,20 @@ pub enum Action {
     Save,
     Fullscreen,
     Select(u8),
+    /// Backquote: the animal debug view on or off (game/eco.rs). The five
+    /// after it act only while it is on.
+    EcoDebug,
+    /// P: the ecology map, every animal in the world.
+    EcoMap,
+    /// I: pin the animal under the crosshair for the inspector.
+    Pin,
+    /// O: freeze the animals; `.` runs one think of them, `,` ten times as fast.
+    Freeze,
+    EcoStep,
+    EcoSpeed,
+    /// `[` and `]` with the ecology map open: the layer before or after.
+    EcoLayerBack,
+    EcoLayerOn,
 }
 
 pub struct Binding {
@@ -260,6 +274,46 @@ pub const BINDINGS: &[Binding] = &[
         keys: &[K::F11],
         name: "F11",
         action: Action::Fullscreen,
+    },
+    Binding {
+        keys: &[K::Backquote],
+        name: "`",
+        action: Action::EcoDebug,
+    },
+    Binding {
+        keys: &[K::KeyP],
+        name: "P",
+        action: Action::EcoMap,
+    },
+    Binding {
+        keys: &[K::KeyI],
+        name: "I",
+        action: Action::Pin,
+    },
+    Binding {
+        keys: &[K::KeyO],
+        name: "O",
+        action: Action::Freeze,
+    },
+    Binding {
+        keys: &[K::Period],
+        name: ".",
+        action: Action::EcoStep,
+    },
+    Binding {
+        keys: &[K::Comma],
+        name: ",",
+        action: Action::EcoSpeed,
+    },
+    Binding {
+        keys: &[K::BracketLeft],
+        name: "[",
+        action: Action::EcoLayerBack,
+    },
+    Binding {
+        keys: &[K::BracketRight],
+        name: "]",
+        action: Action::EcoLayerOn,
     },
     Binding {
         keys: &[K::Digit1],
@@ -500,6 +554,16 @@ pub const HELP: &[HelpBox] = &[
             keys("X / Y", "CAR IN OR OUT, HELD: RESET / CAMERA", None),
             keys("D-PAD", "GLIDE / KAYAK / BIKE / CAMERA OUT", None),
             keys("START / BACK", "PAUSE / HELP", None),
+        ],
+    },
+    HelpBox {
+        title: "ANIMALS (DEBUG)",
+        rows: &[
+            row(&[Action::EcoDebug], "ANIMAL DEBUG ON OR OFF; THE KEYS BELOW WORK WHILE IT IS ON"),
+            row(&[Action::EcoMap], "ECOLOGY MAP: EVERY ANIMAL BY WHAT IT IS DOING"),
+            row(&[Action::EcoLayerBack, Action::EcoLayerOn], "MAP LAYER: THE ANIMALS, OR A CHANNEL OF THE WORLD SURVEY"),
+            row(&[Action::Pin], "PIN THE ANIMAL UNDER THE CROSSHAIR: ITS PANEL AND LINES"),
+            row(&[Action::Freeze, Action::EcoStep, Action::EcoSpeed], "FREEZE / ONE THINK / TEN TIMES AS FAST"),
         ],
     },
     HelpBox {

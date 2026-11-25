@@ -158,10 +158,26 @@ pub fn undercuts(fore: &Fore, sea: f32, length: f32, seed: u32, face: impl Fn(f3
 
 /// Paint a reef cell: its height, surface and zone (as a region).
 pub fn paint(f: &mut Fields, i: usize, y: f32, zone: Zone, rock: u8, sand: u8, cause: u16) {
+    paint_as(f, i, y, zone, rock, sand, cause, "");
+}
+
+/// `paint` with the zone's region named `<prefix>_<zone>` (an `atoll`'s
+/// `regions`), or plainly with an empty prefix.
+#[allow(clippy::too_many_arguments)]
+pub fn paint_as(f: &mut Fields, i: usize, y: f32, zone: Zone, rock: u8, sand: u8, cause: u16, prefix: &str) {
     f.h[i] = y;
     f.surface[i] = if matches!(zone, Zone::Groove | Zone::Apron) { sand } else { rock };
-    f.region[i] = f.region_id(zone.region());
+    f.region[i] = f.region_id(&named(prefix, zone.region()));
     f.cause[i] = cause;
+}
+
+/// A reef region's name under a prefix: `fw` and `lagoon` make `fw_lagoon`.
+pub fn named(prefix: &str, region: &str) -> String {
+    if prefix.is_empty() {
+        region.to_string()
+    } else {
+        format!("{prefix}_{region}")
+    }
 }
 
 /// A fringing reef along a coast: `path` is its crest, a little off the

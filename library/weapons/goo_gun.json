@@ -43,6 +43,7 @@
     "tracer_s": 0.09,
     "look": "goo"
   },
-  "view": "goo",
-  "tint": [0.4, 0.5, 0.3]
+  "view": "goo_gun",
+  "tint": [0.4, 0.5, 0.3],
+  "role": "lobber"
 }

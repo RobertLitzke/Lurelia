@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "Beechwood on the high ground of the Hollins: tall grey trunks close together, a floor of brown leaves with almost nothing growing on it, fern only where a tree has come down.",
+  "habitat": "broadleaf_forest",
   "priority": 3,
   "rules": {"elev": [36.5, 200], "slope": [0, 0.9]},
   "surface": "forest_floor",
   "subsurface": "dirt",
+  "soil": 0.6,
   "map_color": [44, 98, 52],
   "plants": [
     {

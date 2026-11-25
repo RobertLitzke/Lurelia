@@ -1,0 +1,389 @@
+{
+  "events": [
+    {
+      "year": -1000000,
+      "event": "heightmap",
+      "file": "ground.bin",
+      "cause": "the land the track is laid over, fitted to the road by tools/course/track_file.py"
+    },
+    {
+      "year": -999999,
+      "event": "terrain",
+      "mode": "add",
+      "base": 0,
+      "hills": 0.6,
+      "ridges": 0,
+      "rough": 1,
+      "vary": 0.4,
+      "warp": 30,
+      "cause": "rolling over the fitted land"
+    },
+    {
+      "year": 1790,
+      "event": "place",
+      "cause": "a house on Front Street",
+      "structure": "saltbox",
+      "at": {
+        "along": 18,
+        "right": 22
+      }
+    },
+    {
+      "year": 1791,
+      "event": "place",
+      "cause": "a house on Front Street",
+      "structure": "cape_cod",
+      "at": {
+        "along": 52,
+        "right": 22
+      }
+    },
+    {
+      "year": 1792,
+      "event": "place",
+      "cause": "a house on Front Street",
+      "structure": "captains_house",
+      "at": {
+        "along": 1300,
+        "right": 26
+      }
+    },
+    {
+      "year": 1793,
+      "event": "place",
+      "cause": "a house on Front Street",
+      "structure": "saltbox",
+      "at": {
+        "along": 1350,
+        "right": 22
+      }
+    },
+    {
+      "year": 1794,
+      "event": "place",
+      "cause": "a house on Front Street",
+      "structure": "cape_cod",
+      "at": {
+        "along": 1380,
+        "right": 22
+      }
+    },
+    {
+      "year": 1795,
+      "event": "place",
+      "cause": "a house up Church Hill",
+      "structure": "saltbox",
+      "at": {
+        "along": 700,
+        "right": 20
+      }
+    },
+    {
+      "year": 1796,
+      "event": "place",
+      "cause": "a house up Church Hill",
+      "structure": "captains_house",
+      "at": {
+        "along": 710,
+        "left": 25
+      }
+    },
+    {
+      "year": 1797,
+      "event": "place",
+      "cause": "a house up Church Hill",
+      "structure": "cape_cod",
+      "at": {
+        "along": 735,
+        "right": 20
+      }
+    },
+    {
+      "year": 1798,
+      "event": "place",
+      "cause": "a house up Church Hill",
+      "structure": "cape_cod",
+      "at": {
+        "along": 745,
+        "left": 21
+      }
+    },
+    {
+      "year": 1799,
+      "event": "place",
+      "cause": "a house up Church Hill",
+      "structure": "saltbox",
+      "at": {
+        "along": 770,
+        "right": 24
+      }
+    },
+    {
+      "year": 1800,
+      "event": "place",
+      "cause": "a house up Church Hill",
+      "structure": "saltbox",
+      "at": {
+        "along": 780,
+        "left": 25
+      }
+    },
+    {
+      "year": 1801,
+      "event": "place",
+      "cause": "a house down the hill to the ropewalk",
+      "structure": "saltbox",
+      "at": {
+        "along": 880,
+        "left": 22
+      }
+    },
+    {
+      "year": 1802,
+      "event": "place",
+      "cause": "a house down the hill to the ropewalk",
+      "structure": "cape_cod",
+      "at": {
+        "along": 880,
+        "right": 22
+      }
+    },
+    {
+      "year": 1803,
+      "event": "place",
+      "cause": "a house down the hill to the ropewalk",
+      "structure": "cape_cod",
+      "at": {
+        "along": 920,
+        "left": 22
+      }
+    },
+    {
+      "year": 1804,
+      "event": "place",
+      "cause": "a house down the hill to the ropewalk",
+      "structure": "saltbox",
+      "at": {
+        "along": 920,
+        "right": 22
+      }
+    },
+    {
+      "year": 1800,
+      "event": "place",
+      "cause": "the ship chandler's on Front Street",
+      "structure": "chandlery",
+      "at": {
+        "along": 1325,
+        "right": 21
+      }
+    },
+    {
+      "year": 1800,
+      "event": "place",
+      "cause": "the captain's house above the piers",
+      "structure": "captains_house",
+      "at": {
+        "along": 375,
+        "right": 24
+      }
+    },
+    {
+      "year": 1800,
+      "event": "place",
+      "cause": "the sail loft on the quay between the piers",
+      "structure": "sail_loft",
+      "at": {
+        "along": 370,
+        "left": 22
+      }
+    },
+    {
+      "year": 1800,
+      "event": "place",
+      "cause": "the church at the top of Church Hill",
+      "structure": "white_church",
+      "at": {
+        "along": 850,
+        "left": 27
+      }
+    },
+    {
+      "year": 1800,
+      "event": "place",
+      "cause": "the try-works, where the blubber was boiled down",
+      "structure": "try_works",
+      "at": {
+        "along": 690,
+        "left": 24
+      }
+    },
+    {
+      "year": 1800,
+      "event": "place",
+      "cause": "the cooper's shop on the yard",
+      "structure": "cooperage",
+      "at": {
+        "along": 1175,
+        "right": 24
+      }
+    },
+    {
+      "year": 1840,
+      "event": "place",
+      "cause": "a whaler moored between the piers",
+      "structure": "whaler",
+      "at": [
+        100,
+        226
+      ],
+      "bearing": 90
+    },
+    {
+      "year": 1845,
+      "event": "place",
+      "cause": "a whaler moored north of the cannery pier",
+      "structure": "whaler",
+      "at": [
+        104,
+        96
+      ],
+      "bearing": 90
+    },
+    {
+      "year": 1800,
+      "event": "place",
+      "cause": "a dory on the pier",
+      "structure": "dory_upturned",
+      "at": {
+        "along": 120,
+        "left": 19
+      }
+    },
+    {
+      "year": 1850,
+      "event": "place",
+      "cause": "a dory off the whaling pier",
+      "structure": "dory",
+      "at": [
+        120,
+        350
+      ],
+      "bearing": 30
+    },
+    {
+      "year": 1850,
+      "event": "place",
+      "cause": "a whaleboat at the quay steps",
+      "structure": "whaleboat",
+      "at": [
+        128,
+        198
+      ],
+      "bearing": 270
+    },
+    {
+      "year": 1850,
+      "event": "sign",
+      "cause": "the street name at the foot of the hill",
+      "at": {
+        "along": 668,
+        "left": 16
+      },
+      "text": [
+        "CHURCH HILL"
+      ],
+      "style": "street_blade"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "Front Street",
+      "kind": "street",
+      "along": {
+        "from": 1281,
+        "to": 85,
+        "right": [
+          0,
+          30
+        ]
+      },
+      "cause": "Front Street"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Whaling Pier",
+      "kind": "street",
+      "along": {
+        "from": 95,
+        "to": 320,
+        "left": [
+          0,
+          40
+        ]
+      },
+      "cause": "the Whaling Pier"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Cannery Pier",
+      "kind": "street",
+      "along": {
+        "from": 418,
+        "to": 652,
+        "left": [
+          0,
+          40
+        ]
+      },
+      "cause": "the Cannery Pier"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "Church Hill",
+      "kind": "street",
+      "along": {
+        "from": 665,
+        "to": 860,
+        "right": [
+          0,
+          40
+        ]
+      },
+      "cause": "Church Hill"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Ropewalk",
+      "kind": "street",
+      "along": {
+        "from": 965,
+        "to": 1130,
+        "right": [
+          0,
+          12
+        ]
+      },
+      "cause": "the Ropewalk"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "Cooper's Yard",
+      "kind": "street",
+      "along": {
+        "from": 1130,
+        "to": 1200,
+        "right": [
+          0,
+          30
+        ]
+      },
+      "cause": "Cooper's Yard"
+    }
+  ]
+}

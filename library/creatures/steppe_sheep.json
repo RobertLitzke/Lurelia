@@ -12,12 +12,20 @@
     "dark": [36, 28, 24],
     "antler": [214, 196, 160]
   },
+  "forms": {"female": "steppe_sheep_female", "juvenile": "steppe_sheep_female"},
   "behaviour": {
     "movement": "graze",
     "walk_speed": 0.7,
     "flee_speed": 4.5,
     "wary": 9,
-    "group": {"size": [12, 36], "spacing": 1.8, "range": 26, "alignment": 1.0, "cohesion": 1.6}
+    "group": {"size": [12, 36], "spacing": 1.8, "range": 26, "alignment": 1.0, "cohesion": 1.6},
+    "voice": {
+      "size": 1.05,
+      "calls": [
+        {"cry": "bleat", "on": "idle", "every_s": [60, 240], "chorus": 0.4, "chorus_m": 100},
+        {"cry": "snort", "on": "flee", "size": 1.1, "chance": 0.4}
+      ]
+    }
   },
   "like": "sheep",
   "scale": 1.0

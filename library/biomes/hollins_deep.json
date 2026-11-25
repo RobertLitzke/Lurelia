@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "The heart of the Hollins, where the wood is plainly somebody else's: oaks a hundred feet high and as far round as a cottage, gold maples and wisteria grown into trees between them, blossom hanging from everything, glassbloom at their feet, and white deer with one horn among the others.",
+  "habitat": "broadleaf_forest",
   "priority": 5,
   "rules": {"region": "deepwood"},
   "surface": "moss_grass",
   "subsurface": "dirt",
+  "soil": 0.5,
   "map_color": [40, 110, 92],
   "plants": [
     {"plant": "mother_oak", "density": 0.00035, "placement": {"verb": "lone", "params": {"spacing": 52}}},

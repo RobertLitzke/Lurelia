@@ -7,6 +7,7 @@
   "tide": {"range": 3.0},
   "surf": {"height": 1.2},
   "seed": 4410,
+  "plants": "v2",
   "underwater": {
     "visibility": 20,
     "light": 0.35
@@ -56,7 +57,7 @@
     "rib_dunes",
     "rib_hollow",
     "rib_blowout",
-    "rib_wrack",
+    "rib_wrack_giants",
     "rib_beach",
     "rib_headland",
     "rib_tidepools",

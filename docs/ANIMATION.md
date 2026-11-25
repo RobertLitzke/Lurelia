@@ -64,13 +64,13 @@ Voxels nothing assigns belong to the root (the first bone).
 - `"overlap": n` on a bone grows its part n voxel layers into its parent's voxels at the
   joint, which hides gaps when the joint bends. Off by default.
 - `"flesh": f` on a bone (0 to 1, default 0) makes the part soft: see **Soft bodies** below.
+- `"rigid": true` on a bone keeps it from ever turning on its joint, whatever the motors do. It
+  is for a piece split off only so that every part fits its 32^3 window: the salt tortoise's
+  shell is quartered, the root keeping one quarter and three rigid `spine` bones claiming the
+  others, which would otherwise swing apart with the sprawler's spine. Leave the root a piece of
+  its own: a root that owns no voxels fails the slicer's test.
 - `"spread": [pitch, yaw, roll]` on a bone is its pose in flight, for a flier whose rest pose
   stands on the ground. See **Pterosaurs** below.
-- `"slope": true` on the rig (next to `plan`) draws the parts with sloped corners and joins
-  them where they meet their parents: see **Sloped parts** below. Off by default. The deer,
-  horse, fox and boar have it (each version 4), and so their children: elk, mule deer, lechwe,
-  mossback deer, unicorn; donkey, fae horse, Przewalski's horse, zebra; arctic fox; javelina,
-  warthog.
 - The root's joint defaults to the body's centre; every other bone needs one. Parents must be
   listed before their children.
 
@@ -85,35 +85,20 @@ parts pose and draw exactly as a 32^3 creature's do. `--validate` checks the rig
 inside the grid, every op `part` naming a bone, and on a big grid that every part fits its
 window.
 
-### Sloped parts
+### Smooth parts
 
-With `"slope": true` on the rig, each part is meshed by `src/anim/slope.rs` instead of as square
-voxel faces. Every corner is placed by surface nets over the whole body's voxels, the way trees
-are rounded, so box legs come out bevelled and an ellipsoid body smooth. A corner moves up to half
-a voxel in, but only half as far along an axis where the shape is one voxel thick, so a fox's
-one-voxel legs and ears keep about three quarters of their width.
-
-A sloped part draws no faces toward its parent or its children, so at rest the body is one
-closed surface with no caps at the joints. The corners of a part that touch its parent's voxels
-(the ring where a leg leaves the body) follow the parent's rotation, and the ring one voxel
-further along goes a third of the way. The parent draws the same ring with its own rotation, so
-when a joint bends the ring stays where the two parts meet and the faces between it and the
-rest of the part stretch over what would have been a gap. The weights are two bits a corner in
-the quad (`quad::SEAM_SHIFT`), the parent's rotation rides in the instance (`glow[1..]`, set in
-`push_parts`), and `entity_local` in `common.wgsl` blends the two in both the entity and the
-shadow pass. Sloped faces are lit by their diagonals as drawn, stretched or not.
-
-Parts that touch without being parent and child (a head resting on the body, legs side by side)
-keep their caps toward each other, as square parts do. `overlap` is ignored on a sloped rig. A
-juvenile's head is drawn larger about its own joint and its ring is not, so a young animal's neck
-seam can open a little. Skeletons stay square.
-
-`VOXEL_SLOPE_CREATURES=1` turns slopes on for every rigged creature and `0` off for all, for
-before-and-after comparisons:
-
-```bash
-VOXEL_SLOPE_CREATURES=1 cargo run --release -- --headless --anim-sheet deer --no-hud --hour 10 --size 3840x2160 --look -90,14 --screenshot sloped.png
-```
+Each rigged creature is also baked at load into two decimated triangle meshes of its whole body,
+split by bone into its parts, and drawn as those unless the player picks voxel creatures
+(docs/CREATURES.md "Model resolution and decimation"). Because the body is one surface, a part
+and its parent share a ring of vertices where they meet. In the part's mesh that ring follows the
+parent's rotation and the ring next to it a third of the way (the seam weight, eight bits in the
+vertex), so a bent knee or a turned neck stretches the surface instead of opening a gap or
+showing two rounded ends. The parent's rotation rides in the part's instance (`glow[1..]`, set in
+`push_parts_at`) and `entity_local_seam` in `common.wgsl` blends the two, in the scene and the
+shadow pass. Parts that touch without being parent and child (legs side by side) keep their own
+rotations, so they can still part a little. A part that lies flat against others at rest and swings away from them (a pterosaur's wing panel, the triceratops frill over its shoulders) has no surface where they touch, so it opens holes; give its bone `"loose": true` and it and its children are baked as a closed surface of their own, with no seam to the parent. Bone boundaries are held through the decimation like
+colour boundaries, so a joint's ring stays at the joint. `overlap` only matters in voxel mode. The sloped parts that used to do this job (`"slope": true`,
+`src/anim/slope.rs`) are gone.
 
 ### Soft bodies
 
@@ -132,8 +117,8 @@ and the entity vertex shader moves every vertex of them by one field over the wh
 The field has its origin at the bottom centre of the soft bones' voxels and acts in the creature
 frame after the bones are posed, so parts that met before it meet after it. A part with less flesh
 than its parent takes its parent's movement at its joint and its own past it, so a rigid flipper
-rides on a sagging flank and a half-soft head stays on its neck. Ragdolls, swimmers and skeletons
-have no sag or jiggle. The walrus has `flesh` 1 on its body and 0.6 on its head; the harbour seal
+rides on a sagging flank and a half-soft head stays on its neck. Limp bodies, swimmers and
+skeletons have no sag or jiggle. The walrus has `flesh` 1 on its body and 0.6 on its head; the harbour seal
 (and the sea lion, which inherits it) 0.7 and 0.4.
 
 ### Body plans
@@ -153,7 +138,7 @@ picked by roles.
 | serpent | rattlesnake and its children | no motors at all: the body is posed along a path (below) |
 | crab | bone crab | eight two-bone legs out to the sides and two two-bone claws (`arm`); walks sideways (below) |
 | octopus | giant octopus | a root and eight chains of `arm` bones, each posed along a path of its own (below) |
-| biped | humanoid and its children (robot) | walk, jog and run on two legs: knees that bend only backwards, elbows only forwards, ankles that keep the feet flat and point at toe-off, arms counter-swinging, hips dropping and rolling and turning against the shoulders |
+| biped | humanoid and its children (`bot` and `zombie` and their builds) | walk, jog and run on two legs: knees that bend only backwards, elbows only forwards, ankles that keep the feet flat and point at toe-off, arms counter-swinging, hips dropping and rolling and turning against the shoulders |
 
 `flutterer` is an accepted name with no motors behind it; `--validate` warns that such a
 creature would move as a quadruped. Creatures without a rig (the glassmoth, bees,
@@ -237,6 +222,10 @@ block overrides rows by name; the marmot uses it to sit up.
 - When the creature is alarmed or the mover wants to move, the level changes at about three
   times the normal rate: a lying deer scrambles up and bolts.
 - A table with no `sit` goes straight from standing to lying.
+- `"sit_up"` on the rig (radians, next to `plan`) makes `sit` a lookout: past about 0.5 the
+  body tips back that far, the hind legs fold flat under it, the fore paws come up to the chest
+  and the head and tail turn back level (`motors::sit_up`). The prairie dog uses 1.35 and sits
+  for much of its day.
 - Fleeing and chasing are decided by the mover, not the table; `Life` sees them as `moving`
   and `alarm` in its `Input`.
 - `drink` is chosen like any other activity; `walk.rs` finds the water and walks there, and
@@ -314,6 +303,9 @@ inner membrane's width at the hand to the finger tip) and folded back to rest by
 spread angle, so the pieces meet without gaps when open. The layers sit one voxel apart across
 the side of the body, so the open wing is stepped by a voxel or two. A voxel of membrane that
 falls inside another bone's op (a thigh) moves with that bone and leaves a hole in flight.
+The panels are `loose` (Smooth parts above): sandwiched between the finger's membrane and the
+inner membrane at rest, joined into one surface they had no faces of their own and showed as
+slits in the open wing.
 
 A walker with wings and a `fly_height` takes off when it bolts (`Air` in walk.rs), so the
 quetzalcoatlus (`graze`) runs a few steps' worth of alarm and flies 25 to 50 m. The pteranodon
@@ -347,7 +339,7 @@ mover (creatures/snake.rs)  ->  Spine (a path)  ->  pose_along  ->  one instance
   crawling out of its own coil), and a folded path throws the parts about.
   The phase runs backwards as the snake advances, so the wave stands still on
   the ground and the body slides through it.
-- `coil`, `drape` and `settled` (the ragdoll) are paths and poses of their
+- `coil`, `drape` and `settled` (limp.rs) are paths and poses of their
   own: a ring that rises as it goes round with the head lifted over it, a
   body lying along a branch with its front curving off and hanging, and a
   limp body for a snake that has let go of one.
@@ -431,7 +423,7 @@ Parts with no voxels are skipped. The fixed-step update keeps the previous pose 
 current one (`Anim.prev`, `Anim.pose`), and `Entities::instances` blends them by `alpha` as it
 does position and yaw. A rigged creature with no `Anim` component draws at rest.
 
-## Ages, bones and ragdolls
+## Ages, bones and limp bodies
 
 An animal is one of four ages (`creatures/age.rs`): juvenile, adult, aged or deceased. The
 stage is rolled once when the individual spawns and never changes, and it is laid over the
@@ -457,8 +449,8 @@ knee-high and up has young and old, half a metre and up leaves bones. `"ages": {
 Nothing about a skeleton is authored. `anim/bones.rs` walks the `owner` grid the slicer
 already built and keeps, for each bone, a thin structure inside the flesh: a strut down a leg,
 a neck or a tail; a ribcage every third voxel along the body with a spine over it; a hollow
-skull. Ears get nothing. The parts come out on the creature's own rig, so a skeleton poses,
-lies and ragdolls through the same code as the animal.
+skull. Ears get nothing. The parts come out on the creature's own rig, so a skeleton poses
+and lies through the same code as the animal.
 
 Every voxel it keeps is one that was solid in the living animal and was *not* on its surface.
 The core is defined as
@@ -472,57 +464,93 @@ A thin creature can clear the height rule and still fail this one, which is why 
 leaves no bones. An entry that asked for `"bones": "full"` and fails gets a `--validate`
 complaint naming the voxel count.
 
-### Ragdolls
+### Limp bodies
 
-`anim/ragdoll.rs` is a body with nothing holding it up. Each bone gets an angular velocity;
-gravity pulls whichever way the bone's own long axis is not already pointing, the joint
-clamps at a per-role limit, and friction takes the motion out of it. Once every joint is
-still the pose is held and costs nothing further. The body itself keeps the roll it was given,
-since the ground, not a joint, is holding it up, and it is lifted back up by `FLANK` of its
-hip height because it rolls about the model's feet.
+`anim/limp.rs` is an animal with nothing holding it up: the dead, the carried, and an animal
+asleep on its side. It replaced a ragdoll that turned joint angles about a body pinned at its
+feet. That one had no floor, only a rule for how far down to put the body afterwards, so a
+skeleton came to rest rolled part way over with its legs swung back under it and the lowest
+joint, a hoof, on the ground: a carcass propped up on four straight legs. Nothing could hang
+from a mouth either, since the body was posed about its own feet.
 
-Which way a bone points at rest comes from the plan: down the body for most
-animals, back along the chain for a serpent, so a snake that lets go of a
-branch flails instead of standing to attention.
+A limp body is points. Every part of the animal is a rigid cluster: its own joint, the joints
+of the parts that hang off it, and up to fifteen voxels on its outside (`Bone::hull`, from
+`slice::hulls`, the furthest voxels from the joint in the six box directions, the eight
+corner directions and outright). Each step:
 
-Five things use it:
+- every point falls under gravity, plus any `push` the caller gives (a moving frame's own
+  acceleration turned round)
+- six times over: a point under the ground is put on it, and one that moved less than
+  `GRIP_M` along it this step is put back where it was (without that a lying body creeps
+  round, because putting a part back into shape after lifting a point turns it a hair, always
+  the same way); every part is matched back into its own shape, turned to fit its points
+  best (shape matching, with the rotation found by Müller's 2016 iteration from last step's
+  answer); and any joint bent past its role's limit from rest is turned back about the joint.
+  A point on the ground counts eight times over in the matching and a held point sixty times,
+  so parts move to the floor and to the hand rather than the other way round
+- a point on the ground loses most of its slide once a step and does not bounce
 
-- the deceased settle into it (`ragdoll::settled`), seeded per individual, so no two skeletons
-  in a field lie the same way
-- prey in a predator's mouth keeps stepping, with the carrier's pace fed in as `shake`, which
-  is the jiggle
-- an animal whose entry says `sleeps_on_side` tips over into `ragdoll::on_side` as it lies
-  down, worked out once the first time it lies and then kept, because settling a ragdoll is
-  not something to do every frame
-- a snake that drops out of a tree is limp all the way down, with the fall fed
-  in as `shake`, and the mover holds its head where the fall has got to
-- a body thrown by a blast (`Ragdoll::hurl`; `physics::tumble` moves it, for a
-  fighter from `shooter` and for an animal from `creatures::flung`) leaves the
-  ground upright and tumbles. While it is `aloft` the root turns past its joint
-  stop and keeps its spin, nothing is lying on the floor, nothing is brought
-  down onto it, and **no bone has any weight**: a body in free fall is
-  weightless, and gravity on each bone through the fall would pin every joint
-  at its stop and land a corpse arched backwards with its arms out. On the way down
-  the root is wrapped back into a half turn, the floor turns the body's own
-  axis toward horizontal (`TOPPLE`, measured off the axis so a body that lands
-  on its head is dealt with too), and its joints ease back toward rest
-  (`RELAX`) -- the only thing that straightens a bent limb, since a flat body's
-  limbs are held by the floor rather than by gravity. A body that was dropped
-  rather than thrown feels none of this: nothing of it is bent
+The parts share their joints, and nothing else holds the body together. Each part's turn
+becomes the bone's angle in its parent's frame and the root joint's place becomes
+`Pose::root`, so a limp body is drawn by the same `push_parts` as a living one. Between two
+steps the angles are unwrapped onto the last ones, and where a joint jumps further than
+drawing between them could make sense of (a turn passing through the pole of the angles) the
+new pose is drawn without blending (`limp::follow`).
+
+It runs in the animal's own frame: x and z turned with the yaw it had, y up, the origin at
+`Look::pos`. The caller says where the ground is in that frame, and may move the frame
+(`Limp::shift`) to keep `Look::pos` with the body.
+
+What uses it:
+
+- the deceased that a world starts with settle into `limp::settled` on flat ground, from
+  standing, with a roll about their own length (`Limp::topple`) seeded per individual, so no
+  two skeletons in a field lie the same way. A skeleton's rig has its own hull from the bone
+  voxels (`bones::hulls`), so bones lie on bone
+- anything can be held at one point (`Limp::hold`): a `Grip` is the scruff (the head's
+  joint), the middle of the back, or any point of the body by number. The held point counts
+  sixty times over and the rest hangs from it, swinging as the hand moves. A kill is held at
+  the point nearest the hunter's mouth as the catch is made, on its neck, head or trunk
+  (`Limp::nearest`, `carry::grab`), or nearest the talons on its trunk, so a rabbit taken
+  from behind dangles by the rump with its head down, and one taken from the side hangs by
+  the back. A deer, longer than a cougar's mouth is high, lies along the ground behind it and
+  is hauled. Nothing chooses between carried and dragged
+- a carcass on the ground is stepped until it is still (`creatures/carcass.rs`), and again
+  each time something eating it tugs at it, and once more when it goes to bones, which lie
+  lower than the body did
+- a carcass thrown by a blast rides in the frame of the box `physics::tumble` moves
+  (`creatures::flung`), with the box's acceleration turned round as `push`: in free fall the
+  limbs float, and the landing throws them down onto the ground
+- an animal whose entry says `sleeps_on_side` lies in `limp::on_side`: the body put over a
+  quarter turn and every limb let down onto the ground, worked out once the first time it
+  lies down
+- a snake that drops out of a tree is held by the head at the frame's origin, which falls
+  with the head, so the body trails above it
+
+The shooter's bots still use the older `anim/ragdoll.rs` for the moment between dying and
+their corpse (`shooter/corpse.rs`, points and sticks) taking over.
 
 ### Predation
 
-There is no pounce and no eating (`creatures/carry.rs`). A hunter that already chases its prey
-(`walk.rs`, from the library's `hunts`) takes it at `CATCH_M`: the prey loses its `Critter` and
-`Body`, gains a limp ragdoll and a `Carried`, and is pinned to the hunter's jaw or head joint
-as that joint is actually drawn. Prey at least 0.55 of the carrier's height is dragged with its
-feet on the ground and trailing; anything smaller is carried clear of it. A rabbit is carried,
-a deer is dragged.
+A hunter that chases its prey (`walk.rs`, from the library's `hunts`) takes it at `CATCH_M`:
+the prey loses its `Critter`, `Body` and any other mover, goes limp in the pose it was in,
+and gains a `Carried`, a `Carcass` and `Age::fresh_kill`. It is held at the hunter's mouth as
+the mouth is actually drawn (`carry.rs`).
 
-The hunter walks it off for `CARRY_S` and drops it, then is not hungry again for `FULL_S`. What
-it drops stays a body for a minute and is bones after that (`Age::fresh_kill`), or, if the
-creature leaves no bones, it is gone. A corpse has no `Critter`, and every mover's query asks
-for one, so nothing chases a corpse and nothing flees one.
+The hunter walks it off for `CARRY_S`, then puts it down where it stands and eats it
+(`Mood::Eat`): it stands over the carcass, faces it and holds its head down (`Act::Graze`),
+and pulls at it now and then, for up to `EAT_S` or until the meat runs out. After that it is
+not hungry again for `FULL_S`.
+
+A `Carcass` holds its meat as seconds of one animal eating, 60 a metre of the animal's
+height. Any walker that hunts that species and is hungry treats a carcass nobody is carrying
+as prey that does not run: it walks over and eats when its snout is over it, beside whoever
+else is already there. While something eats, the carcass does not rot to bones; when the meat
+is gone it goes to bones at once (or, for an animal that leaves none, is gone), and one
+nobody touches goes to bones after `CARCASS_S` as before. A shot animal is a carcass too, so
+predators clean up after the player. A bird of prey holds its kill in its talons for
+`4 × CARRY_S` and lets it drop; it does not come down to eat it, but a walker that hunts that
+species may.
 
 ## Checking
 
@@ -544,7 +572,10 @@ for one, so nothing chases a corpse and nothing flees one.
 - `VG_DEAD_SHARE=0.3` fills a field with skeletons to look at them; `VG_JUVENILE_SHARE` and
   `VG_AGED_SHARE` do the same for the living stages.
 - Unit tests over every rigged creature: `skeleton_stays_inside_the_animal` (in `bones.rs`)
-  and `every_creature_settles_and_stays_within_its_joints` (in `ragdoll.rs`); in `slice.rs`, `parts_add_up_to_the_whole` (no voxel
+  and, in `limp.rs`, `every_creature_settles_in_one_piece` (no joint past its limit, nothing
+  drawn into the floor), `skeletons_lie_down`, `held_by_the_scruff_it_hangs`,
+  `held_anywhere_it_hangs_from_there`,
+  `dragged_it_trails` and `asleep_on_its_side_the_legs_are_down`; in `slice.rs`, `parts_add_up_to_the_whole` (no voxel
   lost or doubled) and `rest_pose_reproduces_the_whole_model` (every part's voxels land where
   they were in the whole model).
 - In `spine.rs`, `bones_land_on_the_path` (every bone is drawn on the point the path put
@@ -599,17 +630,39 @@ ten states (idle, walk, run, sprint, backpedal, strafe, aim up, aim down, jump, 
 on above and three-quarters below, through the same `shooter::draw_bot` a match uses.
 
 The deathmatch bots are the only users (`brain/avatar.rs`, which compiles the library
-`robot` into models of its own so a bot looks the same in every world). A `Figure` is display
+`bot` builds into models of their own so a bot looks the same in every world). A `Figure` is display
 only: it reads the body and never writes to it, and nothing that decides anything may read
 it. See `docs/BOTS.md`.
 
 One thing a bot wears is not in its library entry: the lamps that carry its health, a bar across
 the top of the chest and another between the shoulder blades. Health is state rather than shape,
-so `avatar.rs` draws them as their own instances and the `robot` entry holds only the dark bands
-they sit in. A bot is drawn as one of three children of `robot` (`robot_brawny`, `robot_heavy`,
-`robot_lean`, picked from its seed); `avatar.rs` finds each build's chest surface on its voxels,
-so the bars follow a deeper or flatter chest without anyone moving an offset.
-The consequence is worth knowing before you reach for the obvious tool: **`--edit robot`
+so `avatar.rs` draws them as their own instances and the `bot` entry holds only the dark bands
+they sit in (rows 74 to 78). A bot is drawn as one of three children of `bot` (`bot_courier`,
+`bot_hardsuit`, `bot_walker`, picked from its seed); `avatar.rs` finds each build's chest surface
+on its voxels, so the bars follow a deeper or flatter chest without anyone moving an offset. The
+builds are on the humanoid's 40x96x40 grid at 18.5 mm, so `avatar.rs` slices each part into a
+32^3 window and bakes each rig (the whole body for a corpse, and the uniform and the rest for a
+living bot) into smooth meshes with `models::bake_with`, as the loader does for a library
+creature. `build` skips the bake for callers that only want the rig; `build_drawn` is for the
+renderer. The walker's legs are reverse-kneed by shape alone: thigh forward to a knee in front
+of the hip, shin back to a raised ankle, a long foot bone; the biped stride and crouch bend
+them the same way as anyone's.
+
+The zombie builds (`zombie_office`, `zombie_hiker`, `zombie_labourer`) come after the bots in
+`Avatar::bodies` (`avatar.bots` says where), each whole, in a palette block of its own and with no
+lamps (`Body::lit`); `Avatar::zombie_build(seed)` picks one. How a zombie walks is
+`Figure::walk` (`anim/undead.rs`): `Shamble` (short dragging steps, head hung to one side, arms
+dead, one foot scuffed), `Lurch` (one stiff knee swung round from a hitched hip, the stride bent so
+that leg goes through fast, arms held out ahead), `Runner` (hard lean, head thrust out, arms
+clawing in turn, a twitch) and `Crawler` (face down, dragging itself on its forearms, legs
+trailing). Each is a pass over the stride, plus a step length and cadence the stride itself uses,
+so the brain only sets velocity. The zombie round gives a crawler a 0.7 m collider
+(`Player::stand_h`) and moves its hitbox forward over the head. `--zombie-sheet`
+draws all four, standing and moving, as `--bot-sheet` does.
+
+The upper arms and thighs of every people rig are `loose` bones (docs/CREATURES.md): baked as one
+surface, the pelvis had no skin where a thigh met it, and a thigh swung forward showed the hole.
+The consequence is worth knowing before you reach for the obvious tool: **`--edit bot_courier`
 cannot show them.** The EDIT page draws the library entry, so it shows two dark bands and
 nothing lit, and the one page that lets you turn a robot round is blind to the one part of it
 that changes. Judging a lamp means a bot in a match, which means the headless recipe in

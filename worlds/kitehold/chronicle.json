@@ -1,0 +1,8876 @@
+{
+ "places": {},
+ "events": [
+  {
+   "year": -300000000,
+   "event": "terrain",
+   "cause": "the old upland of Saurischia coming down to the Lessa: high in the north under Cinderhorn, falling west to Gannet's coast country and south to the sea, and rising in the east into the high country behind the Steps",
+   "base": 66,
+   "hills": 5,
+   "ridges": 2,
+   "rough": 1.2,
+   "vary": 0.7,
+   "warp": 50,
+   "relief": [
+    {
+     "at": [
+      760,
+      -260
+     ],
+     "radius": 720,
+     "height": 52,
+     "stretch": [
+      90,
+      1.6
+     ]
+    },
+    {
+     "at": [
+      470,
+      -40
+     ],
+     "radius": 230,
+     "height": 70
+    },
+    {
+     "at": [
+      1500,
+      -60
+     ],
+     "radius": 420,
+     "height": 70
+    },
+    {
+     "at": [
+      1720,
+      980
+     ],
+     "radius": 760,
+     "height": 88,
+     "stretch": [
+      0,
+      1.5
+     ]
+    },
+    {
+     "at": [
+      1250,
+      1690
+     ],
+     "radius": 170,
+     "height": -36,
+     "stretch": [
+      155,
+      2.8
+     ]
+    },
+    {
+     "at": [
+      1110,
+      1560
+     ],
+     "radius": 150,
+     "height": -26,
+     "stretch": [
+      150,
+      1.8
+     ]
+    },
+    {
+     "at": [
+      300,
+      1300
+     ],
+     "radius": 420,
+     "height": 10
+    },
+    {
+     "at": [
+      -80,
+      400
+     ],
+     "radius": 320,
+     "height": -8
+    },
+    {
+     "at": [
+      1460,
+      1500
+     ],
+     "radius": 330,
+     "height": -30,
+     "stretch": [
+      120,
+      1.3
+     ]
+    },
+    {
+     "at": [
+      850,
+      1400
+     ],
+     "radius": 260,
+     "height": -16,
+     "stretch": [
+      150,
+      1.4
+     ]
+    },
+    {
+     "at": [
+      1290,
+      1200
+     ],
+     "radius": 210,
+     "height": 20,
+     "stretch": [
+      60,
+      1.5
+     ]
+    },
+    {
+     "at": [
+      1500,
+      1300
+     ],
+     "radius": 200,
+     "height": 22,
+     "stretch": [
+      20,
+      1.3
+     ]
+    },
+    {
+     "at": [
+      700,
+      1330
+     ],
+     "radius": 230,
+     "height": 14,
+     "stretch": [
+      100,
+      1.6
+     ]
+    },
+    {
+     "at": [
+      380,
+      1430
+     ],
+     "radius": 200,
+     "height": 12,
+     "stretch": [
+      140,
+      1.4
+     ]
+    },
+    {
+     "at": [
+      140,
+      1240
+     ],
+     "radius": 170,
+     "height": 10
+    }
+   ],
+   "courses": [
+    {
+     "path": [
+      [
+       1108,
+       -40
+      ],
+      [
+       1090,
+       200
+      ],
+      [
+       1000,
+       450
+      ],
+      [
+       950,
+       640
+      ],
+      [
+       930,
+       860
+      ],
+      [
+       960,
+       1100
+      ],
+      [
+       1040,
+       1320
+      ],
+      [
+       1140,
+       1480
+      ],
+      [
+       1220,
+       1640
+      ]
+     ],
+     "width": 80,
+     "depth": 38,
+     "depth_end": 12
+    },
+    {
+     "path": [
+      [
+       420,
+       60
+      ],
+      [
+       300,
+       80
+      ],
+      [
+       160,
+       76
+      ],
+      [
+       -40,
+       76
+      ]
+     ],
+     "width": 30,
+     "depth": 3
+    }
+   ]
+  },
+  {
+   "year": -42000000,
+   "event": "region",
+   "cause": "the estuary's water and flats",
+   "name": "bay",
+   "at": [
+    1230,
+    1560
+   ],
+   "radius": 300
+  },
+  {
+   "year": -41000000,
+   "event": "region",
+   "cause": "the east bank of the Lessa",
+   "name": "eastside",
+   "poly": [
+    [
+     1117,
+     -10
+    ],
+    [
+     1092,
+     90
+    ],
+    [
+     1062,
+     270
+    ],
+    [
+     1002,
+     390
+    ],
+    [
+     957,
+     540
+    ],
+    [
+     942,
+     630
+    ],
+    [
+     930,
+     780
+    ],
+    [
+     924,
+     900
+    ],
+    [
+     949,
+     1020
+    ],
+    [
+     964,
+     1140
+    ],
+    [
+     987,
+     1230
+    ],
+    [
+     1032,
+     1305
+    ],
+    [
+     1072,
+     1360
+    ],
+    [
+     1250,
+     1400
+    ],
+    [
+     1546,
+     1500
+    ],
+    [
+     1546,
+     -10
+    ]
+   ]
+  },
+  {
+   "year": -41000000,
+   "event": "region",
+   "cause": "the wet meadows at the foot of the hills, down to the salt marsh",
+   "name": "wetmeadow",
+   "poly": [
+    [
+     1060,
+     1360
+    ],
+    [
+     1250,
+     1400
+    ],
+    [
+     1546,
+     1500
+    ],
+    [
+     1546,
+     1546
+    ],
+    [
+     1100,
+     1546
+    ],
+    [
+     1060,
+     1450
+    ]
+   ]
+  },
+  {
+   "year": -40000000,
+   "event": "escarpment",
+   "cause": "the Steps coming on from Saurischia, front face: the lower of the two, swinging south out of the high country in the north-east and dying out toward the sea in the south-east",
+   "path": [
+    [
+     1430,
+     1300
+    ],
+    [
+     1370,
+     1200
+    ],
+    [
+     1318,
+     1070
+    ],
+    [
+     1262,
+     900
+    ],
+    [
+     1238,
+     760
+    ],
+    [
+     1252,
+     600
+    ],
+    [
+     1300,
+     400
+    ],
+    [
+     1420,
+     210
+    ],
+    [
+     1580,
+     90
+    ],
+    [
+     1720,
+     30
+    ]
+   ],
+   "height": 28,
+   "width": 8,
+   "reach": 2000,
+   "region": "bench"
+  },
+  {
+   "year": -40000000,
+   "event": "escarpment",
+   "cause": "the Steps, back face: the higher, set back east of the first, over which the high moor lies",
+   "path": [
+    [
+     1560,
+     1200
+    ],
+    [
+     1500,
+     1140
+    ],
+    [
+     1460,
+     1060
+    ],
+    [
+     1400,
+     900
+    ],
+    [
+     1390,
+     700
+    ],
+    [
+     1430,
+     500
+    ],
+    [
+     1530,
+     340
+    ],
+    [
+     1720,
+     240
+    ]
+   ],
+   "height": 36,
+   "width": 7,
+   "reach": 2000,
+   "region": "highland"
+  },
+  {
+   "year": -39000000,
+   "event": "dip",
+   "cause": "the blocks tilted as they rose, their beds slanting down to the east",
+   "at": [
+    1360,
+    800
+   ],
+   "radius": 600,
+   "bearing": 80,
+   "grade": 0.06
+  },
+  {
+   "year": -35000000,
+   "event": "canyon",
+   "cause": "a side canyon cut back into the front face by a stream off the bench",
+   "path": [
+    [
+     1236,
+     520
+    ],
+    [
+     1262,
+     532
+    ],
+    [
+     1290,
+     548
+    ],
+    [
+     1318,
+     556
+    ]
+   ],
+   "width": 8,
+   "depth": 12,
+   "depth_end": 3,
+   "meander": 4
+  },
+  {
+   "year": -35000000,
+   "event": "canyon",
+   "cause": "a side canyon cut back into the back face by a stream off the moor",
+   "path": [
+    [
+     1384,
+     1000
+    ],
+    [
+     1414,
+     1010
+    ],
+    [
+     1440,
+     1030
+    ],
+    [
+     1470,
+     1036
+    ]
+   ],
+   "width": 8,
+   "depth": 14,
+   "depth_end": 3,
+   "meander": 4
+  },
+  {
+   "year": -2000000,
+   "event": "drainage",
+   "cause": "rain on the country since the Steps rose, the Lessa coming in over the north edge out of Cascade Mere, streams off the high moor cutting combes in the faces",
+   "name": "lessa",
+   "points": 14,
+   "iters": 16,
+   "strength": 0.22,
+   "wander": 2.0,
+   "source": 3000,
+   "edges": true,
+   "inflow": [
+    {
+     "at": [
+      1108,
+      2
+     ],
+     "area": 60000000
+    }
+   ]
+  },
+  {
+   "year": -1800000,
+   "event": "mesa",
+   "cause": "THE KITE: the throat of a volcano far older than Cinderhorn, its cone weathered away and its plug of columnar basalt left standing out of the plain",
+   "at": [
+    640,
+    1000
+   ],
+   "radius": 80,
+   "height": 19,
+   "warp": 0.45,
+   "skirt": 14,
+   "talus": 0.45,
+   "poi": "the Kite",
+   "stretch": [
+    60,
+    1.22
+   ],
+   "tiers": 1
+  },
+  {
+   "year": -1000000,
+   "event": "erode_rims",
+   "cause": "weathering of every cliff top since the blocks rose",
+   "depth": 3,
+   "reach": 10,
+   "gullies": 0.5,
+   "min_drop": 5
+  },
+  {
+   "year": -12500,
+   "event": "lake",
+   "cause": "a tarn on the high moor, in a rock hollow the ice left",
+   "name": "tarn_n",
+   "at": [
+    1500,
+    900
+   ],
+   "radius": 18,
+   "depth": 2,
+   "bed": "peat",
+   "ragged": 0.35,
+   "steep": true
+  },
+  {
+   "year": -12500,
+   "event": "lake",
+   "cause": "a tarn on the high moor",
+   "name": "tarn_m",
+   "at": [
+    1470,
+    980
+   ],
+   "radius": 13,
+   "depth": 1.5,
+   "bed": "peat",
+   "ragged": 0.4,
+   "steep": true
+  },
+  {
+   "year": -12500,
+   "event": "lake",
+   "cause": "a tarn on the high moor",
+   "name": "tarn_s",
+   "at": [
+    1505,
+    1075
+   ],
+   "radius": 22,
+   "depth": 2,
+   "bed": "peat",
+   "ragged": 0.3,
+   "steep": true
+  },
+  {
+   "year": -12200,
+   "event": "vale",
+   "cause": "the Lessa valley north of Maplebridge: the river wandering on a broad floor of meadow between long soft slopes of maple, the old gorge long since filled and slumped back",
+   "path": [
+    [
+     1092,
+     130
+    ],
+    [
+     1084,
+     190
+    ],
+    [
+     1079,
+     245
+    ],
+    [
+     1066,
+     280
+    ],
+    [
+     1050,
+     315
+    ],
+    [
+     1031,
+     350
+    ],
+    [
+     1006,
+     375
+    ],
+    [
+     993,
+     410
+    ],
+    [
+     989,
+     455
+    ],
+    [
+     987,
+     500
+    ],
+    [
+     972,
+     530
+    ]
+   ],
+   "width": 50,
+   "depth": 0.3,
+   "side": 150,
+   "meander": 8
+  },
+  {
+   "year": -12100,
+   "event": "river",
+   "cause": "the Lessa, out of Cascade Mere in Saurischia, south down the foot of the Steps past Maplebridge and the farms to the estuary",
+   "name": "lessa_river",
+   "path": [
+    "lessa_source",
+    "lessa_1",
+    "lessa_2",
+    "lessa_3",
+    "lessa_4",
+    "lessa_5",
+    "lessa_6",
+    "lessa_7",
+    "lessa_8",
+    "lessa_9",
+    "lessa_10",
+    "lessa_11",
+    "lessa_12",
+    "lessa_13",
+    "lessa_14",
+    "lessa_mouth"
+   ],
+   "width": 14,
+   "depth": 2.0,
+   "bed": "river_cobbles",
+   "bank": "river_gravel",
+   "meander": 5,
+   "curve": true,
+   "from_edge": true
+  },
+  {
+   "year": -12000,
+   "event": "region",
+   "cause": "Cinderhorn's first flows, down the old valley in the north-west and east to the Lessa",
+   "name": "lava",
+   "poly": [
+    [
+     300,
+     -10
+    ],
+    [
+     660,
+     -10
+    ],
+    [
+     760,
+     40
+    ],
+    [
+     900,
+     70
+    ],
+    [
+     1060,
+     60
+    ],
+    [
+     1110,
+     120
+    ],
+    [
+     1080,
+     210
+    ],
+    [
+     960,
+     250
+    ],
+    [
+     860,
+     300
+    ],
+    [
+     760,
+     300
+    ],
+    [
+     680,
+     360
+    ],
+    [
+     600,
+     340
+    ],
+    [
+     520,
+     390
+    ],
+    [
+     430,
+     370
+    ],
+    [
+     360,
+     330
+    ],
+    [
+     300,
+     260
+    ],
+    [
+     260,
+     180
+    ],
+    [
+     270,
+     80
+    ]
+   ]
+  },
+  {
+   "year": -12000,
+   "event": "region",
+   "cause": "the same flows as the country sees them now: black cinder and broken crust, pines and fireweed, the same ground as Cinderhorn's cone across the edge",
+   "name": "cinder",
+   "poly": [
+    [
+     300,
+     -10
+    ],
+    [
+     660,
+     -10
+    ],
+    [
+     760,
+     40
+    ],
+    [
+     900,
+     70
+    ],
+    [
+     1060,
+     60
+    ],
+    [
+     1110,
+     120
+    ],
+    [
+     1080,
+     210
+    ],
+    [
+     960,
+     250
+    ],
+    [
+     860,
+     300
+    ],
+    [
+     760,
+     300
+    ],
+    [
+     680,
+     360
+    ],
+    [
+     600,
+     340
+    ],
+    [
+     520,
+     390
+    ],
+    [
+     430,
+     370
+    ],
+    [
+     360,
+     330
+    ],
+    [
+     300,
+     260
+    ],
+    [
+     260,
+     180
+    ],
+    [
+     270,
+     80
+    ]
+   ]
+  },
+  {
+   "year": -12000,
+   "event": "river",
+   "cause": "Maple Beck, out of the north tarn on the moor, over both faces of the Steps in falls and down through the maples to the Lessa at Maplebridge",
+   "name": "maple_beck",
+   "path": [
+    [
+     1500,
+     900
+    ],
+    [
+     1452.6,
+     879.8
+    ],
+    [
+     1405.6,
+     856.6
+    ],
+    [
+     1358.2,
+     829.5
+    ],
+    [
+     1310.2,
+     801.0
+    ],
+    [
+     1262.3,
+     774.0
+    ],
+    [
+     1212.9,
+     747.4
+    ],
+    [
+     1159.8,
+     718.8
+    ],
+    [
+     1103.2,
+     690.6
+    ],
+    [
+     1045.8,
+     669.2
+    ],
+    [
+     989.6,
+     654.2
+    ],
+    [
+     935,
+     640
+    ]
+   ],
+   "width": 8,
+   "depth": 1.4,
+   "bed": "river_cobbles",
+   "bank": "river_gravel",
+   "meander": 6,
+   "curve": true
+  },
+  {
+   "year": -12000,
+   "event": "river",
+   "cause": "the Cloud Run, rising in the moss of the moor in the north-east and going down both faces through the cloud forest and the redwoods",
+   "name": "cloud_run",
+   "path": [
+    [
+     1528,
+     474
+    ],
+    [
+     1488.8,
+     479.1
+    ],
+    [
+     1449.5,
+     482.7
+    ],
+    [
+     1407.6,
+     485.5
+    ],
+    [
+     1362.9,
+     487.0
+    ],
+    [
+     1317.5,
+     483.5
+    ],
+    [
+     1271.0,
+     472.0
+    ],
+    [
+     1220.5,
+     452.4
+    ],
+    [
+     1164.9,
+     427.8
+    ],
+    [
+     1106.0,
+     404.5
+    ],
+    [
+     1045.8,
+     386.0
+    ],
+    [
+     985,
+     370
+    ]
+   ],
+   "width": 6,
+   "depth": 1.2,
+   "bed": "river_cobbles",
+   "bank": "river_gravel",
+   "meander": 6,
+   "curve": true,
+   "rise": 200
+  },
+  {
+   "year": -12000,
+   "event": "river",
+   "cause": "Tarn Water, out of the south tarn, over the faces and down to the Lessa above the farms' marsh",
+   "name": "tarn_water",
+   "path": [
+    [
+     1505,
+     1075
+    ],
+    [
+     1468.4,
+     1071.7
+    ],
+    [
+     1431.6,
+     1073.0
+    ],
+    [
+     1394.0,
+     1082.3
+    ],
+    [
+     1354.5,
+     1098.8
+    ],
+    [
+     1311.2,
+     1118.4
+    ],
+    [
+     1261.4,
+     1136.6
+    ],
+    [
+     1203.3,
+     1149.6
+    ],
+    [
+     1138.8,
+     1155.7
+    ],
+    [
+     1072.8,
+     1155.9
+    ],
+    [
+     1010.4,
+     1153.2
+    ],
+    [
+     952,
+     1150
+    ]
+   ],
+   "width": 7,
+   "depth": 1.3,
+   "bed": "river_cobbles",
+   "bank": "river_gravel",
+   "meander": 6,
+   "curve": true
+  },
+  {
+   "year": -12000,
+   "event": "river",
+   "cause": "the spring at the west foot of the lava, where rain that sank through the flows comes out cold and runs west to become the east branch of Gannet's Cold River",
+   "name": "east_branch",
+   "path": [
+    [
+     268,
+     104
+    ],
+    [
+     226,
+     98
+    ],
+    [
+     180,
+     92
+    ],
+    [
+     130,
+     84
+    ],
+    [
+     80,
+     80
+    ],
+    [
+     36,
+     77
+    ],
+    [
+     0,
+     76
+    ]
+   ],
+   "width": 5,
+   "depth": 1.0,
+   "bed": "river_cobbles",
+   "bank": "river_gravel",
+   "meander": 4,
+   "curve": true,
+   "rise": 150
+  },
+  {
+   "year": -11900,
+   "event": "lava_tube",
+   "cause": "the Long Tube: the main feeder of the first flows, drained when the vent stopped",
+   "path": [
+    [
+     430,
+     10
+    ],
+    [
+     470,
+     80
+    ],
+    [
+     520,
+     150
+    ],
+    [
+     590,
+     210
+    ],
+    [
+     660,
+     250
+    ],
+    [
+     720,
+     290
+    ]
+   ],
+   "radius": 4.5,
+   "depth": 9,
+   "skylights": 4,
+   "wall": "basalt"
+  },
+  {
+   "year": -11900,
+   "event": "lava_tube",
+   "cause": "the West Tube, which fed the lobe that reached the west edge",
+   "path": [
+    [
+     400,
+     20
+    ],
+    [
+     370,
+     90
+    ],
+    [
+     340,
+     160
+    ],
+    [
+     330,
+     230
+    ],
+    [
+     372,
+     300
+    ]
+   ],
+   "radius": 3.5,
+   "depth": 8,
+   "skylights": 3,
+   "wall": "basalt"
+  },
+  {
+   "year": -11900,
+   "event": "lava_tube",
+   "cause": "the East Tube, toward the Lessa",
+   "path": [
+    [
+     640,
+     30
+    ],
+    [
+     720,
+     70
+    ],
+    [
+     810,
+     110
+    ],
+    [
+     900,
+     150
+    ],
+    [
+     960,
+     200
+    ]
+   ],
+   "radius": 3.5,
+   "depth": 8,
+   "skylights": 3,
+   "wall": "basalt"
+  },
+  {
+   "year": -11899,
+   "event": "lava_tube",
+   "cause": "the Braid: a second channel the lava cut beside the Long Tube and drained back into it, lower in the middle, where glow-worms hang from the roof",
+   "path": [
+    [
+     470,
+     80
+    ],
+    [
+     446,
+     116
+    ],
+    [
+     452,
+     152
+    ],
+    [
+     482,
+     178
+    ],
+    [
+     520,
+     150
+    ]
+   ],
+   "depths": [
+    9,
+    10,
+    11.5,
+    10.5,
+    9
+   ],
+   "radius": 3.0,
+   "depth": 9,
+   "mouths": "none",
+   "vary": 0.25,
+   "chambers": 1,
+   "chamber": 1.6,
+   "lining": "glowworm_ceiling",
+   "lined": [
+    0.25,
+    0.85
+   ],
+   "wall": "basalt",
+   "poi": "the Braid"
+  },
+  {
+   "year": -11899,
+   "event": "lava_tube",
+   "cause": "the Undertube: an older feeder under the Long Tube, reached down a ramp of breakdown, dark all the way and lit only by its glow-worms",
+   "path": [
+    [
+     520,
+     150
+    ],
+    [
+     546,
+     140
+    ],
+    [
+     582,
+     158
+    ],
+    [
+     632,
+     192
+    ],
+    [
+     688,
+     212
+    ],
+    [
+     732,
+     238
+    ]
+   ],
+   "depths": [
+    9,
+    13,
+    17,
+    18,
+    18,
+    16
+   ],
+   "radius": 3.4,
+   "depth": 16,
+   "mouths": "none",
+   "vary": 0.3,
+   "chambers": 2,
+   "chamber": 1.9,
+   "lining": "glowworm_ceiling",
+   "lined": [
+    0.15,
+    1.0
+   ],
+   "wall": "basalt",
+   "poi": "the Undertube"
+  },
+  {
+   "year": -11899,
+   "event": "lava_tube",
+   "cause": "the cross-passage from the West Tube to the Long Tube",
+   "path": [
+    [
+     340,
+     160
+    ],
+    [
+     380,
+     150
+    ],
+    [
+     420,
+     128
+    ],
+    [
+     470,
+     80
+    ]
+   ],
+   "depths": [
+    8,
+    8.5,
+    9,
+    9
+   ],
+   "radius": 2.8,
+   "depth": 9,
+   "mouths": "none",
+   "vary": 0.3,
+   "skylights": 1,
+   "wall": "basalt"
+  },
+  {
+   "year": -11899,
+   "event": "lava_tube",
+   "cause": "the Bat Hall: a side tube off the West Tube that ends in a high chamber, where the colony hangs through the day",
+   "path": [
+    [
+     330,
+     230
+    ],
+    [
+     302,
+     216
+    ],
+    [
+     284,
+     188
+    ],
+    [
+     292,
+     152
+    ]
+   ],
+   "depths": [
+    8,
+    8.5,
+    9,
+    8.5
+   ],
+   "radius": 3.0,
+   "depth": 8.5,
+   "mouths": "none",
+   "vary": 0.2,
+   "chambers": 1,
+   "chamber": 2.2,
+   "skylights": 1,
+   "wall": "basalt",
+   "poi": "the Bat Hall"
+  },
+  {
+   "year": -11899,
+   "event": "lava_tube",
+   "cause": "the East Braid: a loop north of the East Tube, rejoining it, its roof green with glow-worms",
+   "path": [
+    [
+     720,
+     70
+    ],
+    [
+     748,
+     38
+    ],
+    [
+     790,
+     34
+    ],
+    [
+     826,
+     60
+    ],
+    [
+     810,
+     110
+    ]
+   ],
+   "depths": [
+    8,
+    9,
+    10,
+    9,
+    8
+   ],
+   "radius": 3.0,
+   "depth": 8,
+   "mouths": "none",
+   "vary": 0.25,
+   "chambers": 1,
+   "chamber": 1.7,
+   "lining": "glowworm_ceiling",
+   "lined": [
+    0.15,
+    0.9
+   ],
+   "wall": "basalt",
+   "poi": "the East Braid"
+  },
+  {
+   "year": -11899,
+   "event": "lava_tube",
+   "cause": "the Cross Tube: from the Long Tube's lower bend north-east to the East Tube, two chambers along it",
+   "path": [
+    [
+     660,
+     250
+    ],
+    [
+     700,
+     222
+    ],
+    [
+     742,
+     180
+    ],
+    [
+     780,
+     140
+    ],
+    [
+     810,
+     110
+    ]
+   ],
+   "depths": [
+    9,
+    9,
+    9.5,
+    9,
+    8
+   ],
+   "radius": 3.2,
+   "depth": 9,
+   "mouths": "none",
+   "vary": 0.3,
+   "chambers": 2,
+   "chamber": 1.8,
+   "skylights": 1,
+   "wall": "basalt"
+  },
+  {
+   "year": -11899,
+   "event": "lava_tube",
+   "cause": "the Pilgrims' Door: a short tube from the cinders by the pilgrim road into the Long Tube, the way most people go in",
+   "path": [
+    [
+     600,
+     335
+    ],
+    [
+     622,
+     300
+    ],
+    [
+     646,
+     268
+    ],
+    [
+     660,
+     250
+    ]
+   ],
+   "depths": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "radius": 2.6,
+   "depth": 9,
+   "mouths": "start",
+   "vary": 0.2,
+   "wall": "basalt",
+   "poi": "the Pilgrims' Door"
+  },
+  {
+   "year": -11899,
+   "event": "lava_tube",
+   "cause": "a blind tube west off the Long Tube's head, ending in a choke of fallen roof",
+   "path": [
+    [
+     430,
+     40
+    ],
+    [
+     400,
+     52
+    ],
+    [
+     372,
+     48
+    ]
+   ],
+   "depths": [
+    8,
+    8,
+    8
+   ],
+   "radius": 2.4,
+   "depth": 8,
+   "mouths": "none",
+   "vary": 0.35,
+   "chambers": 1,
+   "chamber": 1.5,
+   "lining": "glowworm_ceiling",
+   "lined": [
+    0.4,
+    1.0
+   ],
+   "wall": "basalt"
+  },
+  {
+   "year": -11899,
+   "event": "lava_tube",
+   "cause": "the Fern Door: a skylight-lit tube from the south edge of the flow into the Undertube's end",
+   "path": [
+    [
+     800,
+     332
+    ],
+    [
+     776,
+     296
+    ],
+    [
+     752,
+     265
+    ],
+    [
+     732,
+     238
+    ]
+   ],
+   "depths": [
+    6,
+    10,
+    14,
+    16
+   ],
+   "radius": 2.8,
+   "depth": 16,
+   "mouths": "start",
+   "vary": 0.2,
+   "skylights": 1,
+   "wall": "basalt",
+   "poi": "the Fern Door"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    870,
+    193
+   ],
+   "radius": 6.7,
+   "thickness": 1.4,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    575,
+    202
+   ],
+   "radius": 11.4,
+   "thickness": 3.1,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    375,
+    244
+   ],
+   "radius": 11.6,
+   "thickness": 2.6,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    842,
+    69
+   ],
+   "radius": 9.1,
+   "thickness": 2.5,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    365,
+    58
+   ],
+   "radius": 5.6,
+   "thickness": 1.3,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    627,
+    265
+   ],
+   "radius": 11.6,
+   "thickness": 3.0,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    725,
+    216
+   ],
+   "radius": 5.2,
+   "thickness": 1.9,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    355,
+    290
+   ],
+   "radius": 6.1,
+   "thickness": 1.3,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    404,
+    98
+   ],
+   "radius": 7.8,
+   "thickness": 2.9,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    679,
+    189
+   ],
+   "radius": 6.7,
+   "thickness": 2.0,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    352,
+    318
+   ],
+   "radius": 8.2,
+   "thickness": 2.5,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    554,
+    144
+   ],
+   "radius": 6.5,
+   "thickness": 1.6,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    1043,
+    210
+   ],
+   "radius": 10.8,
+   "thickness": 2.3,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    485,
+    91
+   ],
+   "radius": 10.9,
+   "thickness": 2.8,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    445,
+    218
+   ],
+   "radius": 6.3,
+   "thickness": 2.3,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    882,
+    230
+   ],
+   "radius": 7.0,
+   "thickness": 1.3,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    429,
+    262
+   ],
+   "radius": 12.2,
+   "thickness": 2.1,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    428,
+    339
+   ],
+   "radius": 5.0,
+   "thickness": 2.5,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    846,
+    82
+   ],
+   "radius": 9.6,
+   "thickness": 1.7,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    461,
+    242
+   ],
+   "radius": 5.8,
+   "thickness": 2.4,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    501,
+    376
+   ],
+   "radius": 8.1,
+   "thickness": 1.5,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    469,
+    62
+   ],
+   "radius": 6.1,
+   "thickness": 2.8,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    510,
+    341
+   ],
+   "radius": 11.6,
+   "thickness": 1.3,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    414,
+    303
+   ],
+   "radius": 9.8,
+   "thickness": 1.8,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    729,
+    132
+   ],
+   "radius": 5.9,
+   "thickness": 3.1,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    296,
+    163
+   ],
+   "radius": 12.4,
+   "thickness": 2.1,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    821,
+    266
+   ],
+   "radius": 11.6,
+   "thickness": 1.2,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    796,
+    84
+   ],
+   "radius": 10.7,
+   "thickness": 2.4,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    892,
+    190
+   ],
+   "radius": 6.1,
+   "thickness": 2.2,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    690,
+    209
+   ],
+   "radius": 7.2,
+   "thickness": 1.4,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    1007,
+    128
+   ],
+   "radius": 7.2,
+   "thickness": 2.7,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    443,
+    131
+   ],
+   "radius": 11.1,
+   "thickness": 2.2,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    975,
+    218
+   ],
+   "radius": 7.8,
+   "thickness": 1.5,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    673,
+    207
+   ],
+   "radius": 7.7,
+   "thickness": 1.5,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    622,
+    63
+   ],
+   "radius": 7.5,
+   "thickness": 2.7,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    945,
+    103
+   ],
+   "radius": 11.1,
+   "thickness": 3.2,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    659,
+    322
+   ],
+   "radius": 10.4,
+   "thickness": 1.9,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    941,
+    117
+   ],
+   "radius": 11.9,
+   "thickness": 2.3,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    319,
+    193
+   ],
+   "radius": 10.8,
+   "thickness": 2.7,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    585,
+    243
+   ],
+   "radius": 7.4,
+   "thickness": 1.3,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    400,
+    312
+   ],
+   "radius": 6.5,
+   "thickness": 2.3,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    453,
+    125
+   ],
+   "radius": 10.2,
+   "thickness": 2.1,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    708,
+    92
+   ],
+   "radius": 12.3,
+   "thickness": 1.4,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    947,
+    153
+   ],
+   "radius": 7.3,
+   "thickness": 2.8,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11800,
+   "event": "deposit",
+   "cause": "a tumulus: a blister of the flow's crust pushed up by the lava under it",
+   "at": [
+    720,
+    173
+   ],
+   "radius": 6.5,
+   "thickness": 3.2,
+   "mat": "basalt",
+   "shape": "dome"
+  },
+  {
+   "year": -11700,
+   "event": "pahoehoe",
+   "cause": "the surface the first flows left as they cooled: overlapping tongues with stepped toes, ropy folds round their fronts, pressure ridges where the crust buckled, rough aa where it ran fast, and cooling cracks the ferns have found",
+   "region": "lava",
+   "from": [
+    470,
+    -110
+   ],
+   "lobes": 1.3,
+   "lobe_size": 32,
+   "ropes": 0.4,
+   "rope_spacing": 3.2,
+   "ridges": 1.8,
+   "aa": 0.22,
+   "aa_mat": "kh_aa",
+   "cracks": 0.22,
+   "crack_mat": "kh_aa"
+  },
+  {
+   "year": -11000,
+   "event": "region",
+   "cause": "a kipuka: a knoll the lava went round",
+   "name": "kipuka",
+   "poly": [
+    [
+     565,
+     260
+    ],
+    [
+     580,
+     266
+    ],
+    [
+     588,
+     290
+    ],
+    [
+     593,
+     316
+    ],
+    [
+     579,
+     321
+    ],
+    [
+     560,
+     327
+    ],
+    [
+     547,
+     323
+    ],
+    [
+     541,
+     305
+    ],
+    [
+     533,
+     291
+    ],
+    [
+     542,
+     281
+    ]
+   ]
+  },
+  {
+   "year": -11000,
+   "event": "region",
+   "cause": "a kipuka: a knoll the lava went round",
+   "name": "kipuka",
+   "poly": [
+    [
+     441,
+     208
+    ],
+    [
+     454,
+     204
+    ],
+    [
+     469,
+     223
+    ],
+    [
+     458,
+     234
+    ],
+    [
+     458,
+     249
+    ],
+    [
+     441,
+     246
+    ],
+    [
+     424,
+     253
+    ],
+    [
+     422,
+     234
+    ],
+    [
+     412,
+     224
+    ],
+    [
+     426,
+     209
+    ]
+   ]
+  },
+  {
+   "year": -11000,
+   "event": "region",
+   "cause": "a kipuka: a knoll the lava went round",
+   "name": "kipuka",
+   "poly": [
+    [
+     818,
+     197
+    ],
+    [
+     836,
+     196
+    ],
+    [
+     851,
+     200
+    ],
+    [
+     850,
+     226
+    ],
+    [
+     842,
+     239
+    ],
+    [
+     824,
+     247
+    ],
+    [
+     807,
+     234
+    ],
+    [
+     788,
+     225
+    ],
+    [
+     801,
+     210
+    ],
+    [
+     808,
+     198
+    ]
+   ]
+  },
+  {
+   "year": -11000,
+   "event": "region",
+   "cause": "a kipuka: a knoll the lava went round",
+   "name": "kipuka",
+   "poly": [
+    [
+     688,
+     106
+    ],
+    [
+     697,
+     107
+    ],
+    [
+     704,
+     114
+    ],
+    [
+     704,
+     126
+    ],
+    [
+     698,
+     131
+    ],
+    [
+     691,
+     132
+    ],
+    [
+     684,
+     130
+    ],
+    [
+     672,
+     125
+    ],
+    [
+     673,
+     116
+    ],
+    [
+     684,
+     109
+    ]
+   ]
+  },
+  {
+   "year": -11000,
+   "event": "region",
+   "cause": "the valley floor as meadow: hay and grazing down to the water north of Maplebridge",
+   "name": "valemeadow",
+   "poly": [
+    [
+     1170.4,
+     148.4
+    ],
+    [
+     1142.4,
+     196.5
+    ],
+    [
+     1162.1,
+     240.2
+    ],
+    [
+     1140.3,
+     275.7
+    ],
+    [
+     1116.4,
+     312.5
+    ],
+    [
+     1101.7,
+     351.2
+    ],
+    [
+     1066.9,
+     379.5
+    ],
+    [
+     1056.7,
+     407.1
+    ],
+    [
+     1065.3,
+     460.2
+    ],
+    [
+     1066.3,
+     496.0
+    ],
+    [
+     1036.7,
+     530.0
+    ],
+    [
+     1037.4,
+     562.9
+    ],
+    [
+     912.4,
+     564.8
+    ],
+    [
+     921.1,
+     534.9
+    ],
+    [
+     930.3,
+     505.4
+    ],
+    [
+     944.3,
+     450.0
+    ],
+    [
+     949.5,
+     414.4
+    ],
+    [
+     957.5,
+     369.0
+    ],
+    [
+     971.4,
+     349.5
+    ],
+    [
+     1001.9,
+     313.4
+    ],
+    [
+     1005.2,
+     279.2
+    ],
+    [
+     1035.5,
+     240.0
+    ],
+    [
+     1024.9,
+     198.9
+    ],
+    [
+     1032.8,
+     152.1
+    ]
+   ]
+  },
+  {
+   "year": -9000,
+   "event": "subside",
+   "cause": "the delta: the lower Lessa's mouth settling as the sea rose, a mile of reed marsh, pools and hummocks with the river split among it",
+   "at": [
+    1180,
+    1470
+   ],
+   "radius": 300,
+   "level": [
+    -0.5,
+    0.7
+   ],
+   "grain": 40,
+   "edge": 120,
+   "ragged": 0.3,
+   "stretch": 1.6,
+   "bearing": 95,
+   "islands": 0.55,
+   "island_size": 18,
+   "island_rise": 0.6,
+   "floor": 1.2
+  },
+  {
+   "year": -9000,
+   "event": "subside",
+   "cause": "the marsh at the foot of the farms, where the Lessa slows before the estuary",
+   "at": [
+    925,
+    1300
+   ],
+   "radius": 85,
+   "level": [
+    -0.6,
+    0.5
+   ],
+   "grain": 30,
+   "edge": 40,
+   "ragged": 0.35,
+   "islands": 0.4,
+   "island_size": 14,
+   "island_rise": 0.5,
+   "floor": 1.2
+  },
+  {
+   "year": -8000,
+   "event": "watercourse",
+   "cause": "the delta's distributaries: the Lessa splitting in the marsh into slow channels that wander south to the sea, each choking with reed in its turn",
+   "name": "delta",
+   "from": [
+    1036,
+    1322
+   ],
+   "to": [
+    1160,
+    1546
+   ],
+   "width": 9,
+   "depth": 1.4,
+   "bed": "river_mud",
+   "bank": "river_mud",
+   "meander": 16,
+   "branches": [
+    {
+     "name": "delta_west",
+     "to": [
+      880,
+      1546
+     ],
+     "at": 0.2,
+     "width": 6,
+     "depth": 1.1,
+     "meander": 18
+    },
+    {
+     "name": "delta_east",
+     "to": [
+      1330,
+      1546
+     ],
+     "at": 0.35,
+     "width": 6,
+     "depth": 1.1,
+     "meander": 18
+    },
+    {
+     "name": "delta_mid",
+     "to": [
+      1010,
+      1546
+     ],
+     "at": 0.55,
+     "width": 4,
+     "depth": 0.9,
+     "meander": 20
+    }
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "an old stream bed buried under the ash, still carrying water under the grass",
+   "name": "ribbon_purple",
+   "poly": [
+    [
+     306,
+     363
+    ],
+    [
+     305,
+     385
+    ],
+    [
+     307,
+     406
+    ],
+    [
+     310,
+     429
+    ],
+    [
+     315,
+     453
+    ],
+    [
+     324,
+     475
+    ],
+    [
+     333,
+     494
+    ],
+    [
+     339,
+     519
+    ],
+    [
+     355,
+     537
+    ],
+    [
+     359,
+     564
+    ],
+    [
+     364,
+     587
+    ],
+    [
+     378,
+     602
+    ],
+    [
+     393,
+     619
+    ],
+    [
+     409,
+     632
+    ],
+    [
+     426,
+     652
+    ],
+    [
+     447,
+     667
+    ],
+    [
+     462,
+     684
+    ],
+    [
+     479,
+     694
+    ],
+    [
+     501,
+     695
+    ],
+    [
+     524,
+     699
+    ],
+    [
+     547,
+     710
+    ],
+    [
+     569,
+     710
+    ],
+    [
+     595,
+     715
+    ],
+    [
+     618,
+     724
+    ],
+    [
+     640,
+     742
+    ],
+    [
+     663,
+     745
+    ],
+    [
+     682,
+     748
+    ],
+    [
+     675,
+     786
+    ],
+    [
+     647,
+     780
+    ],
+    [
+     626,
+     763
+    ],
+    [
+     608,
+     754
+    ],
+    [
+     586,
+     748
+    ],
+    [
+     565,
+     740
+    ],
+    [
+     540,
+     734
+    ],
+    [
+     517,
+     732
+    ],
+    [
+     493,
+     726
+    ],
+    [
+     469,
+     714
+    ],
+    [
+     443,
+     703
+    ],
+    [
+     424,
+     686
+    ],
+    [
+     413,
+     665
+    ],
+    [
+     397,
+     650
+    ],
+    [
+     372,
+     637
+    ],
+    [
+     356,
+     617
+    ],
+    [
+     344,
+     592
+    ],
+    [
+     337,
+     568
+    ],
+    [
+     333,
+     548
+    ],
+    [
+     326,
+     524
+    ],
+    [
+     318,
+     503
+    ],
+    [
+     303,
+     480
+    ],
+    [
+     300,
+     456
+    ],
+    [
+     296,
+     432
+    ],
+    [
+     289,
+     408
+    ],
+    [
+     286,
+     382
+    ],
+    [
+     294,
+     357
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "an old stream bed buried under the ash, still carrying water under the grass",
+   "name": "ribbon_red",
+   "poly": [
+    [
+     525,
+     421
+    ],
+    [
+     523,
+     445
+    ],
+    [
+     516,
+     469
+    ],
+    [
+     508,
+     492
+    ],
+    [
+     506,
+     515
+    ],
+    [
+     500,
+     539
+    ],
+    [
+     490,
+     561
+    ],
+    [
+     479,
+     584
+    ],
+    [
+     465,
+     605
+    ],
+    [
+     446,
+     622
+    ],
+    [
+     421,
+     633
+    ],
+    [
+     404,
+     648
+    ],
+    [
+     382,
+     660
+    ],
+    [
+     360,
+     670
+    ],
+    [
+     343,
+     682
+    ],
+    [
+     324,
+     700
+    ],
+    [
+     308,
+     715
+    ],
+    [
+     282,
+     725
+    ],
+    [
+     264,
+     740
+    ],
+    [
+     237,
+     748
+    ],
+    [
+     229,
+     718
+    ],
+    [
+     249,
+     714
+    ],
+    [
+     272,
+     706
+    ],
+    [
+     289,
+     694
+    ],
+    [
+     309,
+     676
+    ],
+    [
+     331,
+     669
+    ],
+    [
+     349,
+     649
+    ],
+    [
+     370,
+     636
+    ],
+    [
+     391,
+     628
+    ],
+    [
+     414,
+     617
+    ],
+    [
+     433,
+     608
+    ],
+    [
+     448,
+     592
+    ],
+    [
+     465,
+     575
+    ],
+    [
+     479,
+     558
+    ],
+    [
+     481,
+     533
+    ],
+    [
+     487,
+     511
+    ],
+    [
+     495,
+     487
+    ],
+    [
+     503,
+     465
+    ],
+    [
+     509,
+     442
+    ],
+    [
+     515,
+     419
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "an old stream bed buried under the ash, still carrying water under the grass",
+   "name": "ribbon_orange",
+   "poly": [
+    [
+     694,
+     380
+    ],
+    [
+     700,
+     403
+    ],
+    [
+     696,
+     428
+    ],
+    [
+     699,
+     451
+    ],
+    [
+     707,
+     472
+    ],
+    [
+     716,
+     494
+    ],
+    [
+     727,
+     514
+    ],
+    [
+     738,
+     535
+    ],
+    [
+     752,
+     555
+    ],
+    [
+     760,
+     579
+    ],
+    [
+     765,
+     603
+    ],
+    [
+     781,
+     619
+    ],
+    [
+     791,
+     643
+    ],
+    [
+     795,
+     669
+    ],
+    [
+     799,
+     692
+    ],
+    [
+     808,
+     716
+    ],
+    [
+     818,
+     734
+    ],
+    [
+     828,
+     752
+    ],
+    [
+     848,
+     761
+    ],
+    [
+     870,
+     763
+    ],
+    [
+     892,
+     770
+    ],
+    [
+     916,
+     782
+    ],
+    [
+     904,
+     805
+    ],
+    [
+     886,
+     796
+    ],
+    [
+     861,
+     791
+    ],
+    [
+     837,
+     779
+    ],
+    [
+     816,
+     763
+    ],
+    [
+     795,
+     745
+    ],
+    [
+     784,
+     720
+    ],
+    [
+     785,
+     696
+    ],
+    [
+     777,
+     673
+    ],
+    [
+     772,
+     651
+    ],
+    [
+     763,
+     632
+    ],
+    [
+     752,
+     607
+    ],
+    [
+     743,
+     586
+    ],
+    [
+     735,
+     565
+    ],
+    [
+     726,
+     542
+    ],
+    [
+     712,
+     522
+    ],
+    [
+     700,
+     500
+    ],
+    [
+     694,
+     476
+    ],
+    [
+     688,
+     452
+    ],
+    [
+     685,
+     427
+    ],
+    [
+     687,
+     405
+    ],
+    [
+     686,
+     380
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "an old stream bed buried under the ash, still carrying water under the grass",
+   "name": "ribbon_purple",
+   "poly": [
+    [
+     184,
+     543
+    ],
+    [
+     173,
+     564
+    ],
+    [
+     165,
+     585
+    ],
+    [
+     148,
+     604
+    ],
+    [
+     135,
+     625
+    ],
+    [
+     129,
+     646
+    ],
+    [
+     121,
+     667
+    ],
+    [
+     121,
+     690
+    ],
+    [
+     119,
+     716
+    ],
+    [
+     117,
+     737
+    ],
+    [
+     121,
+     758
+    ],
+    [
+     125,
+     785
+    ],
+    [
+     120,
+     810
+    ],
+    [
+     116,
+     832
+    ],
+    [
+     109,
+     857
+    ],
+    [
+     100,
+     882
+    ],
+    [
+     91,
+     902
+    ],
+    [
+     75,
+     924
+    ],
+    [
+     58,
+     912
+    ],
+    [
+     71,
+     896
+    ],
+    [
+     76,
+     870
+    ],
+    [
+     89,
+     852
+    ],
+    [
+     95,
+     830
+    ],
+    [
+     96,
+     805
+    ],
+    [
+     101,
+     783
+    ],
+    [
+     107,
+     762
+    ],
+    [
+     98,
+     737
+    ],
+    [
+     98,
+     710
+    ],
+    [
+     110,
+     690
+    ],
+    [
+     110,
+     665
+    ],
+    [
+     111,
+     639
+    ],
+    [
+     123,
+     616
+    ],
+    [
+     140,
+     598
+    ],
+    [
+     153,
+     581
+    ],
+    [
+     160,
+     555
+    ],
+    [
+     176,
+     537
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "an old stream bed buried under the ash, still carrying water under the grass",
+   "name": "ribbon_red",
+   "poly": [
+    [
+     434,
+     1154
+    ],
+    [
+     413,
+     1168
+    ],
+    [
+     392,
+     1180
+    ],
+    [
+     377,
+     1196
+    ],
+    [
+     366,
+     1216
+    ],
+    [
+     350,
+     1236
+    ],
+    [
+     334,
+     1253
+    ],
+    [
+     314,
+     1270
+    ],
+    [
+     296,
+     1285
+    ],
+    [
+     282,
+     1302
+    ],
+    [
+     269,
+     1319
+    ],
+    [
+     254,
+     1341
+    ],
+    [
+     237,
+     1358
+    ],
+    [
+     214,
+     1372
+    ],
+    [
+     192,
+     1385
+    ],
+    [
+     167,
+     1394
+    ],
+    [
+     145,
+     1400
+    ],
+    [
+     117,
+     1397
+    ],
+    [
+     91,
+     1401
+    ],
+    [
+     68,
+     1400
+    ],
+    [
+     43,
+     1385
+    ],
+    [
+     50,
+     1366
+    ],
+    [
+     70,
+     1368
+    ],
+    [
+     95,
+     1370
+    ],
+    [
+     116,
+     1380
+    ],
+    [
+     137,
+     1373
+    ],
+    [
+     160,
+     1366
+    ],
+    [
+     181,
+     1362
+    ],
+    [
+     202,
+     1353
+    ],
+    [
+     220,
+     1341
+    ],
+    [
+     237,
+     1324
+    ],
+    [
+     256,
+     1312
+    ],
+    [
+     266,
+     1288
+    ],
+    [
+     284,
+     1269
+    ],
+    [
+     304,
+     1254
+    ],
+    [
+     325,
+     1246
+    ],
+    [
+     338,
+     1225
+    ],
+    [
+     354,
+     1208
+    ],
+    [
+     368,
+     1188
+    ],
+    [
+     385,
+     1168
+    ],
+    [
+     406,
+     1156
+    ],
+    [
+     426,
+     1146
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "an old stream bed buried under the ash, still carrying water under the grass",
+   "name": "ribbon_orange",
+   "poly": [
+    [
+     764,
+     1181
+    ],
+    [
+     764,
+     1205
+    ],
+    [
+     757,
+     1229
+    ],
+    [
+     743,
+     1250
+    ],
+    [
+     728,
+     1271
+    ],
+    [
+     714,
+     1290
+    ],
+    [
+     704,
+     1309
+    ],
+    [
+     695,
+     1332
+    ],
+    [
+     679,
+     1353
+    ],
+    [
+     656,
+     1365
+    ],
+    [
+     639,
+     1380
+    ],
+    [
+     627,
+     1400
+    ],
+    [
+     612,
+     1419
+    ],
+    [
+     596,
+     1437
+    ],
+    [
+     573,
+     1451
+    ],
+    [
+     557,
+     1469
+    ],
+    [
+     541,
+     1448
+    ],
+    [
+     563,
+     1437
+    ],
+    [
+     580,
+     1424
+    ],
+    [
+     594,
+     1404
+    ],
+    [
+     612,
+     1388
+    ],
+    [
+     629,
+     1370
+    ],
+    [
+     647,
+     1352
+    ],
+    [
+     665,
+     1339
+    ],
+    [
+     682,
+     1325
+    ],
+    [
+     694,
+     1305
+    ],
+    [
+     701,
+     1279
+    ],
+    [
+     717,
+     1262
+    ],
+    [
+     732,
+     1244
+    ],
+    [
+     743,
+     1224
+    ],
+    [
+     751,
+     1203
+    ],
+    [
+     756,
+     1179
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "an old stream bed buried under the ash, still carrying water under the grass",
+   "name": "ribbon_purple",
+   "poly": [
+    [
+     413.6,
+     419.3
+    ],
+    [
+     397.9,
+     447.2
+    ],
+    [
+     381.4,
+     480.6
+    ],
+    [
+     363.3,
+     519.1
+    ],
+    [
+     378.2,
+     555.3
+    ],
+    [
+     378.8,
+     578.1
+    ],
+    [
+     385.1,
+     613.9
+    ],
+    [
+     380.9,
+     632.1
+    ],
+    [
+     367.0,
+     670.0
+    ],
+    [
+     352.7,
+     695.6
+    ],
+    [
+     332.9,
+     722.5
+    ],
+    [
+     330.2,
+     757.8
+    ],
+    [
+     311.7,
+     794.9
+    ],
+    [
+     317.4,
+     832.6
+    ],
+    [
+     334.8,
+     865.9
+    ],
+    [
+     340.9,
+     890.2
+    ],
+    [
+     321.2,
+     914.1
+    ],
+    [
+     306.7,
+     941.1
+    ],
+    [
+     294.7,
+     977.4
+    ],
+    [
+     305.3,
+     982.6
+    ],
+    [
+     326.3,
+     952.4
+    ],
+    [
+     345.8,
+     929.2
+    ],
+    [
+     359.6,
+     893.1
+    ],
+    [
+     350.1,
+     861.1
+    ],
+    [
+     344.5,
+     826.0
+    ],
+    [
+     340.8,
+     798.9
+    ],
+    [
+     350.8,
+     763.6
+    ],
+    [
+     359.1,
+     731.9
+    ],
+    [
+     370.9,
+     707.2
+    ],
+    [
+     391.8,
+     680.0
+    ],
+    [
+     397.3,
+     636.3
+    ],
+    [
+     405.1,
+     613.6
+    ],
+    [
+     397.9,
+     575.9
+    ],
+    [
+     398.1,
+     551.1
+    ],
+    [
+     389.1,
+     521.2
+    ],
+    [
+     406.0,
+     493.5
+    ],
+    [
+     425.8,
+     458.0
+    ],
+    [
+     425.3,
+     422.1
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "an old stream bed buried under the ash, still carrying water under the grass",
+   "name": "ribbon_red",
+   "poly": [
+    [
+     754.6,
+     413.6
+    ],
+    [
+     736.0,
+     443.2
+    ],
+    [
+     719.9,
+     461.9
+    ],
+    [
+     709.3,
+     505.4
+    ],
+    [
+     715.1,
+     531.6
+    ],
+    [
+     720.7,
+     561.8
+    ],
+    [
+     725.0,
+     602.5
+    ],
+    [
+     710.6,
+     625.2
+    ],
+    [
+     703.3,
+     652.2
+    ],
+    [
+     693.9,
+     680.9
+    ],
+    [
+     678.5,
+     703.3
+    ],
+    [
+     658.9,
+     728.0
+    ],
+    [
+     635.3,
+     763.8
+    ],
+    [
+     647.5,
+     793.0
+    ],
+    [
+     649.0,
+     823.1
+    ],
+    [
+     655.8,
+     859.9
+    ],
+    [
+     664.2,
+     860.1
+    ],
+    [
+     673.4,
+     822.0
+    ],
+    [
+     666.4,
+     788.3
+    ],
+    [
+     659.2,
+     767.5
+    ],
+    [
+     673.2,
+     737.5
+    ],
+    [
+     691.9,
+     713.7
+    ],
+    [
+     711.7,
+     690.3
+    ],
+    [
+     722.6,
+     659.2
+    ],
+    [
+     735.3,
+     635.6
+    ],
+    [
+     744.5,
+     604.6
+    ],
+    [
+     739.6,
+     560.6
+    ],
+    [
+     744.3,
+     525.2
+    ],
+    [
+     726.7,
+     505.7
+    ],
+    [
+     741.8,
+     473.8
+    ],
+    [
+     760.7,
+     456.3
+    ],
+    [
+     762.9,
+     416.1
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "an old stream bed buried under the ash, still carrying water under the grass",
+   "name": "ribbon_orange",
+   "poly": [
+    [
+     114.2,
+     407.2
+    ],
+    [
+     115.2,
+     432.0
+    ],
+    [
+     127.7,
+     450.6
+    ],
+    [
+     126.6,
+     484.3
+    ],
+    [
+     121.4,
+     506.2
+    ],
+    [
+     108.3,
+     546.6
+    ],
+    [
+     105.7,
+     577.2
+    ],
+    [
+     110.2,
+     612.9
+    ],
+    [
+     110.5,
+     632.9
+    ],
+    [
+     112.9,
+     654.7
+    ],
+    [
+     115.9,
+     688.1
+    ],
+    [
+     99.1,
+     718.1
+    ],
+    [
+     96.4,
+     758.8
+    ],
+    [
+     103.6,
+     761.2
+    ],
+    [
+     126.2,
+     728.0
+    ],
+    [
+     135.5,
+     691.7
+    ],
+    [
+     137.5,
+     654.2
+    ],
+    [
+     138.4,
+     630.8
+    ],
+    [
+     133.8,
+     609.0
+    ],
+    [
+     124.8,
+     575.5
+    ],
+    [
+     124.6,
+     551.2
+    ],
+    [
+     146.4,
+     513.8
+    ],
+    [
+     145.1,
+     485.5
+    ],
+    [
+     147.5,
+     447.4
+    ],
+    [
+     137.6,
+     422.6
+    ],
+    [
+     124.7,
+     403.8
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "an old stream bed buried under the ash, still carrying water under the grass",
+   "name": "ribbon_purple",
+   "poly": [
+    [
+     289.6,
+     1044.7
+    ],
+    [
+     272.0,
+     1060.7
+    ],
+    [
+     251.9,
+     1087.1
+    ],
+    [
+     236.7,
+     1112.9
+    ],
+    [
+     241.3,
+     1156.2
+    ],
+    [
+     249.8,
+     1183.6
+    ],
+    [
+     249.7,
+     1204.3
+    ],
+    [
+     225.1,
+     1221.7
+    ],
+    [
+     204.9,
+     1262.7
+    ],
+    [
+     189.5,
+     1291.4
+    ],
+    [
+     183.5,
+     1322.3
+    ],
+    [
+     194.5,
+     1354.1
+    ],
+    [
+     196.3,
+     1381.5
+    ],
+    [
+     176.2,
+     1401.0
+    ],
+    [
+     163.2,
+     1430.9
+    ],
+    [
+     146.6,
+     1456.5
+    ],
+    [
+     153.4,
+     1463.5
+    ],
+    [
+     183.3,
+     1444.3
+    ],
+    [
+     194.0,
+     1412.9
+    ],
+    [
+     219.4,
+     1390.5
+    ],
+    [
+     218.2,
+     1350.3
+    ],
+    [
+     211.6,
+     1320.4
+    ],
+    [
+     215.3,
+     1299.7
+    ],
+    [
+     224.3,
+     1272.7
+    ],
+    [
+     246.7,
+     1239.9
+    ],
+    [
+     274.9,
+     1217.8
+    ],
+    [
+     274.9,
+     1178.9
+    ],
+    [
+     262.0,
+     1152.6
+    ],
+    [
+     265.0,
+     1118.3
+    ],
+    [
+     274.4,
+     1102.2
+    ],
+    [
+     293.7,
+     1074.9
+    ],
+    [
+     298.8,
+     1049.8
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "an old stream bed buried under the ash, still carrying water under the grass",
+   "name": "ribbon_red",
+   "poly": [
+    [
+     631.2,
+     1161.4
+    ],
+    [
+     624.1,
+     1187.7
+    ],
+    [
+     604.0,
+     1204.1
+    ],
+    [
+     590.2,
+     1240.9
+    ],
+    [
+     605.7,
+     1275.1
+    ],
+    [
+     615.6,
+     1302.8
+    ],
+    [
+     634.3,
+     1323.6
+    ],
+    [
+     627.5,
+     1343.9
+    ],
+    [
+     623.5,
+     1376.9
+    ],
+    [
+     610.4,
+     1414.6
+    ],
+    [
+     617.6,
+     1438.9
+    ],
+    [
+     630.9,
+     1477.4
+    ],
+    [
+     655.1,
+     1502.8
+    ],
+    [
+     664.9,
+     1497.2
+    ],
+    [
+     657.1,
+     1465.6
+    ],
+    [
+     642.9,
+     1428.8
+    ],
+    [
+     632.4,
+     1415.5
+    ],
+    [
+     641.6,
+     1381.8
+    ],
+    [
+     652.3,
+     1349.0
+    ],
+    [
+     654.4,
+     1318.9
+    ],
+    [
+     640.4,
+     1288.8
+    ],
+    [
+     625.9,
+     1265.8
+    ],
+    [
+     615.4,
+     1241.1
+    ],
+    [
+     628.6,
+     1218.8
+    ],
+    [
+     641.3,
+     1194.2
+    ],
+    [
+     638.7,
+     1162.0
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "an old stream bed buried under the ash, still carrying water under the grass",
+   "name": "ribbon_orange",
+   "poly": [
+    [
+     474.3,
+     867.5
+    ],
+    [
+     448.4,
+     884.7
+    ],
+    [
+     436.8,
+     922.3
+    ],
+    [
+     425.7,
+     951.8
+    ],
+    [
+     434.5,
+     974.8
+    ],
+    [
+     426.5,
+     1004.0
+    ],
+    [
+     441.1,
+     1025.5
+    ],
+    [
+     423.0,
+     1047.4
+    ],
+    [
+     408.0,
+     1066.8
+    ],
+    [
+     396.6,
+     1097.7
+    ],
+    [
+     403.4,
+     1102.3
+    ],
+    [
+     427.2,
+     1081.1
+    ],
+    [
+     444.6,
+     1061.8
+    ],
+    [
+     457.5,
+     1027.6
+    ],
+    [
+     454.5,
+     1000.4
+    ],
+    [
+     450.8,
+     972.7
+    ],
+    [
+     442.7,
+     953.3
+    ],
+    [
+     457.1,
+     931.4
+    ],
+    [
+     474.2,
+     899.4
+    ],
+    [
+     482.9,
+     874.5
+    ]
+   ]
+  },
+  {
+   "year": -40,
+   "event": "lake",
+   "cause": "a pan on the Plain where a buried stream bed comes near the top: water seeps up into a hollow the herds have trodden out and wallowed deeper, the only standing water west of the Lessa",
+   "name": "pan_north",
+   "at": [
+    335,
+    866
+   ],
+   "radius": 12,
+   "depth": 1.0,
+   "bed": "lake_mud",
+   "bank": "river_mud",
+   "ragged": 0.35,
+   "stretch": 1.4,
+   "bearing": 160
+  },
+  {
+   "year": -40,
+   "event": "lake",
+   "cause": "a second pan on the Plain, on the buried bed that runs south-west from the Kite toward the sea",
+   "name": "pan_south",
+   "at": [
+    266,
+    1288
+   ],
+   "radius": 9,
+   "depth": 0.9,
+   "bed": "lake_mud",
+   "bank": "river_mud",
+   "ragged": 0.4,
+   "stretch": 1.3,
+   "bearing": 120
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the north prairie-dog town, under the lava's edge",
+   "name": "dogtown",
+   "poly": [
+    [
+     633.9,
+     515.5
+    ],
+    [
+     608.5,
+     542.8
+    ],
+    [
+     570.0,
+     546.7
+    ],
+    [
+     548.5,
+     530.2
+    ],
+    [
+     497.1,
+     499.2
+    ],
+    [
+     498.1,
+     467.8
+    ],
+    [
+     493.8,
+     447.4
+    ],
+    [
+     499.7,
+     417.0
+    ],
+    [
+     524.1,
+     415.3
+    ],
+    [
+     559.1,
+     394.8
+    ],
+    [
+     597.4,
+     432.4
+    ],
+    [
+     617.2,
+     457.0
+    ],
+    [
+     623.4,
+     480.8
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the west prairie-dog town",
+   "name": "dogtown",
+   "poly": [
+    [
+     330.2,
+     696.9
+    ],
+    [
+     318.2,
+     733.3
+    ],
+    [
+     311.0,
+     779.2
+    ],
+    [
+     293.5,
+     794.1
+    ],
+    [
+     248.0,
+     800.0
+    ],
+    [
+     216.3,
+     802.8
+    ],
+    [
+     178.6,
+     776.5
+    ],
+    [
+     189.2,
+     738.7
+    ],
+    [
+     197.8,
+     721.7
+    ],
+    [
+     214.6,
+     703.8
+    ],
+    [
+     238.5,
+     675.9
+    ],
+    [
+     268.2,
+     669.9
+    ],
+    [
+     300.5,
+     689.2
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the south prairie-dog town, out on the open Plain below the Kite",
+   "name": "dogtown",
+   "poly": [
+    [
+     418.0,
+     1295.6
+    ],
+    [
+     396.9,
+     1295.7
+    ],
+    [
+     365.9,
+     1263.7
+    ],
+    [
+     347.0,
+     1230.9
+    ],
+    [
+     320.1,
+     1198.7
+    ],
+    [
+     323.8,
+     1176.0
+    ],
+    [
+     349.4,
+     1142.3
+    ],
+    [
+     376.0,
+     1148.8
+    ],
+    [
+     408.4,
+     1123.8
+    ],
+    [
+     439.5,
+     1155.2
+    ],
+    [
+     470.9,
+     1213.7
+    ],
+    [
+     456.5,
+     1237.5
+    ],
+    [
+     453.7,
+     1282.7
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the faerie wood in the corner where Gannet, Saurischia and Hemlow meet, coming over both edges",
+   "name": "faewood",
+   "poly": [
+    [
+     -10,
+     -10
+    ],
+    [
+     210,
+     -10
+    ],
+    [
+     172,
+     42
+    ],
+    [
+     118,
+     78
+    ],
+    [
+     84,
+     130
+    ],
+    [
+     96,
+     190
+    ],
+    [
+     60,
+     240
+    ],
+    [
+     40,
+     268
+    ],
+    [
+     -10,
+     272
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the spruce wood along the west edge, the same wood as behind Gannet Harbor",
+   "name": "spruce",
+   "poly": [
+    [
+     -10,
+     272
+    ],
+    [
+     40,
+     268
+    ],
+    [
+     70,
+     300
+    ],
+    [
+     44,
+     380
+    ],
+    [
+     78,
+     560
+    ],
+    [
+     52,
+     720
+    ],
+    [
+     128,
+     860
+    ],
+    [
+     186,
+     960
+    ],
+    [
+     212,
+     1080
+    ],
+    [
+     168,
+     1250
+    ],
+    [
+     226,
+     1400
+    ],
+    [
+     196,
+     1546
+    ],
+    [
+     -10,
+     1546
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the Fernwood coming down over the north edge from Saurischia and thinning out into the Plain",
+   "name": "fernwood",
+   "poly": [
+    [
+     150,
+     -10
+    ],
+    [
+     300,
+     -10
+    ],
+    [
+     296,
+     30
+    ],
+    [
+     262,
+     64
+    ],
+    [
+     226,
+     92
+    ],
+    [
+     188,
+     120
+    ],
+    [
+     170,
+     80
+    ]
+   ]
+  },
+  {
+   "year": -50,
+   "event": "region",
+   "cause": "the marsh from the foot of the farms down over the whole delta to the south edge",
+   "name": "rivmarsh",
+   "poly": [
+    [
+     934,
+     1209
+    ],
+    [
+     973,
+     1200
+    ],
+    [
+     1010,
+     1230
+    ],
+    [
+     1070,
+     1290
+    ],
+    [
+     1180,
+     1330
+    ],
+    [
+     1320,
+     1360
+    ],
+    [
+     1440,
+     1400
+    ],
+    [
+     1550,
+     1420
+    ],
+    [
+     1550,
+     1550
+    ],
+    [
+     760,
+     1550
+    ],
+    [
+     800,
+     1440
+    ],
+    [
+     840,
+     1350
+    ],
+    [
+     828,
+     1266
+    ],
+    [
+     879,
+     1219
+    ]
+   ]
+  },
+  {
+   "year": -49,
+   "event": "region",
+   "cause": "the Fernwood coming down over the north edge from Saurischia and thinning out into the Plain",
+   "name": "fernwood",
+   "poly": [
+    [
+     680,
+     -10
+    ],
+    [
+     1092,
+     -10
+    ],
+    [
+     1080,
+     40
+    ],
+    [
+     1030,
+     62
+    ],
+    [
+     960,
+     52
+    ],
+    [
+     900,
+     86
+    ],
+    [
+     840,
+     70
+    ],
+    [
+     790,
+     96
+    ],
+    [
+     730,
+     60
+    ],
+    [
+     700,
+     40
+    ]
+   ]
+  },
+  {
+   "year": 1090,
+   "event": "vale",
+   "cause": "the cutting for the road up the Kite: dug back into the south face and along inside the east rim, so the road climbs at an easy grade between rock banks",
+   "path": [
+    [
+     601.2,
+     979.3
+    ],
+    [
+     592.5,
+     966.7
+    ],
+    [
+     591.9,
+     951.9
+    ],
+    [
+     606.0,
+     941.1
+    ],
+    [
+     622.4,
+     934.3
+    ],
+    [
+     640.0,
+     932.0
+    ],
+    [
+     657.6,
+     934.3
+    ],
+    [
+     674.0,
+     941.1
+    ],
+    [
+     688.1,
+     951.9
+    ],
+    [
+     698.9,
+     966.0
+    ],
+    [
+     705.7,
+     982.4
+    ],
+    [
+     708.0,
+     1000.0
+    ],
+    [
+     705.7,
+     1017.6
+    ],
+    [
+     698.9,
+     1034.0
+    ],
+    [
+     688.1,
+     1048.1
+    ],
+    [
+     674.0,
+     1058.9
+    ],
+    [
+     657.6,
+     1065.7
+    ],
+    [
+     640.0,
+     1068.0
+    ],
+    [
+     619.3,
+     1089.6
+    ],
+    [
+     599.6,
+     1110.9
+    ],
+    [
+     576.6,
+     1135.9
+    ]
+   ],
+   "width": 5,
+   "depth": 0.6,
+   "side": 4,
+   "meander": 0,
+   "fall": 8
+  },
+  {
+   "year": 1100,
+   "event": "road",
+   "cause": "the road up the Kite: cut through the south face and on inside the rim, climbing round under the east side to the north of the top",
+   "path": [
+    [
+     576.6,
+     1135.9
+    ],
+    [
+     599.6,
+     1110.9
+    ],
+    [
+     619.3,
+     1089.6
+    ],
+    [
+     640.0,
+     1068.0
+    ],
+    [
+     657.6,
+     1065.7
+    ],
+    [
+     674.0,
+     1058.9
+    ],
+    [
+     688.1,
+     1048.1
+    ],
+    [
+     698.9,
+     1034.0
+    ],
+    [
+     705.7,
+     1017.6
+    ],
+    [
+     708.0,
+     1000.0
+    ],
+    [
+     705.7,
+     982.4
+    ],
+    [
+     698.9,
+     966.0
+    ],
+    [
+     688.1,
+     951.9
+    ],
+    [
+     674.0,
+     941.1
+    ],
+    [
+     657.6,
+     934.3
+    ],
+    [
+     640.0,
+     932.0
+    ],
+    [
+     622.4,
+     934.3
+    ],
+    [
+     606.0,
+     941.1
+    ],
+    [
+     591.9,
+     951.9
+    ],
+    [
+     592.5,
+     966.7
+    ],
+    [
+     601.2,
+     979.3
+    ]
+   ],
+   "width": 4.5,
+   "mat": "road_gravel",
+   "shoulder": "path_dirt",
+   "smooth": 24
+  },
+  {
+   "year": 1100,
+   "event": "place",
+   "cause": "the bathhouse cut into the rim of the largest skylight, over the steaming pools",
+   "structure": "lava_bathhouse",
+   "at": [
+    596,
+    210
+   ],
+   "bearing": 180,
+   "poi": "the bathhouse"
+  },
+  {
+   "year": 1100,
+   "event": "place",
+   "cause": "a shrine at the rim of a skylight",
+   "structure": "skylight_shrine",
+   "at": [
+    474,
+    96
+   ],
+   "face": [
+    470,
+    82
+   ]
+  },
+  {
+   "year": 1100,
+   "event": "place",
+   "cause": "a shrine at the rim of a skylight",
+   "structure": "skylight_shrine",
+   "at": [
+    523,
+    165
+   ],
+   "face": [
+    519,
+    151
+   ]
+  },
+  {
+   "year": 1100,
+   "event": "place",
+   "cause": "a shrine at the rim of a skylight",
+   "structure": "skylight_shrine",
+   "at": [
+    668,
+    252
+   ],
+   "face": [
+    664,
+    238
+   ]
+  },
+  {
+   "year": 1100,
+   "event": "place",
+   "cause": "a shrine at the rim of a skylight",
+   "structure": "skylight_shrine",
+   "at": [
+    372,
+    104
+   ],
+   "face": [
+    368,
+    90
+   ]
+  },
+  {
+   "year": 1100,
+   "event": "place",
+   "cause": "a shrine at the rim of a skylight",
+   "structure": "skylight_shrine",
+   "at": [
+    812,
+    124
+   ],
+   "face": [
+    808,
+    110
+   ]
+  },
+  {
+   "year": 1101,
+   "event": "vent",
+   "cause": "warm air and steam rising out of a skylight",
+   "at": [
+    581,
+    203
+   ],
+   "points": [
+    [
+     0,
+     0,
+     -4
+    ],
+    [
+     2,
+     1,
+     -5
+    ]
+   ],
+   "fx": "steam",
+   "rate": 2.0,
+   "spread": 2.5
+  },
+  {
+   "year": 1101,
+   "event": "vent",
+   "cause": "warm air and steam rising out of a skylight",
+   "at": [
+    519,
+    149
+   ],
+   "points": [
+    [
+     0,
+     0,
+     -4
+    ],
+    [
+     2,
+     1,
+     -5
+    ]
+   ],
+   "fx": "steam",
+   "rate": 2.0,
+   "spread": 2.5
+  },
+  {
+   "year": 1101,
+   "event": "vent",
+   "cause": "warm air and steam rising out of a skylight",
+   "at": [
+    652,
+    244
+   ],
+   "points": [
+    [
+     0,
+     0,
+     -4
+    ],
+    [
+     2,
+     1,
+     -5
+    ]
+   ],
+   "fx": "steam",
+   "rate": 2.0,
+   "spread": 2.5
+  },
+  {
+   "year": 1102,
+   "event": "area",
+   "cause": "what the country calls it",
+   "name": "the Skylights",
+   "kind": "lava tubes",
+   "at": [
+    560,
+    160
+   ],
+   "radius": 180
+  },
+  {
+   "year": 1102,
+   "event": "area",
+   "cause": "what the country calls it",
+   "name": "the Lessa mouth",
+   "kind": "estuary",
+   "at": [
+    1180,
+    1420
+   ],
+   "radius": 200
+  },
+  {
+   "year": 1103,
+   "event": "roost",
+   "cause": "THE EXODUS: at sunset the bats come up out of the largest skylight, and with them the ember drakes",
+   "at": [
+    581,
+    203
+   ],
+   "creatures": [
+    "bat",
+    "bat",
+    "ember_drake"
+   ],
+   "count": 55,
+   "hours": [
+    17.7,
+    18.8
+   ],
+   "depth": 6
+  },
+  {
+   "year": 1103,
+   "event": "roost",
+   "cause": "bats out of the West Tube's skylights at dusk",
+   "at": [
+    370,
+    90
+   ],
+   "creatures": [
+    "bat"
+   ],
+   "count": 20,
+   "hours": [
+    17.8,
+    18.8
+   ],
+   "depth": 5
+  },
+  {
+   "year": 1103,
+   "event": "roost",
+   "cause": "bats out of the East Tube at dusk",
+   "at": [
+    806,
+    109
+   ],
+   "creatures": [
+    "bat"
+   ],
+   "count": 20,
+   "hours": [
+    17.8,
+    18.8
+   ],
+   "depth": 5
+  },
+  {
+   "year": 1103,
+   "event": "roost",
+   "cause": "the Bat Hall's colony, out through its skylight at dusk",
+   "at": [
+    291,
+    199
+   ],
+   "creatures": [
+    "bat"
+   ],
+   "count": 45,
+   "hours": [
+    17.6,
+    18.9
+   ],
+   "depth": 9
+  },
+  {
+   "year": 1104,
+   "event": "find",
+   "cause": "THE OFFERINGS: bell charms the pilgrims drop down the bathhouse skylight, lying on the tube floor where they landed",
+   "item": "bell_charm",
+   "at": [
+    590,
+    212
+   ],
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     2.5,
+     1.5
+    ],
+    [
+     -2,
+     2
+    ],
+    [
+     4,
+     -1
+    ],
+    [
+     1,
+     -3
+    ]
+   ]
+  },
+  {
+   "year": 1104,
+   "event": "find",
+   "cause": "coins thrown down the skylight for luck, among the charms",
+   "item": "settler_coin",
+   "at": [
+    598,
+    219
+   ],
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     3,
+     2
+    ],
+    [
+     -2,
+     3
+    ],
+    [
+     5,
+     4
+    ],
+    [
+     1,
+     -2
+    ],
+    [
+     6,
+     1
+    ]
+   ]
+  },
+  {
+   "year": 1104,
+   "event": "find",
+   "cause": "THE BEAR DEN: teeth from the bones of cave bears that wintered in the West Tube before people came",
+   "item": "bear_tooth",
+   "at": [
+    352,
+    126
+   ],
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     -3,
+     1
+    ]
+   ]
+  },
+  {
+   "year": 1104,
+   "event": "find",
+   "cause": "THE OLD HEARTHS: shards from the people who lived deep in the East Tube before Kitehold was built, round their lamps",
+   "item": "pottery_shard",
+   "at": [
+    772,
+    92
+   ],
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     2,
+     -1
+    ],
+    [
+     -3,
+     2
+    ],
+    [
+     4,
+     3
+    ],
+    [
+     -1,
+     -3
+    ],
+    [
+     6,
+     0
+    ]
+   ]
+  },
+  {
+   "year": 1104,
+   "event": "find",
+   "cause": "a pilgrim's bottle, dropped in the dark between two skylights",
+   "item": "purple_bottle",
+   "at": [
+    548,
+    176
+   ],
+   "points": [
+    [
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "year": 1104,
+   "event": "find",
+   "cause": "THE GLOWING GALLERY: pale cave mushrooms on the floor under the lit moss",
+   "item": "mushroom",
+   "at": [
+    497,
+    118
+   ],
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     -2,
+     -1
+    ],
+    [
+     3,
+     -2
+    ]
+   ]
+  },
+  {
+   "year": 1105,
+   "event": "place",
+   "cause": "in the Skylights: a stone lantern the bathhouse keepers set on the tube floor under the skylight, where the offerings land",
+   "structure": "stone_lantern",
+   "at": [
+    585,
+    207
+   ],
+   "height": 72.8,
+   "bearing": 0
+  },
+  {
+   "year": 1105,
+   "event": "lamp",
+   "cause": "in the Skylights: the offering lantern's light",
+   "at": [
+    585,
+    207
+   ],
+   "level": 72.8,
+   "points": [
+    [
+     0,
+     0,
+     1.6
+    ]
+   ],
+   "colour": [
+    255,
+    214,
+    150
+   ],
+   "strength": 1.4,
+   "reach": 14
+  },
+  {
+   "year": 1105,
+   "event": "place",
+   "cause": "in the Skylights: cave-bear bones in the West Tube, where the bears wintered",
+   "structure": "bone_shard",
+   "at": [
+    349,
+    123
+   ],
+   "height": 83.8,
+   "bearing": 30
+  },
+  {
+   "year": 1105,
+   "event": "place",
+   "cause": "in the Skylights: cave-bear bones in the West Tube",
+   "structure": "bone_shard",
+   "at": [
+    356,
+    131
+   ],
+   "height": 83.8,
+   "bearing": 110
+  },
+  {
+   "year": 1105,
+   "event": "lamp",
+   "cause": "in the Skylights: faint daylight reaching the bear den from the skylight",
+   "at": [
+    352,
+    126
+   ],
+   "level": 83.8,
+   "points": [
+    [
+     0,
+     0,
+     3
+    ]
+   ],
+   "colour": [
+    200,
+    214,
+    230
+   ],
+   "strength": 0.6,
+   "reach": 12
+  },
+  {
+   "year": 1105,
+   "event": "place",
+   "cause": "in the Skylights: the lamps of the old hearths in the East Tube, their film still glowing",
+   "structure": "stone_lantern",
+   "at": [
+    768,
+    96
+   ],
+   "height": 84.5,
+   "bearing": 0
+  },
+  {
+   "year": 1105,
+   "event": "place",
+   "cause": "in the Skylights: the lamps of the old hearths",
+   "structure": "stone_lantern",
+   "at": [
+    777,
+    88
+   ],
+   "height": 84.5,
+   "bearing": 0
+  },
+  {
+   "year": 1105,
+   "event": "lamp",
+   "cause": "in the Skylights: the old hearths' lamps",
+   "at": [
+    772,
+    92
+   ],
+   "level": 84.5,
+   "points": [
+    [
+     -4,
+     4,
+     1.6
+    ],
+    [
+     5,
+     -4,
+     1.6
+    ]
+   ],
+   "colour": [
+    255,
+    196,
+    120
+   ],
+   "strength": 1.3,
+   "reach": 14
+  },
+  {
+   "year": 1105,
+   "event": "place",
+   "cause": "in the Skylights: THE GLOWING GALLERY: lava drips hanging from the roof of the Long Tube",
+   "structure": "grotto_stalactites",
+   "at": [
+    490,
+    108
+   ],
+   "height": 103.0,
+   "bearing": 20
+  },
+  {
+   "year": 1105,
+   "event": "place",
+   "cause": "in the Skylights: lava drips in the glowing gallery",
+   "structure": "grotto_stalactites",
+   "at": [
+    505,
+    128
+   ],
+   "height": 103.2,
+   "bearing": 200
+  },
+  {
+   "year": 1105,
+   "event": "lamp",
+   "cause": "in the Skylights: the moss light in the glowing gallery",
+   "at": [
+    497,
+    118
+   ],
+   "level": 97.6,
+   "points": [
+    [
+     0,
+     0,
+     4
+    ],
+    [
+     -9,
+     -12,
+     4
+    ],
+    [
+     9,
+     12,
+     4
+    ]
+   ],
+   "colour": [
+    170,
+    235,
+    200
+   ],
+   "strength": 0.9,
+   "reach": 16
+  },
+  {
+   "year": 1105,
+   "event": "passage",
+   "cause": "in the Skylights: THE GLOWING GALLERY: moss lighting the roof of the Long Tube between its first two skylights",
+   "path": [
+    [
+     481,
+     96
+    ],
+    [
+     497,
+     118
+    ],
+    [
+     511,
+     137
+    ]
+   ],
+   "height": 101.6,
+   "radius": 4.4,
+   "lining": "lumen_moss",
+   "poi": "the glowing gallery"
+  },
+  {
+   "year": 1190,
+   "event": "vale",
+   "cause": "the holloway: the old road north from Maplebridge up the Lessa valley, worn down between its banks by four hundred years of carts and sap barrels",
+   "path": [
+    [
+     1058.0,
+     425.0
+    ],
+    [
+     1056.1,
+     432.8
+    ],
+    [
+     1054.1,
+     442.0
+    ],
+    [
+     1051.9,
+     451.8
+    ],
+    [
+     1049.7,
+     461.8
+    ],
+    [
+     1047.3,
+     471.4
+    ],
+    [
+     1045.0,
+     480.0
+    ],
+    [
+     1042.7,
+     487.5
+    ],
+    [
+     1040.3,
+     494.4
+    ],
+    [
+     1037.8,
+     500.9
+    ],
+    [
+     1035.3,
+     507.2
+    ],
+    [
+     1032.7,
+     513.5
+    ],
+    [
+     1030.0,
+     520.0
+    ],
+    [
+     1027.4,
+     526.7
+    ],
+    [
+     1024.9,
+     533.3
+    ],
+    [
+     1022.4,
+     540.0
+    ],
+    [
+     1019.5,
+     546.7
+    ],
+    [
+     1016.1,
+     553.3
+    ],
+    [
+     1012.0,
+     560.0
+    ],
+    [
+     1006.5,
+     567.1
+    ],
+    [
+     999.7,
+     574.8
+    ],
+    [
+     992.4,
+     582.5
+    ],
+    [
+     985.3,
+     589.6
+    ],
+    [
+     979.2,
+     595.6
+    ],
+    [
+     975.0,
+     600.0
+    ]
+   ],
+   "width": 6,
+   "depth": 2.4,
+   "side": 7,
+   "meander": 0
+  },
+  {
+   "year": 1190,
+   "event": "vale",
+   "cause": "the holloway: the old road north from Maplebridge up the Lessa valley, worn down between its banks by four hundred years of carts and sap barrels",
+   "path": [
+    [
+     1110.0,
+     225.0
+    ],
+    [
+     1108.7,
+     229.5
+    ],
+    [
+     1108.3,
+     233.6
+    ],
+    [
+     1108.2,
+     237.4
+    ],
+    [
+     1108.4,
+     241.2
+    ],
+    [
+     1108.4,
+     245.3
+    ],
+    [
+     1108.0,
+     250.0
+    ],
+    [
+     1107.2,
+     255.2
+    ],
+    [
+     1106.2,
+     260.7
+    ],
+    [
+     1105.1,
+     266.6
+    ],
+    [
+     1103.8,
+     272.6
+    ],
+    [
+     1102.5,
+     278.8
+    ],
+    [
+     1101.0,
+     285.0
+    ],
+    [
+     1099.4,
+     291.4
+    ],
+    [
+     1097.8,
+     298.0
+    ],
+    [
+     1096.0,
+     304.7
+    ],
+    [
+     1094.1,
+     311.5
+    ],
+    [
+     1092.1,
+     318.3
+    ],
+    [
+     1090.0,
+     325.0
+    ],
+    [
+     1087.7,
+     331.8
+    ],
+    [
+     1085.1,
+     338.7
+    ],
+    [
+     1082.4,
+     345.6
+    ],
+    [
+     1079.7,
+     352.3
+    ],
+    [
+     1077.2,
+     358.9
+    ],
+    [
+     1075.0,
+     365.0
+    ]
+   ],
+   "width": 6,
+   "depth": 2.4,
+   "side": 7,
+   "meander": 0
+  },
+  {
+   "year": 1190,
+   "event": "vale",
+   "cause": "the holloway: the old road north from Maplebridge up the Lessa valley, worn down between its banks by four hundred years of carts and sap barrels",
+   "path": [
+    [
+     1205,
+     1
+    ],
+    [
+     1202.9,
+     6.1
+    ],
+    [
+     1200.1,
+     13.1
+    ],
+    [
+     1196.7,
+     21.5
+    ],
+    [
+     1193.0,
+     30.5
+    ],
+    [
+     1189.4,
+     39.6
+    ],
+    [
+     1186.0,
+     48.0
+    ],
+    [
+     1182.7,
+     56.2
+    ],
+    [
+     1179.3,
+     64.8
+    ],
+    [
+     1175.9,
+     73.4
+    ],
+    [
+     1172.7,
+     81.7
+    ],
+    [
+     1169.6,
+     89.4
+    ],
+    [
+     1167.0,
+     96.0
+    ],
+    [
+     1164.8,
+     101.4
+    ],
+    [
+     1163.0,
+     105.8
+    ],
+    [
+     1161.4,
+     109.5
+    ],
+    [
+     1159.9,
+     112.9
+    ],
+    [
+     1158.5,
+     116.3
+    ],
+    [
+     1157.0,
+     120.0
+    ],
+    [
+     1155.6,
+     123.7
+    ],
+    [
+     1154.3,
+     127.1
+    ],
+    [
+     1153.1,
+     130.5
+    ],
+    [
+     1151.7,
+     134.2
+    ],
+    [
+     1150.1,
+     138.6
+    ],
+    [
+     1148.0,
+     144.0
+    ],
+    [
+     1145.4,
+     150.8
+    ],
+    [
+     1142.4,
+     158.8
+    ],
+    [
+     1139.1,
+     167.4
+    ],
+    [
+     1135.7,
+     176.2
+    ],
+    [
+     1132.3,
+     184.6
+    ],
+    [
+     1129.0,
+     192.0
+    ],
+    [
+     1125.6,
+     198.5
+    ],
+    [
+     1122.0,
+     204.4
+    ],
+    [
+     1118.4,
+     209.9
+    ],
+    [
+     1115.1,
+     215.1
+    ],
+    [
+     1112.2,
+     220.1
+    ],
+    [
+     1110.0,
+     225.0
+    ]
+   ],
+   "width": 6,
+   "depth": 0.3,
+   "side": 10,
+   "meander": 0,
+   "depth_end": 2.6,
+   "fall": 8
+  },
+  {
+   "year": 1200,
+   "event": "network",
+   "cause": "the roads of Kitehold: west across the Plain to the Wayfinders and on to Gannet Harbor, from the foot of the Kite to Maplebridge, the holloway north up the Lessa valley to Saurischia, and the east road up the Steps through the Hollow Titans to the moor",
+   "nodes": {
+    "gannet_gate": [
+     1,
+     975
+    ],
+    "outpost": [
+     222,
+     990
+    ],
+    "plain_w": [
+     420,
+     1040
+    ],
+    "kite_foot": [
+     578,
+     1132
+    ],
+    "farm_x": [
+     790,
+     1000
+    ],
+    "mb_west": [
+     910,
+     604
+    ],
+    "mb_east": [
+     975,
+     600
+    ],
+    "beck_x": [
+     1110,
+     640
+    ],
+    "canyon_foot": [
+     1215,
+     522
+    ],
+    "bench_top": [
+     1330,
+     560
+    ],
+    "titans_s": [
+     1346,
+     646
+    ],
+    "titans_n": [
+     1346,
+     596
+    ],
+    "bench_s": [
+     1372,
+     820
+    ],
+    "canyon2_foot": [
+     1376,
+     1000
+    ],
+    "moor": [
+     1478,
+     1030
+    ],
+    "observatory": [
+     1488,
+     930
+    ]
+   },
+   "links": [
+    {
+     "from": "gannet_gate",
+     "to": "outpost",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "outpost",
+     "to": "plain_w",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "plain_w",
+     "to": "kite_foot",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "kite_foot",
+     "to": "farm_x",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "farm_x",
+     "to": "mb_west",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "mb_east",
+     "to": "beck_x",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "beck_x",
+     "to": "canyon_foot",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "canyon_foot",
+     "to": "bench_top",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "bench_top",
+     "to": "titans_n",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "titans_n",
+     "to": "titans_s",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "titans_s",
+     "to": "bench_s",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "bench_s",
+     "to": "canyon2_foot",
+     "kit": "dirt_lane"
+    },
+    {
+     "from": "canyon2_foot",
+     "to": "moor",
+     "kit": "footpath"
+    },
+    {
+     "from": "moor",
+     "to": "observatory",
+     "kit": "footpath"
+    }
+   ]
+  },
+  {
+   "year": 1200,
+   "event": "ribbon",
+   "cause": "the holloway's lane along the floor of its cutting, from Maplebridge north up the valley to Saurischia",
+   "path": [
+    [
+     975.0,
+     600.0
+    ],
+    [
+     979.2,
+     595.6
+    ],
+    [
+     985.3,
+     589.6
+    ],
+    [
+     992.4,
+     582.5
+    ],
+    [
+     999.7,
+     574.8
+    ],
+    [
+     1006.5,
+     567.1
+    ],
+    [
+     1012.0,
+     560.0
+    ],
+    [
+     1016.1,
+     553.3
+    ],
+    [
+     1019.5,
+     546.7
+    ],
+    [
+     1022.4,
+     540.0
+    ],
+    [
+     1024.9,
+     533.3
+    ],
+    [
+     1027.4,
+     526.7
+    ],
+    [
+     1030.0,
+     520.0
+    ],
+    [
+     1032.7,
+     513.5
+    ],
+    [
+     1035.3,
+     507.2
+    ],
+    [
+     1037.8,
+     500.9
+    ],
+    [
+     1040.3,
+     494.4
+    ],
+    [
+     1042.7,
+     487.5
+    ],
+    [
+     1045.0,
+     480.0
+    ],
+    [
+     1047.3,
+     471.4
+    ],
+    [
+     1049.7,
+     461.8
+    ],
+    [
+     1051.9,
+     451.8
+    ],
+    [
+     1054.1,
+     442.0
+    ],
+    [
+     1056.1,
+     432.8
+    ],
+    [
+     1058.0,
+     425.0
+    ],
+    [
+     1059.6,
+     418.7
+    ],
+    [
+     1061.0,
+     413.5
+    ],
+    [
+     1062.2,
+     409.0
+    ],
+    [
+     1063.4,
+     404.9
+    ],
+    [
+     1064.7,
+     400.6
+    ],
+    [
+     1066.0,
+     396.0
+    ],
+    [
+     1067.4,
+     391.1
+    ],
+    [
+     1068.7,
+     386.1
+    ],
+    [
+     1070.1,
+     381.2
+    ],
+    [
+     1071.5,
+     376.1
+    ],
+    [
+     1073.1,
+     370.7
+    ],
+    [
+     1075.0,
+     365.0
+    ],
+    [
+     1077.2,
+     358.9
+    ],
+    [
+     1079.7,
+     352.3
+    ],
+    [
+     1082.4,
+     345.6
+    ],
+    [
+     1085.1,
+     338.7
+    ],
+    [
+     1087.7,
+     331.8
+    ],
+    [
+     1090.0,
+     325.0
+    ],
+    [
+     1092.1,
+     318.3
+    ],
+    [
+     1094.1,
+     311.5
+    ],
+    [
+     1096.0,
+     304.7
+    ],
+    [
+     1097.8,
+     298.0
+    ],
+    [
+     1099.4,
+     291.4
+    ],
+    [
+     1101.0,
+     285.0
+    ],
+    [
+     1102.5,
+     278.8
+    ],
+    [
+     1103.8,
+     272.6
+    ],
+    [
+     1105.1,
+     266.6
+    ],
+    [
+     1106.2,
+     260.7
+    ],
+    [
+     1107.2,
+     255.2
+    ],
+    [
+     1108.0,
+     250.0
+    ],
+    [
+     1108.4,
+     245.3
+    ],
+    [
+     1108.4,
+     241.2
+    ],
+    [
+     1108.2,
+     237.4
+    ],
+    [
+     1108.3,
+     233.6
+    ],
+    [
+     1108.7,
+     229.5
+    ],
+    [
+     1110.0,
+     225.0
+    ],
+    [
+     1112.2,
+     220.1
+    ],
+    [
+     1115.1,
+     215.1
+    ],
+    [
+     1118.4,
+     209.9
+    ],
+    [
+     1122.0,
+     204.4
+    ],
+    [
+     1125.6,
+     198.5
+    ],
+    [
+     1129.0,
+     192.0
+    ],
+    [
+     1132.3,
+     184.6
+    ],
+    [
+     1135.7,
+     176.2
+    ],
+    [
+     1139.1,
+     167.4
+    ],
+    [
+     1142.4,
+     158.8
+    ],
+    [
+     1145.4,
+     150.8
+    ],
+    [
+     1148.0,
+     144.0
+    ],
+    [
+     1150.1,
+     138.6
+    ],
+    [
+     1151.7,
+     134.2
+    ],
+    [
+     1153.1,
+     130.5
+    ],
+    [
+     1154.3,
+     127.1
+    ],
+    [
+     1155.6,
+     123.7
+    ],
+    [
+     1157.0,
+     120.0
+    ],
+    [
+     1158.5,
+     116.3
+    ],
+    [
+     1159.9,
+     112.9
+    ],
+    [
+     1161.4,
+     109.5
+    ],
+    [
+     1163.0,
+     105.8
+    ],
+    [
+     1164.8,
+     101.4
+    ],
+    [
+     1167.0,
+     96.0
+    ],
+    [
+     1169.6,
+     89.4
+    ],
+    [
+     1172.7,
+     81.7
+    ],
+    [
+     1175.9,
+     73.4
+    ],
+    [
+     1179.3,
+     64.8
+    ],
+    [
+     1182.7,
+     56.2
+    ],
+    [
+     1186.0,
+     48.0
+    ],
+    [
+     1189.4,
+     39.6
+    ],
+    [
+     1193.0,
+     30.5
+    ],
+    [
+     1196.7,
+     21.5
+    ],
+    [
+     1200.1,
+     13.1
+    ],
+    [
+     1202.9,
+     6.1
+    ],
+    [
+     1205,
+     1
+    ]
+   ],
+   "kit": "dirt_lane",
+   "curve": false
+  },
+  {
+   "year": 1210,
+   "event": "place",
+   "cause": "THE HOLLOW TITANS: a ring of redwoods grown together at the root, the road going under them",
+   "structure": "titan_arch",
+   "at": [
+    1346,
+    621
+   ],
+   "bearing": 0,
+   "poi": "the Hollow Titans"
+  },
+  {
+   "year": 1250,
+   "event": "town",
+   "cause": "KITEHOLD: the wind town on the Kite, low houses of stone and timber round a flagged plaza, wind towers over the roofs, mills on the rim",
+   "name": "kitehold",
+   "at": [
+    640,
+    1000
+   ],
+   "radius": 60,
+   "core": "village",
+   "core_frac": 0.0,
+   "districts": [
+    "village"
+   ],
+   "footprints": false,
+   "gradient": false,
+   "gates": [
+    [
+     600.2,
+     977.0
+    ]
+   ],
+   "gaps": 1.2,
+   "market": true,
+   "churches": 0,
+   "parks": 0,
+   "jetties": false,
+   "waterfront": 0,
+   "ribbon": 0,
+   "fields": 0,
+   "bounds": [
+    [
+     640.0,
+     944.0
+    ],
+    [
+     655.4,
+     942.6
+    ],
+    [
+     669.7,
+     948.5
+    ],
+    [
+     679.6,
+     960.4
+    ],
+    [
+     685.5,
+     973.7
+    ],
+    [
+     690.8,
+     986.4
+    ],
+    [
+     696.1,
+     1000.0
+    ],
+    [
+     697.5,
+     1015.4
+    ],
+    [
+     691.5,
+     1029.7
+    ],
+    [
+     679.5,
+     1039.5
+    ],
+    [
+     666.2,
+     1045.5
+    ],
+    [
+     653.6,
+     1050.8
+    ],
+    [
+     640.0,
+     1056.1
+    ],
+    [
+     624.6,
+     1057.5
+    ],
+    [
+     610.3,
+     1051.4
+    ],
+    [
+     600.5,
+     1039.5
+    ],
+    [
+     594.6,
+     1026.2
+    ],
+    [
+     589.2,
+     1013.6
+    ],
+    [
+     583.8,
+     1000.0
+    ],
+    [
+     582.5,
+     984.6
+    ],
+    [
+     588.6,
+     970.3
+    ],
+    [
+     600.6,
+     960.6
+    ],
+    [
+     613.8,
+     954.6
+    ],
+    [
+     626.4,
+     949.1
+    ]
+   ],
+   "houses": [
+    "kh_house",
+    "kh_house_b",
+    "kh_kite_loft",
+    "kh_pilgrim_house"
+   ],
+   "infill": 32,
+   "paths": true,
+   "kit": "kitehold",
+   "region": "kitehold",
+   "landmarks": [
+    {
+     "structure": "kh_flag_mast",
+     "near": "market",
+     "poi": "the Mast"
+    },
+    {
+     "structure": "kh_wind_tower",
+     "near": "anywhere"
+    },
+    {
+     "structure": "kh_wind_tower",
+     "near": "anywhere"
+    },
+    {
+     "structure": "kh_wind_tower",
+     "near": "anywhere"
+    },
+    {
+     "structure": "kh_wind_tower",
+     "near": "high"
+    },
+    {
+     "structure": "kh_tower_mill",
+     "near": "edge",
+     "poi": "the mills"
+    },
+    {
+     "structure": "kh_tower_mill",
+     "near": "edge"
+    },
+    {
+     "structure": "stone_stupa",
+     "near": "edge"
+    }
+   ]
+  },
+  {
+   "year": 1251,
+   "event": "area",
+   "cause": "what the country calls it",
+   "name": "Kitehold",
+   "kind": "town",
+   "at": [
+    640,
+    1000
+   ],
+   "radius": 85
+  },
+  {
+   "year": 1251,
+   "event": "area",
+   "cause": "what the country calls it",
+   "name": "the Plain",
+   "kind": "grassland",
+   "poly": [
+    [
+     0,
+     330
+    ],
+    [
+     600,
+     330
+    ],
+    [
+     860,
+     600
+    ],
+    [
+     880,
+     1100
+    ],
+    [
+     700,
+     1536
+    ],
+    [
+     0,
+     1536
+    ]
+   ]
+  },
+  {
+   "year": 1270,
+   "event": "flags",
+   "cause": "the plaza mast's flag lines, staked out round the square, renewed every spring",
+   "mast": "kh_flag_mast",
+   "fan": 10,
+   "fan_radius": 17,
+   "fan_up": 1.2,
+   "size": [
+    0.34,
+    0.44
+   ]
+  },
+  {
+   "year": 1271,
+   "event": "flags",
+   "cause": "flags strung from roof to roof and tower to tower across every street",
+   "link": [
+    "kh_house",
+    "kh_house_b",
+    "kh_wind_tower",
+    "stone_stupa",
+    "kh_tower_mill"
+   ],
+   "near": [
+    640,
+    1000
+   ],
+   "radius": 75,
+   "within": 20,
+   "per": 2,
+   "below": 0.6
+  },
+  {
+   "year": 1272,
+   "event": "kites",
+   "cause": "kites flown from the rim every day there is wind: for the dead, for the harvest, for nothing",
+   "around": [
+    640,
+    1000
+   ],
+   "radius": 58,
+   "count": 12,
+   "height": [
+    40,
+    95
+   ],
+   "size": [
+    1.5,
+    2.6
+   ]
+  },
+  {
+   "year": 1300,
+   "event": "vale",
+   "cause": "the pilgrim road, worn three metres down into the Plain by eight hundred years of hooves and carts",
+   "path": [
+    [
+     581,
+     215
+    ],
+    [
+     574,
+     262
+    ],
+    [
+     566,
+     310
+    ],
+    [
+     534,
+     360
+    ],
+    [
+     522,
+     420
+    ],
+    [
+     548,
+     470
+    ],
+    [
+     560,
+     530
+    ],
+    [
+     536,
+     590
+    ],
+    [
+     500,
+     640
+    ],
+    [
+     490,
+     700
+    ],
+    [
+     522,
+     760
+    ],
+    [
+     540,
+     820
+    ],
+    [
+     514,
+     872
+    ],
+    [
+     496,
+     930
+    ],
+    [
+     512,
+     990
+    ],
+    [
+     548,
+     1040
+    ],
+    [
+     566,
+     1092
+    ],
+    [
+     600,
+     1126
+    ]
+   ],
+   "width": 5,
+   "depth": 2.8,
+   "side": 10,
+   "meander": 3
+  },
+  {
+   "year": 1301,
+   "event": "ribbon",
+   "cause": "the pilgrim road along the floor of its hollow",
+   "path": [
+    [
+     600,
+     1126
+    ],
+    [
+     566,
+     1092
+    ],
+    [
+     548,
+     1040
+    ],
+    [
+     512,
+     990
+    ],
+    [
+     496,
+     930
+    ],
+    [
+     514,
+     872
+    ],
+    [
+     540,
+     820
+    ],
+    [
+     522,
+     760
+    ],
+    [
+     490,
+     700
+    ],
+    [
+     500,
+     640
+    ],
+    [
+     536,
+     590
+    ],
+    [
+     560,
+     530
+    ],
+    [
+     548,
+     470
+    ],
+    [
+     522,
+     420
+    ],
+    [
+     534,
+     360
+    ],
+    [
+     566,
+     310
+    ],
+    [
+     574,
+     262
+    ],
+    [
+     581,
+     215
+    ]
+   ],
+   "kit": "cattle_track"
+  },
+  {
+   "year": 1302,
+   "event": "vale",
+   "cause": "the pilgrim road south: on from the foot of the Kite across the Plain toward the bay and the ribcage at Bonebight, worn three metres down like the road north",
+   "path": [
+    [
+     600,
+     1126
+    ],
+    [
+     590,
+     1190
+    ],
+    [
+     566,
+     1262
+    ],
+    [
+     548,
+     1330
+    ],
+    [
+     530,
+     1398
+    ],
+    [
+     506,
+     1462
+    ],
+    [
+     494,
+     1520
+    ],
+    [
+     490,
+     1560
+    ]
+   ],
+   "width": 5,
+   "depth": 2.8,
+   "side": 10,
+   "meander": 3
+  },
+  {
+   "year": 1303,
+   "event": "ribbon",
+   "cause": "the south road along the floor of its hollow",
+   "path": [
+    [
+     600,
+     1126
+    ],
+    [
+     590,
+     1190
+    ],
+    [
+     566,
+     1262
+    ],
+    [
+     548,
+     1330
+    ],
+    [
+     530,
+     1398
+    ],
+    [
+     506,
+     1462
+    ],
+    [
+     494,
+     1520
+    ],
+    [
+     490,
+     1560
+    ]
+   ],
+   "kit": "cattle_track"
+  },
+  {
+   "year": 1320,
+   "event": "place",
+   "cause": "a cairn on the bank of the pilgrim road",
+   "structure": "cairn",
+   "at": [
+    554,
+    1045.9
+   ],
+   "bearing": 270
+  },
+  {
+   "year": 1320,
+   "event": "place",
+   "cause": "a cairn on the bank of the pilgrim road",
+   "structure": "cairn",
+   "at": [
+    502,
+    930.1
+   ],
+   "bearing": 90
+  },
+  {
+   "year": 1320,
+   "event": "place",
+   "cause": "a cairn on the bank of the pilgrim road",
+   "structure": "cairn",
+   "at": [
+    534,
+    824.9
+   ],
+   "bearing": 270
+  },
+  {
+   "year": 1320,
+   "event": "place",
+   "cause": "a cairn on the bank of the pilgrim road",
+   "structure": "cairn",
+   "at": [
+    484,
+    693.5
+   ],
+   "bearing": 180
+  },
+  {
+   "year": 1320,
+   "event": "place",
+   "cause": "a cairn on the bank of the pilgrim road",
+   "structure": "cairn",
+   "at": [
+    530,
+    583.5
+   ],
+   "bearing": 0
+  },
+  {
+   "year": 1320,
+   "event": "place",
+   "cause": "a cairn on the bank of the pilgrim road",
+   "structure": "cairn",
+   "at": [
+    554,
+    477.4
+   ],
+   "bearing": 90
+  },
+  {
+   "year": 1320,
+   "event": "place",
+   "cause": "a cairn on the bank of the pilgrim road",
+   "structure": "cairn",
+   "at": [
+    528,
+    365.3
+   ],
+   "bearing": 0
+  },
+  {
+   "year": 1320,
+   "event": "place",
+   "cause": "a cairn on the bank of the pilgrim road",
+   "structure": "cairn",
+   "at": [
+    568,
+    254.6
+   ],
+   "bearing": 90
+  },
+  {
+   "year": 1340,
+   "event": "place",
+   "cause": "the mill on Maple Beck below the falls",
+   "structure": "mb_mill",
+   "at": [
+    988,
+    650
+   ],
+   "bearing": 270
+  },
+  {
+   "year": 1340,
+   "event": "place",
+   "cause": "the inn at Maplebridge, the last bed before the climb",
+   "structure": "mb_inn",
+   "at": [
+    990,
+    592
+   ],
+   "bearing": 270,
+   "poi": "the inn at Maplebridge"
+  },
+  {
+   "year": 1345,
+   "event": "place",
+   "cause": "a house in Maplebridge",
+   "structure": "mb_house",
+   "at": [
+    1010,
+    612
+   ],
+   "bearing": 270
+  },
+  {
+   "year": 1345,
+   "event": "place",
+   "cause": "a house in Maplebridge",
+   "structure": "mb_house",
+   "at": [
+    1002,
+    566
+   ],
+   "bearing": 180
+  },
+  {
+   "year": 1345,
+   "event": "place",
+   "cause": "a house in Maplebridge",
+   "structure": "mb_house",
+   "at": [
+    1030,
+    590
+   ],
+   "bearing": 270
+  },
+  {
+   "year": 1345,
+   "event": "place",
+   "cause": "a house in Maplebridge",
+   "structure": "mb_house",
+   "at": [
+    1018,
+    640
+   ],
+   "bearing": 0
+  },
+  {
+   "year": 1345,
+   "event": "place",
+   "cause": "a house in Maplebridge",
+   "structure": "mb_house",
+   "at": [
+    1040,
+    618
+   ],
+   "bearing": 270
+  },
+  {
+   "year": 1346,
+   "event": "place",
+   "cause": "a sugar house in the maples, where the sap is boiled in March",
+   "structure": "sugar_shack",
+   "at": [
+    1068,
+    556
+   ],
+   "bearing": 200
+  },
+  {
+   "year": 1346,
+   "event": "place",
+   "cause": "a sugar house in the maples",
+   "structure": "sugar_shack",
+   "at": [
+    1084,
+    712
+   ],
+   "bearing": 300
+  },
+  {
+   "year": 1347,
+   "event": "vent",
+   "cause": "wood smoke from the sugar houses and the inn",
+   "at": [
+    1068,
+    556
+   ],
+   "points": [
+    [
+     0,
+     0,
+     6
+    ]
+   ],
+   "fx": "chimney_smoke",
+   "rate": 1.0
+  },
+  {
+   "year": 1348,
+   "event": "region",
+   "cause": "the hamlet's ground",
+   "name": "maplebridge",
+   "at": [
+    1000,
+    605
+   ],
+   "radius": 60
+  },
+  {
+   "year": 1349,
+   "event": "area",
+   "cause": "what the country calls it",
+   "name": "Maplebridge",
+   "kind": "hamlet",
+   "at": [
+    985,
+    610
+   ],
+   "radius": 70
+  },
+  {
+   "year": 1349,
+   "event": "sign",
+   "cause": "the board at the bridge",
+   "at": [
+    970,
+    618
+   ],
+   "text": [
+    "MAPLEBRIDGE",
+    "toll bridge"
+   ],
+   "style": "timber_sign",
+   "bearing": 270
+  },
+  {
+   "year": 1349,
+   "event": "lamp",
+   "cause": "the inn's lamps",
+   "at": [
+    990,
+    592
+   ],
+   "points": [
+    [
+     0,
+     -6,
+     2.6
+    ],
+    [
+     3,
+     -6,
+     2.6
+    ],
+    [
+     -3,
+     -6,
+     2.6
+    ]
+   ],
+   "reach": 12,
+   "strength": 1.6,
+   "after_dark": true
+  },
+  {
+   "year": 1350,
+   "event": "place",
+   "cause": "the covered toll bridge over the Lessa at Maplebridge",
+   "structure": "mb_toll_bridge",
+   "at": [
+    941,
+    602
+   ],
+   "bearing": 90,
+   "poi": "Maplebridge toll bridge"
+  },
+  {
+   "year": 1360,
+   "event": "region",
+   "cause": "the Hollow Titans' grove",
+   "name": "titans",
+   "poly": [
+    [
+     1310,
+     560
+    ],
+    [
+     1390,
+     570
+    ],
+    [
+     1400,
+     650
+    ],
+    [
+     1360,
+     690
+    ],
+    [
+     1312,
+     660
+    ]
+   ]
+  },
+  {
+   "year": 1370,
+   "event": "area",
+   "cause": "what the country calls it",
+   "name": "the Hollow Titans",
+   "kind": "grove",
+   "at": [
+    1346,
+    620
+   ],
+   "radius": 45
+  },
+  {
+   "year": 1370,
+   "event": "area",
+   "cause": "what the country calls it",
+   "name": "the Steps",
+   "kind": "escarpment",
+   "poly": [
+    [
+     1200,
+     0
+    ],
+    [
+     1536,
+     0
+    ],
+    [
+     1536,
+     1300
+    ],
+    [
+     1400,
+     1330
+    ],
+    [
+     1260,
+     1100
+    ],
+    [
+     1200,
+     700
+    ]
+   ]
+  },
+  {
+   "year": 1370,
+   "event": "area",
+   "cause": "what the country calls it",
+   "name": "the Páramo",
+   "kind": "moor",
+   "poly": [
+    [
+     1420,
+     650
+    ],
+    [
+     1536,
+     600
+    ],
+    [
+     1536,
+     1200
+    ],
+    [
+     1470,
+     1120
+    ],
+    [
+     1430,
+     900
+    ]
+   ]
+  },
+  {
+   "year": 1390,
+   "event": "ribbon",
+   "cause": "a field wall along the river side of the holloway, gapped where people climb up to look over the meadows",
+   "path": [
+    [
+     1022.3,
+     510.4
+    ],
+    [
+     1029.1,
+     490.6
+    ],
+    [
+     1036.5,
+     469.0
+    ],
+    [
+     1042.4,
+     443.1
+    ]
+   ],
+   "kit": "dry_stone_wall"
+  },
+  {
+   "year": 1390,
+   "event": "ribbon",
+   "cause": "a field wall along the river side of the holloway, gapped where people climb up to look over the meadows",
+   "path": [
+    [
+     1068.3,
+     354.0
+    ],
+    [
+     1072.9,
+     338.6
+    ],
+    [
+     1082.0,
+     315.2
+    ],
+    [
+     1086.8,
+     297.2
+    ],
+    [
+     1091.8,
+     277.7
+    ],
+    [
+     1094.0,
+     263.0
+    ]
+   ],
+   "kit": "dry_stone_wall"
+  },
+  {
+   "year": 1400,
+   "event": "place",
+   "cause": "a wind-shelter of the Wayfinders' ring",
+   "structure": "wf_shelter",
+   "at": [
+    229.7,
+    976.7
+   ],
+   "face": [
+    222,
+    990
+   ]
+  },
+  {
+   "year": 1400,
+   "event": "place",
+   "cause": "a wind-shelter of the Wayfinders' ring",
+   "structure": "wf_shelter",
+   "at": [
+    237.1,
+    995.5
+   ],
+   "face": [
+    222,
+    990
+   ]
+  },
+  {
+   "year": 1400,
+   "event": "place",
+   "cause": "a wind-shelter of the Wayfinders' ring",
+   "structure": "wf_shelter",
+   "at": [
+    217.1,
+    1003.4
+   ],
+   "face": [
+    222,
+    990
+   ]
+  },
+  {
+   "year": 1400,
+   "event": "place",
+   "cause": "a wind-shelter of the Wayfinders' ring",
+   "structure": "wf_shelter",
+   "at": [
+    207.6,
+    984.7
+   ],
+   "face": [
+    222,
+    990
+   ]
+  },
+  {
+   "year": 1400,
+   "event": "place",
+   "cause": "the well in the middle of the ring",
+   "structure": "wind_pump_well",
+   "at": [
+    224,
+    988
+   ],
+   "bearing": 200
+  },
+  {
+   "year": 1400,
+   "event": "place",
+   "cause": "the Wayfinders' lookout at the forest edge",
+   "structure": "wf_lookout",
+   "at": [
+    192,
+    1008
+   ],
+   "bearing": 90
+  },
+  {
+   "year": 1400,
+   "event": "place",
+   "cause": "the lantern beacon they light every night for travellers from the west",
+   "structure": "wf_beacon",
+   "at": [
+    198,
+    966
+   ],
+   "bearing": 90,
+   "poi": "the Wayfinders' beacon"
+  },
+  {
+   "year": 1400,
+   "event": "place",
+   "cause": "the Wayfinders' horse pen",
+   "structure": "stock_pen",
+   "at": [
+    262,
+    1012
+   ],
+   "bearing": 0
+  },
+  {
+   "year": 1400,
+   "event": "region",
+   "cause": "a cottage garden off the holloway: beans, kale, potatoes, flowers along the fence",
+   "name": "cottage_garden",
+   "poly": [
+    [
+     1043.5,
+     511.6
+    ],
+    [
+     1050.3,
+     494.9
+    ],
+    [
+     1060.3,
+     499.0
+    ],
+    [
+     1054.6,
+     515.0
+    ]
+   ]
+  },
+  {
+   "year": 1401,
+   "event": "lamp",
+   "cause": "the beacon's lantern",
+   "at": [
+    198,
+    966
+   ],
+   "points": [
+    [
+     0,
+     0,
+     9.25
+    ]
+   ],
+   "reach": 40,
+   "strength": 2.6,
+   "colour": [
+    255,
+    200,
+    130
+   ],
+   "after_dark": true
+  },
+  {
+   "year": 1401,
+   "event": "place",
+   "cause": "a cottage on the holloway, its garden between it and the lane",
+   "structure": "mb_house",
+   "at": [
+    1054.9,
+    509.1
+   ],
+   "face": [
+    1037.5,
+    500.0
+   ]
+  },
+  {
+   "year": 1401,
+   "event": "region",
+   "cause": "a cottage garden off the holloway: beans, kale, potatoes, flowers along the fence",
+   "name": "cottage_garden",
+   "poly": [
+    [
+     1060.9,
+     458.7
+    ],
+    [
+     1064.6,
+     440.7
+    ],
+    [
+     1074.9,
+     443.8
+    ],
+    [
+     1072.9,
+     460.4
+    ]
+   ]
+  },
+  {
+   "year": 1402,
+   "event": "area",
+   "cause": "what the country calls it",
+   "name": "the Wayfinders",
+   "kind": "waystation",
+   "at": [
+    222,
+    990
+   ],
+   "radius": 45
+  },
+  {
+   "year": 1402,
+   "event": "sign",
+   "cause": "the board at the station",
+   "at": [
+    252,
+    976
+   ],
+   "text": [
+    "THE WAYFINDERS",
+    "Gannet Harbor west"
+   ],
+   "style": "timber_sign",
+   "bearing": 90
+  },
+  {
+   "year": 1402,
+   "event": "ribbon",
+   "cause": "the garden fence",
+   "path": [
+    [
+     1047.0,
+     502.2
+    ],
+    [
+     1049.5,
+     494.1
+    ],
+    [
+     1069.7,
+     500.7
+    ],
+    [
+     1061.3,
+     520.2
+    ],
+    [
+     1042.5,
+     512.9
+    ],
+    [
+     1045.6,
+     504.2
+    ]
+   ],
+   "kit": "garden_fence",
+   "curve": false
+  },
+  {
+   "year": 1402,
+   "event": "ribbon",
+   "cause": "steps worn up out of the holloway to the garden gate and the door",
+   "path": [
+    [
+     1037.5,
+     500.0
+    ],
+    [
+     1046.3,
+     503.3
+    ],
+    [
+     1054.7,
+     509.7
+    ]
+   ],
+   "kit": "footpath"
+  },
+  {
+   "year": 1402,
+   "event": "place",
+   "cause": "a cottage on the holloway, its garden between it and the lane",
+   "structure": "mb_house",
+   "at": [
+    1075.5,
+    449.8
+   ],
+   "face": [
+    1052.8,
+    447.0
+   ]
+  },
+  {
+   "year": 1402,
+   "event": "region",
+   "cause": "a cottage garden off the holloway: beans, kale, potatoes, flowers along the fence",
+   "name": "cottage_garden",
+   "poly": [
+    [
+     1089.2,
+     356.9
+    ],
+    [
+     1095.8,
+     341.3
+    ],
+    [
+     1105.0,
+     344.8
+    ],
+    [
+     1100.1,
+     360.0
+    ]
+   ]
+  },
+  {
+   "year": 1403,
+   "event": "place",
+   "cause": "bee skeps on a bench by the garden",
+   "structure": "skep_bench",
+   "at": [
+    1053.1,
+    498.2
+   ],
+   "face": [
+    1037.5,
+    500.0
+   ]
+  },
+  {
+   "year": 1403,
+   "event": "ribbon",
+   "cause": "the garden fence",
+   "path": [
+    [
+     1062.6,
+     447.6
+    ],
+    [
+     1064.3,
+     438.7
+    ],
+    [
+     1087.3,
+     444.4
+    ],
+    [
+     1082.0,
+     464.6
+    ],
+    [
+     1059.6,
+     459.8
+    ],
+    [
+     1061.5,
+     450.5
+    ]
+   ],
+   "kit": "garden_fence",
+   "curve": false
+  },
+  {
+   "year": 1403,
+   "event": "ribbon",
+   "cause": "steps worn up out of the holloway to the garden gate and the door",
+   "path": [
+    [
+     1052.8,
+     447.0
+    ],
+    [
+     1061.9,
+     449.2
+    ],
+    [
+     1075.7,
+     449.3
+    ]
+   ],
+   "kit": "footpath"
+  },
+  {
+   "year": 1403,
+   "event": "place",
+   "cause": "a cottage on the holloway, its garden between it and the lane",
+   "structure": "mb_house",
+   "at": [
+    1101.7,
+    349.6
+   ],
+   "face": [
+    1082.5,
+    345.0
+   ]
+  },
+  {
+   "year": 1403,
+   "event": "region",
+   "cause": "a cottage garden off the holloway: beans, kale, potatoes, flowers along the fence",
+   "name": "cottage_garden",
+   "poly": [
+    [
+     1104.0,
+     313.2
+    ],
+    [
+     1108.1,
+     297.5
+    ],
+    [
+     1117.5,
+     301.3
+    ],
+    [
+     1115.4,
+     315.9
+    ]
+   ]
+  },
+  {
+   "year": 1404,
+   "event": "place",
+   "cause": "the cottage well",
+   "structure": "well",
+   "at": [
+    1079.6,
+    461.0
+   ]
+  },
+  {
+   "year": 1404,
+   "event": "ribbon",
+   "cause": "the garden fence",
+   "path": [
+    [
+     1091.9,
+     347.3
+    ],
+    [
+     1094.5,
+     339.9
+    ],
+    [
+     1113.9,
+     346.8
+    ],
+    [
+     1107.3,
+     363.7
+    ],
+    [
+     1087.9,
+     357.1
+    ],
+    [
+     1091.0,
+     349.4
+    ]
+   ],
+   "kit": "garden_fence",
+   "curve": false
+  },
+  {
+   "year": 1404,
+   "event": "ribbon",
+   "cause": "steps worn up out of the holloway to the garden gate and the door",
+   "path": [
+    [
+     1082.5,
+     345.0
+    ],
+    [
+     1091.3,
+     348.3
+    ],
+    [
+     1101.9,
+     349.1
+    ]
+   ],
+   "kit": "footpath"
+  },
+  {
+   "year": 1404,
+   "event": "place",
+   "cause": "a cottage on the holloway, its garden between it and the lane",
+   "structure": "mb_house",
+   "at": [
+    1114.8,
+    310.7
+   ],
+   "face": [
+    1096.0,
+    303.0
+   ]
+  },
+  {
+   "year": 1404,
+   "event": "region",
+   "cause": "a cottage garden off the holloway: beans, kale, potatoes, flowers along the fence",
+   "name": "cottage_garden",
+   "poly": [
+    [
+     1112.5,
+     277.8
+    ],
+    [
+     1116.7,
+     261.4
+    ],
+    [
+     1127.0,
+     263.4
+    ],
+    [
+     1124.8,
+     280.1
+    ]
+   ]
+  },
+  {
+   "year": 1405,
+   "event": "place",
+   "cause": "bee skeps on a bench by the garden",
+   "structure": "skep_bench",
+   "at": [
+    1097.7,
+    344.2
+   ],
+   "face": [
+    1082.5,
+    345.0
+   ]
+  },
+  {
+   "year": 1405,
+   "event": "ribbon",
+   "cause": "the garden fence",
+   "path": [
+    [
+     1105.5,
+     304.3
+    ],
+    [
+     1107.6,
+     296.5
+    ],
+    [
+     1128.1,
+     302.1
+    ],
+    [
+     1122.6,
+     319.6
+    ],
+    [
+     1102.7,
+     314.9
+    ],
+    [
+     1105.2,
+     306.7
+    ]
+   ],
+   "kit": "garden_fence",
+   "curve": false
+  },
+  {
+   "year": 1405,
+   "event": "ribbon",
+   "cause": "steps worn up out of the holloway to the garden gate and the door",
+   "path": [
+    [
+     1096.0,
+     303.0
+    ],
+    [
+     1105.1,
+     305.5
+    ],
+    [
+     1114.6,
+     311.2
+    ]
+   ],
+   "kit": "footpath"
+  },
+  {
+   "year": 1405,
+   "event": "place",
+   "cause": "a cottage on the holloway, its garden between it and the lane",
+   "structure": "mb_house",
+   "at": [
+    1125.4,
+    269.1
+   ],
+   "face": [
+    1104.5,
+    267.5
+   ]
+  },
+  {
+   "year": 1405,
+   "event": "region",
+   "cause": "a cottage garden off the holloway: beans, kale, potatoes, flowers along the fence",
+   "name": "cottage_garden",
+   "poly": [
+    [
+     1119.1,
+     242.3
+    ],
+    [
+     1120.2,
+     224.6
+    ],
+    [
+     1130.8,
+     225.0
+    ],
+    [
+     1131.0,
+     243.9
+    ]
+   ]
+  },
+  {
+   "year": 1406,
+   "event": "ribbon",
+   "cause": "the garden fence",
+   "path": [
+    [
+     1113.6,
+     267.9
+    ],
+    [
+     1115.6,
+     259.5
+    ],
+    [
+     1137.4,
+     263.5
+    ],
+    [
+     1133.2,
+     283.4
+    ],
+    [
+     1111.8,
+     279.6
+    ],
+    [
+     1113.4,
+     270.3
+    ]
+   ],
+   "kit": "garden_fence",
+   "curve": false
+  },
+  {
+   "year": 1406,
+   "event": "ribbon",
+   "cause": "steps worn up out of the holloway to the garden gate and the door",
+   "path": [
+    [
+     1104.5,
+     267.5
+    ],
+    [
+     1113.7,
+     269.3
+    ],
+    [
+     1125.5,
+     268.6
+    ]
+   ],
+   "kit": "footpath"
+  },
+  {
+   "year": 1406,
+   "event": "place",
+   "cause": "a cottage on the holloway, its garden between it and the lane",
+   "structure": "mb_house",
+   "at": [
+    1131.3,
+    236.7
+   ],
+   "face": [
+    1109.4,
+    232.5
+   ]
+  },
+  {
+   "year": 1406,
+   "event": "region",
+   "cause": "a cottage garden off the holloway: beans, kale, potatoes, flowers along the fence",
+   "name": "cottage_garden",
+   "poly": [
+    [
+     1144.5,
+     179.4
+    ],
+    [
+     1151.7,
+     163.2
+    ],
+    [
+     1161.6,
+     167.8
+    ],
+    [
+     1156.0,
+     183.5
+    ]
+   ]
+  },
+  {
+   "year": 1407,
+   "event": "place",
+   "cause": "bee skeps on a bench by the garden",
+   "structure": "skep_bench",
+   "at": [
+    1119.6,
+    263.6
+   ],
+   "face": [
+    1104.5,
+    267.5
+   ]
+  },
+  {
+   "year": 1407,
+   "event": "place",
+   "cause": "the cottage well",
+   "structure": "well",
+   "at": [
+    1130.0,
+    279.5
+   ]
+  },
+  {
+   "year": 1407,
+   "event": "ribbon",
+   "cause": "the garden fence",
+   "path": [
+    [
+     1118.8,
+     231.5
+    ],
+    [
+     1119.7,
+     222.8
+    ],
+    [
+     1142.8,
+     224.1
+    ],
+    [
+     1140.5,
+     245.8
+    ],
+    [
+     1117.6,
+     244.3
+    ],
+    [
+     1118.9,
+     234.8
+    ]
+   ],
+   "kit": "garden_fence",
+   "curve": false
+  },
+  {
+   "year": 1407,
+   "event": "ribbon",
+   "cause": "steps worn up out of the holloway to the garden gate and the door",
+   "path": [
+    [
+     1109.4,
+     232.5
+    ],
+    [
+     1118.8,
+     233.2
+    ],
+    [
+     1131.2,
+     237.3
+    ]
+   ],
+   "kit": "footpath"
+  },
+  {
+   "year": 1407,
+   "event": "place",
+   "cause": "a cottage on the holloway, its garden between it and the lane",
+   "structure": "mb_house",
+   "at": [
+    1159.8,
+    173.7
+   ],
+   "face": [
+    1138.5,
+    168.0
+   ]
+  },
+  {
+   "year": 1408,
+   "event": "ribbon",
+   "cause": "the garden fence",
+   "path": [
+    [
+     1147.7,
+     169.8
+    ],
+    [
+     1150.4,
+     162.7
+    ],
+    [
+     1172.2,
+     170.8
+    ],
+    [
+     1164.9,
+     188.9
+    ],
+    [
+     1143.3,
+     180.5
+    ],
+    [
+     1146.7,
+     172.9
+    ]
+   ],
+   "kit": "garden_fence",
+   "curve": false
+  },
+  {
+   "year": 1408,
+   "event": "ribbon",
+   "cause": "steps worn up out of the holloway to the garden gate and the door",
+   "path": [
+    [
+     1138.5,
+     168.0
+    ],
+    [
+     1147.2,
+     171.5
+    ],
+    [
+     1159.9,
+     173.2
+    ]
+   ],
+   "kit": "footpath"
+  },
+  {
+   "year": 1409,
+   "event": "place",
+   "cause": "bee skeps on a bench by the garden",
+   "structure": "skep_bench",
+   "at": [
+    1153.9,
+    167.1
+   ],
+   "face": [
+    1138.5,
+    168.0
+   ]
+  },
+  {
+   "year": 1450,
+   "event": "fields",
+   "cause": "the farms along the Lessa below Maplebridge: barley, flax and sunflowers, apples, pasture and hay, walled with the stone off the fields",
+   "area": [
+    [
+     845,
+     760
+    ],
+    [
+     895,
+     760
+    ],
+    [
+     892,
+     900
+    ],
+    [
+     905,
+     1040
+    ],
+    [
+     920,
+     1150
+    ],
+    [
+     880,
+     1220
+    ],
+    [
+     800,
+     1180
+    ],
+    [
+     760,
+     1100
+    ],
+    [
+     740,
+     1060
+    ],
+    [
+     760,
+     950
+    ],
+    [
+     800,
+     840
+    ]
+   ],
+   "crops": [
+    "barley",
+    "flax",
+    "sunflower",
+    "orchard",
+    "pasture",
+    "hay",
+    "flax",
+    "barley"
+   ],
+   "kit": "kitehold",
+   "field_size": 55,
+   "farmsteads": true,
+   "shacks": {
+    "default": 0.15,
+    "pasture": 0.3,
+    "orchard": 0.25,
+    "sunflower": 0.1
+   }
+  },
+  {
+   "year": 1500,
+   "event": "place",
+   "cause": "the weather observatory on the moor, kept by Kitehold for the wind",
+   "structure": "weather_observatory",
+   "at": [
+    1488,
+    930
+   ],
+   "bearing": 270,
+   "poi": "the observatory"
+  },
+  {
+   "year": 1500,
+   "event": "place",
+   "cause": "a cairn hung with cloth on the high moor",
+   "structure": "cloth_cairn",
+   "at": [
+    1455.6,
+    689.3
+   ],
+   "bearing": 180
+  },
+  {
+   "year": 1500,
+   "event": "place",
+   "cause": "a cairn hung with cloth on the high moor",
+   "structure": "cloth_cairn",
+   "at": [
+    1480.0,
+    776.5
+   ],
+   "bearing": 270
+  },
+  {
+   "year": 1500,
+   "event": "place",
+   "cause": "a cairn hung with cloth on the high moor",
+   "structure": "cloth_cairn",
+   "at": [
+    1492.4,
+    836.3
+   ],
+   "bearing": 0
+  },
+  {
+   "year": 1500,
+   "event": "place",
+   "cause": "a cairn hung with cloth on the high moor",
+   "structure": "cloth_cairn",
+   "at": [
+    1496.6,
+    902.6
+   ],
+   "bearing": 90
+  },
+  {
+   "year": 1500,
+   "event": "place",
+   "cause": "a cairn hung with cloth on the high moor",
+   "structure": "cloth_cairn",
+   "at": [
+    1481.0,
+    961.2
+   ],
+   "bearing": 0
+  },
+  {
+   "year": 1500,
+   "event": "place",
+   "cause": "a cairn hung with cloth on the high moor",
+   "structure": "cloth_cairn",
+   "at": [
+    1472.0,
+    1063.9
+   ],
+   "bearing": 270
+  },
+  {
+   "year": 1500,
+   "event": "place",
+   "cause": "a cairn hung with cloth on the high moor",
+   "structure": "cloth_cairn",
+   "at": [
+    1445.3,
+    1100.7
+   ],
+   "bearing": 0
+  },
+  {
+   "year": 1501,
+   "event": "flags",
+   "cause": "cloth tied out from the moor's cairns",
+   "mast": "cloth_cairn",
+   "fan": 3,
+   "fan_radius": 5,
+   "fan_up": 0.4,
+   "size": [
+    0.26,
+    0.34
+   ],
+   "below": 0.2
+  },
+  {
+   "year": 1520,
+   "event": "place",
+   "cause": "a carved lantern on a post beside the road through the cloud forest, lit, though nobody says who lights it",
+   "structure": "spirit_lantern",
+   "at": [
+    1377.5,
+    842.4
+   ],
+   "face": [
+    1372,
+    842
+   ]
+  },
+  {
+   "year": 1520,
+   "event": "place",
+   "cause": "a carved lantern on a post beside the road through the cloud forest, lit, though nobody says who lights it",
+   "structure": "spirit_lantern",
+   "at": [
+    1368.5,
+    887.6
+   ],
+   "face": [
+    1374,
+    888
+   ]
+  },
+  {
+   "year": 1520,
+   "event": "place",
+   "cause": "a carved lantern on a post beside the road through the cloud forest, lit, though nobody says who lights it",
+   "structure": "spirit_lantern",
+   "at": [
+    1379.5,
+    932.4
+   ],
+   "face": [
+    1374,
+    932
+   ]
+  },
+  {
+   "year": 1520,
+   "event": "place",
+   "cause": "a carved lantern on a post beside the road through the cloud forest, lit, though nobody says who lights it",
+   "structure": "spirit_lantern",
+   "at": [
+    1370.5,
+    977.6
+   ],
+   "face": [
+    1376,
+    978
+   ]
+  },
+  {
+   "year": 1520,
+   "event": "place",
+   "cause": "a carved lantern on a post beside the road through the cloud forest, lit, though nobody says who lights it",
+   "structure": "spirit_lantern",
+   "at": [
+    1390.2,
+    999.0
+   ],
+   "face": [
+    1389,
+    1004
+   ]
+  },
+  {
+   "year": 1520,
+   "event": "place",
+   "cause": "a carved lantern on a post beside the road through the cloud forest, lit, though nobody says who lights it",
+   "structure": "spirit_lantern",
+   "at": [
+    1412.8,
+    1016.0
+   ],
+   "face": [
+    1414,
+    1011
+   ]
+  },
+  {
+   "year": 1520,
+   "event": "place",
+   "cause": "a carved lantern on a post beside the road through the cloud forest, lit, though nobody says who lights it",
+   "structure": "spirit_lantern",
+   "at": [
+    1441.2,
+    1014.0
+   ],
+   "face": [
+    1440,
+    1019
+   ]
+  },
+  {
+   "year": 1520,
+   "event": "place",
+   "cause": "a carved lantern on a post beside the road through the cloud forest, lit, though nobody says who lights it",
+   "structure": "spirit_lantern",
+   "at": [
+    1463.8,
+    1031.0
+   ],
+   "face": [
+    1465,
+    1026
+   ]
+  },
+  {
+   "year": 1521,
+   "event": "lamp",
+   "cause": "the lantern's light",
+   "at": [
+    1377.5,
+    842.4
+   ],
+   "points": [
+    [
+     0,
+     0,
+     1.25
+    ]
+   ],
+   "reach": 9,
+   "strength": 1.4,
+   "colour": [
+    255,
+    196,
+    120
+   ],
+   "after_dark": true
+  },
+  {
+   "year": 1521,
+   "event": "lamp",
+   "cause": "the lantern's light",
+   "at": [
+    1368.5,
+    887.6
+   ],
+   "points": [
+    [
+     0,
+     0,
+     1.25
+    ]
+   ],
+   "reach": 9,
+   "strength": 1.4,
+   "colour": [
+    255,
+    196,
+    120
+   ],
+   "after_dark": true
+  },
+  {
+   "year": 1521,
+   "event": "lamp",
+   "cause": "the lantern's light",
+   "at": [
+    1379.5,
+    932.4
+   ],
+   "points": [
+    [
+     0,
+     0,
+     1.25
+    ]
+   ],
+   "reach": 9,
+   "strength": 1.4,
+   "colour": [
+    255,
+    196,
+    120
+   ],
+   "after_dark": true
+  },
+  {
+   "year": 1521,
+   "event": "lamp",
+   "cause": "the lantern's light",
+   "at": [
+    1370.5,
+    977.6
+   ],
+   "points": [
+    [
+     0,
+     0,
+     1.25
+    ]
+   ],
+   "reach": 9,
+   "strength": 1.4,
+   "colour": [
+    255,
+    196,
+    120
+   ],
+   "after_dark": true
+  },
+  {
+   "year": 1521,
+   "event": "lamp",
+   "cause": "the lantern's light",
+   "at": [
+    1390.2,
+    999.0
+   ],
+   "points": [
+    [
+     0,
+     0,
+     1.25
+    ]
+   ],
+   "reach": 9,
+   "strength": 1.4,
+   "colour": [
+    255,
+    196,
+    120
+   ],
+   "after_dark": true
+  },
+  {
+   "year": 1521,
+   "event": "lamp",
+   "cause": "the lantern's light",
+   "at": [
+    1412.8,
+    1016.0
+   ],
+   "points": [
+    [
+     0,
+     0,
+     1.25
+    ]
+   ],
+   "reach": 9,
+   "strength": 1.4,
+   "colour": [
+    255,
+    196,
+    120
+   ],
+   "after_dark": true
+  },
+  {
+   "year": 1521,
+   "event": "lamp",
+   "cause": "the lantern's light",
+   "at": [
+    1441.2,
+    1014.0
+   ],
+   "points": [
+    [
+     0,
+     0,
+     1.25
+    ]
+   ],
+   "reach": 9,
+   "strength": 1.4,
+   "colour": [
+    255,
+    196,
+    120
+   ],
+   "after_dark": true
+  },
+  {
+   "year": 1521,
+   "event": "lamp",
+   "cause": "the lantern's light",
+   "at": [
+    1463.8,
+    1031.0
+   ],
+   "points": [
+    [
+     0,
+     0,
+     1.25
+    ]
+   ],
+   "reach": 9,
+   "strength": 1.4,
+   "colour": [
+    255,
+    196,
+    120
+   ],
+   "after_dark": true
+  }
+ ]
+}

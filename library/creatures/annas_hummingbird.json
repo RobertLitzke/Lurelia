@@ -1,9 +1,10 @@
 {
   "name": "annas_hummingbird",
-  "version": 1,
+  "version": 2,
   "introduced_by": "ribshore",
-  "notes": "hum: Anna's hummingbird, a male: bronze-green back, grey belly, and a gorget and crown of rose-magenta that look near black until the sun catches them, when they flash (the gorget's fourth colour value below zero is iridescence, scene.wgsl). Sits on a bare twig at the top of a shrub, darts out to hover at flowers -- lupine, ocotillo in spring, desert willow, meadow wildflowers -- and now and then climbs high and dives in a narrow U, again and again, the way it courts. Year round on the Pacific coast and in the desert. The base of the hummingbirds. Drawn on 5 mm voxels, about half again life size, so it shows.",
-  "voxel": 0.005,
+  "notes": "hum: Anna's hummingbird, a male: bronze-green back, grey belly, and a gorget and crown of rose-magenta that look near black until the sun catches them, when they flash (the gorget's fourth colour value below zero is iridescence, scene.wgsl). Sits on a bare twig at the top of a shrub, darts out to hover at flowers -- lupine, ocotillo in spring, desert willow, meadow wildflowers -- and now and then climbs high and dives in a narrow U, again and again, the way it courts. Year round on the Pacific coast and in the desert. The base of the hummingbirds. Drawn on 3 mm voxels, about half again life size, so it shows.",
+  "voxel": 0.003,
+  "grid": [38, 32, 54],
   "half_w": 0.04,
   "height": 0.055,
   "colors": {
@@ -18,6 +19,7 @@
     "legs": [30, 28, 28]
   },
   "behaviour": {
+    "displays": [{"kind": "sky_dive"}, {"kind": "shuttle"}],
     "movement": "hum",
     "walk_speed": 7,
     "flee_speed": 14,
@@ -29,40 +31,85 @@
     "flees_from": ["player"],
     "group": {"size": [1, 2], "spacing": 4, "range": 20},
     "rain": 0.3,
-    "winter": 0.8
+    "winter": 0.8,
+    "voice": {
+      "calls": [
+        {"cry": "pipe", "on": "takeoff", "size": 0.4, "chance": 0.6},
+        {"cry": "buzz", "on": "display:shuttle", "size": 0.35},
+        {"cry": "pipe", "on": "display:sky_dive", "size": 0.3, "boost": 4}
+      ]
+    }
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [16.5, 12, 15], "radius": [2.5, 2.5, 4.5], "mat": "back"},
-    {"op": "recolour_below", "y": 11, "from": "back", "to": "belly"},
-    {"op": "ellipsoid", "centre": [16.5, 14, 9.8], "radius": [2.2, 2.2, 2.2], "mat": "back", "part": "head"},
-    {"op": "recolour", "at": [13, 11, 7], "until": [21, 14, 11], "from": "back", "to": "gorget"},
-    {"op": "recolour", "at": [13, 15, 7], "until": [21, 17, 12], "from": "back", "to": "gorget"},
-    {"op": "set", "at": [15, 15, 8], "mat": "eye", "part": "head"},
-    {"op": "set", "at": [18, 15, 8], "mat": "eye", "part": "head"},
-    {"op": "set", "at": [15, 15, 9], "mat": "white", "part": "head"},
-    {"op": "set", "at": [18, 15, 9], "mat": "white", "part": "head"},
-    {"op": "box", "from": [16, 14, 1], "to": [17, 15, 8], "mat": "bill", "part": "head"},
-    {"op": "box", "from": [13, 14, 13], "to": [15, 15, 16], "mat": "wing", "part": "wing_l"},
-    {"op": "box", "from": [7, 14, 13], "to": [13, 15, 15], "mat": "wing", "part": "wing_l_tip"},
-    {"op": "box", "from": [18, 14, 13], "to": [20, 15, 16], "mat": "wing", "part": "wing_r"},
-    {"op": "box", "from": [20, 14, 13], "to": [26, 15, 15], "mat": "wing", "part": "wing_r_tip"},
-    {"op": "box", "from": [16, 11, 19], "to": [17, 12, 24], "mat": "tail", "part": "tail"},
-    {"op": "box", "from": [15, 11, 20], "to": [18, 12, 23], "mat": "tail", "part": "tail"},
-    {"op": "box", "from": [15, 8, 14], "to": [16, 10, 15], "mat": "legs", "part": "leg_l"},
-    {"op": "box", "from": [17, 8, 14], "to": [18, 10, 15], "mat": "legs", "part": "leg_r"}
+    {"op": "ellipsoid", "centre": [19.833, 20.0, 25.333], "radius": [4.167, 4.167, 7.5], "mat": "back"},
+    {"op": "recolour_below", "y": 18, "from": "back", "to": "belly"},
+    {
+      "op": "ellipsoid",
+      "centre": [19.833, 23.333, 16.667],
+      "radius": [3.667, 3.667, 3.667],
+      "mat": "back",
+      "part": "head"
+    },
+    {"op": "recolour", "at": [14, 18, 12], "until": [27, 23, 19], "from": "back", "to": "gorget"},
+    {"op": "recolour", "at": [14, 25, 12], "until": [27, 28, 20], "from": "back", "to": "gorget"},
+    {"op": "ellipsoid", "centre": [16.9, 24.5, 15.9], "radius": [1.4, 1.5, 1.5], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [22.77, 24.5, 15.9], "radius": [1.4, 1.5, 1.5], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [17.0, 25.6, 18.8], "radius": [1.1, 1.0, 1.1], "mat": "white", "part": "head"},
+    {"op": "ellipsoid", "centre": [22.67, 25.6, 18.8], "radius": [1.1, 1.0, 1.1], "mat": "white", "part": "head"},
+    {
+      "op": "segment",
+      "points": [[19.833, 23.3, 15.0], [19.833, 23.0, 9.0]],
+      "radius": 1.35,
+      "mat": "bill",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[19.833, 23.0, 9.0], [19.833, 22.7, 2.5]],
+      "radius": 0.95,
+      "mat": "bill",
+      "part": "head"
+    },
+    {"op": "ellipsoid", "centre": [15.6, 24.0, 24.5], "radius": [2.6, 1.2, 2.9], "mat": "wing", "part": "wing_l"},
+    {"op": "ellipsoid", "centre": [9.0, 24.3, 25.0], "radius": [5.5, 1.1, 2.3], "mat": "wing", "part": "wing_l_tip"},
+    {"op": "ellipsoid", "centre": [24.067, 24.0, 24.5], "radius": [2.6, 1.2, 2.9], "mat": "wing", "part": "wing_r"},
+    {
+      "op": "ellipsoid",
+      "centre": [30.667, 24.3, 25.0],
+      "radius": [5.5, 1.1, 2.3],
+      "mat": "wing",
+      "part": "wing_r_tip"
+    },
+    {"op": "ellipsoid", "centre": [19.833, 18.9, 36.3], "radius": [3.0, 1.1, 5.6], "mat": "tail", "part": "tail"},
+    {
+      "op": "segment",
+      "points": [[18.2, 17.0, 24.5], [18.2, 14.0, 25.0]],
+      "radius": 0.9,
+      "mat": "legs",
+      "part": "leg_l"
+    },
+    {
+      "op": "segment",
+      "points": [[21.47, 17.0, 24.5], [21.47, 14.0, 25.0]],
+      "radius": 0.9,
+      "mat": "legs",
+      "part": "leg_r"
+    },
+    {"op": "ellipsoid", "centre": [18.2, 13.4, 25.4], "radius": [1.3, 0.7, 1.7], "mat": "legs", "part": "leg_l"},
+    {"op": "ellipsoid", "centre": [21.47, 13.4, 25.4], "radius": [1.3, 0.7, 1.7], "mat": "legs", "part": "leg_r"}
   ],
   "rig": {
     "plan": "bird",
     "bones": [
       {"name": "body", "role": "root"},
-      {"name": "head", "role": "head", "parent": "body", "joint": [16.5, 13.5, 11.5]},
-      {"name": "wing_l", "role": "wing", "parent": "body", "joint": [15, 14.5, 14.5], "side": "l"},
-      {"name": "wing_l_tip", "role": "wing", "parent": "wing_l", "joint": [13, 14.5, 14], "side": "l"},
-      {"name": "wing_r", "role": "wing", "parent": "body", "joint": [18, 14.5, 14.5], "side": "r"},
-      {"name": "wing_r_tip", "role": "wing", "parent": "wing_r", "joint": [20, 14.5, 14], "side": "r"},
-      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 11.5, 19]},
-      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [15.5, 10, 14.5], "side": "l", "pair": 0},
-      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [17.5, 10, 14.5], "side": "r", "pair": 0}
+      {"name": "head", "role": "head", "parent": "body", "joint": [19.833, 22.5, 19.5]},
+      {"name": "wing_l", "role": "wing", "parent": "body", "joint": [17.333, 24.167, 24.5], "side": "l"},
+      {"name": "wing_l_tip", "role": "wing", "parent": "wing_l", "joint": [14.0, 24.167, 23.667], "side": "l"},
+      {"name": "wing_r", "role": "wing", "parent": "body", "joint": [22.333, 24.167, 24.5], "side": "r"},
+      {"name": "wing_r_tip", "role": "wing", "parent": "wing_r", "joint": [25.667, 24.167, 23.667], "side": "r"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [19.833, 19.167, 32.0]},
+      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [18.167, 16.667, 24.5], "side": "l", "pair": 0},
+      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [21.5, 16.667, 24.5], "side": "r", "pair": 0}
     ]
   },
   "vary": {"size": 0.06}

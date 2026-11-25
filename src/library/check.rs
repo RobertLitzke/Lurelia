@@ -116,6 +116,18 @@ impl Library {
                     out.push(format!("plant {}: crust must be \"bracket\" or \"patch\"", p.name));
                 }
             }
+            if let Some(site) = &p.site {
+                for (field, r) in site.ranges() {
+                    if let Some([lo, hi]) = r {
+                        if !(0.0..=1.0).contains(&lo) || !(0.0..=1.0).contains(&hi) || lo > hi {
+                            out.push(format!("plant {}: site {field} must be [lo, hi] with 0 <= lo <= hi <= 1", p.name));
+                        }
+                    }
+                }
+                if matches!(p.form, crate::world::flora::Form::Vine | crate::world::flora::Form::Crust) {
+                    out.push(format!("plant {}: a vine or crust grows on its host; a site block does nothing", p.name));
+                }
+            }
             for a in p.affords.iter().filter(|a| !crate::creatures::affordance::AFFORDANCES.contains(&a.as_str())) {
                 out.push(format!("plant {}: unknown affordance {a}", p.name));
             }
@@ -256,6 +268,16 @@ impl Library {
                 }
             }
             crate::anim::validate(c, &mut out);
+            let roles: Vec<crate::anim::Role> = c.rig.as_ref().map_or(Vec::new(), |r| r.bones.iter().map(|b| b.role).collect());
+            crate::creatures::display::validate(&c.name, &c.behaviour.displays, &c.behaviour.movement, &roles, &mut out);
+            if let Some(v) = &c.behaviour.voice {
+                crate::creatures::voice::validate(&c.name, v, &c.behaviour.displays, &mut out);
+            }
+            for f in c.behaviour.displays.iter().filter_map(|d| d.food.as_ref()) {
+                if self.creature(f).is_none() && !self.collectibles.iter().any(|i| i.name == *f) {
+                    out.push(format!("creature {}: display food {f} is no creature or collectible", c.name));
+                }
+            }
             op_colours(&c.ops, &c.colors, &format!("creature {}", c.name), &mut out);
             if let Some(g) = &c.behaviour.group {
                 if g.size[0] == 0 || g.size[0] > g.size[1] {
@@ -271,6 +293,11 @@ impl Library {
             let coats = self.creature_coats(ci);
             check_coats(&coats, &cwhat, &mut out);
             check_fit(&coats, &c.colors, &cwhat, &mut out);
+            for (k, f) in c.forms.each() {
+                if self.creature(f).is_none() {
+                    out.push(format!("{cwhat}: form {k} names {f}, which is no creature"));
+                }
+            }
         }
         for c in &self.collectibles {
             op_colours(&c.ops, &c.colors, &format!("collectible {}", c.name), &mut out);
@@ -281,6 +308,14 @@ impl Library {
             mat(&b.subsurface, &what, &mut out);
             if let Some(r) = &b.rock {
                 mat(r, &what, &mut out);
+            }
+            if let Some(s) = b.soil.filter(|s| !(0.0..=1.0).contains(s)) {
+                out.push(format!("{what}: soil {s} must be 0 to 1"));
+            }
+            match &b.habitat {
+                None => out.push(format!("{what}: names no habitat (library/habitats/)")),
+                Some(h) if !self.habitats.iter().any(|x| &x.name == h) => out.push(format!("{what}: unknown habitat {h}")),
+                _ => {}
             }
             for p in &b.plants {
                 match self.plant(&p.plant) {
@@ -293,7 +328,7 @@ impl Library {
                     out.push(format!("{what}: unknown structure {}", f.structure));
                 }
             }
-            for c in &b.creatures {
+            for c in b.creatures.iter().chain(&b.cave_creatures) {
                 match self.creature(&c.creature) {
                     None => out.push(format!("{what}: unknown creature {}", c.creature)),
                     Some(i) => check_pick(&c.morph, &self.creature_coats(i), &c.creature, &what, &mut out),
@@ -303,6 +338,56 @@ impl Library {
                 if self.collectible(&c.item).is_none() {
                     out.push(format!("{what}: unknown collectible {}", c.item));
                 }
+            }
+        }
+        let realm = |r: &String, what: &str, out: &mut Vec<String>| {
+            if !self.realms.iter().any(|x| &x.name == r) {
+                out.push(format!("{what}: unknown realm {r} (library/realms/)"));
+            }
+        };
+        for p in &self.plants {
+            p.realms.iter().for_each(|r| realm(r, &format!("plant {}", p.name), &mut out));
+        }
+        for c in &self.creatures {
+            c.realms.iter().for_each(|r| realm(r, &format!("creature {}", c.name), &mut out));
+        }
+        for b in &self.biomes {
+            for (r, s) in b.realm.iter().flatten() {
+                realm(r, &format!("biome {}", b.name), &mut out);
+                if !(0.0..=1.0).contains(s) {
+                    out.push(format!("biome {}: realm {r} strength must be 0 to 1", b.name));
+                }
+            }
+        }
+        for r in &self.realms {
+            let what = format!("realm {}", r.name);
+            for (h, cast) in &r.habitats {
+                if !self.habitats.iter().any(|x| &x.name == h) {
+                    out.push(format!("{what}: unknown habitat {h}"));
+                }
+                for u in cast.plants.iter().filter(|u| self.plant(&u.plant).is_none()) {
+                    out.push(format!("{what}: {h}: unknown plant {}", u.plant));
+                }
+                for c in cast.creatures.iter().filter(|c| self.creature(&c.creature).is_none()) {
+                    out.push(format!("{what}: {h}: unknown creature {}", c.creature));
+                }
+            }
+            for (a, b) in &r.ground {
+                mat(a, &what, &mut out);
+                mat(b, &what, &mut out);
+            }
+            if !(0.0..=1.0).contains(&r.mist) {
+                out.push(format!("{what}: mist must be 0 to 1"));
+            }
+        }
+        for h in &self.habitats {
+            for (k, v) in h.values() {
+                if v.is_some_and(|v| !(0.0..=1.0).contains(&v)) {
+                    out.push(format!("habitat {}: {k} must be 0 to 1", h.name));
+                }
+            }
+            for f in h.forage.iter().filter(|f| !super::FORAGE.contains(&f.as_str())) {
+                out.push(format!("habitat {}: unknown forage {f} (one of {})", h.name, super::FORAGE.join(", ")));
             }
         }
         // City kits: every material and plant they name. Checked by name
@@ -383,8 +468,8 @@ impl Library {
             if !(1..=10).contains(&w.slot) {
                 out.push(format!("{what}: slot {} is not 1 to 10", w.slot));
             }
-            if !w.view.is_empty() && !crate::combat::viewmodel::SHAPES.contains(&w.view.as_str()) {
-                out.push(format!("{what}: view must be one of {:?}", crate::combat::viewmodel::SHAPES));
+            if !w.view.is_empty() && crate::combat::viewmodel::shape_of(&w.view).is_none() {
+                out.push(format!("{what}: no view called {} (combat::real::REAL)", w.view));
             }
             if w.ammo_start > w.ammo_max {
                 out.push(format!("{what}: ammo_start {} is over ammo_max {}", w.ammo_start, w.ammo_max));
@@ -556,14 +641,16 @@ impl Library {
                 }
             }
         }
-        {
-            let mut slots: HashMap<u32, &str> = HashMap::new();
-            for w in &self.weapons {
-                if let Some(other) = slots.insert(w.slot, &w.name) {
-                    out.push(format!("weapon {}: slot {} is already {other}'s", w.name, w.slot));
-                }
+        // A weapon's digit is its role's, so the guns a kit puts in one match
+        // never share one (src/weapon_kit.rs).
+        for w in &self.weapons {
+            match crate::weapon_kit::slot(&w.role) {
+                None => out.push(format!("weapon {}: role {:?} is not one of {}", w.name, w.role, crate::weapon_kit::ROLES.map(|r| r.0).join(", "))),
+                Some(s) if s != w.slot => out.push(format!("weapon {}: slot {} is not its role {}'s, {s}", w.name, w.slot, w.role)),
+                Some(_) => {}
             }
         }
+        out.extend(crate::weapon_kit::check(self));
         for (kind, names) in [
             ("kit", self.kits.iter().map(|p| &p.name).collect::<Vec<_>>()),
             ("city kit", self.cities.iter().map(|p| &p.name).collect::<Vec<_>>()),

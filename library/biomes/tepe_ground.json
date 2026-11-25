@@ -3,12 +3,14 @@
   "version": 1,
   "introduced_by": "windbarrow",
   "notes": "The hilltop round the Tepe: turf grazed and trodden down to the chalk, thyme and thistles at the wall's foot, and the pillars standing in it. The bare rubble is the enclosure's own floor, inside the bench wall.",
+  "habitat": "dry_grassland",
   "priority": 18,
   "rules": {"region": "tepe"},
   "surface": "downland_grass",
   "subsurface": "chalk_white",
   "rock": null,
   "fringe": 0,
+  "soil": 0.85,
   "map_color": [200, 196, 150],
   "plants": [
     {

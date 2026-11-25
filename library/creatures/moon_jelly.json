@@ -1,13 +1,14 @@
 {
   "name": "moon_jelly",
-  "version": 1,
+  "version": 2,
   "introduced_by": "underwater",
-  "notes": "Moon jellyfish: a pale lilac bell the size of a plate with four rings in it, drifting, beating slowly upward and sinking between.",
-  "voxel": 0.02,
+  "notes": "Moon jellyfish: a pale lilac bell the size of a plate with four rings in it, drifting, beating slowly upward and sinking between. v2: one broad domed bell, four oral arms and a skirt of rim tentacles drawn as segments.",
+  "voxel": 0.017,
   "half_w": 0.16,
   "height": 0.36,
   "colors": {"bell": [222, 206, 236], "ring": [240, 182, 214], "tentacle": [236, 228, 242]},
   "behaviour": {
+    "displays": [{"kind": "pulse_bloom"}],
     "movement": "school",
     "habit": "pulse",
     "walk_speed": 0.1,
@@ -21,13 +22,21 @@
     "active": "any"
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [16.5, 15, 16.5], "radius": [8, 4, 8], "mat": "bell"},
-    {"op": "recolour", "at": [12, 16, 12], "until": [21, 19, 21], "from": "bell", "to": "ring"},
-    {"op": "recolour", "at": [14, 16, 14], "until": [19, 19, 19], "from": "ring", "to": "bell"},
-    {"op": "box", "from": [16, 2, 16], "to": [17, 12, 17], "mat": "tentacle"},
-    {"op": "box", "from": [11, 5, 16], "to": [12, 12, 17], "mat": "tentacle"},
-    {"op": "box", "from": [21, 5, 16], "to": [22, 12, 17], "mat": "tentacle"},
-    {"op": "box", "from": [16, 6, 11], "to": [17, 12, 12], "mat": "tentacle"},
-    {"op": "box", "from": [16, 6, 21], "to": [17, 12, 22], "mat": "tentacle"}
+    {"op": "ellipsoid", "centre": [16, 15, 16], "radius": [12, 6.5, 12], "mat": "bell"},
+    {"op": "ellipsoid", "centre": [16, 11.5, 16], "radius": [11, 2.5, 11], "mat": "bell"},
+    {"op": "recolour", "at": [8, 13, 8], "until": [24, 19, 24], "from": "bell", "to": "ring"},
+    {"op": "recolour", "at": [13, 13, 13], "until": [19, 20, 19], "from": "ring", "to": "bell"},
+    {"op": "segment", "points": [[16, 11, 13.5], [15.5, 6, 13], [16, 1.5, 13.5]], "radius": 1.3, "mat": "tentacle"},
+    {"op": "segment", "points": [[16, 11, 18.5], [16.5, 6, 19], [16, 1.5, 18.5]], "radius": 1.3, "mat": "tentacle"},
+    {"op": "segment", "points": [[13.5, 11, 16], [13, 6, 15.5], [13.5, 1.5, 16]], "radius": 1.3, "mat": "tentacle"},
+    {"op": "segment", "points": [[18.5, 11, 16], [19, 6, 16.5], [18.5, 1.5, 16]], "radius": 1.3, "mat": "tentacle"},
+    {"op": "segment", "points": [[6, 12, 16], [5.5, 8, 16], [6, 5, 16]], "radius": 1.5, "mat": "tentacle"},
+    {"op": "segment", "points": [[26, 12, 16], [26.5, 8, 16], [26, 5, 16]], "radius": 1.5, "mat": "tentacle"},
+    {"op": "segment", "points": [[16, 12, 5.5], [16, 8, 5], [16, 5, 5.5]], "radius": 1.5, "mat": "tentacle"},
+    {"op": "segment", "points": [[16, 12, 26.5], [16, 8, 27], [16, 5, 26.5]], "radius": 1.5, "mat": "tentacle"},
+    {"op": "segment", "points": [[11, 12, 6.5], [10.5, 8, 6], [11, 5, 6.5]], "radius": 1.5, "mat": "tentacle"},
+    {"op": "segment", "points": [[21, 12, 6.5], [21.5, 8, 6], [21, 5, 6.5]], "radius": 1.5, "mat": "tentacle"},
+    {"op": "segment", "points": [[11, 12, 25.5], [10.5, 8, 26], [11, 5, 25.5]], "radius": 1.5, "mat": "tentacle"},
+    {"op": "segment", "points": [[21, 12, 25.5], [21.5, 8, 26], [21, 5, 25.5]], "radius": 1.5, "mat": "tentacle"}
   ]
 }

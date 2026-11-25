@@ -1,0 +1,30 @@
+{
+  "name": "anti_materiel_rifle",
+  "version": 1,
+  "introduced_by": "realistic",
+  "notes": "A fifty-calibre rifle made for engine blocks rather than men. Five in the magazine, slow, and it goes through a metre of wall and whoever is behind it, hollowing the way. The right button is a four-power sight. There is no such thing as cover from it, which is the point of carrying something this heavy.",
+  "display": "ANTI-MATERIEL RIFLE",
+  "slot": 4,
+  "ammo_max": 25,
+  "ammo_start": 10,
+  "mag": 5,
+  "reload_s": 3.2,
+  "zoom": 0.25,
+  "fire": {
+    "kind": "hitscan",
+    "rpm": 50.0,
+    "damage": 85.0,
+    "spread_deg": 0.05,
+    "range": 500.0,
+    "falloff": 1.0,
+    "head_mult": 1.6,
+    "pierce_m": 1.0,
+    "kick": 3.2,
+    "tracer": [1.0, 0.85, 0.6],
+    "tracer_s": 0.25
+  },
+  "view": "amr_long",
+  "tint": [0.3, 0.31, 0.3],
+  "role": "breacher",
+  "ammo_type": "heavy"
+}

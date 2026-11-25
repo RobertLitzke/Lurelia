@@ -18,6 +18,10 @@
 //! - any walking verb with `group`: a family group (deer in twos and threes)
 //!   that grazes together and bolts together (herd.rs).
 //!
+//! A display (creatures/display: starlings wheeling, a hawk's sky dance)
+//! takes members out of the boids for a while: each carries a `Show` and is
+//! put where the display says, and flies on from there when it ends.
+//!
 //! Each bird steers by the three classic rules over its flockmates within
 //! `range`: separation (keep `spacing` apart), alignment (fly the way the
 //! neighbours fly) and cohesion (stay with them), plus a pull toward the
@@ -158,6 +162,8 @@ pub struct Flyer {
     pub flock: hecs::Entity,
     pub vel: Vec3,
     pub perched: bool,
+    /// In a display last step.
+    pub shown: bool,
 }
 
 impl Flock {
@@ -202,7 +208,7 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, at: Vec3, n: u32, 
     let fe = world.spawn((f,));
     for (pos, vel) in members {
         let yaw = vel.x.atan2(vel.z) + std::f32::consts::PI;
-        world.spawn((Flyer { flock: fe, vel, perched: false }, Creature::of(s), Look::new(sp.model, pos, yaw)));
+        world.spawn((Flyer { flock: fe, vel, perched: false, shown: false }, Creature::of(s), Look::new(sp.model, pos, yaw)));
     }
     n.max(1)
 }
@@ -419,7 +425,7 @@ pub fn update(
     // Strikes this step: (flock, hunter, prey, how the prey was).
     let mut strikes: Vec<(hecs::Entity, hecs::Entity, hecs::Entity, Reach)> = Vec::new();
     // Members.
-    for (me, fl, look, morph) in world.query_mut::<(hecs::Entity, &mut Flyer, &mut Look, Option<&crate::variety::Morph>)>() {
+    for (me, fl, look, morph, show) in world.query_mut::<(hecs::Entity, &mut Flyer, &mut Look, Option<&crate::variety::Morph>, Option<&super::display::Show>)>() {
         look.begin_step();
         let (pace, _) = crate::variety::pace(morph);
         let Some(&(mode, goal, s, soarer, prey)) = flocks.get(&fl.flock) else {
@@ -428,6 +434,31 @@ pub fn update(
         let sp = &species[s];
         let g = &groups[s];
         let cruise = sp.beh.walk_speed.max(2.0) * pace;
+        // In a display: where it says, its velocity kept from the move so
+        // it flies on smoothly when handed back.
+        if let Some(sh) = show {
+            match sh.out.drive {
+                super::display::Drive::Place { pos, yaw } => {
+                    fl.vel = (pos - look.pos) / dt.max(1e-4);
+                    (look.pos, look.yaw, fl.perched) = (pos, yaw, false);
+                }
+                super::display::Drive::Sit { pos, yaw } => {
+                    fl.vel = Vec3::ZERO;
+                    (look.pos, look.yaw, fl.perched) = (pos, yaw, true);
+                }
+                _ => {}
+            }
+            fl.shown = true;
+            continue;
+        }
+        if std::mem::take(&mut fl.shown) {
+            // Up and off with the rest, at its cruising pace.
+            fl.perched = false;
+            let ahead = Vec3::new(-look.yaw.sin(), 0.0, -look.yaw.cos());
+            if fl.vel.length() < cruise * 0.6 {
+                fl.vel = ahead * cruise + Vec3::Y * 1.5;
+            }
+        }
         let top = sp.beh.flee_speed.max(cruise * 1.2) * pace * if mode == Mode::Stoop { 2.0 } else { 1.0 };
         let p = look.pos;
         if flushed.contains(&fl.flock) && fl.perched {

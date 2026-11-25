@@ -1,0 +1,26 @@
+{
+  "name": "zombies",
+  "version": 1,
+  "introduced_by": "zombies",
+  "kind": "zombies",
+  "title": "ZOMBIES",
+  "notes": "Cross an explore world to a refuge with up to three bots, through zombies sent by a director (notes/ZOMBIES.md). Real guns, carried tighter than elsewhere: a melee weapon, the pistol, a shotgun and an assault rifle to start, more in caches on the way. On foot only, and the ground matters: marsh, rock and sand are slower going.",
+  "help": "Three legs: two refuges, then hold out at the extraction until the way out opens. Shots draw them; caches have guns. X tells the bots to hold or follow.",
+  "kit": "realistic",
+  "health": 100,
+  "friendly_fire": 0.1,
+  "weapon_tune": {
+    "*": {
+      "ammo_max": {"times": 0.5},
+      "ammo_start": {"times": 0.5},
+      "reload_s": {"times": 1.15},
+      "fire": {"kick": {"times": 1.3}, "move_spread": {"per_mps": 0.35, "most_deg": 3.0, "air_deg": 2.5}},
+      "alt": {"kick": {"times": 1.3}, "move_spread": {"per_mps": 0.35, "most_deg": 3.0, "air_deg": 2.5}}
+    }
+  },
+  "terrain_pace": {
+    "marsh": 0.7,
+    "rock": 0.9,
+    "beach": 0.92
+  }
+}

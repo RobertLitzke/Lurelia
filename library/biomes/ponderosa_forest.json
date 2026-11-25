@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "redrock",
   "notes": "The plateau: open park-like ponderosa pine forest on needle duff, gambel oak beneath, aspen in the damp hollows.",
+  "habitat": "open_pine",
   "priority": 4,
   "rules": {"elev": [78, 200]},
   "surface": "pine_duff",
   "subsurface": "dirt",
+  "soil": 0.35,
   "map_color": [70, 104, 60],
   "plants": [
     {

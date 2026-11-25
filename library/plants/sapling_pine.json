@@ -11,5 +11,6 @@
   "leaf": "pine",
   "sweep": "up",
   "taper": 0.85,
-  "whorls": [4, 6]
+  "whorls": [4, 6],
+  "site": {"soil": [0.0, 0.7], "shade": [0.0, 0.4]}
 }

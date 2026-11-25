@@ -17,6 +17,9 @@ pub enum Surface {
     Grass,
     Mud,
     Snow,
+    /// Black ice, glass, a skin of brine on salt: hardly any grip, long
+    /// slides. Only a material that says so (`"surface": "ice"`) is ice.
+    Ice,
 }
 
 /// How a surface takes a tyre.
@@ -33,7 +36,7 @@ pub struct Feel {
 }
 
 impl Surface {
-    pub const ALL: [Surface; 7] = [Surface::Hardpack, Surface::Rock, Surface::SandWet, Surface::SandSoft, Surface::Grass, Surface::Mud, Surface::Snow];
+    pub const ALL: [Surface; 8] = [Surface::Hardpack, Surface::Rock, Surface::SandWet, Surface::SandSoft, Surface::Grass, Surface::Mud, Surface::Snow, Surface::Ice];
 
     pub fn name(self) -> &'static str {
         match self {
@@ -44,6 +47,7 @@ impl Surface {
             Surface::Grass => "grass",
             Surface::Mud => "mud",
             Surface::Snow => "snow",
+            Surface::Ice => "ice",
         }
     }
 
@@ -96,12 +100,18 @@ impl Surface {
                 drag: 0.6,
                 soft: 0.6,
             },
+            Surface::Ice => Feel {
+                grip: 0.3,
+                peak: deg(6.0),
+                drag: 0.12,
+                soft: 0.0,
+            },
         }
     }
 
     /// Whether a wheel turning on it throws anything up.
     pub fn loose(self) -> bool {
-        !matches!(self, Surface::Rock | Surface::Hardpack)
+        !matches!(self, Surface::Rock | Surface::Hardpack | Surface::Ice)
     }
 
     /// Guess from a material's name, lower case with underscores or spaces.

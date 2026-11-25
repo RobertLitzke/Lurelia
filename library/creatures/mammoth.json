@@ -1,8 +1,8 @@
 {
   "name": "mammoth",
-  "version": 3,
+  "version": 4,
   "introduced_by": "base",
-  "notes": "Woolly mammoth on its own 0.124 m voxel, a quarter finer than the elephant's scaled 1.38 and the same size in the world, so it no longer borrows the elephant's ops. A domed head with a topknot over a hump at the shoulder, a back that slopes to a low rump, small ears, a hairy trunk whose bare tip is its own bone, a skirt of dark fringe hanging below the belly, and long spiralling tusks that sweep out, down and up with a stained base. Its behaviour is the elephant's with the slower walk and wider groups of v2.",
+  "notes": "Woolly mammoth on its own 0.124 m voxel, a quarter finer than the elephant's scaled 1.38 and the same size in the world. A domed head with a topknot over a hump at the shoulder, a back that slopes to a low rump, small ears, a hairy trunk whose bare tip is its own bone, a skirt of dark fringe hanging below the belly (one flattened ellipsoid), tapered legs on flattened feet with round toenails, and long spiralling tusks built as a smooth tapering chain that sweep out, down and up with a stained base. Eyes are small dark ellipsoids set into the head. Its behaviour is the elephant's with the slower walk and wider groups of v2.",
   "voxel": 0.1242,
   "grid": [48, 40, 48],
   "half_w": 1.1,
@@ -14,9 +14,12 @@
     "nail": [72, 56, 44],
     "dark": [36, 28, 24],
     "mane": [86, 56, 32],
-    "tusk_base": [176, 150, 104]
+    "tusk_base": [176, 150, 104],
+    "eye": [16, 10, 8]
   },
+  "forms": {"juvenile": "mammoth_juvenile"},
   "behaviour": {
+    "displays": [{"kind": "greet", "params": {"time": [6, 10]}}, {"kind": "rub", "params": {"style": "flank"}}],
     "movement": "graze",
     "sleeps_on_side": true,
     "walk_speed": 0.42,
@@ -28,280 +31,489 @@
     "swims": true,
     "group": {"size": [2, 4], "spacing": 4.5, "range": 22, "alignment": 0.8, "cohesion": 1.2},
     "active": "crepuscular",
-    "off_hours": 0.4
+    "off_hours": 0.4,
+    "voice": {
+      "size": 1.25,
+      "calls": [
+        {"cry": "rumble", "on": "idle", "every_s": [60, 240], "chorus": 0.5, "chorus_m": 400},
+        {"cry": "trumpet", "on": "idle", "every_s": [600, 1800], "chance": 0.5, "boost": 3},
+        {"cry": "trumpet", "on": "flee", "chance": 0.8, "boost": 3},
+        {"cry": "trumpet", "on": "display:greet", "chance": 0.6, "boost": 3}
+      ]
+    }
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [24, 23, 27], "radius": [8.2, 6.2, 10.6], "mat": "coat"},
+    {"op": "ellipsoid", "centre": [24, 23, 27], "radius": [8.4, 6.4, 10.8], "mat": "coat"},
     {"op": "ellipsoid", "centre": [24, 26.5, 20], "radius": [7.2, 6.0, 6.4], "mat": "coat"},
     {"op": "ellipsoid", "centre": [24, 23, 32.5], "radius": [6.9, 4.8, 5.6], "mat": "coat"},
     {"op": "ellipsoid", "centre": [24, 18.5, 27], "radius": [8.8, 3.8, 11.6], "mat": "coat"},
-    {"op": "ellipsoid", "centre": [24, 29.0, 20], "radius": [4.0, 3.0, 4.0], "mat": "mane"},
-    {"op": "box", "from": [32, 13, 26], "to": [34, 18, 28], "mat": "mane"},
-    {"op": "box", "from": [31, 11, 28], "to": [33, 18, 30], "mat": "mane"},
-    {"op": "box", "from": [31, 14, 30], "to": [33, 18, 32], "mat": "mane"},
-    {"op": "box", "from": [30, 12, 32], "to": [32, 18, 34], "mat": "mane"},
-    {"op": "box", "from": [29, 10, 34], "to": [31, 18, 36], "mat": "mane"},
-    {"op": "box", "from": [28, 13, 35], "to": [30, 18, 37], "mat": "mane"},
-    {"op": "box", "from": [27, 13, 36], "to": [29, 18, 38], "mat": "mane"},
-    {"op": "box", "from": [25, 11, 37], "to": [27, 18, 39], "mat": "mane"},
-    {"op": "box", "from": [24, 14, 37], "to": [26, 18, 39], "mat": "mane"},
-    {"op": "box", "from": [22, 12, 37], "to": [24, 18, 39], "mat": "mane"},
-    {"op": "box", "from": [21, 10, 37], "to": [23, 18, 39], "mat": "mane"},
-    {"op": "box", "from": [19, 13, 36], "to": [21, 18, 38], "mat": "mane"},
-    {"op": "box", "from": [18, 13, 35], "to": [20, 18, 37], "mat": "mane"},
-    {"op": "box", "from": [17, 11, 34], "to": [19, 18, 36], "mat": "mane"},
-    {"op": "box", "from": [16, 14, 32], "to": [18, 18, 34], "mat": "mane"},
-    {"op": "box", "from": [15, 12, 30], "to": [17, 18, 32], "mat": "mane"},
-    {"op": "box", "from": [15, 10, 28], "to": [17, 18, 30], "mat": "mane"},
-    {"op": "box", "from": [14, 13, 26], "to": [16, 18, 28], "mat": "mane"},
-    {"op": "box", "from": [15, 13, 24], "to": [17, 18, 26], "mat": "mane"},
-    {"op": "box", "from": [15, 11, 22], "to": [17, 18, 24], "mat": "mane"},
-    {"op": "box", "from": [16, 14, 20], "to": [18, 18, 22], "mat": "mane"},
-    {"op": "box", "from": [17, 12, 18], "to": [19, 18, 20], "mat": "mane"},
-    {"op": "box", "from": [18, 10, 17], "to": [20, 18, 19], "mat": "mane"},
-    {"op": "box", "from": [19, 13, 16], "to": [21, 18, 18], "mat": "mane"},
-    {"op": "box", "from": [21, 13, 15], "to": [23, 18, 17], "mat": "mane"},
-    {"op": "box", "from": [22, 11, 15], "to": [24, 18, 17], "mat": "mane"},
-    {"op": "box", "from": [24, 14, 15], "to": [26, 18, 17], "mat": "mane"},
-    {"op": "box", "from": [25, 12, 15], "to": [27, 18, 17], "mat": "mane"},
-    {"op": "box", "from": [27, 10, 16], "to": [29, 18, 18], "mat": "mane"},
-    {"op": "box", "from": [28, 13, 17], "to": [30, 18, 19], "mat": "mane"},
-    {"op": "box", "from": [29, 13, 18], "to": [31, 18, 20], "mat": "mane"},
-    {"op": "box", "from": [30, 11, 20], "to": [32, 18, 22], "mat": "mane"},
-    {"op": "box", "from": [31, 14, 22], "to": [33, 18, 24], "mat": "mane"},
-    {"op": "box", "from": [31, 12, 24], "to": [33, 18, 26], "mat": "mane"},
-    {"op": "segment", "points": [[20, 3, 16], [20, 20, 16]], "radius": 3.1, "mat": "coat", "part": "leg_fl"},
-    {"op": "segment", "points": [[20, 0.8, 16], [20, 3, 16]], "radius": 3.0, "mat": "hide", "part": "leg_fl"},
-    {"op": "segment", "points": [[20, 3.2, 16], [20, 6.4, 16]], "radius": 3.5, "mat": "mane", "part": "leg_fl"},
-    {"op": "box", "from": [18, 0, 12], "to": [19, 2, 13], "mat": "nail", "part": "leg_fl"},
-    {"op": "box", "from": [20, 0, 12], "to": [21, 2, 13], "mat": "nail", "part": "leg_fl"},
-    {"op": "box", "from": [22, 0, 12], "to": [23, 2, 13], "mat": "nail", "part": "leg_fl"},
-    {"op": "segment", "points": [[28, 3, 16], [28, 20, 16]], "radius": 3.1, "mat": "coat", "part": "leg_fr"},
-    {"op": "segment", "points": [[28, 0.8, 16], [28, 3, 16]], "radius": 3.0, "mat": "hide", "part": "leg_fr"},
-    {"op": "segment", "points": [[28, 3.2, 16], [28, 6.4, 16]], "radius": 3.5, "mat": "mane", "part": "leg_fr"},
-    {"op": "box", "from": [26, 0, 12], "to": [27, 2, 13], "mat": "nail", "part": "leg_fr"},
-    {"op": "box", "from": [28, 0, 12], "to": [29, 2, 13], "mat": "nail", "part": "leg_fr"},
-    {"op": "box", "from": [30, 0, 12], "to": [31, 2, 13], "mat": "nail", "part": "leg_fr"},
-    {"op": "segment", "points": [[20, 3, 32], [20, 20, 32]], "radius": 3.1, "mat": "coat", "part": "leg_hl"},
-    {"op": "segment", "points": [[20, 0.8, 32], [20, 3, 32]], "radius": 3.0, "mat": "hide", "part": "leg_hl"},
-    {"op": "segment", "points": [[20, 3.2, 32], [20, 6.4, 32]], "radius": 3.5, "mat": "mane", "part": "leg_hl"},
-    {"op": "box", "from": [18, 0, 28], "to": [19, 2, 29], "mat": "nail", "part": "leg_hl"},
-    {"op": "box", "from": [20, 0, 28], "to": [21, 2, 29], "mat": "nail", "part": "leg_hl"},
-    {"op": "box", "from": [22, 0, 28], "to": [23, 2, 29], "mat": "nail", "part": "leg_hl"},
-    {"op": "segment", "points": [[28, 3, 32], [28, 20, 32]], "radius": 3.1, "mat": "coat", "part": "leg_hr"},
-    {"op": "segment", "points": [[28, 0.8, 32], [28, 3, 32]], "radius": 3.0, "mat": "hide", "part": "leg_hr"},
-    {"op": "segment", "points": [[28, 3.2, 32], [28, 6.4, 32]], "radius": 3.5, "mat": "mane", "part": "leg_hr"},
-    {"op": "box", "from": [26, 0, 28], "to": [27, 2, 29], "mat": "nail", "part": "leg_hr"},
-    {"op": "box", "from": [28, 0, 28], "to": [29, 2, 29], "mat": "nail", "part": "leg_hr"},
-    {"op": "box", "from": [30, 0, 28], "to": [31, 2, 29], "mat": "nail", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [24, 14.6, 27], "radius": [8.4, 4.0, 11.8], "mat": "mane"},
+    {"op": "ellipsoid", "centre": [24, 29.4, 20], "radius": [4.4, 3.2, 4.4], "mat": "mane"},
+    {"op": "segment", "points": [[20, 20, 16], [20, 10, 16]], "radius": 3.6, "mat": "coat", "part": "leg_fl"},
+    {"op": "segment", "points": [[20, 10, 16], [20, 3.5, 16]], "radius": 3.1, "mat": "coat", "part": "leg_fl"},
+    {"op": "segment", "points": [[20, 3.2, 16], [20, 7, 16]], "radius": 3.5, "mat": "mane", "part": "leg_fl"},
+    {"op": "ellipsoid", "centre": [20, 1.5, 15.2], "radius": [3.5, 1.6, 4.0], "mat": "hide", "part": "leg_fl"},
+    {"op": "ellipsoid", "centre": [18.2, 1.1, 11.7], "radius": [1.2, 1.1, 1.0], "mat": "nail", "part": "leg_fl"},
+    {"op": "ellipsoid", "centre": [20, 1.1, 11.7], "radius": [1.2, 1.1, 1.0], "mat": "nail", "part": "leg_fl"},
+    {"op": "ellipsoid", "centre": [21.8, 1.1, 11.7], "radius": [1.2, 1.1, 1.0], "mat": "nail", "part": "leg_fl"},
+    {"op": "segment", "points": [[28, 20, 16], [28, 10, 16]], "radius": 3.6, "mat": "coat", "part": "leg_fr"},
+    {"op": "segment", "points": [[28, 10, 16], [28, 3.5, 16]], "radius": 3.1, "mat": "coat", "part": "leg_fr"},
+    {"op": "segment", "points": [[28, 3.2, 16], [28, 7, 16]], "radius": 3.5, "mat": "mane", "part": "leg_fr"},
+    {"op": "ellipsoid", "centre": [28, 1.5, 15.2], "radius": [3.5, 1.6, 4.0], "mat": "hide", "part": "leg_fr"},
+    {"op": "ellipsoid", "centre": [26.2, 1.1, 11.7], "radius": [1.2, 1.1, 1.0], "mat": "nail", "part": "leg_fr"},
+    {"op": "ellipsoid", "centre": [28, 1.1, 11.7], "radius": [1.2, 1.1, 1.0], "mat": "nail", "part": "leg_fr"},
+    {"op": "ellipsoid", "centre": [29.8, 1.1, 11.7], "radius": [1.2, 1.1, 1.0], "mat": "nail", "part": "leg_fr"},
+    {"op": "segment", "points": [[20, 20, 32], [20, 10, 32]], "radius": 3.6, "mat": "coat", "part": "leg_hl"},
+    {"op": "segment", "points": [[20, 10, 32], [20, 3.5, 32]], "radius": 3.1, "mat": "coat", "part": "leg_hl"},
+    {"op": "segment", "points": [[20, 3.2, 32], [20, 7, 32]], "radius": 3.5, "mat": "mane", "part": "leg_hl"},
+    {"op": "ellipsoid", "centre": [20, 1.5, 31.2], "radius": [3.5, 1.6, 4.0], "mat": "hide", "part": "leg_hl"},
+    {"op": "ellipsoid", "centre": [18.2, 1.1, 27.7], "radius": [1.2, 1.1, 1.0], "mat": "nail", "part": "leg_hl"},
+    {"op": "ellipsoid", "centre": [20, 1.1, 27.7], "radius": [1.2, 1.1, 1.0], "mat": "nail", "part": "leg_hl"},
+    {"op": "ellipsoid", "centre": [21.8, 1.1, 27.7], "radius": [1.2, 1.1, 1.0], "mat": "nail", "part": "leg_hl"},
+    {"op": "segment", "points": [[28, 20, 32], [28, 10, 32]], "radius": 3.6, "mat": "coat", "part": "leg_hr"},
+    {"op": "segment", "points": [[28, 10, 32], [28, 3.5, 32]], "radius": 3.1, "mat": "coat", "part": "leg_hr"},
+    {"op": "segment", "points": [[28, 3.2, 32], [28, 7, 32]], "radius": 3.5, "mat": "mane", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [28, 1.5, 31.2], "radius": [3.5, 1.6, 4.0], "mat": "hide", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [26.2, 1.1, 27.7], "radius": [1.2, 1.1, 1.0], "mat": "nail", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [28, 1.1, 27.7], "radius": [1.2, 1.1, 1.0], "mat": "nail", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [29.8, 1.1, 27.7], "radius": [1.2, 1.1, 1.0], "mat": "nail", "part": "leg_hr"},
     {"op": "ellipsoid", "centre": [24, 25, 16.5], "radius": [5.6, 5.6, 4.6], "mat": "coat", "part": "neck"},
     {"op": "ellipsoid", "centre": [24, 26, 12], "radius": [6.3, 6.6, 6.0], "mat": "coat", "part": "head"},
     {"op": "ellipsoid", "centre": [24, 30.2, 13.5], "radius": [4.8, 4.6, 5.0], "mat": "coat", "part": "head"},
     {"op": "ellipsoid", "centre": [24, 33.2, 14], "radius": [3.0, 1.8, 3.2], "mat": "mane", "part": "head"},
     {"op": "ellipsoid", "centre": [24, 22, 8.4], "radius": [4.8, 4.2, 3.2], "mat": "coat", "part": "head"},
-    {"op": "set", "at": [18, 27, 8], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [18, 26, 8], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [29, 27, 8], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [29, 26, 8], "mat": "dark", "part": "head"},
-    {"op": "ellipsoid", "centre": [17.5, 27, 15.5], "radius": [1.3, 2.6, 2.3], "mat": "hide", "part": "ear_l"},
-    {"op": "ellipsoid", "centre": [30.5, 27, 15.5], "radius": [1.3, 2.6, 2.3], "mat": "hide", "part": "ear_r"},
-    {"op": "ellipsoid", "centre": [24, 22.5, 5.6], "radius": [3.8, 3.4, 3.2], "mat": "coat", "part": "head"},
-    {"op": "ellipsoid", "centre": [24, 18.5, 4.8], "radius": [3.5, 3.2, 3.0], "mat": "coat", "part": "head"},
-    {"op": "ellipsoid", "centre": [24, 14.5, 4.4], "radius": [3.3, 3.2, 2.8], "mat": "coat", "part": "head"},
-    {"op": "ellipsoid", "centre": [24, 11, 4.4], "radius": [3.0, 3.2, 2.7], "mat": "coat", "part": "trunk"},
-    {"op": "ellipsoid", "centre": [24, 7.8, 5.0], "radius": [2.7, 3.0, 2.4], "mat": "hide", "part": "trunk"},
-    {"op": "ellipsoid", "centre": [24, 5, 6.2], "radius": [2.4, 2.6, 2.2], "mat": "hide", "part": "trunk"},
-    {"op": "ellipsoid", "centre": [24, 3.0, 7.6], "radius": [2.0, 2.0, 2.0], "mat": "nail", "part": "trunk"},
-    {"op": "box", "from": [20, 19, 3], "to": [21, 22, 7], "mat": "mane", "part": "head"},
-    {"op": "box", "from": [27, 19, 3], "to": [28, 22, 7], "mat": "mane", "part": "head"},
-    {"op": "box", "from": [20, 15, 3], "to": [21, 18, 7], "mat": "mane", "part": "head"},
-    {"op": "box", "from": [27, 15, 3], "to": [28, 18, 7], "mat": "mane", "part": "head"},
-    {"op": "box", "from": [20, 11, 3], "to": [21, 14, 7], "mat": "mane", "part": "trunk"},
-    {"op": "box", "from": [27, 11, 3], "to": [28, 14, 7], "mat": "mane", "part": "trunk"},
+    {"op": "ellipsoid", "centre": [30.5, 27, 15.5], "radius": [1.4, 2.8, 2.4], "mat": "hide", "part": "ear_r"},
+    {"op": "ellipsoid", "centre": [17.5, 27, 15.5], "radius": [1.4, 2.8, 2.4], "mat": "hide", "part": "ear_l"},
+    {"op": "segment", "points": [[24, 23, 6.2], [24, 17.5, 4.8]], "radius": 3.7, "mat": "coat", "part": "head"},
+    {"op": "segment", "points": [[24, 17.5, 4.8], [24, 13, 4.5]], "radius": 3.3, "mat": "coat", "part": "head"},
+    {"op": "segment", "points": [[24, 13, 4.5], [24, 8.5, 5.0]], "radius": 3.1, "mat": "coat", "part": "trunk"},
+    {"op": "segment", "points": [[24, 8.5, 5.0], [24, 5, 6.3]], "radius": 2.6, "mat": "hide", "part": "trunk"},
+    {"op": "segment", "points": [[24, 5, 6.3], [24, 3.2, 8.0]], "radius": 2.2, "mat": "hide", "part": "trunk"},
+    {"op": "ellipsoid", "centre": [24, 2.8, 8.3], "radius": [2.3, 2.0, 2.3], "mat": "nail", "part": "trunk"},
+    {"op": "ellipsoid", "centre": [18.3, 25.6, 9.6], "radius": [1.1, 1.4, 1.4], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [29.7, 25.6, 9.6], "radius": [1.1, 1.4, 1.4], "mat": "eye", "part": "head"},
     {
       "op": "segment",
-      "points": [[18.2, 22.5, 10.5], [17.47, 20.87, 9.89], [16.69, 19.33, 9.31]],
+      "points": [[18.2, 22.5, 10.5], [17.83, 21.76, 10.19]],
+      "radius": 2.3,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[17.83, 21.76, 10.19], [17.31, 20.71, 9.76]],
+      "radius": 2.27,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[17.31, 20.71, 9.76], [16.7, 19.49, 9.25]],
+      "radius": 2.23,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[16.7, 19.49, 9.25], [16.04, 18.21, 8.7]],
+      "radius": 2.2,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[16.04, 18.21, 8.7], [15.39, 17.0, 8.13]],
+      "radius": 2.17,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[15.39, 17.0, 8.13], [14.8, 16.0, 7.6]],
+      "radius": 2.13,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[14.8, 16.0, 7.6], [14.23, 15.18, 7.07]],
+      "radius": 2.1,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[14.23, 15.18, 7.07], [13.65, 14.43, 6.51]],
+      "radius": 2.07,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[13.65, 14.43, 6.51], [13.07, 13.76, 5.94]],
+      "radius": 2.03,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[13.07, 13.76, 5.94], [12.53, 13.16, 5.38]],
+      "radius": 2.0,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[12.53, 13.16, 5.38], [12.03, 12.64, 4.86]],
       "radius": 1.97,
-      "mat": "tusk_base",
+      "mat": "tusk",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[16.69, 19.33, 9.31], [15.89, 17.89, 8.72], [15.06, 16.56, 8.09]],
+      "points": [[12.03, 12.64, 4.86], [11.6, 12.2, 4.4]],
+      "radius": 1.93,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[11.6, 12.2, 4.4], [11.24, 11.84, 4.0]],
       "radius": 1.9,
-      "mat": "tusk_base",
+      "mat": "tusk",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[15.06, 16.56, 8.09], [14.24, 15.37, 7.41], [13.47, 14.33, 6.69]],
+      "points": [[11.24, 11.84, 4.0], [10.94, 11.56, 3.66]],
+      "radius": 1.87,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[10.94, 11.56, 3.66], [10.69, 11.36, 3.35]],
       "radius": 1.83,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[10.69, 11.36, 3.35], [10.48, 11.24, 3.06]],
+      "radius": 1.8,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[10.48, 11.24, 3.06], [10.32, 11.18, 2.78]],
+      "radius": 1.77,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[10.32, 11.18, 2.78], [10.2, 11.2, 2.5]],
+      "radius": 1.73,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[10.2, 11.2, 2.5], [10.11, 11.26, 2.19]],
+      "radius": 1.7,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[10.11, 11.26, 2.19], [10.06, 11.37, 1.86]],
+      "radius": 1.67,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[10.06, 11.37, 1.86], [10.05, 11.55, 1.54]],
+      "radius": 1.63,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[10.05, 11.55, 1.54], [10.1, 11.83, 1.26]],
+      "radius": 1.6,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[10.1, 11.83, 1.26], [10.21, 12.24, 1.04]],
+      "radius": 1.57,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[10.21, 12.24, 1.04], [10.4, 12.8, 0.9]],
+      "radius": 1.53,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[10.4, 12.8, 0.9], [10.72, 13.64, 0.88]],
+      "radius": 1.5,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[10.72, 13.64, 0.88], [11.19, 14.76, 0.96]],
+      "radius": 1.47,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[11.19, 14.76, 0.96], [11.71, 16.0, 1.1]],
+      "radius": 1.43,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[11.71, 16.0, 1.1], [12.24, 17.22, 1.26]],
+      "radius": 1.4,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[12.24, 17.22, 1.26], [12.69, 18.27, 1.41]],
+      "radius": 1.37,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[12.69, 18.27, 1.41], [13.0, 19.0, 1.5]],
+      "radius": 1.33,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[29.8, 22.5, 10.5], [30.17, 21.76, 10.19]],
+      "radius": 2.3,
       "mat": "tusk_base",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[13.47, 14.33, 6.69], [12.8, 13.5, 5.95], [12.26, 12.84, 5.27]],
-      "radius": 1.76,
+      "points": [[30.17, 21.76, 10.19], [30.69, 20.71, 9.76]],
+      "radius": 2.27,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[30.69, 20.71, 9.76], [31.3, 19.49, 9.25]],
+      "radius": 2.23,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[31.3, 19.49, 9.25], [31.96, 18.21, 8.7]],
+      "radius": 2.2,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[31.96, 18.21, 8.7], [32.61, 17.0, 8.13]],
+      "radius": 2.17,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[32.61, 17.0, 8.13], [33.2, 16.0, 7.6]],
+      "radius": 2.13,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[33.2, 16.0, 7.6], [33.77, 15.18, 7.07]],
+      "radius": 2.1,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[33.77, 15.18, 7.07], [34.35, 14.43, 6.51]],
+      "radius": 2.07,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[34.35, 14.43, 6.51], [34.92, 13.76, 5.94]],
+      "radius": 2.03,
+      "mat": "tusk_base",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[34.92, 13.76, 5.94], [35.47, 13.16, 5.38]],
+      "radius": 2.0,
       "mat": "tusk",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[12.26, 12.84, 5.27], [11.8, 12.33, 4.67], [11.41, 11.94, 4.16]],
-      "radius": 1.69,
-      "mat": "tusk",
-      "part": "head"
-    },
-    {
-      "op": "segment",
-      "points": [[11.41, 11.94, 4.16], [11.08, 11.66, 3.74], [10.79, 11.47, 3.43]],
-      "radius": 1.62,
-      "mat": "tusk",
-      "part": "head"
-    },
-    {
-      "op": "segment",
-      "points": [[10.79, 11.47, 3.43], [10.55, 11.34, 3.2], [10.35, 11.26, 3.04]],
-      "radius": 1.55,
-      "mat": "tusk",
-      "part": "head"
-    },
-    {
-      "op": "segment",
-      "points": [[10.35, 11.26, 3.04], [10.24, 11.18, 2.86], [10.24, 11.16, 2.58]],
-      "radius": 1.48,
-      "mat": "tusk",
-      "part": "head"
-    },
-    {
-      "op": "segment",
-      "points": [[10.24, 11.16, 2.58], [10.29, 11.27, 2.12], [10.26, 11.57, 1.53]],
-      "radius": 1.41,
-      "mat": "tusk",
-      "part": "head"
-    },
-    {
-      "op": "segment",
-      "points": [[10.26, 11.57, 1.53], [10.07, 12.02, 1.04], [9.87, 12.61, 0.84]],
-      "radius": 1.34,
-      "mat": "tusk",
-      "part": "head"
-    },
-    {
-      "op": "segment",
-      "points": [[9.87, 12.61, 0.84], [9.87, 13.32, 0.87], [10.11, 14.17, 1.03]],
-      "radius": 1.27,
-      "mat": "tusk",
-      "part": "head"
-    },
-    {
-      "op": "segment",
-      "points": [[10.11, 14.17, 1.03], [10.59, 15.16, 1.2], [11.26, 16.29, 1.36]],
-      "radius": 1.2,
-      "mat": "tusk",
-      "part": "head"
-    },
-    {
-      "op": "segment",
-      "points": [[11.26, 16.29, 1.36], [12.09, 17.58, 1.48], [13.04, 19.0, 1.55]],
-      "radius": 1.13,
-      "mat": "tusk",
-      "part": "head"
-    },
-    {
-      "op": "segment",
-      "points": [[29.8, 22.5, 10.5], [30.6, 20.87, 9.89], [31.33, 19.33, 9.31]],
+      "points": [[35.47, 13.16, 5.38], [35.97, 12.64, 4.86]],
       "radius": 1.97,
-      "mat": "tusk_base",
+      "mat": "tusk",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[31.33, 19.33, 9.31], [32.0, 17.89, 8.72], [32.59, 16.56, 8.09]],
+      "points": [[35.97, 12.64, 4.86], [36.4, 12.2, 4.4]],
+      "radius": 1.93,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[36.4, 12.2, 4.4], [36.76, 11.84, 4.0]],
       "radius": 1.9,
-      "mat": "tusk_base",
+      "mat": "tusk",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[32.59, 16.56, 8.09], [33.15, 15.37, 7.41], [33.68, 14.33, 6.69]],
+      "points": [[36.76, 11.84, 4.0], [37.06, 11.56, 3.66]],
+      "radius": 1.87,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[37.06, 11.56, 3.66], [37.31, 11.36, 3.35]],
       "radius": 1.83,
-      "mat": "tusk_base",
-      "part": "head"
-    },
-    {
-      "op": "segment",
-      "points": [[33.68, 14.33, 6.69], [34.26, 13.5, 5.95], [34.89, 12.84, 5.27]],
-      "radius": 1.76,
       "mat": "tusk",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[34.89, 12.84, 5.27], [35.51, 12.33, 4.67], [36.12, 11.94, 4.16]],
-      "radius": 1.69,
+      "points": [[37.31, 11.36, 3.35], [37.52, 11.24, 3.06]],
+      "radius": 1.8,
       "mat": "tusk",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[36.12, 11.94, 4.16], [36.68, 11.66, 3.74], [37.19, 11.47, 3.43]],
-      "radius": 1.62,
+      "points": [[37.52, 11.24, 3.06], [37.68, 11.18, 2.78]],
+      "radius": 1.77,
       "mat": "tusk",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[37.19, 11.47, 3.43], [37.62, 11.34, 3.2], [37.98, 11.26, 3.04]],
-      "radius": 1.55,
+      "points": [[37.68, 11.18, 2.78], [37.8, 11.2, 2.5]],
+      "radius": 1.73,
       "mat": "tusk",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[37.98, 11.26, 3.04], [38.3, 11.18, 2.86], [38.58, 11.16, 2.58]],
-      "radius": 1.48,
+      "points": [[37.8, 11.2, 2.5], [37.89, 11.26, 2.19]],
+      "radius": 1.7,
       "mat": "tusk",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[38.58, 11.16, 2.58], [38.78, 11.27, 2.12], [38.74, 11.57, 1.53]],
-      "radius": 1.41,
+      "points": [[37.89, 11.26, 2.19], [37.94, 11.37, 1.86]],
+      "radius": 1.67,
       "mat": "tusk",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[38.74, 11.57, 1.53], [38.39, 12.02, 1.04], [37.85, 12.61, 0.84]],
-      "radius": 1.34,
+      "points": [[37.94, 11.37, 1.86], [37.95, 11.55, 1.54]],
+      "radius": 1.63,
       "mat": "tusk",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[37.85, 12.61, 0.84], [37.33, 13.32, 0.87], [36.88, 14.17, 1.03]],
-      "radius": 1.27,
+      "points": [[37.95, 11.55, 1.54], [37.9, 11.83, 1.26]],
+      "radius": 1.6,
       "mat": "tusk",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[36.88, 14.17, 1.03], [36.47, 15.16, 1.2], [36.06, 16.29, 1.36]],
-      "radius": 1.2,
+      "points": [[37.9, 11.83, 1.26], [37.79, 12.24, 1.04]],
+      "radius": 1.57,
       "mat": "tusk",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[36.06, 16.29, 1.36], [35.6, 17.58, 1.48], [35.04, 19.0, 1.55]],
-      "radius": 1.13,
+      "points": [[37.79, 12.24, 1.04], [37.6, 12.8, 0.9]],
+      "radius": 1.53,
       "mat": "tusk",
       "part": "head"
     },
-    {"op": "box", "from": [23, 15, 37], "to": [25, 24, 39], "mat": "hide", "part": "tail"},
-    {"op": "box", "from": [22, 11, 37], "to": [26, 16, 40], "mat": "mane", "part": "tail"}
+    {
+      "op": "segment",
+      "points": [[37.6, 12.8, 0.9], [37.28, 13.64, 0.88]],
+      "radius": 1.5,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[37.28, 13.64, 0.88], [36.81, 14.76, 0.96]],
+      "radius": 1.47,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[36.81, 14.76, 0.96], [36.29, 16.0, 1.1]],
+      "radius": 1.43,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[36.29, 16.0, 1.1], [35.76, 17.22, 1.26]],
+      "radius": 1.4,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[35.76, 17.22, 1.26], [35.31, 18.27, 1.41]],
+      "radius": 1.37,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[35.31, 18.27, 1.41], [35.0, 19.0, 1.5]],
+      "radius": 1.33,
+      "mat": "tusk",
+      "part": "head"
+    },
+    {"op": "segment", "points": [[24, 24, 37], [24, 17, 39.3]], "radius": 1.5, "mat": "hide", "part": "tail"},
+    {"op": "segment", "points": [[24, 17, 39.3], [24, 12, 40]], "radius": 2.0, "mat": "mane", "part": "tail"}
   ],
   "vary": {"size": 0.08, "shade": 0.08, "hue": 0.03},
   "rig": {
@@ -355,5 +567,6 @@
       },
       {"name": "tail", "role": "tail", "parent": "body", "joint": [24, 24, 37.5]}
     ]
-  }
+  },
+  "realms": ["ice_age"]
 }

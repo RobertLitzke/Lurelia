@@ -9,5 +9,6 @@
   "bark": "dead_wood",
   "leaf": "sawgrass_blades",
   "max_slope": 0.4,
-  "standing_water": [-0.8, 0.6]
+  "standing_water": [-0.8, 0.6],
+  "site": {"wet": [0.85, 1.0], "shade": [0.0, 0.2]}
 }

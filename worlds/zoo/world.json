@@ -1,0 +1,22 @@
+{
+  "name": "zoo",
+  "title": "Zoo",
+  "blurb": "Every creature in the library in a pen of its own, each age and sex held at one activity, for looking at animals up close.",
+  "listed": true,
+  "size_m": 1536,
+  "height_m": 96,
+  "sea_level_m": 10,
+  "seed": 4141,
+  "rock": [["stone", 1.0]],
+  "spawn": [40, 30],
+  "spawn_bearing": 135,
+  "default_biome": "zoo_lawn",
+  "seabed_biome": "seabed",
+  "biomes": ["zoo_lawn", "seabed"],
+  "start_hour": 11.0,
+  "weather": {"sun": 1.0},
+  "start_weather": "sun",
+  "seasons": ["summer"],
+  "games": ["explore"],
+  "zoo": {}
+}

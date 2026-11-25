@@ -3,10 +3,12 @@
   "version": 3,
   "introduced_by": "jadewater",
   "notes": "The narrow misty gorges of the Old Wall: golden bamboo you push through, a few giant clumps, ferns, pandas.",
+  "habitat": "tropical_forest",
   "priority": 9,
   "rules": {"region": "gorges", "elev": [-1, 16]},
   "surface": "bamboo_litter",
   "subsurface": "dirt",
+  "soil": 0.5,
   "map_color": [196, 176, 80],
   "plants": [
     {

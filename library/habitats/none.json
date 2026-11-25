@@ -1,0 +1,12 @@
+{
+  "name": "none",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Arenas, works yards and the void: ground with no natural habitat.",
+  "wet": 0.0,
+  "soil": 0.5,
+  "shade": 0.0,
+  "rock": 0.0,
+  "disturbed": 1.0,
+  "open": 1.0
+}

@@ -135,6 +135,8 @@ struct EntityInst {
     flesh: array<vec4<f32>, 3>,
     // x: the glow's gain less one (a coat's `glow`, models.rs `Instance::glow`).
     glow: vec4<f32>,
+    // x: how much has dissolved away, 0 whole to 1 gone (models.rs `Instance::fade`).
+    fade: vec4<f32>,
 };
 
 // How far a point of a soft body moves, `p` from the body's origin (bottom
@@ -227,7 +229,8 @@ struct GradeU {
     b: vec4<f32>, // sky from ramp, sky reach, shade from ramp, sun-side warmth
     c: vec4<f32>, // sun glow, crown shading, exposure, tint strength
     d: vec4<f32>, // gradient map, saturation, contrast, vignette
-    e: vec4<f32>, // time-of-day tint, ramp curve (1 eased, 0 straight), distance slabs, spare
+    e: vec4<f32>, // time-of-day tint, ramp curve (1 eased, 0 straight), distance slabs, haze height
+    f: vec4<f32>, // site lushness (scene.wgsl site_lean), spare x3
 };
 @group(0) @binding(14) var<uniform> gd: GradeU;
 // The land's own skyline (render/horizon.rs): one layer per compass
@@ -356,29 +359,59 @@ fn quad_vertex_corner(q: vec4<u32>, c: u32) -> u32 {
     return select(ta[c], tb[c], quad_flip(q));
 }
 
-// How far corner k of a sloped creature part's quad follows the parent bone
-// (anim/slope.rs), 0 to 1. Only rounded quads without a smoothed normal keep
-// weights in their size fields; everything else reads 0.
-fn seam_weight(q: vec4<u32>, k: u32) -> f32 {
-    if (((q.x >> Q_ROUND_BIT) & 1u) == 0u || ((q.x >> Q_NORMAL_BIT) & 3u) != 0u) {
-        return 0.0;
-    }
-    return f32((q.x >> (Q_SEAM_SHIFT + 2u * k)) & 3u) / 3.0;
+// A part's vertex in the creature frame (metres from the creature's pivot
+// before the yaw, as `rot` leaves it): its own rotation, then the soft body's
+// flesh. `local` is in the model's voxels; a decimated mesh's vertex
+// (vs_entity_tri) goes through the same.
+fn entity_local_v(local: vec3<f32>, inst: EntityInst) -> vec3<f32> {
+    let r = qrot(inst.rot, (local - inst.info.yzw) * inst.info.x);
+    return r + flesh_offset(r, inst.flesh);
 }
 
-// A part's vertex in the creature frame (metres from the creature's pivot
-// before the yaw, as `rot` leaves it): its own rotation, or for the corners
-// of a sloped part stretched to its parent, partly the parent's (glow.yzw,
-// w kept positive: anim push_parts). Then the soft body's flesh.
-fn entity_local(q: vec4<u32>, k: u32, local: vec3<f32>, inst: EntityInst) -> vec3<f32> {
+// The same for a smooth part's vertex that is `w` of the way to following
+// the parent bone (mesh/decimate.rs seam weights): the parent's rotation
+// rides in glow.yzw, w kept positive (anim/mod.rs `push_parts_at`). The
+// ring where a part meets its parent turns with the parent, so a bent joint
+// stretches rather than opens.
+fn entity_local_seam(local: vec3<f32>, w: f32, inst: EntityInst) -> vec3<f32> {
     let v = (local - inst.info.yzw) * inst.info.x;
     var r = qrot(inst.rot, v);
-    let w = seam_weight(q, k);
     if (w > 0.0) {
         let pq = vec4<f32>(inst.glow.yzw, sqrt(max(1.0 - dot(inst.glow.yzw, inst.glow.yzw), 0.0)));
         r = mix(r, qrot(pq, v), w);
     }
     return r + flesh_offset(r, inst.flesh);
+}
+
+fn tri_seam(q: vec4<u32>) -> f32 {
+    return f32((q.w >> 16u) & 255u) / 255.0;
+}
+
+fn entity_local(q: vec4<u32>, k: u32, local: vec3<f32>, inst: EntityInst) -> vec3<f32> {
+    return entity_local_v(local, inst);
+}
+
+// A creature-frame point turned by the yaw and placed in the world.
+fn entity_place(l: vec3<f32>, inst: EntityInst) -> vec3<f32> {
+    let c = cos(inst.pos_yaw.w);
+    let sn = sin(inst.pos_yaw.w);
+    return inst.pos_yaw.xyz + vec3<f32>(l.x * c + l.z * sn, l.y, -l.x * sn + l.z * c);
+}
+
+// A decimated mesh's vertex (mesh/decimate.rs): x, y, z as f16, the palette
+// block in the top half of y, an octahedral normal, the material.
+fn tri_local(q: vec4<u32>) -> vec3<f32> {
+    let xy = unpack2x16float(q.x);
+    return vec3<f32>(xy.x, xy.y, unpack2x16float(q.y & 65535u).x);
+}
+
+fn tri_normal(q: vec4<u32>) -> vec3<f32> {
+    let o = unpack2x16snorm(q.z);
+    var n = vec3<f32>(o.x, o.y, 1.0 - abs(o.x) - abs(o.y));
+    if (n.z < 0.0) {
+        n = vec3<f32>((1.0 - abs(o.y)) * sign(o.x), (1.0 - abs(o.x)) * sign(o.y), n.z);
+    }
+    return normalize(n);
 }
 
 // `entity_local` turned by the yaw and placed in the world.

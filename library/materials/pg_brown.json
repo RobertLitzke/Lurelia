@@ -1,0 +1,15 @@
+{
+  "name": "pg_brown",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Maroon-brown paint on the outpost's capsules, gone to rust in patches.",
+  "like": "pg_gold",
+  "texture": {
+    "pattern": "blotch",
+    "base": [96, 44, 40],
+    "alt": [120, 64, 44],
+    "scale": 3,
+    "contrast": 0.7,
+    "calm": {"base": [106, 52, 48], "alt": [128, 72, 52]}
+  }
+}

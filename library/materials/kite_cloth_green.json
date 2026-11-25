@@ -1,0 +1,8 @@
+{
+  "name": "kite_cloth_green",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Kitehold's copper-green cloth: awnings, kites and flags.",
+  "like": "canvas",
+  "texture": {"base": [70, 122, 90], "alt": [60, 108, 78], "calm": {"base": [86, 136, 104], "alt": [76, 124, 94]}}
+}

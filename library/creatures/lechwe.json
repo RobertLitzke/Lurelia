@@ -4,32 +4,47 @@
   "introduced_by": "thornpan",
   "notes": "Red lechwe: a chestnut antelope of the flood meadows, hocks always wet, running in splashing herds through water a foot deep. The males carry long horns swept back in a shallow lyre.",
   "colors": {"coat": [172, 108, 52], "belly": [240, 236, 228], "antler": [214, 196, 160]},
+  "forms": {"female": "lechwe_female", "juvenile": "lechwe_female"},
   "behaviour": {
+    "displays": [{"kind": "nurse"}],
     "movement": "wade",
     "walk_speed": 1.2,
     "flee_speed": 9.0,
     "wary": 22,
     "flightiness": 1.6,
     "swims": true,
-    "group": {"size": [8, 30], "spacing": 2.4, "range": 48, "alignment": 1.3, "cohesion": 1.5}
+    "group": {"size": [8, 30], "spacing": 2.4, "range": 48, "alignment": 1.3, "cohesion": 1.5},
+    "voice": {"calls": [{"cry": "snort", "on": "flee", "chance": 0.6}]}
   },
   "like": "deer",
   "scale": 0.95,
   "extra_ops": [
-    {"op": "box", "from": [12, 38, 4], "to": [36, 58, 16], "mat": "air", "part": "head"},
-    {"op": "segment", "points": [[22, 37, 10.5], [19.48, 40.06, 10.8]], "radius": 1.1, "mat": "coat", "part": "ear_l"},
-    {"op": "segment", "points": [[26, 37, 10.5], [28.52, 40.06, 10.8]], "radius": 1.1, "mat": "coat", "part": "ear_r"},
+    {"op": "box", "from": [5, 36, 5], "to": [27, 54, 17], "mat": "air", "part": "head"},
     {
       "op": "segment",
-      "points": [[22.8, 38.2, 9], [21.8, 42, 8.4], [22.4, 46, 9.6], [23, 49.5, 12]],
-      "radius": 0.8,
+      "points": [[14.126, 34.663, 11.353], [11.766, 37.529, 11.634]],
+      "radius": 1.031,
+      "mat": "coat",
+      "part": "ear_l"
+    },
+    {
+      "op": "segment",
+      "points": [[17.874, 34.663, 11.353], [20.234, 37.529, 11.634]],
+      "radius": 1.031,
+      "mat": "coat",
+      "part": "ear_r"
+    },
+    {
+      "op": "segment",
+      "points": [[14.876, 35.787, 9.948], [13.939, 39.347, 9.385], [14.501, 43.094, 10.51], [15.063, 46.373, 12.758]],
+      "radius": 0.749,
       "mat": "antler",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[25.2, 38.2, 9], [26.2, 42, 8.4], [25.6, 46, 9.6], [25, 49.5, 12]],
-      "radius": 0.8,
+      "points": [[17.124, 35.787, 9.948], [18.061, 39.347, 9.385], [17.499, 43.094, 10.51], [16.937, 46.373, 12.758]],
+      "radius": 0.749,
       "mat": "antler",
       "part": "head"
     }

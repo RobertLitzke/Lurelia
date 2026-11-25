@@ -1,0 +1,23 @@
+{
+  "name": "spirit_lantern",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A carved wooden lantern on a square post, 2 m tall and 1.5 m wide at the eaves, with glowing panes on all four sides; its light sits about 1.25 m above the ground at the middle of the box, local [3, 5, 3]. Front is -Z.",
+  "size": [6, 8, 6],
+  "anchor": [3, 0, 3],
+  "foundation": 1,
+  "level": false,
+  "tags": ["lantern", "road"],
+  "slots": {"wood": "temple_wood", "band": "rust_iron", "glass": "lamplit_glass", "roof": "weathered_planks"},
+  "ops": [
+    {"op": "box", "from": [1, 0, 1], "to": [5, 1, 5], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [2, 1, 2], "to": [4, 3, 4], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [2, 1, 2], "to": [4, 2, 4], "mat": "band", "part": "metal"},
+    {"op": "box", "from": [1, 3, 1], "to": [5, 4, 5], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [1, 4, 1], "to": [5, 6, 5], "mat": "wood", "part": "timber"},
+    {"op": "box", "from": [2, 4, 1], "to": [4, 6, 5], "mat": "glass", "part": "glass"},
+    {"op": "box", "from": [1, 4, 2], "to": [5, 6, 4], "mat": "glass", "part": "glass"},
+    {"op": "box", "from": [0, 6, 0], "to": [6, 7, 6], "mat": "roof", "part": "roof"},
+    {"op": "box", "from": [2, 7, 2], "to": [4, 8, 4], "mat": "roof", "part": "roof"}
+  ]
+}

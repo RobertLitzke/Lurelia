@@ -1,0 +1,22 @@
+{
+  "notes": "Kitehold's grass plain and basalt plug: a dark gravel road, basalt kerbs and walls.",
+  "story": "a windy grass plain under a black rock",
+  "road": "road_gravel",
+  "kerb": "basalt",
+  "wall": "basalt",
+  "deck": "basalt",
+  "gate_post": "basalt",
+  "pad": "boost_pad",
+  "world": {
+    "rock": [["basalt", 0.6], ["stone_dark", 0.4]],
+    "biomes": ["kh_plain", "kh_ribbon", "kh_ribbon_orange", "kh_ribbon_red", "kh_dogtown", "kh_kipuka", "kh_cliff", "kh_town", "kh_sunflower", "kh_flax"],
+    "default_biome": "kh_plain",
+    "seabed_biome": "kh_plain",
+    "seasons": ["spring", "summer", "autumn"],
+    "weather": {"sun": 1.2, "clouds": 1.0, "rain": 0.5, "storm": 0.15},
+    "start_weather": "sun",
+    "weathering": 0.3,
+    "moss": 0.2
+  },
+  "look": null
+}

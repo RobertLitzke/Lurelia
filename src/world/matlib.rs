@@ -36,6 +36,8 @@ pub struct MatTable {
     /// Wood laid along X and along Z (`grained`): a copy of the material
     /// whose grain the shader turns to run along that axis. 0 where none.
     grain: [[u8; 2]; 256],
+    /// Woods drawn without grain because no ids were left for their copies.
+    grainless: usize,
     /// The material a grain copy was made from (itself for every other id).
     base: [u8; 256],
     /// The multiply that takes this material's own texture to each end of
@@ -45,6 +47,8 @@ pub struct MatTable {
     /// How grass grows on this ground: [sparse, dense, short] from the
     /// material's `grass` block, where it has one.
     grass: [Option<[f32; 3]>; 256],
+    /// One flower through the grass: (sprite layer, share), from `bloom`.
+    bloom: [Option<(u32, f32)>; 256],
     /// What the ground is like to drive on, where the material says
     /// (`surface` in its file; world/surface.rs guesses the rest).
     surface: [Option<crate::world::surface::Surface>; 256],
@@ -361,9 +365,11 @@ pub fn install(lib: &Library) {
         was: Vec::new(),
         sprites: [None; 256],
         grain: [[0; 2]; 256],
+        grainless: 0,
         base: std::array::from_fn(|i| i as u8),
         drift: [[None; 256]; 2],
         grass: [None; 256],
+        bloom: [None; 256],
         surface: [None; 256],
         kelp: [None; 256],
         recipes: Vec::new(),
@@ -404,6 +410,7 @@ pub fn install(lib: &Library) {
         t.crisp[i] = m.crisp;
         t.passable[i] = m.passable;
         t.grass[i] = m.grass.as_ref().map(|g| [g.sparse, g.dense, g.short]);
+        t.bloom[i] = m.bloom.as_ref().and_then(|b| crate::mesh::sprites::flower_layer(&b.flower).map(|l| (l, b.share.clamp(0.0, 1.0))));
         t.surface[i] = m.surface.as_deref().and_then(crate::world::surface::Surface::parse);
         if let Some(d) = &m.drift {
             // Against the texture the style actually draws: the top face
@@ -555,13 +562,11 @@ pub fn install(lib: &Library) {
         let bi = b as usize;
         for (k, (suffix, gflag)) in [("x", flag::GRAIN_X), ("z", flag::GRAIN_Z)].into_iter().enumerate() {
             let Some(i) = free.next() else {
-                // With no world chosen every wood in the library is counted
-                // as reached and there are never ids for them all; nothing is
-                // built from that table, so it is not worth a line.
-                if lib.reach.is_some() {
-                    eprintln!("materials: no free id left for the grain of {key}");
-                }
-                break 'woods;
+                // Out of ids: this wood and the rest are drawn without
+                // grain. Counted, not printed per wood; the budget line
+                // (`--validate`) says how many.
+                t.grainless += 1;
+                continue 'woods;
             };
             if b < 17 {
                 t.faces[i] = Some(material::faces(b));
@@ -587,6 +592,11 @@ pub fn install(lib: &Library) {
     }
     TABLE.store(Box::into_raw(Box::new(t)), Ordering::Release);
     GENERATION.fetch_add(1, Ordering::AcqRel);
+}
+
+/// How many woods the current table draws without grain for want of ids.
+pub fn grainless() -> usize {
+    tab().map_or(0, |t| t.grainless)
 }
 
 pub fn table() -> Option<&'static MatTable> {
@@ -634,6 +644,11 @@ pub fn slab(m: u8) -> bool {
 #[inline]
 pub fn passable(m: u8) -> bool {
     m >= 17 && tab().is_some_and(|t| t.passable[m as usize])
+}
+
+/// The one flower standing through ground `m`'s grass: (sprite layer, share).
+pub fn bloom(m: u8) -> Option<(u32, f32)> {
+    (m >= 17).then(|| tab().and_then(|t| t.bloom[m as usize])).flatten()
 }
 
 /// How grass grows on ground `m`: [sparse, dense, short], where its file says.

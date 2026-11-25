@@ -8,5 +8,6 @@
   "trunk_radius": [0.2, 0.3],
   "crown_radius": [2.2, 3.0],
   "bark": "pale_bark",
-  "leaf": "pale_needles"
+  "leaf": "pale_needles",
+  "realms": ["bloom"]
 }

@@ -12,5 +12,6 @@
   "squash": 1.2,
   "max_slope": 1.1,
   "affords": ["nectar"],
-  "stalk": ["yucca_stalk", 0.4]
+  "stalk": ["yucca_stalk", 0.4],
+  "site": {"wet": [0.0, 0.5], "soil": [0.0, 0.85], "sun": [0.4, 1.0], "shade": [0.0, 0.25]}
 }

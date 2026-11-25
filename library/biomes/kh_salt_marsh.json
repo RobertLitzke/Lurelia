@@ -1,0 +1,10 @@
+{
+  "name": "kh_salt_marsh",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Salt marsh where the wet meadows meet the estuary: cordgrass and glasswort cut by tidal creeks.",
+  "priority": 8,
+  "rules": {"region": "wetmeadow", "elev": [-1.5, 2.0], "amphibious": true},
+  "soil": 0.65,
+  "like": "gh_salt_marsh"
+}

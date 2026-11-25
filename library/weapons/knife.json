@@ -1,0 +1,37 @@
+{
+  "name": "knife",
+  "version": 1,
+  "introduced_by": "realistic",
+  "notes": "A fixed blade. Shorter reach than the shovel and less in each blow, but it is out and back again three times while the shovel goes once. The right button is a stab held back for a moment that goes through to the heart: twice the damage, and half again to the head like the cut.",
+  "display": "KNIFE",
+  "slot": 1,
+  "ammo_max": 0,
+  "ammo_start": 0,
+  "fire": {
+    "kind": "hitscan",
+    "rpm": 150.0,
+    "damage": 26.0,
+    "range": 1.9,
+    "falloff": 1.0,
+    "head_mult": 1.5,
+    "kick": 0.8,
+    "tracer": [0.95, 0.95, 1.0],
+    "tracer_s": 0.0
+  },
+  "alt": {
+    "kind": "hitscan",
+    "rpm": 60.0,
+    "damage": 30.0,
+    "range": 2.0,
+    "falloff": 1.0,
+    "head_mult": 1.5,
+    "charge_s": 0.45,
+    "charge_mult": 2.0,
+    "kick": 1.2,
+    "tracer": [0.95, 0.95, 1.0],
+    "tracer_s": 0.0
+  },
+  "view": "knife_machete",
+  "tint": [0.4, 0.4, 0.42],
+  "role": "melee"
+}

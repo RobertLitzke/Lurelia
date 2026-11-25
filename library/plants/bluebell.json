@@ -8,5 +8,6 @@
   "crown_radius": [0.3, 0.5],
   "bark": "dead_wood",
   "leaf": "bluebells",
-  "max_slope": 0.9
+  "max_slope": 0.9,
+  "site": {"wet": [0.25, 0.85], "soil": [0.4, 1.0], "shade": [0.15, 1.0]}
 }

@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "thornpan",
   "notes": "A palm island in the delta: a sand knoll a metre and a half up, ringed with fan palms grown from nuts that went through an elephant, with grass on its crown and usually one baobab.",
+  "habitat": "hammock",
   "priority": 14,
   "rules": {"region": "spread", "elev": [1.6, 8], "slope": [0, 0.6]},
   "surface": "savanna_grass",
   "subsurface": "shore_sand",
+  "soil": 0.5,
   "map_color": [164, 168, 102],
   "plants": [
     {"plant": "cabbage_palm", "density": 0.02, "placement": {"verb": "edge", "params": {"width": 10, "inner": 0.004}}},

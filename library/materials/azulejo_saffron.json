@@ -1,0 +1,8 @@
+{
+  "name": "azulejo_saffron",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Glazed wall tile in saffron and white, used for bands and the church front.",
+  "like": "azulejo_cobalt",
+  "texture": {"base": [214, 156, 48], "alt": [232, 224, 204], "calm": {"base": [218, 164, 62], "alt": [236, 228, 210]}}
+}

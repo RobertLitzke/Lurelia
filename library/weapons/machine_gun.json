@@ -1,0 +1,28 @@
+{
+  "name": "machine_gun",
+  "version": 1,
+  "introduced_by": "realistic",
+  "notes": "A light machine gun: a hundred rounds before it wants feeding and a slow reload when it does. Less accurate than the rifle and it climbs as it goes, but nothing else puts as many rounds down a corridor. It takes the assault rifle's rounds.",
+  "display": "MACHINE GUN",
+  "slot": 7,
+  "ammo_max": 300,
+  "ammo_start": 200,
+  "mag": 100,
+  "reload_s": 4.2,
+  "fire": {
+    "kind": "hitscan",
+    "rpm": 800.0,
+    "damage": 10.5,
+    "spread_deg": 1.6,
+    "range": 220.0,
+    "falloff": 0.65,
+    "head_mult": 1.5,
+    "kick": 0.3,
+    "tracer": [1.0, 0.82, 0.45],
+    "tracer_s": 0.05
+  },
+  "view": "mg_jacket",
+  "tint": [0.3, 0.32, 0.26],
+  "role": "heavy",
+  "ammo_type": "rifle_rounds"
+}

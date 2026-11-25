@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "lowmouth",
   "notes": "A cane field burned off: black stubble and ash, a few charred stalks standing, and the woven stick lattices along the path through it.",
+  "habitat": "field_crop",
   "priority": 9,
   "rules": {"region": "burnt"},
   "surface": "cane_char",
   "subsurface": "silt",
   "fringe": 0,
+  "soil": 0.7,
   "map_color": [70, 66, 60],
   "plants": [
     {"plant": "sugar_cane", "density": 0.004, "placement": {"verb": "scatter", "params": {}}},

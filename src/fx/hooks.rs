@@ -206,9 +206,10 @@ pub fn vehicle(fx: &mut Fx, car: &crate::vehicle::Vehicle, ev: &crate::vehicle::
     }
 }
 
-/// A kart drifting: smoke off its back wheels, and once the drift has
-/// charged a boost, sparks, blue for the first and orange for the second,
-/// so you can see when to let go.
+/// A kart drifting: smoke off its back wheels that thickens and changes
+/// colour with each level of boost the drift has charged (thin white, then
+/// blue, orange and magenta), with sparks of the same colour once it has
+/// charged any, so you can read how big the boost will be.
 pub fn drift(fx: &mut Fx, car: &crate::vehicle::Vehicle, dt: f32) {
     if !fx.on || car.drift.is_none() || car.b.vel.length() < 4.0 {
         return;
@@ -216,15 +217,19 @@ pub fn drift(fx: &mut Fx, car: &crate::vehicle::Vehicle, dt: f32) {
     let up = car.up();
     let back = -car.forward();
     let r = car.spec.wheel_radius;
-    let tier = car.drift_tier();
+    // Smoke, its puffs a second, and sparks, by level.
+    let (smoke, rate, sparks) = match car.drift_tier() {
+        0 => ("drift_smoke", 14.0, None),
+        1 => ("drift_smoke_1", 24.0, Some(("drift_sparks", 30.0))),
+        2 => ("drift_smoke_2", 32.0, Some(("drift_sparks_hot", 40.0))),
+        _ => ("drift_smoke_3", 40.0, Some(("drift_sparks_top", 50.0))),
+    };
     for w in car.wheels.iter().filter(|w| w.rear && w.down) {
         let patch = car.pos() + car.b.rot * w.mount - up * (w.t + r);
         let throw = back * 0.8 + Vec3::Y * 0.6;
-        fx.trickle("drift_smoke", patch + Vec3::Y * 0.1, throw, 0, 22.0, dt);
-        match tier {
-            0 => {}
-            1 => fx.trickle("drift_sparks", patch + Vec3::Y * 0.05, back + Vec3::Y * 0.5, 0, 30.0, dt),
-            _ => fx.trickle("drift_sparks_hot", patch + Vec3::Y * 0.05, back + Vec3::Y * 0.5, 0, 45.0, dt),
+        fx.trickle(smoke, patch + Vec3::Y * 0.1, throw, 0, rate, dt);
+        if let Some((name, n)) = sparks {
+            fx.trickle(name, patch + Vec3::Y * 0.05, back + Vec3::Y * 0.5, 0, n, dt);
         }
     }
 }

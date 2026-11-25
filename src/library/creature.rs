@@ -162,6 +162,155 @@ pub struct Behaviour {
     /// of it, so one number covers migrating and hibernating both.
     #[serde(default)]
     pub winter: Option<f32>,
+    /// The rare things it now and then does (creatures/display): a
+    /// hummingbird's dive, rams butting heads. Each names a display written
+    /// in Rust and says how often and when this species does it.
+    #[serde(default)]
+    pub displays: Vec<DisplayDef>,
+    /// The calls it makes and when (creatures/voice.rs, sound/call.rs).
+    /// Never inherited through `like`, which is mostly about shape: a crow
+    /// built on a starling doesn't sing.
+    #[serde(default)]
+    pub voice: Option<VoiceDef>,
+}
+
+/// What a species sounds like: a list of calls, each with what sets it off.
+#[derive(Deserialize, Clone, Debug, Default, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct VoiceDef {
+    /// How big its voice is against each cry as made, 1 by default: bigger
+    /// is lower and slower. A juvenile's is smaller again.
+    #[serde(default)]
+    pub size: Option<f32>,
+    pub calls: Vec<CallDef>,
+}
+
+/// One call a species makes.
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct CallDef {
+    /// Which cry: one of sound::call::CRIES by name ("howl", "song").
+    pub cry: String,
+    /// What sets it off: "idle" (now and then while it goes about its day),
+    /// "flee" (as it bolts), "chase" (as it starts after prey), "takeoff"
+    /// (a perched bird flying up), "warn" (a snake that `warns` holding its
+    /// ground, again as each call ends), or "display:KIND" (as one of its
+    /// displays starts, or with `at: "jaw"` each time the display opens its
+    /// jaw).
+    pub on: String,
+    /// With a display: "start" (the default) or "jaw".
+    #[serde(default)]
+    pub at: Option<String>,
+    /// "idle": seconds between calls for one individual, [low, high].
+    /// Left out, [60, 240].
+    #[serde(default)]
+    pub every_s: Option<[f32; 2]>,
+    /// The hours it calls in: "day", "night", "dawn", "dusk" or "twilight"
+    /// (dawn and dusk). Left out, any hour it is awake.
+    #[serde(default)]
+    pub hours: Option<String>,
+    /// Seasons it calls in; empty is all year.
+    #[serde(default)]
+    pub season: Vec<String>,
+    /// Only one sex calls: "male" or "female".
+    #[serde(default)]
+    pub sex: Option<String>,
+    /// Only one age calls: "juvenile", "adult" or "aged".
+    #[serde(default)]
+    pub age: Option<String>,
+    /// dB over the cry's own level: a marquee call that carries.
+    #[serde(default)]
+    pub boost: f32,
+    /// The chance each other of its species near it answers (0 to 1), a
+    /// second or few later: a pack's howl, a rookery's caws.
+    #[serde(default)]
+    pub chorus: f32,
+    /// How far an answer may come from, metres; 300 by default.
+    #[serde(default)]
+    pub chorus_m: Option<f32>,
+    /// Its own size against the voice's.
+    #[serde(default)]
+    pub size: Option<f32>,
+    /// Calls in the rain too. Left out, a downpour quiets it.
+    #[serde(default)]
+    pub rain: bool,
+    /// The chance it calls when set off (events) or when its time comes
+    /// (idle), 1 by default.
+    #[serde(default)]
+    pub chance: Option<f32>,
+}
+
+/// One display a species does (creatures/display). Everything but `kind` is
+/// optional; the display's own code has a default for each.
+#[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct DisplayDef {
+    /// Which display: one of creatures::display::KINDS.
+    pub kind: String,
+    /// Times an hour one individual starts it, before the global dial
+    /// (`VG_DISPLAY_RATE`) and only while the player could see it.
+    #[serde(default)]
+    pub rate: Option<f32>,
+    /// Seasons it happens in ("spring", "summer", "autumn", "winter");
+    /// empty is all year.
+    #[serde(default)]
+    pub season: Vec<String>,
+    /// Who takes part. Left out, the display's own default.
+    #[serde(default)]
+    pub cast: Option<CastDef>,
+    /// How much the player still unsettles the cast while it runs, as a
+    /// multiplier on flightiness: 0 for bison mid-shove that don't care who
+    /// is watching, 1 for the usual nerves.
+    #[serde(default)]
+    pub holds: Option<f32>,
+    /// Started by the player coming near (within the display's `near`
+    /// param) instead of at `rate`: a skunk's handstand. Left out, the
+    /// display's own default (`threat` is, the rest aren't).
+    #[serde(default)]
+    pub on_approach: Option<bool>,
+    /// Numbers that tune this display for this species; each display lists
+    /// the ones it reads. A number, or [low, high] for a random pick. A few
+    /// take a word instead (`call`'s `posture`, `threat`'s `style`).
+    #[serde(default)]
+    pub params: std::collections::BTreeMap<String, serde_json::Value>,
+    /// What it carries in its bill or mouth while the display says so: a
+    /// collectible's name (`acorn`) or a creature's (`lizard`), drawn there
+    /// small. Its model is built in every world this creature is in.
+    #[serde(default)]
+    pub food: Option<String>,
+}
+
+/// Who a display needs. The first member is the one that starts it; the rest
+/// are found near it.
+#[derive(Deserialize, Clone, Debug, Default, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct CastDef {
+    /// "solo", "same" (any of its own species near it) or "family" (members
+    /// of its own family group only, creatures/herd.rs).
+    #[serde(default)]
+    pub from: Option<String>,
+    /// How many take part, all told: [least, most].
+    #[serde(default)]
+    pub count: Option<[u32; 2]>,
+    /// How far from the first member the others may be, metres.
+    #[serde(default)]
+    pub range: Option<f32>,
+    /// What each member must be, in order: the first is the one that starts
+    /// it. Members past the end of the list take the last entry.
+    #[serde(default)]
+    pub members: Vec<MemberDef>,
+}
+
+/// What one member of a display's cast must be.
+#[derive(Deserialize, Clone, Debug, Default, PartialEq, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct MemberDef {
+    /// "juvenile", "adult" or "aged"; left out, any living one.
+    #[serde(default)]
+    pub age: Option<String>,
+    /// "female" or "male"; left out, either.
+    #[serde(default)]
+    pub sex: Option<String>,
 }
 
 impl Behaviour {
@@ -174,6 +323,30 @@ impl Behaviour {
     /// The share of it abroad outside its hours.
     pub fn off_hours(&self) -> f32 {
         self.off_hours.unwrap_or(crate::creatures::diel::OFF_HOURS)
+    }
+}
+
+/// The entries whose models an individual is drawn with, by sex and age,
+/// where it looks different from the entry's own model: a hind without
+/// antlers, a lioness, a spotted fawn (creatures::Species::model_for). Each
+/// names a creature entry, of which only the model is used: the individual
+/// keeps its own species, behaviour and voice. A juvenile takes `juvenile` if
+/// there is one, else its sex's form; a form left out is the entry's own
+/// model.
+#[derive(Deserialize, Clone, Debug, Default, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct Forms {
+    #[serde(default)]
+    pub female: Option<String>,
+    #[serde(default)]
+    pub male: Option<String>,
+    #[serde(default)]
+    pub juvenile: Option<String>,
+}
+
+impl Forms {
+    pub fn each(&self) -> impl Iterator<Item = (&'static str, &String)> {
+        [("female", &self.female), ("male", &self.male), ("juvenile", &self.juvenile)].into_iter().filter_map(|(k, f)| f.as_ref().map(|f| (k, f)))
     }
 }
 
@@ -365,6 +538,12 @@ pub(super) fn default_wary() -> f32 {
 #[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
 pub struct CreatureDef {
     pub name: String,
+    /// The realms it belongs to (`library/realms/`): which world its kind
+    /// comes from. `real` where it names none. Read by animal fill later
+    /// (habitats plan H6).
+    #[serde(default)]
+    #[allow(dead_code)] // read by --validate; animal fill later
+    pub realms: Vec<String>,
     #[serde(default = "default_version")]
     #[allow(dead_code)] // read by tools/libfmt.py
     pub version: u32,
@@ -419,6 +598,10 @@ pub struct CreatureDef {
     /// Which ages turn up (src/creatures/age.rs); defaults from `height`.
     #[serde(default)]
     pub ages: Ages,
+    /// Other entries' models for one sex or for the young (`Forms`). Never
+    /// inherited through `like`: an elk's hind is an elk, not a deer.
+    #[serde(default)]
+    pub forms: Forms,
     #[serde(default)]
     #[allow(dead_code)] // read by tools/libfmt.py and people
     pub notes: String,

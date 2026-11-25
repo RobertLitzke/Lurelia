@@ -1108,6 +1108,20 @@ impl Ride {
         Vec3::new(xz.x, self.prev_eye_y + (self.eye_y - self.prev_eye_y) * alpha, xz.z)
     }
 
+    /// Where screenshot mode's free camera starts. In first person on a ride
+    /// the eye is inside the rider, and screenshot mode draws the whole body,
+    /// so start back where the chase camera would be, short of any wall.
+    pub fn free_camera_start(&self, p: &Player, store: &Store, eye: Vec3, fwd: Vec3) -> Vec3 {
+        if self.mode == Mode::Foot || self.chase_on() {
+            return eye;
+        }
+        let spec = self.mode.cam(self.air);
+        let follow = p.pos + Vec3::Y * spec.height;
+        let dir = (-fwd + Vec3::Y * 0.3).normalize_or(Vec3::Y);
+        let d = store.ray(follow, dir, spec.dist, |m| m != AIR).map_or(spec.dist, |h| (h.t - 0.3).max(0.0));
+        follow + dir * d
+    }
+
     /// Where the camera is and where it looks.
     pub fn camera(&self, p: &Player, store: &Store, alpha: f32) -> Camera {
         let lerp = |a: f32, b: f32| a + (b - a) * alpha;
@@ -1240,6 +1254,7 @@ impl Ride {
                 shift: [0.0; 4],
                 flesh: [[0.0; 4]; 3],
                 glow: [0.0; 4],
+                fade: [0.0; 4],
             },
         ))
     }
@@ -1267,6 +1282,7 @@ impl Ride {
                         shift: [0.0; 4],
                         flesh: [[0.0; 4]; 3],
                         glow: [0.0; 4],
+                        fade: [0.0; 4],
                     },
                 ));
             }
@@ -1353,6 +1369,7 @@ impl Ride {
                     shift: [0.0; 4],
                     flesh: [[0.0; 4]; 3],
                     glow: [0.0; 4],
+                    fade: [0.0; 4],
                 },
             ));
         }
@@ -1375,6 +1392,7 @@ impl Ride {
                 shift: [0.0; 4],
                 flesh: [[0.0; 4]; 3],
                 glow: [0.0; 4],
+                fade: [0.0; 4],
             },
         ));
     }

@@ -1,0 +1,39 @@
+{
+  "name": "arc_gun",
+  "version": 1,
+  "introduced_by": "slagdeck",
+  "notes": "Two beams off one tank, and the left button is the one people remember: a rope of electric blue with a thread of it turning fast round the outside, held on a man rather than fired at him. It does its damage by the second, so the fight is not about timing a shot but about keeping a line on somebody who is strafing, and it falls off hard past thirty metres. The right button is the same stream let loose: shorter, and once it is on somebody it does not stay there. It jumps to whoever is nearest them within seven metres and in sight, and on from them to the next, four times, losing half of itself at each jump. Held on one of a crowd, it is in all of them, and it is the reason nobody in this arena stands close to a friend.",
+  "display": "ARC GUN",
+  "slot": 5,
+  "ammo_max": 220,
+  "ammo_start": 90,
+  "fire": {
+    "kind": "beam",
+    "rpm": 420.0,
+    "damage": 96.0,
+    "range": 34.0,
+    "falloff": 0.45,
+    "twist": 9.0,
+    "kick": 0.0,
+    "tracer": [0.12, 0.42, 1.0],
+    "tracer_s": 0.03
+  },
+  "alt": {
+    "kind": "beam",
+    "rpm": 600.0,
+    "damage": 86.0,
+    "range": 18.0,
+    "falloff": 0.8,
+    "arc_jumps": 4,
+    "arc_m": 7.0,
+    "arc_keep": 0.5,
+    "bend_m": 0.45,
+    "twist": 14.0,
+    "kick": 0.0,
+    "tracer": [0.69, 1.0, 0.77],
+    "tracer_s": 0.03
+  },
+  "view": "arc_gun",
+  "tint": [0.34, 0.42, 0.36],
+  "role": "stream"
+}

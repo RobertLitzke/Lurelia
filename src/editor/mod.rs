@@ -562,8 +562,8 @@ static WEAPON_KNOBS: &[Knob] = &[
         4,
         "VIEW",
         "view",
-        &crate::combat::viewmodel::SHAPES,
-        "Which built-in shape is drawn in the player's hands. The shapes are Rust, not data, so a weapon file picks one rather than describing one.",
+        &crate::combat::real::NAMES,
+        "Which built-in model is drawn in the player's hands (src/combat/real). The models are Rust, not data, so a weapon file picks one rather than describing one.",
     ),
     colour(4, "TINT", "tint", "The colour of the flat grip the HUD draws in the corner when the view-model is off."),
 ];
@@ -2093,26 +2093,28 @@ pub fn apply(page: &mut Editor, st: &mut Studio, game: &mut Game, aspect: f32) {
                 Err(x) => page.msg = Some(x),
                 Ok(def) => {
                     // A gun's shape is Rust, not data: the file picks one of
-                    // `combat::viewmodel::SHAPES` by name, so the page stands
+                    // `combat::real::REAL` by name, so the page stands
                     // that one up rather than building anything.
                     let which = crate::combat::viewmodel::shape_of(&def.view);
                     if which.is_none() && !def.view.is_empty() {
-                        page.msg = Some(format!("no shape called {}: the shapes are {}", def.view, crate::combat::viewmodel::SHAPES.join(", ")));
+                        page.msg = Some(format!("no shape called {}: the shapes are {}", def.view, crate::combat::viewmodel::shape_names().join(", ")));
                     }
                     let at = which.unwrap_or(0);
-                    let all = crate::combat::viewmodel::models();
+                    let mut all = crate::combat::viewmodel::models();
                     let mut parts: Vec<crate::models::Model> = Vec::new();
-                    for (k, m) in all.into_iter().enumerate() {
-                        // The gun, and for the minigun the barrels that turn
-                        // on an axis of their own.
-                        if k == at || (at == crate::combat::viewmodel::MINIGUN && k == crate::combat::viewmodel::BARRELS) {
-                            parts.push(m);
-                        }
+                    // The gun, and for the minigun the barrels that turn on
+                    // an axis of their own. They are drawn in the gun's grid,
+                    // so placed by the gun's pivot they sit where they go.
+                    let pivot = all[at].pivot;
+                    if crate::combat::viewmodel::spins(at) {
+                        let mut b = all.swap_remove(crate::combat::viewmodel::BARRELS);
+                        b.pivot = pivot;
+                        parts.push(b);
                     }
+                    parts.push(all.swap_remove(at));
                     // A gun's model carries a collision box it never uses, so
-                    // its grid is the only honest measure: 32 voxels long and
-                    // about half that tall.
-                    let span = 32.0 * crate::combat::viewmodel::VOXEL;
+                    // its real length is the measure.
+                    let span = crate::combat::viewmodel::real(at).map_or(1.0, |r| r.cm / 100.0);
                     // The guns have palette slots of their own, fixed and
                     // outside the library's: a world that is not a match has
                     // never written them.

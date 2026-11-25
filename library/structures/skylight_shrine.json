@@ -1,0 +1,26 @@
+{
+  "name": "skylight_shrine",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A small basalt shrine, 2 m square and 3 m tall including its slab roof, with a niche 0.5 m wide and 1 m high facing -Z and offering stones on the front step; it stands on the rim of a fallen lava-tube roof.",
+  "size": [10, 13, 10],
+  "anchor": [5, 0, 5],
+  "foundation": 2,
+  "level": false,
+  "tags": ["shrine", "lava"],
+  "slots": {"stone": "basalt", "slab": "stone_dark", "offering": "fieldstone"},
+  "ops": [
+    {"op": "box", "from": [1, 0, 1], "to": [9, 2, 9], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [3, 0, 0], "to": [7, 1, 1], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [2, 2, 2], "to": [8, 9, 8], "mat": "stone", "part": "stone"},
+    {"op": "box", "from": [4, 4, 2], "to": [6, 8, 5], "mat": "air", "part": "stone"},
+    {"op": "box", "from": [4, 4, 3], "to": [5, 5, 4], "mat": "offering", "part": "stone"},
+    {"op": "box", "from": [1, 9, 1], "to": [9, 10, 9], "mat": "slab", "part": "roof"},
+    {"op": "box", "from": [2, 10, 2], "to": [8, 11, 8], "mat": "slab", "part": "roof"},
+    {"op": "box", "from": [4, 11, 4], "to": [6, 12, 6], "mat": "slab", "part": "roof"},
+    {"op": "set", "at": [3, 1, 0], "mat": "offering", "part": "stone"},
+    {"op": "set", "at": [5, 1, 0], "mat": "offering", "part": "stone"},
+    {"op": "set", "at": [2, 0, 0], "mat": "offering", "part": "stone"},
+    {"op": "box", "from": [7, 0, 0], "to": [9, 1, 1], "mat": "offering", "part": "stone"}
+  ]
+}

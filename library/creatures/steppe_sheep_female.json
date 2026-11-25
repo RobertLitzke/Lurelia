@@ -1,0 +1,166 @@
+{
+  "name": "steppe_sheep_female",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The steppe sheep's female form (steppe_sheep `forms`): a ewe: smaller than the ram and polled. Only its model is used; it spawns as a steppe sheep. Written once from the steppe sheep's own ops; edit it as its own model.",
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 22.2, 19.5], "radius": [6.4, 6.9, 6.8], "mat": "rabbit"},
+    {"op": "ellipsoid", "centre": [16, 22.0, 27.5], "radius": [6.6, 6.6, 9.5], "mat": "rabbit"},
+    {"op": "ellipsoid", "centre": [16, 22.2, 33.0], "radius": [6.0, 6.4, 6.0], "mat": "rabbit"},
+    {"op": "recolour", "at": [8, 12, 34], "until": [24, 32, 42], "from": "rabbit", "to": "white"},
+    {"op": "recolour_below", "y": 17, "from": "rabbit", "to": "rabbit_light"},
+    {"op": "segment", "points": [[16, 24.5, 38.0], [16, 22.8, 39.2]], "radius": 1.5, "mat": "white"},
+    {
+      "op": "segment",
+      "points": [[12.7, 20.5, 18.3], [12.7, 10.5, 18.0]],
+      "radius": 2.7,
+      "mat": "rabbit",
+      "part": "leg_fl"
+    },
+    {
+      "op": "segment",
+      "points": [[12.7, 10.5, 18.0], [12.7, 3.2, 18.0]],
+      "radius": 1.5,
+      "mat": "rabbit",
+      "part": "leg_fl_low"
+    },
+    {
+      "op": "segment",
+      "points": [[12.7, 6.5, 18.0], [12.7, 3.4, 18.0]],
+      "radius": 1.7,
+      "mat": "dark",
+      "part": "leg_fl_low"
+    },
+    {"op": "ellipsoid", "centre": [12.7, 1.5, 17.4], "radius": [2.0, 1.6, 2.6], "mat": "dark", "part": "leg_fl_low"},
+    {
+      "op": "segment",
+      "points": [[19.3, 20.5, 18.3], [19.3, 10.5, 18.0]],
+      "radius": 2.7,
+      "mat": "rabbit",
+      "part": "leg_fr"
+    },
+    {
+      "op": "segment",
+      "points": [[19.3, 10.5, 18.0], [19.3, 3.2, 18.0]],
+      "radius": 1.5,
+      "mat": "rabbit",
+      "part": "leg_fr_low"
+    },
+    {
+      "op": "segment",
+      "points": [[19.3, 6.5, 18.0], [19.3, 3.4, 18.0]],
+      "radius": 1.7,
+      "mat": "dark",
+      "part": "leg_fr_low"
+    },
+    {"op": "ellipsoid", "centre": [19.3, 1.5, 17.4], "radius": [2.0, 1.6, 2.6], "mat": "dark", "part": "leg_fr_low"},
+    {
+      "op": "segment",
+      "points": [[12.7, 21.0, 33.8], [12.7, 11.5, 35.1]],
+      "radius": 3.0,
+      "mat": "rabbit",
+      "part": "leg_hl"
+    },
+    {
+      "op": "segment",
+      "points": [[12.7, 11.5, 35.1], [12.7, 3.2, 33.6]],
+      "radius": 1.5,
+      "mat": "rabbit",
+      "part": "leg_hl_low"
+    },
+    {
+      "op": "segment",
+      "points": [[12.7, 6.5, 33.6], [12.7, 3.4, 33.6]],
+      "radius": 1.7,
+      "mat": "dark",
+      "part": "leg_hl_low"
+    },
+    {"op": "ellipsoid", "centre": [12.7, 1.5, 33.1], "radius": [2.0, 1.6, 2.6], "mat": "dark", "part": "leg_hl_low"},
+    {
+      "op": "segment",
+      "points": [[19.3, 21.0, 33.8], [19.3, 11.5, 35.1]],
+      "radius": 3.0,
+      "mat": "rabbit",
+      "part": "leg_hr"
+    },
+    {
+      "op": "segment",
+      "points": [[19.3, 11.5, 35.1], [19.3, 3.2, 33.6]],
+      "radius": 1.5,
+      "mat": "rabbit",
+      "part": "leg_hr_low"
+    },
+    {
+      "op": "segment",
+      "points": [[19.3, 6.5, 33.6], [19.3, 3.4, 33.6]],
+      "radius": 1.7,
+      "mat": "dark",
+      "part": "leg_hr_low"
+    },
+    {"op": "ellipsoid", "centre": [19.3, 1.5, 33.1], "radius": [2.0, 1.6, 2.6], "mat": "dark", "part": "leg_hr_low"},
+    {
+      "op": "segment",
+      "points": [[16, 24.5, 15.0], [16, 28.5, 12.0], [16, 31.2, 10.2]],
+      "radius": 4.3,
+      "mat": "rabbit",
+      "part": "neck"
+    },
+    {"op": "ellipsoid", "centre": [16, 33.2, 8.0], "radius": [3.3, 3.5, 4.4], "mat": "rabbit", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 31.0, 4.0], "radius": [2.3, 2.3, 3.3], "mat": "rabbit_light", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 30.6, 1.4], "radius": [1.9, 1.6, 1.5], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 31.0, 2.6], "radius": [2.6, 1.5, 2.2], "mat": "rabbit_light", "part": "head"},
+    {"op": "segment", "points": [[16, 35.5, 9.5], [16, 35.0, 6.5]], "radius": 1.6, "mat": "rabbit", "part": "head"},
+    {"op": "ellipsoid", "centre": [12.9, 33.9, 5.9], "radius": [1.3, 1.3, 1.5], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [11.8, 35.2, 10.3], "radius": [1.3, 0.9, 1.9], "mat": "rabbit", "part": "head"},
+    {"op": "ellipsoid", "centre": [11.8, 35.1, 10.5], "radius": [0.9, 0.5, 1.2], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [19.1, 33.9, 5.9], "radius": [1.3, 1.3, 1.5], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [20.2, 35.2, 10.3], "radius": [1.3, 0.9, 1.9], "mat": "rabbit", "part": "head"},
+    {"op": "ellipsoid", "centre": [20.2, 35.1, 10.5], "radius": [0.9, 0.5, 1.2], "mat": "dark", "part": "head"},
+    {
+      "op": "segment",
+      "points": [[13.4, 36.6, 8.6], [11.7, 37.4, 11.2], [10.4, 35.6, 13.6]],
+      "radius": 3.3,
+      "mat": "air",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[10.4, 35.6, 13.6], [10.0, 32.2, 13.6], [10.8, 30.8, 10.6]],
+      "radius": 2.8,
+      "mat": "air",
+      "part": "head"
+    },
+    {"op": "segment", "points": [[10.8, 30.8, 10.6], [11.6, 31.6, 8.0]], "radius": 2.2, "mat": "air", "part": "head"},
+    {
+      "op": "segment",
+      "points": [[18.6, 36.6, 8.6], [20.3, 37.4, 11.2], [21.6, 35.6, 13.6]],
+      "radius": 3.3,
+      "mat": "air",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[21.6, 35.6, 13.6], [22.0, 32.2, 13.6], [21.2, 30.8, 10.6]],
+      "radius": 2.8,
+      "mat": "air",
+      "part": "head"
+    },
+    {"op": "segment", "points": [[21.2, 30.8, 10.6], [20.4, 31.6, 8.0]], "radius": 2.2, "mat": "air", "part": "head"},
+    {"op": "recolour", "at": [10, 28, 0], "until": [22, 38, 11], "from": "rabbit", "to": "face"},
+    {"op": "recolour", "at": [10, 28, 0], "until": [22, 38, 11], "from": "rabbit_light", "to": "face"},
+    {"op": "recolour", "at": [8, 3, 14], "until": [24, 14, 42], "from": "rabbit", "to": "face"},
+    {"op": "ellipsoid", "centre": [16, 22.8, 26], "radius": [7.6, 7.3, 11.4], "mat": "fleece"},
+    {"op": "ellipsoid", "centre": [16, 22.6, 20], "radius": [7.2, 7.4, 7.4], "mat": "fleece"},
+    {"op": "ellipsoid", "centre": [16, 22.6, 33], "radius": [6.8, 7.0, 6.5], "mat": "fleece"},
+    {
+      "op": "segment",
+      "points": [[16, 24.5, 15.0], [16, 28.5, 13.0], [16, 30.8, 11.8]],
+      "radius": 4.8,
+      "mat": "fleece",
+      "part": "neck"
+    },
+    {"op": "ellipsoid", "centre": [16, 36.0, 10.0], "radius": [3.2, 1.9, 2.6], "mat": "fleece", "part": "head"}
+  ],
+  "like": "steppe_sheep",
+  "scale": 0.92
+}

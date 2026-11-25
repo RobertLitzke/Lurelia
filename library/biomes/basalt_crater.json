@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "redrock",
   "notes": "The floor and inner walls of a young cone's crater: black basalt the last lava froze into, broken columns, fallen blocks, and the mouths of the tubes it drained through. Nothing grows yet.",
+  "habitat": "bare_rock",
   "priority": 8,
   "rules": {"region": "crater"},
   "surface": "basalt",
   "subsurface": "basalt",
+  "soil": 0.4,
   "map_color": [34, 30, 32],
   "plants": [],
   "features": [

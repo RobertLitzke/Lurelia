@@ -9,5 +9,7 @@
   "crown_radius": [1.3, 2.0],
   "bark": "redwood_bark",
   "leaf": "podocarp_needles",
-  "max_slope": 1.0
+  "max_slope": 1.0,
+  "site": {"wet": [0.2, 1.0], "soil": [0.0, 0.5]},
+  "realms": ["dinosaur"]
 }

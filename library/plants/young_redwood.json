@@ -8,5 +8,6 @@
   "buttress": 0.4,
   "crown_radius": [2.6, 3.2],
   "like": "redwood",
-  "crown_base": 0.3
+  "crown_base": 0.3,
+  "site": {"wet": [0.25, 1.0]}
 }

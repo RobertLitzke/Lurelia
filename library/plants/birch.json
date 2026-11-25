@@ -15,5 +15,6 @@
   "fill": 0.5,
   "spread": 0.25,
   "autumn": "leaves_autumn",
-  "thin_limbs": 0.12
+  "thin_limbs": 0.12,
+  "site": {"soil": [0.0, 0.6], "sun": [0.3, 1.0], "shade": [0.0, 0.5]}
 }

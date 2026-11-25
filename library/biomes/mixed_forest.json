@@ -2,10 +2,12 @@
   "name": "mixed_forest",
   "version": 2,
   "introduced_by": "glassfall",
+  "habitat": "broadleaf_forest",
   "priority": 1,
   "rules": {},
   "surface": "forest_floor",
   "subsurface": "dirt",
+  "soil": 0.5,
   "map_color": [70, 120, 60],
   "plants": [
     {"plant": "hanging_vine", "density": 0.12, "placement": {"verb": "scatter", "params": {}}},

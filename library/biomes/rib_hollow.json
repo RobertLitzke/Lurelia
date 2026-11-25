@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "ribshore",
   "notes": "Blowouts: bowls the wind has dug down through the dunes to the damp sand, with water standing in the bottom after rain, a snag or two, elk tracks.",
+  "habitat": "dunes",
   "priority": 6,
   "rules": {"region": "hollow"},
   "surface": "dune_sand",
   "subsurface": "wet_sand",
   "fringe": 5,
+  "soil": 0.5,
   "map_color": [196, 186, 150],
   "plants": [
     {"plant": "snag", "density": 0.0006, "placement": {"verb": "lone", "params": {"spacing": 30}}},

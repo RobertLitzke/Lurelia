@@ -1492,11 +1492,11 @@
   {
    "year": -27,
    "event": "route",
-   "cause": "the road from the camp down onto the salt to the hub",
+   "cause": "the road from the camp down onto the salt, joining the east arm at its far end",
    "from": "camp",
    "to": [
-    600,
-    860
+    1161.0,
+    1072.9
    ],
    "kit": "dirt_lane",
    "terms": {
@@ -1645,12 +1645,12 @@
   {
    "year": -10,
    "event": "place",
-   "cause": "a pickup by the dome",
+   "cause": "a pickup by the dome, at the end of the fire road",
    "at": {
     "from": "dome_top",
     "by": [
-     14,
-     20
+     -12,
+     24
     ]
    },
    "structure": "pickup_truck",

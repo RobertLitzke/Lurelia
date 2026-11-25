@@ -95,6 +95,17 @@ pub struct Town {
     /// footprint houses take the rest.
     #[serde(default)]
     houses: Vec<String>,
+    /// Up to this many more of `houses` on the ground the street plots
+    /// leave free (back plots, corners), each facing its nearest street
+    /// and reached by a footpath; for a small top where few streets run
+    /// square to the compass.
+    #[serde(default)]
+    infill: u32,
+    /// A footpath 1.4 m wide (the kit's `path` street, else its `lane`)
+    /// from every library structure's door to the streets, routed round
+    /// the buildings and joining the paths already there.
+    #[serde(default)]
+    paths: bool,
     /// The market is a village green: left as grass on the lie of the
     /// land, the lanes running on across it, not a levelled, paved square.
     #[serde(default)]
@@ -117,6 +128,10 @@ pub struct Town {
     /// Region names for the field parcels, picked in turn (for biomes).
     #[serde(default)]
     crops: Vec<String>,
+    /// The chance a field has a shed or shack in its corner, as on a
+    /// `fields` event.
+    #[serde(default)]
+    shacks: super::fields::Shacks,
     /// The city kit (`library/cities/`) whose `town` section says what the
     /// town is made of.
     kit: String,
@@ -265,6 +280,9 @@ impl Process for Town {
             yards: self.yards,
             landmarks,
             houses,
+            infill: self.infill,
+            paths: self.paths,
+            footprints: self.footprints && self.walkways.is_none(),
         };
         let spec = town::Spec {
             centre: c,
@@ -493,6 +511,11 @@ impl Process for Town {
         for &(a, b) in &laid.drives {
             cf.streets.push(StreetDef { pts: vec![[a.x, a.y], [b.x, b.y]], width: 3.0, mat: drive.clone(), walk: 0.0, strip: 0.0 });
         }
+        // Footpaths to the doors of the library houses.
+        let path_mat = tk.streets.get("path").or_else(|| tk.streets.get("lane")).cloned().unwrap_or_else(|| town_default::STREET.to_string());
+        for pts in &laid.paths {
+            cf.streets.push(StreetDef { pts: pts.iter().map(|p| [p.x, p.y]).collect(), width: 1.4, mat: path_mat.clone(), walk: 0.0, strip: 0.0 });
+        }
         for (p, kind) in &laid.trees {
             let k = hash32((p.x as u32).wrapping_mul(73) ^ (p.y as u32).wrapping_mul(9301) ^ seed);
             let name = match kind {
@@ -628,8 +651,13 @@ impl Process for Town {
             let l = route::lay(cx, &pts, k, 4.0);
             fences += l.length;
         }
+        // Sheds in the corners of the fields, once their walls stand.
+        let (sheds, why) = super::fields::place_shacks(cx, &plan.corners, &self.crops, &self.shacks, &tk.shack_list(), seed);
 
-        let extra = if self.walkways.is_some() { format!("; {walked:.0} m of boardwalk") } else { String::new() };
+        let mut extra = if self.walkways.is_some() { format!("; {walked:.0} m of boardwalk") } else { String::new() };
+        if sheds > 0 {
+            extra += &format!("; {sheds} field sheds ({why})");
+        }
         let by_rank = |r: u8| plan.ways.iter().filter(|w| w.rank == r).map(|w| w.pts.windows(2).map(|s| s[0].distance(s[1])).sum::<f32>()).sum::<f32>();
         cx.pois.push(Poi { name: self.name.clone(), pos: c, cause });
         format!(
@@ -759,8 +787,27 @@ fn bridge(cf: &mut CityFile, f: &Fields, pts: &[Vec2], half: f32) {
         }
     }
     let top = top + 0.6;
-    cf.decks.push(DeckDef { pts: pts.iter().map(|p| [p.x, top, p.y]).collect(), width: half * 2.0 + 1.0 });
     let len: f32 = pts.windows(2).map(|w| w[0].distance(w[1])).sum();
+    // An end on land comes down to the street there, so the deck carries on
+    // from the street without a step: it climbs to `top` over a ramp of
+    // 1 in 5, or less where the bridge is short.
+    let ends: Vec<Option<f32>> = [pts[0], pts[pts.len() - 1]].iter().map(|p| (!wet(*p)).then(|| f.height(p.x, p.y))).collect();
+    let n = len.ceil().max(1.0) as usize;
+    let deck: Vec<[f32; 3]> = (0..=n)
+        .map(|j| {
+            let s = len * j as f32 / n as f32;
+            let (p, _) = town::lots::point_at(pts, s);
+            let mut y = top;
+            for (g, d) in [(ends[0], s), (ends[1], len - s)] {
+                if let Some(g) = g {
+                    let ramp = ((top - g) * 5.0).clamp(2.0, len * 0.45);
+                    y = y.min(g + (top - g) * crate::world::noise::smoothstep(0.0, ramp, d));
+                }
+            }
+            [p.x, y, p.y]
+        })
+        .collect();
+    cf.decks.push(DeckDef { pts: deck, width: half * 2.0 + 1.0 });
     let spans = (len / 14.0).ceil().max(1.0) as usize;
     for s in 1..spans {
         let (p, _) = town::lots::point_at(pts, len * s as f32 / spans as f32);

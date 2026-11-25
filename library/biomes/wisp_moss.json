@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "The Wisp Moss round Hemmere: sphagnum and peat pools, reedmace, willow scrub, dead alders standing in the wet; marsh lights over it after sunset.",
+  "habitat": "bog",
   "priority": 11,
   "rules": {"region": "moss"},
   "surface": "bog_moss",
   "subsurface": "peat",
+  "soil": 0.15,
   "map_color": [130, 120, 70],
   "plants": [
     {

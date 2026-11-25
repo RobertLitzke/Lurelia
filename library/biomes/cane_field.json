@@ -3,11 +3,13 @@
   "version": 2,
   "introduced_by": "lowmouth",
   "notes": "Sugar cane in blocks taller than a man, dirt rows between.",
+  "habitat": "field_crop",
   "priority": 8,
   "rules": {"region": "cane"},
   "surface": "cane_soil",
   "subsurface": "silt",
   "fringe": 0,
+  "soil": 0.7,
   "map_color": [170, 190, 90],
   "plants": [
     {

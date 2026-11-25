@@ -1,0 +1,14 @@
+{
+  "name": "paintbrush",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Indian paintbrush: scarlet bracts in drifts along the Plain's buried stream beds.",
+  "form": "herb",
+  "height": [0.3, 0.5],
+  "crown_radius": [0.25, 0.4],
+  "bark": "dead_wood",
+  "leaf": "paintbrush",
+  "max_slope": 0.9,
+  "affords": ["nectar"],
+  "site": {"wet": [0.4, 0.9], "shade": [0.0, 0.2]}
+}

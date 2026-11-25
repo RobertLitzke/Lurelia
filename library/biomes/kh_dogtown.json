@@ -1,0 +1,23 @@
+{
+  "name": "kh_dogtown",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A prairie-dog town: the grass bitten to the roots over a patch a hundred metres or so across, fifty to seventy-five burrow mounds on pale aprons of kicked-out soil, sentries sitting up on them.",
+  "habitat": "dry_grassland",
+  "priority": 7,
+  "rules": {"region": "dogtown"},
+  "surface": "kh_dogtown_grass",
+  "subsurface": "dirt",
+  "fringe": 6,
+  "soil": 0.55,
+  "map_color": [170, 150, 110],
+  "plants": [{"plant": "ash_poppy", "density": 0.004, "placement": {"verb": "scatter", "params": {}}}],
+  "features": [{"structure": "burrow_mound", "density": 0.0042, "placement": {"verb": "scatter", "params": {"spacing": 7}}}],
+  "creatures": [
+    {"creature": "prairie_dog", "count": 40},
+    {"creature": "hawk", "count": 2},
+    {"creature": "eagle", "count": 1},
+    {"creature": "coyote", "count": 0.8},
+    {"creature": "killdeer", "count": 3}
+  ]
+}

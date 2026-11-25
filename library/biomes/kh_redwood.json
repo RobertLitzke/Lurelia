@@ -1,0 +1,34 @@
+{
+  "name": "kh_redwood",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "The redwoods on the first bench of the Steps, in the wet under the cloud: tall red columns, sorrel and fern, moss up the north side.",
+  "habitat": "conifer_forest",
+  "priority": 4,
+  "rules": {"region": "bench", "elev": [0, 140]},
+  "surface": "pine_duff",
+  "subsurface": "dirt",
+  "soil": 0.35,
+  "map_color": [96, 60, 50],
+  "plants": [
+    {"plant": "redwood", "density": 0.012, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "young_redwood", "density": 0.008, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "giant_redwood", "density": 0.0014, "placement": {"verb": "lone", "params": {"spacing": 24}}},
+    {"plant": "fern", "density": 0.08, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "redwood_sorrel", "density": 0.15, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "huckleberry", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "tree_moss", "density": 0.5, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "shelf_fungus", "density": 0.1, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [{"structure": "fallen_trunk", "density": 0.0003}, {"structure": "mossy_log", "density": 0.0004}],
+  "creatures": [
+    {"creature": "elk", "count": 5.4},
+    {"creature": "douglas_squirrel", "count": 6},
+    {"creature": "banana_slug", "count": 8},
+    {"creature": "stellers_jay", "count": 4},
+    {"creature": "great_horned_owl", "count": 1},
+    {"creature": "pileated_woodpecker", "count": 2}
+  ],
+  "sound": {"wind": 0.7, "leaves": 0.7},
+  "mist": 0.35
+}

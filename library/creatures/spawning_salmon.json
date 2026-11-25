@@ -1,0 +1,28 @@
+{
+  "name": "spawning_salmon",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Salmon on the spawning run up the delta's clear channel: crimson flanks and olive-green heads, holding in knee-deep water over the cobbles.",
+  "morphs": [
+    {"name": "bright", "weight": 1, "notes": "Fresh run from the sea: steel-blue back, bright silver sides."},
+    {
+      "name": "run",
+      "weight": 2,
+      "shades": 2,
+      "notes": "Spawning colour, deep in the run: dark olive-bronze back, coppery red flanks.",
+      "colors": {"herring": [[60, 48, 34], [72, 54, 38]], "silver": [[150, 76, 54], [168, 90, 60]]}
+    }
+  ],
+  "behaviour": {
+    "displays": [{"kind": "bait_ball"}, {"kind": "leap"}],
+    "walk_speed": 0.9,
+    "flee_speed": 4.5,
+    "wary": 6,
+    "flightiness": 1.2,
+    "leap": 2.0,
+    "group": {"size": [3, 7], "spacing": 1.2, "range": 6},
+    "voice": {"size": 0.8, "calls": [{"cry": "splash", "on": "display:leap"}]},
+    "shallows": 0.25
+  },
+  "like": "salmon"
+}

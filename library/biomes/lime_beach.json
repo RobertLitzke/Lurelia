@@ -3,10 +3,12 @@
   "version": 4,
   "introduced_by": "jadewater",
   "notes": "White lime-sand beaches at the foot of the jungle and round the towers.",
+  "habitat": "beach",
   "priority": 6,
   "rules": {"coast": [0, 22], "elev": [-1, 3.0], "slope": [0, 0.6]},
   "surface": "white_sand",
   "subsurface": "white_sand",
+  "soil": 0.85,
   "map_color": [226, 222, 200],
   "plants": [
     {"plant": "hazel", "density": 0.002, "placement": {"verb": "edge", "params": {"width": 8, "inner": 0.004}}},

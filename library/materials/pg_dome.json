@@ -1,0 +1,8 @@
+{
+  "name": "pg_dome",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Orange geodesic dome panels, drawn in facets so the dome reads as a dome.",
+  "like": "pg_orange",
+  "facet": true
+}

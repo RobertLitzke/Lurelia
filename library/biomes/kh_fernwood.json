@@ -1,0 +1,10 @@
+{
+  "name": "kh_fernwood",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Saurischia's Fernwood where it comes over the edge and thins into the Plain: the same high forest, broken into clumps and glades.",
+  "priority": 4,
+  "rules": {"region": "fernwood"},
+  "soil": 0.4,
+  "like": "sau_fernwood"
+}

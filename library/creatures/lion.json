@@ -1,10 +1,16 @@
 {
   "name": "lion",
-  "version": 2,
+  "version": 3,
   "introduced_by": "base",
   "notes": "Lion: a heavy tawny cat with a dark mane over its shoulders and a tufted tail. Lives in prides, so it walks in twos and threes.",
   "colors": {"coat": [206, 170, 112], "belly": [226, 212, 184], "mane": [122, 84, 44], "muzzle": [226, 212, 184]},
+  "forms": {"female": "lion_female", "juvenile": "lion_juvenile"},
   "behaviour": {
+    "displays": [
+      {"kind": "call", "cast": {"count": [1, 3]}, "params": {"pitch": 0.45, "jaw": 0.6, "pump": 0.08, "call_s": 2.0}},
+      {"kind": "stalk", "params": {"creep": 0.3}},
+      {"kind": "play"}
+    ],
     "sleeps_on_side": true,
     "walk_speed": 1.1,
     "flee_speed": 8.0,
@@ -14,17 +20,49 @@
     "spawn_chance": 0.08,
     "group": {"size": [1, 3], "spacing": 2.6, "range": 14, "alignment": 0.8, "cohesion": 1.2},
     "active": "nocturnal",
-    "off_hours": 0.15
+    "off_hours": 0.15,
+    "voice": {
+      "calls": [
+        {
+          "cry": "roar",
+          "on": "idle",
+          "hours": "night",
+          "age": "adult",
+          "every_s": [900, 2400],
+          "boost": 6,
+          "chorus": 0.5,
+          "chorus_m": 600
+        }
+      ]
+    }
   },
   "like": "cougar",
   "scale": 1.35,
   "extra_ops": [
-    {"op": "ellipsoid", "centre": [16, 12.5, 7.5], "radius": [5.2, 4.8, 4.0], "mat": "mane", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16, 13, 5], "radius": [3.2, 2.8, 3.0], "mat": "coat", "part": "head"},
-    {"op": "box", "from": [15, 10, 1], "to": [18, 11, 4], "mat": "muzzle", "part": "head"},
-    {"op": "set", "at": [16, 12, 1], "mat": "mane", "part": "head"},
-    {"op": "set", "at": [14, 14, 3], "mat": "mane", "part": "head"},
-    {"op": "set", "at": [18, 14, 3], "mat": "mane", "part": "head"},
-    {"op": "ellipsoid", "centre": [16, 9, 29.5], "radius": [1.7, 1.7, 1.8], "mat": "mane", "part": "tail"}
+    {
+      "op": "ellipsoid",
+      "centre": [16.0, 21.688, 14.252],
+      "radius": [9.022, 8.328, 6.94],
+      "mat": "mane",
+      "part": "neck"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [16.0, 22.555, 9.915],
+      "radius": [5.552, 4.858, 5.205],
+      "mat": "coat",
+      "part": "head"
+    },
+    {"op": "ellipsoid", "centre": [16.0, 18.0, 5.6], "radius": [2.6, 1.4, 2.6], "mat": "muzzle", "part": "head"},
+    {"op": "ellipsoid", "centre": [16.0, 21.6, 4.4], "radius": [1.2, 1.0, 1.0], "mat": "mane", "part": "head"},
+    {"op": "ellipsoid", "centre": [13.5, 24.3, 5.9], "radius": [1.2, 1.1, 1.1], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [18.5, 24.3, 5.9], "radius": [1.2, 1.1, 1.1], "mat": "eye", "part": "head"},
+    {
+      "op": "ellipsoid",
+      "centre": [16.0, 15.615, 52.423],
+      "radius": [2.95, 2.95, 3.123],
+      "mat": "mane",
+      "part": "tail"
+    }
   ]
 }

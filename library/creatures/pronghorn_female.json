@@ -1,0 +1,110 @@
+{
+  "name": "pronghorn_female",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "The pronghorn's female form (pronghorn `forms`): a doe: a little smaller than the buck, with short horns about the length of her ears and no prong. Only its model is used; it spawns as a pronghorn. Written once from the pronghorn's own ops; edit it as its own model.",
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 21.2, 25.6], "radius": [5.1, 5.8, 10.8], "mat": "pronghorn"},
+    {"op": "ellipsoid", "centre": [16, 19.9, 18.6], "radius": [4.8, 5.8, 5.6], "mat": "pronghorn"},
+    {"op": "recolour_below", "y": 17, "from": "pronghorn", "to": "white"},
+    {"op": "ellipsoid", "centre": [16, 21.6, 35.3], "radius": [4.4, 4.8, 1.9], "mat": "white"},
+    {"op": "recolour", "at": [10, 17, 26], "until": [22, 20, 36], "from": "pronghorn", "to": "white"},
+    {
+      "op": "segment",
+      "points": [[13.2, 17.6, 18.6], [13.2, 10.3, 18.4]],
+      "radius": 1.6,
+      "mat": "pronghorn",
+      "part": "leg_fl"
+    },
+    {"op": "ellipsoid", "centre": [13.2, 9.9, 18.4], "radius": [1.4, 1.5, 1.6], "mat": "pronghorn", "part": "leg_fl"},
+    {
+      "op": "segment",
+      "points": [[13.2, 9.3, 18.4], [13.2, 2.8, 18.9]],
+      "radius": 1.1,
+      "mat": "pronghorn",
+      "part": "leg_fl"
+    },
+    {"op": "ellipsoid", "centre": [13.2, 1.0, 19.1], "radius": [1.4, 1.0, 2.0], "mat": "dark", "part": "leg_fl"},
+    {
+      "op": "segment",
+      "points": [[13.2, 18.6, 31.9], [13.2, 14, 33.3], [13.2, 10.3, 34.2]],
+      "radius": 2.1,
+      "mat": "pronghorn",
+      "part": "leg_hl"
+    },
+    {"op": "ellipsoid", "centre": [13.2, 9.9, 34.3], "radius": [1.4, 1.5, 1.7], "mat": "pronghorn", "part": "leg_hl"},
+    {
+      "op": "segment",
+      "points": [[13.2, 9.3, 34.2], [13.2, 2.8, 33.7]],
+      "radius": 1.1,
+      "mat": "pronghorn",
+      "part": "leg_hl"
+    },
+    {"op": "ellipsoid", "centre": [13.2, 1.0, 33.9], "radius": [1.4, 1.0, 2.0], "mat": "dark", "part": "leg_hl"},
+    {
+      "op": "segment",
+      "points": [[18.8, 17.6, 18.6], [18.8, 10.3, 18.4]],
+      "radius": 1.6,
+      "mat": "pronghorn",
+      "part": "leg_fr"
+    },
+    {"op": "ellipsoid", "centre": [18.8, 9.9, 18.4], "radius": [1.4, 1.5, 1.6], "mat": "pronghorn", "part": "leg_fr"},
+    {
+      "op": "segment",
+      "points": [[18.8, 9.3, 18.4], [18.8, 2.8, 18.9]],
+      "radius": 1.1,
+      "mat": "pronghorn",
+      "part": "leg_fr"
+    },
+    {"op": "ellipsoid", "centre": [18.8, 1.0, 19.1], "radius": [1.4, 1.0, 2.0], "mat": "dark", "part": "leg_fr"},
+    {
+      "op": "segment",
+      "points": [[18.8, 18.6, 31.9], [18.8, 14, 33.3], [18.8, 10.3, 34.2]],
+      "radius": 2.1,
+      "mat": "pronghorn",
+      "part": "leg_hr"
+    },
+    {"op": "ellipsoid", "centre": [18.8, 9.9, 34.3], "radius": [1.4, 1.5, 1.7], "mat": "pronghorn", "part": "leg_hr"},
+    {
+      "op": "segment",
+      "points": [[18.8, 9.3, 34.2], [18.8, 2.8, 33.7]],
+      "radius": 1.1,
+      "mat": "pronghorn",
+      "part": "leg_hr"
+    },
+    {"op": "ellipsoid", "centre": [18.8, 1.0, 33.9], "radius": [1.4, 1.0, 2.0], "mat": "dark", "part": "leg_hr"},
+    {
+      "op": "segment",
+      "points": [[16, 22.6, 17.0], [16, 26.8, 14.6]],
+      "radius": 3.1,
+      "mat": "pronghorn",
+      "part": "neck"
+    },
+    {
+      "op": "segment",
+      "points": [[16, 26.8, 14.6], [16, 31.0, 12.4]],
+      "radius": 2.5,
+      "mat": "pronghorn",
+      "part": "neck"
+    },
+    {"op": "recolour", "at": [13, 24, 10], "until": [19, 28, 14], "from": "pronghorn", "to": "white"},
+    {
+      "op": "segment",
+      "points": [[16, 32.4, 12.4], [16, 30.6, 6.6]],
+      "radius": 2.6,
+      "mat": "pronghorn",
+      "part": "head"
+    },
+    {"op": "segment", "points": [[16, 30.6, 6.6], [16, 29.8, 4.0]], "radius": 1.9, "mat": "pronghorn", "part": "head"},
+    {"op": "recolour", "at": [12, 28, 6], "until": [20, 31, 11], "from": "pronghorn", "to": "white"},
+    {"op": "ellipsoid", "centre": [16, 29.8, 3.4], "radius": [1.8, 1.6, 1.3], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [13.7, 32.6, 8.8], "radius": [1.2, 1.2, 1.3], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [18.3, 32.6, 8.8], "radius": [1.2, 1.2, 1.3], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [12.8, 35.2, 12.6], "radius": [1.0, 2.8, 1.4], "mat": "pronghorn", "part": "ear_l"},
+    {"op": "ellipsoid", "centre": [19.2, 35.2, 12.6], "radius": [1.0, 2.8, 1.4], "mat": "pronghorn", "part": "ear_r"},
+    {"op": "segment", "points": [[14.1, 33.8, 9.8], [14.2, 35.4, 9.9]], "radius": 0.8, "mat": "horn", "part": "head"},
+    {"op": "segment", "points": [[17.9, 33.8, 9.8], [17.8, 35.4, 9.9]], "radius": 0.8, "mat": "horn", "part": "head"}
+  ],
+  "like": "pronghorn",
+  "scale": 0.95
+}

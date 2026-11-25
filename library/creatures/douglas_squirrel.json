@@ -4,7 +4,17 @@
   "introduced_by": "base",
   "notes": "Douglas squirrel: a small dark olive squirrel with a rusty orange front, loud in the firs and gone round the trunk in a blink.",
   "colors": {"coat": [104, 94, 60], "belly": [214, 140, 40], "dark": [36, 28, 24]},
-  "behaviour": {"wary": 9, "walk_speed": 1.6},
+  "behaviour": {
+    "wary": 9,
+    "walk_speed": 1.6,
+    "voice": {
+      "size": 0.8,
+      "calls": [
+        {"cry": "chatter", "on": "idle", "hours": "day", "every_s": [90, 300], "chance": 0.6},
+        {"cry": "chatter", "on": "flee", "chance": 0.7}
+      ]
+    }
+  },
   "like": "squirrel",
   "scale": 0.85
 }

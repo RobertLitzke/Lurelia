@@ -4,14 +4,33 @@
   "introduced_by": "base",
   "notes": "Common toad: squatter and warty, dry brown, walking more than hopping and found well away from water as often as beside it.",
   "colors": {"coat": [122, 98, 62], "belly": [196, 180, 148], "mark": [84, 66, 44], "dark": [36, 28, 24]},
-  "behaviour": {"walk_speed": 0.4, "flee_speed": 1.6, "wary": 3, "flightiness": 1.0},
+  "behaviour": {
+    "walk_speed": 0.4,
+    "flee_speed": 1.6,
+    "wary": 3,
+    "flightiness": 1.0,
+    "voice": {
+      "size": 1.0,
+      "calls": [
+        {
+          "cry": "trill",
+          "on": "idle",
+          "hours": "night",
+          "every_s": [20, 90],
+          "rain": true,
+          "chorus": 0.4,
+          "chorus_m": 50
+        }
+      ]
+    }
+  },
   "like": "frog",
   "scale": 1.25,
   "extra_ops": [
-    {"op": "set", "at": [13, 6, 16], "mat": "mark"},
-    {"op": "set", "at": [19, 6, 18], "mat": "mark"},
-    {"op": "set", "at": [16, 7, 19], "mat": "mark"},
-    {"op": "set", "at": [14, 7, 21], "mat": "mark"},
-    {"op": "set", "at": [18, 6, 14], "mat": "mark"}
+    {"op": "box", "from": [9, 13, 21], "to": [12, 15, 23], "mat": "mark"},
+    {"op": "box", "from": [23, 13, 25], "to": [25, 15, 28], "mat": "mark"},
+    {"op": "box", "from": [16, 15, 28], "to": [18, 18, 30], "mat": "mark"},
+    {"op": "box", "from": [12, 15, 32], "to": [14, 18, 34], "mat": "mark"},
+    {"op": "box", "from": [20, 13, 17], "to": [23, 15, 19], "mat": "mark"}
   ]
 }

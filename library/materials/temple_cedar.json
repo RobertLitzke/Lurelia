@@ -1,0 +1,15 @@
+{
+  "name": "temple_cedar",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Planed cedar for the temple's posts and walls: warm brown gone grey on the weather side.",
+  "smooth": false,
+  "texture": {
+    "pattern": "grain",
+    "base": [152, 112, 78],
+    "alt": [130, 94, 64],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [158, 120, 86], "alt": [136, 100, 70]}
+  }
+}

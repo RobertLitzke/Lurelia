@@ -1,0 +1,111 @@
+{
+  "name": "swordbill",
+  "version": 2,
+  "introduced_by": "kitehold",
+  "notes": "Sword-billed hummingbird of the high Andes: a dark bronze-green hummingbird whose bill is longer than its body. It sits on a bare twig and works the long trumpet flowers of the cloud forest edge. The Anna's hummingbird model redrawn with the bill and wings lengthened, since the bill needs more grid in front. v2: two overlapping body ellipsoids, a tapering segment bill on its own bone, flattened-ellipsoid wings, tail and feet for the decimated mesh.",
+  "voxel": 0.004,
+  "grid": [58, 34, 64],
+  "half_w": 0.06,
+  "height": 0.08,
+  "colors": {
+    "back": [70, 118, 62],
+    "belly": [140, 134, 108],
+    "gorget": [40, 92, 96, -0.9],
+    "eye": [16, 14, 16],
+    "white": [230, 230, 226],
+    "bill": [26, 24, 24],
+    "wing": [74, 70, 66],
+    "tail": [40, 52, 44],
+    "legs": [30, 28, 28],
+    "crown": [26, 40, 40]
+  },
+  "behaviour": {
+    "displays": [{"kind": "shuttle"}],
+    "movement": "hum",
+    "walk_speed": 7,
+    "flee_speed": 14,
+    "wary": 3,
+    "flightiness": 0.8,
+    "fly_height": 0,
+    "flight": "hover",
+    "wingbeat": 11,
+    "flees_from": ["player"],
+    "group": {"size": [1, 2], "spacing": 4, "range": 20},
+    "rain": 0.3,
+    "winter": 0.8,
+    "voice": {
+      "calls": [
+        {"cry": "pipe", "on": "takeoff", "size": 0.5, "chance": 0.6},
+        {"cry": "buzz", "on": "display:shuttle", "size": 0.35}
+      ]
+    }
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [29.94, 22.6, 38.5], "radius": [5.4, 5.0, 7.6], "mat": "back"},
+    {"op": "ellipsoid", "centre": [29.94, 22.2, 46.0], "radius": [3.9, 3.5, 6.2], "mat": "back"},
+    {"op": "recolour_below", "y": 21, "from": "back", "to": "belly"},
+    {"op": "ellipsoid", "centre": [29.94, 26.4, 31.4], "radius": [4.5, 4.3, 4.6], "mat": "back", "part": "head"},
+    {"op": "recolour", "at": [23, 21, 26], "until": [38, 26, 34], "from": "back", "to": "gorget"},
+    {"op": "recolour", "at": [23, 26, 26], "until": [38, 29, 32], "from": "belly", "to": "gorget"},
+    {"op": "ellipsoid", "centre": [26.0, 27.4, 29.6], "radius": [1.5, 1.5, 1.5], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [33.9, 27.4, 29.6], "radius": [1.5, 1.5, 1.5], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [26.2, 28.0, 33.2], "radius": [1.2, 1.2, 1.2], "mat": "white", "part": "head"},
+    {"op": "ellipsoid", "centre": [33.7, 28.0, 33.2], "radius": [1.2, 1.2, 1.2], "mat": "white", "part": "head"},
+    {
+      "op": "segment",
+      "points": [[29.94, 25.6, 28.5], [29.94, 25.4, 19]],
+      "radius": 1.7,
+      "mat": "bill",
+      "part": "bill"
+    },
+    {"op": "segment", "points": [[29.94, 25.4, 19], [29.94, 25.2, 10]], "radius": 1.4, "mat": "bill", "part": "bill"},
+    {
+      "op": "segment",
+      "points": [[29.94, 25.2, 10], [29.94, 25.0, 2.5]],
+      "radius": 1.05,
+      "mat": "bill",
+      "part": "bill"
+    },
+    {"op": "segment", "points": [[29.94, 21.5, 48], [29.94, 21.3, 56]], "radius": 1.0, "mat": "tail", "part": "tail"},
+    {"op": "ellipsoid", "centre": [28.4, 21.4, 53.5], "radius": [2.3, 0.95, 5.6], "mat": "tail", "part": "tail"},
+    {"op": "ellipsoid", "centre": [31.5, 21.4, 53.5], "radius": [2.3, 0.95, 5.6], "mat": "tail", "part": "tail"},
+    {"op": "ellipsoid", "centre": [29.94, 21.4, 50.5], "radius": [3.4, 1.0, 3.2], "mat": "tail", "part": "tail"},
+    {
+      "op": "segment",
+      "points": [[28.3, 19.6, 40.5], [28.3, 16.4, 41.0]],
+      "radius": 1.05,
+      "mat": "legs",
+      "part": "leg_l"
+    },
+    {"op": "ellipsoid", "centre": [28.3, 15.6, 41.6], "radius": [1.5, 0.8, 2.0], "mat": "legs", "part": "leg_l"},
+    {
+      "op": "segment",
+      "points": [[31.6, 19.6, 40.5], [31.6, 16.4, 41.0]],
+      "radius": 1.05,
+      "mat": "legs",
+      "part": "leg_r"
+    },
+    {"op": "ellipsoid", "centre": [31.6, 15.6, 41.6], "radius": [1.5, 0.8, 2.0], "mat": "legs", "part": "leg_r"},
+    {"op": "ellipsoid", "centre": [22.5, 27.0, 40.8], "radius": [6.0, 1.2, 3.6], "mat": "wing", "part": "wing_l"},
+    {"op": "ellipsoid", "centre": [11.5, 27.0, 40.0], "radius": [7.5, 0.95, 2.4], "mat": "wing", "part": "wing_l_tip"},
+    {"op": "ellipsoid", "centre": [37.4, 27.0, 40.8], "radius": [6.0, 1.2, 3.6], "mat": "wing", "part": "wing_r"},
+    {"op": "ellipsoid", "centre": [48.4, 27.0, 40.0], "radius": [7.5, 0.95, 2.4], "mat": "wing", "part": "wing_r_tip"},
+    {"op": "recolour", "at": [25, 29, 26], "until": [35, 32, 36], "from": "back", "to": "crown"}
+  ],
+  "rig": {
+    "plan": "bird",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "head", "role": "head", "parent": "body", "joint": [29.938, 25.312, 34.812]},
+      {"name": "bill", "role": "head", "parent": "head", "joint": [29.94, 25.5, 28.5]},
+      {"name": "wing_l", "role": "wing", "parent": "body", "joint": [27.125, 27.188, 40.438], "side": "l"},
+      {"name": "wing_l_tip", "role": "wing", "parent": "wing_l", "joint": [17.75, 27.188, 39.5], "side": "l"},
+      {"name": "wing_r", "role": "wing", "parent": "body", "joint": [32.75, 27.188, 40.438], "side": "r"},
+      {"name": "wing_r_tip", "role": "wing", "parent": "wing_r", "joint": [42.125, 27.188, 39.5], "side": "r"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [29.938, 21.562, 48.875]},
+      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [28.062, 18.75, 40.438], "side": "l", "pair": 0},
+      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [31.812, 18.75, 40.438], "side": "r", "pair": 0}
+    ]
+  },
+  "vary": {"size": 0.06}
+}

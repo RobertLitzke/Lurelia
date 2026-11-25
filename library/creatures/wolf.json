@@ -5,6 +5,11 @@
   "notes": "Grey wolf: a quarter bigger than a coyote and heavier in the shoulder, hunting in packs of two to six: deer and elk in the forests, horses and saiga on the steppe. Keeps its distance and watches. v2: steppe_wolf merged in (its prey and its larger packs).",
   "colors": {"coyote": [124, 118, 112], "rabbit_light": [210, 196, 176], "dark": [36, 28, 24]},
   "behaviour": {
+    "displays": [
+      {"kind": "call", "params": {"posture": "sit", "pitch": 1.15, "jaw": 0.15, "call_s": 3.5}},
+      {"kind": "greet", "params": {"low": 0.4, "wag": 0.4}},
+      {"kind": "play"}
+    ],
     "sleeps_on_side": true,
     "walk_speed": 1.5,
     "flee_speed": 8.5,
@@ -13,7 +18,22 @@
     "hunts": ["deer", "elk", "mule_deer", "rabbit", "jackrabbit", "przewalski_horse", "saiga"],
     "spawn_chance": 0.1,
     "swims": true,
-    "group": {"size": [2, 6], "spacing": 2.6, "range": 16, "alignment": 1.0, "cohesion": 1.2}
+    "group": {"size": [2, 6], "spacing": 2.6, "range": 16, "alignment": 1.0, "cohesion": 1.2},
+    "voice": {
+      "size": 1.35,
+      "calls": [
+        {"cry": "howl", "on": "display:call", "at": "jaw", "boost": 8, "chorus": 0.6, "chorus_m": 800},
+        {
+          "cry": "howl",
+          "on": "idle",
+          "hours": "night",
+          "every_s": [600, 1800],
+          "boost": 8,
+          "chorus": 0.7,
+          "chorus_m": 800
+        }
+      ]
+    }
   },
   "like": "coyote",
   "scale": 1.3,

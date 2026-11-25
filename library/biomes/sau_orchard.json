@@ -3,12 +3,15 @@
   "version": 1,
   "introduced_by": "saurischia",
   "notes": "Orchards round the farms: apples in rows over mown grass.",
+  "habitat": "garden",
   "priority": 19,
   "rules": {"region": "orchard"},
   "surface": "lawn_grass",
   "subsurface": "dirt",
   "fringe": 0,
+  "soil": 0.6,
   "map_color": [150, 176, 92],
   "plants": [{"plant": "apple", "density": 0.012, "placement": {"verb": "scatter", "params": {"spacing": 7}}}],
-  "creatures": [{"creature": "starling", "count": 8}, {"creature": "bee", "count": 8}, {"creature": "compsognathus", "count": 4}]
+  "creatures": [{"creature": "starling", "count": 8}, {"creature": "bee", "count": 8}, {"creature": "compsognathus", "count": 4}],
+  "realm": {"real": 1.0}
 }

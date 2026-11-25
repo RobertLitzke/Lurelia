@@ -1,0 +1,15 @@
+{
+  "name": "frailejon",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Frailejón (Espeletia): an old one, a silver rosette of furred leaves held up on a trunk shagged with the dead leaves of every year it has grown, two to four metres tall, standing over the young ones.",
+  "form": "umbrella",
+  "height": [1.8, 3.6],
+  "trunk_radius": [0.18, 0.26],
+  "crown_radius": [0.4, 0.6],
+  "bark": "frailejon_trunk",
+  "leaf": "frailejon_leaf",
+  "squash": 0.8,
+  "max_slope": 0.7,
+  "site": {"wet": [0.15, 1.0], "soil": [0.0, 0.45], "cold": [0.65, 1.0], "shade": [0.0, 0.25]}
+}

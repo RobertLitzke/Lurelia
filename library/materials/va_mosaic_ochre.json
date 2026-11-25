@@ -1,0 +1,8 @@
+{
+  "name": "va_mosaic_ochre",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Plaza paving of glazed tile in saffron and terracotta, the borders round the blue.",
+  "like": "va_mosaic_blue",
+  "texture": {"base": [204, 140, 52], "alt": [180, 90, 56], "calm": {"base": [210, 150, 64], "alt": [186, 98, 64]}}
+}

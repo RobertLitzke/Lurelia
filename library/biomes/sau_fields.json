@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saurischia",
   "notes": "Cascadelle's grain fields: wheat and barley in hedged plots.",
+  "habitat": "field_crop",
   "priority": 20,
   "rules": {"region": "fields"},
   "surface": "barley_grass",
   "subsurface": "dirt",
   "fringe": 0,
+  "soil": 0.6,
   "map_color": [206, 186, 104],
   "plants": [{"plant": "hawthorn", "density": 0.004, "placement": {"verb": "edge", "params": {"width": 3, "inner": 0.0}}}],
   "creatures": [
@@ -16,5 +18,6 @@
     {"creature": "bumblebee", "count": 6},
     {"creature": "brachiosaurus", "count": 2},
     {"creature": "diplodocus", "count": 3}
-  ]
+  ],
+  "realm": {"real": 1.0}
 }

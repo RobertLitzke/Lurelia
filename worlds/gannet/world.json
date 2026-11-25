@@ -12,6 +12,7 @@
     "height": 1.2
   },
   "seed": 5120,
+  "plants": "v2",
   "neighbours": {
     "south": {
       "world": "ribshore",
@@ -82,7 +83,7 @@
     "rib_plain",
     "rib_dunes",
     "rib_blowout",
-    "rib_wrack",
+    "rib_wrack_giants",
     "rib_beach",
     "rib_shoals",
     "rib_kelp",

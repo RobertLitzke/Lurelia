@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "vermilion",
   "notes": "A damp ravine cut into a mesa's face by a spring-fed stream: a grove of aspen on grass along the water, a few young ponderosa and gambel oak on the drier banks, willow and thimbleberry by the stream.",
+  "habitat": "riparian",
   "priority": 7,
   "rules": {"region": "draw"},
   "surface": "meadow_grass",
   "subsurface": "dirt",
+  "soil": 0.55,
   "map_color": [128, 160, 84],
   "plants": [
     {"plant": "aspen", "density": 0.05, "placement": {"verb": "riparian", "params": {"width": 26}}},

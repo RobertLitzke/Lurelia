@@ -18,5 +18,6 @@
   "flower": "broom_flowers",
   "flower_seasons": ["spring", "summer"],
   "affords": ["nectar"],
-  "cane_leaves": 0.15
+  "cane_leaves": 0.15,
+  "site": {"wet": [0.0, 0.5], "soil": [0.0, 0.5], "sun": [0.4, 1.0], "shade": [0.0, 0.4]}
 }

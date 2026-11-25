@@ -10,14 +10,20 @@
     "dark": [36, 28, 24],
     "cap": [190, 240, 170, 1.4]
   },
-  "behaviour": {"walk_speed": 0.7, "wary": 5, "spawn_chance": 0.25},
+  "behaviour": {
+    "walk_speed": 0.7,
+    "wary": 5,
+    "spawn_chance": 0.25,
+    "voice": {"calls": [{"cry": "grunt", "on": "idle", "size": 0.45, "every_s": [300, 900], "chance": 0.5}]}
+  },
   "like": "badger",
   "scale": 1.15,
   "extra_ops": [
-    {"op": "ellipsoid", "centre": [16, 9.5, 17], "radius": [4.0, 1.4, 6.0], "mat": "coat"},
-    {"op": "box", "from": [14, 10, 13], "to": [15, 12, 14], "mat": "cap"},
-    {"op": "box", "from": [18, 10, 17], "to": [19, 11, 18], "mat": "cap"},
-    {"op": "set", "at": [16, 10, 21], "mat": "cap"}
+    {"op": "ellipsoid", "centre": [16.0, 13.3, 24.4], "radius": [5.6, 1.96, 8.4], "mat": "coat"},
+    {"op": "box", "from": [13, 14, 19], "to": [15, 17, 20], "mat": "cap"},
+    {"op": "box", "from": [19, 14, 24], "to": [20, 15, 26], "mat": "cap"},
+    {"op": "box", "from": [16, 14, 30], "to": [17, 15, 31], "mat": "cap"}
   ],
-  "vary": {"shade": 0.06, "hue": 0.04}
+  "vary": {"shade": 0.06, "hue": 0.04},
+  "realms": ["fae"]
 }

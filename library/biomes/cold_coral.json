@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "underwater",
   "notes": "Deep fjord walls and the slopes under them: thickets of white Lophelia, red sea fans standing across the tide, cod hanging over it and jellyfish drifting past.",
+  "habitat": "coral_reef",
   "priority": 5,
   "rules": {"underwater": true, "elev": [-60, -8], "slope": [0.45, 20]},
   "surface": "stone_dark",
   "subsurface": "stone_dark",
+  "soil": 0.5,
   "map_color": [200, 190, 200],
   "plants": [
     {

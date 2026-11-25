@@ -1,13 +1,15 @@
 {
   "name": "bear",
-  "version": 3,
+  "version": 4,
   "introduced_by": "glassfall",
-  "notes": "Black bear: a heavy, slow forager with a tan muzzle, alone and fairly rare. It moves off from people rather than toward them.",
-  "voxel": 0.06,
+  "notes": "Black bear: a heavy, slow forager with a tan muzzle, alone and fairly rare. It moves off from people rather than toward them. Modelled in a few large ellipsoids (chest with a shoulder hump, rump as its own bone) with segment legs and flat paws, for decimation.",
+  "voxel": 0.0333,
+  "grid": [32, 38, 62],
   "half_w": 0.34,
   "height": 1.0,
   "colors": {"bear": [36, 28, 24], "muzzle": [210, 180, 140], "dark": [36, 28, 24]},
   "behaviour": {
+    "displays": [{"kind": "roll"}, {"kind": "rub", "params": {"style": "back"}}, {"kind": "play"}],
     "movement": "graze",
     "sleeps_on_side": true,
     "walk_speed": 0.9,
@@ -19,78 +21,118 @@
     "spawn_chance": 0.00133,
     "swims": true,
     "active": "crepuscular",
-    "off_hours": 0.3
+    "off_hours": 0.3,
+    "voice": {
+      "size": 1.8,
+      "calls": [
+        {"cry": "growl", "on": "chase", "boost": 3},
+        {"cry": "snort", "on": "flee", "size": 1.2, "chance": 0.6},
+        {"cry": "grunt", "on": "idle", "every_s": [300, 900], "chance": 0.3}
+      ]
+    }
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [16.5, 11, 16], "radius": [5, 5, 8.5], "mat": "bear"},
-    {"op": "ellipsoid", "centre": [16.5, 13.5, 12], "radius": [4.2, 3.4, 3.6], "mat": "bear"},
-    {"op": "ellipsoid", "centre": [16.5, 12, 21], "radius": [4.6, 4.6, 4.2], "mat": "bear"},
-    {"op": "box", "from": [13, 2, 10], "to": [16, 10, 13], "mat": "bear", "part": "leg_fl"},
-    {"op": "box", "from": [13, 0, 9], "to": [16, 2, 13], "mat": "dark", "part": "leg_fl"},
-    {"op": "box", "from": [17, 2, 10], "to": [20, 10, 13], "mat": "bear", "part": "leg_fr"},
-    {"op": "box", "from": [17, 0, 9], "to": [20, 2, 13], "mat": "dark", "part": "leg_fr"},
-    {"op": "box", "from": [13, 2, 19], "to": [16, 10, 22], "mat": "bear", "part": "leg_hl"},
-    {"op": "box", "from": [13, 0, 18], "to": [16, 2, 22], "mat": "dark", "part": "leg_hl"},
-    {"op": "box", "from": [17, 2, 19], "to": [20, 10, 22], "mat": "bear", "part": "leg_hr"},
-    {"op": "box", "from": [17, 0, 18], "to": [20, 2, 22], "mat": "dark", "part": "leg_hr"},
-    {"op": "box", "from": [14, 10, 6], "to": [19, 15, 10], "mat": "bear", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.5, 13, 5], "radius": [3, 2.8, 2.8], "mat": "bear", "part": "head"},
-    {"op": "box", "from": [15, 10, 1], "to": [18, 13, 4], "mat": "muzzle", "part": "head"},
-    {"op": "box", "from": [15, 12, 0], "to": [18, 13, 1], "mat": "dark", "part": "head"},
-    {"op": "box", "from": [13, 15, 5], "to": [15, 17, 6], "mat": "bear", "part": "ear_l"},
-    {"op": "box", "from": [18, 15, 5], "to": [20, 17, 6], "mat": "bear", "part": "ear_r"},
-    {"op": "box", "from": [16, 13, 24], "to": [17, 15, 26], "mat": "bear", "part": "tail"}
+    {"op": "ellipsoid", "centre": [17, 19.2, 26.5], "radius": [8.8, 9.6, 9.8], "mat": "bear"},
+    {"op": "ellipsoid", "centre": [17, 18.6, 32.5], "radius": [9, 9.1, 8.2], "mat": "bear"},
+    {"op": "ellipsoid", "centre": [17, 24, 24.5], "radius": [7, 5.5, 6.5], "mat": "bear"},
+    {"op": "ellipsoid", "centre": [17, 19.6, 40], "radius": [8.6, 9.2, 8], "mat": "bear", "part": "hips"},
+    {
+      "op": "segment",
+      "points": [[13.5, 19.5, 22.5], [13.5, 10, 22.3]],
+      "radius": 3.2,
+      "mat": "bear",
+      "part": "leg_fl"
+    },
+    {"op": "segment", "points": [[13.5, 10, 22.3], [13.5, 3.5, 22]], "radius": 2.8, "mat": "bear", "part": "leg_fl"},
+    {"op": "ellipsoid", "centre": [13.5, 1.6, 22.3], "radius": [3.0, 1.8, 4.4], "mat": "dark", "part": "leg_fl"},
+    {
+      "op": "segment",
+      "points": [[13.5, 19.5, 38.5], [13.5, 11, 39.2]],
+      "radius": 4.0,
+      "mat": "bear",
+      "part": "leg_hl"
+    },
+    {"op": "segment", "points": [[13.5, 11, 39.2], [13.5, 3.5, 38.8]], "radius": 3.0, "mat": "bear", "part": "leg_hl"},
+    {"op": "ellipsoid", "centre": [13.5, 1.6, 38.8], "radius": [3.0, 1.8, 5.0], "mat": "dark", "part": "leg_hl"},
+    {
+      "op": "segment",
+      "points": [[20.5, 19.5, 22.5], [20.5, 10, 22.3]],
+      "radius": 3.2,
+      "mat": "bear",
+      "part": "leg_fr"
+    },
+    {"op": "segment", "points": [[20.5, 10, 22.3], [20.5, 3.5, 22]], "radius": 2.8, "mat": "bear", "part": "leg_fr"},
+    {"op": "ellipsoid", "centre": [20.5, 1.6, 22.3], "radius": [3.0, 1.8, 4.4], "mat": "dark", "part": "leg_fr"},
+    {
+      "op": "segment",
+      "points": [[20.5, 19.5, 38.5], [20.5, 11, 39.2]],
+      "radius": 4.0,
+      "mat": "bear",
+      "part": "leg_hr"
+    },
+    {"op": "segment", "points": [[20.5, 11, 39.2], [20.5, 3.5, 38.8]], "radius": 3.0, "mat": "bear", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [20.5, 1.6, 38.8], "radius": [3.0, 1.8, 5.0], "mat": "dark", "part": "leg_hr"},
+    {"op": "segment", "points": [[17, 22, 19.5], [17, 23.4, 14.5]], "radius": 4.6, "mat": "bear", "part": "neck"},
+    {"op": "ellipsoid", "centre": [17, 23.4, 11], "radius": [5.3, 4.9, 5.4], "mat": "bear", "part": "head"},
+    {"op": "ellipsoid", "centre": [17, 21.4, 6.8], "radius": [3.2, 2.6, 4.2], "mat": "muzzle", "part": "head"},
+    {"op": "ellipsoid", "centre": [17, 22.3, 2.9], "radius": [2.2, 1.7, 1.6], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [13.1, 25.2, 8], "radius": [1.2, 1.2, 1.2], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [20.9, 25.2, 8], "radius": [1.2, 1.2, 1.2], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [12.8, 27.6, 12], "radius": [2.2, 2.4, 1.2], "mat": "bear", "part": "ear_l"},
+    {"op": "ellipsoid", "centre": [21.2, 27.6, 12], "radius": [2.2, 2.4, 1.2], "mat": "bear", "part": "ear_r"},
+    {"op": "ellipsoid", "centre": [17, 24, 48.5], "radius": [2, 2, 2.4], "mat": "bear", "part": "tail"}
   ],
   "vary": {"size": 0.1, "shade": 0.1, "hue": 0.06},
   "rig": {
     "plan": "quadruped",
     "bones": [
       {"name": "body", "role": "root"},
-      {"name": "neck", "role": "neck", "parent": "body", "joint": [16.5, 12.5, 9]},
-      {"name": "head", "role": "head", "parent": "neck", "joint": [16.5, 12.5, 6.5]},
-      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [14, 15, 5.5], "side": "l"},
-      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [19, 15, 5.5], "side": "r"},
-      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14.5, 10, 11.5], "side": "l", "pair": 0},
+      {"name": "hips", "role": "spine", "parent": "body", "joint": [17, 20.5, 35.5]},
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16.901, 22.523, 18.387]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16.901, 22.523, 13.883]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [12.396, 27.027, 12.081], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [21.405, 27.027, 12.081], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [13.5, 18.018, 22.892], "side": "l", "pair": 0},
       {
         "name": "leg_fl_low",
         "role": "leg",
         "parent": "leg_fl",
-        "joint": [14.5, 5, 11.5],
-        "claims": [[[13, 0, 9], [16, 5, 13]]],
+        "joint": [13.5, 9.009, 22.892],
+        "claims": [[[10, 0, 17], [17, 9, 27]]],
         "side": "l",
         "pair": 0
       },
-      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [18.5, 10, 11.5], "side": "r", "pair": 0},
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [20.5, 18.018, 22.892], "side": "r", "pair": 0},
       {
         "name": "leg_fr_low",
         "role": "leg",
         "parent": "leg_fr",
-        "joint": [18.5, 5, 11.5],
-        "claims": [[[17, 0, 9], [20, 5, 13]]],
+        "joint": [20.5, 9.009, 22.892],
+        "claims": [[[17, 0, 17], [24, 9, 27]]],
         "side": "r",
         "pair": 0
       },
-      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14.5, 10, 20.5], "side": "l", "pair": 1},
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [13.5, 18.018, 39.108], "side": "l", "pair": 1},
       {
         "name": "leg_hl_low",
         "role": "leg",
         "parent": "leg_hl",
-        "joint": [14.5, 5, 20.5],
-        "claims": [[[13, 0, 18], [16, 5, 22]]],
+        "joint": [13.5, 9.009, 39.108],
+        "claims": [[[10, 0, 33], [17, 9, 45]]],
         "side": "l",
         "pair": 1
       },
-      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [18.5, 10, 20.5], "side": "r", "pair": 1},
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [20.5, 18.018, 39.108], "side": "r", "pair": 1},
       {
         "name": "leg_hr_low",
         "role": "leg",
         "parent": "leg_hr",
-        "joint": [18.5, 5, 20.5],
-        "claims": [[[17, 0, 18], [20, 5, 22]]],
+        "joint": [20.5, 9.009, 39.108],
+        "claims": [[[17, 0, 33], [24, 9, 45]]],
         "side": "r",
         "pair": 1
       },
-      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 14, 24]}
+      {"name": "tail", "role": "tail", "parent": "hips", "joint": [17, 24, 46.5]}
     ]
   }
 }

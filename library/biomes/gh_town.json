@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "gannet",
   "notes": "The town's lawns and verges: mown grass, street trees, roses by the doors. Kept, with nobody to keep it.",
+  "habitat": "settlement",
   "priority": 8,
   "rules": {"region": "gannet_harbor", "elev": [0.5, 80]},
   "surface": "lawn_grass",
   "subsurface": "dirt",
+  "soil": 0.55,
   "map_color": [160, 170, 150],
   "plants": [
     {"plant": "street_maple", "density": 0.0015, "placement": {"verb": "lone", "params": {"spacing": 22}}},

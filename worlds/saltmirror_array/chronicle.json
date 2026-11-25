@@ -1,0 +1,187 @@
+{
+  "events": [
+    {
+      "year": -1000000,
+      "event": "heightmap",
+      "file": "ground.bin",
+      "cause": "the land the track is laid over, fitted to the road by tools/course/track_file.py"
+    },
+    {
+      "year": -999999,
+      "event": "terrain",
+      "mode": "add",
+      "base": 0,
+      "hills": 0.6,
+      "ridges": 0,
+      "rough": 1,
+      "vary": 0.4,
+      "warp": 30,
+      "cause": "rolling over the fitted land"
+    },
+    {
+      "year": 1975,
+      "event": "place",
+      "cause": "one of the array's dishes, still parked facing the zenith",
+      "structure": "array_dish",
+      "at": {
+        "along": 70,
+        "right": 95
+      }
+    },
+    {
+      "year": 1976,
+      "event": "place",
+      "cause": "one of the array's dishes, still parked facing the zenith",
+      "structure": "array_dish",
+      "at": {
+        "along": 190,
+        "right": 95
+      }
+    },
+    {
+      "year": 1977,
+      "event": "place",
+      "cause": "one of the array's dishes, still parked facing the zenith",
+      "structure": "array_dish",
+      "at": {
+        "along": 310,
+        "right": 95
+      }
+    },
+    {
+      "year": 1978,
+      "event": "place",
+      "cause": "one of the array's dishes, still parked facing the zenith",
+      "structure": "array_dish",
+      "at": {
+        "along": 430,
+        "right": 95
+      }
+    },
+    {
+      "year": 1979,
+      "event": "place",
+      "cause": "one of the array's dishes, still parked facing the zenith",
+      "structure": "array_dish",
+      "at": {
+        "along": 520,
+        "right": 95
+      }
+    },
+    {
+      "year": 1985,
+      "event": "place",
+      "cause": "the dish whose bowl came down on the salt, half turned on its mount",
+      "structure": "array_dish_tilted",
+      "at": [
+        930,
+        560
+      ]
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Arm",
+      "kind": "pan",
+      "along": {
+        "from": 0,
+        "to": 540,
+        "left": [
+          0,
+          90
+        ]
+      },
+      "cause": "the Arm"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Fallen Dish",
+      "kind": "pan",
+      "along": {
+        "from": 548,
+        "to": 720,
+        "left": [
+          0,
+          50
+        ]
+      },
+      "cause": "the Fallen Dish"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Knolls",
+      "kind": "pan",
+      "along": {
+        "from": 720,
+        "to": 1050,
+        "right": [
+          0,
+          40
+        ]
+      },
+      "cause": "the Knolls"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Fynbos",
+      "kind": "pan",
+      "along": {
+        "from": 1070,
+        "to": 1410,
+        "left": [
+          0,
+          60
+        ]
+      },
+      "cause": "the Fynbos"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Shoreline",
+      "kind": "pan",
+      "along": {
+        "from": 1410,
+        "to": 1680,
+        "left": [
+          0,
+          60
+        ]
+      },
+      "cause": "the Shoreline"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Gypsum Dunes",
+      "kind": "pan",
+      "along": {
+        "from": 1700,
+        "to": 1980,
+        "left": [
+          0,
+          60
+        ]
+      },
+      "cause": "the Gypsum Dunes"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Brine",
+      "kind": "pan",
+      "along": {
+        "from": 1980,
+        "to": 2100,
+        "left": [
+          0,
+          60
+        ]
+      },
+      "cause": "the Brine"
+    }
+  ]
+}

@@ -9,6 +9,8 @@
     "light": 0.15
   },
   "seed": 1883,
+  "plants": "v2",
+  "realms": {"real": 0.4, "ice_age": 0.6},
   "sun": {
     "latitude": 50
   },

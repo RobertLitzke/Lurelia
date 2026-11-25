@@ -1,0 +1,13 @@
+{
+  "name": "parkland",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Grass with single trees standing apart: savanna and wood pasture.",
+  "wet": 0.35,
+  "soil": 0.55,
+  "shade": 0.15,
+  "rock": 0.05,
+  "disturbed": 0.05,
+  "open": 0.7,
+  "forage": ["graze", "browse"]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "fallen_log",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A tree that came down and lies where it fell, bark going grey, a limb or two snapped short. Under placement v2 a wood's own trees fall as logs of their own size and bark; listed on its own, it is this.",
+  "form": "snag",
+  "height": [4.0, 9.0],
+  "trunk_radius": [0.2, 0.35],
+  "crown_radius": [0.0, 0.0],
+  "bark": "dead_wood",
+  "max_slope": 0.6,
+  "skeleton": "log"
+}

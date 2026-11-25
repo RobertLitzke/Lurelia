@@ -1,0 +1,17 @@
+{
+  "name": "drift_bell_dome",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "A drift-bell's dome: translucent-looking lilac and milk white, ribbed, faintly lit from inside.",
+  "smooth": true,
+  "glow": 0.35,
+  "texture": {
+    "pattern": "blotch",
+    "base": [206, 196, 232],
+    "alt": [238, 232, 246],
+    "scale": 4,
+    "contrast": 0.6,
+    "calm": {"base": [212, 202, 236], "alt": [242, 236, 248]}
+  },
+  "round": true
+}

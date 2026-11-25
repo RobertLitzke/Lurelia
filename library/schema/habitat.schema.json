@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "patternProperties": {
+    "^_": {}
+  },
+  "properties": {
+    "disturbed": {
+      "default": null,
+      "description": "How much people, fire or fresh ground have opened it, 0 to 1.",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "forage": {
+      "default": [],
+      "description": "What it offers animals that feed there (`FORAGE`).",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "introduced_by": {
+      "default": "",
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "notes": {
+      "description": "One sentence on what the entry is, for people and the catalogue.",
+      "type": "string"
+    },
+    "open": {
+      "default": null,
+      "description": "How open the ground is to the sky and to running animals, 0 (closed\nwood) to 1 (open plain).",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "rock": {
+      "default": null,
+      "description": "How much of the ground is stone, 0 to 1.",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "shade": {
+      "default": null,
+      "description": "Share of the ground under a canopy, 0 to 1.",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "soil": {
+      "default": null,
+      "description": "Acid (0) to base-rich (1), as a biome's `soil`.",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "version": {
+      "default": 1,
+      "format": "uint32",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "wet": {
+      "default": null,
+      "description": "Ground water, 0 dry to 1 standing water: the habitat's baseline for\nthe `wet` site field.",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "title": "HabitatDef",
+  "type": "object"
+}

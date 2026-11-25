@@ -62,10 +62,25 @@ pub struct Farmland<'a> {
     pub seed: u32,
 }
 
+/// A corner of a field, away from the road: where a shed would stand.
+#[derive(Clone, Copy, Debug)]
+pub struct Corner {
+    /// The corner, on the field's own ground just inside its walls.
+    pub at: Vec2,
+    /// Toward the middle of the field.
+    pub into: Vec2,
+    /// The field's crop (an index into the caller's crop list).
+    pub crop: u8,
+    /// A number of its own, for the dice.
+    pub hash: u32,
+}
+
 /// What laying them made.
 pub struct LaidFields {
     pub boundaries: Vec<Boundary>,
     pub crops: Crops,
+    /// One corner of each field big enough to have one.
+    pub corners: Vec<Corner>,
     /// Oaks standing out of the hedges.
     pub trees: Vec<(Vec2, super::Tree)>,
 }
@@ -118,6 +133,7 @@ pub fn fields(plan: &mut Plan, dist: &Districts, spec: &Spec, ground: &dyn Groun
         ground,
     );
     plan.crops = laid.crops;
+    plan.corners = laid.corners;
     plan.boundaries.extend(laid.boundaries);
     plan.trees.extend(laid.trees);
 }
@@ -131,7 +147,7 @@ pub fn lay(f: &Farmland, ground: &dyn Ground) -> LaidFields {
     let lo = f.lo;
     let w = (((f.hi.x - lo.x) / CELL) as usize).max(1);
     let h = (((f.hi.y - lo.y) / CELL) as usize).max(1);
-    let mut out = LaidFields { boundaries: Vec::new(), crops: Crops { lo, step: CELL, w, h, cells: vec![255; w * h] }, trees: Vec::new() };
+    let mut out = LaidFields { boundaries: Vec::new(), crops: Crops { lo, step: CELL, w, h, cells: vec![255; w * h] }, corners: Vec::new(), trees: Vec::new() };
     let near_road = |p: Vec2, m: f32| f.keep_off.iter().any(|&(a, b, hw)| seg_foot(a, b, p).0 < hw + m) || f.avoid.iter().any(|&(q, r)| q.distance(p) < r);
     let in_band = |p: Vec2| (f.band)(p);
     if f.roads.is_empty() {
@@ -233,6 +249,52 @@ pub fn lay(f: &Farmland, ground: &dyn Ground) -> LaidFields {
     for i in 0..w * h {
         if key[i] != NONE {
             out.crops.cells[i] = (hash32((key[i] as u32) ^ ((key[i] >> 32) as u32).wrapping_mul(0x9e37_79b9) ^ f.seed) >> 29) as u8;
+        }
+    }
+
+    // Each field's corner: of the cells on its edge (beside another field,
+    // or no field) and clear of the roads, the one furthest from its middle.
+    {
+        let mut sum: HashMap<u64, (Vec2, u32)> = HashMap::default();
+        for i in 0..w * h {
+            if key[i] != NONE {
+                let p = lo + Vec2::new(((i % w) as f32 + 0.5) * CELL, ((i / w) as f32 + 0.5) * CELL);
+                let e = sum.entry(key[i]).or_insert((Vec2::ZERO, 0));
+                e.0 += p;
+                e.1 += 1;
+            }
+        }
+        let mut best: HashMap<u64, (f32, usize)> = HashMap::default();
+        for z in 1..h.saturating_sub(1) {
+            for x in 1..w.saturating_sub(1) {
+                let i = z * w + x;
+                let k = key[i];
+                if k == NONE || [i - 1, i + 1, i - w, i + w].iter().all(|&j| key[j] == k) {
+                    continue;
+                }
+                let p = lo + Vec2::new((x as f32 + 0.5) * CELL, (z as f32 + 0.5) * CELL);
+                if near_road(p, 9.0) {
+                    continue;
+                }
+                let (s, n) = sum[&k];
+                let d = p.distance(s / n as f32);
+                if best.get(&k).is_none_or(|b| d > b.0) {
+                    best.insert(k, (d, i));
+                }
+            }
+        }
+        let mut ks: Vec<u64> = best.keys().copied().collect();
+        ks.sort_unstable();
+        for k in ks {
+            let (s, n) = sum[&k];
+            // Under about 0.1 ha a field is too small for a shed of its own.
+            if (n as f32) * CELL * CELL < 1000.0 {
+                continue;
+            }
+            let i = best[&k].1;
+            let p = lo + Vec2::new(((i % w) as f32 + 0.5) * CELL, ((i / w) as f32 + 0.5) * CELL);
+            let into = (s / n as f32 - p).normalize_or_zero();
+            out.corners.push(Corner { at: p, into, crop: out.crops.cells[i], hash: hash32((k as u32) ^ ((k >> 32) as u32).wrapping_mul(0x85eb_ca6b) ^ f.seed) });
         }
     }
 

@@ -1,0 +1,16 @@
+{
+  "name": "paintbrush",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Indian paintbrush (drawn as sprites): scarlet bracts over grey-green leaves.",
+  "smooth": false,
+  "sprites": "flower",
+  "texture": {
+    "pattern": "noise",
+    "base": [88, 104, 70],
+    "alt": [206, 64, 46],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [94, 110, 76], "alt": [212, 78, 58]}
+  }
+}

@@ -13,7 +13,21 @@
     "spawn_chance": 0.12,
     "group": {"size": [2, 5], "spacing": 3.0, "range": 16, "alignment": 0.7, "cohesion": 1.1},
     "active": "nocturnal",
-    "off_hours": 0.15
+    "off_hours": 0.15,
+    "voice": {
+      "calls": [
+        {
+          "cry": "whoop",
+          "on": "idle",
+          "hours": "night",
+          "every_s": [300, 900],
+          "boost": 5,
+          "chorus": 0.4,
+          "chorus_m": 600
+        },
+        {"cry": "chatter", "on": "chase", "size": 2.0, "boost": 2}
+      ]
+    }
   },
   "like": "cougar",
   "scale": 0.95,

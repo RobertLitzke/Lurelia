@@ -1,0 +1,40 @@
+{
+  "name": "realistic",
+  "version": 1,
+  "introduced_by": "realistic",
+  "notes": "Real firearms in the arena's roles: the rocket launcher's pad holds a shoulder rocket, the scrap gun's a shotgun, the minigun's a machine gun, the skipjack's an assault rifle, the arc gun's a flamethrower, the goo gun's a grenade launcher, the bore's an anti-materiel rifle that goes through walls. The melee spot holds a shovel or a knife, drawn once a match, so every pad of it agrees.",
+  "title": "Realistic",
+  "roles": {
+    "melee": [
+      "shovel",
+      "knife"
+    ],
+    "sidearm": [
+      "pistol"
+    ],
+    "lobber": [
+      "grenade_launcher"
+    ],
+    "breacher": [
+      "anti_materiel_rifle"
+    ],
+    "stream": [
+      "flamethrower"
+    ],
+    "midrange": [
+      "assault_rifle"
+    ],
+    "heavy": [
+      "machine_gun"
+    ],
+    "spread": [
+      "shotgun"
+    ],
+    "explosive": [
+      "rpg"
+    ],
+    "marksman": [
+      "bolt_rifle"
+    ]
+  }
+}

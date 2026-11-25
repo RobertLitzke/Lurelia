@@ -1,0 +1,30 @@
+{
+  "name": "lion_female",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Lioness: the lion's female form (lion `forms`), drawn when a lion is female. Smaller than the male and maneless, paler and sleeker, with a deep chest, a heavy square muzzle and the dark tuft on the tail. Only its model is used; it spawns as a lion. It hunts nothing of its own, so a world with lions doesn't build the cougar's prey for it.",
+  "colors": {
+    "coat": [212, 178, 122],
+    "belly": [232, 218, 190],
+    "muzzle": [234, 222, 198],
+    "tuft": [70, 50, 34],
+    "ear_back": [74, 56, 40]
+  },
+  "behaviour": {"hunts": []},
+  "like": "cougar",
+  "scale": 1.24,
+  "extra_ops": [
+    {"op": "ellipsoid", "centre": [16.0, 18.6, 22.4], "radius": [6.5, 6.6, 6.8], "mat": "coat"},
+    {"op": "recolour_below", "y": 14, "from": "coat", "to": "belly"},
+    {"op": "ellipsoid", "centre": [16.0, 22.4, 10.2], "radius": [5.6, 4.8, 5.4], "mat": "coat", "part": "head"},
+    {"op": "ellipsoid", "centre": [16.0, 20.0, 5.2], "radius": [3.2, 2.6, 3.4], "mat": "coat", "part": "head"},
+    {"op": "ellipsoid", "centre": [16.0, 18.2, 5.6], "radius": [2.7, 1.5, 2.7], "mat": "muzzle", "part": "head"},
+    {"op": "ellipsoid", "centre": [16.0, 21.6, 2.4], "radius": [1.5, 1.1, 1.0], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [13.2, 24.2, 6.4], "radius": [1.2, 1.1, 1.1], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [18.8, 24.2, 6.4], "radius": [1.2, 1.1, 1.1], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [12.6, 26.0, 11.6], "radius": [1.7, 2.1, 0.8], "mat": "ear_back", "part": "ear_l"},
+    {"op": "ellipsoid", "centre": [19.4, 26.0, 11.6], "radius": [1.7, 2.1, 0.8], "mat": "ear_back", "part": "ear_r"},
+    {"op": "segment", "points": [[16, 15.4, 50], [16, 15, 54]], "radius": 1.6, "mat": "coat", "part": "tail"},
+    {"op": "ellipsoid", "centre": [16.0, 15.0, 54.6], "radius": [2.4, 2.4, 2.6], "mat": "tuft", "part": "tail"}
+  ]
+}

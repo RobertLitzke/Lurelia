@@ -1,0 +1,97 @@
+{
+  "name": "kitehold",
+  "title": "Kitehold Plains",
+  "blurb": "South of Saurischia: a grass plain with wild horses and a kite-flying town on a basalt plug, lava tubes in the north-west, and east of the Lessa maple woods climbing through redwoods and cloud forest to a foggy páramo.",
+  "size_m": 1536,
+  "height_m": 256,
+  "sea_level_m": 34,
+  "seed": 4417,
+  "plants": "v2",
+  "neighbours": {
+    "north": {
+      "world": "saurischia",
+      "offset": 0
+    },
+    "west": {
+      "world": "gannet",
+      "offset": 0
+    }
+  },
+  "tide": {
+    "range": 3.0
+  },
+  "sun": {
+    "latitude": 47
+  },
+  "rock": [
+    [
+      "basalt",
+      0.6
+    ],
+    [
+      "stone_dark",
+      0.4
+    ]
+  ],
+  "spawn": [
+    560,
+    1200
+  ],
+  "spawn_bearing": 15,
+  "seasons": [
+    "spring",
+    "summer",
+    "autumn",
+    "winter"
+  ],
+  "start_season": "autumn",
+  "weather": {
+    "sun": 1.2,
+    "clouds": 1.0,
+    "rain": 0.7,
+    "fog": 0.6,
+    "storm": 0.15,
+    "snow": 0.05
+  },
+  "start_weather": "sun",
+  "start_hour": 16.0,
+  "moss": 1.0,
+  "default_biome": "kh_plain",
+  "seabed_biome": "gh_bay_floor",
+  "biomes": [
+    "kh_plain",
+    "kh_ribbon",
+    "kh_ribbon_orange",
+    "kh_ribbon_red",
+    "kh_dogtown",
+    "sau_cinder",
+    "kh_kipuka",
+    "kh_cliff",
+    "kh_riverside",
+    "kh_maple",
+    "kh_vale_meadow",
+    "kh_redwood",
+    "kh_titans",
+    "kh_cloud",
+    "kh_cloud_high",
+    "kh_paramo",
+    "kh_bog",
+    "kh_marsh",
+    "kh_flax",
+    "kh_sunflower",
+    "kh_town",
+    "kh_hamlet",
+    "kh_cottage_garden",
+    "kh_wet_meadow",
+    "kh_salt_marsh",
+    "kh_fernwood",
+    "barley_plot",
+    "gh_orchard",
+    "town_pasture",
+    "town_hay",
+    "gh_spruce",
+    "gh_faewood",
+    "gh_clam_flats",
+    "gh_bay_floor"
+  ]
+}

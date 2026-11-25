@@ -12,33 +12,69 @@
     "dark": [36, 28, 24],
     "antler": [214, 196, 160]
   },
+  "forms": {"female": "sheep_female", "juvenile": "sheep_female"},
   "behaviour": {
     "movement": "graze",
     "walk_speed": 0.7,
     "flee_speed": 4.5,
     "wary": 9,
     "flightiness": 0.3,
-    "group": {"size": [3, 9], "spacing": 2.0, "range": 16, "alignment": 1.0, "cohesion": 1.4}
+    "group": {"size": [3, 9], "spacing": 2.0, "range": 16, "alignment": 1.0, "cohesion": 1.4},
+    "voice": {
+      "size": 1.0,
+      "calls": [
+        {"cry": "bleat", "on": "idle", "every_s": [60, 240], "chorus": 0.4, "chorus_m": 100},
+        {"cry": "snort", "on": "flee", "size": 1.1, "chance": 0.4}
+      ]
+    }
   },
   "like": "bighorn",
   "scale": 0.8,
   "extra_ops": [
-    {"op": "disc", "centre": [12.5, 22, 7], "radius": 3.6, "thick": 2.0, "axis": "x", "mat": "air", "part": "head"},
-    {"op": "disc", "centre": [19.5, 22, 7], "radius": 3.6, "thick": 2.0, "axis": "x", "mat": "air", "part": "head"},
-    {"op": "box", "from": [13, 24, 6], "to": [19, 26, 10], "mat": "air", "part": "head"},
-    {"op": "box", "from": [13, 23, 8], "to": [19, 24, 10], "mat": "air", "part": "head"},
-    {"op": "ellipsoid", "centre": [16, 15, 17], "radius": [5.0, 4.8, 7.6], "mat": "fleece"},
-    {"op": "box", "from": [14, 16, 8], "to": [18, 21, 12], "mat": "fleece", "part": "neck"},
-    {"op": "box", "from": [14, 19, 3], "to": [18, 24, 8], "mat": "face", "part": "head"},
-    {"op": "box", "from": [14, 22, 7], "to": [18, 25, 9], "mat": "fleece", "part": "head"},
-    {"op": "set", "at": [14, 22, 4], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [17, 22, 4], "mat": "dark", "part": "head"},
-    {"op": "box", "from": [12, 21, 7], "to": [14, 22, 9], "mat": "face", "part": "head"},
-    {"op": "box", "from": [18, 21, 7], "to": [20, 22, 9], "mat": "face", "part": "head"},
-    {"op": "box", "from": [13, 2, 11], "to": [16, 9, 14], "mat": "face", "part": "leg_fl"},
-    {"op": "box", "from": [17, 2, 11], "to": [20, 9, 14], "mat": "face", "part": "leg_fr"},
-    {"op": "box", "from": [13, 2, 21], "to": [16, 9, 24], "mat": "face", "part": "leg_hl"},
-    {"op": "box", "from": [17, 2, 21], "to": [20, 9, 24], "mat": "face", "part": "leg_hr"}
+    {
+      "op": "segment",
+      "points": [[13.4, 36.6, 8.6], [11.7, 37.4, 11.2], [10.4, 35.6, 13.6]],
+      "radius": 3.3,
+      "mat": "air",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[10.4, 35.6, 13.6], [10.0, 32.2, 13.6], [10.8, 30.8, 10.6]],
+      "radius": 2.8,
+      "mat": "air",
+      "part": "head"
+    },
+    {"op": "segment", "points": [[10.8, 30.8, 10.6], [11.6, 31.6, 8.0]], "radius": 2.2, "mat": "air", "part": "head"},
+    {
+      "op": "segment",
+      "points": [[18.6, 36.6, 8.6], [20.3, 37.4, 11.2], [21.6, 35.6, 13.6]],
+      "radius": 3.3,
+      "mat": "air",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[21.6, 35.6, 13.6], [22.0, 32.2, 13.6], [21.2, 30.8, 10.6]],
+      "radius": 2.8,
+      "mat": "air",
+      "part": "head"
+    },
+    {"op": "segment", "points": [[21.2, 30.8, 10.6], [20.4, 31.6, 8.0]], "radius": 2.2, "mat": "air", "part": "head"},
+    {"op": "recolour", "at": [10, 28, 0], "until": [22, 38, 11], "from": "rabbit", "to": "face"},
+    {"op": "recolour", "at": [10, 28, 0], "until": [22, 38, 11], "from": "rabbit_light", "to": "face"},
+    {"op": "recolour", "at": [8, 3, 14], "until": [24, 14, 42], "from": "rabbit", "to": "face"},
+    {"op": "ellipsoid", "centre": [16, 22.8, 26], "radius": [7.6, 7.3, 11.4], "mat": "fleece"},
+    {"op": "ellipsoid", "centre": [16, 22.6, 20], "radius": [7.2, 7.4, 7.4], "mat": "fleece"},
+    {"op": "ellipsoid", "centre": [16, 22.6, 33], "radius": [6.8, 7.0, 6.5], "mat": "fleece"},
+    {
+      "op": "segment",
+      "points": [[16, 24.5, 15.0], [16, 28.5, 13.0], [16, 30.8, 11.8]],
+      "radius": 4.8,
+      "mat": "fleece",
+      "part": "neck"
+    },
+    {"op": "ellipsoid", "centre": [16, 36.0, 10.0], "radius": [3.2, 1.9, 2.6], "mat": "fleece", "part": "head"}
   ],
   "vary": {"size": 0.08, "shade": 0.04}
 }

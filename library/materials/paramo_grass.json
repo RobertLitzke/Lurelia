@@ -1,0 +1,10 @@
+{
+  "name": "paramo_grass",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Páramo tussock grass: stiff straw-gold and grey-green bunches on the high wet moor, beaded with fog.",
+  "like": "feathergrass",
+  "drift": {"calm": [[150, 150, 108], [172, 158, 106]], "classic": [[128, 128, 90], [150, 136, 88]]},
+  "texture": {"base": [146, 138, 96], "alt": [120, 124, 88], "calm": {"base": [162, 154, 110], "alt": [138, 140, 100]}},
+  "grass": {"sparse": 0.4, "dense": 0.95, "short": 2.4}
+}

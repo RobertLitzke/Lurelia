@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "ribshore",
   "notes": "The wrack line at the dune foot: dry sand, driftwood thrown up by the storms, and the last of the dunegrass.",
+  "habitat": "beach",
   "priority": 5,
   "rules": {"coast": [90, 190], "elev": [1.4, 7]},
   "surface": "dune_sand",
   "subsurface": "dune_sand",
+  "soil": 0.5,
   "map_color": [208, 196, 160],
   "plants": [
     {

@@ -3,11 +3,13 @@
   "version": 2,
   "introduced_by": "glassfall",
   "notes": "Old fields and yards around a settlement, gone to meadow.",
+  "habitat": "meadow",
   "priority": 9,
   "rules": {"region": "village"},
   "surface": "meadow_grass",
   "subsurface": "silt",
   "fringe": 0,
+  "soil": 0.65,
   "map_color": [150, 180, 90],
   "plants": [
     {"plant": "oak", "density": 0.0005, "placement": {"verb": "lone", "params": {"spacing": 30}}},

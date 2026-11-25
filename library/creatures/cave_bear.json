@@ -12,14 +12,23 @@
     "wary": 15,
     "flees_from": ["player"],
     "spawn_chance": 0.3,
-    "swims": true
+    "swims": true,
+    "voice": {
+      "size": 2.2,
+      "calls": [
+        {"cry": "growl", "on": "chase", "boost": 3},
+        {"cry": "snort", "on": "flee", "size": 1.2, "chance": 0.6},
+        {"cry": "grunt", "on": "idle", "every_s": [300, 900], "chance": 0.3}
+      ]
+    }
   },
   "like": "bear",
   "scale": 1.8,
   "extra_ops": [
-    {"op": "ellipsoid", "centre": [16.5, 14.5, 13.5], "radius": [4.8, 3.2, 4.0], "mat": "bear"},
-    {"op": "box", "from": [13, 0, 9], "to": [16, 2, 14], "mat": "dark", "part": "leg_fl"},
-    {"op": "box", "from": [17, 0, 9], "to": [20, 2, 14], "mat": "dark", "part": "leg_fr"}
+    {"op": "ellipsoid", "centre": [16.901, 26.126, 26.495], "radius": [8.649, 5.766, 7.207], "mat": "bear"},
+    {"op": "ellipsoid", "centre": [13.5, 1.8, 22.5], "radius": [3.2, 2, 4.8], "mat": "dark", "part": "leg_fl"},
+    {"op": "ellipsoid", "centre": [20.5, 1.8, 22.5], "radius": [3.2, 2, 4.8], "mat": "dark", "part": "leg_fr"}
   ],
-  "vary": {"size": 0.1, "shade": 0.1, "hue": 0.04}
+  "vary": {"size": 0.1, "shade": 0.1, "hue": 0.04},
+  "realms": ["ice_age"]
 }

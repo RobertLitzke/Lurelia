@@ -11,5 +11,6 @@
   "leaf": "beach_pea_leaves",
   "squash": 0.45,
   "max_slope": 0.9,
-  "affords": ["nectar"]
+  "affords": ["nectar"],
+  "site": {"wet": [0.0, 0.5], "exposure": [0.4, 1.0], "shade": [0.0, 0.2]}
 }

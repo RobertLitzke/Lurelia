@@ -386,10 +386,14 @@ mod tests {
                 side: 0.0,
                 pair: 0,
                 spread: None,
+                rigid: false,
+                loose: false,
+                hull: Vec::new(),
             })
             .collect();
         let rig = Rig {
             soft: None,
+            sit_up: 0.0,
             plan: Some(Plan::Serpent),
             bones,
             activities: HashMap::new(),
@@ -445,9 +449,13 @@ mod tests {
             side: 0.0,
             pair: 0,
             spread: None,
+            rigid: false,
+            loose: false,
+            hull: Vec::new(),
         };
         let rig = Rig {
             soft: None,
+            sit_up: 0.0,
             plan: Some(Plan::Octopus),
             activities: HashMap::new(),
             floor: 0.0,

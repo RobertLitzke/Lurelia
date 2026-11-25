@@ -1,0 +1,34 @@
+{
+  "name": "bb_temple",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "The wood round Kagami Pond: coast redwoods and old spruce over moss and redwood sorrel, Japanese maples along the shore that go crimson in autumn, ferns, and stone grown over with moss. Koi in the pond.",
+  "habitat": "conifer_forest",
+  "priority": 9,
+  "rules": {"region": "temple"},
+  "surface": "fernwood_floor",
+  "subsurface": "dirt",
+  "map_color": [90, 120, 70],
+  "plants": [
+    {"plant": "redwood", "density": 0.012, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "young_redwood", "density": 0.01, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "momiji", "density": 0.01, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "fern", "density": 0.09, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "tree_moss", "density": 0.4, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "rock_moss", "density": 0.3, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "salal", "density": 0.05, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "sitka_spruce", "density": 0.014, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "redwood_sorrel", "density": 0.05, "placement": {"verb": "clustered", "params": {}}}
+  ],
+  "features": [{"structure": "mossy_log", "density": 0.0004}],
+  "creatures": [
+    {"creature": "deer", "count": 2},
+    {"creature": "douglas_squirrel", "count": 3},
+    {"creature": "stellers_jay", "count": 3},
+    {"creature": "kingfisher", "count": 2},
+    {"creature": "tawny_owl", "count": 1},
+    {"creature": "koi", "count": 14},
+    {"creature": "cougar", "count": 2},
+    {"creature": "firefly", "count": 12}
+  ]
+}

@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "saltmirror",
   "notes": "The gravel fans at the foot of the range: sand washed out of the ravines over grey gravel, dry grass tufts on it, and the cactus forest on them, cardon and saguaro over ocotillo, cholla, prickly pear and agave, with lizards everywhere.",
+  "habitat": "desert_scrub",
   "priority": 7,
   "rules": {"elev": [1.0, 20]},
   "surface": "fan_sand",
   "subsurface": "fan_gravel",
+  "soil": 0.5,
   "map_color": [176, 170, 150],
   "plants": [
     {

@@ -13,6 +13,15 @@
     "breast": [214, 196, 162],
     "head_cap": [110, 90, 64]
   },
+  "behaviour": {
+    "displays": [{"kind": "song_flight", "params": {"climb": [25, 45], "rise": 2.0, "hang": [15, 30], "spiral": 4}}],
+    "voice": {
+      "calls": [
+        {"cry": "song", "on": "idle", "hours": "day", "every_s": [20, 60]},
+        {"cry": "song", "on": "display:song_flight"}
+      ]
+    }
+  },
   "like": "sparrow",
   "scale": 0.95
 }

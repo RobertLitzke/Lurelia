@@ -10,7 +10,8 @@
     "flee_speed": 5,
     "wary": 12,
     "flightiness": 1.4,
-    "flees_from": ["player", "eagle", "coyote"]
+    "flees_from": ["player", "eagle", "coyote"],
+    "voice": {"size": 2.2, "calls": [{"cry": "pipe", "on": "flee", "boost": 2}]}
   },
   "like": "marmot",
   "scale": 0.8

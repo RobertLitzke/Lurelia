@@ -10,82 +10,153 @@
     "rump": [236, 218, 184],
     "leg": [84, 60, 44]
   },
+  "forms": {"female": "elk_female", "juvenile": "elk_juvenile"},
   "behaviour": {
     "walk_speed": 1.2,
     "flee_speed": 7.0,
     "wary": 14,
     "flightiness": 1.1,
-    "group": {"size": [3, 7], "spacing": 3.2, "range": 18, "alignment": 1.0, "cohesion": 1.0}
+    "group": {"size": [3, 7], "spacing": 3.2, "range": 18, "alignment": 1.0, "cohesion": 1.0},
+    "voice": {
+      "calls": [
+        {
+          "cry": "bugle",
+          "on": "idle",
+          "season": ["autumn"],
+          "sex": "male",
+          "age": "adult",
+          "every_s": [90, 300],
+          "boost": 6,
+          "chorus": 0.35,
+          "chorus_m": 600
+        },
+        {"cry": "snort", "on": "flee", "size": 1.2, "chance": 0.5}
+      ]
+    }
   },
   "like": "deer",
   "scale": 1.625,
   "extra_ops": [
-    {"op": "ellipsoid", "centre": [24, 21.5, 25], "radius": [6.4, 6.4, 11.5], "mat": "coat"},
-    {"op": "recolour_below", "y": 16, "from": "coat", "to": "belly"},
-    {"op": "ellipsoid", "centre": [24, 22.5, 34], "radius": [5.6, 5.8, 5], "mat": "coat"},
-    {"op": "ellipsoid", "centre": [24, 22, 36.9], "radius": [4.4, 4.6, 2.4], "mat": "rump"},
-    {"op": "ellipsoid", "centre": [24, 28, 15], "radius": [4.7, 5.2, 4.4], "mat": "mane", "part": "neck"},
-    {"op": "ellipsoid", "centre": [24, 29, 12.8], "radius": [3.6, 5.2, 3.2], "mat": "mane", "part": "neck"},
-    {"op": "ellipsoid", "centre": [24, 33, 13.8], "radius": [3.3, 3.8, 2.7], "mat": "mane", "part": "neck"},
-    {"op": "ellipsoid", "centre": [24, 29.5, 10.2], "radius": [1.9, 3.6, 1.9], "mat": "mane", "part": "neck"},
-    {"op": "ellipsoid", "centre": [24, 32, 12], "radius": [2.4, 2.0, 1.5], "mat": "coat", "part": "neck"},
+    {"op": "ellipsoid", "centre": [16.0, 20.142, 24.937], "radius": [5.996, 5.996, 10.774], "mat": "coat"},
+    {"op": "recolour_below", "y": 15, "from": "coat", "to": "belly"},
+    {"op": "ellipsoid", "centre": [16.0, 21.079, 33.368], "radius": [5.246, 5.434, 4.684], "mat": "coat"},
+    {"op": "ellipsoid", "centre": [16.0, 20.61, 36.085], "radius": [4.122, 4.309, 2.248], "mat": "rump"},
+    {
+      "op": "ellipsoid",
+      "centre": [16.0, 26.231, 15.569],
+      "radius": [4.403, 4.872, 4.122],
+      "mat": "mane",
+      "part": "neck"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [16.0, 27.168, 13.507],
+      "radius": [3.373, 4.872, 2.998],
+      "mat": "mane",
+      "part": "neck"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [16.0, 30.915, 14.444],
+      "radius": [3.092, 3.56, 2.529],
+      "mat": "mane",
+      "part": "neck"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [16.0, 27.637, 11.072],
+      "radius": [1.78, 3.373, 1.78],
+      "mat": "mane",
+      "part": "neck"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [16.0, 29.979, 12.758],
+      "radius": [2.248, 1.874, 1.405],
+      "mat": "coat",
+      "part": "neck"
+    },
     {
       "op": "segment",
-      "points": [[22.3, 38.2, 9.5], [19.5, 42.5, 10], [16.5, 47, 12], [13.5, 51.5, 14.5], [12.5, 54, 15]],
-      "radius": 0.8,
+      "points": [
+        [14.407, 35.787, 10.416],
+        [11.784, 39.815, 10.884],
+        [8.974, 44.031, 12.758],
+        [6.163, 48.247, 15.1],
+        [5.226, 50.589, 15.569]
+      ],
+      "radius": 0.749,
       "mat": "antler",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[25.7, 38.2, 9.5], [28.5, 42.5, 10], [31.5, 47, 12], [34.5, 51.5, 14.5], [35.5, 54, 15]],
-      "radius": 0.8,
+      "points": [
+        [17.593, 35.787, 10.416],
+        [20.216, 39.815, 10.884],
+        [23.026, 44.031, 12.758],
+        [25.837, 48.247, 15.1],
+        [26.774, 50.589, 15.569]
+      ],
+      "radius": 0.749,
       "mat": "antler",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[21.5, 39.5, 8.6], [20.5, 43, 5.8], [20, 46.5, 3.8]],
-      "radius": 0.8,
+      "points": [[13.658, 37.005, 9.573], [12.721, 40.284, 6.95], [12.253, 43.563, 5.076]],
+      "radius": 0.749,
       "mat": "antler",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[26.5, 39.5, 8.6], [27.5, 43, 5.8], [28, 46.5, 3.8]],
-      "radius": 0.8,
+      "points": [[18.342, 37.005, 9.573], [19.279, 40.284, 6.95], [19.747, 43.563, 5.076]],
+      "radius": 0.749,
       "mat": "antler",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[19.5, 42.5, 10], [18, 46.5, 6.5], [17, 50, 5]],
-      "radius": 0.8,
+      "points": [[11.784, 39.815, 10.884], [10.379, 43.563, 7.605], [9.442, 46.842, 6.2]],
+      "radius": 0.749,
       "mat": "antler",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[28.5, 42.5, 10], [30, 46.5, 6.5], [31, 50, 5]],
-      "radius": 0.8,
+      "points": [[20.216, 39.815, 10.884], [21.621, 43.563, 7.605], [22.558, 46.842, 6.2]],
+      "radius": 0.749,
       "mat": "antler",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[16.5, 47, 12], [15, 51, 8.5], [14, 54.5, 7.5]],
-      "radius": 0.8,
+      "points": [[8.974, 44.031, 12.758], [7.569, 47.778, 9.479], [6.632, 51.057, 8.542]],
+      "radius": 0.749,
       "mat": "antler",
       "part": "head"
     },
     {
       "op": "segment",
-      "points": [[31.5, 47, 12], [33, 51, 8.5], [34, 54.5, 7.5]],
-      "radius": 0.8,
+      "points": [[23.026, 44.031, 12.758], [24.431, 47.778, 9.479], [25.368, 51.057, 8.542]],
+      "radius": 0.749,
       "mat": "antler",
       "part": "head"
     },
-    {"op": "segment", "points": [[14.5, 50, 13.8], [13, 52, 9.5]], "radius": 0.8, "mat": "antler", "part": "head"},
-    {"op": "segment", "points": [[33.5, 50, 13.8], [35, 52, 9.5]], "radius": 0.8, "mat": "antler", "part": "head"}
+    {
+      "op": "segment",
+      "points": [[7.1, 46.842, 14.444], [5.695, 48.715, 10.416]],
+      "radius": 0.749,
+      "mat": "antler",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[24.9, 46.842, 14.444], [26.305, 48.715, 10.416]],
+      "radius": 0.749,
+      "mat": "antler",
+      "part": "head"
+    }
   ]
 }

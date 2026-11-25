@@ -4,7 +4,13 @@
   "introduced_by": "faerie",
   "notes": "A bee of the faerie wood: gold, softly glowing, drifting between blossoms at dusk.",
   "colors": {"bee": [255, 214, 120, 1.6], "fuzz": [255, 214, 120, 1.6]},
-  "behaviour": {"active": "nocturnal", "off_hours": 0.05},
+  "behaviour": {
+    "displays": [{"kind": "orientation"}, {"kind": "sync_flash", "params": {"rate": 1.2}}],
+    "active": "nocturnal",
+    "off_hours": 0.05,
+    "voice": {"size": 1.1, "calls": [{"cry": "buzz", "on": "idle", "every_s": [10, 40]}]}
+  },
   "like": "bee",
-  "scale": 1.3
+  "scale": 1.3,
+  "realms": ["fae"]
 }

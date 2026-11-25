@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "ribshore",
   "notes": "The old dunes, held by grass: tan dunegrass combed by the wind, purple lupine in drifts and thickets of sea buckthorn in the hollows.",
+  "habitat": "dunes",
   "priority": 4,
   "rules": {"region": "dunes", "slope": [0, 0.42]},
   "surface": "dune_grass",
   "subsurface": "dune_sand",
+  "soil": 0.5,
   "map_color": [176, 166, 120],
   "plants": [
     {

@@ -18,5 +18,6 @@
   "dome": 0.35,
   "limb": 0.6,
   "max_slope": 0.6,
-  "affords": ["perch", "nest"]
+  "affords": ["perch", "nest"],
+  "site": {"wet": [0.3, 0.8], "exposure": [0.0, 0.7]}
 }

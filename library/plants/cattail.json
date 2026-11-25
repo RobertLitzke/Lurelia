@@ -10,5 +10,6 @@
   "leaf": "cattail_leaves",
   "max_slope": 0.6,
   "standing_water": [-0.4, 0.9],
-  "stalk": ["cattail_head", 0.65]
+  "stalk": ["cattail_head", 0.65],
+  "site": {"wet": [0.8, 1.0], "shade": [0.0, 0.3]}
 }

@@ -15,7 +15,7 @@ pub mod draw;
 mod grip;
 mod kart;
 #[cfg(test)]
-mod lab;
+pub(crate) mod lab;
 pub mod lights;
 pub mod spec;
 pub mod touch;
@@ -27,13 +27,15 @@ pub use body::Body;
 pub use spec::Driven;
 pub use spec::{Catalogue, Handling, Spec, Steering};
 
-use crate::world::store::{Cell, Store};
+use crate::world::store::{Cell, Store, VoxelRead, Window, WindowBuf};
 use glam::{Quat, Vec3};
 use wheel::Contact;
 
 /// Seconds a drift's boost holds the boosted top speed, for each tier of
 /// charge it fired with.
 const DRIFT_KICK_SECS: f32 = 0.7;
+/// The levels a drift charges, one each `Spec::drift_charge` seconds.
+pub const DRIFT_TIERS: u32 = 3;
 
 pub const SUBSTEPS: usize = 4;
 
@@ -118,6 +120,9 @@ pub struct Vehicle {
     pub kick_t: f32,
     pub air_time: f32,
     pub grounded: usize,
+    /// Extra on the spec's gravity, as a multiple (1: none). A race sets it
+    /// on a low-gravity stretch.
+    pub gravity_k: f32,
     /// Touched down after a jump: seconds since, and the hardest impact.
     landing: Option<(f32, f32, f32)>,
     upset: f32,
@@ -147,6 +152,8 @@ pub struct Vehicle {
     /// meets the same ground the wheels do.
     slopes: bool,
     pub events: Events,
+    /// The buffers `Window` copies each step's voxels into, kept between steps.
+    window: WindowBuf,
 }
 
 fn smoothstep(a: f32, b: f32, x: f32) -> f32 {
@@ -294,6 +301,7 @@ impl Vehicle {
             kick_t: 0.0,
             air_time: 0.0,
             grounded: 0,
+            gravity_k: 1.0,
             landing: None,
             upset: 0.0,
             righting: 0.0,
@@ -313,6 +321,7 @@ impl Vehicle {
             waiting: false,
             slopes: false,
             events: Events::default(),
+            window: WindowBuf::default(),
         }
     }
 
@@ -385,6 +394,16 @@ impl Vehicle {
         }
     }
 
+    /// Whether the world has streamed in under the car and 0.6 s ahead of
+    /// it at its speed. Until it has, `step` holds the car where it is.
+    pub fn ground_loaded(&self, store: &Store) -> bool {
+        let v = |p: Vec3| ((p.x * 4.0).floor() as i32, (p.y * 4.0).floor() as i32, (p.z * 4.0).floor() as i32);
+        let ahead = self.b.pos + Vec3::new(self.b.vel.x, 0.0, self.b.vel.z) * 0.6;
+        let (ax, ay, az) = v(ahead);
+        let (px, py, pz) = v(self.b.pos);
+        store.loaded(px, py, pz) && store.loaded(ax, ay, az)
+    }
+
     /// One fixed step of `dt` seconds. `level` is the water's surface here.
     pub fn step(&mut self, c: &Controls, store: &Store, level: f32, slopes: bool, dt: f32) {
         self.slopes = slopes;
@@ -400,11 +419,7 @@ impl Vehicle {
 
         // The world hasn't streamed in under or ahead of the car: wait at the
         // edge of it, as the bike does.
-        let v = |p: Vec3| ((p.x * 4.0).floor() as i32, (p.y * 4.0).floor() as i32, (p.z * 4.0).floor() as i32);
-        let ahead = self.b.pos + Vec3::new(self.b.vel.x, 0.0, self.b.vel.z) * 0.6;
-        let (ax, ay, az) = v(ahead);
-        let (px, py, pz) = v(self.b.pos);
-        self.waiting = !store.loaded(px, py, pz) || !store.loaded(ax, ay, az);
+        self.waiting = !self.ground_loaded(store);
         // Paused there, keeping its speed: it carries on as it was once the
         // ground arrives, instead of stopping dead in the middle of a lap.
         if self.waiting {
@@ -432,6 +447,15 @@ impl Vehicle {
         let rate = self.spec.steer_rate.to_radians() * dt * pace;
         self.steer += (want - self.steer).clamp(-rate, rate);
 
+        // Every voxel the step reads, copied out once: the wheels read the
+        // same few thousand many times over (each ground sample smooths over
+        // the columns round it), and from the store each is a hash lookup.
+        let (lo, hi) = self.reach(dt);
+        let mut win = Window::new(store, lo, hi, std::mem::take(&mut self.window));
+        if self.spec.wade > 0.0 {
+            win.dry();
+        }
+        let store = &win;
         self.probe(store, level, slopes);
         let h = dt / SUBSTEPS as f32;
         let mut thump = 0.0f32;
@@ -449,13 +473,37 @@ impl Vehicle {
             thump = thump.max(t);
             crash = crash.max(k);
         }
+        self.window = win.into_buf();
         self.events.thump = thump;
         self.events.crash = crash;
         self.after(c, dt);
     }
 
+    /// The voxels a step can read, as a box (inclusive): the wheels' ground
+    /// searches and the chassis spheres, wherever the body gets to in the
+    /// step. A read outside it is only slower.
+    fn reach(&self, dt: f32) -> ([i32; 3], [i32; 3]) {
+        let s = &self.spec;
+        let ext = s
+            .collide
+            .iter()
+            .map(|c| Vec3::new(c[0], c[1], c[2]).length() + c[3])
+            .chain(self.wheels.iter().map(|w| w.mount.length() + s.wheel_radius))
+            .fold(0.0f32, f32::max);
+        let go = self.b.vel.length() * dt + 0.25;
+        // Round a wheel's hub: its ground samples (0.4 m out), and the slope
+        // smoothing of each, which reads three voxels round the sample and
+        // four up and down.
+        let side = ext + go + 1.5;
+        let below = ext + go + 2.0 * s.travel + s.wheel_radius + 3.0;
+        let above = ext + go + 1.5;
+        let p = self.b.pos;
+        let v = |q: Vec3| (q * 4.0).floor().as_ivec3().to_array();
+        (v(p - Vec3::new(side, below, side)), v(p + Vec3::new(side, above, side)))
+    }
+
     /// The ground under every wheel, once a step.
-    fn probe(&mut self, store: &Store, level: f32, slopes: bool) {
+    fn probe(&mut self, store: &impl VoxelRead, level: f32, slopes: bool) {
         let s = &self.spec;
         let (r, travel) = (s.wheel_radius, s.travel);
         let up = self.up();
@@ -477,7 +525,7 @@ impl Vehicle {
                 }
                 _ => hub.y,
             });
-            w.contact = wheel::probe(store, hub, fwd, r, from, reach, level, slopes, limit);
+            w.contact = wheel::probe(store, hub, fwd, r, from, reach, level, slopes, limit, self.spec.wade > 0.0);
         }
     }
 
@@ -498,6 +546,7 @@ impl Vehicle {
                 level,
                 slopes,
                 None,
+                s.wade > 0.0,
             );
             match (now, w.contact) {
                 (Some(a), Some(b)) => (a.point.y - b.point.y).abs() > 0.02,
@@ -510,10 +559,10 @@ impl Vehicle {
     /// One substep: forces, integration, collision. Returns the hardest
     /// bump-stop hit and chassis strike, m/s.
     #[allow(clippy::needless_range_loop)] // four wheels read and written by index
-    fn substep(&mut self, c: &Controls, store: &Store, level: f32, h: f32) -> (f32, f32) {
+    fn substep(&mut self, c: &Controls, store: &impl VoxelRead, level: f32, h: f32) -> (f32, f32) {
         let s = &self.spec;
         let kart = s.handling == Handling::Kart;
-        let g = s.gravity;
+        let g = s.gravity * self.gravity_k;
         let up = self.up();
         let fwd = self.forward();
         let mut f = Vec3::new(0.0, -g * s.mass, 0.0);
@@ -552,7 +601,8 @@ impl Vehicle {
         // The drivetrain, shared among the driven wheels that are down.
         let depth = self.wheels.iter().filter_map(|w| w.contact.map(|c| c.depth)).fold(0.0f32, f32::max);
         let r = s.wheel_radius;
-        let drown = (1.0 - (depth - r) / (0.5 * r)).clamp(0.0, 1.0);
+        let wade = if s.wade > 0.0 { s.wade } else { r };
+        let drown = (1.0 - (depth - wade) / (0.5 * wade)).clamp(0.0, 1.0);
         self.stalled = drown <= 0.0;
         let top = s.top_speed + if self.boosting { s.boost_speed } else { 0.0 };
         let mut drive = 0.0;
@@ -724,9 +774,17 @@ impl Vehicle {
         let sub = (level - floor).clamp(0.0, 1.6);
         self.wade = sub;
         if sub > 0.0 {
-            f += Vec3::Y * s.mass * g * (sub / 1.3) * 0.95;
-            f -= self.b.vel * s.mass * 1.2 * sub.min(1.0);
+            // A vehicle made to wade (a kart through a ford) is lifted only
+            // past its wading depth and drags less: it splashes through
+            // rather than being stopped in it.
+            let (lift, drag) = if s.wade > 0.0 { ((sub - s.wade * 0.6).max(0.0), 0.35) } else { (sub, 1.2) };
+            f += Vec3::Y * s.mass * g * (lift / 1.3) * 0.95;
+            f -= self.b.vel * s.mass * drag * sub.min(1.0);
             t -= self.b.ang * s.inertia[0] * 2.0 * sub.min(1.0);
+            // Far deeper than it wades: afloat, its engine drowned.
+            if s.wade > 0.0 && sub > s.wade * 1.6 {
+                self.stalled = true;
+            }
         }
 
         // Assists. The kart's tyres steer its yaw and hold its drift.
@@ -857,7 +915,16 @@ impl Vehicle {
             if down >= 3 && *t < 0.3 {
                 if *air > 0.5 {
                     if *impact < s.clean_impact && up.y > 0.8 {
-                        self.b.vel += fwd * s.clean_kick;
+                        // A kart's landing boost grows with the hang time,
+                        // as kart games give it: up to four times the kick,
+                        // held at the boosted top speed a while.
+                        if s.handling == Handling::Kart {
+                            let k = (1.0 + 2.0 * (*air - 0.5)).clamp(1.0, 4.0);
+                            self.b.vel += fwd * s.clean_kick * k;
+                            self.kick_t = self.kick_t.max((*air * 0.6).min(1.5));
+                        } else {
+                            self.b.vel += fwd * s.clean_kick;
+                        }
                         self.events.clean_landing = true;
                         self.events.note = Some(format!("CLEAN LANDING   {:.1} S AIR", air));
                     } else {
@@ -974,10 +1041,14 @@ impl Vehicle {
                     d.t = 0.0;
                 }
                 if !c.hop || v < 5.0 || lost {
-                    let tiers = (d.t / charge.max(0.1)).floor().min(2.0);
-                    if !c.hop && tiers > 0.0 {
-                        self.b.vel += fwd * boost * tiers;
-                        self.kick_t = DRIFT_KICK_SECS * tiers;
+                    // The boost grows with the whole drift, not in steps:
+                    // from one charge (the first tier) to the full three,
+                    // its kick goes from `boost` to twice that and its
+                    // seconds from `DRIFT_KICK_SECS` to three times.
+                    let held = (d.t / charge.max(0.1)).min(DRIFT_TIERS as f32);
+                    if !c.hop && held >= 1.0 {
+                        self.b.vel += fwd * boost * (0.5 + 0.5 * held);
+                        self.kick_t = DRIFT_KICK_SECS * held;
                     }
                     self.drift = None;
                 }
@@ -1002,9 +1073,9 @@ impl Vehicle {
         b.rot = (Quat::from_axis_angle(right, pitch) * Quat::from_axis_angle(back, roll) * b.rot).normalize();
     }
 
-    /// The boost a drift has charged so far: 0, 1 or 2.
+    /// The boost a drift has charged so far: 0 to `DRIFT_TIERS`.
     pub fn drift_tier(&self) -> u32 {
-        self.drift.map_or(0, |d| (d.t / self.spec.drift_charge.max(0.1)).floor().min(2.0) as u32)
+        self.drift.map_or(0, |d| (d.t / self.spec.drift_charge.max(0.1)).floor().min(DRIFT_TIERS as f32) as u32)
     }
 
     /// The drawn chassis' extra lean, `alpha` of the way through the step.

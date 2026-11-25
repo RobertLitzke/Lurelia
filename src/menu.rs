@@ -111,6 +111,7 @@ pub enum Setting {
     Style,
     Shadows,
     Slopes,
+    Creatures,
     Msaa,
     View,
     Vsync,
@@ -119,6 +120,7 @@ pub enum Setting {
     Volume,
     Ambience,
     Effects,
+    Wildlife,
     Music,
 }
 
@@ -439,6 +441,7 @@ pub fn settings_items(p: &Prefs, in_world: bool, msaa_now: u32) -> Vec<Item> {
         set("STYLE", Setting::Style, soften(&p.settings.style.name().to_uppercase())),
         set("SHADOWS", Setting::Shadows, on(p.settings.shadows)),
         set("SLOPED GROUND", Setting::Slopes, on(p.settings.slopes)),
+        set("CREATURES", Setting::Creatures, if p.settings.smooth_creatures { "Smooth" } else { "Voxel" }.to_string()),
         set("ANTIALIASING", Setting::Msaa, msaa_label(p.msaa, msaa_now)),
         set("VIEW DISTANCE", Setting::View, view),
         set("VSYNC", Setting::Vsync, on(p.vsync)),
@@ -447,6 +450,7 @@ pub fn settings_items(p: &Prefs, in_world: bool, msaa_now: u32) -> Vec<Item> {
         set("VOLUME", Setting::Volume, p.sound.volume.to_string()),
         set("AMBIENCE", Setting::Ambience, p.sound.ambience.to_string()),
         set("EFFECTS", Setting::Effects, p.sound.effects.to_string()),
+        set("WILDLIFE", Setting::Wildlife, p.sound.wildlife.to_string()),
         set("MUSIC", Setting::Music, p.sound.music.to_string()),
         Item::new("BACK", Choice::Back),
     ]
@@ -464,6 +468,7 @@ pub fn step(p: &mut Prefs, s: Setting, dir: i32) {
         Setting::Style => p.settings.style = p.settings.style.next(),
         Setting::Shadows => p.settings.shadows = !p.settings.shadows,
         Setting::Slopes => p.settings.slopes = !p.settings.slopes,
+        Setting::Creatures => p.settings.smooth_creatures = !p.settings.smooth_creatures,
         Setting::Msaa => {
             let n = SAMPLES.len() as i32;
             let at = SAMPLES.iter().position(|v| *v == p.msaa).unwrap_or(n as usize - 1) as i32;
@@ -477,6 +482,7 @@ pub fn step(p: &mut Prefs, s: Setting, dir: i32) {
         Setting::Volume => p.sound.volume = tens(p.sound.volume, dir),
         Setting::Ambience => p.sound.ambience = tens(p.sound.ambience, dir),
         Setting::Effects => p.sound.effects = tens(p.sound.effects, dir),
+        Setting::Wildlife => p.sound.wildlife = tens(p.sound.wildlife, dir),
         Setting::Music => p.sound.music = tens(p.sound.music, dir),
         Setting::View => {
             let n = VIEWS.len() as i32;

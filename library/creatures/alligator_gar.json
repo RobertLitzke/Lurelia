@@ -5,12 +5,17 @@
   "notes": "Alligator gar: a long armoured fish with a toothy snout, cruising the channels and rolling at the surface.",
   "colors": {"herring": [96, 96, 66], "silver": [176, 170, 130], "fin": [80, 74, 56]},
   "behaviour": {
+    "displays": [{"kind": "bait_ball"}, {"kind": "leap"}, {"kind": "surface_roll"}],
     "walk_speed": 0.7,
     "flee_speed": 2.6,
     "leap": 0.4,
     "shallows": 0.9,
     "group": {"size": [1, 2], "spacing": 2.0, "range": 6},
-    "flightiness": 0.4
+    "flightiness": 0.4,
+    "voice": {
+      "size": 1.0,
+      "calls": [{"cry": "splash", "on": "display:leap"}, {"cry": "splash", "on": "display:surface_roll", "size": 0.5}]
+    }
   },
   "like": "trout",
   "scale": 2.8

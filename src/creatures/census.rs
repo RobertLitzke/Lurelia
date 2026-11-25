@@ -26,7 +26,8 @@ pub fn census(world: &hecs::World, species: &[Species]) -> BTreeMap<String, usiz
 /// counts toward the parent it stands in for.
 pub fn quota(world: &hecs::World) -> crate::util::FxHashMap<usize, u32> {
     let mut have = crate::util::FxHashMap::default();
-    for c in world.query::<&Creature>().iter() {
+    // The far band has its own count (spawn.rs `Distant`).
+    for c in world.query::<&Creature>().without::<&super::spawn::Distant>().iter() {
         *have.entry(c.spawned_for).or_insert(0) += 1;
     }
     have
@@ -64,6 +65,20 @@ pub fn activities(world: &hecs::World, land: Option<&crate::world::fields::World
                 "bird gliding"
             };
             *out.entry(what.to_string()).or_insert(0) += 1;
+        }
+    }
+    // Predators at their kills, and the kills with meat on them.
+    for c in world.query::<&super::walk::Critter>().iter() {
+        let what = match c.mood {
+            super::walk::Mood::Feed => "carrying a kill",
+            super::walk::Mood::Eat => "eating a kill",
+            _ => continue,
+        };
+        *out.entry(what.to_string()).or_insert(0) += 1;
+    }
+    for c in world.query::<&super::carcass::Carcass>().iter() {
+        if c.meat > 0.0 && !c.bones {
+            *out.entry("carcass".to_string()).or_insert(0) += 1;
         }
     }
     // Running birds and hummingbirds: what each is doing.
@@ -111,14 +126,19 @@ pub fn count_sitting(world: &hecs::World, terrain: &Terrain, stats: &mut Pathing
 /// The creature under a ray, nearest first: (distance, display name).
 /// The name is built only for the winner; this runs every frame.
 pub fn identify(world: &hecs::World, species: &[Species], models: &[crate::models::Model], origin: Vec3, dir: Vec3, max: f32) -> Option<(f32, String)> {
+    identify_one(world, species, models, origin, dir, max).map(|(t, name, _)| (t, name))
+}
+
+/// `identify`, with the entity it found.
+pub fn identify_one(world: &hecs::World, species: &[Species], models: &[crate::models::Model], origin: Vec3, dir: Vec3, max: f32) -> Option<(f32, String, hecs::Entity)> {
     enum Who {
         Species(usize),
         /// The random island's deer, rabbit or fox, by the model it wears.
         Legacy(usize),
         Gull,
     }
-    let mut best: Option<(f32, Who, Stage)> = None;
-    for (look, me, crit, gull, age) in world.query::<(&Look, Option<&Creature>, Option<&Critter>, Option<&Gull>, Option<&Age>)>().iter() {
+    let mut best: Option<(f32, Who, Stage, hecs::Entity)> = None;
+    for (e, look, me, crit, gull, age) in world.query::<(hecs::Entity, &Look, Option<&Creature>, Option<&Critter>, Option<&Gull>, Option<&Age>)>().iter() {
         let who = match (me, crit, gull) {
             (Some(c), _, _) => Who::Species(c.species),
             (_, Some(_), _) => Who::Legacy(look.model),
@@ -143,16 +163,50 @@ pub fn identify(world: &hecs::World, species: &[Species], models: &[crate::model
         }
         // A little more forgiving with distance, so far animals can be named.
         if d < (hw + 0.25).max(0.6) + t * 0.01 && best.as_ref().map_or(true, |b| t < b.0) {
-            best = Some((t, who, stage));
+            best = Some((t, who, stage, e));
         }
     }
-    let (t, who, stage) = best?;
+    let (t, who, stage, e) = best?;
     let name = match who {
         Who::Species(s) => super::display_name(species, s).to_string(),
         Who::Legacy(m) => super::spawn::legacy(m).map_or("animal", |l| l.name).to_string(),
         Who::Gull => "GULL".to_string(),
     };
-    Some((t, format!("{}{}", name.replace('_', " "), stage.label()).to_uppercase()))
+    Some((t, format!("{}{}", name.replace('_', " "), stage.label()).to_uppercase(), e))
+}
+
+/// One line on an individual for the crosshair readout: its sex and age, and
+/// what it is doing -- the display it is in and how far through, or else
+/// its activity or its mover's state.
+pub fn doing(world: &hecs::World, e: hecs::Entity) -> String {
+    let Ok(ent) = world.entity(e) else { return String::new() };
+    let mut out = Vec::new();
+    if let Some(s) = ent.get::<&super::sex::Sex>() {
+        out.push(s.name().to_string());
+    }
+    out.push(ent.get::<&Age>().map_or(Stage::Adult, |a| a.stage).name().to_string());
+    let what = if let Some(show) = ent.get::<&super::display::Show>() {
+        format!("{}: {}", show.kind, show.phase)
+    } else if let Some(h) = ent.get::<&super::hummer::Hummer>() {
+        h.doing().to_string()
+    } else {
+        let mood = ent.get::<&Critter>().map(|c| c.mood);
+        let act = ent.get::<&crate::anim::Anim>().and_then(|a| a.life.as_ref().map(|l| l.act.name()));
+        match (mood, act) {
+            (Some(super::walk::Mood::Flee), _) => "fleeing".to_string(),
+            (Some(super::walk::Mood::Chase), _) => "hunting".to_string(),
+            (Some(super::walk::Mood::Feed), _) => "carrying a kill".to_string(),
+            (Some(super::walk::Mood::Eat), _) => "eating a kill".to_string(),
+            (_, Some(a)) => a.to_string(),
+            (Some(super::walk::Mood::Walk), None) => "walk".to_string(),
+            (Some(super::walk::Mood::Idle), None) => "stand".to_string(),
+            (None, None) => String::new(),
+        }
+    };
+    if !what.is_empty() {
+        out.push(what);
+    }
+    out.join("  ").to_uppercase()
 }
 
 /// Closest approach of a ray to the upright segment from `foot + lo` to

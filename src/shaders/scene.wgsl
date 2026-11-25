@@ -505,13 +505,72 @@ fn canopy_dapple(p: vec3<f32>) -> f32 {
     return 1.0 + clamp((n - 0.5) * 2.4, -0.5, 0.5) * 0.44;
 }
 
+// Neighbouring trees are never quite the same colour: one is a little darker,
+// one a little warmer or more yellow. A slow field over the ground, about a
+// crown across and the same all the way up, so a whole tree takes one tint
+// rather than speckling. Per-voxel jitter averages out across a crown and
+// canopy_dapple is light, not colour, so without this a wood of one species
+// read as one even colour. Cards and voxels take it alike, as with the
+// dapple. VOXEL_CROWN_TINT=0 turns it off.
+fn crown_tint(p: vec3<f32>) -> vec3<f32> {
+    if (!CROWN_TINT_ON) {
+        return vec3<f32>(1.0);
+    }
+    let q = p.xz * 0.15;
+    let b = clamp((vnoise2(q + vec2<f32>(41.3, 17.9)) - 0.5) * 2.6, -1.0, 1.0);
+    let w = clamp((vnoise2(q * 0.8 + vec2<f32>(-23.1, 59.4)) - 0.5) * 2.6 * 0.5 + 0.5, 0.0, 1.0);
+    // Warmth only, from none to some: red up and blue down takes a green
+    // toward olive and a gold toward amber. The other way turned gold
+    // crowns lime.
+    return (1.0 + 0.15 * b) * vec3<f32>(1.0 + 0.10 * w, 1.0 - 0.01 * w, 1.0 - 0.16 * w);
+}
+
+
+// How lush the ground grows by its site (world/site.rs `Site::lush`): r is
+// lush 0..1 with 0.5 ordinary ground, a is 1 where a world set it. See
+// Renderer::set_site.
+@group(0) @binding(22) var sitemap: texture_2d<f32>;
+
+// How far the site moves grassy ground along its dry-to-lush colour blend.
+const SITE_TILT: f32 = 0.7;
+
+// The lean of grassy ground at `xz` toward lush (+) or dry (-), in units of
+// the colour blend; 0 where the world has no site map.
+fn site_lean(xz: vec2<f32>) -> f32 {
+    let dims = vec2<f32>(textureDimensions(sitemap));
+    let p = clamp(xz / g.fog.w * dims - 0.5, vec2<f32>(0.0), dims - 1.0);
+    let i = vec2<i32>(floor(p));
+    let fr = p - floor(p);
+    let top = vec2<i32>(dims) - 1;
+    let j = min(i + vec2<i32>(1, 1), top);
+    let a = textureLoad(sitemap, i, 0);
+    let b = textureLoad(sitemap, vec2<i32>(j.x, i.y), 0);
+    let c = textureLoad(sitemap, vec2<i32>(i.x, j.y), 0);
+    let d = textureLoad(sitemap, j, 0);
+    let v = mix(mix(a, b, fr.x), mix(c, d, fr.x), fr.y);
+    if (v.a < 0.5) {
+        return 0.0;
+    }
+    return (v.r - 0.5) * SITE_TILT * gd.f.x;
+}
+
+// Whether material flags `f` mark ground that grows grass, which the site
+// tilts: not leaves, not bare ground.
+fn grassy(f: u32) -> bool {
+    return (f & (M_CALM_MEADOW | M_UNDERSTORY)) != 0u;
+}
 
 // Calm style: broad fields of colour across the land, tens of metres across,
-// in place of per-texel detail. Grass drifts between sage and ochre meadow.
+// in place of per-texel detail. Grass drifts between sage and ochre meadow,
+// greener on lush ground and more ochre on dry (`site_lean`).
 fn calm_tint(albedo: vec3<f32>, mat: u32, world: vec3<f32>) -> vec3<f32> {
-    let t = vnoise2(world.xz * 0.012) * 0.6 + vnoise2(world.xz * 0.045 + vec2<f32>(13.0, 7.0)) * 0.4;
+    var t = vnoise2(world.xz * 0.012) * 0.6 + vnoise2(world.xz * 0.045 + vec2<f32>(13.0, 7.0)) * 0.4;
     let f = mats[mat].w;
     let d = drift_of(mat, 0u);
+    if (grassy(f)) {
+        // Both the shared ramp and a declared pair run from green to ochre.
+        t = clamp(t - site_lean(world.xz), 0.0, 1.0);
+    }
     // A material that declares its own two colours uses them, whatever tint
     // class it is in; the ramps below are what every meadow and every canopy
     // shares when none is declared.
@@ -540,10 +599,13 @@ fn calm_tint(albedo: vec3<f32>, mat: u32, world: vec3<f32>) -> vec3<f32> {
 fn classic_patch(albedo: vec3<f32>, mat: u32, world: vec3<f32>) -> vec3<f32> {
     let t = vnoise2(world.xz * 0.025) * 0.65 + vnoise2(world.xz * 0.11) * 0.35;
     let d = drift_of(mat, 1u);
+    let lean = select(0.0, site_lean(world.xz), grassy(mats[mat].w));
     if (d.on) {
-        return albedo * mix(d.lo, d.hi, t);
+        // A declared pair runs from green to dry.
+        return albedo * mix(d.lo, d.hi, clamp(t - lean, 0.0, 1.0));
     }
-    return albedo * mix(vec3<f32>(1.08, 1.02, 0.84), vec3<f32>(0.88, 0.98, 1.0), t);
+    // The shared ramp runs from dry to lush.
+    return albedo * mix(vec3<f32>(1.08, 1.02, 0.84), vec3<f32>(0.88, 0.98, 1.0), clamp(t + lean, 0.0, 1.0));
 }
 
 // Grass understory: meadow ground near the camera is painted as the shaded
@@ -951,7 +1013,7 @@ fn fs_terrain(in: TerrainOut) -> @location(0) vec4<f32> {
         shadow_kind = SHADOW_LEGACY;
     }
     if (leafy) {
-        albedo = albedo * canopy_dapple(in.world);
+        albedo = albedo * canopy_dapple(in.world) * crown_tint(in.world);
     }
     // The season, on anything that grows (world/season.rs). Leaves take its
     // colour; grass goes over to straw with the year. Summer leaves both
@@ -1046,24 +1108,15 @@ struct EntityOut {
 
 fn entity_transform(q: vec4<u32>, k: u32, qv: QuadVert, inst: EntityInst) -> mat2x3<f32> {
     let world = entity_world(q, k, qv.local, inst);
+    return mat2x3<f32>(world, entity_normal(qv.normal, inst));
+}
+
+// A model-space normal turned as the instance is.
+fn entity_normal(n0: vec3<f32>, inst: EntityInst) -> vec3<f32> {
     let c = cos(inst.pos_yaw.w);
     let sn = sin(inst.pos_yaw.w);
-    var n = qrot(inst.rot, qv.normal);
-    var nr = vec3<f32>(n.x * c + n.z * sn, n.y, -n.x * sn + n.z * c);
-    // A sloped creature part's face (rounded, not a tube: anim/slope.rs) is
-    // lit by its diagonals as drawn, stretched and all, not by the square
-    // face it was cut from.
-    if (qv.rounded == 1u && ((q.x >> Q_TUBE_BIT) & 1u) == 0u) {
-        let c0 = entity_world(q, 0u, decode_corner(q, 0u).local, inst);
-        let c1 = entity_world(q, 1u, decode_corner(q, 1u).local, inst);
-        let c2 = entity_world(q, 2u, decode_corner(q, 2u).local, inst);
-        let c3 = entity_world(q, 3u, decode_corner(q, 3u).local, inst);
-        let pn = cross(c2 - c0, c3 - c1);
-        if (dot(pn, pn) > 1e-12) {
-            nr = normalize(pn);
-        }
-    }
-    return mat2x3<f32>(world, nr);
+    let n = qrot(inst.rot, n0);
+    return vec3<f32>(n.x * c + n.z * sn, n.y, -n.x * sn + n.z * c);
 }
 
 @vertex
@@ -1091,8 +1144,46 @@ fn vs_entity(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -
     return out;
 }
 
+// A creature part's decimated mesh (mesh/decimate.rs, models.rs `Lods`):
+// one packed vertex a vertex, three a triangle, in the same buffer as the
+// quads. Placed exactly as the part's quads are.
+@vertex
+fn vs_entity_tri(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -> EntityOut {
+    let q = equads[vi];
+    let inst = einst[ii];
+    let local = tri_local(q);
+    let n0 = tri_normal(q);
+    let world = entity_place(entity_local_seam(local, tri_seam(q), inst), inst);
+    var out: EntityOut;
+    out.clip = g.view_proj * vec4<f32>(world, 1.0);
+    if (inst.shift.w > 0.5 && inst.shift.w < 1.5) {
+        out.clip = vec4<f32>(0.0, 0.0, -2.0, 1.0);
+    }
+    out.world = world;
+    out.normal = entity_normal(n0, inst);
+    out.mat = max(q.w & 255u, PALETTE_BASE) - PALETTE_BASE + (q.y >> 16u);
+    out.ao = f32((q.w >> 8u) & 255u) / 85.0;
+    out.local = local - n0 * 0.5;
+    out.inst = ii;
+    return out;
+}
+
 @fragment
 fn fs_entity(in: EntityOut) -> @location(0) vec4<f32> {
+    return vec4<f32>(entity_colour(in), 1.0);
+}
+
+// A creature coming into view or leaving it at the far edge, fade.x of it
+// gone (models.rs `Instance::fade`): pixels drop out in a fine screen-space
+// noise, so it is opaque wherever it is drawn and keeps its depth and order.
+// Its own pipeline, since a discard costs every other entity early depth.
+@fragment
+fn fs_entity_fade(in: EntityOut) -> @location(0) vec4<f32> {
+    let p = floor(in.clip.xy);
+    let ign = fract(52.9829189 * fract(0.06711056 * p.x + 0.00583715 * p.y));
+    if (ign < einst[in.inst].fade.x) {
+        discard;
+    }
     return vec4<f32>(entity_colour(in), 1.0);
 }
 
@@ -1826,6 +1917,11 @@ fn fs_water(in: WaterOut, @builtin(front_facing) front: bool) -> @location(0) ve
         // Over the sea's own surface: only a fall's churn.
         col = vec3<f32>(0.92, 0.95, 0.96) * lightk * 1.6;
         alpha = select(0.0, foam_all * 0.85, in.fall > 0u);
+        // Rivers write depth (render/mod.rs): a clear cell over the sea must
+        // not hide the sea's bed from the reflections and the fog.
+        if (alpha < 0.004) {
+            discard;
+        }
     }
     return vec4<f32>(apply_fog(col, in.world), alpha);
 }
@@ -1840,8 +1936,10 @@ fn fs_water(in: WaterOut, @builtin(front_facing) front: bool) -> @location(0) ve
 struct FallOut {
     @builtin(position) clip: vec4<f32>,
     @location(0) world: vec3<f32>,
-    // Seconds since the lip, offset across (-1 to 1).
-    @location(1) info: vec2<f32>,
+    // Seconds since the lip, offset across (-1 to 1), 1 for a step (water
+    // pouring over an edge of the surface, rivers.rs `step_face`) which has
+    // no ragged ends.
+    @location(1) info: vec3<f32>,
 };
 
 @vertex
@@ -1865,7 +1963,7 @@ fn vs_fall(@builtin(vertex_index) vi: u32) -> FallOut {
     var out: FallOut;
     out.clip = g.view_proj * vec4<f32>(p.xyz, 1.0);
     out.world = p.xyz;
-    out.info = vec2<f32>(p.w, q.flow_z[c]);
+    out.info = vec3<f32>(p.w, q.flow_z[c], q.ebb[0]);
     return out;
 }
 
@@ -1884,7 +1982,7 @@ fn fs_fall(in: FallOut) -> @location(0) vec4<f32> {
     let white = clamp(smoothstep(0.42, 0.72, streak) * smoothstep(0.0, 0.25, secs) + smoothstep(0.1, 1.2, secs) * 0.55, 0.0, 1.0);
     // Ragged, thinning edges.
     let rag = vnoise2(vec2<f32>(u * 3.0 + 7.0, s * 4.0));
-    let edge = smoothstep(0.0, 0.15 + 0.3 * rag, 1.0 - abs(u));
+    let edge = select(smoothstep(0.0, 0.15 + 0.3 * rag, 1.0 - abs(u)), 1.0, in.info.z > 0.5);
     let alpha = mix(0.4, 0.92, white) * edge;
     if (alpha < 0.01) {
         discard;

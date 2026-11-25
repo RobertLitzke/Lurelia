@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saurischia",
   "notes": "The ground of Ferncross, cleared round the stilt houses: trodden fern floor, a few monkey-puzzles left standing.",
+  "habitat": "settlement",
   "priority": 20,
   "rules": {"region": "ferncross"},
   "surface": "fernwood_floor",
   "subsurface": "dirt",
   "fringe": 4,
+  "soil": 0.4,
   "map_color": [150, 140, 110],
   "plants": [
     {"plant": "araucaria", "density": 0.0006, "placement": {"verb": "lone", "params": {"spacing": 30}}},
@@ -21,5 +23,6 @@
     {"creature": "compsognathus", "count": 8},
     {"creature": "sparrow", "count": 6},
     {"creature": "stellers_jay", "count": 3}
-  ]
+  ],
+  "realm": {"real": 1.0}
 }

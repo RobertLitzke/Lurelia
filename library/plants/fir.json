@@ -9,5 +9,6 @@
   "crown_radius": [2.0, 2.8],
   "bark": "bark",
   "leaf": "dark_needles",
-  "max_slope": 0.75
+  "max_slope": 0.75,
+  "site": {"wet": [0.3, 1.0]}
 }

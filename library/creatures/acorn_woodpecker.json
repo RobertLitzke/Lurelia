@@ -3,8 +3,26 @@
   "version": 1,
   "introduced_by": "redrock",
   "notes": "Acorn woodpecker: a clown-faced black woodpecker with a white face ring and a red cap, in noisy family groups in the pines and oaks.",
-  "behaviour": {"wary": 9, "group": {"size": [2, 4], "spacing": 5, "range": 14}},
+  "behaviour": {
+    "displays": [{"kind": "drum"}, {"kind": "cache", "food": "acorn"}],
+    "wary": 9,
+    "group": {"size": [2, 4], "spacing": 5, "range": 14},
+    "voice": {
+      "calls": [
+        {"cry": "drum", "on": "display:drum", "size": 0.9},
+        {
+          "cry": "chatter",
+          "on": "idle",
+          "hours": "day",
+          "size": 0.8,
+          "every_s": [40, 150],
+          "chorus": 0.4,
+          "chorus_m": 80
+        }
+      ]
+    }
+  },
   "like": "woodpecker",
   "scale": 1.3,
-  "extra_ops": [{"op": "box", "from": [15, 11, 10], "to": [17, 12, 13], "mat": "red", "part": "head"}]
+  "extra_ops": [{"op": "box", "from": [42, 31, 14], "to": [48, 34, 23], "mat": "red", "part": "head"}]
 }

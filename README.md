@@ -9,7 +9,7 @@ Lurelia is an engine that allows you to play different games in different worlds
 
 - A peaceful open-world exploration game where you hike, mountain bike,
   wingsuit, kayak, free-climb and scuba dive across landscapes shaped by
-  simulated geological history. You'll share terrain as varied as paleolithic grasslands, tropical karst towers, nordic fjords, faerie forests and an upland where dinosaurs never died out, with 209 species of wildlife, 166 species of plants, and dozens of procedural structures, artifacts, towns, trails and roads.
+  simulated geological history. You'll share terrain as varied as paleolithic grasslands, tropical karst towers, nordic fjords, faerie forests and an upland where dinosaurs never died out, with 227 species of wildlife, 176 species of plants, and dozens of procedural structures, artifacts, towns, trails and roads.
 - A fast retro arena deathmatch where triple jumps, double dodges,   terrain-carving, trap-laying, enemy-decimating weapons that change each map, each time you play it. No multiplayer, but supports smart local bots.
 - Kart racing on hand-built circuits: drift boosts, pickup rows of weapons,
   shields and boosts, a racing line that polishes in as karts wear it, and
@@ -20,7 +20,7 @@ Lurelia is an engine that allows you to play different games in different worlds
 Open-world mode is built around curiosity and a sense of place. There are no
 quest markers, no health bars and no enemies in the wild. Every island, desert
 canyon, fjord and bayou is generated from a written chronicle of its history:
-sixty-three kinds of geological and human events, run in order before you take
+sixty-eight kinds of geological and human events, run in order before you take
 your first step.
 
 Volcanoes pour lava tongues down to the sea and blanket the leeward hills in
@@ -62,11 +62,11 @@ flow into one another:
   allows it, and take it over dunes, voxel steps and dirt roads on long soft
   suspension, hopping and drifting as a kart does.
 
-### 209 creatures and 166 plants
+### 227 creatures and 176 plants
 
-All of the life is procedural. The library holds 166 plant species across
+All of the life is procedural. The library holds 176 plant species across
 twenty-eight growth forms, from tall conifers, weeping willows and hollow
-walk-in baobabs to kelp beds and antler coral, and 209 animal species, sauropods and tyrannosaurs among them, animated
+walk-in baobabs to kelp beds and antler coral, and 227 animal species, sauropods and tyrannosaurs among them, animated
 in real time by bone motors rather than recorded clips.
 
 Wildlife fills the air, land and water with behaviour of its own:
@@ -184,13 +184,13 @@ On an RTX 3060 at 1440p with 4x MSAA a frame takes 2.3 to 5 ms, thanks to GPU
 depth-pyramid occlusion culling, leaf crowns meshed in larger blocks, draw
 lists bucketed near to far, and shadow cascades updated in slices.
 
-Content is data: 473 materials, 332 structures, 209 creatures, 200 biomes and
-166 plants, each a short JSON file in `library/`. Two studios built into the
+Content is data: 507 materials, 358 structures, 227 creatures, 227 biomes and
+176 plants, each a short JSON file in `library/`. Two studios built into the
 game let you change it while it runs: one grades the sky, fog and colour ramps
 live, and a turntable studio edits creatures, plants, materials and weapons and
 writes the change straight back to disk. The engine also runs headless from
 the command line to take screenshots, draw top-down world maps, run bot
-tournaments and run its 720 unit and shader tests.
+tournaments and run its 770 unit and shader tests.
 
 ## Installation
 

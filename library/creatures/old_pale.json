@@ -4,6 +4,16 @@
   "introduced_by": "lowmouth",
   "notes": "Old Pale: a white alligator half as long again as any other, seen now and then in the swamp and never twice in the same place.",
   "colors": {"hide": [226, 222, 206], "belly": [240, 236, 226], "ridge": [204, 198, 182], "eye": [190, 60, 50, 0.4]},
+  "behaviour": {
+    "voice": {
+      "size": 1.4,
+      "calls": [
+        {"cry": "bellow", "on": "display:call", "boost": 8, "chorus": 0.4, "chorus_m": 400},
+        {"cry": "bellow", "on": "idle", "hours": "night", "every_s": [600, 1800], "chance": 0.4, "boost": 8},
+        {"cry": "hiss", "on": "chase", "size": 2.5}
+      ]
+    }
+  },
   "like": "alligator",
   "rarity": 0.03,
   "scale": 1.6

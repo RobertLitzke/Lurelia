@@ -19,5 +19,7 @@
   "stems": [1, 2],
   "autumn": "gold_leaves",
   "thin_limbs": 0.25,
-  "trunk_taper": 0.4
+  "trunk_taper": 0.4,
+  "site": {"wet": [0.3, 0.7], "soil": [0.4, 1.0]},
+  "realms": ["dinosaur"]
 }

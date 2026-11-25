@@ -11,15 +11,16 @@
     "wary": 4,
     "flightiness": 0.15,
     "spawn_chance": 1,
-    "active": "any"
+    "active": "any",
+    "voice": {"size": 1.6, "calls": [{"cry": "bleat", "on": "idle", "every_s": [300, 900], "chance": 0.5}]}
   },
   "like": "bear",
   "scale": 0.95,
   "extra_ops": [
-    {"op": "recolour", "at": [0, 0, 0], "until": [32, 9, 32], "from": "bear", "to": "dark"},
-    {"op": "recolour", "at": [10, 6, 8], "until": [23, 17, 13], "from": "bear", "to": "dark"},
-    {"op": "recolour", "at": [12, 15, 4], "until": [21, 18, 7], "from": "bear", "to": "dark"},
-    {"op": "box", "from": [14, 13, 2], "to": [16, 15, 3], "mat": "dark", "part": "head"},
-    {"op": "box", "from": [17, 13, 2], "to": [19, 15, 3], "mat": "dark", "part": "head"}
+    {"op": "recolour", "at": [-13, 0, 2], "until": [45, 16, 60], "from": "bear", "to": "dark"},
+    {"op": "recolour", "at": [5, 11, 17], "until": [29, 31, 26], "from": "bear", "to": "dark"},
+    {"op": "recolour", "at": [9, 27, 9], "until": [25, 32, 15], "from": "bear", "to": "dark"},
+    {"op": "box", "from": [12, 23, 6], "to": [16, 27, 8], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [18, 23, 6], "to": [21, 27, 8], "mat": "dark", "part": "head"}
   ]
 }

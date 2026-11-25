@@ -1,0 +1,156 @@
+# Kaldvik Fjord: a lap that is nearly all climb, given back in one jump.
+# Units in metres: x east, z south, from the world's north-west corner.
+#
+# From the fjord-head flat the road runs east through the hamlet's market
+# street, on ice, and turns up the fjord wall: seven switchbacks, each leg
+# shorter than it looks, the fourth hairpin turned inside the rock. Over the
+# fell at the top it drops into a ski-jump inrun at the edge of the wall,
+# and a kart flies off the table and comes down a landing hill shaped to its
+# flight, out onto the flat and the line.
+track kaldvik_fjord size 768 style fjord
+title KALDVIK FJORD
+blurb A blue winter dusk at the head of a fjord: seven switchbacks up the fjord wall under the aurora, a run over the fell, and a ski jump that gives the whole climb back in one long flight down to the line.
+race laps 2 rivals 5 vehicle kart
+road 14.5 bank 1.3
+land 30 1.5
+hour 16
+lights 25
+materials verge packed_snow
+
+# The fjord: deep water west of the head.
+plateau -6 30 -20,-20 130,-20 120,300 140,520 150,788 -20,788
+# The fell above the wall, 60 m over the head.
+plateau 90 150 -20,-20 788,-20 788,215 -20,215
+
+# The flat at the head of the fjord, east toward the hamlet.
+point 270 562                  # start / finish
+point 330 560
+point 390 556                  # the market street
+point 440 554
+point 490 550
+point 540 540
+# Up to the foot of the wall.
+point 580 522
+point 604 496
+point 606 470
+point 590 450 at 30
+point 565 450 at 31.88
+point 540 450 at 33.75          # leg 1
+point 515 450 at 35.62
+point 490 450 at 37.5
+point 475.9 444.1 at 37.75
+point 470 430 at 38          # hairpin 1
+point 475.9 415.9 at 38.25
+point 490 410 at 38.5
+point 515 410 at 40.38
+point 540 410 at 42.25          # leg 2
+point 565 410 at 44.12
+point 590 410 at 46
+point 604.1 404.1 at 46.25
+point 610 390 at 46.5          # hairpin 2
+point 604.1 375.9 at 46.75
+point 590 370 at 47
+point 565 370 at 48.88
+point 540 370 at 50.75          # leg 3
+point 515 370 at 52.62
+point 490 370 at 54.5
+point 475.9 364.1 at 54.75
+point 470 350 at 55          # hairpin 3
+point 475.9 335.9 at 55.25
+point 490 330 at 55.5
+point 515 330 at 57.38
+point 540 330 at 59.25          # leg 4
+point 565 330 at 61.12
+point 590 330 at 63
+point 604.1 324.1 at 63.25
+point 610 310 at 63.5          # hairpin 4
+point 604.1 295.9 at 63.75
+point 590 290 at 64
+point 565 290 at 65.88
+point 540 290 at 67.75          # leg 5
+point 515 290 at 69.62
+point 490 290 at 71.5
+point 475.9 284.1 at 71.75
+point 470 270 at 72          # hairpin 5
+point 475.9 255.9 at 72.25
+point 490 250 at 72.5
+point 515 250 at 74.38
+point 540 250 at 76.25          # leg 6
+point 565 250 at 78.12
+point 590 250 at 80
+point 604.1 244.1 at 80.25
+point 610 230 at 80.5          # hairpin 6
+point 604.1 215.9 at 80.75
+point 590 210 at 81
+point 565 210 at 82.88
+point 540 210 at 84.75          # leg 7
+point 515 210 at 86.62
+point 490 210 at 88.5          # the top of the wall
+# Over the fell.
+point 446 204 at 89.2
+point 396 198 at 90
+point 346 198 at 90
+point 302 206 at 90
+# The inrun, the take-off at the edge of the wall, and the landing hill.
+point 268 222 at 90
+point 250 246 at 88
+point 240 274 at 84.5          # the table
+point 236 320 at 70
+point 234 370 at 52
+point 232 420 at 36
+point 234 470 at 30.5
+point 238 512 at 30
+point 248 546 at 30
+
+# The ski jump: the table at the edge of the wall, and the landing hill
+# shaped to the flight of a kart leaving it at pad speed.
+jump 1704 0.4 8 boost
+landing 1704 2000 38 2.5
+pad 1660 centre 8
+ramp 1640 2010 24
+
+# The switchbacks are cut into the wall and built up on it, never on decks.
+ramp 395 1490 22
+bank 495 580 2.2
+bank 655 745 2.2
+bank 815 905 2.2
+bank 980 1070 2.2
+bank 1140 1230 2.2
+bank 1305 1395 2.2
+
+# Room in the hairpins, and walls high enough to hold a kart that runs
+# wide against the hillside: the only walls on the lap, where the fjord
+# wall falls away. The flat, the street and the fell are open.
+walls 395 1490 2.0
+# The market street: a narrow run-off, the fair's stalls close either side.
+verge 100 310 - 3
+
+# The market street: on ice between the stalls, walled.
+surface 110 300 black_ice
+
+# Smashables: market stalls' crates on the inside of the corners off the
+# flat.
+smash 300 left 4 crates
+smash 345 left 4 crates
+
+items 60
+items 760
+items 1580
+
+# The fair's gate over the market street.
+arch 150 20 9 2.5 mat basalt
+
+# Width: 14.5 m. The market street is narrower, on ice between the
+# stalls; the hairpins have room, the legs between them less; the fell is
+# open and the landing hill wide, so a kart that comes down crooked can
+# still drive out of it.
+width 110 300 13
+width 400 1490 14
+width 495 580 18
+width 655 745 18
+width 815 905 18
+width 980 1070 18
+width 1140 1230 18
+width 1305 1395 18
+width 1500 1700 16
+width 1740 2040 18

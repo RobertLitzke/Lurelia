@@ -1,0 +1,75 @@
+{
+  "name": "kaldvik_fjord",
+  "title": "KALDVIK FJORD",
+  "blurb": "A blue winter dusk at the head of a fjord: seven switchbacks up the fjord wall under the aurora, a run over the fell, and a ski jump that gives the whole climb back in one long flight down to the line.",
+  "size_m": 768.0,
+  "height_m": 96,
+  "sea_level_m": 4,
+  "seed": 9601,
+  "plants": "v2",
+  "sun": {
+    "latitude": 64,
+    "lift_deg": 20,
+    "shadow_soft": 1.6,
+    "cold": 0.75
+  },
+  "modes": [
+    "walk",
+    "drive",
+    "race",
+    "screenshot",
+    "camera"
+  ],
+  "games": [
+    "race"
+  ],
+  "vehicles": [
+    "kart"
+  ],
+  "start_hour": 16.0,
+  "rock": [
+    [
+      "basalt",
+      0.7
+    ],
+    [
+      "stone_dark",
+      0.3
+    ]
+  ],
+  "biomes": [
+    "kaldvik_spruce",
+    "kaldvik_fell",
+    "kaldvik_shore",
+    "kaldvik_green",
+    "kaldvik_fjord",
+    "black_sand_beach"
+  ],
+  "default_biome": "kaldvik_fell",
+  "seabed_biome": "kaldvik_fjord",
+  "seasons": [
+    "winter"
+  ],
+  "weather": {
+    "sun": 1.0,
+    "clouds": 1.1,
+    "snow": 1.0,
+    "fog": 0.4
+  },
+  "start_weather": "sun",
+  "weathering": 0.3,
+  "moss": 0.1,
+  "start_season": "winter",
+  "spawn": [
+    270,
+    562
+  ],
+  "spawn_bearing": 99,
+  "race": {
+    "circuit": "kaldvik_fjord_ring",
+    "track": "track.json",
+    "laps": 2,
+    "rivals": 5,
+    "vehicle": "kart"
+  }
+}

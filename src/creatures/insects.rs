@@ -27,6 +27,9 @@ pub enum State {
 
 pub struct Buzzer {
     pub state: State,
+    /// In a display last step (creatures/display: a bee's orientation
+    /// loops, dragonflies in tandem).
+    shown: bool,
     home: Vec3,
     /// Dragonfly: keeps to water.
     water: bool,
@@ -92,6 +95,7 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, flora: &Flora, t: 
     let mut rng = Rng::new(seed | 1);
     for _ in 0..n.max(1) {
         let mut b = Buzzer {
+            shown: false,
             state: State::Hover { at, timer: 0.0 },
             home: at,
             water,
@@ -108,8 +112,21 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, flora: &Flora, t: 
 /// Step every insect.
 pub fn update(world: &mut hecs::World, species: &[Species], flora: &Flora, dt: f32, threat: &super::startle::Threat, t: &Terrain) {
     let player = threat.pos;
-    for (b, look, me) in world.query_mut::<(&mut Buzzer, &mut Look, &Creature)>() {
+    for (b, look, me, show) in world.query_mut::<(&mut Buzzer, &mut Look, &Creature, Option<&super::display::Show>)>() {
         look.begin_step();
+        // Only a display that puts it somewhere takes it over; one that
+        // only sets its glow (fireflies flashing together) leaves it flying.
+        let show = show.filter(|s| matches!(s.out.drive, super::display::Drive::Place { .. } | super::display::Drive::Sit { .. }));
+        if let Some(s) = show {
+            if let super::display::Drive::Place { pos, yaw } | super::display::Drive::Sit { pos, yaw } = s.out.drive {
+                (look.pos, look.yaw) = (pos, yaw);
+            }
+            b.shown = true;
+            continue;
+        }
+        if std::mem::take(&mut b.shown) {
+            b.state = State::Hover { at: look.pos, timer: 0.5 };
+        }
         let sp = &species[me.species];
         b.wob += dt * if b.water { 2.0 } else { 7.0 };
         let nerve = super::startle::Nerve::of(sp, None, super::age::Stage::Adult);

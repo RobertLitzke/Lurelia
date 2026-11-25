@@ -20,5 +20,6 @@
   "flower_seasons": ["autumn"],
   "autumn": "apple_leaves_autumn",
   "affords": ["nectar", "browse"],
-  "thin_limbs": 0.1
+  "thin_limbs": 0.1,
+  "site": {"wet": [0.25, 0.65], "soil": [0.4, 0.9], "exposure": [0.0, 0.6]}
 }

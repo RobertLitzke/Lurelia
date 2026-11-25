@@ -1,0 +1,60 @@
+{
+  "name": "ember_drake",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Ember drake: a small soot-black pterosaur of the lava tubes, 2 m across the wings, with glowing orange veins in its wing membranes and a glowing throat and belly. It circles low over the lava field and is warm and curious, not wary of people. The pteranodon's model at under a third of the size.",
+  "voxel": 0.01741,
+  "half_w": 0.1,
+  "height": 0.53,
+  "colors": {
+    "body": [30, 27, 28],
+    "membrane": [26, 23, 25],
+    "bone": [48, 40, 38],
+    "beak": [58, 48, 44],
+    "crest": [70, 34, 28],
+    "crest_tip": [255, 96, 28, 1.2],
+    "eye": [150, 52, 28, 0.5],
+    "vein": [255, 84, 18, 1.8],
+    "glow": [255, 110, 30, 1.4]
+  },
+  "behaviour": {
+    "displays": [{"kind": "sky_dance", "params": {"height": 10, "wave_m": 25}}],
+    "movement": "circle",
+    "walk_speed": 4,
+    "flee_speed": 7,
+    "wary": 2,
+    "flightiness": 0.05,
+    "fly_height": 3.5,
+    "flight": "flap_glide",
+    "group": {"size": [1, 2], "spacing": 4, "range": 14},
+    "wind": 0.3,
+    "rain": 0.2,
+    "active": "any",
+    "off_hours": 0.8,
+    "flees_from": [],
+    "voice": {
+      "size": 1.5,
+      "calls": [
+        {"cry": "scream", "on": "display:sky_dance", "boost": 4},
+        {"cry": "scream", "on": "idle", "every_s": [300, 900], "boost": 4}
+      ]
+    }
+  },
+  "like": "pteranodon",
+  "extra_ops": [
+    {"op": "recolour", "at": [9, 6, 22], "until": [14, 7, 56], "from": "membrane", "to": "vein"},
+    {"op": "recolour", "at": [20, 6, 22], "until": [23, 7, 56], "from": "membrane", "to": "vein"},
+    {"op": "recolour", "at": [9, 11, 22], "until": [14, 12, 56], "from": "membrane", "to": "vein"},
+    {"op": "recolour", "at": [20, 11, 22], "until": [23, 12, 56], "from": "membrane", "to": "vein"},
+    {"op": "recolour", "at": [9, 16, 22], "until": [14, 17, 56], "from": "membrane", "to": "vein"},
+    {"op": "recolour", "at": [20, 16, 22], "until": [23, 17, 56], "from": "membrane", "to": "vein"},
+    {"op": "recolour", "at": [9, 21, 22], "until": [14, 22, 56], "from": "membrane", "to": "vein"},
+    {"op": "recolour", "at": [20, 21, 22], "until": [23, 22, 56], "from": "membrane", "to": "vein"},
+    {"op": "recolour", "at": [9, 26, 22], "until": [14, 27, 56], "from": "membrane", "to": "vein"},
+    {"op": "recolour", "at": [20, 26, 22], "until": [23, 27, 56], "from": "membrane", "to": "vein"},
+    {"op": "recolour", "at": [9, 31, 22], "until": [14, 32, 56], "from": "membrane", "to": "vein"},
+    {"op": "recolour", "at": [20, 31, 22], "until": [23, 32, 56], "from": "membrane", "to": "vein"},
+    {"op": "recolour", "at": [14, 10, 24], "until": [18, 14, 40], "from": "body", "to": "glow"},
+    {"op": "recolour", "at": [15, 15, 20], "until": [17, 23, 24], "from": "body", "to": "glow"}
+  ]
+}

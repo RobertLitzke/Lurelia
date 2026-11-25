@@ -1,0 +1,43 @@
+{
+  "name": "assault_rifle",
+  "version": 1,
+  "introduced_by": "realistic",
+  "notes": "The rifle every army carries: thirty rounds, fully automatic, good from across a room to across a street. The left button holds it on automatic; the right fires three-round bursts that stay tighter. It takes the same rounds as the machine gun, out of one store.",
+  "display": "ASSAULT RIFLE",
+  "slot": 6,
+  "ammo_max": 300,
+  "ammo_start": 120,
+  "mag": 30,
+  "reload_s": 2.1,
+  "fire": {
+    "kind": "hitscan",
+    "rpm": 700.0,
+    "damage": 11.0,
+    "spread_deg": 0.9,
+    "range": 220.0,
+    "falloff": 0.65,
+    "head_mult": 1.8,
+    "kick": 0.45,
+    "tracer": [1.0, 0.9, 0.62],
+    "tracer_s": 0.04
+  },
+  "alt": {
+    "kind": "hitscan",
+    "rpm": 900.0,
+    "damage": 11.0,
+    "burst": 3,
+    "burst_gap_s": 0.22,
+    "burst_spread_deg": 0.25,
+    "spread_deg": 0.4,
+    "range": 240.0,
+    "falloff": 0.7,
+    "head_mult": 1.8,
+    "kick": 0.4,
+    "tracer": [1.0, 0.9, 0.62],
+    "tracer_s": 0.04
+  },
+  "view": "ar_bullpup",
+  "tint": [0.22, 0.23, 0.24],
+  "role": "midrange",
+  "ammo_type": "rifle_rounds"
+}

@@ -1,0 +1,34 @@
+{
+  "name": "dino_nest",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "A long-neck's mound nest on Thunderfield: a rim of scraped earth and piled fern litter about 4 m across round a hollow holding a clutch of seven pale eggs the size of melons, a shard of old bone in the rim.",
+  "size": [17, 5, 17],
+  "anchor": [8, 0, 8],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"litter": "fernwood_floor", "egg": "stone_light", "bone": "old_bone"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [8, 0, 8], "radius": [7.5, 2.2, 7.5], "mat": "litter", "part": "floor"},
+    {"op": "ellipsoid", "centre": [8, 1.6, 8], "radius": [5, 1.6, 5], "mat": "air", "part": "floor"},
+    {"op": "ellipsoid", "centre": [8, 0.6, 8], "radius": [4.6, 0.8, 4.6], "mat": "litter", "part": "floor"},
+    {"op": "ellipsoid", "centre": [8.0, 2.0, 8.0], "radius": [0.9, 1.2, 0.9], "mat": "egg", "part": "floor"},
+    {"op": "ellipsoid", "centre": [9.4, 2.0, 9.7], "radius": [0.9, 1.2, 0.9], "mat": "egg", "part": "floor"},
+    {"op": "ellipsoid", "centre": [7.5, 2.0, 10.1], "radius": [0.9, 1.2, 0.9], "mat": "egg", "part": "floor"},
+    {"op": "ellipsoid", "centre": [6.0, 2.0, 9.0], "radius": [0.9, 1.2, 0.9], "mat": "egg", "part": "floor"},
+    {"op": "ellipsoid", "centre": [6.0, 2.0, 7.0], "radius": [0.9, 1.2, 0.9], "mat": "egg", "part": "floor"},
+    {"op": "ellipsoid", "centre": [7.5, 2.0, 5.9], "radius": [0.9, 1.2, 0.9], "mat": "egg", "part": "floor"},
+    {"op": "ellipsoid", "centre": [9.4, 2.0, 6.3], "radius": [0.9, 1.2, 0.9], "mat": "egg", "part": "floor"},
+    {
+      "op": "log",
+      "base": [1, 1.5, 12],
+      "radius": 0.4,
+      "length": 6,
+      "axis": "x",
+      "yaw": 20,
+      "mat": "bone",
+      "part": "floor"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "name": "poison_frog",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Poison dart frog: a thumb-sized frog of the cloud forest floor, bright blue with black spots, hopping about in the leaf litter by day. Its legs have their own colour, `limb`, so a rare child can be red with blue legs.",
+  "colors": {
+    "coat": [24, 84, 240],
+    "limb": [24, 84, 240],
+    "mark": [3, 3, 6],
+    "belly": [40, 70, 170],
+    "dark": [3, 3, 6],
+    "spot": [3, 3, 6]
+  },
+  "behaviour": {
+    "movement": "hop",
+    "walk_speed": 0.5,
+    "flee_speed": 1.5,
+    "wary": 1.5,
+    "flightiness": 0.8,
+    "swims": false,
+    "active": "diurnal",
+    "off_hours": 0.1,
+    "voice": {
+      "size": 0.4,
+      "calls": [
+        {
+          "cry": "trill",
+          "on": "idle",
+          "hours": "day",
+          "every_s": [20, 90],
+          "rain": true,
+          "chorus": 0.4,
+          "chorus_m": 50
+        }
+      ]
+    }
+  },
+  "like": "frog",
+  "scale": 0.3,
+  "extra_ops": [
+    {"op": "recolour", "at": [5, 0, 23], "until": [9, 9, 34], "from": "coat", "to": "limb"},
+    {"op": "recolour", "at": [23, 0, 23], "until": [27, 9, 34], "from": "coat", "to": "limb"},
+    {"op": "recolour", "at": [7, 0, 10], "until": [12, 7, 14], "from": "coat", "to": "limb"},
+    {"op": "recolour", "at": [20, 0, 10], "until": [25, 7, 14], "from": "coat", "to": "limb"},
+    {"op": "recolour", "at": [12, 7, 12], "until": [14, 20, 14], "from": "coat", "to": "spot"},
+    {"op": "recolour", "at": [18, 7, 12], "until": [20, 20, 14], "from": "coat", "to": "spot"},
+    {"op": "recolour", "at": [14, 7, 19], "until": [16, 20, 21], "from": "coat", "to": "spot"},
+    {"op": "recolour", "at": [20, 7, 21], "until": [23, 20, 23], "from": "coat", "to": "spot"},
+    {"op": "recolour", "at": [9, 7, 23], "until": [12, 20, 25], "from": "coat", "to": "spot"},
+    {"op": "recolour", "at": [16, 7, 28], "until": [18, 20, 30], "from": "coat", "to": "spot"},
+    {"op": "recolour", "at": [12, 7, 32], "until": [14, 20, 34], "from": "coat", "to": "spot"},
+    {"op": "recolour", "at": [20, 7, 32], "until": [23, 20, 34], "from": "coat", "to": "spot"},
+    {"op": "recolour", "at": [16, 7, 17], "until": [18, 20, 19], "from": "coat", "to": "spot"},
+    {"op": "recolour", "at": [14, 7, 36], "until": [16, 20, 39], "from": "coat", "to": "spot"},
+    {"op": "recolour", "at": [18, 7, 39], "until": [20, 20, 41], "from": "coat", "to": "spot"}
+  ]
+}

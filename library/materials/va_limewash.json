@@ -1,0 +1,15 @@
+{
+  "name": "va_limewash",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Vila Azul's limewashed wall between the tiled panels: white, a little warm, chalky.",
+  "smooth": false,
+  "texture": {
+    "pattern": "noise",
+    "base": [234, 232, 224],
+    "alt": [220, 218, 210],
+    "scale": 5,
+    "contrast": 0.5,
+    "calm": {"base": [238, 236, 228], "alt": [226, 224, 216]}
+  }
+}

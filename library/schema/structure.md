@@ -53,7 +53,7 @@ Top-level keys (required: `name`, `size`, `ops`):
 | `tags` | labels; the engine reads `ruin` and `anomaly` |
 | `decays` | weathers with age (default true); false for rock and logs |
 | `level` | ground levelled under it (default true); false settles it into the lowest ground |
-| `base` | `sea` (y = 0 one metre under sea level), `rim` (anchor at the highest ground, for spans), `bed` (sunk into the sea bed) |
+| `base` | `sea` (y = 0 one metre under sea level), `rim` (anchor at the highest ground, for spans; a bridge is seated on its banks, see below), `bed` (sunk into the sea bed) |
 | `vines` | 0 to 1, how readily vines cover its walls |
 
 Ops, by their `op` value. All but the recolours and `repeat` take `mat` and
@@ -81,12 +81,45 @@ else (`timber`, `frame`, `wall`, `stone`, `metal`, any other name, or none)
 crumbles from the top of each column, all at the same rate. So an op that
 must survive age whole (an iron kettle set in brick) needs `floor`.
 
+## Bridges
+
+A structure with `base: "rim"` and the tag `bridge` is seated on its banks
+by the `place` event (`chronicle/events/place.rs`, `fit_bridge`) instead of
+hung from the highest ground under its footprint:
+
+- Its long axis is local X or Z, whichever is longer, and the deck is
+  centred on the anchor across that axis. The tips are the first and last
+  slice along it.
+- The walking surface at each tip is read from the model: the first air
+  above the first solid voxel in the tip column on the anchor's line. So that
+  column must be solid from the bottom up to the deck (an abutment or the
+  deck itself), with air above the deck.
+- Without a `height` on the `place` event, the deck goes to the mean of the
+  ground just off the two tips. With one, it stays there (rope bridges, a
+  chain of `bridge_bay`s).
+- The ground at each tip is cut or filled to the deck from 2.5 m under the
+  abutment out along a ramp of about 1 in 5 (6 to 24 m), as wide as the deck
+  plus a 3 m feather. An end more than 5 m off its ground (a cliff, a canyon
+  rim) is left alone.
+- The nearest graded road (a `network`, `route` or `ribbon` kit) or town
+  street on each bank within 45 m of a tip is carried on to the tip in its
+  own surface, easing from the road's height to the deck's. A road on the
+  far side of the water, or one whose join would cross a house, is not taken.
+- The deck and 8 m off each tip are marked taken, so a later town builds no
+  house across the bridge head and later walls and fences leave a gap there.
+
+So make the bridge long enough to land on dry ground at both ends with a
+few metres to spare: a tip standing in the river gets no ground and no
+road. In the chronicle, end the road's links at the two tips (or within
+45 m of them) rather than routing the road across the water beside it.
+
 ## What to check
 
 - Everything drawn lies inside `size`, including the top of the roof:
   clipping is silent.
 - `anchor` is inside `size`. For `base: "rim"` its y is the row that rests
-  on the highest ground under the footprint (a bridge's deck).
+  on the highest ground under the footprint (a bridge's deck). A bridge
+  follows the rules in "Bridges" below.
 - Order: an `air` or `carve` op comes after the solids it cuts, and nothing
   after it fills the hole again.
 - Doors and windows cut the full wall thickness: an opening in `walls` with

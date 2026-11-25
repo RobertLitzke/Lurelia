@@ -1,16 +1,30 @@
 {
   "name": "sapling_maple",
-  "version": 1,
+  "version": 2,
   "introduced_by": "glassfall",
-  "notes": "A young broadleaf, head high to twice that, waiting in the shade for a gap in the canopy.",
+  "notes": "A young broadleaf, head high to twice that, waiting in the shade for a gap in the canopy. v2: turns the same reds, oranges and golds as the grown maples instead of the generic autumn leaf.",
   "height": [2.4, 4.2],
   "trunk_radius": [0.05, 0.08],
   "crown_radius": [0.6, 0.95],
   "leaf": "leaves",
+  "morphs": [
+    {"name": "crimson", "weight": 3, "notes": "Deep red.", "colors": {"autumn": "maple_crimson"}},
+    {"name": "red", "weight": 4, "notes": "Scarlet going orange.", "colors": {"autumn": "maple_red"}},
+    {"name": "orange", "weight": 3.5, "notes": "Clear orange.", "colors": {"autumn": "maple_orange"}},
+    {"name": "gold", "weight": 1.5, "notes": "Ochre gold.", "colors": {"autumn": "maple_gold"}},
+    {
+      "name": "turning",
+      "weight": 0.5,
+      "notes": "Still part green, going amber.",
+      "colors": {"autumn": "maple_turning"}
+    }
+  ],
+  "morph_blob_m": 5,
   "leader": 0.7,
   "fill": 0.6,
   "spread": 0.3,
   "max_slope": 0.8,
   "like": "maple",
-  "autumn": "leaves_autumn"
+  "autumn": "maple_red",
+  "site": {"shade": [0.25, 1.0]}
 }

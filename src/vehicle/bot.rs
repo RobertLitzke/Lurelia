@@ -331,19 +331,30 @@ impl Style {
     }
 }
 
+/// The speed a kart's grip is measured at when its driver is fitted to it
+/// (`Style::for_kart`, `Style::drift_fit`), m/s.
+const FIT_V: f32 = 22.0;
+
 impl Style {
     /// A kart driver fitted to the kart it drives:
     /// trusting `SHARE` of the sideways grip its tyres give at 22 m/s
     /// (`kart::reach`), and braking as `Style::kart` does, scaled by its grip
-    /// against the plain kart's. So a heavier kart's driver brakes sooner and
+    /// against the plain kart's (`kart::plain`). So a heavier kart's driver brakes sooner and
     /// a grippier one corners faster, without a style bred for each.
     pub fn for_kart(spec: &super::Spec) -> Style {
         const SHARE: f32 = 0.8;
-        /// The grip of the reference kart (library/vehicles/kart.json) that
-        /// `Style::kart()` was tuned on.
-        const KART_GRIP: f32 = 1.6;
         let k = Style::kart();
-        Style { corner_g: SHARE * super::kart::reach(spec, 22.0), brake_g: k.brake_g * spec.grip / KART_GRIP, ..k }
+        let plain = super::kart::plain();
+        Style { corner_g: SHARE * super::kart::reach(spec, FIT_V), brake_g: k.brake_g * spec.grip / plain.grip.max(0.01), ..k }
+    }
+
+    /// How much tighter a bend this kart takes flat out than the plain kart
+    /// (`kart::plain`) does: the curvature its grip at `FIT_V` holds at its
+    /// top speed, against the plain kart's. A drift threshold set for the
+    /// plain kart, scaled by this, is as tight a bend for any kart: about
+    /// 0.84 for the heavy kart, 1.09 for the quick one.
+    pub fn drift_fit(spec: &super::Spec) -> f32 {
+        super::kart::flat_out_bend(spec, FIT_V) / super::kart::flat_out_bend(super::kart::plain(), FIT_V).max(1e-6)
     }
 }
 
@@ -441,7 +452,10 @@ impl Driver {
         let mut want = car.spec.top_speed + 5.0;
         let mut d = 0.0;
         while d < st.plan {
-            let k = track.curve_at(place.s + d).abs().max(1e-4);
+            // The bend as the car's lane takes it: on a wide road a lane
+            // well inside a hairpin turns much tighter than the centreline.
+            let kc = track.curve_at(place.s + d);
+            let k = (kc / (1.0 + self.lane * kc).max(0.3)).abs().max(1e-4);
             let (grade, bend) = track.grade_at(place.s + d);
             let mut limit = (st.corner_g / k).sqrt();
             if bend < -1e-4 && !track.on_jump(place.s + d) {
@@ -566,6 +580,21 @@ mod tests {
     /// stretch all the way, so its distance round only ever grows, through
     /// the crossing too, and from a cold start at the crossing on either
     /// level.
+    /// The kart drivers are fitted against kart.json as it is now: the plain
+    /// kart's driver is `Style::kart` itself, and the heavy and quick karts
+    /// take the bends their files give them.
+    #[test]
+    fn kart_drivers_are_fitted_against_the_plain_kart() {
+        let plain = super::super::kart::plain();
+        assert_eq!(plain.name, "kart");
+        assert!((Style::drift_fit(plain) - 1.0).abs() < 1e-5);
+        assert!((Style::for_kart(plain).brake_g - Style::kart().brake_g).abs() < 1e-5);
+        let cat = super::super::Catalogue::load(&crate::library::data_root());
+        let heavy = Style::drift_fit(&cat.get("kart_heavy"));
+        let quick = Style::drift_fit(&cat.get("kart_quick"));
+        assert!(heavy < 0.95 && quick > 1.05, "heavy {heavy}, quick {quick}");
+    }
+
     #[test]
     fn a_crossing_is_placed_by_height() {
         let n = 400;

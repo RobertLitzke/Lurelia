@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "lowmouth",
   "notes": "The levee and the high ground along the Marrow: mown grass, a few great live oaks, cottonwoods and willows down the bank.",
+  "habitat": "riparian",
   "priority": 7,
   "rules": {"region": "levee"},
   "surface": "meadow_grass",
   "subsurface": "silt",
+  "soil": 0.75,
   "map_color": [140, 176, 96],
   "plants": [
     {"plant": "live_oak", "density": 0.0003, "placement": {"verb": "lone", "params": {"spacing": 60}}},

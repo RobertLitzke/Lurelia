@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saurischia",
   "notes": "The ash country north-east of Cinderhorn: grey ash from the last eruption, dead snags of the forest it buried, horsetails and ferns coming back in the gullies.",
+  "habitat": "volcanic_barren",
   "priority": 9,
   "rules": {"region": "ash"},
   "surface": "grey_ash",
   "subsurface": "cinders",
   "fringe": 14,
+  "soil": 0.3,
   "map_color": [150, 146, 138],
   "plants": [
     {"plant": "snag", "density": 0.002, "placement": {"verb": "lone", "params": {"spacing": 14}}},

@@ -1,0 +1,187 @@
+{
+  "$defs": {
+    "CreatureUse": {
+      "properties": {
+        "count": {
+          "description": "How many to keep around the player while they are in this biome. A\nfraction is an extra one in that share of the country: 2.2 keeps two,\nand a third in about one 128 m square in five.",
+          "format": "float",
+          "type": "number"
+        },
+        "creature": {
+          "type": "string"
+        },
+        "morph": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MorphPick"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Which of the creature's coats turn up here (see `MorphPick`): the glass\ncountry's elk pale, the faerie wood's herons recoloured."
+        }
+      },
+      "required": [
+        "creature",
+        "count"
+      ],
+      "type": "object"
+    },
+    "MorphPick": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "additionalProperties": {
+            "format": "float",
+            "type": "number"
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Which coats a biome wants of a creature or plant it lists: one by name\n(\"the pale hare here\"), or weights that override the entry's own (\"mostly\npale, some wild\"). Left out, the entry's own weights stand."
+    },
+    "PlaceVerb": {
+      "description": "How a biome places a plant or a feature (`placement.verb`).",
+      "enum": [
+        "scatter",
+        "clustered",
+        "edge",
+        "riparian",
+        "gradient",
+        "ring",
+        "lone"
+      ],
+      "type": "string"
+    },
+    "Placement": {
+      "description": "A placement rule: which verb, and its parameters.",
+      "properties": {
+        "field": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "params": {
+          "additionalProperties": {
+            "format": "float",
+            "type": "number"
+          },
+          "default": {},
+          "type": "object"
+        },
+        "verb": {
+          "$ref": "#/$defs/PlaceVerb"
+        }
+      },
+      "required": [
+        "verb"
+      ],
+      "type": "object"
+    },
+    "PlantUse": {
+      "properties": {
+        "density": {
+          "description": "Plants per square metre where the placement allows them fully.",
+          "format": "float",
+          "type": "number"
+        },
+        "morph": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MorphPick"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Which of the plant's coats grow here (see `MorphPick`)."
+        },
+        "placement": {
+          "$ref": "#/$defs/Placement"
+        },
+        "plant": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "plant",
+        "density"
+      ],
+      "type": "object"
+    },
+    "RealmCast": {
+      "description": "A realm's own species for one habitat (`RealmDef::habitats`).",
+      "properties": {
+        "creatures": {
+          "description": "Read by animal fill later (habitats plan H6); checked now.",
+          "items": {
+            "$ref": "#/$defs/CreatureUse"
+          },
+          "type": "array"
+        },
+        "plants": {
+          "items": {
+            "$ref": "#/$defs/PlantUse"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "patternProperties": {
+    "^_": {}
+  },
+  "properties": {
+    "ground": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {},
+      "description": "Its look, in a world that asks for realm looks\n(`WorldDef::realm_looks`): ground materials it turns into others, by\nname (`{\"meadow_grass\": \"pale_grass\"}`), where its share of the\nground passes a noisy threshold, so changed ground comes in blobs.",
+      "type": "object"
+    },
+    "habitats": {
+      "additionalProperties": {
+        "$ref": "#/$defs/RealmCast"
+      },
+      "description": "What each habitat holds in this realm, by habitat name: a dinosaur\nmarsh has giant horsetail and hadrosaurs. Drawn in by fill\n(`WorldDef::fill`) wherever the realm comes through, so a world with\ndinosaur ground gets the cast without a biome listing it.",
+      "type": "object"
+    },
+    "introduced_by": {
+      "default": "",
+      "type": "string"
+    },
+    "mist": {
+      "default": 0.0,
+      "description": "Ground mist where it is strong, 0 to 1, as a biome's `mist`.",
+      "format": "float",
+      "type": "number"
+    },
+    "name": {
+      "type": "string"
+    },
+    "notes": {
+      "description": "One sentence on what the entry is, for people and the catalogue.",
+      "type": "string"
+    },
+    "version": {
+      "default": 1,
+      "format": "uint32",
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "title": "RealmDef",
+  "type": "object"
+}

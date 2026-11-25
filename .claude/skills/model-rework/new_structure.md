@@ -34,6 +34,12 @@ so they fit its plots.
 everything else crumbles from the top at one rate. Draw it whole and give
 every op a part.
 
+**Bridges:** `base: "rim"` with the tag `bridge`, long axis along local X or
+Z, deck centred on the anchor across it, `anchor[1]` the deck row, and the
+column at each tip on the anchor's line solid from the bottom up to the deck.
+Long enough to land a few metres onto dry ground at both ends. Read "Bridges"
+in the schema doc.
+
 **Notes:** one or two plain sentences with real dimensions, which way it
 faces (front is local -Z) and what it carves.
 

@@ -4,7 +4,7 @@ track peregrine size 512 style downs
 title PEREGRINE RIDGE
 blurb A fast, flowing circuit across the chalk downs: a long drafting straight, a banked climb up Falcon Crest, a tight ridge hairpin, a plunge into the Chalk Bowl, and technical S-bends over West Knoll.
 race laps 3 rivals 3 vehicle kart
-road 12 bank 1.25
+road 14.5 bank 1.25
 land 32 5
 hour 16.5
 
@@ -47,3 +47,12 @@ point 96 314 0.6        # mid-straight crest before braking
 point 74 368            # Quarry Chicane entry (left)
 point 64 412            # final corner apex (right)
 point 86 440            # exit onto the main straight
+
+# Width: 14.5 m. The main straight is wide for the start and for passing,
+# and so is the Ridge Hairpin; the Chalk Bowl a little wide; the Feather
+# Esses and the Quarry Chicane are narrow and technical.
+width 1390 200 17
+width 545 700 18
+width 700 800 16
+width 900 1075 13.5
+width 1270 1365 13

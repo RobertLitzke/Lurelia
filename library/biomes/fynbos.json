@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saltmirror",
   "notes": "The fynbos on the range: a low grey-green fleece of heath and restio reed with proteas standing out of it, pincushions in the open and rock showing through everywhere.",
+  "habitat": "heath_moor",
   "priority": 9,
   "rules": {"elev": [20, 400], "slope": [0, 1.0]},
   "surface": "fynbos_grass",
   "subsurface": "dirt",
   "rock": "quartzite",
+  "soil": 0.15,
   "map_color": [118, 126, 100],
   "plants": [
     {

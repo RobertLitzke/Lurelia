@@ -9,5 +9,6 @@
   "like": "hanging_vine",
   "hosts": ["tree"],
   "affords": ["nectar"],
-  "autumn": "autumn_vine"
+  "autumn": "autumn_vine",
+  "realms": ["fae"]
 }

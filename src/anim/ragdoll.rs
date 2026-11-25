@@ -1,14 +1,14 @@
-//! A body with nothing holding it up.
+//! The shooter figure's body with nothing holding it up (figure.rs).
 //!
 //! Each bone is given an angular velocity and let go: gravity pulls whichever
 //! way its own long axis is not already pointing down, the joint fights back a
 //! little, and friction takes the motion out of it. Once everything has
 //! stopped, the pose is held and costs nothing further.
 //!
-//! Three things use it. The deceased settle into it, so no two skeletons in a
-//! field lie the same way. Prey in a predator's mouth keeps stepping, with the
-//! carrier's own movement fed in, so it swings and jiggles as it is carried.
-//! And an animal that sleeps on its side tips over into it and stays there.
+//! Animals no longer use this: a dead or carried animal is a body of points
+//! that really lies on the ground (limp.rs). This one turns joints about a
+//! body pinned at its feet, which serves a bot that is drawn for a moment
+//! before its corpse (shooter/corpse.rs) takes over.
 
 use super::{bone_rot, Pose, Rig};
 use crate::anim::{Plan, Role};
@@ -55,10 +55,6 @@ const FLOOR_GRIP: f32 = 1.4;
 /// How hard a thrown body's joints are drawn back toward their rest pose
 /// once it is lying down, radians a second squared per radian of bend.
 const RELAX: f32 = 9.0;
-/// Steps a settle is allowed to take before it is called finished.
-const MAX_STEPS: u32 = 600;
-/// The length of one step of a settle, seconds.
-pub const SETTLE_DT: f32 = 1.0 / 30.0;
 /// How far the body's own axis may be off horizontal and still count as
 /// lying down: 0.34 is within twenty degrees. Above it a thrown body on the
 /// floor keeps going over, because the floor cannot hold a corpse up on its
@@ -313,26 +309,6 @@ impl Ragdoll {
         self.up.extend(self.fk.iter().map(|(p, _)| p.y + self.pose.root.y));
     }
 
-    pub fn settled(&self) -> bool {
-        self.settled
-    }
-
-    /// Step it where it lies, nothing shaking it, until it has settled or
-    /// `MAX_STEPS` steps have gone by.
-    pub fn run_out(&mut self, rig: &Rig) {
-        for _ in 0..MAX_STEPS {
-            if self.settled {
-                break;
-            }
-            self.step(rig, SETTLE_DT, Vec3::ZERO);
-        }
-    }
-
-    /// Let it start moving again: it has just been dropped.
-    pub fn wake(&mut self) {
-        self.settled = false;
-    }
-
     /// One fixed step. `shake` is the carrier's acceleration in the creature's
     /// own frame, metres a second squared, for prey being carried; zero for
     /// anything lying still.
@@ -477,163 +453,5 @@ impl Ragdoll {
             }
         }
         (q * rest_axis(rig)).normalize_or_zero()
-    }
-}
-
-/// A ragdoll run to a standstill: what bones that have been lying in a field
-/// look like. Deterministic in `seed`, so the same skeleton always lies the
-/// same way.
-pub fn settled(rig: &Rig, voxel: f32, seed: u32) -> Pose {
-    let mut r = Ragdoll::new(rig, voxel, seed);
-    r.run_out(rig);
-    r.pose
-}
-
-/// Lying on one side: the pose an animal that sleeps that way tips into.
-/// `side` is -1 or 1.
-pub fn on_side(rig: &Rig, voxel: f32, side: f32, seed: u32) -> Pose {
-    let mut r = Ragdoll::new(rig, voxel, seed);
-    // Over onto the side and nothing else: `new` may have picked a fall
-    // forwards or backwards for this seed, and that pitch left in had some
-    // seals and walruses sleeping stood on their tails.
-    r.pose.bones[0] = Vec3::new(0.0, 0.0, side * 1.35);
-    r.run_out(rig);
-    // Keep the body where it was put; only the limbs were allowed to fall.
-    r.pose.bones[0] = Vec3::new(0.0, 0.0, side * 1.35);
-    r.rest_on_ground(rig);
-    r.pose
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::library::Library;
-
-    fn rigs() -> Vec<(String, Rig)> {
-        let (lib, errors) = Library::load(&crate::library::data_root());
-        // Only the creatures are used here; the rest of the library has its
-        // own tests, and a kit being edited elsewhere should not fail these.
-        let errors: Vec<_> = errors.iter().filter(|e| e.contains("creatures")).collect();
-        assert!(errors.is_empty(), "{errors:?}");
-        lib.creatures
-            .iter()
-            .filter_map(|c| {
-                let def = c.rig.as_ref()?;
-                let names: Vec<&String> = c.colors.keys().collect();
-                let resolve = |n: &str| {
-                    if n == "air" {
-                        Some(0u8)
-                    } else {
-                        names.iter().position(|x| x.as_str() == n).map(|k| k as u8 + 1)
-                    }
-                };
-                let whole = crate::world::shape::compile(&c.ops, c.grid, &resolve).mat;
-                let s = crate::anim::slice::slice(def, &c.ops, &whole, crate::anim::slice::Dims(c.grid), &|n| resolve(n).is_some(), c.voxel, c.half_w, c.height);
-                Some((c.name.clone(), s.rig))
-            })
-            .collect()
-    }
-
-    #[test]
-    fn every_creature_settles_and_stays_within_its_joints() {
-        let all = rigs();
-        assert!(all.len() > 20, "only {} rigs", all.len());
-        for (name, rig) in &all {
-            let mut r = Ragdoll::new(rig, 0.05, 0x1234);
-            let mut steps = 0;
-            while !r.settled() && steps < MAX_STEPS {
-                r.step(rig, 1.0 / 30.0, Vec3::ZERO);
-                steps += 1;
-            }
-            assert!(r.settled(), "{name}: still moving after {steps} steps");
-            for (i, b) in rig.bones.iter().enumerate() {
-                let lim = limit(b.role) + 1e-4;
-                let e = r.pose.bones[i];
-                assert!(e.x.abs() <= lim && e.z.abs() <= lim, "{name}: {} bent past its joint: {e:?}", b.name);
-                assert!(e.x.is_finite() && e.z.is_finite(), "{name}: {} went to NaN", b.name);
-            }
-        }
-    }
-
-    #[test]
-    fn no_two_settle_alike() {
-        let (name, rig) = rigs().into_iter().find(|(n, _)| n == "deer" || n == "coyote").expect("a quadruped");
-        let a = settled(&rig, 0.05, 1);
-        let b = settled(&rig, 0.05, 2);
-        assert_ne!(a.bones, b.bones, "{name}: two seeds settled identically");
-        // And the same seed always gives the same pose.
-        assert_eq!(settled(&rig, 0.05, 1).bones, a.bones);
-    }
-
-    #[test]
-    fn a_four_legged_body_lies_on_its_side() {
-        let (name, rig) = rigs().into_iter().find(|(n, _)| n == "deer").expect("a deer");
-        for seed in 0..64 {
-            let p = settled(&rig, 0.05, seed);
-            // Rolled onto a side (z), never pitched end over end (x).
-            assert!(p.bones[0].x.abs() < 0.8, "{name} seed {seed}: pitched {:?}", p.bones[0]);
-        }
-    }
-
-    /// Lying along the floor, not leaning on one end of itself.
-    fn assert_level(name: &str, how: &str, r: &Ragdoll) {
-        let pitch = r.pose.bones[0].x;
-        assert!(pitch.abs() < 0.15, "{name} {how}: body left pitched {pitch:.2} rad");
-    }
-
-    #[test]
-    fn a_horizontal_body_lies_level_however_it_fell() {
-        for (name, rig) in rigs() {
-            if rig.plan == Some(Plan::Biped) || rig.plan == Some(Plan::Serpent) {
-                continue;
-            }
-            for seed in 0..24u32 {
-                // Dropped where it stood.
-                let mut r = Ragdoll::new(&rig, 0.05, seed);
-                for _ in 0..MAX_STEPS {
-                    r.step(&rig, 1.0 / 30.0, Vec3::ZERO);
-                    if r.settled() {
-                        break;
-                    }
-                }
-                assert!(r.settled(), "{name} seed {seed}: dropped body still moving");
-                assert_level(&name, &format!("dropped, seed {seed}"), &r);
-
-                // Thrown: tumbles in the air for a while, then lands.
-                let mut r = Ragdoll::new(&rig, 0.05, seed);
-                r.hurl(&rig, 6.0 + (seed % 5) as f32 * 3.0, seed.wrapping_mul(2654435761));
-                for _ in 0..(10 + seed % 20) {
-                    r.step(&rig, 1.0 / 30.0, Vec3::ZERO);
-                }
-                r.aloft(false);
-                for _ in 0..MAX_STEPS * 2 {
-                    r.step(&rig, 1.0 / 30.0, Vec3::ZERO);
-                    if r.settled() {
-                        break;
-                    }
-                }
-                assert!(r.settled(), "{name} seed {seed}: thrown body still moving");
-                assert_level(&name, &format!("thrown, seed {seed}"), &r);
-                // And over on a side: the floor puts a thrown body down
-                // (`topple`), however it landed.
-                let down = r.direction(&rig, 0);
-                assert!(down.y.abs() < DOWN + 0.1, "{name} thrown, seed {seed}: not lying down, belly axis {down:?}");
-            }
-        }
-    }
-
-    #[test]
-    fn being_carried_keeps_it_moving() {
-        let (_, rig) = rigs().into_iter().find(|(n, _)| n == "rabbit").expect("a rabbit");
-        let mut r = Ragdoll::new(&rig, 0.03, 7);
-        for _ in 0..MAX_STEPS {
-            r.step(&rig, 1.0 / 30.0, Vec3::ZERO);
-        }
-        assert!(r.settled());
-        let before = r.pose.bones.clone();
-        for _ in 0..30 {
-            r.step(&rig, 1.0 / 30.0, Vec3::new(3.0, 0.0, 2.0));
-        }
-        assert_ne!(before, r.pose.bones, "a shake did not move it");
     }
 }

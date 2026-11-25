@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "gannet",
   "notes": "Coast redwood along the north edge: tall trunks with young redwoods coming up round them, fern and huckleberry under, fog in the crowns.",
+  "habitat": "conifer_forest",
   "priority": 4,
   "rules": {"region": "redwood", "elev": [1.5, 200]},
   "surface": "pine_duff",
   "subsurface": "dirt",
+  "soil": 0.4,
   "map_color": [52, 74, 50],
   "plants": [
     {"plant": "redwood", "density": 0.012, "placement": {"verb": "clustered", "params": {"size": 30}}},

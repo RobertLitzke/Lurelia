@@ -8,5 +8,6 @@
   "trunk_radius": [0.25, 0.4],
   "crown_radius": [0.0, 0.0],
   "bark": "cottonwood_bark",
-  "max_slope": 1.0
+  "max_slope": 1.0,
+  "skeleton": "stump"
 }

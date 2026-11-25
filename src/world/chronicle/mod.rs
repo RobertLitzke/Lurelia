@@ -18,6 +18,7 @@ pub mod race_track;
 
 pub use ctx::{compile_structure, EventCtx, Process};
 pub use events::defaults_used as event_defaults;
+pub(crate) use events::circuit::LAMP_POST;
 pub use gazetteer::gazetteer;
 
 use super::fields::*;
@@ -180,6 +181,12 @@ pub fn build_world_with(dir: &Path, lib: Library, edges: &[super::seam::Edge]) -
             warnings.push(format!("world.json: no such weather as {w}"));
         }
     }
+    if let Some(p) = def.plants.as_deref().filter(|p| !matches!(*p, "v1" | "v2")) {
+        warnings.push(format!("world.json: plants is {p}, which is neither v1 nor v2; placed by list (v1)"));
+    }
+    if let Some(f) = def.fill.filter(|f| !(0.0..=1.0).contains(f)) {
+        warnings.push(format!("world.json: fill {f} must be 0 to 1"));
+    }
     for k in crate::world::season::Calendar::unknown(&def.seasons) {
         warnings.push(format!("world.json: no such season as {k}"));
     }
@@ -320,6 +327,8 @@ pub fn build_world_with(dir: &Path, lib: Library, edges: &[super::seam::Edge]) -
     let mut cx_when = std::mem::take(&mut cx.when);
     let city = cx.state.take::<super::city::City>();
     let circuits = cx.state.take::<events::circuit::Circuits>().0;
+    let cloth = cx.state.take::<crate::world::cloth::Cloth>();
+    let roosts = cx.state.take::<events::roost::Roosts>().0;
     let mut ribbons = cx.state.take::<super::route::ribbon::Ribbons>();
     ribbons.index();
     let EventCtx {
@@ -431,6 +440,12 @@ pub fn build_world_with(dir: &Path, lib: Library, edges: &[super::seam::Edge]) -
         city,
         ribbons,
         circuits,
+        cloth,
+        roosts,
+        survey: None,
+        site: None,
+        realm_swaps: Vec::new(),
+        realm_mist: Vec::new(),
         log,
         warnings,
         build_ms: 0.0,
@@ -449,6 +464,9 @@ pub fn build_world_with(dir: &Path, lib: Library, edges: &[super::seam::Edge]) -
     }
     world.standing = maps.into_iter().map(|m| m.0).collect();
     stage("decay and gravity", &mut stages);
+    world.site = Some(super::site::Site::build(&world));
+    world.realm_looks();
+    stage("site fields", &mut stages);
     flora::place_plants(&mut world);
     for e in edges {
         let gone = super::seam::clear_trees(&mut world.trees, e);

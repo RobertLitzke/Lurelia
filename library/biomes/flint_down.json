@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "windbarrow",
   "notes": "The high ground east of the Edge: short sparse grass over chalk rubble, more flint than soil, the diggers' pits and spoil, and the cave mouths under it.",
+  "habitat": "dry_grassland",
   "priority": 12,
   "rules": {"region": "flint"},
   "surface": "flint_grass",
   "subsurface": "chalk_white",
   "rock": "chalk_white",
+  "soil": 0.8,
   "map_color": [176, 170, 128],
   "plants": [
     {

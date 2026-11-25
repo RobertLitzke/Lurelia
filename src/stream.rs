@@ -153,7 +153,11 @@ fn free_later(dead: Vec<Voxels>) {
     }
     let tx = TX.get_or_init(|| {
         let (tx, rx) = channel::<Vec<Voxels>>();
-        std::thread::Builder::new().name("voxel free".into()).spawn(move || while rx.recv().is_ok() {}).expect("free thread");
+        let free = move || {
+            lower_priority();
+            while rx.recv().is_ok() {}
+        };
+        std::thread::Builder::new().name("voxel free".into()).spawn(free).expect("free thread");
         tx
     });
     let _ = tx.send(dead);
@@ -273,6 +277,15 @@ impl Streamer {
         if was.snow == t.snow && (!t.moves() || (t.step == 0 && was.to == t.from)) {
             return;
         }
+        let mut keys: Vec<ColKey> = self.loaded.keys().copied().collect();
+        keys.sort_by(|a, b| b.dist_m(p.x, p.z).total_cmp(&a.dist_m(p.x, p.z)));
+        self.queue_regen(&keys);
+    }
+
+    /// Build every loaded column again, nearest to `p` first, swapped in
+    /// place as each finishes: something every chunk bakes changed (how
+    /// strongly the grass follows the site).
+    pub fn regen_all(&mut self, p: Vec3) {
         let mut keys: Vec<ColKey> = self.loaded.keys().copied().collect();
         keys.sort_by(|a, b| b.dist_m(p.x, p.z).total_cmp(&a.dist_m(p.x, p.z)));
         self.queue_regen(&keys);
@@ -782,21 +795,15 @@ impl Drop for Streamer {
     }
 }
 
-/// Workers run below normal priority so the main thread is never preempted by
+/// Workers run at the lowest priority so the main thread is never preempted by
 /// them: with every core busy, an equal-priority worker can hold a core for a
 /// whole scheduler quantum (about 15 ms on Windows), which shows up as a hitch.
+/// Below normal is not enough. Windows lifts a thread's priority for a moment
+/// when it wakes from a wait, which puts a below-normal worker level with the
+/// main thread. Over a three-lap race on Ribstrand (i5-13500, 8 workers),
+/// below normal had 134 frames over 12 ms, the worst 91 ms; lowest had 1.
 fn lower_priority() {
-    #[cfg(windows)]
-    {
-        extern "system" {
-            fn GetCurrentThread() -> isize;
-            fn SetThreadPriority(thread: isize, priority: i32) -> i32;
-        }
-        const THREAD_PRIORITY_BELOW_NORMAL: i32 = -1;
-        unsafe {
-            SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
-        }
-    }
+    crate::util::set_thread_priority(crate::util::Priority::Lowest);
 }
 
 /// Nanoseconds the workers spent on each part of a column job outside the
@@ -870,6 +877,7 @@ fn worker(s: Arc<Shared>, tx: Sender<JobResult>) {
                         VOXEL * (1u32 << key.lod) as f32,
                         key.lod > 0,
                         &|x, z| s.gen.water_m(x, z),
+                        &|x, z| s.gen.world.as_ref().and_then(|w| w.site.as_ref()).filter(|_| crate::world::site::lush_on()).map_or(0.5, |site| site.lush_scaled(x, z)),
                         &mut mesh.sprites,
                     );
                     work_nanos(2, tw);
@@ -928,6 +936,7 @@ fn worker(s: Arc<Shared>, tx: Sender<JobResult>) {
                     VOXEL,
                     false,
                     &|x, z| s.gen.water_m(x, z),
+                    &|x, z| s.gen.world.as_ref().and_then(|w| w.site.as_ref()).filter(|_| crate::world::site::lush_on()).map_or(0.5, |site| site.lush_scaled(x, z)),
                     &mut mesh.sprites,
                 );
                 JobResult::Remesh {

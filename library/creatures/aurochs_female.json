@@ -1,0 +1,541 @@
+{
+  "name": "aurochs_female",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "The aurochs's female form (aurochs `forms`): a cow: smaller than the bull, with thinner, shorter horns. Only its model is used; it spawns as a aurochs. Written once from the aurochs's own ops; edit it as its own model.",
+  "ops": [
+    {"op": "ellipsoid", "centre": [19, 19.8, 25.5], "radius": [7.4, 6.6, 9.6], "mat": "coat"},
+    {"op": "ellipsoid", "centre": [19, 22.6, 17.4], "radius": [6.9, 7.4, 6.4], "mat": "wool"},
+    {"op": "ellipsoid", "centre": [19, 19.6, 31.5], "radius": [6.2, 5.8, 5.8], "mat": "coat"},
+    {"op": "recolour", "at": [11, 13, 12], "until": [27, 31, 22], "from": "coat", "to": "wool"},
+    {
+      "op": "segment",
+      "points": [[15.6, 16.5, 15.6], [15.7, 9.5, 15.8]],
+      "radius": 2.5,
+      "mat": "wool",
+      "part": "leg_fl"
+    },
+    {
+      "op": "segment",
+      "points": [[15.7, 9.5, 15.8], [15.8, 2.6, 15.8]],
+      "radius": 1.7,
+      "mat": "coat",
+      "part": "leg_fl"
+    },
+    {"op": "ellipsoid", "centre": [15.8, 1.3, 15.5], "radius": [2.1, 1.3, 2.6], "mat": "dark", "part": "leg_fl"},
+    {
+      "op": "segment",
+      "points": [[22.4, 16.5, 15.6], [22.5, 9.5, 15.8]],
+      "radius": 2.5,
+      "mat": "wool",
+      "part": "leg_fr"
+    },
+    {
+      "op": "segment",
+      "points": [[22.5, 9.5, 15.8], [22.6, 2.6, 15.8]],
+      "radius": 1.7,
+      "mat": "coat",
+      "part": "leg_fr"
+    },
+    {"op": "ellipsoid", "centre": [22.6, 1.3, 15.5], "radius": [2.1, 1.3, 2.6], "mat": "dark", "part": "leg_fr"},
+    {
+      "op": "segment",
+      "points": [[15.7, 17.5, 30.6], [15.6, 10, 32.0]],
+      "radius": 2.7,
+      "mat": "coat",
+      "part": "leg_hl"
+    },
+    {"op": "segment", "points": [[15.6, 10, 32.0], [15.8, 2.6, 31.2]], "radius": 1.7, "mat": "coat", "part": "leg_hl"},
+    {"op": "ellipsoid", "centre": [15.8, 1.3, 30.9], "radius": [2.0, 1.3, 2.5], "mat": "dark", "part": "leg_hl"},
+    {
+      "op": "segment",
+      "points": [[22.3, 17.5, 30.6], [22.2, 10, 32.0]],
+      "radius": 2.7,
+      "mat": "coat",
+      "part": "leg_hr"
+    },
+    {"op": "segment", "points": [[22.2, 10, 32.0], [22.4, 2.6, 31.2]], "radius": 1.7, "mat": "coat", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [22.4, 1.3, 30.9], "radius": [2.0, 1.3, 2.5], "mat": "dark", "part": "leg_hr"},
+    {"op": "segment", "points": [[19, 21.8, 15.8], [19, 19.2, 11.0]], "radius": 4.7, "mat": "wool", "part": "neck"},
+    {"op": "ellipsoid", "centre": [19, 17.6, 8.2], "radius": [3.9, 4.3, 4.4], "mat": "wool", "part": "head"},
+    {"op": "segment", "points": [[19, 15.8, 6.0], [19, 14.2, 3.8]], "radius": 2.7, "mat": "coat", "part": "head"},
+    {"op": "ellipsoid", "centre": [19, 13.9, 3.1], "radius": [2.3, 1.7, 1.4], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [19, 13.0, 8.2], "radius": [1.9, 2.4, 2.4], "mat": "wool", "part": "head"},
+    {"op": "ellipsoid", "centre": [15.3, 18.6, 6.4], "radius": [0.9, 1.0, 1.2], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [22.7, 18.6, 6.4], "radius": [0.9, 1.0, 1.2], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [14.0, 19.2, 11.4], "radius": [1.5, 1.0, 1.7], "mat": "coat", "part": "head"},
+    {"op": "ellipsoid", "centre": [24.0, 19.2, 11.4], "radius": [1.5, 1.0, 1.7], "mat": "coat", "part": "head"},
+    {"op": "segment", "points": [[19, 22.2, 34.2], [19, 19.2, 36.2]], "radius": 1.2, "mat": "coat", "part": "tail"},
+    {"op": "segment", "points": [[19, 19.2, 36.2], [19, 15.8, 36.8]], "radius": 1.0, "mat": "coat", "part": "tail"},
+    {"op": "ellipsoid", "centre": [19, 14.4, 36.9], "radius": [1.6, 2.4, 1.6], "mat": "dark", "part": "tail"},
+    {"op": "recolour", "at": [11, 19, 10], "until": [27, 32, 26], "from": "wool", "to": "coat"},
+    {
+      "op": "segment",
+      "points": [[15.6, 20.4, 8.6], [14.016, 20.976, 8.456]],
+      "radius": 0.975,
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[14.016, 20.976, 8.456], [13.44, 22.704, 7.88]],
+      "radius": 0.75,
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[22.4, 20.4, 8.6], [23.984, 20.976, 8.456]],
+      "radius": 0.975,
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "segment",
+      "points": [[23.984, 20.976, 8.456], [24.56, 22.704, 7.88]],
+      "radius": 0.75,
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [14.745, 21.453, 8.475],
+      "radius": [1.569, 1.569, 1.569],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [23.255, 21.453, 8.475],
+      "radius": [1.569, 1.569, 1.569],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [14.434, 21.472, 8.173],
+      "radius": [1.508, 1.508, 1.508],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [23.566, 21.472, 8.173],
+      "radius": [1.508, 1.508, 1.508],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [14.133, 21.501, 7.881],
+      "radius": [1.478, 1.478, 1.478],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [23.867, 21.501, 7.881],
+      "radius": [1.478, 1.478, 1.478],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [13.831, 21.54, 7.6],
+      "radius": [1.448, 1.448, 1.448],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [24.169, 21.54, 7.6],
+      "radius": [1.448, 1.448, 1.448],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [13.53, 21.589, 7.338],
+      "radius": [1.417, 1.417, 1.417],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [24.47, 21.589, 7.338],
+      "radius": [1.417, 1.417, 1.417],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [13.238, 21.637, 7.085],
+      "radius": [1.397, 1.397, 1.397],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [24.762, 21.637, 7.085],
+      "radius": [1.397, 1.397, 1.397],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [12.957, 21.695, 6.842],
+      "radius": [1.376, 1.376, 1.376],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [25.043, 21.695, 6.842],
+      "radius": [1.376, 1.376, 1.376],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [12.675, 21.773, 6.619],
+      "radius": [1.346, 1.346, 1.346],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [25.325, 21.773, 6.619],
+      "radius": [1.346, 1.346, 1.346],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [12.403, 21.851, 6.405],
+      "radius": [1.326, 1.326, 1.326],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [25.597, 21.851, 6.405],
+      "radius": [1.326, 1.326, 1.326],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [12.14, 21.938, 6.21],
+      "radius": [1.306, 1.306, 1.306],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [25.86, 21.938, 6.21],
+      "radius": [1.306, 1.306, 1.306],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [11.888, 22.035, 6.026],
+      "radius": [1.285, 1.285, 1.285],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [26.112, 22.035, 6.026],
+      "radius": [1.285, 1.285, 1.285],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [11.645, 22.142, 5.861],
+      "radius": [1.265, 1.265, 1.265],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [26.355, 22.142, 5.861],
+      "radius": [1.265, 1.265, 1.265],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [11.412, 22.268, 5.706],
+      "radius": [1.245, 1.245, 1.245],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [26.588, 22.268, 5.706],
+      "radius": [1.245, 1.245, 1.245],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [11.189, 22.395, 5.559],
+      "radius": [1.234, 1.234, 1.234],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [26.811, 22.395, 5.559],
+      "radius": [1.234, 1.234, 1.234],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [10.984, 22.541, 5.433],
+      "radius": [1.214, 1.214, 1.214],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [27.016, 22.541, 5.433],
+      "radius": [1.214, 1.214, 1.214],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [10.79, 22.686, 5.317],
+      "radius": [1.194, 1.194, 1.194],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [27.22, 22.686, 5.317],
+      "radius": [1.194, 1.194, 1.194],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [10.605, 22.861, 5.22],
+      "radius": [1.174, 1.174, 1.174],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [27.395, 22.861, 5.22],
+      "radius": [1.174, 1.174, 1.174],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [10.43, 23.036, 5.132],
+      "radius": [1.164, 1.164, 1.164],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [27.57, 23.036, 5.132],
+      "radius": [1.164, 1.164, 1.164],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [10.285, 23.23, 5.064],
+      "radius": [1.144, 1.144, 1.144],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [27.715, 23.23, 5.064],
+      "radius": [1.144, 1.144, 1.144],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [10.149, 23.435, 5.006],
+      "radius": [1.123, 1.123, 1.123],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [27.851, 23.435, 5.006],
+      "radius": [1.123, 1.123, 1.123],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [10.022, 23.658, 4.967],
+      "radius": [1.113, 1.113, 1.113],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [27.978, 23.658, 4.967],
+      "radius": [1.113, 1.113, 1.113],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [9.916, 23.891, 4.937],
+      "radius": [1.093, 1.093, 1.093],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [28.084, 23.891, 4.937],
+      "radius": [1.093, 1.093, 1.093],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [9.838, 24.134, 4.919],
+      "radius": [1.083, 1.083, 1.083],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [28.162, 24.134, 4.919],
+      "radius": [1.083, 1.083, 1.083],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [9.769, 24.397, 4.928],
+      "radius": [1.063, 1.063, 1.063],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [28.231, 24.397, 4.928],
+      "radius": [1.063, 1.063, 1.063],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [9.721, 24.678, 4.937],
+      "radius": [1.052, 1.052, 1.052],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [28.279, 24.678, 4.937],
+      "radius": [1.052, 1.052, 1.052],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [9.692, 24.979, 4.976],
+      "radius": [1.032, 1.032, 1.032],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [28.308, 24.979, 4.976],
+      "radius": [1.032, 1.032, 1.032],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [9.682, 25.29, 5.025],
+      "radius": [1.022, 1.022, 1.022],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [28.318, 25.29, 5.025],
+      "radius": [1.022, 1.022, 1.022],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [9.702, 25.611, 5.084],
+      "radius": [1.002, 1.002, 1.002],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [28.298, 25.611, 5.084],
+      "radius": [1.002, 1.002, 1.002],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [9.741, 25.961, 5.161],
+      "radius": [0.992, 0.992, 0.992],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [28.259, 25.961, 5.161],
+      "radius": [0.992, 0.992, 0.992],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [9.799, 26.32, 5.258],
+      "radius": [0.972, 0.972, 0.972],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [28.201, 26.32, 5.258],
+      "radius": [0.972, 0.972, 0.972],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [9.886, 26.699, 5.365],
+      "radius": [0.962, 0.962, 0.962],
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [28.114, 26.699, 5.365],
+      "radius": [0.962, 0.962, 0.962],
+      "mat": "horn",
+      "part": "head"
+    },
+    {"op": "ellipsoid", "centre": [19, 19.6, 25.2], "radius": [8.4, 6.6, 9.8], "mat": "coat"},
+    {"op": "ellipsoid", "centre": [19, 15.6, 23.4], "radius": [7.6, 4.8, 6.0], "mat": "coat"},
+    {"op": "ellipsoid", "centre": [19, 17.0, 29.0], "radius": [7.0, 4.4, 4.0], "mat": "coat"}
+  ],
+  "like": "aurochs",
+  "scale": 0.88,
+  "realms": ["ice_age"]
+}

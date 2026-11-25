@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "ribshore",
   "notes": "The flat behind the beach and between the dune fields: dunegrass and lupine on old sand, wet in the hollows.",
+  "habitat": "dunes",
   "priority": 2,
   "rules": {"coast": [0, 420]},
   "surface": "dune_grass",
   "subsurface": "dune_sand",
+  "soil": 0.5,
   "map_color": [168, 160, 118],
   "plants": [
     {

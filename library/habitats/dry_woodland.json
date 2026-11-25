@@ -1,0 +1,13 @@
+{
+  "name": "dry_woodland",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Open low woods of drought-hardy trees: pinyon and juniper.",
+  "wet": 0.2,
+  "soil": 0.5,
+  "shade": 0.25,
+  "rock": 0.25,
+  "disturbed": 0.0,
+  "open": 0.5,
+  "forage": ["browse", "seed"]
+}

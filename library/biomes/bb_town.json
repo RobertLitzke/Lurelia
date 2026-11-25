@@ -1,0 +1,25 @@
+{
+  "name": "bb_town",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "The lanes and yards of Bonebight inside the ribcage: trodden sand and shingle, a few lupines and buckthorn against the walls.",
+  "habitat": "settlement",
+  "priority": 10,
+  "rules": {"region": "bonebight"},
+  "surface": "dune_sand",
+  "subsurface": "dune_sand",
+  "map_color": [190, 176, 150],
+  "plants": [
+    {"plant": "lupine", "density": 0.02, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "sea_buckthorn", "density": 0.002, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "beach_pea", "density": 0.006, "placement": {"verb": "clustered", "params": {}}}
+  ],
+  "features": [{"structure": "bone_shard", "density": 0.0002}],
+  "creatures": [
+    {"creature": "gull", "count": 4},
+    {"creature": "raven", "count": 2},
+    {"creature": "crow", "count": 3},
+    {"creature": "sparrow", "count": 6},
+    {"creature": "albatross", "count": 3}
+  ]
+}

@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "ribshore",
   "notes": "The basalt headland: wind-cut turf and heather, shore pines bent flat, the cliffs white with birds.",
+  "habitat": "heath_moor",
   "priority": 6,
   "rules": {"region": "headland", "elev": [1.5, 200]},
   "surface": "shore_grass",
   "subsurface": "dirt",
   "rock": "basalt",
+  "soil": 0.4,
   "map_color": [110, 120, 84],
   "plants": [
     {"plant": "shore_pine", "density": 0.0012, "placement": {"verb": "clustered", "params": {"size": 24}}},

@@ -6,10 +6,9 @@
 //! spring, `flower_seasons`), and the drifts of wildflowers drawn in a
 //! meadow (mesh/sprites.rs `bloom_at`).
 //!
-//! Now and then, leaving its perch, it climbs twenty metres or more
-//! straight up and dives: a narrow U down past the perch at speed and up
-//! the far side, then again the other way, a few times over, the way a male
-//! Anna's does over a female.
+//! Its courtship dive is a display (creatures/display/sky_dive.rs): while one
+//! runs the bird carries a `Show` and is put where the display says, and
+//! when it ends it darts back to its twig.
 //!
 //! No physics. Wings beat in a blur (`hover`) and the body hangs tilted up
 //! while it hovers (birds.rs sets `Flight::upright`).
@@ -30,10 +29,6 @@ pub enum State {
     Hover { at: Vec3, face: f32, timer: f32 },
     /// A quick flight from `from` to `to`; `then` says what it does there.
     Dart { from: Vec3, to: Vec3, t: f32, dur: f32, then: Then },
-    /// The dive display: `dir` is the way across the U, `dives` how many
-    /// are left, `s` how far through this one (0 at the top of the climb on
-    /// one side, 1 at the top on the other).
-    Dive { bottom: Vec3, dir: Vec3, s: f32, dives: u32, climb: f32 },
 }
 
 /// What a dart ends in.
@@ -41,8 +36,6 @@ pub enum State {
 pub enum Then {
     Hover { face: f32 },
     Perch,
-    /// At the top of the climb, ready to dive.
-    Dive { bottom: Vec3, dir: Vec3, dives: u32 },
 }
 
 pub struct Hummer {
@@ -56,6 +49,9 @@ pub struct Hummer {
     last: Option<Vec3>,
     wob: f32,
     rng: Rng,
+    /// In a display last step (creatures/display): when it ends, it goes
+    /// back to its twig.
+    shown: bool,
 }
 
 impl Hummer {
@@ -70,7 +66,6 @@ impl Hummer {
         match self.state {
             State::Perch { .. } => "perched",
             State::Hover { .. } => "at a flower",
-            State::Dart { then: Then::Dive { .. }, .. } | State::Dive { .. } => "diving",
             State::Dart { .. } => "darting",
         }
     }
@@ -81,12 +76,6 @@ impl Hummer {
 
 /// How far from home it goes for flowers, metres.
 const RANGE: f32 = 22.0;
-/// Height of the display's climb above the bottom of the dive, metres, and
-/// half the width of the U.
-const CLIMB: (f32, f32) = (18.0, 10.0);
-const HALF_U: (f32, f32) = (5.0, 3.0);
-/// Seconds through one dive.
-const DIVE_S: f32 = 1.3;
 
 /// The flower to go to next and the yaw that faces it: a blooming plant
 /// near home (often the one it is at), else a drift of meadow flowers.
@@ -180,6 +169,7 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, flora: &Flora, blo
             last: None,
             wob: rng.unit() * TAU,
             rng: Rng::new(crate::world::noise::hash32(seed ^ k.wrapping_mul(0x27d4_eb2d)) | 1),
+            shown: false,
         };
         let Some((flower, face)) = next_flower(&mut h, flora, blooming, t) else {
             return k > 0;
@@ -207,17 +197,31 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, flora: &Flora, blo
 /// is in flower this season.
 pub fn update(world: &mut hecs::World, species: &[Species], flora: &Flora, blooming: &[bool], dt: f32, threat: &super::startle::Threat, t: &Terrain) {
     let player = threat.pos;
-    for (h, look, me, morph) in world.query_mut::<(&mut Hummer, &mut Look, &Creature, Option<&crate::variety::Morph>)>() {
+    for (h, look, me, morph, show) in world.query_mut::<(&mut Hummer, &mut Look, &Creature, Option<&crate::variety::Morph>, Option<&super::display::Show>)>() {
         look.begin_step();
         let sp = &species[me.species];
         let (pace, _) = crate::variety::pace(morph);
         let speed = sp.beh.walk_speed.max(2.0) * pace;
         let fast = sp.beh.flee_speed.max(speed) * pace;
         h.wob += dt * 9.0;
+        // In a display: where it says, flying (not perched, so birds.rs
+        // beats its wings).
+        if let Some(s) = show {
+            if let super::display::Drive::Place { pos, yaw } = s.out.drive {
+                look.pos = pos;
+                look.yaw = yaw;
+            }
+            h.state = State::Hover { at: look.pos, face: look.yaw, timer: 1.0 };
+            h.shown = true;
+            continue;
+        }
+        if std::mem::take(&mut h.shown) {
+            let perch = h.perch;
+            dart(h, look.pos, perch, fast, Then::Perch);
+        }
         let nerve = super::startle::Nerve::of(sp, morph, super::age::Stage::Adult);
         let near = (look.pos - player).length() < super::startle::reach(&nerve, threat, look.pos, 1.5);
-        let diving = matches!(h.state, State::Dive { .. } | State::Dart { then: Then::Dive { .. }, .. });
-        if near && !diving && !matches!(h.state, State::Dart { .. }) {
+        if near && !matches!(h.state, State::Dart { .. }) {
             // Off to a twig farther away, and a new patch round it.
             let away = (look.pos - player).with_y(0.0).normalize_or_zero();
             let to = perch_spot(h, t, look.pos, 10.0, 22.0, Some(away)).unwrap_or(look.pos + away * 10.0 + Vec3::Y * 3.0);
@@ -239,29 +243,9 @@ pub fn update(world: &mut hecs::World, species: &[Species], flora: &Flora, bloom
                     }
                     continue;
                 }
-                // Off the twig: a display now and then, else a run of flowers.
-                if h.rand() < 0.2 {
-                    let a = h.rand() * TAU;
-                    let dir = Vec3::new(a.sin(), 0.0, a.cos());
-                    let g = t.drawn(h.perch.x, h.perch.z, h.perch.y + 0.5).unwrap_or(h.perch.y - 2.0);
-                    let bottom = Vec3::new(h.perch.x, g + 1.0, h.perch.z) + dir * (h.rand() - 0.5) * 2.0;
-                    let climb = CLIMB.0 + h.rand() * CLIMB.1;
-                    let half = HALF_U.0 + h.rand() * HALF_U.1;
-                    let top = bottom - dir * half + Vec3::Y * climb;
-                    let dives = 2 + (h.rand() * 4.0) as u32;
-                    // Straight up: a slow climb, wings whirring.
-                    let from = look.pos;
-                    h.state = State::Dart {
-                        from,
-                        to: top,
-                        t: 0.0,
-                        dur: ((top - from).length() / (speed * 0.6)).clamp(1.5, 8.0),
-                        then: Then::Dive { bottom, dir: dir * half, dives },
-                    };
-                } else {
-                    h.visits = 3 + (h.rand() * 6.0) as u32;
-                    go_to_flower(h, flora, blooming, t, look.pos, speed);
-                }
+                // Off the twig for a run of flowers.
+                h.visits = 3 + (h.rand() * 6.0) as u32;
+                go_to_flower(h, flora, blooming, t, look.pos, speed);
             }
             State::Hover { at, face, timer } => {
                 let timer = timer - dt;
@@ -308,7 +292,7 @@ pub fn update(world: &mut hecs::World, species: &[Species], flora: &Flora, bloom
                 // Dev hook: VG_HUM=1 says what each dart ended in.
                 if debug() {
                     let ground = t.drawn(to.x, to.z, to.y + 0.5).unwrap_or(f32::NAN);
-                    eprintln!("VG_HUM: {} at {:.1},{:.1},{:.1} ({:.1} m up)", match then { Then::Hover { .. } => "flower", Then::Perch => "perch", Then::Dive { .. } => "dive" }, to.x, to.y, to.z, to.y - ground);
+                    eprintln!("VG_HUM: {} at {:.1},{:.1},{:.1} ({:.1} m up)", match then { Then::Hover { .. } => "flower", Then::Perch => "perch" }, to.x, to.y, to.z, to.y - ground);
                 }
                 h.state = match then {
                     Then::Hover { face } => State::Hover {
@@ -317,44 +301,7 @@ pub fn update(world: &mut hecs::World, species: &[Species], flora: &Flora, bloom
                         timer: 0.5 + h.rand() * 1.2,
                     },
                     Then::Perch => State::Perch { timer: 5.0 + h.rand() * 20.0 },
-                    Then::Dive { bottom, dir, dives } => State::Dive {
-                        bottom,
-                        dir,
-                        s: 0.0,
-                        dives,
-                        climb: to.y - bottom.y,
-                    },
                 };
-            }
-            State::Dive { bottom, dir, s, dives, climb } => {
-                let s = s + dt / DIVE_S;
-                if s < 1.0 {
-                    // Down the U and up the far side, fastest at the bottom.
-                    let u = (PI * (s - 0.5)).sin();
-                    let p = bottom + dir * u + Vec3::Y * climb * u * u;
-                    let v = p - look.pos;
-                    look.pos = p;
-                    if v.with_y(0.0).length() > 1e-3 {
-                        look.yaw = v.x.atan2(v.z) + PI;
-                    }
-                    h.state = State::Dive { bottom, dir, s, dives, climb };
-                    continue;
-                }
-                if dives > 1 {
-                    // Hang at the top a moment, turned round, and back down.
-                    let top = bottom + dir + Vec3::Y * climb;
-                    let from = look.pos;
-                    h.state = State::Dart {
-                        from,
-                        to: top,
-                        t: 0.0,
-                        dur: 0.6 + h.rand() * 0.6,
-                        then: Then::Dive { bottom, dir: -dir, dives: dives - 1 },
-                    };
-                } else {
-                    let perch = h.perch;
-                    dart(h, look.pos, perch, fast, Then::Perch);
-                }
             }
         }
     }

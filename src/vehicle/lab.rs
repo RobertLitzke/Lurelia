@@ -15,7 +15,7 @@ use glam::{Vec2, Vec3};
 use std::time::Duration;
 
 /// The world's circuit streamed in at full detail, and its track.
-fn open(name: &str) -> (Store, Track) {
+pub(crate) fn open(name: &str) -> (Store, Track) {
     struct NoSink;
     impl crate::stream::ChunkSink for NoSink {
         fn upload(&mut self, _origin: Vec3, _scale: f32, _mesh: &crate::mesh::Mesh) -> Option<crate::stream::GpuChunk> {
@@ -126,6 +126,8 @@ fn kart_lab() {
     let mut high = vec![false; n];
     let mut contacts = 0;
     let mut t = 0.0f32;
+    // The karts' own physics, timed, for `Vehicle::step`'s cost.
+    let (mut phys, mut steps) = (std::time::Duration::ZERO, 0u32);
     while t < 240.0 && done.iter().any(|d| !d) {
         let places: Vec<_> = (0..n).map(|i| track.place(cars[i].pos(), bots[i].place)).collect();
         for i in 0..n {
@@ -139,7 +141,10 @@ fn kart_lab() {
                 // At the keys: full lock or none.
                 c.steer = if c.steer.abs() > 0.25 { c.steer.signum() } else { 0.0 };
             }
+            let t0 = std::time::Instant::now();
             cars[i].step(&c, &store, -100.0, true, dt);
+            phys += t0.elapsed();
+            steps += 1;
         }
         for i in 0..n {
             for j in i + 1..n {
@@ -216,6 +221,12 @@ fn kart_lab() {
         }
     }
     eprintln!("{tune} on {name}: {t:.0} s, kart-to-kart contacts {contacts}");
+    // Where the karts ended up, to the bit: a change that should not alter
+    // the driving (a faster read of the same voxels) leaves this as it was.
+    let print = cars.iter().fold(0u64, |h, c| {
+        [c.b.pos.x, c.b.pos.y, c.b.pos.z, c.b.vel.x, c.b.vel.z].iter().fold(h, |h, v| (h ^ v.to_bits() as u64).wrapping_mul(0x100_0000_01b3))
+    });
+    eprintln!("  physics {:.3} ms a kart-step over {steps} steps; final state {print:016x}", phys.as_secs_f64() * 1000.0 / steps.max(1) as f64);
     for (i, tl) in tally.iter().enumerate() {
         let laps: Vec<String> = tl.laps.iter().map(|x| format!("{x:.1}")).collect();
         eprintln!(

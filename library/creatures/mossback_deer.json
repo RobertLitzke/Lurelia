@@ -4,12 +4,20 @@
   "introduced_by": "faerie",
   "notes": "A deer with moss grown along its back and antlers that glow faintly green. Shyer than a red deer.",
   "colors": {"coat": [110, 100, 66], "belly": [210, 180, 140], "antler": [190, 240, 170, 1.4], "moss": [74, 116, 50]},
-  "behaviour": {"wary": 16, "flightiness": 1.0},
+  "forms": {"female": "mossback_deer_female", "juvenile": "mossback_deer_female"},
+  "behaviour": {"wary": 16, "flightiness": 1.0, "voice": {"calls": [{"cry": "snort", "on": "flee", "chance": 0.6}]}},
   "like": "deer",
   "scale": 1.05,
   "extra_ops": [
-    {"op": "ellipsoid", "centre": [24, 27.6, 26], "radius": [4.6, 1.7, 10], "mat": "moss"},
-    {"op": "ellipsoid", "centre": [24, 30, 14], "radius": [2.8, 1.3, 3], "mat": "moss", "part": "neck"}
+    {"op": "ellipsoid", "centre": [16.0, 25.857, 25.874], "radius": [4.309, 1.593, 9.368], "mat": "moss"},
+    {
+      "op": "ellipsoid",
+      "centre": [16.0, 28.105, 14.632],
+      "radius": [2.623, 1.218, 2.81],
+      "mat": "moss",
+      "part": "neck"
+    }
   ],
-  "vary": {"shade": 0.05, "hue": 0.02}
+  "vary": {"shade": 0.05, "hue": 0.02},
+  "realms": ["fae"]
 }

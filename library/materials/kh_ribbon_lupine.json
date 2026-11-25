@@ -1,0 +1,8 @@
+{
+  "name": "kh_ribbon_lupine",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "The Plain's own tan grass over a buried stream bed, with lupine through about two tufts in five, so the bed shows as a wandering band of colour in the gold.",
+  "like": "kh_plains_grass",
+  "bloom": {"flower": "blue", "share": 0.4}
+}

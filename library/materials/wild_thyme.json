@@ -1,0 +1,16 @@
+{
+  "name": "wild_thyme",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Wild thyme (drawn as sprites): low grey-green mats starred with small pink-purple flowers, on short chalk turf.",
+  "smooth": false,
+  "sprites": "flower",
+  "texture": {
+    "pattern": "noise",
+    "base": [90, 104, 74],
+    "alt": [178, 112, 168],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [96, 110, 80], "alt": [186, 124, 176]}
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "flamethrower",
+  "version": 1,
+  "introduced_by": "realistic",
+  "notes": "Burning fuel in a stream, held on whatever is in front of you for as long as the trigger is: damage by the second, nine metres of it, and nothing in the tank lasts long. The right button lobs a gout of fuel that bursts into fire where it lands, for a doorway or a crowd.",
+  "display": "FLAMETHROWER",
+  "slot": 5,
+  "ammo_max": 300,
+  "ammo_start": 150,
+  "fire": {
+    "kind": "beam",
+    "rpm": 600.0,
+    "damage": 110.0,
+    "range": 9.0,
+    "falloff": 0.6,
+    "bend_m": 0.35,
+    "twist": 3.0,
+    "kick": 0.0,
+    "tracer": [1.0, 0.5, 0.12],
+    "tracer_s": 0.04
+  },
+  "alt": {
+    "kind": "shell",
+    "rpm": 60.0,
+    "damage": 15.0,
+    "speed": 16.0,
+    "gravity": 9.0,
+    "fuse_s": 3.0,
+    "per_shot": 25,
+    "kick": 0.6,
+    "splash": {"damage": 55.0, "radius": 3.5, "push": 3.0, "self_damage": 0.5, "self_push": 0.5},
+    "tracer": [1.0, 0.45, 0.1],
+    "tracer_s": 0.08,
+    "look": "goo"
+  },
+  "view": "flame_scrap",
+  "tint": [0.5, 0.3, 0.2],
+  "role": "stream",
+  "ammo_type": "fuel"
+}

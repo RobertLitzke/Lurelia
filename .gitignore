@@ -1,4 +1,6 @@
 /target
+# A cargo run from a subfolder with a relative --target-dir lands here.
+/src/target/
 /saves
 /shots
 /photos

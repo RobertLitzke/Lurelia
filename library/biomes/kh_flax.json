@@ -1,0 +1,16 @@
+{
+  "name": "kh_flax",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A field of flax for Kitehold's linen and kite cloth: sky-blue in flower in early summer.",
+  "habitat": "field_crop",
+  "priority": 24,
+  "rules": {"region": "flax", "crisp": true},
+  "surface": "meadow_grass",
+  "subsurface": "dirt",
+  "fringe": 0,
+  "soil": 0.65,
+  "map_color": [130, 150, 200],
+  "plants": [{"plant": "flax", "density": 0.6, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [{"creature": "bumblebee", "count": 6}, {"creature": "sparrow", "count": 6}, {"creature": "starling", "count": 10}]
+}

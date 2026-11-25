@@ -8,5 +8,6 @@
   "crown_radius": [0.6, 1.0],
   "bark": "pale_bark",
   "leaf": "glassbloom",
-  "affords": ["nectar"]
+  "affords": ["nectar"],
+  "realms": ["bloom"]
 }

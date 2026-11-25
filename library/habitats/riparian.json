@@ -1,0 +1,13 @@
+{
+  "name": "riparian",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "The strip along a river: floodplain trees, willows and banks.",
+  "wet": 0.75,
+  "soil": 0.55,
+  "shade": 0.4,
+  "rock": 0.05,
+  "disturbed": 0.05,
+  "open": 0.5,
+  "forage": ["browse", "graze"]
+}

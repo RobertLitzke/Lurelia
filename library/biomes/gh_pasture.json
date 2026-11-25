@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "gannet",
   "notes": "Gannet Harbor's sheep pasture inside dry-stone walls: turf grazed short, a thorn left for shade, an oak or maple to a field.",
+  "habitat": "pasture",
   "priority": 9,
   "rules": {"region": "pasture"},
   "surface": "lawn_grass",
   "subsurface": "dirt",
   "fringe": 0,
+  "soil": 0.6,
   "map_color": [138, 190, 96],
   "plants": [
     {"plant": "hawthorn", "density": 0.0006, "placement": {"verb": "lone", "params": {"spacing": 36}}},

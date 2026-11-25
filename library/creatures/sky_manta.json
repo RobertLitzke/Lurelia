@@ -5,6 +5,7 @@
   "notes": "undulate: One skate in twenty grown to three metres across, riding well above the rest where they skim the awns. A rare morph of wind_skate, so it stands in for one of them and is never spawned on its own.",
   "colors": {"back": [146, 134, 98], "belly": [218, 210, 186], "glow": [198, 184, 124]},
   "behaviour": {
+    "displays": [{"kind": "barrel_roll"}],
     "movement": "undulate",
     "walk_speed": 3.0,
     "flee_speed": 5.0,
@@ -12,7 +13,11 @@
     "fly_height": 7.5,
     "flight": "flap",
     "wingbeat": 0.32,
-    "group": null
+    "group": null,
+    "voice": {
+      "size": 0.6,
+      "calls": [{"cry": "moan", "on": "idle", "every_s": [60, 240], "chance": 0.5, "chorus": 0.3, "chorus_m": 300}]
+    }
   },
   "like": "wind_skate",
   "rarity": 0.05,

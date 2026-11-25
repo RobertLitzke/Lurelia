@@ -10,5 +10,6 @@
   "bark": "water_lily",
   "leaf": "water_lily",
   "max_slope": 0.35,
-  "standing_water": [0.35, 3.0]
+  "standing_water": [0.35, 3.0],
+  "site": {"wet": [0.8, 1.0]}
 }

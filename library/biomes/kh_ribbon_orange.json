@@ -1,0 +1,11 @@
+{
+  "name": "kh_ribbon_orange",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A buried stream bed under the Plain with poppy through the tan grass.",
+  "rules": {"region": "ribbon_orange"},
+  "surface": "kh_ribbon_poppy",
+  "soil": 0.6,
+  "map_color": [190, 150, 100],
+  "like": "kh_ribbon"
+}

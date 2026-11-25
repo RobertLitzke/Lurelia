@@ -4,6 +4,7 @@
   "introduced_by": "faerie",
   "notes": "Parks gone to glades: great oaks on moss.",
   "surface": "moss_grass",
+  "soil": 0.5,
   "map_color": [86, 170, 90],
   "plants": [
     {"plant": "blossom_vine", "density": 0.3, "placement": {"verb": "scatter", "params": {}}},

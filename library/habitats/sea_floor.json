@@ -1,0 +1,12 @@
+{
+  "name": "sea_floor",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Open sea floor: sand, mud and scattered rock.",
+  "wet": 1.0,
+  "soil": 0.6,
+  "shade": 0.0,
+  "rock": 0.15,
+  "disturbed": 0.0,
+  "open": 1.0
+}

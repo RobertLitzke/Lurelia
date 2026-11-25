@@ -1,0 +1,13 @@
+{
+  "name": "broadleaf_forest",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Closed forest of oak, beech, maple and other leafy trees.",
+  "wet": 0.45,
+  "soil": 0.55,
+  "shade": 0.65,
+  "rock": 0.05,
+  "disturbed": 0.0,
+  "open": 0.15,
+  "forage": ["browse", "nectar", "fruit"]
+}

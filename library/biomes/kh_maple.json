@@ -1,0 +1,46 @@
+{
+  "name": "kh_maple",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "The maple woods east of the Lessa: sugar maples gone crimson and amber, a few big-leaf maples and birch, ferns and trillium under them.",
+  "habitat": "broadleaf_forest",
+  "priority": 3,
+  "rules": {"region": "eastside"},
+  "surface": "fernwood_floor",
+  "subsurface": "dirt",
+  "soil": 0.55,
+  "map_color": [150, 70, 50],
+  "plants": [
+    {"plant": "maple", "density": 0.022, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "sapling_maple", "density": 0.006, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "bigleaf_maple", "density": 0.003, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "birch",
+      "density": 0.003,
+      "placement": {"verb": "clustered", "params": {"size": 20, "min": 0, "max": 1}}
+    },
+    {
+      "plant": "bracken",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 12, "min": 0, "max": 1}}
+    },
+    {"plant": "fern", "density": 0.04, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "trillium",
+      "density": 0.01,
+      "placement": {"verb": "clustered", "params": {"size": 8, "min": 0, "max": 1}}
+    },
+    {"plant": "tree_moss", "density": 0.3, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "shelf_fungus", "density": 0.08, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [{"structure": "mossy_log", "density": 0.0004}, {"structure": "boulder", "density": 0.0002}],
+  "creatures": [
+    {"creature": "deer", "count": 5.4},
+    {"creature": "mossback_deer", "count": 4},
+    {"creature": "fox", "count": 2.4},
+    {"creature": "red_squirrel", "count": 8},
+    {"creature": "pileated_woodpecker", "count": 2},
+    {"creature": "great_horned_owl", "count": 1},
+    {"creature": "raccoon", "count": 2}
+  ]
+}

@@ -2,10 +2,12 @@
   "name": "conifer_slopes",
   "version": 2,
   "introduced_by": "glassfall",
+  "habitat": "conifer_forest",
   "priority": 3,
   "rules": {"elev": [30, 64]},
   "surface": "forest_floor",
   "subsurface": "dirt",
+  "soil": 0.35,
   "map_color": [46, 90, 64],
   "plants": [
     {"plant": "pine", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},

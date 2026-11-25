@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "gannet",
   "notes": "Hake and Hogback islands above the shore: granite, wind-cut turf, bent shore pines, heather and lichen.",
+  "habitat": "heath_moor",
   "priority": 5,
   "rules": {"region": "island", "elev": [1.5, 200]},
   "surface": "shore_grass",
   "subsurface": "dirt",
+  "soil": 0.3,
   "map_color": [110, 128, 96],
   "plants": [
     {"plant": "shore_pine", "density": 0.003, "placement": {"verb": "clustered", "params": {"size": 24}}},

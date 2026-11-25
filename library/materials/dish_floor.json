@@ -1,0 +1,16 @@
+{
+  "name": "dish_floor",
+  "version": 1,
+  "introduced_by": "saltmirror_array",
+  "notes": "The inside of a fallen dish's bowl as a road: the array's chalky grey paint, rust at the bolt lines, drawn smooth so its curve reads as a curve.",
+  "smooth": true,
+  "surface": "rock",
+  "texture": {
+    "pattern": "blotch",
+    "base": [146, 154, 164],
+    "alt": [146, 116, 96],
+    "scale": 3,
+    "contrast": 0.6,
+    "calm": {"base": [150, 158, 168], "alt": [150, 126, 106]}
+  }
+}

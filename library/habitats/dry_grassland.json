@@ -1,0 +1,13 @@
+{
+  "name": "dry_grassland",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Steppe, prairie and downland: short or tall grass with few trees.",
+  "wet": 0.3,
+  "soil": 0.6,
+  "shade": 0.0,
+  "rock": 0.05,
+  "disturbed": 0.05,
+  "open": 0.95,
+  "forage": ["graze", "seed"]
+}

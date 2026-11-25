@@ -1,0 +1,8 @@
+{
+  "name": "azulejo_turquoise",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Glazed wall tile in turquoise and white, the second colour of Vila Azul's towers.",
+  "like": "azulejo_cobalt",
+  "texture": {"base": [44, 150, 160], "alt": [208, 226, 226], "calm": {"base": [60, 160, 168], "alt": [216, 230, 230]}}
+}

@@ -1,0 +1,14 @@
+{
+  "name": "wild_thyme",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Wild thyme: low mats of pink-purple flowers through the short turf of the chalk downs, where heather, which hates lime, does not grow.",
+  "form": "herb",
+  "height": [0.08, 0.18],
+  "crown_radius": [0.3, 0.5],
+  "bark": "dead_wood",
+  "leaf": "wild_thyme",
+  "max_slope": 1.0,
+  "affords": ["nectar"],
+  "site": {"wet": [0.0, 0.55], "soil": [0.55, 1.0], "shade": [0.0, 0.2]}
+}

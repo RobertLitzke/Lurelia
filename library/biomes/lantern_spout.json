@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "Round Lantern Spout and its pool: moss lit faintly by the glow-worms, ferns in the spray, vines down the cliff.",
+  "habitat": "riparian",
   "priority": 12,
   "rules": {"region": "spout"},
   "surface": "moss_grass",
   "subsurface": "dirt",
   "rock": "oolite",
+  "soil": 0.8,
   "map_color": [80, 200, 190],
   "plants": [
     {"plant": "hanging_vine", "density": 0.8, "placement": {"verb": "scatter", "params": {}}},

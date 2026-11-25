@@ -1,0 +1,15 @@
+{
+  "name": "pg_avocado",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "The outpost's avocado green, faded and bleeding rust from every seam.",
+  "like": "pg_gold",
+  "texture": {
+    "pattern": "blotch",
+    "base": [122, 136, 66],
+    "alt": [104, 76, 48],
+    "scale": 3,
+    "contrast": 0.7,
+    "calm": {"base": [132, 146, 76], "alt": [112, 84, 56]}
+  }
+}

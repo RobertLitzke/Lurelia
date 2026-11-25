@@ -3,11 +3,13 @@
   "version": 2,
   "introduced_by": "redrock",
   "notes": "Bare sloping sandstone: fins, domes, canyon benches. A juniper in a crack here and there.",
+  "habitat": "bare_rock",
   "priority": 6,
   "rules": {"slope": [0.55, 99], "elev": [4, 80]},
   "surface": "slickrock",
   "subsurface": "navajo_sandstone",
   "fringe": 0,
+  "soil": 0.5,
   "map_color": [226, 160, 116],
   "plants": [
     {"plant": "juniper", "density": 0.001, "placement": {"verb": "scatter", "params": {}}},

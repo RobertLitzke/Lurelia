@@ -1,0 +1,12 @@
+{
+  "name": "mudflat",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Bare mud and silt by the water, covered and uncovered.",
+  "wet": 0.9,
+  "soil": 0.6,
+  "shade": 0.0,
+  "rock": 0.0,
+  "disturbed": 0.0,
+  "open": 1.0
+}

@@ -19,6 +19,8 @@ const WET: u8 = 4;
 /// on, and never claimed by a square, park or street mark, so a church
 /// cannot stand in an older landmark's door.
 const TAKEN: u8 = 5;
+/// A footpath to a door: walked on, never built on.
+const PATH: u8 = 6;
 
 /// The town on a one-metre raster: who owns each cell and what is on it.
 struct Raster {
@@ -292,6 +294,33 @@ pub fn build(plan: &mut Plan, dist: &Districts, spec: &Spec, ground: &dyn Ground
         for side in [1.0f32, -1.0] {
             frontage(plan, &mut r, dist, spec, &way, wi, side, ground, rng);
         }
+    }
+
+    // Footpaths to the doors of the structures on the street plots, then
+    // more houses on the ground those leave, each with its own path.
+    if spec.features.paths {
+        for s in plan.sites.clone() {
+            if let Some(cells) = door_path(&r, dist, ground, s.at, s.turns, s.size) {
+                lay_path(plan, &mut r, &cells);
+            }
+        }
+    }
+    if spec.features.infill > 0 && !spec.features.houses.is_empty() {
+        // With no footprint houses to draw, their plots are free ground.
+        if !spec.features.footprints {
+            for u in r.used.iter_mut().filter(|u| **u == BUILT) {
+                *u = FREE;
+            }
+            for s in &plan.sites {
+                let h = s.size * 0.5 + Vec2::splat(0.3);
+                let quad = [s.at - h, Vec2::new(s.at.x + h.x, s.at.y - h.y), s.at + h, Vec2::new(s.at.x - h.x, s.at.y + h.y)];
+                for i in quad_cells(&r, &quad).unwrap_or_default() {
+                    r.used[i] = BUILT;
+                }
+            }
+            plan.buildings.clear();
+        }
+        infill(plan, &mut r, dist, spec, ground, rng);
     }
 
     // A turning circle with no houses round it was a close nobody built.
@@ -1383,5 +1412,237 @@ fn landmarks(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, gro
         if !done {
             plan.notes.push(format!("no site for landmark {} ({:?})", lm.id, lm.near));
         }
+    }
+}
+
+/// Where a structure's door is: the middle of its front face, turned.
+fn door_at(at: Vec2, turns: u8, size: Vec2) -> (Vec2, Vec2) {
+    let face = super::quarter_axis(turns);
+    let reach = (size.x * face.x).abs() * 0.5 + (size.y * face.y).abs() * 0.5;
+    (at + face * reach, face)
+}
+
+/// The cheapest way on foot from a door out to a street, a square or a
+/// path already laid: round the buildings, not up the rim, keeping off
+/// walls where it can and sharing the paths there are. Cells from the
+/// door out, the last one on the street; None if nothing is in reach.
+fn door_path(r: &Raster, dist: &Districts, ground: &dyn Ground, at: Vec2, turns: u8, size: Vec2) -> Option<Vec<usize>> {
+    use std::cmp::Reverse;
+    const REACH: f32 = 40.0;
+    let (door, face) = door_at(at, turns, size);
+    let start = r.idx(door + face * 0.9)?;
+    let goal = |u: u8| u == STREET || u == PATH || u == OPEN;
+    if r.used[start] != FREE && !goal(r.used[start]) {
+        return None;
+    }
+    if goal(r.used[start]) {
+        return Some(vec![start]);
+    }
+    let mut cost: crate::util::FxHashMap<usize, f32> = Default::default();
+    let mut from: crate::util::FxHashMap<usize, usize> = Default::default();
+    let mut heap = std::collections::BinaryHeap::new();
+    cost.insert(start, 0.0);
+    heap.push(Reverse((0u32, start)));
+    let built = |x: i64, z: i64| x >= 0 && z >= 0 && (x as usize) < r.w && (z as usize) < r.h && r.used[z as usize * r.w + x as usize] == BUILT;
+    while let Some(Reverse((cb, i))) = heap.pop() {
+        // Costs are positive, so their bits order like the floats.
+        let c = f32::from_bits(cb);
+        if c > *cost.get(&i).unwrap_or(&f32::MAX) {
+            continue;
+        }
+        if goal(r.used[i]) {
+            let mut out = vec![i];
+            let mut k = i;
+            while let Some(&j) = from.get(&k) {
+                out.push(j);
+                k = j;
+            }
+            out.reverse();
+            return Some(out);
+        }
+        let (x, z) = ((i % r.w) as i64, (i / r.w) as i64);
+        let hp = ground.height(r.centre(i));
+        for (dx, dz) in [(-1i64, 0i64), (1, 0), (0, -1), (0, 1), (-1, -1), (1, -1), (-1, 1), (1, 1)] {
+            let (xx, zz) = (x + dx, z + dz);
+            if xx < 0 || zz < 0 || xx >= r.w as i64 || zz >= r.h as i64 {
+                continue;
+            }
+            let j = zz as usize * r.w + xx as usize;
+            let u = r.used[j];
+            if u != FREE && !goal(u) {
+                continue;
+            }
+            // A diagonal step may not cut a building's corner.
+            if dx != 0 && dz != 0 && (built(xx, z) || built(x, zz)) {
+                continue;
+            }
+            let q = r.centre(j);
+            if q.distance(door) > REACH || dist.at(q).is_none() {
+                continue;
+            }
+            let len = if dx != 0 && dz != 0 { std::f32::consts::SQRT_2 } else { 1.0 };
+            let climb = (ground.height(q) - hp).abs() / len;
+            if climb > 0.8 {
+                continue;
+            }
+            let mut w = match u {
+                PATH => 0.35,
+                STREET | OPEN => 0.5,
+                _ => 1.0,
+            };
+            // Keep a step off the walls where there is room.
+            if u == FREE && (built(xx - 1, zz) || built(xx + 1, zz) || built(xx, zz - 1) || built(xx, zz + 1)) {
+                w += 0.8;
+            }
+            w += climb * 2.0;
+            let nc = c + len * w;
+            if nc < *cost.get(&j).unwrap_or(&f32::MAX) {
+                cost.insert(j, nc);
+                from.insert(j, i);
+                heap.push(Reverse((nc.to_bits(), j)));
+            }
+        }
+    }
+    None
+}
+
+/// Lay a footpath along cells from `door_path`: they are kept clear of
+/// building, and the line is straightened where nothing is in the way.
+fn lay_path(plan: &mut Plan, r: &mut Raster, cells: &[usize]) {
+    for &i in cells {
+        if r.used[i] == FREE {
+            r.used[i] = PATH;
+        }
+    }
+    if cells.len() < 2 {
+        return;
+    }
+    let pts: Vec<Vec2> = cells.iter().map(|&i| r.centre(i)).collect();
+    // String-pull: from each kept point, the furthest later point in a
+    // clear straight line, a path's half-width from any wall.
+    let clear = |a: Vec2, b: Vec2| {
+        let n = (a.distance(b) * 3.0).ceil().max(1.0) as usize;
+        (0..=n).all(|k| {
+            let p = a.lerp(b, k as f32 / n as f32);
+            [Vec2::ZERO, Vec2::new(0.7, 0.0), Vec2::new(-0.7, 0.0), Vec2::new(0.0, 0.7), Vec2::new(0.0, -0.7)]
+                .iter()
+                .all(|&o| r.idx(p + o).is_some_and(|i| !matches!(r.used[i], BUILT | WET | TAKEN)))
+        })
+    };
+    let mut line = vec![pts[0]];
+    let mut k = 0;
+    while k < pts.len() - 1 {
+        let mut j = pts.len() - 1;
+        while j > k + 1 && !clear(pts[k], pts[j]) {
+            j -= 1;
+        }
+        line.push(pts[j]);
+        k = j;
+    }
+    plan.paths.push(line);
+}
+
+/// More of the world's own houses on the ground the street plots left:
+/// nearest the streets first, each turned to face its street (or the next
+/// best way when that won't fit), a gap all round, and a footpath out that
+/// the houses after it must leave clear.
+fn infill(plan: &mut Plan, r: &mut Raster, dist: &Districts, spec: &Spec, ground: &dyn Ground, rng: &mut Rng) {
+    let gap = spec.gaps.max(1.5);
+    let mut cands: Vec<(f32, Vec2)> = Vec::new();
+    for z in (0..r.h).step_by(2) {
+        for x in (0..r.w).step_by(2) {
+            let i = z * r.w + x;
+            if r.used[i] != FREE || r.owner[i] == u32::MAX {
+                continue;
+            }
+            let p = r.centre(i);
+            if dist.at(p).is_none() || dist.sd(p) > -3.0 {
+                continue;
+            }
+            cands.push((r.dist[i] + rng.f() * 3.0, p));
+        }
+    }
+    cands.sort_by(|a, b| a.0.total_cmp(&b.0));
+    let houses = &spec.features.houses;
+    let mut used = vec![0u32; houses.len()];
+    let mut added = 0;
+    for (_, p) in cands {
+        if added >= spec.features.infill {
+            break;
+        }
+        let Some(i) = r.idx(p) else { continue };
+        if r.used[i] != FREE {
+            continue;
+        }
+        // The nearest point on the cell's own street.
+        let way = &plan.ways[(r.owner[i] / 2) as usize];
+        let mut foot = (f32::MAX, p);
+        for seg in way.pts.windows(2) {
+            let (d, q, _) = seg_foot(seg[0], seg[1], p);
+            if d < foot.0 {
+                foot = (d, q);
+            }
+        }
+        // The least-built kinds first, so the kinds stay mixed.
+        let mut kinds: Vec<usize> = (0..houses.len()).collect();
+        kinds.sort_by_key(|&k| (used[k], (rng.f() * 1000.0) as u32));
+        let want = super::quarter_turns(foot.1 - p);
+        'kind: for &k in kinds.iter().take(2) {
+            for dt in [0u8, 1, 3, 2] {
+                let turns = (want + dt) % 4;
+                let sz = houses[k].size;
+                let ws = if turns % 2 == 1 { Vec2::new(sz.y, sz.x) } else { sz };
+                // The box set back so its front, not its middle, is at the
+                // candidate.
+                let face = super::quarter_axis(turns);
+                let reach = (ws.x * face.x).abs() * 0.5 + (ws.y * face.y).abs() * 0.5;
+                let at = p - face * reach;
+                let h = ws * 0.5 + Vec2::splat(gap);
+                let quad = [at - h, Vec2::new(at.x + h.x, at.y - h.y), at + h, Vec2::new(at.x - h.x, at.y + h.y)];
+                // Clear of the edge: room to walk round the back.
+                if quad.iter().any(|&q| dist.sd(q) > -2.5) {
+                    continue;
+                }
+                let Some(cells) = quad_cells(r, &quad) else { continue };
+                if cells.is_empty() || cells.iter().any(|&c| r.used[c] != FREE) {
+                    continue;
+                }
+                let inner = ws * 0.5 + Vec2::splat(0.3);
+                let body = [at - inner, Vec2::new(at.x + inner.x, at.y - inner.y), at + inner, Vec2::new(at.x - inner.x, at.y + inner.y)];
+                if super::fall(ground, &body) > 2.7 {
+                    continue;
+                }
+                let Some(own) = quad_cells(r, &body) else { continue };
+                for &c in &own {
+                    r.used[c] = BUILT;
+                }
+                match door_path(r, dist, ground, at, turns, ws) {
+                    Some(path) if path.len() < 30 => {
+                        plan.sites.push(super::Site { id: houses[k].id, at, turns, size: ws });
+                        if spec.features.paths {
+                            lay_path(plan, r, &path);
+                        } else {
+                            for &c in &path {
+                                if r.used[c] == FREE {
+                                    r.used[c] = PATH;
+                                }
+                            }
+                        }
+                        used[k] += 1;
+                        added += 1;
+                        plan.stats.built += 1;
+                        break 'kind;
+                    }
+                    _ => {
+                        for &c in &own {
+                            r.used[c] = FREE;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if added < spec.features.infill {
+        plan.notes_quiet.push(format!("infill: {added} of {} houses found room", spec.features.infill));
     }
 }

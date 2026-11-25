@@ -1,0 +1,108 @@
+# Lowmouth Bayou: a serpentine through the delta, folding back on itself
+# the way the old channel does. Units in metres: x east, z south.
+#
+# North up the parish street by St. Anne's; east along the top of the
+# levee with the river below; across the breach, where the Marrow broke
+# through, on a pad and a lip, or into the deep water; south into the cane,
+# every corner blind; west through the back swamp on cypress boardwalks with
+# no rails over shallow water (a kart that falls in drives out up a log);
+# through the hull of the Belle Marrow where she lies on the old channel;
+# a mud stretch; and back through the tombs to the line.
+track lowmouth_bayou size 768 style bayou
+title LOWMOUTH BAYOU
+blurb A humid summer morning in the delta, fog on the water: the levee top with the river below, a jump across the breach, blind bends through the cane, railless boardwalks over the cypress swamp and a run through a wrecked steamboat's hull.
+race laps 3 rivals 5 vehicle kart
+road 14.5 bank 1.2
+land 30 0.8
+hour 8
+
+# The Marrow, deep, south of the levee; the back swamp, shallow, in the
+# south-west; the breach channel cutting north through the levee.
+plateau 20 20 160,300 700,300 700,420 560,400 420,396 300,398 160,404
+plateau 28.7 14 210,600 460,600 470,720 210,720
+plateau 21 6 356,380 394,380 394,470 356,470
+
+# The parish street, north.
+point 150 640                  # start / finish
+point 150 590
+point 152 540
+point 160 495
+# Up onto the levee and east along its top.
+point 180 462 at 31.5
+point 214 446 at 33.5
+point 260 440 at 34
+point 310 440 at 34
+point 345 440 at 34            # the near side of the breach
+point 375 440 at 34
+point 405 440 at 34            # the far side
+point 440 441 at 34
+point 490 444 at 34
+point 540 452 at 33.5
+# Down off the levee into the cane.
+point 576 474 at 32
+point 592 510
+point 586 548
+point 560 572
+point 526 572
+point 500 548
+point 474 526
+point 444 530
+point 424 556
+# West into the back swamp on the boardwalks.
+point 400 590 at 31
+point 372 612 at 31.4
+point 344 622 at 31.4
+point 318 640 at 31.4
+point 290 656 at 31.4
+point 260 664 at 31.4
+point 232 676 at 31.4
+point 204 690 at 31
+# Through the Belle Marrow's hull and the mud, and round to the line.
+point 172 698 at 30.4
+point 152 696
+point 138 684
+point 140 664
+
+# The levee: built up on its own bank, the river below on the right.
+ramp 160 565 20
+# The breach: one pad, a lip on the near side, and the gap the river broke
+# through, deep on every lap. A kart that comes down in it is pulled out on
+# the far side.
+pad 296 centre 8
+jump 346 1.8 12 boost
+flood 350 402 -4.5 -4.5 -4.5 dip 6.5
+
+# The cane: on the inside of the blind bends, a wall of cane a kart can
+# slice through, a little slower, and see round next lap.
+smash 640 right 8.5 cane 7
+smash 700 right 8.5 cane 7
+smash 815 left 8.5 cane 7
+smash 840 left 8.5 cane 7
+
+# The boardwalks: cypress planks with no rail, over shallow water. Fall
+# off and drive out up a log.
+walls 905 1176 -1
+add ramp 330 630 348 634 w 28.6 31.3 mat weathered_planks drive
+add ramp 263 667 283 671 w 28.6 31.3 mat weathered_planks drive
+add ramp 263 648 283 652 w 28.6 31.3 mat weathered_planks drive
+add ramp 201 693 219 697 w 28.6 31.1 mat weathered_planks drive
+
+# The Belle Marrow: through her hull, bow to stern; then the mud.
+tunnel 1176 1212 4.5 mat weathered_planks portal weathered_planks
+surface 1212 1250 delta_mud
+
+items 60
+items 520
+items 1000
+
+# Width: 14.5 m on the parish street. The levee and the breach as they
+# were, 12 m: the river is below the levee, and the breach's lip and
+# landing are laid for that width. The cane, the boardwalks and the hull keep their
+# 12 m: the cane's corners are blind, the logs up out of the water are
+# laid to the boardwalks, and a kart that comes onto the railless deck off
+# a wider road runs off its edge; the hairpin round the tombs out of the mud is wide.
+width 150 420 12
+width 590 1212 12
+width 1215 1260 17
+# with a short run-off there, the tombs close on its inside.
+verge 1190 1265 - 5

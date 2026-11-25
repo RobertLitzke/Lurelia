@@ -106,6 +106,16 @@ pub struct PlantDef {
     /// show under the crown (street oaks and maples).
     #[serde(default)]
     pub tube_limbs: bool,
+    /// A dead tree's shape, on the generic entries placement v2 draws its
+    /// woods' dead from (`flora::skeleton`): `standing` (a snag with its top
+    /// gone), `broken` (snapped low), `stump` or `log` (fallen, lying along
+    /// the ground). Drawn as the skeleton of a living tree, it takes that
+    /// tree's size and bark; listed in a biome on its own (a drowned wood),
+    /// its own. Under v2 stand structure an entry a biome lists is drawn as
+    /// one of that biome's own trees, dead (picked by their density); a biome
+    /// with no such trees keeps the generic one (docs/PLANTS.md).
+    #[serde(default)]
+    pub skeleton: Option<crate::world::flora::Skeleton>,
     /// How much of its radius the trunk loses from its foot to where the
     /// limbs leave, 0 to 0.85 (default `flora::TRUNK_TAPER`, 0.3). More
     /// for a trunk that narrows clearly into its limbs.
@@ -228,9 +238,68 @@ pub struct PlantDef {
     /// (creatures::affordance::AFFORDANCES).
     #[serde(default)]
     pub affords: Vec<String>,
+    /// The realms it belongs to (`library/realms/`): which world its kind
+    /// comes from. `real` where it names none. A world's fill only draws a
+    /// species into a biome whose realms it shares.
+    #[serde(default)]
+    pub realms: Vec<String>,
+    /// The ground it does well on (world/site.rs), read only by placement
+    /// v2 (world.json `"plants": "v2"`). Left out, it grows wherever its
+    /// biome puts it.
+    #[serde(default)]
+    pub site: Option<SitePrefs>,
     #[serde(default)]
     #[allow(dead_code)] // read by tools/libfmt.py and people
     pub notes: String,
+}
+
+/// A plant's soft range on each site field, 0 to 1: full suitability inside
+/// `[lo, hi]`, falling to almost nothing over `site::SOFT` outside. A field
+/// left out doesn't matter to it.
+#[derive(Deserialize, Clone, Debug, Default, PartialEq, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct SitePrefs {
+    /// Water in the ground: 0.1-0.3 a dry ridge, 0.5-0.8 a gully floor, 1 open water.
+    #[serde(default)]
+    pub wet: Option<[f32; 2]>,
+    /// 0 acid and poor (heath, bog) to 1 base-rich (limestone, rich meadow).
+    #[serde(default)]
+    pub soil: Option<[f32; 2]>,
+    /// Warmth by slope and aspect: 0.5 flat, low on north faces, high on south.
+    #[serde(default)]
+    pub sun: Option<[f32; 2]>,
+    /// Height over the land round it and facing into the wind.
+    #[serde(default)]
+    pub exposure: Option<[f32; 2]>,
+    /// Cold: 0.15 at sea level up to 1 about 220 m above it, colder on north
+    /// faces and in frost hollows, milder by the sea.
+    #[serde(default)]
+    pub cold: Option<[f32; 2]>,
+    /// Steep, cliff, bare stone.
+    #[serde(default)]
+    pub rock: Option<[f32; 2]>,
+    /// Recent fire, paths, roads, buildings.
+    #[serde(default)]
+    pub disturbed: Option<[f32; 2]>,
+    /// The land's shade and the crowns of the taller plants placed before it.
+    #[serde(default)]
+    pub shade: Option<[f32; 2]>,
+}
+
+impl SitePrefs {
+    /// Each range given, by its field's name.
+    pub fn ranges(&self) -> [(&'static str, Option<[f32; 2]>); 8] {
+        [
+            ("wet", self.wet),
+            ("soil", self.soil),
+            ("sun", self.sun),
+            ("exposure", self.exposure),
+            ("cold", self.cold),
+            ("rock", self.rock),
+            ("disturbed", self.disturbed),
+            ("shade", self.shade),
+        ]
+    }
 }
 
 pub(super) fn default_trunk() -> [f32; 2] {

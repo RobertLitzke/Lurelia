@@ -1,0 +1,276 @@
+{
+  "name": "zombie_office",
+  "version": 1,
+  "introduced_by": "shooter",
+  "notes": "A dead office worker: a dingy shirt untucked over slacks, a loose red tie, the right sleeve torn back from the forearm, the right shoe gone so a sock shows, dark hair.",
+  "colors": {
+    "tie": [176, 132, 52],
+    "sock": [152, 152, 140],
+    "body": [172, 170, 152],
+    "limb": [64, 68, 86],
+    "foot": [48, 36, 32],
+    "hair": [46, 40, 38]
+  },
+  "behaviour": {
+    "voice": {
+      "calls": [{"cry": "groan", "on": "idle", "every_s": [20, 80]}, {"cry": "groan", "on": "chase", "size": 0.9, "boost": 3}]
+    }
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [20, 40.5, 20.63], "radius": [5.92, 0.75, 4.27], "mat": "limb"},
+    {"op": "ellipsoid", "centre": [20, 41.5, 20.74], "radius": [6.28, 0.75, 4.48], "mat": "limb"},
+    {"op": "ellipsoid", "centre": [20, 42.5, 20.86], "radius": [6.66, 0.75, 4.71], "mat": "limb"},
+    {"op": "ellipsoid", "centre": [20, 43.5, 20.93], "radius": [6.89, 0.75, 4.86], "mat": "limb"},
+    {"op": "ellipsoid", "centre": [20, 44.5, 20.98], "radius": [7.05, 0.75, 4.98], "mat": "limb"},
+    {"op": "ellipsoid", "centre": [20, 45.5, 21.01], "radius": [7.15, 0.75, 5.07], "mat": "limb"},
+    {"op": "ellipsoid", "centre": [20, 46.5, 21.0], "radius": [7.7, 0.75, 5.5], "mat": "limb"},
+    {"op": "ellipsoid", "centre": [20, 47.5, 20.94], "radius": [7.98, 0.75, 5.7], "mat": "limb"},
+    {"op": "ellipsoid", "centre": [20, 48.5, 20.85], "radius": [7.99, 0.75, 5.69], "mat": "limb"},
+    {"op": "ellipsoid", "centre": [20, 49.5, 20.75], "radius": [7.77, 0.75, 5.49], "mat": "limb"},
+    {"op": "ellipsoid", "centre": [20, 50.5, 20.66], "radius": [7.33, 0.75, 5.15], "mat": "limb"},
+    {"op": "ellipsoid", "centre": [20, 51.5, 20.58], "radius": [6.64, 0.75, 4.64], "mat": "limb"},
+    {"op": "ellipsoid", "centre": [20, 52.5, 20.51], "radius": [6.43, 0.75, 4.52], "mat": "limb"},
+    {"op": "ellipsoid", "centre": [20, 53.5, 20.43], "radius": [6.26, 0.75, 4.43], "mat": "limb"},
+    {"op": "ellipsoid", "centre": [20, 54.5, 20.37], "radius": [6.16, 0.75, 4.39], "mat": "body", "part": "spine"},
+    {"op": "ellipsoid", "centre": [20, 55.5, 20.31], "radius": [6.13, 0.75, 4.39], "mat": "body", "part": "spine"},
+    {"op": "ellipsoid", "centre": [20, 56.5, 20.26], "radius": [6.14, 0.75, 4.42], "mat": "body", "part": "spine"},
+    {"op": "ellipsoid", "centre": [20, 57.5, 20.22], "radius": [6.18, 0.75, 4.47], "mat": "body", "part": "spine"},
+    {"op": "ellipsoid", "centre": [20, 58.5, 20.18], "radius": [6.23, 0.75, 4.53], "mat": "body", "part": "spine"},
+    {"op": "ellipsoid", "centre": [20, 59.5, 20.15], "radius": [6.32, 0.75, 4.62], "mat": "body", "part": "spine"},
+    {"op": "ellipsoid", "centre": [20, 60.5, 20.12], "radius": [6.43, 0.75, 4.73], "mat": "body", "part": "spine"},
+    {"op": "ellipsoid", "centre": [20, 61.5, 20.1], "radius": [6.55, 0.75, 4.84], "mat": "body", "part": "spine"},
+    {"op": "ellipsoid", "centre": [20, 62.5, 20.1], "radius": [6.65, 0.75, 4.95], "mat": "body", "part": "spine"},
+    {"op": "ellipsoid", "centre": [20, 63.5, 20.11], "radius": [6.74, 0.75, 5.07], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 64.5, 20.14], "radius": [6.84, 0.75, 5.19], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 65.5, 20.17], "radius": [6.93, 0.75, 5.31], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 66.5, 20.2], "radius": [7.0, 0.75, 5.4], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 67.5, 20.24], "radius": [7.03, 0.75, 5.47], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 68.5, 20.28], "radius": [7.04, 0.75, 5.54], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 69.5, 20.33], "radius": [7.05, 0.75, 5.58], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 70.5, 20.38], "radius": [7.07, 0.75, 5.6], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 71.5, 20.43], "radius": [7.15, 0.75, 5.59], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 72.5, 20.48], "radius": [7.29, 0.75, 5.52], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 73.5, 20.54], "radius": [7.45, 0.75, 5.42], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 74.5, 20.6], "radius": [7.6, 0.75, 5.3], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 75.5, 20.72], "radius": [7.87, 0.75, 5.09], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 76.5, 20.85], "radius": [8.06, 0.75, 4.83], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 77.5, 20.94], "radius": [7.72, 0.75, 4.54], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 78.5, 20.99], "radius": [6.76, 0.75, 4.2], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 79.5, 20.98], "radius": [5.3, 0.75, 3.65], "mat": "body", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20, 80.5, 20.9], "radius": [3.6, 0.75, 3.0], "mat": "body", "part": "chest"},
+    {
+      "op": "segment",
+      "points": [[15.2, 47.0, 20.2], [15.4, 37.0, 20.1]],
+      "radius": 3.88,
+      "mat": "limb",
+      "part": "thigh_l"
+    },
+    {
+      "op": "segment",
+      "points": [[15.4, 37.0, 20.1], [15.6, 27.5, 20.0]],
+      "radius": 3.3,
+      "mat": "limb",
+      "part": "thigh_l"
+    },
+    {
+      "op": "segment",
+      "points": [[15.6, 25.5, 20.1], [15.7, 14.0, 20.5]],
+      "radius": 2.72,
+      "mat": "limb",
+      "part": "shin_l"
+    },
+    {"op": "ellipsoid", "centre": [15.6, 18.5, 21.2], "radius": [2.72, 6.0, 2.52], "mat": "limb", "part": "shin_l"},
+    {
+      "op": "segment",
+      "points": [[15.7, 14.0, 20.5], [15.8, 5.5, 20.6]],
+      "radius": 1.94,
+      "mat": "limb",
+      "part": "shin_l"
+    },
+    {"op": "ellipsoid", "centre": [15.8, 2.7, 17.5], "radius": [2.5, 2.6, 6.4], "mat": "foot", "part": "foot_l"},
+    {
+      "op": "segment",
+      "points": [[24.8, 47.0, 20.2], [24.6, 37.0, 20.1]],
+      "radius": 3.88,
+      "mat": "limb",
+      "part": "thigh_r"
+    },
+    {
+      "op": "segment",
+      "points": [[24.6, 37.0, 20.1], [24.4, 27.5, 20.0]],
+      "radius": 3.3,
+      "mat": "limb",
+      "part": "thigh_r"
+    },
+    {
+      "op": "segment",
+      "points": [[24.4, 25.5, 20.1], [24.3, 14.0, 20.5]],
+      "radius": 2.72,
+      "mat": "limb",
+      "part": "shin_r"
+    },
+    {"op": "ellipsoid", "centre": [24.4, 18.5, 21.2], "radius": [2.72, 6.0, 2.52], "mat": "limb", "part": "shin_r"},
+    {
+      "op": "segment",
+      "points": [[24.3, 14.0, 20.5], [24.2, 5.5, 20.6]],
+      "radius": 1.94,
+      "mat": "limb",
+      "part": "shin_r"
+    },
+    {"op": "ellipsoid", "centre": [24.2, 2.7, 17.5], "radius": [2.5, 2.6, 6.4], "mat": "sock", "part": "foot_r"},
+    {"op": "ellipsoid", "centre": [10.6, 75.0, 20.4], "radius": [3.16, 3.44, 3.16], "mat": "body", "part": "arm_l"},
+    {
+      "op": "segment",
+      "points": [[10.2, 74.0, 20.3], [9.6, 67.0, 20.2]],
+      "radius": 2.79,
+      "mat": "body",
+      "part": "arm_l"
+    },
+    {
+      "op": "segment",
+      "points": [[9.6, 67.0, 20.2], [9.4, 62.0, 20.1]],
+      "radius": 2.46,
+      "mat": "body",
+      "part": "arm_l"
+    },
+    {
+      "op": "segment",
+      "points": [[9.4, 61.0, 20.1], [9.3, 55.0, 19.9]],
+      "radius": 2.33,
+      "mat": "body",
+      "part": "fore_l"
+    },
+    {
+      "op": "segment",
+      "points": [[9.3, 55.0, 19.9], [9.2, 49.2, 19.7]],
+      "radius": 1.86,
+      "mat": "body",
+      "part": "fore_l"
+    },
+    {"op": "ellipsoid", "centre": [9.3, 45.6, 19.9], "radius": [1.45, 3.1, 2.45], "mat": "face", "part": "hand_l"},
+    {
+      "op": "segment",
+      "points": [[9.3, 43.8, 19.0], [9.3, 40.6, 18.6], [9.3, 38.9, 17.6]],
+      "radius": 1.05,
+      "mat": "face",
+      "part": "hand_l"
+    },
+    {
+      "op": "segment",
+      "points": [[9.3, 43.8, 21.1], [9.3, 40.8, 21.0], [9.3, 39.6, 20.2]],
+      "radius": 1.0,
+      "mat": "face",
+      "part": "hand_l"
+    },
+    {
+      "op": "segment",
+      "points": [[9.6, 47.2, 18.0], [9.5, 44.0, 16.9]],
+      "radius": 1.0,
+      "mat": "face",
+      "part": "hand_l"
+    },
+    {"op": "ellipsoid", "centre": [29.4, 75.0, 20.4], "radius": [3.16, 3.44, 3.16], "mat": "body", "part": "arm_r"},
+    {
+      "op": "segment",
+      "points": [[29.8, 74.0, 20.3], [30.4, 67.0, 20.2]],
+      "radius": 2.79,
+      "mat": "body",
+      "part": "arm_r"
+    },
+    {
+      "op": "segment",
+      "points": [[30.4, 67.0, 20.2], [30.6, 62.0, 20.1]],
+      "radius": 2.46,
+      "mat": "body",
+      "part": "arm_r"
+    },
+    {
+      "op": "segment",
+      "points": [[30.6, 61.0, 20.1], [30.7, 55.0, 19.9]],
+      "radius": 2.33,
+      "mat": "face",
+      "part": "fore_r"
+    },
+    {
+      "op": "segment",
+      "points": [[30.7, 55.0, 19.9], [30.8, 49.2, 19.7]],
+      "radius": 1.86,
+      "mat": "face",
+      "part": "fore_r"
+    },
+    {"op": "ellipsoid", "centre": [30.7, 45.6, 19.9], "radius": [1.45, 3.1, 2.45], "mat": "face", "part": "hand_r"},
+    {
+      "op": "segment",
+      "points": [[30.7, 43.8, 19.0], [30.7, 40.6, 18.6], [30.7, 38.9, 17.6]],
+      "radius": 1.05,
+      "mat": "face",
+      "part": "hand_r"
+    },
+    {
+      "op": "segment",
+      "points": [[30.7, 43.8, 21.1], [30.7, 40.8, 21.0], [30.7, 39.6, 20.2]],
+      "radius": 1.0,
+      "mat": "face",
+      "part": "hand_r"
+    },
+    {
+      "op": "segment",
+      "points": [[30.4, 47.2, 18.0], [30.5, 44.0, 16.9]],
+      "radius": 1.0,
+      "mat": "face",
+      "part": "hand_r"
+    },
+    {"op": "segment", "points": [[20, 77.0, 20.9], [20, 84.0, 20.1]], "radius": 2.5, "mat": "face", "part": "neck"},
+    {"op": "ellipsoid", "centre": [20, 90.3, 20.4], "radius": [5.0, 4.8, 5.4], "mat": "face", "part": "head"},
+    {"op": "ellipsoid", "centre": [20, 87.9, 19.4], "radius": [4.5, 3.9, 4.7], "mat": "face", "part": "head"},
+    {"op": "ellipsoid", "centre": [16.9, 87.7, 16.7], "radius": [1.7, 1.3, 1.5], "mat": "face", "part": "head"},
+    {"op": "ellipsoid", "centre": [23.1, 87.7, 16.7], "radius": [1.7, 1.3, 1.5], "mat": "face", "part": "head"},
+    {"op": "ellipsoid", "centre": [17.6, 85.9, 15.7], "radius": [1.5, 1.5, 1.2], "mat": "air", "part": "head"},
+    {"op": "ellipsoid", "centre": [17.6, 88.9, 14.9], "radius": [1.85, 1.4, 1.6], "mat": "air", "part": "head"},
+    {"op": "ellipsoid", "centre": [22.4, 85.9, 15.7], "radius": [1.5, 1.5, 1.2], "mat": "air", "part": "head"},
+    {"op": "ellipsoid", "centre": [22.4, 88.9, 14.9], "radius": [1.85, 1.4, 1.6], "mat": "air", "part": "head"},
+    {"op": "ellipsoid", "centre": [20, 91.0, 15.5], "radius": [4.5, 1.1, 1.5], "mat": "face", "part": "head"},
+    {"op": "ellipsoid", "centre": [17.5, 88.9, 17.3], "radius": [1.75, 1.25, 1.0], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [17.5, 88.9, 16.8], "radius": [1.1, 1.0, 0.8], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [22.5, 88.9, 17.3], "radius": [1.75, 1.25, 1.0], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [22.5, 88.9, 16.8], "radius": [1.25, 1.15, 0.8], "mat": "eye", "part": "head"},
+    {"op": "segment", "points": [[20, 89.9, 15.7], [20, 87.9, 14.5]], "radius": 1.15, "mat": "face", "part": "head"},
+    {"op": "ellipsoid", "centre": [20, 87.7, 14.6], "radius": [1.7, 1.0, 1.2], "mat": "face", "part": "head"},
+    {"op": "ellipsoid", "centre": [20, 85.3, 19.9], "radius": [4.0, 1.8, 3.6], "mat": "face", "part": "head"},
+    {"op": "ellipsoid", "centre": [20, 83.9, 18.3], "radius": [3.9, 2.3, 3.8], "mat": "face", "part": "jaw"},
+    {"op": "ellipsoid", "centre": [20, 82.6, 15.4], "radius": [1.8, 1.3, 1.4], "mat": "face", "part": "jaw"},
+    {"op": "ellipsoid", "centre": [20, 85.7, 15.7], "radius": [3.1, 1.25, 1.0], "mat": "lip", "part": "head"},
+    {"op": "ellipsoid", "centre": [20, 83.3, 15.8], "radius": [2.9, 1.25, 1.0], "mat": "lip", "part": "jaw"},
+    {"op": "ellipsoid", "centre": [20, 85.7, 15.2], "radius": [2.5, 0.95, 0.9], "mat": "teeth", "part": "head"},
+    {"op": "ellipsoid", "centre": [20, 83.4, 15.4], "radius": [2.3, 0.95, 0.9], "mat": "teeth", "part": "jaw"},
+    {"op": "ellipsoid", "centre": [15.0, 89.2, 20.9], "radius": [1.0, 2.0, 1.4], "mat": "face", "part": "head"},
+    {"op": "ellipsoid", "centre": [25.0, 89.2, 20.9], "radius": [1.0, 2.0, 1.4], "mat": "face", "part": "head"},
+    {"op": "ellipsoid", "centre": [20, 92.0, 21.8], "radius": [5.15, 3.3, 5.4], "mat": "face", "part": "head"},
+    {"op": "ellipsoid", "centre": [20.4, 66.5, 15.0], "radius": [1.3, 7.6, 1.1], "mat": "tie", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20.3, 74.3, 15.2], "radius": [1.6, 1.2, 1.0], "mat": "tie", "part": "chest"},
+    {"op": "ellipsoid", "centre": [20.9, 58.3, 15.3], "radius": [1.0, 1.4, 0.9], "mat": "tie", "part": "spine"},
+    {"op": "recolour", "at": [18, 84, 18], "until": [22, 86, 23], "from": "face", "to": "dark"},
+    {"op": "recolour", "at": [13, 92, 10], "until": [27, 98, 30], "from": "face", "to": "hair"},
+    {"op": "recolour", "at": [13, 87, 22], "until": [27, 98, 30], "from": "face", "to": "hair"},
+    {"op": "recolour", "at": [15, 90, 19], "until": [16, 93, 30], "from": "face", "to": "hair"},
+    {"op": "recolour", "at": [24, 90, 19], "until": [26, 93, 30], "from": "face", "to": "hair"},
+    {"op": "recolour", "at": [15, 86, 14], "until": [19, 88, 17], "from": "face", "to": "bruise"},
+    {"op": "recolour", "at": [23, 83, 14], "until": [26, 86, 18], "from": "face", "to": "wound"},
+    {"op": "recolour", "at": [22, 92, 14], "until": [25, 94, 17], "from": "face", "to": "bruise"},
+    {"op": "recolour", "at": [15, 83, 14], "until": [17, 85, 18], "from": "face", "to": "bruise"},
+    {"op": "recolour", "at": [24, 88, 19], "until": [26, 91, 23], "from": "face", "to": "wound"},
+    {"op": "recolour", "at": [22, 79, 14], "until": [25, 83, 22], "from": "face", "to": "wound"},
+    {"op": "recolour", "at": [12, 39, 8], "until": [28, 47, 34], "from": "body", "to": "limb"},
+    {"op": "recolour", "at": [18, 74, 13], "until": [22, 79, 17], "from": "body", "to": "face"},
+    {"op": "recolour", "at": [12, 47, 13], "until": [17, 49, 18], "from": "limb", "to": "body"},
+    {"op": "recolour", "at": [22, 47, 13], "until": [27, 48, 25], "from": "limb", "to": "body"},
+    {"op": "recolour", "at": [15, 60, 13], "until": [19, 68, 17], "from": "body", "to": "wound"},
+    {"op": "recolour", "at": [17, 69, 13], "until": [19, 74, 17], "from": "body", "to": "wound"},
+    {"op": "recolour", "at": [27, 59, 17], "until": [33, 62, 24], "from": "face", "to": "body"},
+    {"op": "recolour", "at": [31, 55, 14], "until": [34, 59, 19], "from": "face", "to": "bruise"},
+    {"op": "recolour", "at": [28, 52, 18], "until": [31, 56, 23], "from": "face", "to": "wound"},
+    {"op": "recolour", "at": [21, 5, 14], "until": [29, 9, 26], "from": "limb", "to": "sock"},
+    {"op": "recolour", "at": [23, 34, 13], "until": [28, 38, 18], "from": "limb", "to": "bruise"}
+  ],
+  "like": "zombie"
+}

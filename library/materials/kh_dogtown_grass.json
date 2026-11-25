@@ -1,0 +1,9 @@
+{
+  "name": "kh_dogtown_grass",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Prairie-dog town turf: grass bitten down to the roots round the burrows, khaki with bare earth between.",
+  "like": "steppe_grass",
+  "texture": {"base": [156, 138, 100], "alt": [134, 114, 84], "calm": {"base": [170, 150, 112], "alt": [146, 126, 94]}},
+  "grass": {"sparse": 0.04, "dense": 0.18, "short": 0.45}
+}

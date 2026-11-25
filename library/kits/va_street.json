@@ -1,0 +1,12 @@
+{
+  "name": "va_street",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Vila Azul's streets: 4 m of pale stone flags with a border of glazed ochre tile along each side, graded into the hill.",
+  "ground": "grade",
+  "width": 4.0,
+  "mat": "city_flags",
+  "shoulder": "va_mosaic_ochre",
+  "margin": 3.0,
+  "tags": ["road"]
+}

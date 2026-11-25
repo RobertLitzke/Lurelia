@@ -59,6 +59,20 @@ pub struct Skeleton {
     /// Ribcage only: the ribs' radius at the head, metres.
     #[serde(default)]
     rib_radius: Option<f32>,
+    /// Ribcage only: a structure hung under the low outward bow of the ribs,
+    /// its anchor voxel on the bone's underside and its front facing out
+    /// (Bonebight's glass-ear fungi).
+    #[serde(default)]
+    hang: Option<String>,
+    /// Ribcage only: the chance each of three spots up each rib's lower bow
+    /// carries `hang`.
+    #[serde(default = "default_hang_share")]
+    hang_share: f32,
+    /// Ribcage only: take only the ground round each rib's root, not the
+    /// whole stretch under its bow, so a town can build under the ribs
+    /// where they arch high overhead (Bonebight).
+    #[serde(default)]
+    open_under: bool,
     /// "right" or "left" of the line from head to tail: the side the ribs
     /// arch over to.
     #[serde(default = "default_belly")]
@@ -108,6 +122,9 @@ pub struct Skeleton {
     poi: Option<String>,
 }
 
+fn default_hang_share() -> f32 {
+    0.5
+}
 fn default_kind() -> String {
     "toothed".into()
 }

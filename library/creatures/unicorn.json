@@ -4,20 +4,45 @@
   "introduced_by": "glassfall",
   "notes": "One deer in a hundred is born white with a single faintly glowing horn and no antlers. It lives and runs with ordinary deer and is harder to get near.",
   "colors": {"coat": [240, 236, 228], "belly": [240, 236, 228], "horn": [244, 236, 214, 1.1]},
-  "behaviour": {"sleeps_on_side": true, "wary": 18, "flightiness": 0.5},
+  "behaviour": {
+    "displays": [{"kind": "nurse"}],
+    "sleeps_on_side": true,
+    "wary": 18,
+    "flightiness": 0.5,
+    "voice": {
+      "size": 0.9,
+      "calls": [
+        {"cry": "neigh", "on": "idle", "every_s": [300, 900]},
+        {"cry": "snort", "on": "flee", "size": 1.3, "chance": 0.6}
+      ]
+    }
+  },
   "like": "deer",
   "rarity": 0.01,
   "extra_ops": [
-    {"op": "box", "from": [12, 38, 4], "to": [36, 58, 16], "mat": "air", "part": "head"},
-    {"op": "segment", "points": [[22, 37, 10.5], [19.48, 40.06, 10.8]], "radius": 1.1, "mat": "coat", "part": "ear_l"},
-    {"op": "segment", "points": [[26, 37, 10.5], [28.52, 40.06, 10.8]], "radius": 1.1, "mat": "coat", "part": "ear_r"},
+    {"op": "box", "from": [5, 36, 5], "to": [27, 54, 17], "mat": "air", "part": "head"},
     {
       "op": "segment",
-      "points": [[24, 38, 7.5], [24, 41, 6.2], [24, 48, 4.5]],
-      "radius": 0.9,
+      "points": [[14.126, 34.663, 11.353], [11.766, 37.529, 11.634]],
+      "radius": 1.031,
+      "mat": "coat",
+      "part": "ear_l"
+    },
+    {
+      "op": "segment",
+      "points": [[17.874, 34.663, 11.353], [20.234, 37.529, 11.634]],
+      "radius": 1.031,
+      "mat": "coat",
+      "part": "ear_r"
+    },
+    {
+      "op": "segment",
+      "points": [[16.0, 35.6, 8.542], [16.0, 38.41, 7.324], [16.0, 44.968, 5.732]],
+      "radius": 0.843,
       "mat": "horn",
       "part": "head"
     }
   ],
-  "vary": {"shade": 0.02, "hue": 0.0}
+  "vary": {"shade": 0.02, "hue": 0.0},
+  "realms": ["fae"]
 }

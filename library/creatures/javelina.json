@@ -7,16 +7,20 @@
   "behaviour": {
     "sleeps_on_side": true,
     "wary": 10,
-    "group": {"size": [3, 8], "spacing": 1.6, "range": 10, "alignment": 1.0, "cohesion": 1.4}
+    "group": {"size": [3, 8], "spacing": 1.6, "range": 10, "alignment": 1.0, "cohesion": 1.4},
+    "voice": {
+      "size": 0.8,
+      "calls": [
+        {"cry": "grunt", "on": "idle", "every_s": [40, 150], "chorus": 0.2, "chorus_m": 40},
+        {"cry": "bark", "on": "flee", "size": 2.2, "chance": 0.6}
+      ]
+    }
   },
   "like": "boar",
   "scale": 0.72,
   "extra_ops": [
-    {"op": "recolour", "at": [10, 6, 10], "until": [23, 18, 13], "from": "coat", "to": "collar"},
-    {"op": "recolour", "at": [10, 6, 10], "until": [23, 18, 13], "from": "belly", "to": "collar"},
-    {"op": "set", "at": [13, 9, 2], "mat": "air", "part": "head"},
-    {"op": "set", "at": [18, 9, 2], "mat": "air", "part": "head"},
-    {"op": "set", "at": [13, 10, 2], "mat": "air", "part": "head"},
-    {"op": "set", "at": [18, 10, 2], "mat": "air", "part": "head"}
+    {"op": "recolour", "at": [5, 11, 20], "until": [28, 32, 26], "from": "coat", "to": "collar"},
+    {"op": "recolour", "at": [5, 11, 20], "until": [28, 32, 26], "from": "belly", "to": "collar"},
+    {"op": "recolour", "at": [9, 12, 4], "until": [23, 21, 10], "from": "tusk", "to": "coat"}
   ]
 }

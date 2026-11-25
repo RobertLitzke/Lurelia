@@ -1,6 +1,6 @@
 {
   "name": "walrus",
-  "version": 2,
+  "version": 3,
   "introduced_by": "ribshore",
   "notes": "haulout: Pacific walrus: three metres of wrinkled cinnamon hide with pale tusks and a bristled muzzle. Hauls out in heaps on the beach and the low rocks, barely lifts its head when you walk past, and lumbers into the surf only when you all but step on it. v2: propped up on its foreflippers with its chest and tusked head high, and lying level in the water.",
   "voxel": 0.1,
@@ -13,43 +13,62 @@
     "whisker": [222, 204, 170],
     "tusk": [236, 226, 200],
     "flipper": [116, 78, 58],
-    "dark": [30, 26, 24]
+    "dark": [30, 26, 24],
+    "eye": [18, 14, 12]
   },
   "behaviour": {
+    "displays": [{"kind": "bask_pose"}, {"kind": "head_butt", "holds": 0.3, "params": {"charge": 0.3, "backoff": [1.0, 2.0]}}],
     "sleeps_on_side": true,
     "walk_speed": 0.25,
     "flee_speed": 1.0,
     "wary": 8,
     "flightiness": 0.12,
     "juvenile_flightiness": 1.5,
-    "group": {"size": [3, 8], "spacing": 3.4, "range": 14, "alignment": 0.3, "cohesion": 1.2}
+    "group": {"size": [3, 8], "spacing": 3.4, "range": 14, "alignment": 0.3, "cohesion": 1.2},
+    "voice": {
+      "calls": [
+        {"cry": "bellow", "on": "idle", "size": 0.8, "every_s": [120, 400]},
+        {"cry": "clash", "on": "display:head_butt", "size": 1.8}
+      ]
+    }
   },
   "in_water": {"walk_speed": 1.6, "flee_speed": 4.0, "spawn_chance": 0.03, "swim_pitch": 0.38},
   "ops": [
-    {"op": "ellipsoid", "centre": [16, 2.4, 28.6], "radius": [3.2, 2.2, 3.0], "mat": "hide"},
-    {"op": "ellipsoid", "centre": [16, 4.0, 24.5], "radius": [6.0, 4.0, 4.6], "mat": "hide"},
-    {"op": "ellipsoid", "centre": [16, 5.6, 19], "radius": [7.4, 5.6, 5.4], "mat": "hide"},
-    {"op": "ellipsoid", "centre": [16, 7.6, 13.5], "radius": [7.6, 6.8, 4.8], "mat": "hide"},
-    {"op": "ellipsoid", "centre": [16, 9.8, 9.5], "radius": [6.6, 5.6, 3.8], "mat": "hide"},
-    {"op": "ellipsoid", "centre": [16, 11.6, 6.6], "radius": [5.0, 4.0, 3.0], "mat": "hide"},
+    {"op": "ellipsoid", "centre": [16, 3.0, 24.5], "radius": [4.8, 3.0, 7.0], "mat": "hide"},
+    {"op": "ellipsoid", "centre": [16, 6.2, 16], "radius": [7.6, 6.2, 9.5], "mat": "hide"},
+    {"op": "ellipsoid", "centre": [16, 8.6, 9.8], "radius": [6.4, 5.6, 4.6], "mat": "hide"},
     {"op": "recolour_below", "y": 2, "from": "hide", "to": "fold"},
-    {"op": "recolour", "at": [8, 6, 6], "until": [25, 7, 15], "from": "hide", "to": "fold"},
-    {"op": "recolour", "at": [8, 8, 6], "until": [25, 9, 15], "from": "hide", "to": "fold"},
-    {"op": "recolour", "at": [8, 10, 6], "until": [25, 11, 15], "from": "hide", "to": "fold"},
-    {"op": "recolour", "at": [8, 12, 6], "until": [25, 13, 15], "from": "hide", "to": "fold"},
-    {"op": "ellipsoid", "centre": [16, 12.8, 4.4], "radius": [4.0, 3.4, 3.0], "mat": "hide", "part": "head"},
-    {"op": "ellipsoid", "centre": [16, 11.2, 2.2], "radius": [3.8, 2.6, 2.0], "mat": "pale", "part": "head"},
-    {"op": "recolour", "at": [12, 9, 0], "until": [21, 12, 2], "from": "pale", "to": "whisker"},
-    {"op": "set", "at": [13, 14, 4], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [19, 14, 4], "mat": "dark", "part": "head"},
-    {"op": "box", "from": [14, 4, 1], "to": [15, 10, 2], "mat": "tusk", "part": "head"},
-    {"op": "box", "from": [17, 4, 1], "to": [18, 10, 2], "mat": "tusk", "part": "head"},
-    {"op": "ellipsoid", "centre": [9.4, 3.0, 10.8], "radius": [1.6, 3.0, 2.0], "mat": "flipper", "part": "leg_fl"},
-    {"op": "ellipsoid", "centre": [22.6, 3.0, 10.8], "radius": [1.6, 3.0, 2.0], "mat": "flipper", "part": "leg_fr"},
-    {"op": "ellipsoid", "centre": [9.0, 0.6, 10.0], "radius": [2.0, 0.6, 2.6], "mat": "flipper", "part": "leg_fl"},
-    {"op": "ellipsoid", "centre": [23.0, 0.6, 10.0], "radius": [2.0, 0.6, 2.6], "mat": "flipper", "part": "leg_fr"},
-    {"op": "ellipsoid", "centre": [13.4, 1.0, 31.0], "radius": [2.6, 0.7, 2.2], "mat": "flipper", "part": "tail"},
-    {"op": "ellipsoid", "centre": [18.6, 1.0, 31.0], "radius": [2.6, 0.7, 2.2], "mat": "flipper", "part": "tail"}
+    {"op": "recolour", "at": [6, 5, 6], "until": [25, 6, 19], "from": "hide", "to": "fold"},
+    {"op": "recolour", "at": [6, 8, 6], "until": [25, 9, 19], "from": "hide", "to": "fold"},
+    {"op": "recolour", "at": [6, 11, 6], "until": [25, 12, 19], "from": "hide", "to": "fold"},
+    {"op": "recolour", "at": [10, 3, 20], "until": [22, 4, 26], "from": "hide", "to": "fold"},
+    {"op": "ellipsoid", "centre": [16, 12.0, 5.2], "radius": [3.9, 3.6, 3.4], "mat": "hide", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 10.4, 2.6], "radius": [3.6, 2.6, 2.4], "mat": "pale", "part": "head"},
+    {"op": "recolour", "at": [11, 8, 0], "until": [21, 12, 2], "from": "pale", "to": "whisker"},
+    {"op": "ellipsoid", "centre": [12.8, 13.0, 4.2], "radius": [0.95, 0.95, 0.95], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [19.2, 13.0, 4.2], "radius": [0.95, 0.95, 0.95], "mat": "eye", "part": "head"},
+    {"op": "segment", "points": [[14, 9.6, 3.4], [13.8, 6.4, 2.8]], "radius": 1.0, "mat": "tusk", "part": "head"},
+    {"op": "segment", "points": [[13.8, 6.4, 2.8], [13.6, 3.2, 2.4]], "radius": 0.7, "mat": "tusk", "part": "head"},
+    {"op": "segment", "points": [[18, 9.6, 3.4], [18.2, 6.4, 2.8]], "radius": 1.0, "mat": "tusk", "part": "head"},
+    {"op": "segment", "points": [[18.2, 6.4, 2.8], [18.4, 3.2, 2.4]], "radius": 0.7, "mat": "tusk", "part": "head"},
+    {
+      "op": "segment",
+      "points": [[9.2, 6.8, 11.5], [6.8, 2.2, 9.2]],
+      "radius": 1.7,
+      "mat": "flipper",
+      "part": "leg_fl"
+    },
+    {
+      "op": "segment",
+      "points": [[22.8, 6.8, 11.5], [25.2, 2.2, 9.2]],
+      "radius": 1.7,
+      "mat": "flipper",
+      "part": "leg_fr"
+    },
+    {"op": "ellipsoid", "centre": [6.6, 0.8, 8.0], "radius": [2.6, 0.8, 3.6], "mat": "flipper", "part": "leg_fl"},
+    {"op": "ellipsoid", "centre": [25.4, 0.8, 8.0], "radius": [2.6, 0.8, 3.6], "mat": "flipper", "part": "leg_fr"},
+    {"op": "ellipsoid", "centre": [13.2, 1.1, 29.6], "radius": [2.8, 1.0, 2.4], "mat": "flipper", "part": "tail"},
+    {"op": "ellipsoid", "centre": [18.8, 1.1, 29.6], "radius": [2.8, 1.0, 2.4], "mat": "flipper", "part": "tail"}
   ],
   "like": "harbor_seal",
   "vary": {"size": 0.12, "shade": 0.08, "hue": 0.05},

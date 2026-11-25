@@ -1,0 +1,25 @@
+{
+  "name": "fw_islet",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Frondwell's islets: black basalt with a cap of turf, salal and a few wind-bent shore pines and spruce, harbour seals hauled out on the rocks.",
+  "habitat": "rocky_shore",
+  "priority": 21,
+  "rules": {"underwater": false, "region": "frondwell_motu"},
+  "surface": "dune_grass",
+  "subsurface": "basalt",
+  "map_color": [110, 130, 90],
+  "plants": [
+    {"plant": "shore_pine", "density": 0.01, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "sitka_spruce", "density": 0.004, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "salal", "density": 0.05, "placement": {"verb": "clustered", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "harbor_seal", "count": 5},
+    {"creature": "gull", "count": 6},
+    {"creature": "cormorant", "count": 4},
+    {"creature": "black_oystercatcher", "count": 3},
+    {"creature": "puffin", "count": 8},
+    {"creature": "eider", "count": 4}
+  ]
+}

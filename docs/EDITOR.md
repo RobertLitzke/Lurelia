@@ -44,7 +44,9 @@ the file:
   see why its `ages` block says what it says.
 - POSE (creatures): what the subject is doing. REST holds the rig's own rest
   pose; STAND, WALK, RUN, GRAZE, LOOK ABOUT, SIT and LIE DOWN drive a walker's
-  rig on the spot; FLY and PERCH do the same for a bird. None of them has a
+  rig on the spot; FLY and PERCH do the same for a bird. DEAD lets any rigged
+  animal go limp where it stands and settle on the floor (anim/limp.rs), as a
+  fresh kill lies, and ROLL drops it another way. None of them has a
   mover or a mind, so the subject cannot walk out of the view. LIVE turns it
   loose in the world to graze and bolt as it would, tethered to the studio.
   Only the poses the entry's movement verb and rig can actually take are

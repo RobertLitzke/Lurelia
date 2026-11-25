@@ -10,5 +10,6 @@
   "bark": "bark",
   "max_slope": 1.0,
   "lean": 0.15,
-  "thin_limbs": 0.12
+  "thin_limbs": 0.12,
+  "skeleton": "broken"
 }

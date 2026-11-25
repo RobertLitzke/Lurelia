@@ -1,0 +1,10 @@
+{
+  "name": "kh_plains_grass",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "The Plain's grass on ash and loess: tall bunchgrass gone gold, drifting from sage-gold to tawny across the land, silver feather awns in the wind.",
+  "like": "feathergrass",
+  "drift": {"calm": [[150, 146, 92], [188, 156, 96]], "classic": [[126, 122, 76], [160, 128, 76]]},
+  "texture": {"base": [156, 134, 84], "alt": [142, 120, 74], "calm": {"base": [176, 152, 96], "alt": [162, 140, 88]}},
+  "grass": {"sparse": 0.2, "dense": 0.9, "short": 2.6}
+}

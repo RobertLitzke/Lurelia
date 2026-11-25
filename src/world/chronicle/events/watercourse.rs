@@ -41,6 +41,12 @@ pub struct Watercourse {
     /// The deepest the bed may be cut under the sea.
     #[serde(default)]
     floor: Option<f32>,
+    /// Water this deep in the trunk's middle, metres, instead of the
+    /// swimmable 1.4 m or more every river gets: a wide knee-deep riffle
+    /// over cobbles where salmon run (Bonebight). Give it a shallow `depth`
+    /// too, or the water stands low in a deep cut.
+    #[serde(default)]
+    shallow: Option<f32>,
     #[serde(default)]
     branches: Vec<Branch>,
     #[serde(default)]
@@ -133,6 +139,11 @@ impl Process for Watercourse {
         let fall = cx.f.height(a.x, a.y) - cx.f.height(b.x, b.y);
         let grown = super::river::head(cx, &self.name, &trunk, self.width, self.depth, bed, bank, self.floor, self.rise);
         cut(cx, &self.name, &trunk[grown..], self.width, self.depth, bed, bank, self.floor);
+        if let Some(d) = self.shallow {
+            if let Some(r) = cx.state.get::<Rivers>().0.get_mut(&self.name) {
+                r.shallow = Some(d);
+            }
+        }
         let weeded = self.weed.as_ref().map_or(0, |w| weed(cx, w, &trunk, self.width, bed));
         // The trunk's ground is dear to a branch: a distributary that fell
         // straight back into it would not be one.
@@ -238,6 +249,7 @@ fn cut(cx: &mut EventCtx, name: &str, line: &[Vec2], width: f32, depth: f32, bed
             bank,
             seed,
             floor,
+            shallow: None,
         },
     );
 }

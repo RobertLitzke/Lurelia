@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "lowmouth",
   "notes": "The Gulf shore of the chenier: oyster shell and pale sand, wrack along the tide line.",
+  "habitat": "beach",
   "priority": 11,
   "rules": {"region": "chenier", "elev": [-0.4, 0.6]},
   "surface": "oyster_shell",
   "subsurface": "sand",
+  "soil": 0.8,
   "map_color": [214, 206, 180],
   "creatures": [
     {"creature": "gull", "count": 8},

@@ -1,0 +1,13 @@
+{
+  "name": "kelp_forest",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Kelp standing from rock to the surface in cool water.",
+  "wet": 1.0,
+  "soil": 0.6,
+  "shade": 0.4,
+  "rock": 0.6,
+  "disturbed": 0.0,
+  "open": 0.6,
+  "forage": ["graze"]
+}

@@ -44,6 +44,9 @@ CROSS_CLEAR = 4.5
 # Past the corridor the fitted ground eases from the road back to the land
 # over this many metres.
 FIT = 20.0
+# Land lower than the road is filled up level with it this far past the
+# run-off (`shoulder`), so there is never a ditch beside the road.
+SHOULDER = 10.0
 # Run-off either side of an open road (no walls), metres, unless a `verge`
 # line says otherwise.
 RUNOFF = 8.0
@@ -52,6 +55,19 @@ WALL_THICK = 1.2
 # The kart, for estimates: top speed (m/s) and gravity (library/vehicles/kart.json).
 KART_V = 30.0
 KART_G = 14.0
+# A pad's kick at full speed, for flying a boost jump (race/mod.rs
+# `boost_kick_by`): the kart leaves the lip at about this.
+KART_BOOST_V = 38.0
+# The props a kart smashes (`smash`): metres along the road, across it and
+# high, the material, and the share of its speed a kart keeps.
+SMASH = {
+    "bale": (2.0, 1.25, 1.0, "straw_bound", 0.9),
+    "stones": (2.0, 1.0, 0.75, None, 0.86),
+    "gate": (3.5, 0.25, 1.25, "weathered_planks", 0.92),
+    "cane": (6.0, 3.0, 3.0, "cane_stalk", 0.93),
+    "logs": (3.0, 1.5, 0.75, "weathered_planks", 0.9),
+    "crates": (1.5, 1.5, 1.5, "weathered_planks", 0.9),
+}
 KINDS = ("gun", "rocket", "goo", "block", "disc", "boost", "shield", "overdrive", "repair")
 SIDES = {"left": -1.0, "centre": 0.0, "center": 0.0, "right": 1.0}
 
@@ -77,7 +93,8 @@ def parse(path):
          "land": 30.0, "rolling": 4.0, "hour": 14.0, "lights": 0.0, "grid": 8, "title": None, "blurb": "",
          "mats": {}, "hills": [], "points": [], "surface": [], "widths": [], "wall_runs": [], "verge": [],
          "banks": [], "items": [], "pads": [], "jumps": [], "checkpoints": [], "shapes": [], "structures": [],
-         "plateaus": [], "ramps": [], "tunnels": []}
+         "plateaus": [], "ramps": [], "tunnels": [], "fords": [], "floods": [], "zones": [], "smash": [],
+         "boost_jumps": set(), "landings": []}
 
     def opt(w, key, cast=float, default=None):
         if key in w:
@@ -119,6 +136,13 @@ def parse(path):
                 c["land"] = float(w[1])
                 if len(w) > 2:
                     c["rolling"] = float(w[2])
+            elif k == "shoulder":
+                c["shoulder"] = float(w[1])
+            elif k == "arch":
+                c.setdefault("arches", []).append({"s": float(w[1]), "span": float(w[2]) if len(w) > 2 and w[2] != "mat" else None,
+                                                   "height": float(w[3]) if len(w) > 3 and w[3] != "mat" else 8.0,
+                                                   "thick": float(w[4]) if len(w) > 4 and w[4] != "mat" else 5.0,
+                                                   "mat": opt(w, "mat", str), "line": n})
             elif k == "hour":
                 c["hour"] = float(w[1])
             elif k == "lights":
@@ -152,7 +176,14 @@ def parse(path):
                 mat = None if w[3] == "-" else w[3]
                 c["verge"].append((float(w[1]), float(w[2]), mat, float(w[4]) if len(w) > 4 else None))
             elif k == "bank":
-                c["banks"].append((float(w[1]), float(w[2]), float(w[3])))
+                if len(w) > 4 and w[3] == "deg":
+                    # A fixed angle, the outside of the turn up: a bowl's wall.
+                    deg = float(w[4])
+                    if not 0 < deg <= 45:
+                        raise LayoutError("`bank FROM TO deg A`: A from 0 to 45 (a voxel slope steeper than 1 in 1 is a step)")
+                    c.setdefault("bank_deg", []).append((float(w[1]), float(w[2]), deg))
+                else:
+                    c["banks"].append((float(w[1]), float(w[2]), float(w[3])))
             elif k == "items":
                 s = float(w[1])
                 rest = w[2:]
@@ -169,14 +200,56 @@ def parse(path):
                     raise LayoutError(f"a pad's side is left, centre or right, not {side}")
                 c["pads"].append((float(w[1]), side, float(w[3]) if len(w) > 3 else 6.0))
             elif k == "jump":
+                if "boost" in w:
+                    w.remove("boost")
+                    c["boost_jumps"].add(len(c["jumps"]))
                 c["jumps"].append((float(w[1]), float(w[2]), float(w[3]) if len(w) > 3 else 8.0))
                 c.setdefault("skews", {})[len(c["jumps"]) - 1] = float(w[4]) if len(w) > 4 else 0.0
+            elif k == "landing":
+                c["landings"].append((float(w[1]), float(w[2]), float(w[3]) if len(w) > 3 else KART_V,
+                                      float(w[4]) if len(w) > 4 else 3.0))
+            elif k == "ford":
+                c["fords"].append((float(w[1]), float(w[2]), float(w[3]), True))
+            elif k == "flood":
+                dip = opt(w, "dip", float)
+                c["floods"].append((float(w[1]), float(w[2]), [float(v) for v in w[3:]]))
+                if dip:
+                    c["fords"].append((float(w[1]), float(w[2]), dip, False))
+                if len(w) < 4:
+                    raise LayoutError("`flood FROM TO DEPTH [DEPTH ...]` needs a depth for lap 1 at least")
+            elif k == "wind":
+                c["zones"].append({"from": float(w[1]), "to": float(w[2]), "kind": "wind", "value": float(w[3]),
+                                   "bearing": float(w[4]), **({"gust": float(w[5])} if len(w) > 5 else {})})
+            elif k == "herd":
+                c["zones"].append({"from": float(w[1]), "to": float(w[2]), "kind": "herd", "species": w[3],
+                                   "value": float(w[4]), "laps": [float(v) for v in w[5:]]})
+            elif k == "glide":
+                c["zones"].append({"from": float(w[1]), "to": float(w[2]), "kind": "glide", "value": float(w[3]) if len(w) > 3 else 0.3})
+            elif k == "thermal":
+                c["zones"].append({"from": 0.0, "to": 0.0, "kind": "thermal", "value": float(w[4]),
+                                   "at": [float(w[1]), float(w[2]), float(w[3])] + ([float(w[5])] if len(w) > 5 else [])})
+            elif k == "gravity":
+                c["zones"].append({"from": float(w[1]), "to": float(w[2]), "kind": "gravity", "value": float(w[3])})
+            elif k == "smash":
+                mat = opt(w, "mat", str)
+                slow = opt(w, "slow", float)
+                if w[2] not in SIDES:
+                    raise LayoutError("`smash S left|centre|right OFFSET KIND [LEN] [mat M] [slow K]`")
+                if w[4] not in SMASH:
+                    raise LayoutError(f"no smashable called {w[4]} ({', '.join(SMASH)})")
+                c["smash"].append({"s": float(w[1]), "off": float(w[3]) * SIDES[w[2]], "kind": w[4],
+                                   "len": float(w[5]) if len(w) > 5 else None, "mat": mat, "slow": slow, "line": n})
             elif k == "checkpoint":
                 c["checkpoints"].append(float(w[1]))
             elif k in ("add", "carve"):
                 if len(w) < 3 or w[1] not in shapes.SHAPES:
                     raise LayoutError(f"`{k}` needs a shape ({', '.join(shapes.SHAPES)})")
                 mat = opt(w, "mat", str)
+                # `drive`: a shape karts are meant to drive over (a kicker,
+                # a shoal), which the check leaves alone.
+                if "drive" in w:
+                    w.remove("drive")
+                    c.setdefault("drive", set()).add(n)
                 c["shapes"].append((k, w[1:], mat, n))
             elif k == "structure":
                 st = {"name": w[1], "line": n}
@@ -228,6 +301,13 @@ def parse(path):
 # to fly rolls down it instead of dropping off a step. The engine slants it
 # across the road the same way (race_track.rs `jump_profile`).
 JUMP_BACK = 0.5
+# The steepest a landing hill falls, as a slope (tan): where the flight
+# path has steepened to this, it meets the hill.
+LANDING_SLOPE = 0.7
+# Over how far a fixed-angle bank's road rises to it either side, metres.
+LIFT_EASE = 50.0
+# The curve at the foot of a landing hill, metres.
+OUTRUN = 40.0
 # The hardest a kart may meet the ground after a jump, m/s square on.
 JUMP_HIT = 11.0
 JUMP_BACK_MIN = 3.0
@@ -404,6 +484,59 @@ def resolve(c):
         y = y + jump_profile((s - (S - LEN)) % L, H, LEN)
         nobank |= ((s - (S - LEN - 10)) % L) < LEN + jump_back(H) + 30
 
+    # Landing hills: from A (the take-off) to B the road is shaped to the
+    # flight of a kart leaving A at V m/s along the road's slope there: GAP m
+    # under its path at most, meeting it where the path has fallen to the
+    # steepest a landing slope may be (LANDING_SLOPE), then running on down
+    # that slope and easing out to the road at B. A kart flies down the hill
+    # and touches down along it, as a ski jumper does.
+    for A, B, V, GAP in c["landings"]:
+        a, b = A % L, B % L
+        on = in_run(s, a, b)
+        d = (s - a) % L
+        span = (b - a) % L
+        ia = int(np.argmin(np.abs(s - a)))
+        ib = int(np.argmin(np.abs(s - b)))
+        # Off a jump's lip at A, the kart leaves along the lip's slope.
+        lip = [(S, H, LEN) for S, H, LEN in c["jumps"] if abs((S - A + L / 2) % L - L / 2) < 1.5]
+        if lip:
+            S_, H_, LEN_ = lip[0]
+            i_lip = int(np.argmin(np.abs(s - S_ % L)))
+            y0 = float(y[i_lip])
+            base = i_lip - int(LEN_) - 2
+            k0 = float((y[base] - y[base - 10]) / 10.0) + 2 * H_ / LEN_
+        else:
+            y0 = float(y[ia])
+            k0 = float((y[ia] - y[ia - 3]) / max(s[ia] - s[ia - 3], 1e-3))
+        # Where the path is falling at LANDING_SLOPE: there it meets the hill.
+        dl = max((k0 + LANDING_SLOPE) * V * V / KART_G, 10.0)
+        fly = y0 + k0 * d - KART_G * d * d / (2 * V * V)
+        hill = fly - GAP * np.sin(np.pi * np.clip(d / dl, 0.0, 1.0))
+        # Past touchdown: on down the hill at LANDING_SLOPE, then a curve
+        # OUTRUN m long eases it level onto the road at B's height, and it
+        # runs on level to B.
+        y1 = y0 + k0 * dl - KART_G * dl * dl / (2 * V * V)
+        yb = float(y[ib])
+        bend = LANDING_SLOPE * OUTRUN / 2
+        d2 = dl + max(y1 - (yb + bend), 0.0) / LANDING_SLOPE
+        q = np.clip(d - d2, 0.0, OUTRUN)
+        out = np.where(d < d2, y1 - LANDING_SLOPE * (d - dl), yb + bend - (LANDING_SLOPE * q - LANDING_SLOPE * q * q / (2 * OUTRUN)))
+        if d2 + OUTRUN > span:
+            raise LayoutError(f"the landing hill {A:g} to {B:g} needs {d2 + OUTRUN:.0f} m to come down level; it has {span:.0f}")
+        y = np.where(on, np.where(d < dl, hill, out), y)
+        nobank |= on
+        c.setdefault("landing_runs", []).append((a, b, dl))
+
+    # Fords: the road dips DEPTH under the water's level over the stretch,
+    # eased in and out over its first and last quarter, unbanked.
+    for (A, B, D, _), a, b in ranges(L, c["fords"]):
+        span = (b - a) % L
+        u = ((s - a) % L) / max(span, 1.0)
+        on = in_run(s, a, b)
+        ease = np.clip(np.minimum(u, 1.0 - u) / 0.25, 0.0, 1.0)
+        y = y - np.where(on, D * (0.5 - 0.5 * np.cos(np.pi * ease)), 0.0)
+        nobank |= on
+
     width = np.full(n, c["width"])
     for (_, _, w), a, b in ranges(L, c["widths"]):
         width[in_run(s, a, b)] = w
@@ -459,6 +592,27 @@ def resolve(c):
     near_flat = sum(np.roll(nobank, j).astype(float) for j in range(-10, 11)) / 21.0
     unflat = 1.0 - np.minimum(near_flat * 2.0, 1.0)
     bank = -np.clip(t13 * 4.0, -0.18, 0.18) * bank_k * np.where(nobank, 0.0, unflat)
+    # Fixed-angle banks: the outside of the turn lifted to a set slope,
+    # eased in and out over 15 m.
+    for (_, _, deg), a, b in ranges(L, c.get("bank_deg", [])):
+        on = in_run(s, a, b)
+        span = (b - a) % L
+        u = ((s - a) % L) / max(span, 1.0)
+        ease = np.clip(np.minimum(u, 1.0 - u) * span / 15.0, 0.0, 1.0)
+        k_ = math.tan(math.radians(deg)) * (0.5 - 0.5 * np.cos(np.pi * ease))
+        fixed = -np.sign(t13) * k_
+        bank = np.where(on, fixed, bank)
+        # Tipped about its inner edge, not its middle: the inside stays at
+        # the road's own height and the outside climbs the wall, so the bowl
+        # never sinks into a trench. The road rises to it over LIFT_EASE m
+        # either side.
+        top = math.tan(math.radians(deg)) * (float(width[(int(a) + int(span / 2)) % n]) / 2 + 1.0)
+        into = np.minimum((s - (a - LIFT_EASE)) % L, (b + LIFT_EASE - s) % L)
+        near = in_run(s, (a - LIFT_EASE) % L, (b + LIFT_EASE) % L)
+        lift_u = np.clip(into / LIFT_EASE, 0.0, 1.0)
+        y = y + np.where(near, top * (0.5 - 0.5 * np.cos(np.pi * lift_u)), 0.0)
+        nobank |= near & ~on
+
 
     # Decks: the road more than DECK_ABOVE over the land, in runs of three or
     # more, each reaching two samples past its ends.
@@ -546,6 +700,13 @@ def report(c, r):
     for S, H, LEN in jumps:
         lips |= ((s - (S - LEN)) % L) < LEN + jump_back(H) + 2
     # A jump's ramp and slip face are steep on purpose.
+    # So are the banks of a ford or a flooded channel's dip.
+    for A, B, D, _ in c["fords"]:
+        lips |= in_run(s, A % L, B % L)
+    for a_, b_, _ in c.get("landing_runs", []):
+        lips |= in_run(s, a_, b_)
+    for A, B, _ in c.get("bank_deg", []):
+        lips |= in_run(s, (A - LIFT_EASE) % L, (B + LIFT_EASE) % L)
     near_lip = sum(np.roll(lips, j) for j in range(-10, 1)).astype(bool)
     worst = int(np.argmax(np.where(near_lip, 0.0, np.abs(g))))
     lines.append(f"climb {y.max() - y.min():.1f} m, lowest {y.min():.1f}, highest {y.max():.1f}; "
@@ -646,7 +807,7 @@ def report(c, r):
 
     for gi, g in enumerate(grids):
         op, line_no, grid, lo, (sx, sy, sz) = g
-        if op != "add" or grid is None:
+        if op != "add" or grid is None or line_no in c.get("drive", ()):
             continue
         x0, z0 = lo[0] * shapes.V, lo[2] * shapes.V
         x1, z1 = x0 + sx * shapes.V, z0 + sz * shapes.V
@@ -697,7 +858,9 @@ def report(c, r):
         # 9; flying into the face of a rise is far more.
         hard = (-math.inf, 0.0, 0.0, 0.0)
         land_full = None
-        for v in (KART_V, KART_V * 0.75, KART_V * 0.5, KART_V * 0.3):
+        boosted = k_ in c["boost_jumps"]
+        top_v = KART_BOOST_V if boosted else KART_V
+        for v in ((KART_BOOST_V,) if boosted else ()) + (KART_V, KART_V * 0.75, KART_V * 0.5, KART_V * 0.3):
             vx, vy = v / math.hypot(1, lip), v * lip / math.hypot(1, lip)
             for lane in np.arange(-half + 1.0, half - 0.99, 0.5):
                 # Leaving this lane's lip, `lane * tan` before S (lanes are
@@ -711,14 +874,16 @@ def report(c, r):
                     hk = top + vy * t - KART_G * t * t / 2
                     centre = surface(sq, lane, S, H, LEN, tan)
                     if hk <= centre:
-                        if v == KART_V and abs(lane) < 0.25:
+                        if v == top_v and abs(lane) < 0.25:
                             land_full = sq - s0
                         if t > 0.05:
                             ground = (surface(sq + 0.5, lane, S, H, LEN, tan) - surface(sq - 0.5, lane, S, H, LEN, tan))
                             fall = (vy - KART_G * t) / vx
                             angle = math.atan(ground) - math.atan(fall)
                             hit = math.hypot(vx, vy - KART_G * t) * math.sin(angle)
-                            if hit > hard[0]:
+                            # A boost jump is meant to be flown from the pad: a
+                            # kart without it falls short, by design.
+                            if hit > hard[0] and (not boosted or v >= KART_BOOST_V):
                                 hard = (hit, v, lane, sq - s0)
                         break
                     # Both sides of the kart, 0.7 m either side of its line,
@@ -737,9 +902,11 @@ def report(c, r):
         d = land_full
         i = int(round(S / L * n)) % n
         lines.append(f"jump at {S:.0f} m, {H:g} m over {LEN:g} m" + (f", slanted {skews[k_]:g} deg" if skews.get(k_) else "")
-                     + f": lands about {d:.0f} m on at full speed; closest a wheel comes to the jump in flight {worst[0]:+.2f} m; "
+                     + f": lands about {d:.0f} m on at {'pad' if boosted else 'full'} speed; closest a wheel comes to the jump in flight {worst[0]:+.2f} m; "
                      f"hardest touchdown {hard[0]:.1f} m/s")
-        if hard[0] > JUMP_HIT:
+        # A kart off a pad is going faster than a kart can on its own, and
+        # comes down harder in proportion.
+        if hard[0] > JUMP_HIT * max(1.0, hard[1] / KART_V):
             problems.append(f"the jump at {S:.0f} m: a kart at {hard[1] * 3.6:.0f} km/h leaving it {abs(hard[2]):.0f} m "
                             f"{'left' if hard[2] > 0 else 'right'} of the line comes down {hard[3]:.0f} m on at "
                             f"{hard[0]:.1f} m/s square on (keep within {JUMP_HIT:g}): it flies into a rise")
@@ -758,6 +925,24 @@ def report(c, r):
         lines.append("pickups at " + ", ".join(f"{S:.0f}" for S, _, _ in c["items"]))
     if c["pads"]:
         lines.append("pads at " + ", ".join(f"{S:.0f} {side}" for S, side, _ in c["pads"]))
+    for A, B, D, water in c["fords"]:
+        lines.append(f"{'ford' if water else 'dip'} {A % L:.0f} to {B % L:.0f} m, {D:g} m deep")
+    for A, B, ds in c["floods"]:
+        lines.append(f"flood {A % L:.0f} to {B % L:.0f} m, by lap " + ", ".join(f"{d:+g}" for d in ds) + " m on the road at its ends")
+    for z_ in c["zones"]:
+        if z_["kind"] == "thermal":
+            lines.append(f"thermal at {z_['at'][0]:g},{z_['at'][1]:g}, {z_['at'][2]:g} m across, lift {z_['value']:g}")
+            continue
+        lines.append(f"{z_['kind']} {z_['from'] % L:.0f} to {z_['to'] % L:.0f} m: {z_.get('species', '')} {z_['value']:g}"
+                     + (f" toward {z_['bearing']:g} deg" if z_["kind"] == "wind" else "") + (f", gusts of {z_['gust']:g} s" if z_.get("gust") else ""))
+    if c["smash"]:
+        lines.append("smashables: " + ", ".join(f"{p['kind']} at {p['s'] % L:.0f} {p['off']:+g}" for p in c["smash"]))
+    for a_ in c.get("arches", []):
+        made = arch_shape(c, r, a_)
+        clear = made[1] if made else 0.0
+        lines.append(f"arch at {a_['s'] % L:.0f} m: {clear:.1f} m clear over the kerbs")
+        if clear < 5.0:
+            problems.append(f"line {a_['line']}: the arch at {a_['s'] % L:.0f} m is only {clear:.1f} m over the kerbs: make it higher or wider")
     lines.append("checkpoints at " + ", ".join(f"{cp:.0f}" for cp in r["checks"]))
     lines.append(f"shapes {len(c['shapes'])}, structures {len(c['structures'])}")
     lines.append(f"laps {c['laps']}, rivals {c['rivals']}, vehicle {c['vehicle']}; a race is about {L * c['laps'] / 25:.0f} s")
@@ -779,7 +964,12 @@ def fitted_ground(c, r):
     land = land_at(c, X, Z)
     pull = ~r["deck"] & ~r["covered"] & ~r["tunnel"]
     inner = r["width"] / 2 + 1.0 + np.where(r["wall"] > 0, WALL_THICK, 0.0) + r["runoff"]
-    reach = inner + r["fit"]
+    # Shoulder: where the land is lower than the road it is filled up level
+    # with it for this far past the run-off before it eases away, so a road
+    # never has a ditch or a drop beside it (kart tracks don't); land higher
+    # than the road eases down to it as before, a bank or a cliff.
+    shoulder = c.get("shoulder", SHOULDER)
+    reach = inner + r["fit"] + shoulder
 
     def nearest(which):
         """Each cell's nearest point among `which` within its reach: (distance, index)."""
@@ -808,7 +998,11 @@ def fitted_ground(c, r):
     other = have & ~own & (i_pull >= 0) & (np.abs(r["y"][np.maximum(i_pull, 0)] - r["y"][np.maximum(i_all, 0)]) > 3.0)
     use = own | other
     k = np.maximum(i_pull, 0)
-    t = np.clip((reach[k] - d_pull) / np.maximum(reach[k] - inner[k], 1e-3), 0.0, 1.0)
+    fit = np.maximum(r["fit"][k], 1e-3)
+    lower = land < r["y"][k]
+    t_up = np.clip((inner[k] + shoulder + fit - d_pull) / fit, 0.0, 1.0)
+    t_dn = np.clip((inner[k] + fit - d_pull) / fit, 0.0, 1.0)
+    t = np.where(lower, t_up, t_dn)
     w = np.where(use, t * t * (3 - 2 * t), 0.0)
     return (land + (r["y"][k] - land) * w).astype("<f4")
 
@@ -816,6 +1010,138 @@ def fitted_ground(c, r):
 def r2(v, k=2):
     v = round(float(v), k)
     return int(v) if v == int(v) else v
+
+
+VOX = 4  # voxels a metre
+
+
+def merge_columns(cols, y0, y1):
+    """Voxel columns {(x, z)} from y0 to y1 as boxes [x0, y0, z0, x1, y1, z1],
+    runs along z merged."""
+    out = []
+    by_x = {}
+    for x, z in cols:
+        by_x.setdefault(x, []).append(z)
+    for x in sorted(by_x):
+        zs = sorted(by_x[x])
+        start = prev = zs[0]
+        for z in zs[1:] + [None]:
+            if z is not None and z == prev + 1:
+                prev = z
+                continue
+            out.append([x, y0, start, x + 1, y1, prev + 1])
+            if z is not None:
+                start = prev = z
+    return out
+
+
+def water_zone(c, r, A, B, depths):
+    """A flood zone over the stretch A to B: the water's level (the road at
+    the stretch's ends), its depth over that each lap, and the voxel boxes
+    it may fill (the corridor, from the lowest road up), which the race
+    fills only where there is air (race/course.rs)."""
+    L, n, s = r["L"], r["n"], r["s"]
+    a, b = A % L, B % L
+    on = np.flatnonzero(in_run(s, a, b))
+    if not len(on):
+        raise LayoutError(f"the stretch {A:g} to {B:g} has no road on it")
+    ends = [on[0], on[-1]] if a <= b else [int(np.argmin(np.abs(s - a))), int(np.argmin(np.abs(s - b)))]
+    level = float(min(r["y"][ends[0]], r["y"][ends[-1]]))
+    cols = set()
+    for i in on:
+        dx, dz = r["x"][(i + 1) % n] - r["x"][i - 1], r["z"][(i + 1) % n] - r["z"][i - 1]
+        dl = math.hypot(dx, dz) or 1.0
+        rx, rz = -dz / dl, dx / dl
+        reach = r["width"][i] / 2 + 1.0 + max(r["runoff"][i], 2.0) + 4.0
+        for off in np.arange(-reach, reach + 0.01, 0.2):
+            for along_ in (-0.5, 0.0, 0.5):
+                px = r["x"][i] + rx * off + dx / dl * along_
+                pz = r["z"][i] + rz * off + dz / dl * along_
+                cols.add((int(math.floor(px * VOX)), int(math.floor(pz * VOX))))
+    floor = int(math.floor((r["y"][on].min() - 1.0) * VOX))
+    top = int(math.ceil((level + max(depths)) * VOX)) + 1
+    return {"from": r2(a, 1), "to": r2(b, 1), "kind": "flood", "mat": "river_water", "laps": [r2(d) for d in depths], "level": r2(level),
+            "area": merge_columns(cols, floor, max(top, floor + 1))}
+
+
+def smash_boxes(c, r, p):
+    """A smashable prop's voxel boxes, world voxels: a block LEN along the
+    road and its width across, standing on the road (or its verge) at its
+    place, of its parts (a gate is two posts and three rails)."""
+    L, n = r["L"], r["n"]
+    ln, wd, h, mat, slow = SMASH[p["kind"]]
+    ln = p["len"] or ln
+    (px, pz), bearing = along(r, p["s"], p["off"])
+    i = int(round((p["s"] % L) / L * n)) % n
+    half = r["width"][i] / 2 + 1.0
+    base = r["y"][i] - r["bank"][i] * float(np.clip(p["off"], -half, half))
+    y0 = int(round(base * VOX))
+    br = math.radians(bearing)
+    fx, fz = math.sin(br), -math.cos(br)      # along the road
+    rx, rz = -fz, fx                          # across it, to the right
+    if p["kind"] == "gate":
+        parts = [(-ln / 2, -ln / 2 + 0.25, 0.0, h), (ln / 2 - 0.25, ln / 2, 0.0, h),
+                 (-ln / 2, ln / 2, 0.25, 0.5), (-ln / 2, ln / 2, 0.625, 0.875), (-ln / 2, ln / 2, 1.0, 1.25)]
+    else:
+        parts = [(-ln / 2, ln / 2, 0.0, h)]
+    boxes = []
+    for u0, u1, h0, h1 in parts:
+        cols = set()
+        reach = max(abs(u0), abs(u1)) + wd
+        for vx in range(int(math.floor((px - reach) * VOX)), int(math.ceil((px + reach) * VOX)) + 1):
+            for vz in range(int(math.floor((pz - reach) * VOX)), int(math.ceil((pz + reach) * VOX)) + 1):
+                qx, qz = (vx + 0.5) / VOX - px, (vz + 0.5) / VOX - pz
+                u, v = qx * fx + qz * fz, qx * rx + qz * rz
+                if u0 <= u <= u1 and abs(v) <= wd / 2:
+                    cols.add((vx, vz))
+        if cols:
+            boxes += merge_columns(cols, y0 + int(round(h0 * VOX)), y0 + int(round(h1 * VOX)))
+    return {"boxes": boxes, "mat": p["mat"] or mat or c["mats"]["wall"], "slow": p["slow"] or slow}
+
+
+def arch_shape(c, r, a):
+    """An arch over the road at lap distance a["s"]: two legs standing just
+    outside the run-off and a span over the road, a["thick"] m deep along
+    it, the opening a["span"] m across and a["height"] m clear at its
+    middle, its underside a half ellipse and its top a squared one. Voxel
+    boxes, as a shape for track.json."""
+    L, n = r["L"], r["n"]
+    i = int(round((a["s"] % L) / L * n)) % n
+    (px, pz), bearing = along(r, a["s"], 0.0)
+    base = float(r["y"][i])
+    half_road = float(r["width"][i]) / 2 + 1.0
+    hi = (a["span"] / 2) if a["span"] else half_road + 2.0
+    ho = hi + 3.0
+    H = a["height"]
+    top_h = H + 3.0
+    br = math.radians(bearing)
+    fx, fz = math.sin(br), -math.cos(br)
+    rx, rz = -fz, fx
+    reach = ho + a["thick"]
+    lo_y = int(math.floor((base - 3.0) * VOX))
+    cols = []
+    for vx in range(int(math.floor((px - reach) * VOX)), int(math.ceil((px + reach) * VOX)) + 1):
+        for vz in range(int(math.floor((pz - reach) * VOX)), int(math.ceil((pz + reach) * VOX)) + 1):
+            qx, qz = (vx + 0.5) / VOX - px, (vz + 0.5) / VOX - pz
+            u, v = qx * fx + qz * fz, abs(qx * rx + qz * rz)
+            if abs(u) > a["thick"] / 2 or v > ho:
+                continue
+            top = base + top_h * max(1.0 - (v / ho) ** 4, 0.0) ** 0.25
+            if v >= hi:
+                y0 = base - 3.0
+            else:
+                y0 = base + H * max(1.0 - (v / hi) ** 2, 0.0) ** 0.5
+            if top > y0 + 0.2:
+                cols.append((vx, vz, int(math.floor(y0 * VOX)), int(math.ceil(top * VOX))))
+    if not cols:
+        return None
+    x0 = min(cc[0] for cc in cols)
+    z0 = min(cc[1] for cc in cols)
+    y_lo = min(cc[2] for cc in cols)
+    boxes = [[cx - x0, cy0 - y_lo, cz - z0, cx - x0 + 1, cy1 - y_lo, cz - z0 + 1] for cx, cz, cy0, cy1 in cols]
+    size = [max(bb[3] for bb in boxes), max(bb[4] for bb in boxes), max(bb[5] for bb in boxes)]
+    clear = H * max(1.0 - (half_road / hi) ** 2, 0.0) ** 0.5
+    return {"mat": a["mat"] or c["mats"]["wall"], "at": [x0, y_lo, z0], "size": size, "boxes": boxes, "line": a["line"]}, clear
 
 
 def track_json(c, r):
@@ -835,6 +1161,24 @@ def track_json(c, r):
     }
     if c["lights"]:
         out["lights"] = c["lights"]
+    zones = list(c["zones"])
+    for A, B, D, water in c["fords"]:
+        if water:
+            zones.append(water_zone(c, r, A, B, [0.0]))
+    for A, B, ds in c["floods"]:
+        zones.append(water_zone(c, r, A, B, ds))
+    # The rise to a fixed-angle bank is steep on purpose too.
+    for (A, B, _), a_, b_ in ranges(r["L"], c.get("bank_deg", [])):
+        zones.append({"from": (a_ - LIFT_EASE) % r["L"], "to": (b_ + LIFT_EASE) % r["L"], "kind": "landing"})
+    # A landing hill is steep on purpose: the engine's grade check leaves it be.
+    for a_, b_, _ in c.get("landing_runs", []):
+        zones.append({"from": a_, "to": b_, "kind": "landing"})
+    for z_ in zones:
+        z_["from"], z_["to"] = r2(z_["from"] % r["L"], 1), r2(z_["to"] % r["L"], 1)
+    if zones:
+        out["zones"] = zones
+    if c["smash"]:
+        out["smash"] = [smash_boxes(c, r, p) for p in c["smash"]]
     if c["surface"]:
         out["surfaces"] = [[r2(a % L, 1), r2(b % L, 1), m] for a, b, m in c["surface"]]
     verges = [[r2(a % L, 1), r2(b % L, 1), m] for a, b, m, _ in c["verge"] if m]
@@ -859,6 +1203,10 @@ def track_json(c, r):
             continue
         shp.append({"mat": "carve" if op == "carve" else (mat or c["mats"]["wall"]), "at": lo, "size": size, "boxes": boxes,
                     "line": line_no})
+    for a_ in c.get("arches", []):
+        made = arch_shape(c, r, a_)
+        if made:
+            shp.append(made[0])
     if shp:
         out["shapes"] = shp
     sts = []
@@ -885,12 +1233,13 @@ def track_json(c, r):
 def dump(obj):
     """JSON with the line's rows one to a line, so the file is readable and
     diffs well."""
-    text = json.dumps({k: v for k, v in obj.items() if k not in ("line", "shapes")}, indent=1)[:-2]
+    text = json.dumps({k: v for k, v in obj.items() if k not in ("line", "shapes", "zones", "smash")}, indent=1)[:-2]
     rows = ",\n".join("  " + json.dumps(row, separators=(",", ":")) for row in obj["line"])
     text += ',\n "line": [\n' + rows + "\n ]"
-    if "shapes" in obj:
-        sh = ",\n".join("  " + json.dumps(s_, separators=(",", ":")) for s_ in obj["shapes"])
-        text += ',\n "shapes": [\n' + sh + "\n ]"
+    for key in ("shapes", "zones", "smash"):
+        if key in obj:
+            sh = ",\n".join("  " + json.dumps(s_, separators=(",", ":")) for s_ in obj[key])
+            text += f',\n "{key}": [\n' + sh + "\n ]"
     return text + "\n}\n"
 
 
@@ -922,7 +1271,7 @@ def starter_world(c, r, out):
     ]}
     (out / "world.json").write_text(json.dumps(world, indent=2) + "\n", encoding="utf-8")
     (out / "chronicle.json").write_text(json.dumps(chron, indent=2) + "\n", encoding="utf-8")
-    (out / "story.md").write_text(f"# {title.title()}\n\n{world['blurb']}\n\nThe track is built from tools/course/maps/{c['name']}.track "
+    (out / "story.md").write_text(f"# {title.title()}\n\n{world['blurb']}\n\nThe track is built from {c['source']} "
                                   f"by tools/course/track_file.py; the world round it is this folder's chronicle.\n", encoding="utf-8")
     if st.get("look") and not (out / "look.json").exists():
         shutil.copyfile(ROOT / "worlds" / st["look"] / "look.json", out / "look.json")

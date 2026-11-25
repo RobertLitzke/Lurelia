@@ -145,6 +145,10 @@ sound device) at 0.16.0 for the same reason: 0.17 and later depend on
 | F8 | The EDIT page: a creature or plant in a studio, with its library entry beside it (see "The EDIT page") |
 | H or F1 / F3 | Help / stats overlay. Its last line names what the crosshair is on: a creature or find, else the material, its id, distance and voxel, and `IN <name>` when that voxel belongs to a library structure |
 | F6 | Debug minimap: the ground 320 m round you in the map colours, north up |
+| ` (backquote) | Animal debug view on or off. P, I, O, `.` and `,` below work only while it is on; off closes the map, lets the pinned animal go and lets the animals run again |
+| P | Ecology map: the whole world with every animal as a dot coloured by what it is doing (calm, alert, fleeing, hunting, display), the spawn and drop rings round you, and a legend |
+| I | Pin the animal under the crosshair: a panel with its mood, alarm, the pressure on it by sense, its herd and its last 20 decisions with their reasons, and lines in the world for its heading and probes, its kin, its flee radius and your scent cone. I again lets it go |
+| O / . / , | Freeze the animals / run one think of them (a quarter second) / run them at ten times speed |
 | F5 | Save (also saved on exit and every 30 s after edits) |
 | F9 | Sound readout: what the ambience round you is made of, and why (see "Sound") |
 | F11 | Fullscreen (saved in the settings) |
@@ -475,7 +479,11 @@ track when it is far out of bounds (15 m past the kerb, or 6 m below the
 road), after a three-second RETURN TO TRACK countdown, set down where it
 left the road. A kart on its side rights itself where it is, and a bot that
 is stuck backs out. The countdown beeps, each lap ends with a chime, and the
-time to a third and two thirds of the lap shows against your best. When you finish, the
+time to a third and two thirds of the lap shows against your best. Hold the
+throttle from when "1" shows for a rocket start at GO (4 m/s); hold it from
+before "2" and the engine bogs for half a second. A second within 10 m behind
+another kart and 2 m of its line puts you in its slipstream, worth up to 6%
+over top speed (`src/race/feel.rs`). When you finish, the
 results come in as the others do; Enter races again.
 
 KART RACE on the title screen opens a card for each course
@@ -502,6 +510,12 @@ glowing on the model; the tail lights brighten while it brakes, by day too (`src
 course with `lights` has lamps on posts along the road. Rivals drive all three karts,
 each driver fitted to its kart's grip (`Style::for_kart`). `KART_ARMS=off`
 races with no item boxes, for timing.
+
+The gantry over the line carries four countdown lamps: red at 3, 2 and 1,
+all green at GO. CUP on the launch screen makes it three races on three
+courses, starting on the one picked, with 10, 8, 6, 5, 4, 3, 2 and 1 points
+for the places and the table beside each race's results; Enter there goes
+on to the next course (`src/race/cup.rs`).
 
 The racing line polishes in. The road is cut into metre tiles, and every
 kart whose wheels pass over a tile makes it 0.5% faster for whoever comes
@@ -536,12 +550,17 @@ and drive are down by the damage, up to 15% at the most, and a rocket does
 about 2% (the bar under the slot). Goo goes off in a green puff when a kart
 touches it. The rest: a boost, a shield (a blue bubble round the kart,
 flickering as it runs out) that turns every hit for ten seconds, and
-overdrive, six seconds faster with nothing able to spin you. With nothing carried, Shift is a short
+overdrive, six seconds faster with nothing able to spin you, and any kart
+you touch spun out. With nothing carried, Shift is a short
 boost that takes eight seconds to come back. `KART_ARMS=all` gives every
 kart every weapon, refilled, with 1 to 5 picking yours, for trying them out
 (`src/race/arms.rs`). S held as you use an item fires it behind (the gun and
 rocket out of the back, the disc back down the road), and Alt held looks
-behind, and fires behind too. Karts are drawn 1.3 times the size of their
+behind, and fires behind too. The right mouse button uses the item as the
+left does, except that goo and a block are thrown ahead rather than dropped
+behind (W is the throttle, so the keys can't say ahead). Every number the
+items go by, from how long a shield lasts to the order the pickups come
+round in, is the `items` block of `library/games/race.json`. Karts are drawn 1.3 times the size of their
 physics, and are that much bigger to hit; they handle as before.
 
 The rivals are a third a little faster (2% more top speed and drive), a
@@ -1025,6 +1044,20 @@ and droplets are thrown up (`vs_spray`, no simulation: each piece is placed
 from the time, out of one `Spray` record per fall that the pool's churn reads
 too), and the mist map thickens round it. `--validate` lists every
 fall. Hemlow's Lantern Spout is one.
+
+Water always stands in something. Cells whose levels are close (0.6 m, or
+1.5 m where both are in a channel, down rapids) are one surface and meet at
+their mean at every corner they share, so the surface never cracks
+(`rivers.rs`). Further apart they are separate water: once the land is
+settled, `hold_water` (river.rs) raises the ground beside any water that
+would otherwise show an open side into a rim just over it, so each pool down
+a cascade sits in a rock basin, and the ground past a lip either side of the
+sheet becomes the lip's ledge. A stretch of 30 m or less between two falls is
+one level pool, at the next lip's level. Where water still steps down with
+nothing to hold it (a channel against a building's ground), a short face of
+pouring water is drawn over the edge, with the falls' sheets (`step_face`,
+`fs_fall`). Kitehold's run of five falls at x 1115-1143, z 415 is a good
+test.
 
 Water glitters: small points of sun on the ripples, each lasting a fraction of
 a second, make a glitter path toward a low sun (only on real water, not the
@@ -1677,6 +1710,16 @@ crown keeps its clumps as its cards shrink away and does not change character
 at 92 m. It costs one noise lookup per card vertex and per leaf fragment, and
 nothing per tree. `VOXEL_DAPPLE=0` turns it off for comparisons.
 
+Neighbouring crowns also differ a little in colour: a slower field about a
+crown across (`crown_tint`, same file), constant with height, makes one tree up
+to 15% darker or lighter and some trees warmer (red up, blue down). It only
+warms, never cools, because cooling a gold crown turned it lime. Cards and
+voxels take it alike. `VOXEL_CROWN_TINT=0` turns it off. Bigger differences,
+such as a maple wood's reds, oranges and golds in autumn, are plant morphs
+whose coats paint the `autumn` slot (`library/plants/maple.json`), drawn per
+patch of `morph_blob_m` metres; set that to a crown or two across for
+tree-by-tree colour.
+
 The images are PNGs in `library/sprites/`, which override the drawings in
 `src/render/sprite_tex.rs`; that folder's README is the spec for revising them.
 
@@ -1725,10 +1768,11 @@ quad corners from one place (`quad_corner` and `billboard` at the end of
 ## Sound
 
 Everything you hear is synthesised while it plays; the game ships no
-recordings. There are three buses, each with its level in SETTINGS:
+recordings. There are four buses, each with its level in SETTINGS:
 **ambience** (the place itself), **effects** (guns, rounds striking, bursts,
-footsteps, pickups, the match's signals, and the animals when they have
-voices) and **music** (nothing yet). VOLUME is over all three, and the levels
+footsteps, pickups, the match's signals), **wildlife** (the animals' calls,
+60 by default so they stay in the background) and **music** (nothing yet).
+VOLUME is over all of them, and the levels
 are heard on a curve, so 50 sounds like half. SOUND off lets go of the sound
 device altogether. The mix ducks to a third behind the pause menu and goes
 silent when the window loses focus. A machine with no output device plays
@@ -1823,6 +1867,46 @@ hand, the hit marker and the killing-blow marker going up, bots hit and
 going down, and flags changing hands. Hurt sounds come at most every 0.3 s,
 because a beam's damage lands every step.
 
+### Animal calls
+
+Calls are made by `src/sound/call.rs` and play on the wildlife bus. Which
+animal calls when is the species' `behaviour.voice` in the library, read by
+`src/creatures/voice.rs` (docs/CREATURES.md, "Voices"). A call is a `Cry` (40 kinds: song, caw,
+hoot, howl, bugle, moo, neigh, trumpet, roar, bark, bleat, grunt, honk,
+quack, screech, gull, pipe, chatter, drum, rattle, croak, trill, hiss,
+bellow, buzz, growl, whoop, bray, blow, moan, groan, splash, thump, a horn clash, wing flaps
+and more; see
+`call::CRIES`) turned into a pattern of up to 24 syllables from the caller's size and a
+seed. Bigger callers are lower and slower, and the same seed always gives the
+same call, so one bird keeps its own song. Each syllable has a start, a
+length, a pitch contour and one of four sources: a whistle (`Tone`), a pulse
+train through three gliding formants (`Voiced`, the source-filter model of a
+mammal's voice, with jitter and shimmer), the same pulse train with every
+other pulse weaker and a puff of noise on each (`Rough`: roars, growls,
+caws), or noise through the formants (`Hiss`). Syllables can overlap, which
+is how an elk's whistle sits over its own growl and a horse's whinny has a
+second, lower voice. They can also be `tie`d, which continues a pitch
+without a break.
+
+Post one with `Noise::call(at, cry, size, seed, species, key, boost_db)`.
+Its loudness comes from the real animal's level at 1 m (`Cry::spl`, a
+songbird about 85 dB, a lion about 114), with 30% of the real spread
+squeezed out (`call::SQUEEZE`) so a lion doesn't bury a songbird. Placing a
+call adds about 5 dB a kilometre of loss on top of spreading, plus a lowpass
+that falls with distance (`call::air_cut`), so a distant call loses its top
+first. Calls are dropped further down than other effects, which means a howl
+still comes through at 1.5 km. Posting the same `key` and `seed` again moves
+a call that is already sounding, so a call can follow its animal.
+
+With PERFORMANCE STATS on, the stats panel lists HEARD: every call sounding,
+loudest first, with the species, the call, its distance, its compass point
+and about how loud its peak is in dBFS at the current levels.
+
+With every level at 100, a songbird 10 m away peaks at about -26 dBFS, a few
+dB over the rustle of a breezy wood (`WILDLIFE_LEVEL`). A howl peaks at -11
+dBFS at 10 m, -32 at 100 m and -47 at 500 m. At default levels, subtract
+about 15 dB from each.
+
 ### Checking it
 
 You cannot hear a test, so sound is checked by measuring and by listening to
@@ -1835,6 +1919,19 @@ sound posted:
 ```bash
 cargo run --release -- --world glassfall --ground 330,290 --weather rain --sound-bake rain_in_the_pines.wav --secs 30
 cargo run --release -- --world slagdeck --sound-bake match.wav --secs 30
+```
+
+A `--sound-bake` also lists the calls it heard begin, by species and cry,
+and the HEARD list as the bake ended.
+
+`--call-bake DIR` renders the animal calls with no world: for each call and
+seeds 1 and 2, `NAME_SEED.wav` as heard from `--call-m` metres (default 10)
+straight ahead, and `NAME_SEED.png`, a spectrogram of the dry call (0 to
+12 kHz, a faint line every 2 kHz, 80 dB of range). `--calls howl,roar`
+renders just those calls. Compare the spectrograms with field recordings'.
+
+```bash
+cargo run --release -- --call-bake shots/calls --calls howl,bugle --call-m 200
 ```
 
 ## Tree crowns
@@ -2008,17 +2105,22 @@ size. Look at one and the crosshair names it: `CROCODILE (DECEASED)`, as it
 says `DEER (JUVENILE)` or `COYOTE (AGED)`.
 
 Predators catch what they chase. A coyote that gets within a metre of a
-rabbit has it, and carries it off in its jaws at a walk for half a minute
-before dropping it; something as big as the carrier is dragged instead, feet
-trailing on the ground. What it is carrying is limp rather than posed, so it
-swings as the coyote walks. A dropped kill lies as a body for a minute and is
-bones after that. Cats, dogs, bears, badgers, boar, monkeys and seals lie
-down on their sides rather than upright, and tip over to get there.
+rabbit has it by whatever its mouth closed on, the scruff, the back or the
+rump, and the rabbit hangs limp from there and swings as it walks. Something longer than the carrier's mouth is high, a deer
+in a cougar's jaws, lies along the ground behind it and is dragged. After a
+dozen seconds the hunter puts the kill down and eats it, head down over the
+body and tugging at it, for up to three quarters of a minute. A kill has
+meat on it in proportion to its size, and any hungry animal that hunts that
+kind will come and eat from one it finds lying there, alongside whoever is
+already eating, so a deer feeds more than one. Your own kills count: shoot a
+rabbit and leave it, and a coyote may come for it. When the meat is gone the
+bones are left; a kill nobody eats is a body for a minute and bones after
+that. Cats, dogs, bears, badgers, boar, monkeys and seals sleep on their
+sides with their legs let down onto the ground.
 
-A carcass is dragged head first, in line with the carrier, so the mouth is at
-its shoulder and the body trails behind; small prey is slung across the mouth.
-When the carrier is done with it the ragdoll is run to a standstill there and
-then, since nothing steps the ragdoll of a body that is not in a mouth.
+The dead lie on the ground as bodies do: every part falls until something
+stops it, so a skeleton in the grass lies flat with its legs where they
+landed (docs/ANIMATION.md "Limp bodies").
 
 `VG_DEAD_SHARE=0.3` makes nearly a third of the animals skeletons, which is
 how to go and look at them; `VG_JUVENILE_SHARE` and `VG_AGED_SHARE` do the
@@ -2100,8 +2202,8 @@ There are three habits, one mover (`src/creatures/snake.rs`):
   crawls off if you keep at it. A gopher snake or a garter snake just goes.
 - In the trees (`climb`): up a trunk in a slow spiral, then out to lie along
   a limb with the front of it hanging off and swaying. Stand right
-  underneath one and it lets go: it falls limp (a ragdoll, the same code
-  that settles the dead), lands, and crawls away.
+  underneath one and it lets go: it falls limp (the same code that
+  lays out the dead), lands, and crawls away.
 - In the water (`swim`): at the surface with its head out and a long wave
   down its back, ducking under when startled, and hauling out on a bank now
   and then to lie in the sun.
@@ -2153,9 +2255,9 @@ file picks its shape with `"view"`, which is one of the shapes that exist in
 Rust rather than something a file describes.
 
 There are ten guns (`library/weapons/`): the Digger, sidearm, goo gun,
-bore, pulse gun, skipjack, minigun, scrap gun, rocket launcher and sniper
-rifle, on digits 1 to 9 and 0. The Digger is a caulk gun with a spade welded
-under the nozzle: the left button both lets the blast off and bites the wall
+bore, arc gun, skipjack, minigun, scrap gun, rocket launcher and sniper
+rifle, on digits 1 to 9 and 0. The Digger is a blast hammer with a spade welded
+under its head: the left button both lets the blast off and bites the wall
 in front of it, at the rate a shovel works out in the world, so anybody down
 a borer hole can cut their own way out.
 
@@ -2196,6 +2298,12 @@ because the grid is square and the slack either side is where the names go:
 lurelia --headless --world duelbox --mode explore --gun-sheet --no-hud --size 2000x1500 --screenshot shots/guns/sheet.png
 ```
 
+With `--kit realistic` it lays out that kit's guns instead, all at one scale
+so a pistol is seen as small beside a rifle as it is; `--sheet-guns
+pistol,shotgun` keeps only the guns named, and with `--bot-sheet` stands a bot
+holding each. `--kit` also
+picks the weapon kit a match is played with (docs/SHOOTER.md "Weapon kits").
+
 ## Bots
 
 A bot is a body that presses the keys. `Player::update` takes a `MoveInput`
@@ -2224,8 +2332,9 @@ easiest first (`brain::person::LEVELS`). `bold` and `steady` make a character
 of a difficulty, so two bots at one skill fight differently. `colour` is whose
 side it is on, washed over its plates.
 
-Bots are drawn as the library's `robot` -- a `humanoid`, which is the root
-species anything two-legged inherits from -- carrying the same guns you do, in
+Bots are drawn as one of the library's three `bot` builds (courier, hardsuit,
+walker) -- children of `humanoid`, which is the root species anything
+two-legged inherits from -- carrying the same guns you do, in
 its hands rather than floating beside it. It walks, jogs, runs, strafes, backs
 off, crouches, jumps, takes the landing in its knees, leans into a turn, lifts
 its weapon when it means to use it and drops it at a sprint, and goes down as a
@@ -2402,6 +2511,20 @@ the sea torii, five metres by three and a metre over the water. It is a
 `loop`, so it runs whether anybody is aboard or not, which is what a ferry on
 a route does.
 
+A platform can be drawn as a library structure instead of a plain plate:
+`"model": "bb_ferry_skiff"` draws that structure (32 voxels each way at
+most, centred over the plate, each material in its calm base colour) and
+`model_drop` sets how many metres its bottom hangs below the plate, so a
+hull sits under a deck. Only the plate is solid. `"floats": true` lowers the
+whole path with the tide, so a ferry stated at high water stays on the water
+at low; `"absolute": true` gives `up` as metres above the world's floor
+instead of above the spawn floor, which is what a thing on the sea knows. The
+`tide` trigger moves a plate along its path with the tide itself, home at low
+water and the far end at high. Bonebight has both: the chain ferry, a
+cedar-roofed skiff on a `loop` that floats, and fifteen drift-bells on
+`tide`, jellies that rest on the water at low tide and lift a few feet clear
+of it as the tide comes in.
+
 The headless report has a `platforms` key -- where each one is, how far it
 has travelled and how often it has been called -- because a lift that never
 moved and a lift that worked perfectly look the same in a screenshot.
@@ -2452,6 +2575,12 @@ folder exists. A world that fails to build doesn't start: the game returns
 to the title screen with a note, and the console has the reason (or run
 `--world NAME --validate`).
 
+`--world zoo` is not a place but a bench: every library creature in a pen of
+its own, each age and sex held at one activity and each display played over
+and over, for checking models, rigs and behaviour up close. PageDown and
+PageUp go from pen to pen; `VG_ZOO=deer` pens only the deer family. See
+docs/CREATURES.md, "The zoo".
+
 A world is a short story (`story.md`), a chronicle of dated events
 derived from it (`chronicle.json`) and a settings file (`world.json`). At
 startup the events run oldest first as processes over 1 m world-wide maps
@@ -2471,6 +2600,18 @@ comparisons. Then plants and natural features are placed by the biomes' placemen
 (`src/world/flora.rs`), and the chunk generator reads the result: terrain,
 buried layers, structures (rotated, decayed by age with a gravity pass so no
 piece hangs in the air, mossed, buried by later silt) and trees.
+
+Before the plants go in, the world measures what each 4 m patch of ground
+offers a plant (`src/world/site.rs`): how wet it is, its soil, warmth,
+exposure, cold, rock, disturbance and shade. A world with `"plants": "v2"` in
+its world.json puts each plant on the ground its `site` block says it suits,
+tallest first, each layer shading the next, with border zones, stand
+structure and optional fill from the world's own plant pool; without it the
+biomes' lists are placed in order. The same fields make grass lusher or drier
+in every world, whatever its placement. `--site-report` prints the fields by
+biome and how well each plant's ground suits it. docs/PLANTS.md is the full
+account, including the `VG_PLANTS`, `VG_BORDER`, `VG_FILL`, `VG_STANDS` and
+`VG_LUSH` comparison switches.
 
 Everything a world uses comes from the shared `library/`, one JSON file per
 entry: materials with texture recipes, plants, structures written as shape
@@ -3183,6 +3324,171 @@ dawn redwood, titan and young monkey-puzzles, plane tree; araucaria moved
 to the `branching` form. Anomalies: why the animals lived on here, and the
 size of the Sleeper.
 
+### Kitehold
+
+The country south of Saurischia and east of Gannet Harbor, 1.5 km across,
+built to meet both (`"neighbours": {"north": {"world": "saurischia"},
+"west": {"world": "gannet"}}`). The Lessa comes in out of Cascade Mere at
+x 1108 and splits the map; Cinderhorn's older flows come in beside it; a
+spring at the west foot of the lava is the head of Gannet's Cold River east
+branch (z 76); the road west meets Gannet's town gate at z 975; the faerie
+wood in the corner the three worlds share comes over both edges, and a
+ragged fringe of Saurischia's Fernwood thins into the plain. Its title is Kitehold Plains. It shares their
+sea level, height and seasons; `--seam` reports a mean step of about a metre
+along the north edge and a hundredth along the west.
+
+West of the river is the Plain: `terrain` with `drainage` and a deep
+`course` for the Lessa, gold bunchgrass (`kh_plains_grass`, with a `drift`)
+over twelve buried stream beds that show as `region` ribbons of the same
+grass with one flower through it (materials `kh_ribbon_lupine`, `_paintbrush`
+and `_poppy`, each a `bloom` of 0.4), three compact prairie-dog towns of
+about sixty `burrow_mound`s each on pale aprons, two muddy pans on buried beds
+(`lake` events `pan_north` at 335, 866 and `pan_south` at 266, 1288, the only
+water on the Plain away from the Lessa, each with a survey drink anchor), and
+wild horses, pronghorn, bison, a pair of lions and compsognathus. In the north-west the lava field (Saurischia's
+`sau_cinder` on a `cinder` region, so it matches Cinderhorn's cone) has three
+`lava_tube`s with skylights and, under them, a network of nine more joined to them underground (`mouths` none or one, `depths` per point for the Undertube's lower level, `chambers`, `vary`, and `glowworm_ceiling` linings in the darker reaches): the Braid and the East Braid loop off the Long and East Tubes, a cross-passage and the Cross Tube join the three, the Bat Hall ends in a high chamber with its own dusk `roost`, and the Pilgrims' Door and the Fern Door are two more ways in. `sau_cinder` has `cave_creatures` (bats, glassmoths, a few ember drakes), out at any hour while the player is under a roof. The field also has tumuli (`deposit` domes), a `pahoehoe` surface (stepped flow lobes, ropy folds round their fronts, split pressure ridges, aa tongues and cooling cracks, on smooth-meshed ground), kipukas, a bathhouse
+and shrines at the skylights, and steam (`vent`) out of three of them. Inside, `find` events and
+`place`s with `height` reward going down: offerings of bell charms and coins
+under the bathhouse skylight by a lit stone lantern, a glowing gallery (a
+`passage` with a `lumen_moss` lining over the Long Tube, lava drips, cave
+mushrooms), cave-bear bones and teeth in the West Tube, and old glowing
+lanterns over pottery shards deep in the East Tube. In
+the middle the Kite, a `mesa` of columnar basalt 19 m high with one ledge
+(`tiers`) and a wide talus skirt, carries
+Kitehold: a `town` (village layout, plaza and landmarks) whose own plots and
+`infill` (32) stand about 35 of the world's houses in four kinds (`kh_house`,
+`kh_house_b`, the kite makers' `kh_kite_loft` and the pilgrims'
+`kh_pilgrim_house`), each with a footpath from its door (`paths`), plus four
+wind towers, two tower windmills, a stupa and the flag mast. The road up runs in a cutting: a `vale` with `fall` 8
+along the road's line cuts a ramp back into the south face and on inside
+the east rim, and the `road` follows its floor. The pilgrim road north to
+the Skylights is a `vale` 3 m deep with a `ribbon` along its floor and
+cairns on its banks. West, the Wayfinders' station (shelters, lookout, a
+lit beacon, a wind pump) stands where the spruce begins.
+
+East of the river the Steps come on from Saurischia as two `escarpment`
+faces with `region`s for their high sides: maples (`kh_maple`) on the
+foothills, redwoods on the bench, cloud forest on the upper bench and the
+foot of the moor (`mist` 0.9, bromeliads as a `crust` plant), and the
+páramo above 206 m (`mist` 0.85: tussock grass, frailejones, cushion bog
+along the streams, three tarns). Maple Beck, the Cloud Run and Tarn Water
+come off the moor over both faces in falls. North of Maplebridge a broad `vale` (side 150 m)
+turns the Lessa's gorge into a green valley with a meadow floor
+(`kh_vale_meadow`); the holloway runs up it, a `ribbon` lane on one smooth
+curve in a `vale` cutting, with seven cottages (`mb_house`) and their gardens
+(`kh_cottage_garden`) on the uphill side, footpaths cut up the bank to each
+gate, and a gapped field wall on the river side. Maplebridge stands at the Maple
+Beck confluence with a covered toll bridge, a mill, an inn and sugar houses;
+the east road climbs a side canyon and the back face to the observatory,
+passing under the Hollow Titans (`titan_arch`), a ring of fused redwoods.
+In the south low foothills (`terrain` relief) come down to a delta: a
+`subside` marsh of reed, pools and hummocks across the whole mouth, and a
+`watercourse` that leaves the Lessa above it and splits into channels to
+the south edge.
+
+New behaviours that came with it:
+
+- **Cloth** (`world/cloth.rs`, events `flags` and `kites`): flag lines and
+  kites drawn as plates each frame, swung by the clock and the weather's
+  wind. Flag lines are strung point to point, fanned from a mast, or linked
+  between the tops of named structures (Kitehold's 44 lines across its
+  roofs and towers). Kites ride and rock on sagging strings with waving
+  tails, higher in a strong wind, and come down at night and in still air.
+- **Burrows** (movement `burrow`, `creatures/walk.rs`): each prairie dog
+  spawns on a `burrow_mound` of its own, keeps to it, sits bolt upright on
+  lookout (rig `sit_up`), and, startled, runs back and goes down the hole
+  until the danger has passed.
+- **Bloom** (material field `bloom`, `mesh/sprites.rs`): one flower,
+  at a share, through a ground's own grass, and a fifth flower layer, the
+  orange poppy (also the herb sprite `poppy`).
+- **Finds** (event `find`): collectibles laid on a lava tube's floor or at a
+  height, for caches and offerings underground.
+- **Roosts** (event `roost`, `creatures/roost.rs`): at dusk, with the player
+  near, the bats and ember drakes come up out of the Skylights one at a time
+  and spiral out over the lava.
+
+New library entries: biomes `kh_*` (21), plants frailejón, bromeliad,
+paintbrush, ash poppy, sunflower, flax; creatures prairie dog, vicuña,
+spectacled bear, quetzal, morpho, poison frog, swordbill, ember drake;
+structures for Kitehold (`kh_wind_tower`, `kh_house`, `kh_house_b`, `kh_kite_loft`, `kh_pilgrim_house`,
+`kh_tower_mill`, `kh_flag_mast`), Maplebridge (`mb_toll_bridge`, `mb_mill`,
+`mb_inn`, `mb_house`), the Wayfinders (`wf_shelter`, `wf_lookout`,
+`wf_beacon`, `wind_pump_well`), the lava and the moor (`burrow_mound`,
+`skylight_shrine`, `lava_bathhouse`, `weather_observatory`,
+`spirit_lantern`, `cloth_cairn`) and `titan_arch`; materials for the
+dyed kite cloths, maple planks, the plains and páramo grasses, cushion bog
+and the old lava; city kit `kitehold`. Anomalies: the ember drakes, which
+glow and keep to the lava, fewer the further from Cinderhorn; and the lit
+lanterns on the cloud-forest road that nobody admits to lighting.
+
+### Bonebight
+
+The coast east of Ribshore and south of Kitehold, 1.5 km across, built to
+meet both (`"neighbours": {"west": {"world": "ribshore"}, "north":
+{"world": "kitehold"}}`), which fills the last square of the six. The land
+is `terrain` with the bay let down by two `subside`s rather than an edge
+sea, so the Lessa's marsh can stand on the north shore where Kitehold's
+delta comes over the edge; the bay is 25 to 31 m deep, the deepest water in
+the series (the floor stays 2 m over bedrock). Kitehold's sunken pilgrim road
+now runs on south to its edge (a `vale` and `cattle_track` added to its
+chronicle) and comes down the end of the Plain into Bonebight. Mirror Creek
+rises in Kagami Pond, kept out of the 160 m seam band so the blend cannot
+tilt it, runs south through the hills and leaves over the west edge at the
+height of Ribshore's creek (a `watercourse` with `floor` -19.6); a second
+arm braids down to the sea at Vila Azul.
+
+In the dunes a `ribcage` skeleton 422 m long stands in a hollow the chronicle
+levels (`subside` with a negative `level`), its ribs up to 208 m over the
+sea. Its new `open_under` key takes only the ground round each rib's root,
+so Rib Town, a `town` event of about 440 buildings on the `bonebight` city kit
+(cedar shingle over bone footings), fills the lane, the ground under the
+bows and between the ribs, and spills past both ends of the cage and down to
+the harbour: a cove (`subside`) with a quay and breakwater of bone blocks
+(`earthwork` with `mat`), a pier, boats, a fish house and net shed. Its `hang`
+key puts 42 clusters of glowing glass-ear fungi under the ribs. A second,
+toothed skeleton lies from the shore dunes up into the Plain; titan teeth and
+loose vertebrae (`bb_vertebra`, `_b`) lie scattered in the dunes. Vila Azul is
+a dense walled maze `town` of about 145 buildings on the `vila_azul` kit, a
+medieval and Renaissance hill town all white limewash with cobalt trim under
+terracotta, its church, market and twelve towers of seven designs standing
+as landmarks, a windmill on the headland and a wayside chapel on the coast road, and flies two kites from its tower roofs (the new `up` key on
+`kites`); a coast road joins it to Rib Town. Pelagos Outpost stands on
+Frondwell, an `atoll` in basalt whose regions carry a prefix (`regions`) so
+its cold-water biomes (`fw_kelp`, `fw_wall`, `fw_flat`, `fw_lagoon`,
+`fw_islet`) claim them and the tropical reef biomes stay out of the world: a
+base capsule south of the ring joined by `pelagos_walk` trusses to three rim
+capsules, and Station Calypso alone on the north-east rim inside a `bloom`,
+where `fw_pale` turns the kelp and rock to glass growth. The chain ferry (a
+platform drawn as `bb_ferry_skiff`, floating with the tide) runs straight from
+Vila Azul's quay to the base, and fifteen drift-bells ride the tide in the
+pens off the bight and the quay. In the north-west the temple on Kagami Pond
+stands in a dense redwood and spruce wood, all its buildings on the north
+shore, koi in the pond, reached only by a footpath that fades out. The Lessa's
+easternmost channel is the salmon run, a knee-deep riffle (`shallow` on the
+watercourse) where `black_bear_fisher` comes down to fish (`fish` display)
+for `spawning_salmon`; the driftwood graveyard heaps giant logs along the
+marsh shore. Wolves range the spruce hollows and the Plain's edge and a cougar the
+temple wood, so the elk and deer herds are hunted (`--eco-soak` holds steady
+over twenty game days). Smaller finds: a schooner wreck on the bay floor below
+Frondwell's wall, a yellow tether cable along the bed from the base toward
+Calypso (kit `pelagos_tether`), marker buoys on the ferry line, a smokehouse
+on the salmon run, the marrow works at the smaller titan's hips, a lookout on
+the Plain's edge and a teahouse on the pond. Bonebight's own windows use
+`window_dark`, which does not glint.
+
+New: materials for the tiles, mosaics and awnings (`azulejo_*`, `va_*`),
+cedar shingle, bone block, marrow crystal, glass-ear fungus, the outpost's
+1970s paints (`pg_*`), raked gravel and temple timber; plants `momiji`,
+`hydrangea`, `pale_kelp`; kits `pelagos_walk`, `oyster_walk`, `va_street`;
+the structures named above with the prefixes `bb_`, `va_`, `pg_`, `tm_` and
+`drift_bell`; creatures `black_bear_fisher`, `spawning_salmon` and four for
+Frondwell's water. Engine: platforms drawn as structures, `floats`, the
+`tide` trigger and `absolute` heights; watercourse `shallow`; ribcage `hang`
+and `open_under`; atoll `regions`; kite `up`; the `fish` display. Anomalies: the marrow-crystal that drives the
+ferry, the drift-bells that lift with the tide, and the pale spreading from
+the black glass under Calypso.
+
 ### Saltmirror
 
 A salt pan 1.5 km across, flat to the horizon, with the Saltmirror Array on
@@ -3280,6 +3586,8 @@ cargo run --release -- --headless --screenshot shot.png --stats stats.json
   models before the screenshot.
 - `--sound-bake FILE --secs N` renders what is heard where the camera
   stands into a WAV (see "Sound").
+- `--call-bake DIR [--calls a,b] [--call-m M]` renders animal calls alone,
+  each to a WAV with a spectrogram (see "Sound").
 - `--anim-sheet NAME:moves` on a snake shows its crawl at four phases of the
   wave, a turn and a swim below, and stretched out, coiled, coiled with its
   head up, climbing, draped and limp above.
@@ -3304,6 +3612,49 @@ cargo run --release -- --headless --screenshot shot.png --stats stats.json
   frame time percentiles. It works in the window too.
 - `--map map.png` writes a top-down map of the world; `--profile-gen` times
   generation and meshing on one thread.
+- `--site-report` builds the world, prints each plant site field's spread by
+  biome and how well each plant's ground suits it, and exits. Run it under
+  `VG_PLANTS=v1` and `VG_PLANTS=v2` to compare the two placements
+  (docs/PLANTS.md).
+- The animal debug view (notes/ANIMAL_SIM_PLAN.md) headless: `--eco-map creatures`
+  draws the ecology map in the shot, `--eco-pin NAME` pins the nearest walker
+  whose species has NAME in it (`nearest` for any), and `--eco-dump FILE`
+  writes one JSON line of every animal each `--eco-every` seconds (default
+  10), with the pinned one's senses and decision log. `VG_ECO_WALK=S` walks
+  the player at the pinned animal from S seconds in (`VG_ECO_RUN=1` runs),
+  and `VG_ECO_FREEZE=S` freezes the animals then. `VG_CLOCK_RUN=1` lets the
+  clock run on from `--hour` (night goes by at about 2.7 hours a minute). `--eco-map` also takes any
+  world survey channel (`cover`, `open`, `drink`, `pass_person`...; the error
+  lists them) or plant site field (`wet`, `soil`, `shade`...), drawn as a
+  heatmap under the animals, and `fit` and `border` show how well the plants
+  suit their ground and which crossed a biome border; in the game `[` and `]`
+  step through the layers while the map is open.
+- The world survey (notes/WORLD_SURVEY_PLAN.md, `src/world/survey/`): every world
+  that can be explored ships a `survey.bin` of 4 m grids (passability, water,
+  forage, cover, roofs, openness, rise, built-up, underfoot, lamplight, roads).
+  Its key hashes the built world and the survey code, so a stale file is
+  never used: loading rewrites it, `--validate` reports it, and `--survey`
+  measures afresh, writes it and prints each channel.
+- The live grid (`src/world/live.rs`, laid by `src/game/live.rs`): threat, noise,
+  scent down the wind, carrion, grazers, predators and trampled ground on 8 m
+  cells, ticked every 5 s and never saved. Its channels are ecology map layers
+  too (`--eco-map threat`), and `--eco-dump` lines carry each one's total and
+  highest cell.
+- The survey's graph (`src/world/survey/graph.rs`, in survey.bin): zones,
+  anchors (focal, vantage, pinch, entry, refuge, nook, drink, feed) each with
+  one measured record, and links per body class. `--survey` prints counts and
+  an audit; the map layers `links_person`, `links_large` and `links_vehicle`
+  draw them. On the map the wheel zooms, a left drag pans, a right click shows
+  the whole world again, and hovering shows what is under the cursor;
+  headless, `VG_ECO_VIEW=x,z,zoom` and `VG_ECO_CURSOR=sx,sy` set the view and
+  the hover. Herds read the graph (`src/creatures/roam.rs`, docs/CREATURES.md
+  "Where a herd goes"); the map draws each herd's way and goal, and
+  `--eco-dump` lines carry every trip. Prey herds and predators (packs and
+  lone hunters) are kept as records across the whole map
+  (`src/creatures/roster.rs`, docs/CREATURES.md "Herd records" and "Packs"):
+  the map draws the ones not drawn as hollow squares, red for predators, and
+  dump lines carry the roster with each record's kind and each hunt's quarry.
+  `VG_ROAM_LOG=1` prints every herd's and pack's decisions to stderr.
 - `--ride bike|wing|launch|rope|climb` rides for `--ride-secs` (default 4)
   before the screenshot and prints mode, speed and position every half second:
   the bike (holding W), gliding from `--pos`, a glide launched from the

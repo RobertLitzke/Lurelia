@@ -3,6 +3,7 @@
   "version": 2,
   "introduced_by": "kaldvik",
   "notes": "The fjord floor: cold dark water, herring in winter shoals and what follows them, the humpbacks (one in seven of them white here) and a pod of orcas.",
+  "soil": 0.5,
   "creatures": [
     {"creature": "herring_shoal", "count": 264},
     {"creature": "herring", "count": 66},

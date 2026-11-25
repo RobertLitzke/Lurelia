@@ -1,12 +1,30 @@
 {
   "name": "street_maple",
-  "version": 2,
+  "version": 3,
   "introduced_by": "city",
-  "notes": "A planted street maple: smaller and tidier than the bigleaf, a few leaves turning, its trunk tapering into smooth limbs. v2: tapered trunk and tube limbs.",
+  "notes": "A planted street maple: smaller and tidier than the bigleaf, a few leaves turning, its trunk tapering into smooth limbs. v2: tapered trunk and tube limbs. v3: the few trees turning early are now a morph, and in autumn each tree goes mostly scarlet, crimson or orange, some ochre gold, a few still olive.",
   "height": [7, 10],
   "trunk_radius": [0.2, 0.28],
   "crown_radius": [2.4, 3.4],
-  "leaf_alt": ["maple_red", 0.12],
+  "morphs": [
+    {"name": "crimson", "weight": 0.211, "notes": "Deep red.", "colors": {"autumn": "maple_crimson"}},
+    {"name": "red", "weight": 0.282, "notes": "Scarlet going orange.", "colors": {"autumn": "maple_red"}},
+    {"name": "orange", "weight": 0.246, "notes": "Clear orange.", "colors": {"autumn": "maple_orange"}},
+    {"name": "gold", "weight": 0.106, "notes": "Ochre gold.", "colors": {"autumn": "maple_gold"}},
+    {
+      "name": "turning",
+      "weight": 0.035,
+      "notes": "Still part green, going amber.",
+      "colors": {"autumn": "maple_turning"}
+    },
+    {
+      "name": "early",
+      "weight": 0.12,
+      "notes": "Turning red already in summer.",
+      "colors": {"leaf": "maple_red", "autumn": "maple_red"}
+    }
+  ],
+  "morph_blob_m": 6,
   "curve": "straight",
   "leader": 0.6,
   "fill": 0.45,

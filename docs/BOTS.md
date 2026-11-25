@@ -332,7 +332,7 @@ zero, a field of view past 180 degrees. A world's `BotDef` picks a row by
 
 ## How bots are drawn
 
-A bot is the library creature `robot`, a `humanoid` in different paint,
+A bot is one of the library's `bot` builds, which are built on `humanoid`,
 compiled on demand by `brain::avatar` so it looks the same in every world.
 `anim/figure.rs` poses it from what the body is doing. A `Figure` is display
 only: it reads the body and never writes to it, and nothing in `brain/` reads
@@ -341,10 +341,11 @@ one, or a gait could start deciding how fast a bot moves.
 Health is two emissive bars, one across the top
 of the chest and one between the shoulder blades, because the weapon and
 supporting arm cover the rest of the chest. They lie in the dark bands at
-y 24-25 in `library/creatures/robot.json`; `avatar::bars` finds the chest's
-front and back on each build's voxels. Every bot is one of three builds
-(`avatar::BUILDS`: brawny, heavy, lean) on the same bones and the same
-collision box as the player. The team colour goes on a uniform, not the whole
+rows 74-78 of `library/creatures/bot.json` and its builds; `avatar::bars`
+finds the chest's front and back on each build's voxels. Every bot is one of
+three builds (`avatar::BUILDS`: courier, a slim android; hardsuit, a diving
+suit; walker, reverse-kneed) on the same bones and the same collision box as
+the player, drawn smooth like the animals (docs/ANIMATION.md). The team colour goes on a uniform, not the whole
 body: the chest and shoulder plates and the kneepads are their own colour
 (`uniform`) and each body part is sliced twice, uniform and the rest, so only
 the uniform half is tinted (`avatar::PAINT`, `Body::paint`). The tint is taken

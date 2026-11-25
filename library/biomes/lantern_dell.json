@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "Lantern Dell: the floor and walls of the sinkhole behind Lantern Spout, open to the sky. Moss that glows faintly, fern from every ledge, vines down the walls, pale birches and glassbloom on the floor.",
+  "habitat": "riparian",
   "priority": 13,
   "rules": {"region": "dell"},
   "surface": "glowmoss",
   "subsurface": "dirt",
   "rock": "oolite",
+  "soil": 0.8,
   "map_color": [96, 214, 190],
   "plants": [
     {"plant": "fern", "density": 0.5, "placement": {"verb": "scatter", "params": {}}},
@@ -33,5 +35,6 @@
     {"creature": "glow_bee", "count": 5.5}
   ],
   "collectibles": [{"item": "hag_stone", "density": 0.004, "placement": {"verb": "scatter", "params": {}}}],
-  "mist": 0.3
+  "mist": 0.3,
+  "realm": {"fae": 0.8}
 }

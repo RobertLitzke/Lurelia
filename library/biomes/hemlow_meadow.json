@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "The hay meadows and pasture on the Knap and down the valley: flower-thick turf, a few great oaks and elders, dry-stone walls, fireflies at dusk.",
+  "habitat": "meadow",
   "priority": 8,
   "rules": {"region": "meadow"},
   "surface": "wildflower_grass",
   "subsurface": "dirt",
+  "soil": 0.65,
   "map_color": [150, 186, 80],
   "plants": [
     {"plant": "great_oak", "density": 0.00025, "placement": {"verb": "lone", "params": {"spacing": 60}}},

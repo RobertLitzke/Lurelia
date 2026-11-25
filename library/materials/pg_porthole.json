@@ -1,0 +1,15 @@
+{
+  "name": "pg_porthole",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Thick porthole glass, dark sea-green from inside.",
+  "smooth": false,
+  "texture": {
+    "pattern": "glass",
+    "base": [40, 70, 74],
+    "alt": [96, 140, 140],
+    "scale": 3,
+    "contrast": 0.6,
+    "calm": {"base": [50, 80, 84], "alt": [106, 150, 150]}
+  }
+}

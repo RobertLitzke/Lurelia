@@ -1,12 +1,14 @@
 {
   "name": "rib_kelp",
-  "version": 1,
+  "version": 2,
   "introduced_by": "ribshore",
-  "notes": "Bull kelp over the rock reefs off the headland: a canopy at the surface, columns of light under it.",
+  "notes": "Bull kelp over the rock reefs off the headland: a canopy at the surface, columns of light under it. Since v2: lion's mane jellies, wolf eels, opal squid and frond dragons from Bonebight's Frondwell.",
+  "habitat": "kelp_forest",
   "priority": 4,
   "rules": {"underwater": true, "region": "kelp", "elev": [-22, -6]},
   "surface": "reef_rock",
   "subsurface": "stone_dark",
+  "soil": 0.5,
   "map_color": [70, 100, 76],
   "plants": [
     {
@@ -30,7 +32,11 @@
     {"creature": "herring_shoal", "count": 66},
     {"creature": "giant_octopus", "count": 2.2},
     {"creature": "mola", "count": 0.55},
-    {"creature": "marbled_murrelet", "count": 2}
+    {"creature": "marbled_murrelet", "count": 2},
+    {"creature": "lions_mane_jelly", "count": 3},
+    {"creature": "wolf_eel", "count": 3},
+    {"creature": "opal_squid", "count": 30},
+    {"creature": "frond_dragon", "count": 8}
   ],
   "collectibles": []
 }

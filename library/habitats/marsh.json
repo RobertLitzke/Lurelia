@@ -1,0 +1,13 @@
+{
+  "name": "marsh",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Reeds, rushes and open water: ground under water much of the year.",
+  "wet": 0.85,
+  "soil": 0.55,
+  "shade": 0.05,
+  "rock": 0.0,
+  "disturbed": 0.0,
+  "open": 0.9,
+  "forage": ["graze"]
+}

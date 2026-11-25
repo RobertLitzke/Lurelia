@@ -10,6 +10,8 @@
 
 mod arms;
 pub mod brain;
+mod course;
+mod cup;
 mod feel;
 mod fight;
 mod hud;
@@ -29,12 +31,11 @@ use glam::{Vec2, Vec3};
 pub(crate) use hud::clock;
 use hud::{ordinal, Map};
 use arms::{Arms, Harm, Item, Slot};
+pub use arms::ItemRules;
+pub use cup::Cup;
 use brain::{Brain, Lineup, Tier};
 use laps::{put_back, verge, Laps};
 use polish::Polish;
-
-/// Seconds a boost pad holds a kart at its boosted top speed.
-const PAD_SECS: f32 = 1.2;
 
 /// Seconds of countdown on the grid.
 const COUNTDOWN: f32 = 3.5;
@@ -87,6 +88,7 @@ enum Phase {
 /// made new from these by `Race::fresh`.
 struct Setup {
     track: Track,
+    gate: Option<f32>,
     checkpoints: Vec<f32>,
     laps: u32,
     spec: Spec,
@@ -97,10 +99,17 @@ struct Setup {
     arms: Arms,
     races: u64,
     autopilot: bool,
+    /// The cup this race is one of, as it stood when the race began.
+    cup: Option<Cup>,
+    /// The course's props and zones (course.rs).
+    course: course::Course,
 }
 
 pub struct Race {
     track: Track,
+    /// How far the gantry's beam stands clear over the line, if the course
+    /// has one: the countdown lights hang on it (feel.rs).
+    gate: Option<f32>,
     laps: u32,
     spec: Spec,
     /// Each rival's kart as loaded. Its car's own spec changes with its tier,
@@ -145,10 +154,13 @@ pub struct Race {
     reload: Vec<f32>,
     targets: Vec<Option<usize>>,
     held_t: Vec<f32>,
-    /// The fire button, held this frame and last step, and the weapon the
-    /// digits picked (`KART_ARMS=all`).
+    /// The fire button, held this frame and last step, the right mouse
+    /// button (use it ahead) the same, and the weapon the digits picked
+    /// (`KART_ARMS=all`).
     trigger: bool,
     trigger_was: bool,
+    ahead: bool,
+    ahead_was: bool,
     pick: usize,
     /// The stick or the drive keys held back (fire behind), or the stick
     /// held forward (throw a dropped item ahead), as the button is pressed;
@@ -211,6 +223,14 @@ pub struct Race {
     /// The player's car on the ground, for the minimap.
     my_pos: Vec2,
     map: Map,
+    /// The cup this race is one of (cup.rs): as it stood at the start, for
+    /// a restart; as it stands, scored once everyone is home; and the cup
+    /// on its next course, once Enter asks for it (`take_next`).
+    cup_was: Option<Cup>,
+    cup: Option<Cup>,
+    next: Option<Cup>,
+    /// The course's smashable props, wind, gravity and floods (course.rs).
+    course: course::Course,
 }
 
 impl Race {
@@ -231,9 +251,11 @@ impl Race {
         let n = def.rivals.clamp(1, MAX_RIVALS) as usize;
         let rivals: Vec<Spec> = (0..n).map(|i| rivals.get(i).cloned().map(wet).unwrap_or_else(|| spec.clone())).collect();
         let track = Track::of(circuit);
-        let arms = Arms::new(lib, &track, &circuit.items);
+        let length = track.length;
+        let arms = Arms::new(lib, &track, &circuit.items, def.items.clone().unwrap_or_default());
         Race::fresh(Setup {
             track,
+            gate: circuit.gate,
             checkpoints: circuit.checkpoints.clone(),
             laps: def.laps.max(1),
             spec,
@@ -244,7 +266,27 @@ impl Race {
             arms,
             races: 0,
             autopilot: false,
+            cup: None,
+            course: course::Course::new(
+                circuit.zones.clone(),
+                circuit.smash.clone(),
+                circuit.zones.iter().filter(|z| !z.mat.is_empty()).find_map(|z| lib.material(&z.mat)).or_else(|| lib.material("river_water")),
+                circuit.walls.clone(),
+                length,
+            ),
         })
+    }
+
+    /// Make this race one of a cup's.
+    pub fn set_cup(&mut self, cup: Option<Cup>) {
+        self.cup_was = cup.clone();
+        self.cup = cup;
+    }
+
+    /// The cup on its next course, once the player has asked for it on the
+    /// results: main.rs loads that course with it.
+    pub fn take_next(&mut self) -> Option<Cup> {
+        self.next.take()
     }
 
     /// Back to the grid for the race again (the pause menu's RESTART RACE,
@@ -253,6 +295,7 @@ impl Race {
     pub fn restart(&mut self) {
         *self = Race::fresh(Setup {
             track: self.track.clone(),
+            gate: self.gate,
             checkpoints: self.checkpoints.clone(),
             laps: self.laps,
             spec: self.spec.clone(),
@@ -263,13 +306,15 @@ impl Race {
             arms: self.arms.fresh(),
             races: self.races,
             autopilot: self.autopilot.is_some(),
+            cup: self.cup_was.clone(),
+            course: self.course.fresh(),
         });
     }
 
     /// A race not yet on its grid (`place_all` puts it there at the next
     /// step): every kart, timer, item and note as a race starts with them.
     fn fresh(setup: Setup) -> Race {
-        let Setup { track, checkpoints, laps, spec, rivals, level, base, lineup, arms, races, autopilot } = setup;
+        let Setup { track, gate, checkpoints, laps, spec, rivals, level, base, lineup, arms, races, autopilot, cup, course } = setup;
         let n = rivals.len();
         let split_at = if checkpoints.is_empty() { vec![track.length / 3.0, track.length * 2.0 / 3.0] } else { checkpoints.clone() };
         // The rivals all race as the style bred for this vehicle (karts have
@@ -315,6 +360,8 @@ impl Race {
             held_t: Vec::new(),
             trigger: false,
             trigger_was: false,
+            ahead: false,
+            ahead_was: false,
             pick: 0,
             stick_back: false,
             draft: Vec::new(),
@@ -338,6 +385,10 @@ impl Race {
             split: None,
             my_pos: Vec2::ZERO,
             track,
+            gate,
+            cup_was: cup.clone(),
+            cup,
+            next: None,
             laps,
             spec,
             base,
@@ -352,6 +403,7 @@ impl Race {
             tier: 0,
             boosting: false,
             autopilot,
+            course,
         }
     }
 
@@ -414,7 +466,7 @@ impl Race {
                 format!("{item}{spun}{shield}{hurt}")
             })
             .collect();
-        format!("{phase}  {}  lap {}/{}  {}  off {}  items {}  {:.0} km/h", clock(self.clock, 1), self.me.lap(self.track.length, self.laps), self.laps, order.join(", "), off.join("/"), items.join("/"), self.speed * 3.6)
+        format!("{phase}  {}  lap {}/{}  {}  off {}  items {}  {:.0} km/h{}", clock(self.clock, 1), self.me.lap(self.track.length, self.laps), self.laps, order.join(", "), off.join("/"), items.join("/"), self.speed * 3.6, self.course.status())
     }
 
     /// Grid slot `i` (0 at the front): behind the line, two abreast.
@@ -548,7 +600,7 @@ impl Race {
             if spun.get(i + 1).copied().unwrap_or(false) {
                 c = Controls::default();
             }
-            b.car.step(&c, store, sea, slopes, dt);
+            b.car.step(&c, store, course::water_level(store, sea, b.car.pos()), slopes, dt);
             if b.car.waiting {
                 // Out where the world isn't loaded: carried round the
                 // centreline at the speed its driver wants, out of sight.
@@ -586,12 +638,15 @@ impl Race {
         // Cars that touch push each other. A rival carried round out of the
         // loaded world (`ghost`) touches nobody, nor does a kart home.
         let mut hardest = 0.0f32;
+        // Which karts touched (0 the player), for overdrive.
+        let mut touched: Vec<(usize, usize)> = Vec::new();
         if let (Some(mine), None) = (ride.car_mut(), self.me.finish) {
-            for b in self.bots.iter_mut().filter(|b| !b.ghost && !b.home() && b.laps.ghost <= 0.0 && self.me.ghost <= 0.0) {
+            for (i, b) in self.bots.iter_mut().enumerate().filter(|(_, b)| !b.ghost && !b.home() && b.laps.ghost <= 0.0 && self.me.ghost <= 0.0) {
                 let (hard, at) = meet(mine, &mut b.car, store);
                 if hard > 0.0 {
                     hardest = hardest.max(hard);
                     knock_sound(at, hard);
+                    touched.push((0, i + 1));
                 }
             }
         }
@@ -605,14 +660,20 @@ impl Race {
                 if hard > 2.0 && (at - player.pos).length() < 60.0 {
                     knock_sound(at, hard);
                 }
+                if hard > 0.0 {
+                    touched.push((i + 1, j + 1));
+                }
             }
         }
         if hardest > 3.0 {
             ride.jolt(hardest);
         }
+        self.rammed(ride, &touched);
 
         // Boost pads under anyone on the ground.
         self.pads(ride, my_place, &places);
+        // The course's props, wind, gravity and floods.
+        self.course_step(ride, my_place, &places, store, dt);
 
         // The weapons: where everyone is, the boxes and what is used, and
         // what the hits did.
@@ -633,12 +694,25 @@ impl Race {
                 verge(&mut b.car, places[i].off, width, dt);
             }
             let road_y = self.track.height_at(places[i].s);
-            let lost = b.laps.follow(places[i], &b.car, length, width, road_y, &self.checkpoints, dt);
+            let beyond = laps::beyond(self.course.wall_at(places[i].s));
+            let lost = b.laps.follow(places[i], &b.car, length, width, beyond, road_y, &self.checkpoints, dt, self.course.gliding(i + 1));
+            // Stuck in a flood (on its far bank, in water too shallow to
+            // float in) counts as drowned.
+            let flooded = self.course.past_flood(places[i].s).is_some() && b.laps.idle > FLOOD_STUCK;
+            let lost = lost || flooded;
             if b.laps.progress >= total {
                 b.laps.finish = Some(self.clock);
             } else if lost || b.laps.slow > BOT_GIVE_UP {
-                // Far out of bounds, or (a bot only) stuck past backing out.
-                put_back(&mut b.car, &self.track, b.laps.road_s, store);
+                // Far out of bounds, or (a bot only) stuck past backing out;
+                // one drowned in a flood comes out on its far bank.
+                let at = if b.car.stalled || flooded { self.course.past_flood(places[i].s).unwrap_or(b.laps.road_s) } else { b.laps.road_s };
+                if at != b.laps.road_s {
+                    // Across the flood: the metres skipped count as driven.
+                    b.laps.progress += (at - places[i].s).rem_euclid(length);
+                    b.laps.last_s = at;
+                    b.laps.road_s = at;
+                }
+                put_back(&mut b.car, &self.track, at, store);
                 b.laps.clear();
                 b.unstick = 0.0;
             }
@@ -649,7 +723,11 @@ impl Race {
                 verge(car, p.off, width, dt);
             }
             let road_y = self.track.height_at(p.s);
-            let lost = ride.car().is_some_and(|c| self.me.follow(p, c, length, width, road_y, &self.checkpoints, dt));
+            let beyond = laps::beyond(self.course.wall_at(p.s));
+            let flying = self.course.gliding(0);
+            let lost = ride.car().is_some_and(|c| self.me.follow(p, c, length, width, beyond, road_y, &self.checkpoints, dt, flying));
+            let flooded = self.course.past_flood(p.s).is_some() && self.me.idle > FLOOD_STUCK;
+            let lost = lost || flooded;
             // A wheel on the kerb at speed: the controller buzzes.
             if ride.car().is_some_and(|c| c.grounded > 0 && c.b.vel.length() > 5.0) && (p.off.abs() - width * 0.5).abs() < 0.6 {
                 ride.rumble = ride.rumble.max(0.12);
@@ -713,7 +791,13 @@ impl Race {
                 ride.hide = true;
                 ride.auto = None;
             } else if lost {
-                let at = self.me.road_s;
+                let drowned = flooded || ride.car().is_some_and(|c| c.stalled);
+                let at = if drowned { self.course.past_flood(p.s).unwrap_or(self.me.road_s) } else { self.me.road_s };
+                if at != self.me.road_s {
+                    self.me.progress += (at - p.s).rem_euclid(length);
+                    self.me.last_s = at;
+                    self.me.road_s = at;
+                }
                 if let Some(car) = ride.car_mut() {
                     put_back(car, &self.track, at, store);
                 }
@@ -730,9 +814,24 @@ impl Race {
         }
         if let Phase::Done(t) = &mut self.phase {
             *t += dt;
+            // A cup's race is scored once everyone is home, or the time for
+            // them is up, or the player moves on.
+            if self.cup.is_some() && (self.again || self.all_home()) {
+                let order: Vec<usize> = self.standings().iter().map(|s| s.0).collect();
+                if let Some(c) = &mut self.cup {
+                    c.score(&order);
+                }
+            }
             if self.again {
-                self.restart();
-                return;
+                // Enter: a cup goes on to its next course; a race on its own
+                // is raced again.
+                match &self.cup {
+                    Some(c) => self.next = Some(c.next()),
+                    None => {
+                        self.restart();
+                        return;
+                    }
+                }
             }
         }
         self.again = false;
@@ -767,9 +866,10 @@ impl Race {
         if self.track.pads.is_empty() {
             return;
         }
+        let (secs, k) = (self.arms.rules.pad_s, self.arms.rules.pad_kick);
         let kick = |car: &mut Vehicle| {
             if car.grounded > 0 && car.kick_t < 0.2 {
-                boost_kick(car, PAD_SECS);
+                boost_kick_by(car, secs, k);
             }
         };
         if let (Some(p), Some(car)) = (my_place, ride.car_mut()) {
@@ -781,6 +881,34 @@ impl Race {
             if !b.ghost && self.track.on_pad(*p) {
                 kick(&mut b.car);
             }
+        }
+    }
+
+    /// What the course does to every kart this step (course.rs): the wind
+    /// and the gravity where each is, the props each drives into, and the
+    /// floods at the leader's lap.
+    fn course_step(&mut self, ride: &mut Ride, my_place: Option<Place>, places: &[Place], store: &Store, dt: f32) {
+        if self.course.is_empty() {
+            return;
+        }
+        let me = ride.car().map(|c| c.pos());
+        self.course.tick(dt, me, &self.track, my_place.map_or(0.0, |p| p.s));
+        if let (Some(p), Some(car)) = (my_place, ride.car_mut()) {
+            self.course.drive(0, car, p.s, dt);
+            self.course.smash(car, store);
+        }
+        for (i, (b, p)) in self.bots.iter_mut().zip(places).enumerate() {
+            if !b.ghost && !b.home() {
+                self.course.drive(i + 1, &mut b.car, p.s, dt);
+                self.course.smash(&mut b.car, store);
+            }
+        }
+        let length = self.track.length.max(1.0);
+        let lead = std::iter::once(self.me.progress).chain(self.bots.iter().map(|b| b.laps.progress)).fold(0.0f32, f32::max);
+        let lap = (lead / length).floor().max(0.0) as usize;
+        self.course.flood(lap, store);
+        if let Some(p) = my_place {
+            self.course.herds(lap, p.s, &self.track);
         }
     }
 
@@ -942,7 +1070,8 @@ const BOT_GIVE_UP: f32 = 10.0;
 fn driver_style(spec: &Spec, brain: Brain, level: f32) -> Style {
     let base = if spec.handling == Handling::Kart { Style::for_kart(spec) } else { Style::racer() };
     let st = brain.style(base);
-    Style { corner_g: st.corner_g * level, brake_g: st.brake_g * level, ..st }
+    let drift = if brain.drift_fit && spec.handling == Handling::Kart { st.drift * Style::drift_fit(spec) } else { st.drift };
+    Style { corner_g: st.corner_g * level, brake_g: st.brake_g * level, drift, ..st }
 }
 
 /// A driver backing out of where it is stuck: reversing, steered so the
@@ -966,11 +1095,19 @@ fn meet(a: &mut Vehicle, b: &mut Vehicle, store: &Store) -> (f32, Vec3) {
     (crate::vehicle::meet(a, b, Some(store)), at)
 }
 
+/// Seconds getting nowhere in a flood before a kart counts as drowned.
+const FLOOD_STUCK: f32 = 4.0;
+
 /// The kick a full drift gives, and `secs` held at the boosted top speed: a
 /// boost pad's, and the BOOST item's.
 fn boost_kick(car: &mut Vehicle, secs: f32) {
+    boost_kick_by(car, secs, 1.0);
+}
+
+/// `boost_kick` `k` times as hard: a pad's (`ItemRules::pad_kick`).
+fn boost_kick_by(car: &mut Vehicle, secs: f32, k: f32) {
     let fwd = car.forward();
-    car.b.vel += fwd * car.spec.drift_boost.max(3.0) * 2.0;
+    car.b.vel += fwd * car.spec.drift_boost.max(3.0) * 2.0 * k;
     car.kick_t = secs;
 }
 
@@ -990,9 +1127,10 @@ impl Activity for Race {
         self.gas = input.forward || input.throttle > 0.5;
         // The left stick or the drive keys held back fire behind (S also
         // brakes, so a tap of it with the button is enough); the stick held
-        // forward throws goo or a block ahead. The keys can't throw ahead:
-        // W is held to drive. Alt or the right stick held looks behind, and
-        // what is fired then goes behind too.
+        // forward, or the right mouse button in place of the left (W is held
+        // to drive, so the keys can't say ahead), throws goo or a block
+        // ahead. Alt or the right stick held looks behind, and what is fired
+        // then goes behind too.
         self.stick_back = input.stick.y < -0.5 || (!input.pad && input.back);
         self.stick_ahead = input.pad && input.stick.y > 0.5;
         self.look_back = input.look;
@@ -1000,7 +1138,7 @@ impl Activity for Race {
         // The left button uses what the kart carries; with KART_ARMS=all the
         // digits pick the weapon.
         self.trigger = std::mem::take(&mut actions.dig);
-        actions.place = false;
+        self.ahead = std::mem::take(&mut actions.place);
         if let Some(k) = actions.select.take() {
             self.pick = k.saturating_sub(1) % Item::WEAPONS.len();
         }
@@ -1020,6 +1158,19 @@ impl Activity for Race {
             return;
         }
         self.arms.step(cx.store, cx.ents, cx.models, &self.track, cx.edits, crate::game::STEP);
+        self.course.take(cx.edits, &mut cx.ents.cues);
+        // A lap's herd replaces the last lap's, and a race started over
+        // begins with none of the last race's animals about.
+        for e in self.course.take_gone() {
+            let _ = cx.ents.world.despawn(e);
+        }
+        for (zone, name, x, z, seed) in self.course.take_spawns() {
+            if let Some(s) = cx.ents.species.iter().position(|s| s.name == name) {
+                if let Some(put) = cx.ents.place_one(s, (x, z), cx.store, cx.models, seed) {
+                    self.course.placed(zone, put);
+                }
+            }
+        }
     }
 
     fn wants_world_clean(&mut self) -> bool {
@@ -1046,6 +1197,7 @@ impl Activity for Race {
 
     fn instances(&self, player: &Player, alpha: f32, weapons: usize, models: &[crate::models::Model], out: &mut Vec<(usize, crate::models::Instance)>) {
         self.arms_instances(player, alpha, weapons, models, out);
+        self.gantry_instances(weapons, models, out);
         for (i, b) in self.bots.iter().enumerate() {
             if b.home() {
                 continue;

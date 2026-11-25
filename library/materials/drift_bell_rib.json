@@ -1,0 +1,9 @@
+{
+  "name": "drift_bell_rib",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "The ribs of a drift-bell's dome and its frilled skirt: a deeper violet-rose.",
+  "like": "drift_bell_dome",
+  "glow": 0.5,
+  "texture": {"base": [176, 120, 186], "alt": [204, 150, 204], "calm": {"base": [184, 128, 192], "alt": [210, 158, 210]}}
+}

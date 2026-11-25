@@ -17,5 +17,6 @@
   "cane_bend": 0.04,
   "cane_spurs": 0.6,
   "flower": "sloes",
-  "flower_seasons": ["autumn"]
+  "flower_seasons": ["autumn"],
+  "site": {"wet": [0.25, 0.75], "soil": [0.5, 1.0], "shade": [0.0, 0.4]}
 }

@@ -5,6 +5,7 @@
   "notes": "The ponderosa forest on top of Vermilion Mesa: Redrock's plateau forest, placed by region instead of by height, since the mesa top is far lower than Redrock's plateau.",
   "priority": 5,
   "rules": {"region": "mesa_top"},
+  "soil": 0.35,
   "map_color": [70, 104, 60],
   "creatures": [{"creature": "acorn_woodpecker", "count": 3}],
   "like": "ponderosa_forest"

@@ -27,6 +27,7 @@
 
 pub mod aim;
 pub mod avatar;
+pub mod companion;
 pub mod desire;
 pub mod duel;
 pub mod nav;
@@ -36,6 +37,7 @@ pub mod sheet;
 pub mod steer;
 pub mod team;
 pub mod team_v0;
+pub mod zombie;
 
 use crate::anim::figure::Figure;
 use crate::combat::weapon::{Arsenal, Trigger};
@@ -717,7 +719,7 @@ impl Bot {
 
     /// The build a bot with this seed is drawn as: any of them, evenly.
     fn build_for(seed: u32, av: &avatar::Avatar) -> usize {
-        (seed.wrapping_mul(0x9e37_79b9) >> 16) as usize % av.bodies.len()
+        av.bot_build(seed)
     }
 
     /// The body's own numbers. `Bot::body` is a whole `Player`, so these
@@ -747,7 +749,7 @@ impl Bot {
     pub fn muzzle(&self, av: &avatar::Avatar, shape: usize) -> Vec3 {
         let (at, yaw, rot) = self.grip(av, 1.0);
         let (sy, cy) = yaw.sin_cos();
-        let v = rot * ((crate::combat::viewmodel::muzzle(shape) - Vec3::new(16.0, 0.0, 16.0)) * crate::combat::viewmodel::VOXEL * crate::shooter::BOT_GUN);
+        let v = rot * ((crate::combat::viewmodel::muzzle(shape) - Vec3::new(16.0, 0.0, 16.0)) * crate::combat::viewmodel::VOXEL);
         at + Vec3::new(cy, 0.0, -sy) * v.x + Vec3::Y * v.y + Vec3::new(sy, 0.0, cy) * v.z
     }
 

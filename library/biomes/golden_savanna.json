@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "thornpan",
   "notes": "Open savanna: gold tussock grass on rolling sand, flat-topped acacias in loose stands, baobabs standing alone a hundred metres apart, and termite mounds. The country between the water and the pans.",
+  "habitat": "parkland",
   "priority": 6,
   "rules": {"elev": [2.0, 60], "slope": [0, 0.5]},
   "surface": "savanna_grass",
   "subsurface": "packed_dirt",
+  "soil": 0.5,
   "map_color": [172, 150, 96],
   "plants": [
     {

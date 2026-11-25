@@ -2,7 +2,7 @@
   "name": "drift_sparks_hot",
   "version": 1,
   "introduced_by": "kart_race",
-  "notes": "Sparks off a drifting kart's back wheels once the drift has charged its second, bigger boost (fx/hooks.rs `drift`).",
+  "notes": "Sparks off a drifting kart's back wheels once the drift has charged its second level of boost (fx/hooks.rs `drift`).",
   "shape": "streak",
   "count": [2, 3],
   "speed": [2.0, 4.5],

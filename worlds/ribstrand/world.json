@@ -12,6 +12,7 @@
     "height": 0.9
   },
   "seed": 6794,
+  "plants": "v2",
   "underwater": {
     "visibility": 20,
     "light": 0.35

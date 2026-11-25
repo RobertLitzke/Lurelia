@@ -11,7 +11,11 @@
     "tusk": [214, 140, 40],
     "dark": [36, 28, 24]
   },
-  "behaviour": {"active": "nocturnal", "off_hours": 0.15},
+  "behaviour": {
+    "active": "nocturnal",
+    "off_hours": 0.15,
+    "voice": {"calls": [{"cry": "grunt", "on": "idle", "size": 0.5, "every_s": [120, 400]}]}
+  },
   "like": "capybara",
   "scale": 0.5
 }

@@ -1,0 +1,76 @@
+{
+  "name": "gannet_harbor",
+  "title": "GANNET HARBOR",
+  "blurb": "A street circuit in an empty whaling town in the autumn fog: granite setts between the houses, out and back along two plank piers over the bay, up Church Hill, and one long fall straight down it into the dark of the ropewalk.",
+  "size_m": 512.0,
+  "height_m": 96,
+  "sea_level_m": 4,
+  "seed": 9601,
+  "plants": "v2",
+  "sun": {
+    "latitude": 50
+  },
+  "modes": [
+    "walk",
+    "drive",
+    "race",
+    "screenshot",
+    "camera"
+  ],
+  "games": [
+    "race"
+  ],
+  "vehicles": [
+    "kart"
+  ],
+  "start_hour": 7.0,
+  "rock": [
+    [
+      "granite",
+      0.6
+    ],
+    [
+      "stone_dark",
+      0.4
+    ]
+  ],
+  "biomes": [
+    "gh_town",
+    "gh_pasture",
+    "gh_hayfield",
+    "gh_spruce",
+    "rib_beach",
+    "gh_clam_flats",
+    "gh_bay_floor"
+  ],
+  "default_biome": "gh_town",
+  "seabed_biome": "gh_bay_floor",
+  "seasons": [
+    "autumn",
+    "summer",
+    "winter",
+    "spring"
+  ],
+  "weather": {
+    "fog": 1.4,
+    "clouds": 1.4,
+    "sun": 0.5,
+    "rain": 1.1
+  },
+  "start_weather": "fog",
+  "weathering": 0.3,
+  "moss": 0.3,
+  "start_season": "autumn",
+  "spawn": [
+    175,
+    410
+  ],
+  "spawn_bearing": 359,
+  "race": {
+    "circuit": "gannet_harbor_ring",
+    "track": "track.json",
+    "laps": 3,
+    "rivals": 5,
+    "vehicle": "kart"
+  }
+}

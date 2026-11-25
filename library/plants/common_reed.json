@@ -15,5 +15,6 @@
   "cane_lean": 0.15,
   "cane_bend": 0.01,
   "cane_spurs": 0.0,
-  "cane_leaves": 0.3
+  "cane_leaves": 0.3,
+  "site": {"wet": [0.8, 1.0], "shade": [0.0, 0.3]}
 }

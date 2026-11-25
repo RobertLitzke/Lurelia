@@ -18,5 +18,6 @@
   "flower": "protea_flower",
   "flower_tips": true,
   "flower_seasons": ["winter", "spring"],
-  "affords": ["nectar"]
+  "affords": ["nectar"],
+  "site": {"soil": [0.0, 0.4], "wet": [0.0, 0.6]}
 }

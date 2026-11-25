@@ -1,13 +1,14 @@
 {
   "name": "garden_eel",
-  "version": 1,
+  "version": 2,
   "introduced_by": "underwater",
-  "notes": "Garden eels: a colony of thin spotted eels standing up out of their holes in the sand like a field of stalks, all facing into the current, and all sinking back into the sand as you swim near.",
+  "notes": "Garden eels: a colony of thin spotted eels standing up out of their holes in the sand like a field of stalks, all facing into the current, and all sinking back into the sand as you swim near. v2: one tapered segment chain with a slight lean, a flattened head, eyes as small dark ellipsoids, spots by recolour.",
   "voxel": 0.015,
   "half_w": 0.03,
   "height": 0.5,
-  "colors": {"eel": [222, 212, 182], "spot": [60, 52, 44], "dark": [36, 28, 24]},
+  "colors": {"eel": [222, 212, 182], "spot": [60, 52, 44], "dark": [36, 28, 24], "eye": [12, 10, 10]},
   "behaviour": {
+    "displays": [{"kind": "sway"}],
     "movement": "school",
     "habit": "burrow",
     "walk_speed": 0.0,
@@ -20,11 +21,17 @@
     "active": "diurnal"
   },
   "ops": [
-    {"op": "box", "from": [16, 0, 16], "to": [18, 30, 18], "mat": "eel"},
-    {"op": "ellipsoid", "centre": [17, 31, 17], "radius": [1.4, 1.8, 1.6], "mat": "eel"},
-    {"op": "recolour", "at": [16, 6, 16], "until": [18, 8, 17], "from": "eel", "to": "spot"},
-    {"op": "recolour", "at": [16, 14, 17], "until": [18, 16, 18], "from": "eel", "to": "spot"},
-    {"op": "recolour", "at": [16, 22, 16], "until": [18, 24, 17], "from": "eel", "to": "spot"},
-    {"op": "set", "at": [16, 31, 16], "mat": "dark"}
+    {"op": "segment", "points": [[16.5, 0, 16.8], [16.8, 10, 16.9]], "radius": 1.9, "mat": "eel"},
+    {"op": "segment", "points": [[16.8, 10, 16.9], [17, 20, 16.8]], "radius": 1.6, "mat": "eel"},
+    {"op": "segment", "points": [[17, 20, 16.8], [17, 28, 16.4]], "radius": 1.4, "mat": "eel"},
+    {"op": "ellipsoid", "centre": [17, 30, 16], "radius": [1.8, 1.9, 2.4], "mat": "eel"},
+    {"op": "ellipsoid", "centre": [17, 29.6, 14.3], "radius": [1.2, 1.0, 1.1], "mat": "eel"},
+    {"op": "ellipsoid", "centre": [15.3, 30.4, 15.0], "radius": [1.0, 1.1, 1.1], "mat": "eye"},
+    {"op": "ellipsoid", "centre": [18.7, 30.4, 15.0], "radius": [1.0, 1.1, 1.1], "mat": "eye"},
+    {"op": "recolour", "at": [14, 5, 14], "until": [20, 8, 19], "from": "eel", "to": "spot"},
+    {"op": "recolour", "at": [14, 13, 14], "until": [20, 16, 19], "from": "eel", "to": "spot"},
+    {"op": "recolour", "at": [14, 21, 14], "until": [20, 24, 19], "from": "eel", "to": "spot"},
+    {"op": "recolour", "at": [14, 27, 14], "until": [20, 28, 19], "from": "eel", "to": "spot"},
+    {"op": "ellipsoid", "centre": [17, 29.2, 13.4], "radius": [1.0, 0.6, 0.8], "mat": "dark"}
   ]
 }

@@ -1,0 +1,17 @@
+{
+  "name": "maple_orange",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A maple turned clear orange in autumn. One of the autumn coats maples draw from (plants/maple.json morphs).",
+  "smooth": false,
+  "foliage": true,
+  "sprites": {"rule": "leaves", "shape": "maple"},
+  "texture": {
+    "pattern": "blotch",
+    "base": [200, 96, 26],
+    "alt": [232, 140, 40],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [204, 106, 34], "alt": [226, 142, 50]}
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "azulejo_terracotta",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Glazed wall tile in terracotta red and cream, for borders and the lower courses.",
+  "like": "azulejo_cobalt",
+  "texture": {"base": [184, 92, 58], "alt": [226, 210, 190], "calm": {"base": [188, 100, 68], "alt": [230, 216, 196]}}
+}

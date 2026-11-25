@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "jadewater",
   "notes": "The Order's temple grounds at the foot of the Old Wall: moss over everything, banyans in the walls, stone lanterns and rows of little statues.",
+  "habitat": "tropical_forest",
   "priority": 10,
   "rules": {"region": "temple"},
   "surface": "moss_grass",
   "subsurface": "dirt",
+  "soil": 0.45,
   "map_color": [190, 96, 80],
   "plants": [
     {"plant": "banyan", "density": 0.001, "placement": {"verb": "lone", "params": {"spacing": 26}}},

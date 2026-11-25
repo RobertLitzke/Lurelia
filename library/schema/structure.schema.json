@@ -140,7 +140,7 @@
           "const": "sea"
         },
         {
-          "description": "The anchor voxel sits at the highest ground under the footprint and\nnothing is levelled: bridges spanning a gap, things hung on a cliff.",
+          "description": "The anchor voxel sits at the highest ground under the footprint and\nnothing is levelled: things hung on a cliff. Tagged \"bridge\", it is\nseated on its banks instead: the deck set from the ground off both\ntips, the ends graded to it and nearby roads run on to them\n(library/schema/structure.md, \"Bridges\").",
           "type": "string",
           "const": "rim"
         },

@@ -406,6 +406,13 @@
     "^_": {}
   },
   "properties": {
+    "cave_creatures": {
+      "description": "Creatures for the caves under this biome (a lava tube, a passage):\nwanted instead of `creatures` while the player is under a roof, and\nout at any hour, since it is always dark down there.",
+      "items": {
+        "$ref": "#/$defs/CreatureUse"
+      },
+      "type": "array"
+    },
     "collectibles": {
       "items": {
         "$ref": "#/$defs/CollectibleUse"
@@ -429,6 +436,14 @@
       "description": "How far this biome's ground reaches across its edges into the\nneighbouring biome, metres: the edge breaks into interlocking patches\ninstead of a line, and the grass growing on it fringes too. 0 keeps a\nhard edge, and a biome with 0 is never mixed into its neighbours\neither (a shore, a lava field, a paved square).",
       "format": "float",
       "type": "number"
+    },
+    "habitat": {
+      "default": null,
+      "description": "The habitat this biome is an instance of (`library/habitats/`): what\nkind of ground it is, whatever world it is in. Inherited through\n`like` unless the child names its own. Read by fill\n(`WorldDef::fill`) and nothing else yet.",
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "introduced_by": {
       "default": "",
@@ -477,6 +492,18 @@
       "format": "int32",
       "type": "integer"
     },
+    "realm": {
+      "additionalProperties": {
+        "format": "float",
+        "type": "number"
+      },
+      "default": null,
+      "description": "Realms whose life comes through here on top of the world's mix\n(`WorldDef::realms`), with their strength 0 to 1: `{\"fae\": 0.8}` for\na faerie glade in a real wood. Painted over the biome's cells as realm\noverlays (`world/realm_map.rs`), which fill and realm looks read.",
+      "type": [
+        "object",
+        "null"
+      ]
+    },
     "rock": {
       "default": null,
       "description": "Exposed rock on steep ground; else the world's rock strata.",
@@ -487,6 +514,15 @@
     },
     "rules": {
       "$ref": "#/$defs/Rules"
+    },
+    "soil": {
+      "default": null,
+      "description": "The ground's soil, 0 (acid and poor: heath, bog, pine sand) to 1\n(base-rich: limestone, rich meadow); 0.5 if left out. Graded across\nbiome borders (world/site.rs).",
+      "format": "float",
+      "type": [
+        "number",
+        "null"
+      ]
     },
     "sound": {
       "anyOf": [

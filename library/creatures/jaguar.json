@@ -14,7 +14,14 @@
     "spawn_chance": 0.05,
     "swims": true,
     "active": "nocturnal",
-    "off_hours": 0.1
+    "off_hours": 0.1,
+    "voice": {
+      "size": 1.2,
+      "calls": [
+        {"cry": "growl", "on": "idle", "hours": "night", "every_s": [600, 1800], "boost": 4},
+        {"cry": "growl", "on": "chase"}
+      ]
+    }
   },
   "like": "cougar",
   "scale": 1.15,
@@ -22,21 +29,21 @@
     {
       "op": "repeat",
       "count": 7,
-      "step": [0, 0, 3],
+      "step": [0, 0, 5],
       "ops": [
-        {"op": "recolour", "at": [11, 11, 8], "until": [13, 13, 9], "from": "coat", "to": "spot"},
-        {"op": "recolour", "at": [19, 11, 9], "until": [21, 13, 10], "from": "coat", "to": "spot"},
-        {"op": "recolour", "at": [14, 13, 8], "until": [15, 15, 9], "from": "coat", "to": "spot"},
-        {"op": "recolour", "at": [17, 13, 10], "until": [18, 15, 11], "from": "coat", "to": "spot"}
+        {"op": "recolour", "at": [7, 19, 15], "until": [11, 23, 17], "from": "coat", "to": "spot"},
+        {"op": "recolour", "at": [21, 19, 17], "until": [25, 23, 19], "from": "coat", "to": "spot"},
+        {"op": "recolour", "at": [13, 23, 15], "until": [14, 26, 17], "from": "coat", "to": "spot"},
+        {"op": "recolour", "at": [18, 23, 19], "until": [19, 26, 20], "from": "coat", "to": "spot"}
       ]
     },
     {
       "op": "repeat",
       "count": 4,
-      "step": [0, 0, 3],
-      "ops": [{"op": "recolour", "at": [15, 8, 23], "until": [17, 11, 24], "from": "coat", "to": "spot"}]
+      "step": [0, 0, 5],
+      "ops": [{"op": "recolour", "at": [14, 14, 41], "until": [18, 19, 43], "from": "coat", "to": "spot"}]
     },
-    {"op": "set", "at": [13, 15, 4], "mat": "spot", "part": "head"},
-    {"op": "set", "at": [19, 15, 4], "mat": "spot", "part": "head"}
+    {"op": "box", "from": [11, 26, 8], "to": [13, 28, 10], "mat": "spot", "part": "head"},
+    {"op": "box", "from": [21, 26, 8], "to": [23, 28, 10], "mat": "spot", "part": "head"}
   ]
 }

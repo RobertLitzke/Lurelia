@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "ribshore",
   "notes": "The old stand inland: Douglas fir and redwood over sword fern and salal, the trunks too wide to reach round, a few fallen giants.",
+  "habitat": "conifer_forest",
   "priority": 4,
   "rules": {"region": "firstand", "elev": [3, 200]},
   "surface": "pine_duff",
   "subsurface": "dirt",
+  "soil": 0.35,
   "map_color": [30, 52, 40],
   "plants": [
     {"plant": "redwood", "density": 0.006, "placement": {"verb": "clustered", "params": {"size": 36}}},

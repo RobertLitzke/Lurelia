@@ -897,6 +897,7 @@ dependencies = [
  "cpal",
  "glam",
  "hecs",
+ "miniz_oxide 0.8.9",
  "naga",
  "png",
  "pollster",

@@ -1,0 +1,8 @@
+{
+  "name": "gambels_quail_female",
+  "version": 1,
+  "introduced_by": "redrock",
+  "notes": "Gambel's quail's female form (gambels_quail `forms`): the hen, plain grey-brown on the head with no black face or chestnut crown, a buff belly without the black patch, duller chestnut flanks, and a short brownish plume. Only its model is used.",
+  "colors": {"black": [112, 104, 96], "chestnut": [132, 96, 72], "head": [128, 124, 122]},
+  "like": "gambels_quail"
+}

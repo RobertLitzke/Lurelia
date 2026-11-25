@@ -13,7 +13,16 @@
     "breast": [52, 96, 160],
     "head_cap": [24, 26, 34]
   },
-  "behaviour": {"flightiness": 0.9},
+  "behaviour": {
+    "displays": [{"kind": "cache", "food": "acorn"}],
+    "flightiness": 0.9,
+    "voice": {
+      "calls": [
+        {"cry": "caw", "on": "idle", "hours": "day", "size": 0.6, "every_s": [30, 120]},
+        {"cry": "caw", "on": "takeoff", "size": 0.6, "chance": 0.5}
+      ]
+    }
+  },
   "like": "sparrow",
   "scale": 1.6
 }

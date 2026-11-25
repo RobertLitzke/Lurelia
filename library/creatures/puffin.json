@@ -26,16 +26,17 @@
     "flight": "flap",
     "group": null,
     "fly_height": 7,
-    "dive_depth": 7
+    "dive_depth": 7,
+    "voice": {"calls": [{"cry": "grunt", "on": "idle", "size": 0.6, "every_s": [200, 600], "chance": 0.5}]}
   },
   "like": "razorbill",
   "scale": 0.85,
   "extra_ops": [
-    {"op": "recolour", "at": [13, 9, 5], "until": [20, 15, 11], "from": "head", "to": "face"},
-    {"op": "ellipsoid", "centre": [16, 11.6, 5.4], "radius": [1.4, 2, 2.6], "mat": "air", "part": "head"},
-    {"op": "box", "from": [15, 9, 7], "to": [17, 14, 9], "mat": "bill_base", "part": "head"},
-    {"op": "box", "from": [15, 10, 5], "to": [17, 13, 7], "mat": "bill_stripe", "part": "head"},
-    {"op": "box", "from": [15, 10, 3], "to": [17, 13, 5], "mat": "bill", "part": "head"},
-    {"op": "box", "from": [15, 11, 2], "to": [17, 12, 3], "mat": "bill", "part": "head"}
+    {"op": "recolour", "at": [20, 13, 6], "until": [30, 21, 15], "from": "head", "to": "face"},
+    {"op": "ellipsoid", "centre": [24.0, 16.571, 6.857], "radius": [2.0, 2.857, 3.714], "mat": "air", "part": "head"},
+    {"op": "box", "from": [23, 13, 9], "to": [25, 20, 12], "mat": "bill_base", "part": "head"},
+    {"op": "box", "from": [23, 14, 6], "to": [25, 19, 9], "mat": "bill_stripe", "part": "head"},
+    {"op": "box", "from": [23, 14, 3], "to": [25, 19, 6], "mat": "bill", "part": "head"},
+    {"op": "box", "from": [23, 16, 2], "to": [25, 17, 3], "mat": "bill", "part": "head"}
   ]
 }

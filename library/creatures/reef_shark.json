@@ -1,13 +1,15 @@
 {
   "name": "reef_shark",
-  "version": 1,
+  "version": 2,
   "introduced_by": "underwater",
   "notes": "Grey reef shark: about 1.6 m, grey above and white below, cruising the wall and the pass in long slow passes. It minds nobody.",
-  "voxel": 0.05,
+  "voxel": 0.04,
+  "grid": [32, 32, 44],
   "half_w": 0.18,
   "height": 0.4,
-  "colors": {"shark": [112, 120, 126], "belly": [236, 236, 230], "dark": [36, 28, 24]},
+  "colors": {"shark": [112, 120, 126], "belly": [236, 236, 230], "dark": [36, 28, 24], "eye": [18, 14, 12]},
   "behaviour": {
+    "displays": [{"kind": "patrol"}],
     "movement": "school",
     "habit": "patrol",
     "walk_speed": 1.0,
@@ -23,22 +25,41 @@
     "hunts": ["sardine", "jack", "parrotfish", "yellow_tang"]
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [16.5, 6, 15], "radius": [2.8, 3.0, 11], "mat": "shark"},
-    {"op": "ellipsoid", "centre": [16.5, 5.5, 5], "radius": [2.0, 2.0, 3.2], "mat": "shark"},
-    {"op": "recolour_below", "y": 5, "from": "shark", "to": "belly"},
-    {"op": "box", "from": [16, 8, 11], "to": [17, 12, 14], "mat": "shark"},
-    {"op": "box", "from": [16, 8, 14], "to": [17, 10, 16], "mat": "shark"},
-    {"op": "box", "from": [10, 4, 10], "to": [13, 5, 14], "mat": "shark"},
-    {"op": "box", "from": [20, 4, 10], "to": [23, 5, 14], "mat": "shark"},
-    {"op": "set", "at": [14, 7, 4], "mat": "dark"},
-    {"op": "set", "at": [19, 7, 4], "mat": "dark"},
-    {"op": "ellipsoid", "centre": [16.5, 6, 26], "radius": [1.1, 1.4, 2.8], "mat": "shark", "part": "tail"},
-    {"op": "box", "from": [16, 7, 27], "to": [17, 13, 31], "mat": "shark", "part": "tail"},
-    {"op": "box", "from": [16, 1, 27], "to": [17, 5, 30], "mat": "shark", "part": "tail"},
-    {"op": "recolour", "at": [16, 11, 29], "until": [17, 13, 31], "from": "shark", "to": "dark"}
+    {"op": "ellipsoid", "centre": [16.625, 7.5, 16.5], "radius": [3.8, 4.0, 12.5], "mat": "shark"},
+    {"op": "ellipsoid", "centre": [16.625, 7.2, 9.0], "radius": [3.1, 2.7, 5.5], "mat": "shark"},
+    {"op": "ellipsoid", "centre": [16.625, 7.4, 27.5], "radius": [2.4, 2.8, 6.5], "mat": "shark"},
+    {"op": "recolour_below", "y": 6, "from": "shark", "to": "belly"},
+    {"op": "ellipsoid", "centre": [16.625, 13.0, 17.5], "radius": [1.2, 4.4, 3.8], "mat": "shark"},
+    {"op": "ellipsoid", "centre": [16.625, 10.3, 30.0], "radius": [1.0, 1.6, 1.8], "mat": "shark"},
+    {"op": "ellipsoid", "centre": [11.425, 5.0, 12.5], "radius": [4.2, 1.1, 3.0], "mat": "shark"},
+    {"op": "ellipsoid", "centre": [21.825, 5.0, 12.5], "radius": [4.2, 1.1, 3.0], "mat": "shark"},
+    {"op": "ellipsoid", "centre": [14.025, 4.4, 27.0], "radius": [2.0, 1.0, 1.8], "mat": "shark"},
+    {"op": "ellipsoid", "centre": [19.225, 4.4, 27.0], "radius": [2.0, 1.0, 1.8], "mat": "shark"},
+    {"op": "recolour", "at": [14, 16, 13], "until": [19, 19, 22], "from": "shark", "to": "dark"},
+    {"op": "ellipsoid", "centre": [13.925, 8.2, 7.0], "radius": [1.2, 1.2, 1.4], "mat": "eye"},
+    {"op": "ellipsoid", "centre": [19.325, 8.2, 7.0], "radius": [1.2, 1.2, 1.4], "mat": "eye"},
+    {"op": "ellipsoid", "centre": [16.625, 7.5, 34.0], "radius": [1.7, 2.3, 4.6], "mat": "shark", "part": "tail"},
+    {
+      "op": "segment",
+      "points": [[16.625, 8.5, 34], [16.625, 17.0, 39.5]],
+      "radius": 1.4,
+      "mat": "shark",
+      "part": "tail"
+    },
+    {
+      "op": "segment",
+      "points": [[16.625, 6.5, 35], [16.625, 2.0, 38.5]],
+      "radius": 1.2,
+      "mat": "shark",
+      "part": "tail"
+    },
+    {"op": "recolour", "at": [15, 13, 36], "until": [19, 19, 42], "from": "shark", "to": "dark"}
   ],
   "rig": {
     "plan": "fish",
-    "bones": [{"name": "body", "role": "root"}, {"name": "tail", "role": "tail", "parent": "body", "joint": [16.5, 6, 23]}]
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.625, 7.5, 30.75]}
+    ]
   }
 }

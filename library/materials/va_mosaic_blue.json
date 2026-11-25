@@ -1,0 +1,16 @@
+{
+  "name": "va_mosaic_blue",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Plaza paving of glazed tile set in a mosaic, cobalt and white; it shines when it is wet.",
+  "smooth": true,
+  "crisp": true,
+  "texture": {
+    "pattern": "coursed",
+    "base": [52, 84, 160],
+    "alt": [216, 222, 230],
+    "scale": 6,
+    "contrast": 1.0,
+    "calm": {"base": [64, 96, 172], "alt": [222, 228, 234]}
+  }
+}

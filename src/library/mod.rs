@@ -44,6 +44,8 @@ mod biome;
 mod check;
 mod collectible;
 mod creature;
+mod habitat;
+mod realm;
 mod look;
 mod material;
 mod plant;
@@ -53,6 +55,8 @@ mod weapon;
 pub use biome::*;
 pub use collectible::*;
 pub use creature::*;
+pub use habitat::*;
+pub use realm::*;
 pub use look::*;
 pub use material::*;
 pub use plant::*;
@@ -73,11 +77,18 @@ pub struct Library {
     pub cities: Vec<crate::world::city::Kit>,
     pub creatures: Vec<CreatureDef>,
     pub biomes: Vec<BiomeDef>,
+    /// The kinds of ground biomes are instances of (`BiomeDef::habitat`).
+    pub habitats: Vec<HabitatDef>,
+    /// Which worlds life comes from (`realms` on species, biomes, worlds).
+    pub realms: Vec<RealmDef>,
     pub collectibles: Vec<CollectibleDef>,
     /// How signs look (world/places.rs).
     pub signs: Vec<crate::world::places::SignStyle>,
     /// The guns a shooter world may hand out (src/combat).
     pub weapons: Vec<WeaponDef>,
+    /// Each weapon's file as written, by name: what a game's `weapon_tune`
+    /// is merged onto (`crate::tune`).
+    pub weapon_json: HashMap<String, serde_json::Value>,
     /// Particle effects: dust, splashes, chips, falling leaves (src/fx).
     pub fx: Vec<crate::fx::FxDef>,
     /// The library names the world being built reaches (`worldload::reach`),
@@ -100,6 +111,11 @@ struct Index {
     collectibles: HashMap<String, usize>,
     signs: HashMap<String, usize>,
     weapons: HashMap<String, usize>,
+}
+
+/// The name of material `name`'s passable copy (`Library::ghost_twins`).
+pub fn ghost(name: &str) -> String {
+    format!("{name}@ghost")
 }
 
 /// Name -> position, keeping the first of any duplicates (validate reports those).
@@ -161,6 +177,23 @@ fn load_dir<T: for<'de> Deserialize<'de>>(dir: &Path, errors: &mut Vec<String>) 
     out
 }
 
+/// Every entry in `dir` as written, by its `name`, for whatever merges onto
+/// them later. A file that does not parse is left out here; `load_dir`
+/// reports it.
+fn raw_dir(dir: &Path) -> HashMap<String, serde_json::Value> {
+    let mut out = HashMap::new();
+    let Ok(rd) = std::fs::read_dir(dir) else {
+        return out;
+    };
+    for p in rd.filter_map(|e| e.ok()).map(|e| e.path()).filter(|p| p.extension().is_some_and(|x| x == "json")) {
+        let Some(v) = std::fs::read_to_string(&p).ok().and_then(|t| serde_json::from_str::<serde_json::Value>(&t).ok()) else { continue };
+        if let Some(n) = v.get("name").and_then(|n| n.as_str()) {
+            out.insert(n.to_string(), v);
+        }
+    }
+    out
+}
+
 impl Library {
     /// A library holding nothing but these materials, for code that needs a
     /// material list in a `Library` (the EDIT page: `matlib::install` takes
@@ -174,7 +207,9 @@ impl Library {
     pub fn load(root: &Path) -> (Library, Vec<String>) {
         let lib_dir = root.join("library");
         let mut errors = Vec::new();
+        let weapon_json = raw_dir(&lib_dir.join("weapons"));
         let mut lib = Library {
+            weapon_json,
             index: Index::default(),
             reach: None,
             // Materials inherit (`"like": "quartzite", "shade": 0.78`), so a
@@ -188,6 +223,8 @@ impl Library {
             creatures: load_dir_inherit::<CreatureDef>(&lib_dir.join("creatures"), &mut errors).into_iter().map(|x| x.1).collect(),
             // Biomes inherit too (`"like": "city_park"`), lists replaced whole.
             biomes: load_dir_inherit::<BiomeDef>(&lib_dir.join("biomes"), &mut errors).into_iter().map(|x| x.1).collect(),
+            habitats: load_dir::<HabitatDef>(&lib_dir.join("habitats"), &mut errors).into_iter().map(|x| x.1).collect(),
+            realms: load_dir::<RealmDef>(&lib_dir.join("realms"), &mut errors).into_iter().map(|x| x.1).collect(),
             collectibles: load_dir::<CollectibleDef>(&lib_dir.join("collectibles"), &mut errors).into_iter().map(|x| x.1).collect(),
             signs: load_dir::<crate::world::places::SignStyle>(&lib_dir.join("signs"), &mut errors).into_iter().map(|x| x.1).collect(),
             weapons: load_dir::<WeaponDef>(&lib_dir.join("weapons"), &mut errors).into_iter().map(|x| x.1).collect(),
@@ -344,6 +381,27 @@ impl Library {
         reach.extend(names);
     }
 
+    /// Passable copies of the reached materials in `bases`, named
+    /// `<name>@ghost` (`ghost`): drawn like the original, but nothing
+    /// collides with them. Race lamp posts are built of them so a kart
+    /// drives through a post. Widens `reach` to each copy made.
+    pub fn ghost_twins(&mut self, bases: &[String], reach: &mut std::collections::HashSet<String>) {
+        for b in bases {
+            let name = ghost(b);
+            if !reach.contains(b) || self.materials.iter().any(|m| m.name == name) {
+                continue;
+            }
+            let Some(m) = self.materials.iter().find(|m| &m.name == b) else { continue };
+            let mut g = m.clone();
+            g.name = name.clone();
+            g.file_id = None;
+            g.was.clear();
+            g.passable = true;
+            self.materials.push(g);
+            reach.insert(name);
+        }
+    }
+
     /// The material a plant draws one of its colour slots in, before any coat.
     pub fn plant_slot(&self, pi: usize, slot: &str) -> Option<&String> {
         let p = &self.plants[pi];
@@ -419,6 +477,13 @@ impl Library {
             .collect()
     }
 
+    /// Whether this creature entry is another's form (`Forms`): drawn as a
+    /// lioness or a fawn of its species, and never spawned or penned as an
+    /// animal of its own.
+    pub fn is_form(&self, name: &str) -> bool {
+        self.creatures.iter().any(|c| c.forms.each().any(|(_, f)| f == name))
+    }
+
     pub fn plant(&self, name: &str) -> Option<usize> {
         self.index.plants.get(name).copied()
     }
@@ -438,6 +503,12 @@ impl Library {
     }
     pub fn biome(&self, name: &str) -> Option<usize> {
         self.index.biomes.get(name).copied()
+    }
+    /// The habitat a biome is an instance of (`BiomeDef::habitat`). Few, so
+    /// looked up by scanning.
+    pub fn habitat_of(&self, bi: usize) -> Option<&HabitatDef> {
+        let name = self.biomes.get(bi)?.habitat.as_ref()?;
+        self.habitats.iter().find(|h| &h.name == name)
     }
     pub fn collectible(&self, name: &str) -> Option<usize> {
         self.index.collectibles.get(name).copied()

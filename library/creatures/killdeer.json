@@ -16,14 +16,21 @@
     "wary": 10,
     "active": "diurnal",
     "off_hours": 0.15,
-    "winter": 0.6
+    "winter": 0.6,
+    "voice": {
+      "size": 1.1,
+      "calls": [{"cry": "pipe", "on": "takeoff", "chance": 0.8}, {"cry": "pipe", "on": "idle", "every_s": [40, 150]}]
+    }
   },
   "like": "snowy_plover",
   "scale": 1.35,
   "extra_ops": [
-    {"op": "box", "from": [13, 10, 11], "to": [19, 11, 13], "mat": "patch"},
-    {"op": "box", "from": [13, 8, 13], "to": [19, 9, 15], "mat": "patch"},
-    {"op": "box", "from": [13, 12, 8], "to": [19, 13, 9], "mat": "patch", "part": "head"},
-    {"op": "box", "from": [15, 10, 24], "to": [17, 11, 26], "mat": "patch", "part": "tail"}
+    {"op": "recolour", "at": [14, 11, 12], "until": [24, 17, 14], "from": "back", "to": "patch"},
+    {"op": "recolour", "at": [14, 11, 12], "until": [24, 17, 14], "from": "belly", "to": "patch"},
+    {"op": "recolour", "at": [14, 11, 12], "until": [24, 17, 14], "from": "head", "to": "patch"},
+    {"op": "recolour", "at": [14, 9, 15], "until": [24, 15, 17], "from": "back", "to": "patch"},
+    {"op": "recolour", "at": [14, 9, 15], "until": [24, 15, 17], "from": "belly", "to": "patch"},
+    {"op": "recolour", "at": [14, 9, 15], "until": [24, 15, 17], "from": "head", "to": "patch"},
+    {"op": "recolour", "at": [18, 13, 30], "until": [20, 17, 33], "from": "tail", "to": "patch"}
   ]
 }

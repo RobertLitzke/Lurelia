@@ -57,7 +57,7 @@
       "sidearm",
       "goo_gun",
       "bore",
-      "pulse_gun",
+      "arc_gun",
       "skipjack",
       "minigun",
       "scrap_gun",
@@ -853,7 +853,7 @@
         "kind": "weapon",
         "at": [158.0, 186.0],
         "up": 0.0,
-        "weapon": "pulse_gun",
+        "weapon": "arc_gun",
         "respawn_s": 20.0
       },
       {
@@ -916,7 +916,7 @@
         "kind": "ammo",
         "at": [216.0, 206.0],
         "up": 0.0,
-        "weapon": "pulse_gun"
+        "weapon": "arc_gun"
       },
       {
         "kind": "ammo",

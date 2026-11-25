@@ -13,7 +13,11 @@
     "breast": [236, 232, 224],
     "head_cap": [80, 58, 44]
   },
-  "behaviour": {"flightiness": 1.0},
+  "behaviour": {
+    "displays": [{"kind": "bob", "params": {"bob": 0.04, "bob_s": 0.45, "swivel": 0.6, "sway": 0}}],
+    "flightiness": 1.0,
+    "voice": {"calls": [{"cry": "song", "on": "idle", "hours": "day", "size": 0.8, "every_s": [20, 80], "rain": true}]}
+  },
   "like": "sparrow",
   "scale": 1.0
 }

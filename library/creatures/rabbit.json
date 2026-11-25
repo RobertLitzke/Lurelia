@@ -1,9 +1,10 @@
 {
   "name": "rabbit",
-  "version": 2,
+  "version": 3,
   "introduced_by": "base",
-  "notes": "Brown rabbit.",
-  "voxel": 0.03125,
+  "notes": "Brown rabbit: long ears with pink insides, white tail, pale belly, long hind feet.",
+  "voxel": 0.0175,
+  "grid": [32, 48, 40],
   "half_w": 0.12,
   "height": 0.35,
   "colors": {
@@ -14,6 +15,7 @@
     "white": [210, 196, 176]
   },
   "behaviour": {
+    "displays": [{"kind": "box"}, {"kind": "drum"}],
     "movement": "hop",
     "walk_speed": 1.0,
     "flee_speed": 5.5,
@@ -21,37 +23,58 @@
     "flightiness": 1.8,
     "flees_from": ["player", "fox"],
     "active": "crepuscular",
-    "off_hours": 0.15
+    "off_hours": 0.15,
+    "voice": {"size": 1.0, "calls": [{"cry": "thump", "on": "display:drum"}]}
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [16, 7.5, 17.5], "radius": [4, 4.5, 6], "mat": "rabbit"},
-    {"op": "recolour_below", "y": 5, "from": "rabbit", "to": "rabbit_light"},
-    {"op": "ellipsoid", "centre": [16, 11.5, 11], "radius": [3, 3, 3.2], "mat": "rabbit", "part": "head"},
-    {"op": "box", "from": [14, 13, 11], "to": [15, 21, 12], "mat": "rabbit", "part": "ear_l"},
-    {"op": "box", "from": [17, 13, 11], "to": [18, 21, 12], "mat": "rabbit", "part": "ear_r"},
-    {"op": "box", "from": [14, 14, 10], "to": [15, 20, 11], "mat": "pink", "part": "ear_l"},
-    {"op": "box", "from": [17, 14, 10], "to": [18, 20, 11], "mat": "pink", "part": "ear_r"},
-    {"op": "set", "at": [13, 12, 9], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [18, 12, 9], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [16, 11, 7], "mat": "pink", "part": "head"},
-    {"op": "ellipsoid", "centre": [16, 8.5, 24], "radius": [1.8, 1.8, 1.8], "mat": "white", "part": "tail"},
-    {"op": "box", "from": [13, 0, 20], "to": [15, 3, 24], "mat": "rabbit", "part": "leg_hl"},
-    {"op": "box", "from": [17, 0, 20], "to": [19, 3, 24], "mat": "rabbit", "part": "leg_hr"},
-    {"op": "box", "from": [14, 0, 13], "to": [15, 5, 15], "mat": "rabbit", "part": "leg_fl"},
-    {"op": "box", "from": [17, 0, 13], "to": [18, 5, 15], "mat": "rabbit", "part": "leg_fr"}
+    {"op": "ellipsoid", "centre": [16, 12.8, 20.5], "radius": [6.6, 7.2, 9.5], "mat": "rabbit"},
+    {"op": "ellipsoid", "centre": [16, 14, 26.5], "radius": [7.2, 8, 8], "mat": "rabbit"},
+    {"op": "recolour_below", "y": 9, "from": "rabbit", "to": "rabbit_light"},
+    {"op": "ellipsoid", "centre": [16, 20, 10], "radius": [4.9, 5, 6.2], "mat": "rabbit", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 18.6, 6], "radius": [3.1, 3, 3.4], "mat": "rabbit", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 18.6, 3.6], "radius": [2.2, 1.6, 1.6], "mat": "pink", "part": "head"},
+    {"op": "ellipsoid", "centre": [11.3, 21.5, 8.3], "radius": [1.3, 1.6, 1.7], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [20.7, 21.5, 8.3], "radius": [1.3, 1.6, 1.7], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [13.3, 30.5, 12], "radius": [1.7, 8, 2.3], "mat": "rabbit", "part": "ear_l"},
+    {"op": "ellipsoid", "centre": [18.7, 30.5, 12], "radius": [1.7, 8, 2.3], "mat": "rabbit", "part": "ear_r"},
+    {"op": "ellipsoid", "centre": [13.3, 30, 10.6], "radius": [1.2, 6.5, 1.2], "mat": "pink", "part": "ear_l"},
+    {"op": "ellipsoid", "centre": [18.7, 30, 10.6], "radius": [1.2, 6.5, 1.2], "mat": "pink", "part": "ear_r"},
+    {"op": "ellipsoid", "centre": [16, 15.5, 35.6], "radius": [3.4, 3.4, 3.2], "mat": "white", "part": "tail"},
+    {"op": "ellipsoid", "centre": [11.5, 9.5, 28.8], "radius": [3.6, 5.5, 5.8], "mat": "rabbit", "part": "leg_hl"},
+    {"op": "segment", "points": [[11.5, 5.5, 29], [11.5, 2, 25]], "radius": 1.8, "mat": "rabbit", "part": "leg_hl"},
+    {"op": "ellipsoid", "centre": [11.5, 1.5, 22.5], "radius": [1.8, 1.5, 5], "mat": "rabbit", "part": "leg_hl"},
+    {"op": "ellipsoid", "centre": [20.5, 9.5, 28.8], "radius": [3.6, 5.5, 5.8], "mat": "rabbit", "part": "leg_hr"},
+    {"op": "segment", "points": [[20.5, 5.5, 29], [20.5, 2, 25]], "radius": 1.8, "mat": "rabbit", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [20.5, 1.5, 22.5], "radius": [1.8, 1.5, 5], "mat": "rabbit", "part": "leg_hr"},
+    {
+      "op": "segment",
+      "points": [[13.2, 9, 16.5], [13.2, 2.2, 15.5]],
+      "radius": 1.8,
+      "mat": "rabbit",
+      "part": "leg_fl"
+    },
+    {"op": "ellipsoid", "centre": [13.2, 1.2, 14.2], "radius": [1.8, 1.3, 2.8], "mat": "rabbit", "part": "leg_fl"},
+    {
+      "op": "segment",
+      "points": [[18.8, 9, 16.5], [18.8, 2.2, 15.5]],
+      "radius": 1.8,
+      "mat": "rabbit",
+      "part": "leg_fr"
+    },
+    {"op": "ellipsoid", "centre": [18.8, 1.2, 14.2], "radius": [1.8, 1.3, 2.8], "mat": "rabbit", "part": "leg_fr"}
   ],
   "rig": {
     "plan": "hopper",
     "bones": [
       {"name": "body", "role": "root"},
-      {"name": "head", "role": "head", "parent": "body", "joint": [16, 10, 13.5]},
-      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [14.5, 13, 11.5], "side": "l"},
-      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [17.5, 13, 11.5], "side": "r"},
-      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14.5, 5, 14], "side": "l", "pair": 0},
-      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [17.5, 5, 14], "side": "r", "pair": 0},
-      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14, 3, 22], "side": "l", "pair": 1},
-      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [18, 3, 22], "side": "r", "pair": 1},
-      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 8.5, 22.5]}
+      {"name": "head", "role": "head", "parent": "body", "joint": [16.0, 17.857, 15.536]},
+      {"name": "ear_l", "role": "ear", "parent": "head", "joint": [13.321, 23.214, 11.964], "side": "l"},
+      {"name": "ear_r", "role": "ear", "parent": "head", "joint": [18.679, 23.214, 11.964], "side": "r"},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [13.321, 8.929, 16.429], "side": "l", "pair": 0},
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [18.679, 8.929, 16.429], "side": "r", "pair": 0},
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [12.429, 9.0, 29.5], "side": "l", "pair": 1},
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [19.571, 9.0, 29.5], "side": "r", "pair": 1},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.0, 15.179, 31.607]}
     ]
   }
 }

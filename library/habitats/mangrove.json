@@ -1,0 +1,12 @@
+{
+  "name": "mangrove",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Trees on stilt roots in warm tidal water.",
+  "wet": 0.95,
+  "soil": 0.7,
+  "shade": 0.5,
+  "rock": 0.0,
+  "disturbed": 0.0,
+  "open": 0.3
+}

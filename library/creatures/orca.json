@@ -6,6 +6,7 @@
   "colors": {"whale": [18, 18, 22], "whale_belly": [236, 236, 236], "white": [240, 240, 240], "dark": [18, 18, 22]},
   "morphs": [],
   "behaviour": {
+    "displays": [{"kind": "spyhop", "params": {"slaps": [2, 5]}}],
     "movement": "breach",
     "walk_speed": 3.2,
     "flee_speed": 5.5,
@@ -13,7 +14,14 @@
     "flightiness": 0.0,
     "leap": 0.15,
     "spawn_chance": 0.0012,
-    "active": "any"
+    "active": "any",
+    "voice": {
+      "calls": [
+        {"cry": "blow", "on": "idle", "size": 1.2, "every_s": [30, 100]},
+        {"cry": "moan", "on": "idle", "size": 0.4, "every_s": [60, 200], "chance": 0.4},
+        {"cry": "blow", "on": "display:spyhop", "size": 1.2}
+      ]
+    }
   },
   "like": "humpback",
   "scale": 0.6

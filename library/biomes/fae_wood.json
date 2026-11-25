@@ -3,6 +3,8 @@
   "version": 1,
   "introduced_by": "faerie",
   "notes": "Green belts grown to deep wood.",
+  "habitat": "broadleaf_forest",
+  "soil": 0.5,
   "map_color": [50, 110, 66],
   "plants": [
     {"plant": "blossom_vine", "density": 0.2, "placement": {"verb": "scatter", "params": {}}},

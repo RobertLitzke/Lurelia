@@ -1,0 +1,15 @@
+{
+  "name": "sunflower",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Sunflowers grown for oil on Kitehold's farms: head-high stalks with yellow faces.",
+  "form": "herb",
+  "height": [1.6, 2.2],
+  "crown_radius": [0.3, 0.45],
+  "bark": "dead_wood",
+  "leaf": "sunflower_head",
+  "max_slope": 0.5,
+  "affords": ["nectar"],
+  "flower_seasons": ["summer", "autumn"],
+  "site": {"wet": [0.2, 0.6], "shade": [0.0, 0.2]}
+}

@@ -1,0 +1,32 @@
+{
+  "name": "fw_wall",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "The drop-off outside Frondwell's ring: basalt falling to thirty metres, white plumose anemones and cloud sponges on every ledge, the kelp canopy far overhead.",
+  "habitat": "kelp_forest",
+  "priority": 21,
+  "rules": {"underwater": true, "region": "frondwell_reef_wall"},
+  "surface": "reef_rock",
+  "subsurface": "basalt",
+  "map_color": [50, 80, 90],
+  "plants": [
+    {"plant": "kelp", "density": 0.06, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "tube_sponge", "density": 0.01, "placement": {"verb": "scatter", "params": {}}}
+  ],
+  "features": [
+    {"structure": "plumose_anemones", "density": 0.004},
+    {"structure": "cloud_sponge", "density": 0.0012},
+    {"structure": "anemone_bed", "density": 0.0006}
+  ],
+  "creatures": [
+    {"creature": "rockfish", "count": 20},
+    {"creature": "sixgill_shark", "count": 1},
+    {"creature": "giant_octopus", "count": 2},
+    {"creature": "cod", "count": 4},
+    {"creature": "mola", "count": 1},
+    {"creature": "moon_jelly", "count": 10},
+    {"creature": "lions_mane_jelly", "count": 4},
+    {"creature": "wolf_eel", "count": 4},
+    {"creature": "opal_squid", "count": 30}
+  ]
+}

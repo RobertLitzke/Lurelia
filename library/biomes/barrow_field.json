@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "windbarrow",
   "notes": "The barrow ridge: turf kept short by the herds over nineteen mounds, chalk kerbs showing through it, oak posts on the crowns, and nothing growing taller than a thistle.",
+  "habitat": "dry_grassland",
   "priority": 16,
   "rules": {"region": "barrows"},
   "surface": "downland_grass",
   "subsurface": "chalk_white",
   "rock": null,
+  "soil": 0.8,
   "map_color": [186, 180, 132],
   "plants": [
     {

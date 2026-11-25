@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "windbarrow",
   "notes": "The Bone Downs: a stretch of the Flint Down where it is mammoth bone that weathers out of the chalk and not flint. Skulls and ribs stand out of the rubble, ivory splinters lie about, and the diggers will not work it.",
+  "habitat": "dry_grassland",
   "priority": 13,
   "rules": {"region": "bone"},
   "surface": "bone_rubble",
   "subsurface": "chalk_white",
   "rock": "chalk_white",
+  "soil": 0.85,
   "map_color": [204, 196, 168],
   "plants": [
     {

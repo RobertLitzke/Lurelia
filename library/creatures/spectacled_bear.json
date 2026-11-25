@@ -1,0 +1,42 @@
+{
+  "name": "spectacled_bear",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Spectacled bear: the shaggy, black Andean bear with a cream muzzle and cream arcs round the eyes running down the throat and chest; lives in cloud forest and paramo.",
+  "voxel": 0.02886,
+  "half_w": 0.3,
+  "height": 0.88,
+  "colors": {"bear": [30, 24, 22], "dark": [24, 20, 18], "muzzle": [222, 198, 150], "cream": [226, 204, 160]},
+  "behaviour": {
+    "wary": 16,
+    "flightiness": 0.4,
+    "walk_speed": 0.8,
+    "flee_speed": 5.5,
+    "voice": {
+      "size": 1.4,
+      "calls": [
+        {"cry": "growl", "on": "chase", "boost": 3},
+        {"cry": "snort", "on": "flee", "size": 1.2, "chance": 0.6},
+        {"cry": "grunt", "on": "idle", "every_s": [300, 900], "chance": 0.3}
+      ]
+    }
+  },
+  "like": "bear",
+  "extra_ops": [
+    {"op": "ellipsoid", "centre": [16.901, 27.027, 27.396], "radius": [7.207, 3.604, 6.126], "mat": "bear"},
+    {
+      "op": "ellipsoid",
+      "centre": [16.901, 24.865, 18.387],
+      "radius": [7.928, 5.766, 4.324],
+      "mat": "bear",
+      "part": "neck"
+    },
+    {"op": "ellipsoid", "centre": [16.901, 21.622, 42.171], "radius": [6.486, 5.766, 2.883], "mat": "bear"},
+    {"op": "recolour", "at": [12, 22, 6], "until": [16, 27, 11], "from": "bear", "to": "cream"},
+    {"op": "recolour", "at": [18, 22, 6], "until": [21, 27, 11], "from": "bear", "to": "cream"},
+    {"op": "box", "from": [12, 23, 8], "to": [14, 25, 9], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [20, 23, 8], "to": [21, 25, 9], "mat": "dark", "part": "head"},
+    {"op": "recolour", "at": [14, 16, 9], "until": [20, 20, 18], "from": "bear", "to": "cream"},
+    {"op": "recolour", "at": [12, 18, 15], "until": [21, 27, 22], "from": "bear", "to": "cream"}
+  ]
+}

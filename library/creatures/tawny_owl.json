@@ -26,9 +26,22 @@
     "wary": 9.0,
     "flightiness": 0.6,
     "active": "nocturnal",
-    "off_hours": 0.06
+    "off_hours": 0.06,
+    "voice": {
+      "calls": [
+        {
+          "cry": "hoot",
+          "on": "idle",
+          "hours": "night",
+          "size": 0.8,
+          "every_s": [60, 200],
+          "chorus": 0.3,
+          "chorus_m": 500
+        }
+      ]
+    }
   },
   "like": "great_horned_owl",
   "scale": 0.7,
-  "extra_ops": [{"op": "box", "from": [25, 22, 14], "to": [39, 28, 21], "mat": "air", "part": "head"}]
+  "extra_ops": [{"op": "box", "from": [22, 19, 11], "to": [34, 24, 17], "mat": "air", "part": "head"}]
 }

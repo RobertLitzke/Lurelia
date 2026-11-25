@@ -13,28 +13,43 @@
     "legs": [230, 120, 50],
     "breast": [112, 62, 44]
   },
+  "forms": {"female": "mallard_female"},
   "behaviour": {
     "flee_speed": 10,
     "wary": 12,
     "flightiness": 1.1,
     "wingbeat": 4.5,
-    "group": {"size": [2, 6], "spacing": 1.2, "range": 6, "separation": 1.0, "alignment": 1.0, "cohesion": 1.0}
+    "group": {"size": [2, 6], "spacing": 1.2, "range": 6, "separation": 1.0, "alignment": 1.0, "cohesion": 1.0},
+    "voice": {
+      "calls": [
+        {"cry": "quack", "on": "takeoff", "chance": 0.5},
+        {"cry": "quack", "on": "idle", "every_s": [60, 240], "chorus": 0.3, "chorus_m": 80}
+      ]
+    }
   },
   "like": "goose",
   "scale": 0.6,
   "extra_ops": [
-    {"op": "box", "from": [29, 12, 8], "to": [36, 28, 23], "mat": "air", "part": "head"},
+    {"op": "box", "from": [29, 15, 6], "to": [38, 35, 25], "mat": "air", "part": "head"},
     {
       "op": "segment",
-      "points": [[32, 10.5, 21], [32, 13, 20.0], [32, 15.6, 19.0]],
-      "radius": 1.7,
+      "points": [[33.0, 13.23, 22.22], [33.0, 16.38, 20.96], [33.0, 19.656, 19.7]],
+      "radius": 2.142,
       "mat": "neck",
       "part": "head"
     },
-    {"op": "ellipsoid", "centre": [32, 17.2, 17.4], "radius": [1.7, 1.55, 2.3], "mat": "head", "part": "head"},
-    {"op": "box", "from": [31, 16, 12], "to": [33, 17, 15], "mat": "beak", "part": "head"},
-    {"op": "recolour", "at": [29, 13, 19], "until": [36, 14, 22], "from": "neck", "to": "white"},
-    {"op": "recolour", "at": [29, 6, 19], "until": [36, 12, 24], "from": "body", "to": "breast"},
-    {"op": "recolour", "at": [28, 5, 34], "until": [37, 10, 39], "from": "white", "to": "tail"}
+    {
+      "op": "ellipsoid",
+      "centre": [33.0, 21.672, 17.684],
+      "radius": [2.142, 1.953, 2.898],
+      "mat": "head",
+      "part": "head"
+    },
+    {"op": "box", "from": [32, 20, 11], "to": [34, 21, 15], "mat": "beak", "part": "head"},
+    {"op": "recolour", "at": [29, 16, 20], "until": [38, 18, 23], "from": "neck", "to": "white"},
+    {"op": "recolour", "at": [29, 8, 20], "until": [38, 15, 26], "from": "body", "to": "breast"},
+    {"op": "recolour", "at": [28, 6, 39], "until": [39, 13, 45], "from": "white", "to": "tail"},
+    {"op": "ellipsoid", "centre": [31.1, 22.2, 16.6], "radius": [1.0, 1.0, 1.0], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [34.9, 22.2, 16.6], "radius": [1.0, 1.0, 1.0], "mat": "eye", "part": "head"}
   ]
 }

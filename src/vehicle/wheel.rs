@@ -6,9 +6,8 @@
 //! circle, let a wheel climb a 0.25 m voxel step over its radius instead of
 //! meeting it as a wall.
 
-use crate::mesh::ground_height_h;
 use crate::world::material::AIR;
-use crate::world::store::{Cell, Store};
+use crate::world::store::{Cell, VoxelRead};
 use crate::world::surface::Surface;
 use glam::Vec3;
 
@@ -27,17 +26,24 @@ pub struct Contact {
 
 /// The drawn ground under (x, z), searching down from `y` for `reach`
 /// metres; water voxels count as ground, as they do for every ride.
-pub fn height(store: &Store, x: f32, z: f32, y: f32, reach: f32, slopes: bool) -> Option<(f32, u8)> {
+pub fn height(store: &impl VoxelRead, x: f32, z: f32, y: f32, reach: f32, slopes: bool) -> Option<(f32, u8)> {
+    height_under(store, x, z, y, reach, slopes, false)
+}
+
+/// `height`, or with `through_water` the bed under any water voxels: a kart
+/// made to wade sinks through a ford to the road under it, and feels the
+/// water's depth (`probe`'s `level`) instead of driving on its top.
+pub fn height_under(store: &impl VoxelRead, x: f32, z: f32, y: f32, reach: f32, slopes: bool, through_water: bool) -> Option<(f32, u8)> {
     let (vx, vz) = ((x * 4.0).floor() as i32, (z * 4.0).floor() as i32);
     let top = (y * 4.0).floor() as i32;
     let bottom = ((y - reach) * 4.0).floor() as i32;
     for vy in (bottom.max(0)..=top).rev() {
-        if matches!(store.cell(vx, vy, vz), Cell::Solid | Cell::Water) {
+        let cell = store.cell(vx, vy, vz);
+        if cell == Cell::Solid || (cell == Cell::Water && !through_water) {
             let t = vy + 1;
             let mut h = t as f32 / 4.0;
             if slopes {
-                let at = |x: isize, y: isize, z: isize| store.get(x as i32, y as i32, z as i32).unwrap_or(AIR);
-                if let Some(d) = ground_height_h(at, |x, z| store.ground_vox(x as i32, z as i32), x * 4.0, z * 4.0, t as f32) {
+                if let Some(d) = store.ground_height(x * 4.0, z * 4.0, t as f32) {
                     h = (d / 4.0).clamp(h - 0.3, h + 0.3);
                 }
             }
@@ -52,7 +58,8 @@ pub fn height(store: &Store, x: f32, z: f32, y: f32, reach: f32, slopes: bool) -
 /// surface. Ground above `limit` (a height) is an obstacle for the chassis,
 /// not ground under the tyre: a small wheel meets a voxel step as a kerb.
 #[allow(clippy::too_many_arguments)]
-pub fn probe(store: &Store, hub: Vec3, fwd: Vec3, r: f32, from: f32, reach: f32, level: f32, slopes: bool, limit: Option<f32>) -> Option<Contact> {
+#[allow(clippy::too_many_arguments)]
+pub fn probe(store: &impl VoxelRead, hub: Vec3, fwd: Vec3, r: f32, from: f32, reach: f32, level: f32, slopes: bool, limit: Option<f32>, through_water: bool) -> Option<Contact> {
     let f = Vec3::new(fwd.x, 0.0, fwd.z).normalize_or(Vec3::NEG_Z);
     // A column that is still solid where the search starts is a wall or a
     // trunk beside the tyre, not ground under it: the chassis meets it.
@@ -61,7 +68,7 @@ pub fn probe(store: &Store, hub: Vec3, fwd: Vec3, r: f32, from: f32, reach: f32,
         if inside {
             None
         } else {
-            height(store, x, z, from, reach, slopes).filter(|c| limit.is_none_or(|l| c.0 <= l))
+            height_under(store, x, z, from, reach, slopes, through_water).filter(|c| limit.is_none_or(|l| c.0 <= l))
         }
     };
     // The highest the ground may rise round the hub and still be rolled

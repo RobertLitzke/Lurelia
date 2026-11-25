@@ -5,6 +5,7 @@
   "notes": "Jacks: blue-silver fish in a fast school sweeping along the reef edge and round the bait balls.",
   "colors": {"herring": [70, 110, 150], "silver": [150, 158, 168], "fin": [70, 110, 150]},
   "behaviour": {
+    "displays": [{"kind": "bait_ball"}],
     "habit": "patrol",
     "walk_speed": 1.6,
     "flee_speed": 4.5,

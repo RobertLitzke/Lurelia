@@ -1,0 +1,286 @@
+{
+  "events": [
+    {
+      "year": -1000000,
+      "event": "heightmap",
+      "file": "ground.bin",
+      "cause": "the land the track is laid over, fitted to the road by tools/course/track_file.py"
+    },
+    {
+      "year": -999999,
+      "event": "terrain",
+      "mode": "add",
+      "base": 0,
+      "hills": 1.5,
+      "ridges": 0,
+      "rough": 1,
+      "vary": 0.4,
+      "warp": 30,
+      "cause": "rolling over the fitted land"
+    },
+    {
+      "year": 1990,
+      "event": "place",
+      "cause": "a market stall for the winter fair",
+      "structure": "stall_green",
+      "at": {
+        "along": 125,
+        "left": 14
+      }
+    },
+    {
+      "year": 1990,
+      "event": "place",
+      "cause": "a market stall for the winter fair",
+      "structure": "stall_red",
+      "at": {
+        "along": 140,
+        "right": 14
+      }
+    },
+    {
+      "year": 1991,
+      "event": "place",
+      "cause": "a market stall for the winter fair",
+      "structure": "stall_red",
+      "at": {
+        "along": 165,
+        "left": 14
+      }
+    },
+    {
+      "year": 1991,
+      "event": "place",
+      "cause": "a market stall for the winter fair",
+      "structure": "stall_green",
+      "at": {
+        "along": 180,
+        "right": 14
+      }
+    },
+    {
+      "year": 1992,
+      "event": "place",
+      "cause": "a market stall for the winter fair",
+      "structure": "stall_green",
+      "at": {
+        "along": 205,
+        "left": 14
+      }
+    },
+    {
+      "year": 1992,
+      "event": "place",
+      "cause": "a market stall for the winter fair",
+      "structure": "stall_red",
+      "at": {
+        "along": 220,
+        "right": 14
+      }
+    },
+    {
+      "year": 1993,
+      "event": "place",
+      "cause": "a market stall for the winter fair",
+      "structure": "stall_red",
+      "at": {
+        "along": 245,
+        "left": 14
+      }
+    },
+    {
+      "year": 1993,
+      "event": "place",
+      "cause": "a market stall for the winter fair",
+      "structure": "stall_green",
+      "at": {
+        "along": 260,
+        "right": 14
+      }
+    },
+    {
+      "year": 1994,
+      "event": "place",
+      "cause": "a market stall for the winter fair",
+      "structure": "stall_green",
+      "at": {
+        "along": 285,
+        "left": 14
+      }
+    },
+    {
+      "year": 1994,
+      "event": "place",
+      "cause": "a market stall for the winter fair",
+      "structure": "stall_red",
+      "at": {
+        "along": 300,
+        "right": 15
+      }
+    },
+    {
+      "year": 1900,
+      "event": "place",
+      "cause": "the fair's spruce, hung with lights",
+      "structure": "market_spruce",
+      "at": {
+        "along": 205,
+        "left": 24
+      }
+    },
+    {
+      "year": 1900,
+      "event": "place",
+      "cause": "the hamlet's white church",
+      "structure": "white_church",
+      "at": {
+        "along": 150,
+        "right": 32
+      }
+    },
+    {
+      "year": 1880,
+      "event": "place",
+      "cause": "a fisherman's cabin at the head of the fjord",
+      "structure": "rorbu",
+      "at": {
+        "along": 60,
+        "right": 26
+      }
+    },
+    {
+      "year": 1881,
+      "event": "place",
+      "cause": "a fisherman's cabin at the head of the fjord",
+      "structure": "rorbu",
+      "at": {
+        "along": 100,
+        "right": 26
+      }
+    },
+    {
+      "year": 1882,
+      "event": "place",
+      "cause": "a fisherman's cabin at the head of the fjord",
+      "structure": "rorbu",
+      "at": {
+        "along": 320,
+        "right": 26
+      }
+    },
+    {
+      "year": 1900,
+      "event": "place",
+      "cause": "a hut on the fell",
+      "structure": "aframe_cabin",
+      "at": {
+        "along": 1580,
+        "left": 30
+      }
+    },
+    {
+      "year": 1950,
+      "event": "lamp",
+      "cause": "the fair's lights strung over the market street",
+      "at": {
+        "along": 205,
+        "left": 0
+      },
+      "points": [
+        [
+          -20,
+          0,
+          5
+        ],
+        [
+          0,
+          0,
+          5
+        ],
+        [
+          20,
+          0,
+          5
+        ],
+        [
+          40,
+          0,
+          5
+        ],
+        [
+          -40,
+          0,
+          5
+        ]
+      ],
+      "reach": 16,
+      "colour": [
+        255,
+        214,
+        160
+      ],
+      "strength": 1.6,
+      "after_dark": true
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Market",
+      "kind": "fjord",
+      "along": {
+        "from": 100,
+        "to": 320,
+        "left": [
+          0,
+          30
+        ]
+      },
+      "cause": "the Market"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Switchbacks",
+      "kind": "fjord",
+      "along": {
+        "from": 400,
+        "to": 1490,
+        "left": [
+          0,
+          60
+        ]
+      },
+      "cause": "the Switchbacks"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Fell",
+      "kind": "fjord",
+      "along": {
+        "from": 1480,
+        "to": 1650,
+        "left": [
+          0,
+          60
+        ]
+      },
+      "cause": "the Fell"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Jump",
+      "kind": "fjord",
+      "along": {
+        "from": 1650,
+        "to": 2010,
+        "left": [
+          0,
+          40
+        ]
+      },
+      "cause": "the Jump"
+    }
+  ]
+}

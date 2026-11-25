@@ -11,5 +11,6 @@
   "max_slope": 1.0,
   "stems": [2, 5],
   "flower": "prickly_pear_fruit",
-  "affords": ["nectar", "cover"]
+  "affords": ["nectar", "cover"],
+  "site": {"wet": [0.0, 0.55], "sun": [0.4, 1.0], "shade": [0.0, 0.25]}
 }

@@ -13,7 +13,7 @@ track vermilion size 768 style redrock
 title VERMILION MESA
 blurb A figure-eight in red rock country: a broad sweep along a canyon floor, switchbacks up a ravine of aspens, a run through the pines on top of the mesa, a plunge through the boulders and a long tunnel through the mesa's foot.
 race laps 3 rivals 3 vehicle kart
-road 12
+road 14.5
 materials verge red_sand
 land 30 1.5
 hour 15.5
@@ -95,7 +95,6 @@ ramp 1070 1372 30
 # The approach cuts eat about 20 m into each end, so the land covers
 # about 150 m of it and the rest stands out as lined galleries.
 tunnel 1642 1838 6
-width 1610 1870 16        # a little wider through the tunnel and its portals
 
 # Bends that bots took too fast and ran wide: the left turn off the
 # canyon floor into the draw, the right-hand curve at the top of the
@@ -109,3 +108,16 @@ bank 700 800 2
 bank 1090 1230 2.2
 bank 1330 1470 2.2
 bank 1845 1935 2.2
+
+# Two natural arches over the road: one spanning the canyon floor, one in
+# the arch valley the second loop runs round.
+arch 150 24 13 8 mat wingate_sandstone
+arch 1500 26 15 9 mat navajo_sandstone
+
+# Width: 14.5 m. The canyon floor is wide; the mesa top narrower through
+# the pines, from past the corner onto it; the arch valley wide again; the
+# tunnel as it was, a little wider than the base.
+width 1880 360 17
+width 820 1015 12.5
+width 1380 1610 16
+width 1610 1870 16

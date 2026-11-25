@@ -1,0 +1,8 @@
+{
+  "name": "kh_aa",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Aa: the rough clinker a fast lava flow breaks into, black and jagged, loose underfoot.",
+  "like": "scree",
+  "texture": {"base": [40, 38, 38], "alt": [64, 58, 56], "calm": {"base": [54, 52, 52], "alt": [80, 74, 70]}}
+}

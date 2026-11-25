@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "Sheep pasture inside the village's dry-stone walls: turf grazed short, a thorn or two left for shade, one old oak to a field.",
+  "habitat": "pasture",
   "priority": 9,
   "rules": {"region": "pasture"},
   "surface": "lawn_grass",
   "subsurface": "dirt",
+  "soil": 0.6,
   "map_color": [142, 196, 98],
   "plants": [
     {"plant": "hawthorn", "density": 0.0007, "placement": {"verb": "lone", "params": {"spacing": 34}}},

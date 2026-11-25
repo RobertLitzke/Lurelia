@@ -20,5 +20,6 @@
   "affords": ["perch", "nest"],
   "autumn": "leaves_autumn",
   "thin_limbs": 0.12,
-  "lean": 0.3
+  "lean": 0.3,
+  "site": {"wet": [0.55, 1.0]}
 }

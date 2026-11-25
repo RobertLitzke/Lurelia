@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "The heath on the rising ground in the north-east, between the north road and the Grimwold: gorse, heather and bracken, a few pines and birches, larks overhead.",
+  "habitat": "heath_moor",
   "priority": 6,
   "rules": {"region": "heath"},
   "surface": "lawn_grass",
   "subsurface": "dirt",
+  "soil": 0.2,
   "map_color": [138, 132, 70],
   "plants": [
     {

@@ -1,0 +1,27 @@
+{
+  "name": "bb_salmon_run",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "The clear channel of the delta where the salmon run: knee-deep water over dark cobbles, flat gravel banks with a few willows, where the black bears come down to fish.",
+  "habitat": "riparian",
+  "priority": 9,
+  "rules": {"region": "salmon", "river": [0, 22]},
+  "surface": "river_gravel",
+  "subsurface": "river_gravel",
+  "map_color": [120, 150, 150],
+  "plants": [
+    {"plant": "willow", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 12}}},
+    {"plant": "alder", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 14}}},
+    {"plant": "common_reed", "density": 0.02, "placement": {"verb": "clustered", "params": {}}}
+  ],
+  "features": [{"structure": "boulder", "density": 0.0008}],
+  "creatures": [
+    {"creature": "black_bear_fisher", "count": 4},
+    {"creature": "spawning_salmon", "count": 40},
+    {"creature": "heron", "count": 2},
+    {"creature": "eagle", "count": 2},
+    {"creature": "raven", "count": 2},
+    {"creature": "gull", "count": 4},
+    {"creature": "otter", "count": 2}
+  ]
+}

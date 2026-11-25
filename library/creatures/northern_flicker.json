@@ -11,17 +11,25 @@
     "white": [214, 196, 160],
     "red": [200, 50, 40]
   },
-  "behaviour": {"wary": 10},
+  "behaviour": {
+    "wary": 10,
+    "voice": {
+      "calls": [
+        {"cry": "drum", "on": "display:drum", "size": 1.2},
+        {"cry": "chatter", "on": "idle", "hours": "day", "size": 0.9, "every_s": [60, 240], "chance": 0.7}
+      ]
+    }
+  },
   "like": "woodpecker",
   "scale": 1.6,
   "extra_ops": [
     {
       "op": "repeat",
       "count": 4,
-      "step": [0, 0, 2],
-      "ops": [{"op": "recolour", "at": [13, 9, 12], "until": [20, 11, 13], "from": "body", "to": "tail"}]
+      "step": [0, 0, 6],
+      "ops": [{"op": "recolour", "at": [37, 25, 20], "until": [56, 31, 23], "from": "body", "to": "tail"}]
     },
-    {"op": "set", "at": [15, 9, 9], "mat": "red", "part": "head"},
-    {"op": "set", "at": [17, 9, 9], "mat": "red", "part": "head"}
+    {"op": "box", "from": [42, 25, 11], "to": [45, 28, 14], "mat": "red", "part": "head"},
+    {"op": "box", "from": [48, 25, 11], "to": [51, 28, 14], "mat": "red", "part": "head"}
   ]
 }

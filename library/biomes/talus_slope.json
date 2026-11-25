@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "vermilion",
   "notes": "The steep debris slopes under red cliffs, between the bare rock of the faces and the flat desert below: red sand and broken sandstone, juniper and a little sagebrush.",
+  "habitat": "bare_rock",
   "priority": 4,
   "rules": {"slope": [0.28, 0.55], "elev": [4, 80]},
   "surface": "red_sand",
   "subsurface": "kayenta_ledges",
+  "soil": 0.5,
   "map_color": [188, 104, 74],
   "plants": [
     {"plant": "juniper", "density": 0.002, "placement": {"verb": "scatter", "params": {}}},

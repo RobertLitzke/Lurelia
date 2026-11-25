@@ -1,0 +1,40 @@
+{
+  "name": "rib_wrack_giants",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Ribshore's wrack line with the giant driftwood of the northern coast heaped in it: whole storm-thrown cedar and spruce trunks two and three metres thick, root plates and log walls among the ordinary drift. For the open coasts, not the kart circuits.",
+  "habitat": "beach",
+  "features": [
+    {
+      "structure": "drift_log",
+      "density": 0.0015,
+      "placement": {"verb": "edge", "params": {"width": 8, "inner": 0.06, "along": 30}, "field": "rib_dunes,rib_plain,rib_spruce"}
+    },
+    {
+      "structure": "drift_log_b",
+      "density": 0.0006,
+      "placement": {"verb": "edge", "params": {"width": 8, "inner": 0.06, "along": 30}, "field": "rib_dunes,rib_plain,rib_spruce"}
+    },
+    {
+      "structure": "drift_log_c",
+      "density": 0.00051,
+      "placement": {"verb": "edge", "params": {"width": 8, "inner": 0.06, "along": 30}, "field": "rib_dunes,rib_plain,rib_spruce"}
+    },
+    {
+      "structure": "drift_log_d",
+      "density": 0.00039,
+      "placement": {"verb": "edge", "params": {"width": 8, "inner": 0.06, "along": 30}, "field": "rib_dunes,rib_plain,rib_spruce"}
+    },
+    {
+      "structure": "drift_pile",
+      "density": 0.0005,
+      "placement": {"verb": "edge", "params": {"width": 8, "inner": 0.0, "along": 25}, "field": "rib_dunes,rib_plain,rib_spruce"}
+    },
+    {"structure": "drift_shelter", "density": 3e-05, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "bone_shard", "density": 0.00015, "placement": {"verb": "scatter", "params": {}}},
+    {"structure": "bb_drift_giant", "density": 6e-05},
+    {"structure": "bb_drift_giant_b", "density": 5e-05},
+    {"structure": "bb_drift_wall", "density": 3e-05}
+  ],
+  "like": "rib_wrack"
+}

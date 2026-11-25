@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "thornpan",
   "notes": "A kopje: bare granite dome and the boulders split off it, lichen in the shade, a rock fig rooted in a crack, and lions asleep on the warm stone.",
+  "habitat": "bare_rock",
   "priority": 16,
   "rules": {"region": "stacks", "slope": [0.12, 4.0], "elev": [4, 80]},
   "surface": "granite",
   "subsurface": "granite",
   "rock": "granite",
+  "soil": 0.3,
   "map_color": [140, 139, 138],
   "plants": [
     {"plant": "rock_lichen", "density": 0.5, "placement": {"verb": "scatter", "params": {}}},

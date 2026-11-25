@@ -1,0 +1,15 @@
+{
+  "name": "pg_concrete",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Pelagos Outpost's concrete after fifty years at sea: off-white gone grey, stained with rust and salt.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [196, 192, 180],
+    "alt": [160, 146, 128],
+    "scale": 4,
+    "contrast": 0.6,
+    "calm": {"base": [202, 198, 186], "alt": [168, 154, 136]}
+  }
+}

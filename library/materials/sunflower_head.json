@@ -1,0 +1,16 @@
+{
+  "name": "sunflower_head",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Sunflowers (drawn as sprites): yellow heads over coarse green leaves.",
+  "smooth": false,
+  "sprites": "flower",
+  "texture": {
+    "pattern": "noise",
+    "base": [84, 116, 52],
+    "alt": [232, 190, 42],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [90, 120, 58], "alt": [236, 196, 58]}
+  }
+}

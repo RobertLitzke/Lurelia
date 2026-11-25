@@ -1,0 +1,47 @@
+{
+  "notes": "Lowmouth's delta: a crushed-shell road, silt kerbs, cypress plank decks without rails.",
+  "story": "a big brown river's delta, cypress swamp and cane",
+  "road": "oyster_shell",
+  "kerb": "silt",
+  "wall": "weathered_planks",
+  "deck": "weathered_planks",
+  "gate_post": "weathered_planks",
+  "portal": "weathered_planks",
+  "pad": "boost_pad",
+  "world": {
+    "rock": [
+      [
+        "silt",
+        1.0
+      ]
+    ],
+    "biomes": [
+      "bottomland",
+      "levee",
+      "cane_field",
+      "cypress_swamp",
+      "backwater_flats",
+      "lowmouth_village",
+      "sawgrass",
+      "hammock"
+    ],
+    "default_biome": "bottomland",
+    "seabed_biome": "backwater_flats",
+    "seasons": [
+      "summer",
+      "autumn"
+    ],
+    "weather": {
+      "sun": 1.0,
+      "fog": 0.9,
+      "clouds": 1.0,
+      "rain": 0.8,
+      "storm": 0.5,
+      "heat": 1.0
+    },
+    "start_weather": "fog",
+    "weathering": 0.4,
+    "moss": 0.5
+  },
+  "look": "lowmouth"
+}

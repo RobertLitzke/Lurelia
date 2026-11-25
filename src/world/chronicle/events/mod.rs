@@ -34,6 +34,7 @@ registry! {
     ashfall: Ashfall,
     impact: Impact,
     bloom: Bloom,
+    realm: RealmEvent,
     river: River,
     lake: Lake,
     avulsion: Avulsion,
@@ -45,6 +46,7 @@ registry! {
     region: Region,
     escarpment: Escarpment,
     lava_tube: LavaTube,
+    find: Find,
     passage: Passage,
     tower: TowerEvent,
     skeleton: Skeleton,
@@ -92,6 +94,10 @@ registry! {
     seat: Seat,
     strandline: Strandline,
     canopy_town: CanopyTown,
+    flags: Flags,
+    kites: Kites,
+    roost: Roost,
+    pahoehoe: Pahoehoe,
 }
 
 /// The library entries event `e` (its object in chronicle.json) uses without

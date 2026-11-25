@@ -1,0 +1,15 @@
+{
+  "name": "hydrangea_blue",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Mophead hydrangea flowers, blue on Vila Azul's acid soil as on the Azores, a few going violet.",
+  "smooth": false,
+  "texture": {
+    "pattern": "blotch",
+    "base": [96, 128, 206],
+    "alt": [150, 132, 210],
+    "scale": 6,
+    "contrast": 0.7,
+    "calm": {"base": [110, 140, 210], "alt": [156, 142, 212]}
+  }
+}

@@ -7,6 +7,7 @@
   "tide": {"range": 0.6, "high": 16.0},
   "underwater": {"visibility": 4, "light": 0.35},
   "seed": 1927,
+  "plants": "v2",
   "sun": {"latitude": 34},
   "seeds": 1,
   "rock": [

@@ -4,5 +4,15 @@
   "introduced_by": "lowmouth",
   "notes": "American alligator: broad-snouted and near black, the fresh-water crocodilian of the swamp and the sawgrass. Basking on the banks, and awash among the cypress knees.",
   "colors": {"hide": [52, 56, 44], "belly": [196, 188, 156], "ridge": [36, 40, 32], "eye": [36, 28, 24]},
+  "behaviour": {
+    "voice": {
+      "size": 1.1,
+      "calls": [
+        {"cry": "bellow", "on": "display:call", "boost": 6, "chorus": 0.4, "chorus_m": 400},
+        {"cry": "bellow", "on": "idle", "hours": "night", "every_s": [600, 1800], "chance": 0.4, "boost": 6},
+        {"cry": "hiss", "on": "chase", "size": 2.5}
+      ]
+    }
+  },
   "like": "crocodile"
 }

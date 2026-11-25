@@ -1,8 +1,8 @@
 {
   "name": "humpback",
-  "version": 3,
+  "version": 4,
   "introduced_by": "glassfall",
-  "notes": "Humpback whale, about 10 m long: black above with long white flippers. Alone offshore in deep water and rare: it dives for half a minute, lies at the surface spouting, and now and then breaches.",
+  "notes": "Humpback whale, about 10 m long: black above with long white flippers, a pleated throat and a knobbly head. Alone offshore in deep water and rare: it dives for half a minute, lies at the surface spouting, and now and then breaches.",
   "voxel": 0.34,
   "half_w": 1.6,
   "height": 3.0,
@@ -17,6 +17,7 @@
     }
   ],
   "behaviour": {
+    "displays": [{"kind": "spyhop", "params": {"slaps": [2, 5]}}],
     "movement": "breach",
     "walk_speed": 2.0,
     "flee_speed": 4.0,
@@ -24,35 +25,75 @@
     "flightiness": 0.0,
     "leap": 0.3,
     "spawn_chance": 0.0008,
-    "active": "any"
+    "active": "any",
+    "voice": {
+      "calls": [
+        {"cry": "blow", "on": "idle", "size": 2.0, "every_s": [40, 120], "boost": 3},
+        {"cry": "moan", "on": "idle", "size": 1.5, "every_s": [60, 240], "chance": 0.5},
+        {"cry": "blow", "on": "display:spyhop", "size": 2.0, "boost": 3}
+      ]
+    }
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [16, 6, 13], "radius": [4.6, 4.2, 10.5], "mat": "whale"},
-    {"op": "ellipsoid", "centre": [16, 7.5, 5], "radius": [3.6, 2.6, 3.5], "mat": "whale"},
+    {"op": "ellipsoid", "centre": [16, 6.5, 13], "radius": [4.9, 4.5, 10.5], "mat": "whale"},
+    {"op": "ellipsoid", "centre": [16, 6.2, 6.5], "radius": [4.2, 3.5, 4.8], "mat": "whale"},
+    {"op": "ellipsoid", "centre": [16, 5, 5], "radius": [3.4, 2.4, 4.2], "mat": "whale"},
     {"op": "recolour_below", "y": 4, "from": "whale", "to": "whale_belly"},
-    {"op": "box", "from": [15, 10, 19], "to": [17, 11, 21], "mat": "whale"},
-    {"op": "set", "at": [12, 6, 8], "mat": "dark"},
-    {"op": "set", "at": [19, 6, 8], "mat": "dark"},
-    {"op": "box", "from": [4, 4, 9], "to": [12, 5, 12], "mat": "white", "part": "fin_l"},
-    {"op": "box", "from": [2, 4, 10], "to": [4, 5, 12], "mat": "white", "part": "fin_l"},
-    {"op": "box", "from": [20, 4, 9], "to": [28, 5, 12], "mat": "white", "part": "fin_r"},
-    {"op": "box", "from": [28, 4, 10], "to": [30, 5, 12], "mat": "white", "part": "fin_r"},
-    {"op": "ellipsoid", "centre": [16, 6.5, 25], "radius": [2.2, 2.4, 3.5], "mat": "whale", "part": "tail"},
-    {"op": "box", "from": [10, 6, 29], "to": [22, 7, 31], "mat": "whale", "part": "tail"},
-    {"op": "box", "from": [12, 6, 28], "to": [20, 7, 29], "mat": "whale", "part": "tail"},
-    {"op": "box", "from": [8, 6, 30], "to": [10, 7, 32], "mat": "whale", "part": "tail"},
-    {"op": "box", "from": [22, 6, 30], "to": [24, 7, 32], "mat": "whale", "part": "tail"},
-    {"op": "set", "at": [15, 6, 31], "mat": "air", "part": "tail"},
-    {"op": "set", "at": [16, 6, 31], "mat": "air", "part": "tail"}
+    {"op": "recolour", "at": [13, 0, 4], "until": [19, 4, 5], "from": "whale_belly", "to": "whale"},
+    {"op": "recolour", "at": [13, 0, 7], "until": [19, 4, 8], "from": "whale_belly", "to": "whale"},
+    {"op": "recolour", "at": [13, 0, 10], "until": [19, 4, 11], "from": "whale_belly", "to": "whale"},
+    {"op": "recolour", "at": [13, 0, 13], "until": [19, 4, 14], "from": "whale_belly", "to": "whale"},
+    {"op": "ellipsoid", "centre": [16, 9.4, 3.6], "radius": [1.1, 1, 1.3], "mat": "whale"},
+    {"op": "ellipsoid", "centre": [14, 9, 5.3], "radius": [1, 0.9, 1.2], "mat": "whale"},
+    {"op": "ellipsoid", "centre": [18, 9, 5.3], "radius": [1, 0.9, 1.2], "mat": "whale"},
+    {"op": "ellipsoid", "centre": [16, 3.2, 2.6], "radius": [1, 0.9, 1.1], "mat": "whale"},
+    {"op": "ellipsoid", "centre": [16, 10.3, 19], "radius": [1.2, 1.8, 2.4], "mat": "whale"},
+    {"op": "ellipsoid", "centre": [11.9, 5.6, 8], "radius": [0.9, 1.1, 1.3], "mat": "dark"},
+    {"op": "ellipsoid", "centre": [20.1, 5.6, 8], "radius": [0.9, 1.1, 1.3], "mat": "dark"},
+    {
+      "op": "segment",
+      "points": [[12.5, 4, 10], [7, 3.6, 11.5], [2.5, 3.2, 13.5]],
+      "radius": 1.2,
+      "mat": "white",
+      "part": "fin_l"
+    },
+    {"op": "ellipsoid", "centre": [4, 3.4, 12.6], "radius": [3.2, 0.9, 1.5], "mat": "white", "part": "fin_l"},
+    {
+      "op": "segment",
+      "points": [[19.5, 4, 10], [25, 3.6, 11.5], [29.5, 3.2, 13.5]],
+      "radius": 1.2,
+      "mat": "white",
+      "part": "fin_r"
+    },
+    {"op": "ellipsoid", "centre": [28, 3.4, 12.6], "radius": [3.2, 0.9, 1.5], "mat": "white", "part": "fin_r"},
+    {
+      "op": "segment",
+      "points": [[16, 6.5, 20], [16, 6.5, 25], [16, 6.5, 28.5]],
+      "radius": 2.8,
+      "mat": "whale",
+      "part": "tail"
+    },
+    {
+      "op": "segment",
+      "points": [[16, 6.5, 20], [16, 6.5, 25], [16, 6.5, 28.5]],
+      "radius": 1.9,
+      "mat": "whale",
+      "part": "tail"
+    },
+    {"op": "ellipsoid", "centre": [16, 6.5, 23], "radius": [3.0, 3.3, 3.5], "mat": "whale", "part": "tail"},
+    {"op": "ellipsoid", "centre": [12, 6.5, 29.5], "radius": [5, 1.2, 1.8], "mat": "whale", "part": "tail"},
+    {"op": "ellipsoid", "centre": [20, 6.5, 29.5], "radius": [5, 1.2, 1.8], "mat": "whale", "part": "tail"},
+    {"op": "ellipsoid", "centre": [16, 6.5, 29], "radius": [2, 1.2, 1.8], "mat": "whale", "part": "tail"},
+    {"op": "ellipsoid", "centre": [16, 6.5, 30.9], "radius": [0.9, 1.5, 0.9], "mat": "air", "part": "tail"}
   ],
   "vary": {"size": 0.08, "shade": 0.04},
   "rig": {
     "plan": "cetacean",
     "bones": [
       {"name": "body", "role": "root"},
-      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 6.5, 22.5]},
-      {"name": "fin_l", "role": "arm", "parent": "body", "joint": [11.5, 4.5, 10.5], "side": "l"},
-      {"name": "fin_r", "role": "arm", "parent": "body", "joint": [20.5, 4.5, 10.5], "side": "r"}
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 6.5, 21.5]},
+      {"name": "fin_l", "role": "arm", "parent": "body", "joint": [12, 4, 10], "side": "l"},
+      {"name": "fin_r", "role": "arm", "parent": "body", "joint": [20, 4, 10], "side": "r"}
     ]
   }
 }

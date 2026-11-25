@@ -1,0 +1,433 @@
+{
+  "name": "bb_marrow_works",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "A marrow mine head on a titan's hip bone: an 8 m timber headframe over a 3 m marrow-lined shaft on a 2 m bone plateau, a 3 m shingled winding shed beside it with a hoist rope, an ore cart on 5 m of track and a sorting bench with marrow crystals. Faces local -Z: bone steps climb to the plateau and the shed door is on its front.",
+  "size": [40, 48, 36],
+  "anchor": [20, 0, 18],
+  "level": true,
+  "decays": true,
+  "tags": ["bonebight", "mine", "marrow"],
+  "slots": {
+    "bone": "titan_bone",
+    "white": "bone_block",
+    "marrow": "titan_marrow",
+    "pit": "marrow_pit",
+    "crystal": "marrow_crystal",
+    "wall": "cedar_shingle_silver",
+    "roof": "cedar_shingle_silver",
+    "timber": "timber_frame",
+    "deadwood": "silver_deadwood",
+    "iron": "rust_iron",
+    "rope": "shingle_dark",
+    "floor_p": "weathered_planks"
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [20.0, 0, 22.0], "radius": [20, 12, 14], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [33.0, 0, 27.0], "radius": [7, 9, 8], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [6.0, 0, 25.0], "radius": [6, 7, 8], "mat": "bone", "part": "stone"},
+    {"op": "ellipsoid", "centre": [20.0, 0, 10.0], "radius": [8, 5, 3], "mat": "bone", "part": "stone"},
+    {"op": "box", "from": [6, 0, 14], "to": [34, 8, 31], "mat": "bone", "part": "stone"},
+    {"op": "box", "from": [0, 8, 0], "to": [40, 16, 36], "mat": "air", "part": "stone"},
+    {"op": "ellipsoid", "centre": [10, 7, 12], "radius": [2.6, 2.08, 2.6], "mat": "white", "part": "stone"},
+    {"op": "ellipsoid", "centre": [30, 7, 32], "radius": [2.8, 2.24, 2.8], "mat": "white", "part": "stone"},
+    {"op": "ellipsoid", "centre": [36, 6, 24], "radius": [2.4, 1.92, 2.4], "mat": "white", "part": "stone"},
+    {"op": "ellipsoid", "centre": [4, 5, 20], "radius": [2.2, 1.76, 2.2], "mat": "white", "part": "stone"},
+    {"op": "box", "from": [24, 0, 0], "to": [30, 1, 2], "mat": "white", "part": "stone"},
+    {"op": "box", "from": [24, 0, 2], "to": [30, 2, 4], "mat": "white", "part": "stone"},
+    {"op": "box", "from": [24, 0, 4], "to": [30, 3, 6], "mat": "white", "part": "stone"},
+    {"op": "box", "from": [24, 0, 6], "to": [30, 4, 8], "mat": "white", "part": "stone"},
+    {"op": "box", "from": [24, 0, 8], "to": [30, 5, 10], "mat": "white", "part": "stone"},
+    {"op": "box", "from": [24, 0, 10], "to": [30, 6, 12], "mat": "white", "part": "stone"},
+    {"op": "box", "from": [24, 0, 12], "to": [30, 7, 14], "mat": "white", "part": "stone"},
+    {"op": "box", "from": [24, 0, 14], "to": [30, 8, 16], "mat": "white", "part": "stone"},
+    {"op": "box", "from": [24, 0, 14], "to": [30, 8, 17], "mat": "white", "part": "stone"},
+    {"op": "cylinder", "base": [15.0, 1, 22.0], "radius": 4.0, "height": 8, "mat": "marrow", "part": "stone"},
+    {"op": "cylinder", "base": [15.0, 8, 22.0], "radius": 5.0, "height": 1, "mat": "marrow", "part": "stone"},
+    {"op": "cylinder", "base": [15.0, 1, 22.0], "radius": 3.0, "height": 9, "mat": "air", "part": "stone"},
+    {"op": "cylinder", "base": [15.0, 0, 22.0], "radius": 3.0, "height": 1, "mat": "pit", "part": "floor"},
+    {"op": "box", "from": [10, 6, 17], "to": [13, 8, 20], "mat": "white", "part": "stone"},
+    {"op": "segment", "points": [[11.5, 8, 18.5], [14.5, 33, 21.5]], "radius": 1.2, "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [18, 6, 17], "to": [21, 8, 20], "mat": "white", "part": "stone"},
+    {"op": "segment", "points": [[19.5, 8, 18.5], [16.5, 33, 21.5]], "radius": 1.2, "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [18, 6, 25], "to": [21, 8, 28], "mat": "white", "part": "stone"},
+    {"op": "segment", "points": [[19.5, 8, 26.5], [16.5, 33, 23.5]], "radius": 1.2, "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [10, 6, 25], "to": [13, 8, 28], "mat": "white", "part": "stone"},
+    {"op": "segment", "points": [[11.5, 8, 26.5], [14.5, 33, 23.5]], "radius": 1.2, "mat": "timber", "part": "timber"},
+    {
+      "op": "segment",
+      "points": [[11.98, 12, 18.98], [19.02, 12, 18.98]],
+      "radius": 0.6,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[19.02, 12, 18.98], [19.02, 12, 26.02]],
+      "radius": 0.6,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[19.02, 12, 26.02], [11.98, 12, 26.02]],
+      "radius": 0.6,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[11.98, 12, 26.02], [11.98, 12, 18.98]],
+      "radius": 0.6,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[12.82, 19, 19.82], [18.18, 19, 19.82]],
+      "radius": 0.6,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[18.18, 19, 19.82], [18.18, 19, 25.18]],
+      "radius": 0.6,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[18.18, 19, 25.18], [12.82, 19, 25.18]],
+      "radius": 0.6,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[12.82, 19, 25.18], [12.82, 19, 19.82]],
+      "radius": 0.6,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[13.66, 26, 20.66], [17.34, 26, 20.66]],
+      "radius": 0.6,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[17.34, 26, 20.66], [17.34, 26, 24.34]],
+      "radius": 0.6,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[17.34, 26, 24.34], [13.66, 26, 24.34]],
+      "radius": 0.6,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[13.66, 26, 24.34], [13.66, 26, 20.66]],
+      "radius": 0.6,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[11.5, 8, 18.5], [19.02, 12, 18.98]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[19.5, 8, 18.5], [11.98, 12, 18.98]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[19.5, 8, 18.5], [19.02, 12, 26.02]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[19.5, 8, 26.5], [19.02, 12, 18.98]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[19.5, 8, 26.5], [11.98, 12, 26.02]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[11.5, 8, 26.5], [19.02, 12, 26.02]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[11.5, 8, 26.5], [11.98, 12, 18.98]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[11.5, 8, 18.5], [11.98, 12, 26.02]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[11.98, 12, 18.98], [18.18, 19, 19.82]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[19.02, 12, 18.98], [12.82, 19, 19.82]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[19.02, 12, 18.98], [18.18, 19, 25.18]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[19.02, 12, 26.02], [18.18, 19, 19.82]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[19.02, 12, 26.02], [12.82, 19, 25.18]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[11.98, 12, 26.02], [18.18, 19, 25.18]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[11.98, 12, 26.02], [12.82, 19, 19.82]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[11.98, 12, 18.98], [12.82, 19, 25.18]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[12.82, 19, 19.82], [17.34, 26, 20.66]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[18.18, 19, 19.82], [13.66, 26, 20.66]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[18.18, 19, 19.82], [17.34, 26, 24.34]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[18.18, 19, 25.18], [17.34, 26, 20.66]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[18.18, 19, 25.18], [13.66, 26, 24.34]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[12.82, 19, 25.18], [17.34, 26, 24.34]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[12.82, 19, 25.18], [13.66, 26, 20.66]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[12.82, 19, 19.82], [13.66, 26, 24.34]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[13.66, 26, 20.66], [16.5, 33, 21.5]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[17.34, 26, 20.66], [14.5, 33, 21.5]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[17.34, 26, 20.66], [16.5, 33, 23.5]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[17.34, 26, 24.34], [16.5, 33, 21.5]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[17.34, 26, 24.34], [14.5, 33, 23.5]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[13.66, 26, 24.34], [16.5, 33, 23.5]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[13.66, 26, 24.34], [14.5, 33, 21.5]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[13.66, 26, 20.66], [14.5, 33, 23.5]],
+      "radius": 0.5,
+      "mat": "deadwood",
+      "part": "timber"
+    },
+    {"op": "box", "from": [12, 33, 19], "to": [18, 34, 25], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [14, 34, 20], "to": [16, 38, 21], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [14, 34, 23], "to": [16, 38, 24], "mat": "timber", "part": "timber"},
+    {"op": "disc", "centre": [15.0, 37.0, 22.0], "radius": 3, "thick": 2, "axis": "z", "mat": "iron", "part": "metal"},
+    {"op": "walls", "from": [21, 8, 16], "to": [33, 19, 28], "thick": 1, "mat": "wall", "part": "wall"},
+    {"op": "gable", "from": [20, 19, 15], "to": [34, 19, 29], "axis": "z", "rise": 1, "mat": "roof", "part": "roof"},
+    {"op": "gable", "from": [21, 19, 16], "to": [33, 19, 17], "axis": "z", "rise": 1, "mat": "wall", "part": "wall"},
+    {"op": "gable", "from": [21, 19, 27], "to": [33, 19, 28], "axis": "z", "rise": 1, "mat": "wall", "part": "wall"},
+    {"op": "gable", "from": [22, 19, 17], "to": [32, 19, 27], "axis": "z", "rise": 1, "mat": "air", "part": "roof"},
+    {"op": "box", "from": [24, 8, 15], "to": [29, 18, 17], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [23, 8, 16], "to": [24, 19, 17], "mat": "deadwood", "part": "timber"},
+    {"op": "box", "from": [29, 8, 16], "to": [30, 19, 17], "mat": "deadwood", "part": "timber"},
+    {"op": "box", "from": [23, 18, 16], "to": [30, 19, 17], "mat": "deadwood", "part": "timber"},
+    {"op": "box", "from": [21, 11, 21], "to": [22, 14, 24], "mat": "air", "part": "wall"},
+    {"op": "box", "from": [22, 8, 20], "to": [23, 14, 21], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [22, 8, 23], "to": [23, 14, 24], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [31, 8, 20], "to": [32, 14, 21], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [31, 8, 23], "to": [32, 14, 24], "mat": "timber", "part": "timber"},
+    {
+      "op": "segment",
+      "points": [[22.0, 12.5, 22.5], [32.0, 12.5, 22.5]],
+      "radius": 2.0,
+      "mat": "timber",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[21.5, 12.5, 22.5], [16.0, 39.0, 22.5]],
+      "radius": 0.6,
+      "mat": "rope",
+      "part": "cloth"
+    },
+    {
+      "op": "segment",
+      "points": [[15.0, 39.0, 22.5], [15.0, 3.0, 22.5]],
+      "radius": 0.6,
+      "mat": "rope",
+      "part": "cloth"
+    },
+    {"op": "box", "from": [14, 2, 21], "to": [17, 4, 24], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [1, 0, 2], "to": [2, 1, 9], "mat": "deadwood", "part": "timber"},
+    {"op": "box", "from": [4, 0, 2], "to": [5, 1, 9], "mat": "deadwood", "part": "timber"},
+    {"op": "box", "from": [7, 0, 2], "to": [8, 1, 9], "mat": "deadwood", "part": "timber"},
+    {"op": "box", "from": [10, 0, 2], "to": [11, 1, 9], "mat": "deadwood", "part": "timber"},
+    {"op": "box", "from": [13, 0, 2], "to": [14, 1, 9], "mat": "deadwood", "part": "timber"},
+    {"op": "box", "from": [16, 0, 2], "to": [17, 1, 9], "mat": "deadwood", "part": "timber"},
+    {"op": "box", "from": [19, 0, 2], "to": [20, 1, 9], "mat": "deadwood", "part": "timber"},
+    {"op": "box", "from": [22, 0, 2], "to": [23, 1, 9], "mat": "deadwood", "part": "timber"},
+    {"op": "box", "from": [1, 1, 3], "to": [23, 2, 4], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [1, 1, 7], "to": [23, 2, 8], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [22, 1, 2], "to": [23, 4, 9], "mat": "deadwood", "part": "timber"},
+    {"op": "box", "from": [8, 2, 3], "to": [10, 4, 4], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [8, 2, 7], "to": [10, 4, 8], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [12, 2, 3], "to": [14, 4, 4], "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [12, 2, 7], "to": [14, 4, 8], "mat": "iron", "part": "metal"},
+    {"op": "walls", "from": [7, 3, 3], "to": [14, 7, 8], "thick": 1, "mat": "iron", "part": "metal"},
+    {"op": "box", "from": [8, 3, 4], "to": [13, 4, 7], "mat": "iron", "part": "metal"},
+    {"op": "ellipsoid", "centre": [10.5, 6.5, 5.5], "radius": [2.8, 1.5, 1.5], "mat": "crystal", "part": "stone"},
+    {"op": "box", "from": [31, 0, 4], "to": [32, 4, 5], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [31, 0, 7], "to": [32, 4, 8], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [37, 0, 4], "to": [38, 4, 5], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [37, 0, 7], "to": [38, 4, 8], "mat": "timber", "part": "timber"},
+    {"op": "box", "from": [30, 4, 3], "to": [39, 5, 9], "mat": "floor_p", "part": "timber"},
+    {"op": "ellipsoid", "centre": [32.5, 6.0, 5.5], "radius": [1.0, 1.4, 1.0], "mat": "crystal", "part": "stone"},
+    {"op": "ellipsoid", "centre": [34.5, 6.0, 6.5], "radius": [1.3, 1.7, 1.3], "mat": "crystal", "part": "stone"},
+    {"op": "ellipsoid", "centre": [36.5, 6.0, 5.0], "radius": [0.9, 1.3, 0.9], "mat": "crystal", "part": "stone"},
+    {"op": "ellipsoid", "centre": [33.5, 6.0, 7.5], "radius": [0.8, 1.2, 0.8], "mat": "crystal", "part": "stone"}
+  ]
+}

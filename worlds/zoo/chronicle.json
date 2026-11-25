@@ -1,0 +1,18 @@
+{
+  "places": {},
+  "events": [
+    {
+      "year": -1000,
+      "event": "terrain",
+      "cause": "A level lawn six metres over the sea, with the sea along the south edge for the fish, whales and shore animals.",
+      "base": 16,
+      "hills": 0,
+      "ridges": 0,
+      "rough": 0,
+      "vary": 0,
+      "warp": 1,
+      "shelf": 3,
+      "sea": [{"edge": "south", "reach": 300, "bays": 0, "skerries": 0}]
+    }
+  ]
+}

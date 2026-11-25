@@ -5,6 +5,7 @@
   "notes": "Channel catfish: grey-olive, whiskered, in loose groups along the bayous and the channels.",
   "colors": {"herring": [104, 104, 92], "silver": [196, 190, 176], "fin": [84, 84, 74]},
   "behaviour": {
+    "displays": [{"kind": "bait_ball"}, {"kind": "leap"}, {"kind": "surface_roll"}],
     "walk_speed": 0.8,
     "flee_speed": 3.0,
     "leap": 0.2,
@@ -12,7 +13,11 @@
     "group": {"size": [2, 5], "spacing": 1.2, "range": 5},
     "flightiness": 0.8,
     "active": "nocturnal",
-    "off_hours": 0.3
+    "off_hours": 0.3,
+    "voice": {
+      "size": 0.8,
+      "calls": [{"cry": "splash", "on": "display:leap"}, {"cry": "splash", "on": "display:surface_roll", "size": 0.5}]
+    }
   },
   "like": "trout",
   "scale": 1.3

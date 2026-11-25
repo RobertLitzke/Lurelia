@@ -58,8 +58,15 @@ pub fn animate(world: &mut hecs::World, species: &[Species], dt: f32, models: &[
     }
     // Flocks coming down: their members flare near the landing spot.
     let landing: HashMap<hecs::Entity, Vec3> = world.query::<(hecs::Entity, &Flock)>().iter().filter(|(_, f)| f.mode == Mode::Land).map(|(e, f)| (e, f.goal)).collect();
-    for (look, anim, fl, flit, gull, (pad, cl), (run, hum)) in
-        world.query_mut::<(&Look, &mut Anim, Option<&Flyer>, Option<&Flit>, Option<&Gull>, (Option<&Paddler>, Option<&Clinger>), (Option<&Runner>, Option<&Hummer>))>()
+    for (look, anim, fl, flit, gull, (pad, cl), (run, hum, show)) in world.query_mut::<(
+        &Look,
+        &mut Anim,
+        Option<&Flyer>,
+        Option<&Flit>,
+        Option<&Gull>,
+        (Option<&Paddler>, Option<&Clinger>),
+        (Option<&Runner>, Option<&Hummer>, Option<&super::display::Show>),
+    )>()
     {
         if anim.flight.is_none() {
             continue;
@@ -69,6 +76,8 @@ pub fn animate(world: &mut hecs::World, species: &[Species], dt: f32, models: &[
         };
         let vel = (look.pos - look.prev_pos) / dt.max(1e-4);
         let (perched, near_goal) = match (fl, flit, pad, cl) {
+            // In a display: perched when it says sit.
+            _ if show.is_some() => (show.is_some_and(|s| matches!(s.out.drive, super::display::Drive::Sit { .. })), false),
             _ if run.is_some() => run.map_or((false, false), |r| (r.grounded(), r.landing())),
             _ if hum.is_some() => hum.map_or((false, false), |h| (h.perched(), h.landing())),
             (Some(f), ..) => (f.perched, landing.get(&f.flock).is_some_and(|g| (*g - look.pos).length() < 5.0)),
@@ -77,7 +86,8 @@ pub fn animate(world: &mut hecs::World, species: &[Species], dt: f32, models: &[
             (_, _, _, Some(c)) => (c.clinging(), c.landing()),
             _ => gull.map_or((false, false), |g| (g.floating(), g.landing())),
         };
-        let cling = cl.is_some_and(|c| c.clinging());
+        // A clinger in a display clings while it is told to sit.
+        let cling = cl.is_some_and(|c| c.clinging()) && show.is_none_or(|s| matches!(s.out.drive, super::display::Drive::Sit { .. }));
         anim.step_flight(
             rig,
             models[look.model].voxel,
@@ -90,5 +100,8 @@ pub fn animate(world: &mut hecs::World, species: &[Species], dt: f32, models: &[
                 cling,
             },
         );
+        if let Some(s) = show {
+            super::display::apply(rig, &mut anim.pose, &s.out.pose, models[look.model].voxel);
+        }
     }
 }

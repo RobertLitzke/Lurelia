@@ -3,11 +3,13 @@
   "version": 2,
   "introduced_by": "windbarrow",
   "notes": "The green line of the Narrow: willow and alder leaning downwind, reedmace in the slack water, long meadow grass, and everything in the country coming down to drink.",
+  "habitat": "riparian",
   "priority": 14,
   "rules": {"river": [0, 26]},
   "surface": "meadow_grass",
   "subsurface": "dirt",
   "rock": null,
+  "soil": 0.65,
   "map_color": [96, 150, 76],
   "plants": [
     {"plant": "willow", "density": 0.012, "placement": {"verb": "riparian", "params": {"width": 16}}},

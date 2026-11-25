@@ -3,12 +3,14 @@
   "version": 2,
   "introduced_by": "underwater",
   "notes": "The fore reef: spurs of coral running down to the drop-off, the richest water on the reef: staghorn thickets, tables, plates, brain and boulder coral, sponges and fans.",
+  "habitat": "coral_reef",
   "priority": 20,
   "rules": {"underwater": true, "region": "fore_reef"},
   "surface": "reef_lime",
   "subsurface": "reef_lime",
   "rock": "reef_lime",
   "fringe": 0,
+  "soil": 0.5,
   "map_color": [210, 140, 150],
   "plants": [
     {

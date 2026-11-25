@@ -30,6 +30,17 @@ pub(super) fn lay(sk: &Skeleton, cx: &mut EventCtx, pts: &[Vec2]) -> String {
     let mut occupy: Vec<(Vec2, f32)> = Vec::new();
     let mut tallest: f32 = 0.0;
     let sea = cx.f.sea;
+    // Hung structures draw from their own dice so the ribs come out the same
+    // with or without them.
+    let mut hdice = Dice(cx.seed ^ 0x4a6e);
+    let hang_def = sk.hang.as_ref().and_then(|n| {
+        let d = cx.lib.structure(n);
+        if d.is_none() {
+            cx.warnings.push(format!("skeleton {}: unknown hang structure {n}", sk.name));
+        }
+        d
+    });
+    let mut hung = 0;
 
     for i in 0..nr {
         let u = if nr > 1 { i as f32 / (nr - 1) as f32 } else { 0.5 };
@@ -66,7 +77,35 @@ pub(super) fn lay(sk: &Skeleton, cx: &mut EventCtx, pts: &[Vec2]) -> String {
             bones.list.push(Bone::capsule(base - side * 0.4 * rb, base + side * 0.4 * rb + Vec3::Y * 0.4 * rb, rb * 1.3, rb * 1.1, sid));
             let prev = bent_bone(&mut bones.list, pt, 28, end, |w| (rb * (1.0 - 0.8 * w.powf(1.3))).max(0.5), t3, 0.62, sid);
             tallest = tallest.max(prev.y.max(pt(0.75 * end).y) - sea);
-            occupy.push((Vec2::new(base.x, base.z) + Vec2::new(side.x, side.z) * out * 0.4, out * 0.6 + rb));
+            if sk.open_under {
+                // Only the root and the first low stretch of the bow.
+                occupy.push((Vec2::new(base.x, base.z), rb * 1.6));
+                occupy.push((Vec2::new(base.x, base.z) + Vec2::new(side.x, side.z) * rb * 2.0, rb * 1.3));
+            } else {
+                occupy.push((Vec2::new(base.x, base.z) + Vec2::new(side.x, side.z) * out * 0.4, out * 0.6 + rb));
+            }
+            if let Some(def) = hang_def {
+                for t in [0.07f32, 0.14, 0.22] {
+                    if t > end || hdice.next() >= sk.hang_share {
+                        continue;
+                    }
+                    let q = pt(t);
+                    let r = (rb * (1.0 - 0.8 * t.powf(1.3))).max(0.5);
+                    let at = Vec2::new(q.x, q.z) + Vec2::new(side.x, side.z) * r * 0.35;
+                    let y = q.y - r * 0.85;
+                    if y < cx.f.height(at.x, at.y) + 3.0 {
+                        continue;
+                    }
+                    let bearing = crate::util::bearing(Vec2::new(side.x, side.z)).to_degrees();
+                    let seed = hdice.0;
+                    let no = crate::util::FxHashMap::default();
+                    if let Some(k) = cx.place(def, at, bearing, &no, 0.0, seed) {
+                        let lift = cx.lib.structures[def].anchor[1];
+                        cx.placed[k].origin[1] = (y * 4.0).round() as i32 - lift;
+                        hung += 1;
+                    }
+                }
+            }
             if broken && dice.next() < 0.7 {
                 // The piece that fell, lying outside the row.
                 let lie = Vec2::new(base.x, base.z) + Vec2::new(side.x, side.z) * (out + dice.range(4.0, 14.0)) + d * dice.range(-6.0, 6.0);
@@ -92,11 +131,12 @@ pub(super) fn lay(sk: &Skeleton, cx: &mut EventCtx, pts: &[Vec2]) -> String {
         cx.pois.push(Poi { name: poi.clone(), pos: spine.at(len * 0.5).0, cause });
     }
     format!(
-        "skeleton {}: a ribcage {:.0} m long, {nr} pairs of ribs {:.0} m out from its middle, {count} bones, tallest {:.0} m over the sea; places {}",
+        "skeleton {}: a ribcage {:.0} m long, {nr} pairs of ribs {:.0} m out from its middle, {count} bones, tallest {:.0} m over the sea{}; places {}",
         sk.name,
         len,
         gap,
         tallest,
+        if hung > 0 { format!(", {hung} hung under the ribs") } else { String::new() },
         names.join(", ")
     )
 }

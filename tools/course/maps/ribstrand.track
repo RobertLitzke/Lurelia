@@ -8,7 +8,7 @@ track ribstrand size 768 style shore
 title RIBSTRAND
 blurb A fast lap of a grey northern coast: half a kilometre of wet beach at the water's edge under the sea stacks, a tangle of small bends through the dunes past the bones of a giant's calf, three jumps over the dune crests, and back down the beach through the middle of a titan's ribcage to the line.
 race laps 3 rivals 5 vehicle kart
-road 12 bank 1.25
+road 14.5 bank 1.25
 land 30 1.5
 hour 11
 lights 25
@@ -87,3 +87,11 @@ items 1330
 # out of Tail Bend.
 pad 455 centre 8
 pad 1265 centre 8
+
+# Width: 14.5 m. The Strand is wide wet beach; the Dune Tangle narrow
+# between the ridges, and the jumps as they were (wider, a kart off the
+# outside of a lip comes down off the road); Tail Bend at the base; the
+# ribcage straight between the giant's ribs as it was.
+width 0 360 18
+width 510 1110 12
+width 1480 1600 12

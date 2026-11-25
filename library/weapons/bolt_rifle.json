@@ -1,0 +1,28 @@
+{
+  "name": "bolt_rifle",
+  "version": 1,
+  "introduced_by": "realistic",
+  "notes": "A bolt-action rifle with a ten-power scope: five rounds, one at a time, and one in the head is a kill at any range. Nothing in the realistic kit reaches further. The right button is the scope.",
+  "display": "SNIPER RIFLE",
+  "slot": 10,
+  "ammo_max": 30,
+  "ammo_start": 15,
+  "mag": 5,
+  "reload_s": 2.8,
+  "zoom": 0.18,
+  "fire": {
+    "kind": "hitscan",
+    "rpm": 45.0,
+    "damage": 70.0,
+    "range": 600.0,
+    "falloff": 1.0,
+    "head_mult": 2.5,
+    "kick": 2.4,
+    "tracer": [0.95, 0.96, 1.0],
+    "tracer_s": 0.15
+  },
+  "view": "sniper_scout",
+  "tint": [0.42, 0.32, 0.22],
+  "role": "marksman",
+  "ammo_type": "sniper"
+}

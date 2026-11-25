@@ -121,6 +121,13 @@
             "null"
           ]
         },
+        "displays": {
+          "description": "The rare things it now and then does (creatures/display): a\nhummingbird's dive, rams butting heads. Each names a display written\nin Rust and says how often and when this species does it.",
+          "items": {
+            "$ref": "#/$defs/DisplayDef"
+          },
+          "type": "array"
+        },
         "dive_depth": {
           "default": null,
           "description": "Floating seabirds that dive after fish (cormorants, puffins): how\ndeep they go, metres. They swim a weaving way under for a quarter of\na minute and come up a little further on.",
@@ -289,6 +296,17 @@
           "description": "Walkers: crosses rivers too deep to wade by swimming (head up,\ncarried by the current) instead of turning back at the water.",
           "type": "boolean"
         },
+        "voice": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VoiceDef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The calls it makes and when (creatures/voice.rs, sound/call.rs).\nNever inherited through `like`, which is mostly about shape: a crow\nbuilt on a starling doesn't sing."
+        },
         "walk_speed": {
           "default": 1.2000000476837158,
           "format": "float",
@@ -378,6 +396,11 @@
             "null"
           ]
         },
+        "loose": {
+          "default": false,
+          "description": "Baked as a smooth surface of its own instead of joined to the body,\nfor a sheet that lies against other parts at rest and swings away\nfrom them (a pterosaur's wing panel, a frill over the shoulders).\nWhere it touches the rest at rest there is no surface, so without\nthis the parts it uncovers show holes (decimate.rs `bake_body`).",
+          "type": "boolean"
+        },
         "name": {
           "type": "string"
         },
@@ -404,6 +427,11 @@
             "string",
             "null"
           ]
+        },
+        "rigid": {
+          "default": false,
+          "description": "Never turns on its joint: no motor moves it, so it stays where its\nparent puts it. For a piece split off only to fit the 32^3 window\n(the salt tortoise's shell quarters).",
+          "type": "boolean"
         },
         "role": {
           "$ref": "#/$defs/Role"
@@ -435,6 +463,270 @@
         "name",
         "role"
       ],
+      "type": "object"
+    },
+    "CallDef": {
+      "additionalProperties": false,
+      "description": "One call a species makes.",
+      "properties": {
+        "age": {
+          "default": null,
+          "description": "Only one age calls: \"juvenile\", \"adult\" or \"aged\".",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "at": {
+          "default": null,
+          "description": "With a display: \"start\" (the default) or \"jaw\".",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "boost": {
+          "default": 0.0,
+          "description": "dB over the cry's own level: a marquee call that carries.",
+          "format": "float",
+          "type": "number"
+        },
+        "chance": {
+          "default": null,
+          "description": "The chance it calls when set off (events) or when its time comes\n(idle), 1 by default.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "chorus": {
+          "default": 0.0,
+          "description": "The chance each other of its species near it answers (0 to 1), a\nsecond or few later: a pack's howl, a rookery's caws.",
+          "format": "float",
+          "type": "number"
+        },
+        "chorus_m": {
+          "default": null,
+          "description": "How far an answer may come from, metres; 300 by default.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "cry": {
+          "description": "Which cry: one of sound::call::CRIES by name (\"howl\", \"song\").",
+          "type": "string"
+        },
+        "every_s": {
+          "default": null,
+          "description": "\"idle\": seconds between calls for one individual, [low, high].\nLeft out, [60, 240].",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "hours": {
+          "default": null,
+          "description": "The hours it calls in: \"day\", \"night\", \"dawn\", \"dusk\" or \"twilight\"\n(dawn and dusk). Left out, any hour it is awake.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "on": {
+          "description": "What sets it off: \"idle\" (now and then while it goes about its day),\n\"flee\" (as it bolts), \"chase\" (as it starts after prey), \"takeoff\"\n(a perched bird flying up), \"warn\" (a snake that `warns` holding its\nground, again as each call ends), or \"display:KIND\" (as one of its\ndisplays starts, or with `at: \"jaw\"` each time the display opens its\njaw).",
+          "type": "string"
+        },
+        "rain": {
+          "default": false,
+          "description": "Calls in the rain too. Left out, a downpour quiets it.",
+          "type": "boolean"
+        },
+        "season": {
+          "default": [],
+          "description": "Seasons it calls in; empty is all year.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "sex": {
+          "default": null,
+          "description": "Only one sex calls: \"male\" or \"female\".",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "size": {
+          "default": null,
+          "description": "Its own size against the voice's.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "cry",
+        "on"
+      ],
+      "type": "object"
+    },
+    "CastDef": {
+      "additionalProperties": false,
+      "description": "Who a display needs. The first member is the one that starts it; the rest\nare found near it.",
+      "properties": {
+        "count": {
+          "default": null,
+          "description": "How many take part, all told: [least, most].",
+          "items": {
+            "format": "uint32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "from": {
+          "default": null,
+          "description": "\"solo\", \"same\" (any of its own species near it) or \"family\" (members\nof its own family group only, creatures/herd.rs).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "members": {
+          "description": "What each member must be, in order: the first is the one that starts\nit. Members past the end of the list take the last entry.",
+          "items": {
+            "$ref": "#/$defs/MemberDef"
+          },
+          "type": "array"
+        },
+        "range": {
+          "default": null,
+          "description": "How far from the first member the others may be, metres.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "DisplayDef": {
+      "additionalProperties": false,
+      "description": "One display a species does (creatures/display). Everything but `kind` is\noptional; the display's own code has a default for each.",
+      "properties": {
+        "cast": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CastDef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Who takes part. Left out, the display's own default."
+        },
+        "food": {
+          "default": null,
+          "description": "What it carries in its bill or mouth while the display says so: a\ncollectible's name (`acorn`) or a creature's (`lizard`), drawn there\nsmall. Its model is built in every world this creature is in.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "holds": {
+          "default": null,
+          "description": "How much the player still unsettles the cast while it runs, as a\nmultiplier on flightiness: 0 for bison mid-shove that don't care who\nis watching, 1 for the usual nerves.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "kind": {
+          "description": "Which display: one of creatures::display::KINDS.",
+          "type": "string"
+        },
+        "on_approach": {
+          "default": null,
+          "description": "Started by the player coming near (within the display's `near`\nparam) instead of at `rate`: a skunk's handstand. Left out, the\ndisplay's own default (`threat` is, the rest aren't).",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "params": {
+          "additionalProperties": true,
+          "default": {},
+          "description": "Numbers that tune this display for this species; each display lists\nthe ones it reads. A number, or [low, high] for a random pick. A few\ntake a word instead (`call`'s `posture`, `threat`'s `style`).",
+          "type": "object"
+        },
+        "rate": {
+          "default": null,
+          "description": "Times an hour one individual starts it, before the global dial\n(`VG_DISPLAY_RATE`) and only while the player could see it.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "season": {
+          "default": [],
+          "description": "Seasons it happens in (\"spring\", \"summer\", \"autumn\", \"winter\");\nempty is all year.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "Forms": {
+      "additionalProperties": false,
+      "description": "The entries whose models an individual is drawn with, by sex and age,\nwhere it looks different from the entry's own model: a hind without\nantlers, a lioness, a spotted fawn (creatures::Species::model_for). Each\nnames a creature entry, of which only the model is used: the individual\nkeeps its own species, behaviour and voice. A juvenile takes `juvenile` if\nthere is one, else its sex's form; a form left out is the entry's own\nmodel.",
+      "properties": {
+        "female": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "juvenile": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "male": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
       "type": "object"
     },
     "Group": {
@@ -488,6 +780,29 @@
     "MatRef": {
       "description": "What an op draws with: a slot named in the entry's `slots`, a library\nmaterial by name, `\"air\"` (empties the structure's own voxels and leaves\nthe terrain there) or `\"carve\"` (removes the terrain too: alcoves, adits,\narches worn through rock). In a creature or collectible model, a colour\nnamed in its palette.",
       "type": "string"
+    },
+    "MemberDef": {
+      "additionalProperties": false,
+      "description": "What one member of a display's cast must be.",
+      "properties": {
+        "age": {
+          "default": null,
+          "description": "\"juvenile\", \"adult\" or \"aged\"; left out, any living one.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sex": {
+          "default": null,
+          "description": "\"female\" or \"male\"; left out, either.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
     },
     "MorphDef": {
       "additionalProperties": false,
@@ -1256,10 +1571,14 @@
           ],
           "default": null
         },
-        "slope": {
-          "default": false,
-          "description": "Mesh the parts with sloped corners and stretch them where they meet\ntheir parents, instead of square voxel faces (slope.rs).",
-          "type": "boolean"
+        "sit_up": {
+          "default": null,
+          "description": "How far the body tips back when it sits, radians: past about 1 the\nanimal sits bolt upright on its haunches with its fore paws drawn up\nto its chest (a prairie dog or a meerkat on lookout). Left out, it\nsits the plan's usual way.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
         }
       },
       "required": [
@@ -1324,6 +1643,31 @@
         }
       },
       "type": "object"
+    },
+    "VoiceDef": {
+      "additionalProperties": false,
+      "description": "What a species sounds like: a list of calls, each with what sets it off.",
+      "properties": {
+        "calls": {
+          "items": {
+            "$ref": "#/$defs/CallDef"
+          },
+          "type": "array"
+        },
+        "size": {
+          "default": null,
+          "description": "How big its voice is against each cry as made, 1 by default: bigger\nis lower and slower. A juvenile's is smaller again.",
+          "format": "float",
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "calls"
+      ],
+      "type": "object"
     }
   },
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -1363,6 +1707,10 @@
         "$ref": "#/$defs/Op"
       },
       "type": "array"
+    },
+    "forms": {
+      "$ref": "#/$defs/Forms",
+      "description": "Other entries' models for one sex or for the young (`Forms`). Never\ninherited through `like`: an elk's hind is an elk, not a deer."
     },
     "grid": {
       "default": [
@@ -1431,6 +1779,14 @@
       "description": "Above 0: a rare morph of its parent. Where the parent spawns, this\nfraction of individuals are this creature instead. `rarity` makes a\nrare *species*, which may differ in any way including its shape (the\nunicorn's horn); `morphs` below are coats of one species.",
       "format": "float",
       "type": "number"
+    },
+    "realms": {
+      "default": [],
+      "description": "The realms it belongs to (`library/realms/`): which world its kind\ncomes from. `real` where it names none. Read by animal fill later\n(habitats plan H6).",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
     },
     "rig": {
       "anyOf": [

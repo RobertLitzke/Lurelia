@@ -1,0 +1,49 @@
+{
+  "name": "vila_azul",
+  "version": 2,
+  "introduced_by": "bonebight",
+  "notes": "Vila Azul: a walled medieval and Renaissance hill town gone white: limewashed houses with cobalt-blue trim and terracotta roofs, lanes of pale stone flags, a plaza of blue and white mosaic. Meant for a dense maze town that stands the world's own white towers among its houses as landmarks.",
+  "like": "old_town",
+  "glass": "window_dark",
+  "town": {
+    "walls": {
+      "maze": ["va_limewash"],
+      "radial": ["va_limewash"],
+      "grid": ["va_limewash"],
+      "suburb": ["va_limewash"],
+      "village": ["va_limewash"],
+      "ribbon": ["va_limewash"]
+    },
+    "roofs": {
+      "maze": ["tile_terracotta", "tile_terracotta", "roof_tile_red"],
+      "radial": ["tile_terracotta", "tile_terracotta", "roof_tile_red"],
+      "grid": ["tile_terracotta", "tile_terracotta", "roof_tile_red"],
+      "suburb": ["tile_terracotta", "tile_terracotta", "roof_tile_red"],
+      "village": ["tile_terracotta", "tile_terracotta", "roof_tile_red"],
+      "ribbon": ["tile_terracotta", "tile_terracotta", "roof_tile_red"]
+    },
+    "trims": ["azulejo_cobalt"],
+    "streets": {
+      "main": "city_flags",
+      "ring": "city_flags",
+      "street": "city_flags",
+      "lane": "city_flags",
+      "close": "city_flags",
+      "alley": "city_flags",
+      "country": "road_gravel",
+      "quay": "stone_tiles",
+      "maze_main": "city_flags",
+      "maze_street": "city_flags",
+      "maze_lane": "city_flags",
+      "maze_alley": "city_flags",
+      "village_main": "city_flags",
+      "village_street": "city_flags",
+      "ribbon_main": "city_flags",
+      "drive": "city_flags"
+    },
+    "plaza": "va_mosaic_blue",
+    "flat_roof": "city_flags",
+    "church": "va_limewash",
+    "trees": ["shore_pine"]
+  }
+}

@@ -2,7 +2,7 @@
 //! countdown and the results.
 
 use super::laps::AWAY_SECS;
-use super::arms::{Item, Slot, DAMAGE_MAX};
+use super::arms::{Item, Slot};
 use super::fight::name;
 use super::{Phase, Race, RUN_IN, WRONG_AFTER};
 use crate::render::hud::Hud;
@@ -141,25 +141,53 @@ impl Race {
             Phase::Grid(t) => {
                 let left = t.ceil() as u32;
                 let say = if left > 3 { "READY".to_string() } else { left.to_string() };
-                centre(hud, h * 0.3, s * 4.0, warm, &say);
-                centre(hud, h * 0.3 + 44.0 * s, s, dim, "W DRIVE  A D STEER  SPACE HOP, HOLD TO DRIFT  LEFT MOUSE USES THE ITEM  SHIFT BOOSTS");
+                // Above where the gantry's lights stand from the grid.
+                centre(hud, h * 0.16, s * 4.0, warm, &say);
+                centre(hud, h * 0.16 + 44.0 * s, s, dim, "W DRIVE  A D STEER  SPACE HOP, HOLD TO DRIFT  LEFT MOUSE USES THE ITEM, RIGHT THROWS IT AHEAD  SHIFT BOOSTS");
+                if let Some(c) = &self.cup {
+                    centre(hud, h * 0.16 - 22.0 * s, s * 1.3, white, &format!("CUP  RACE {} OF {}", c.at + 1, c.courses.len()));
+                }
             }
             Phase::Racing => {}
             Phase::Done(since) => {
-                // The results, as they come in.
+                // The results, as they come in; in a cup, the points table
+                // beside them.
                 let y0 = h * 0.26;
                 let (bw, bh) = (200.0 * s, (58.0 + 14.0 * n as f32) * s);
-                hud.rect((w * 0.5 - bw * 0.5).floor(), y0 - 8.0 * s, bw, bh, [0.0, 0.0, 0.0, 0.5]);
-                centre(hud, y0, s * 1.8, white, "RESULTS");
+                let mid = if self.cup.is_some() { w * 0.5 - bw * 0.5 - 6.0 * s } else { w * 0.5 };
+                let at = |hud: &mut Hud, x: f32, y: f32, size: f32, c: [f32; 4], t: &str| {
+                    let tw = Hud::text_width(t, size);
+                    hud.label((x - tw * 0.5).floor(), y, size, c, t);
+                };
+                hud.rect((mid - bw * 0.5).floor(), y0 - 8.0 * s, bw, bh, [0.0, 0.0, 0.0, 0.5]);
+                at(hud, mid, y0, s * 1.8, white, "RESULTS");
                 for (k, (who, _, fin)) in self.standings().iter().enumerate() {
                     let time = fin.map_or_else(|| if since > RUN_IN { "DNF".to_string() } else { "RACING".to_string() }, |t| clock(t, 1));
                     let c = if *who == 0 { warm } else { white };
-                    centre(hud, y0 + (22.0 + 14.0 * k as f32) * s, s * 1.2, c, &format!("{}  {:<6}  {}", ordinal(k + 1), name(*who), time));
+                    at(hud, mid, y0 + (22.0 + 14.0 * k as f32) * s, s * 1.2, c, &format!("{}  {:<6}  {}", ordinal(k + 1), name(*who), time));
                 }
                 if let Some(best) = self.best_lap() {
-                    centre(hud, y0 + (24.0 + 14.0 * n as f32) * s, s, dim, &format!("YOUR BEST LAP {}", clock(best, 1)));
+                    at(hud, mid, y0 + (24.0 + 14.0 * n as f32) * s, s, dim, &format!("YOUR BEST LAP {}", clock(best, 1)));
                 }
-                centre(hud, y0 + (36.0 + 14.0 * n as f32) * s, s, dim, "ENTER TO RACE AGAIN");
+                let enter = match &self.cup {
+                    None => "ENTER TO RACE AGAIN".to_string(),
+                    Some(c) if c.last() => "ENTER FOR A NEW CUP".to_string(),
+                    Some(c) => format!("ENTER FOR RACE {}: {}", c.at + 2, crate::menu::world_title(&c.courses[c.at + 1]).to_uppercase()),
+                };
+                centre(hud, y0 + bh + 2.0 * s, s, dim, &enter);
+                if let Some(c) = &self.cup {
+                    let x = w * 0.5 + bw * 0.5 + 6.0 * s;
+                    hud.rect((x - bw * 0.5).floor(), y0 - 8.0 * s, bw, bh, [0.0, 0.0, 0.0, 0.5]);
+                    let title = if c.last() && c.scored() { "CUP FINAL".to_string() } else { format!("CUP  RACE {}/{}", c.at + 1, c.courses.len()) };
+                    at(hud, x, y0, s * 1.8, white, &title);
+                    if !c.scored() {
+                        at(hud, x, y0 + 22.0 * s, s * 1.1, dim, "POINTS WHEN ALL ARE HOME");
+                    }
+                    for (k, (who, pts)) in c.table().iter().enumerate().filter(|_| c.scored()) {
+                        let ink = if *who == 0 { warm } else { white };
+                        at(hud, x, y0 + (22.0 + 14.0 * k as f32) * s, s * 1.2, ink, &format!("{}  {:<6}  {pts:>2} PTS", ordinal(k + 1), name(*who)));
+                    }
+                }
             }
         }
     }
@@ -173,7 +201,7 @@ impl Race {
         hud.rect(x0, y0, w, hh, [0.0, 0.0, 0.0, 0.35]);
         let (label, colour, left) = match self.slots.first().copied().unwrap_or(Slot::Empty) {
             Slot::Empty => ("NO ITEM".to_string(), [0.6, 0.6, 0.6, 0.6], None),
-            Slot::Have(i, n) => (i.name().to_string(), i.colour(), (i.uses() > 1).then_some(n)),
+            Slot::Have(i, n) => (i.name().to_string(), i.colour(), (self.arms.rules.uses(i) > 1).then_some(n)),
         };
         hud.rect(x0, y0, 5.0 * s, hh, colour);
         hud.label(x0 + 10.0 * s, y0 + 6.0 * s, s * 1.5, white, &label);
@@ -187,7 +215,7 @@ impl Race {
         let dy = y0 + hh + 4.0 * s;
         let dh = 5.0 * s;
         hud.rect(x0, dy, w, dh, [0.0, 0.0, 0.0, 0.35]);
-        let share = h0.damage / DAMAGE_MAX;
+        let share = h0.damage / self.arms.rules.damage_max;
         if share > 0.0 {
             let ink = if share > 0.66 { [1.0, 0.32, 0.25, 0.95] } else { [1.0, 0.72, 0.25, 0.95] };
             hud.rect(x0, dy, w * share, dh, ink);

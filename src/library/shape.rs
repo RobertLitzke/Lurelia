@@ -210,7 +210,10 @@ enum Base {
     /// stands these only in water 1.5 to 16 m deep.
     Sea,
     /// The anchor voxel sits at the highest ground under the footprint and
-    /// nothing is levelled: bridges spanning a gap, things hung on a cliff.
+    /// nothing is levelled: things hung on a cliff. Tagged "bridge", it is
+    /// seated on its banks instead: the deck set from the ground off both
+    /// tips, the ends graded to it and nearby roads run on to them
+    /// (library/schema/structure.md, "Bridges").
     Rim,
     /// Sunk half a metre into the lowest sea bed under the footprint: wrecks.
     Bed,

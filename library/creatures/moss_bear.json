@@ -4,16 +4,30 @@
   "introduced_by": "faerie",
   "notes": "The faerie wood's bear: larger and slower than a black bear, its coat gone green-brown under a mantle of moss, with pale mushrooms on its back that glow at dusk. It barely minds people.",
   "colors": {"bear": [110, 100, 66], "moss": [74, 116, 50], "cap": [190, 240, 170, 1.4]},
-  "behaviour": {"sleeps_on_side": true, "walk_speed": 0.7, "wary": 5, "spawn_chance": 0.0015},
+  "behaviour": {
+    "sleeps_on_side": true,
+    "walk_speed": 0.7,
+    "wary": 5,
+    "spawn_chance": 0.0015,
+    "voice": {
+      "size": 1.7,
+      "calls": [
+        {"cry": "growl", "on": "chase", "boost": 3},
+        {"cry": "snort", "on": "flee", "size": 1.2, "chance": 0.6},
+        {"cry": "grunt", "on": "idle", "every_s": [300, 900], "chance": 0.3}
+      ]
+    }
+  },
   "like": "bear",
   "scale": 1.15,
   "extra_ops": [
-    {"op": "ellipsoid", "centre": [16.5, 15.5, 14], "radius": [4.2, 1.6, 7.5], "mat": "moss"},
-    {"op": "ellipsoid", "centre": [16.5, 16.5, 12], "radius": [3.2, 1.2, 3.0], "mat": "moss"},
-    {"op": "box", "from": [15, 17, 10], "to": [16, 19, 11], "mat": "cap"},
-    {"op": "box", "from": [18, 17, 14], "to": [19, 18, 15], "mat": "cap"},
-    {"op": "box", "from": [14, 16, 18], "to": [15, 18, 19], "mat": "cap"},
-    {"op": "set", "at": [17, 17, 20], "mat": "cap"}
+    {"op": "ellipsoid", "centre": [16.901, 27.928, 27.396], "radius": [7.568, 2.883, 13.514], "mat": "moss"},
+    {"op": "ellipsoid", "centre": [16.901, 29.73, 23.793], "radius": [5.766, 2.162, 5.405], "mat": "moss"},
+    {"op": "box", "from": [14, 31, 20], "to": [16, 34, 22], "mat": "cap"},
+    {"op": "box", "from": [20, 31, 27], "to": [21, 32, 29], "mat": "cap"},
+    {"op": "box", "from": [12, 29, 35], "to": [14, 32, 36], "mat": "cap"},
+    {"op": "box", "from": [18, 31, 38], "to": [20, 32, 40], "mat": "cap"}
   ],
-  "vary": {"shade": 0.06, "hue": 0.03}
+  "vary": {"shade": 0.06, "hue": 0.03},
+  "realms": ["fae"]
 }

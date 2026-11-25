@@ -17,5 +17,6 @@
   "cane_spurs": 0.35,
   "flower": "hazel_catkins",
   "flower_tips": true,
-  "flower_seasons": ["winter", "spring"]
+  "flower_seasons": ["winter", "spring"],
+  "site": {"wet": [0.3, 0.9], "soil": [0.4, 1.0]}
 }

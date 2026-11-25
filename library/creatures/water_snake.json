@@ -5,6 +5,7 @@
   "notes": "Dark banded water snake of the swamp and the sawgrass: swims at the surface with its head out and a long wave running down its body, ducks under when you press it, and hauls out on a bank or a cypress knee to lie in the sun.",
   "colors": {"skin": [86, 96, 66]},
   "behaviour": {
+    "displays": [{"kind": "snake_dance"}],
     "movement": "swim",
     "walk_speed": 0.7,
     "flee_speed": 2.6,
@@ -12,9 +13,10 @@
     "flightiness": 0.9,
     "warns": false,
     "active": "nocturnal",
-    "off_hours": 0.2
+    "off_hours": 0.2,
+    "voice": {"calls": [{"cry": "hiss", "on": "warn", "size": 0.8}]}
   },
   "like": "rattlesnake",
   "scale": 1.05,
-  "extra_ops": [{"op": "box", "from": [15, 1, 27], "to": [17, 4, 28], "mat": "air", "part": "tail"}]
+  "extra_ops": [{"op": "box", "from": [14, 1, 32], "to": [19, 5, 38], "mat": "air", "part": "tail"}]
 }

@@ -1,0 +1,299 @@
+{
+  "events": [
+    {
+      "year": -1000000,
+      "event": "heightmap",
+      "file": "ground.bin",
+      "cause": "the land the track is laid over, fitted to the road by tools/course/track_file.py"
+    },
+    {
+      "year": -999999,
+      "event": "terrain",
+      "mode": "add",
+      "base": 0,
+      "hills": 2.0,
+      "ridges": 0,
+      "rough": 1,
+      "vary": 0.4,
+      "warp": 30,
+      "cause": "rolling over the fitted land"
+    },
+    {
+      "year": -500,
+      "event": "path",
+      "cause": "a channel of the delta, dry sand until the flood comes down",
+      "from": [
+        100,
+        560
+      ],
+      "to": [
+        260,
+        500
+      ],
+      "width": 9,
+      "mat": "white_sand"
+    },
+    {
+      "year": -500,
+      "event": "path",
+      "cause": "a channel of the delta, dry sand until the flood comes down",
+      "from": [
+        100,
+        500
+      ],
+      "to": [
+        260,
+        440
+      ],
+      "width": 9,
+      "mat": "white_sand"
+    },
+    {
+      "year": -500,
+      "event": "path",
+      "cause": "a channel of the delta, dry sand until the flood comes down",
+      "from": [
+        100,
+        440
+      ],
+      "to": [
+        260,
+        380
+      ],
+      "width": 9,
+      "mat": "white_sand"
+    },
+    {
+      "year": -500,
+      "event": "path",
+      "cause": "a channel of the delta, dry sand until the flood comes down",
+      "from": [
+        395,
+        150
+      ],
+      "to": [
+        400,
+        330
+      ],
+      "width": 22,
+      "mat": "white_sand"
+    },
+    {
+      "year": 1000,
+      "event": "place",
+      "cause": "a baobab older than anyone's grandmother's grandmother",
+      "structure": "hollow_baobab",
+      "at": {
+        "along": 260,
+        "right": 30
+      }
+    },
+    {
+      "year": 1001,
+      "event": "place",
+      "cause": "a baobab older than anyone's grandmother's grandmother",
+      "structure": "hollow_baobab",
+      "at": {
+        "along": 620,
+        "left": 40
+      }
+    },
+    {
+      "year": 1002,
+      "event": "place",
+      "cause": "a baobab older than anyone's grandmother's grandmother",
+      "structure": "hollow_baobab",
+      "at": {
+        "along": 980,
+        "right": 34
+      }
+    },
+    {
+      "year": 1003,
+      "event": "place",
+      "cause": "a baobab older than anyone's grandmother's grandmother",
+      "structure": "hollow_baobab",
+      "at": {
+        "along": 1300,
+        "left": 36
+      }
+    },
+    {
+      "year": 1004,
+      "event": "place",
+      "cause": "a baobab older than anyone's grandmother's grandmother",
+      "structure": "hollow_baobab",
+      "at": {
+        "along": 80,
+        "left": 40
+      }
+    },
+    {
+      "year": 1500,
+      "event": "place",
+      "cause": "a termite mound",
+      "structure": "termite_mound",
+      "at": {
+        "along": 150,
+        "right": 24
+      }
+    },
+    {
+      "year": 1501,
+      "event": "place",
+      "cause": "a termite mound",
+      "structure": "termite_mound",
+      "at": {
+        "along": 330,
+        "left": 26
+      }
+    },
+    {
+      "year": 1502,
+      "event": "place",
+      "cause": "a termite mound",
+      "structure": "termite_mound",
+      "at": {
+        "along": 700,
+        "right": 22
+      }
+    },
+    {
+      "year": 1503,
+      "event": "place",
+      "cause": "a termite mound",
+      "structure": "termite_mound",
+      "at": {
+        "along": 1380,
+        "right": 28
+      }
+    },
+    {
+      "year": 1504,
+      "event": "place",
+      "cause": "a termite mound",
+      "structure": "termite_mound",
+      "at": {
+        "along": 1450,
+        "left": 30
+      }
+    },
+    {
+      "year": 1505,
+      "event": "place",
+      "cause": "a termite mound",
+      "structure": "termite_mound",
+      "at": {
+        "along": 1040,
+        "right": 30
+      }
+    },
+    {
+      "year": 1950,
+      "event": "place",
+      "cause": "a mokoro pulled up in the dry channel, waiting for the flood",
+      "structure": "mokoro",
+      "at": [
+        395,
+        212
+      ],
+      "bearing": 10
+    },
+    {
+      "year": 1950,
+      "event": "place",
+      "cause": "a mokoro pulled up in the dry channel",
+      "structure": "mokoro",
+      "at": [
+        399,
+        292
+      ],
+      "bearing": 190
+    },
+    {
+      "year": 1800,
+      "event": "place",
+      "cause": "the baobab cistern under the kopje",
+      "structure": "baobab_cistern",
+      "at": {
+        "along": 1180,
+        "right": 34
+      }
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Little Channels",
+      "kind": "delta",
+      "along": {
+        "from": 30,
+        "to": 215,
+        "left": [
+          0,
+          50
+        ]
+      },
+      "cause": "the Little Channels"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Main Channel",
+      "kind": "delta",
+      "along": {
+        "from": 470,
+        "to": 545,
+        "left": [
+          0,
+          60
+        ]
+      },
+      "cause": "the Main Channel"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Trough",
+      "kind": "delta",
+      "along": {
+        "from": 700,
+        "to": 1000,
+        "left": [
+          0,
+          40
+        ]
+      },
+      "cause": "the Trough"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "Lamp Kopje",
+      "kind": "delta",
+      "along": {
+        "from": 1060,
+        "to": 1230,
+        "left": [
+          0,
+          60
+        ]
+      },
+      "cause": "Lamp Kopje"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Salt Pans",
+      "kind": "delta",
+      "along": {
+        "from": 1240,
+        "to": 1480,
+        "right": [
+          0,
+          90
+        ]
+      },
+      "cause": "the Salt Pans"
+    }
+  ]
+}

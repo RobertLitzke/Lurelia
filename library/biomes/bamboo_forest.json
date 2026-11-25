@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "jadewater",
   "notes": "Wetter ground east of the Old Wall: giant bamboo in dense patches over long green grass, among small broadleaf trees and ferns, misty.",
+  "habitat": "tropical_forest",
   "priority": 4,
   "rules": {"moist": [0.62, 1.0], "elev": [2.5, 20]},
   "surface": "meadow_grass",
   "subsurface": "dirt",
+  "soil": 0.5,
   "map_color": [150, 168, 70],
   "plants": [
     {

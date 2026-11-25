@@ -140,6 +140,151 @@
       ],
       "description": "What a morph puts in one of an entry's colour slots: another material by\nname (a plant's leaf, where the material already exists), or the range of\ncolour the slot is drawn in, as two ends in sRGB bytes with an optional\nfourth emissive value. One colour is a range with both ends the same."
     },
+    "SitePrefs": {
+      "additionalProperties": false,
+      "description": "A plant's soft range on each site field, 0 to 1: full suitability inside\n`[lo, hi]`, falling to almost nothing over `site::SOFT` outside. A field\nleft out doesn't matter to it.",
+      "properties": {
+        "cold": {
+          "default": null,
+          "description": "Cold: 0.15 at sea level up to 1 about 220 m above it, colder on north\nfaces and in frost hollows, milder by the sea.",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "disturbed": {
+          "default": null,
+          "description": "Recent fire, paths, roads, buildings.",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "exposure": {
+          "default": null,
+          "description": "Height over the land round it and facing into the wind.",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "rock": {
+          "default": null,
+          "description": "Steep, cliff, bare stone.",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "shade": {
+          "default": null,
+          "description": "The land's shade and the crowns of the taller plants placed before it.",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "soil": {
+          "default": null,
+          "description": "0 acid and poor (heath, bog) to 1 base-rich (limestone, rich meadow).",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "sun": {
+          "default": null,
+          "description": "Warmth by slope and aspect: 0.5 flat, low on north faces, high on south.",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "wet": {
+          "default": null,
+          "description": "Water in the ground: 0.1-0.3 a dry ridge, 0.5-0.8 a gully floor, 1 open water.",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Skeleton": {
+      "description": "What is left of a dead tree (plant `skeleton`).",
+      "oneOf": [
+        {
+          "enum": [
+            "stump"
+          ],
+          "type": "string"
+        },
+        {
+          "const": "standing",
+          "description": "Still standing, its top gone, a few bare limb stubs.",
+          "type": "string"
+        },
+        {
+          "const": "broken",
+          "description": "Snapped a few metres up.",
+          "type": "string"
+        },
+        {
+          "const": "log",
+          "description": "Fallen, lying along the ground.",
+          "type": "string"
+        }
+      ]
+    },
     "Sweep": {
       "description": "How a conifer's whorl branches sit (`sweep`).",
       "oneOf": [
@@ -472,6 +617,14 @@
       "format": "float",
       "type": "number"
     },
+    "realms": {
+      "default": [],
+      "description": "The realms it belongs to (`library/realms/`): which world its kind\ncomes from. `real` where it names none. A world's fill only draws a\nspecies into a biome whose realms it shares.",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
     "scale": {
       "description": "With `like`: multiplies the parent's sizes; sizes this entry gives are taken as written.",
       "type": "number"
@@ -483,6 +636,29 @@
         "boolean",
         "null"
       ]
+    },
+    "site": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SitePrefs"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The ground it does well on (world/site.rs), read only by placement\nv2 (world.json `\"plants\": \"v2\"`). Left out, it grows wherever its\nbiome puts it."
+    },
+    "skeleton": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Skeleton"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "A dead tree's shape, on the generic entries placement v2 draws its\nwoods' dead from (`flora::skeleton`): `standing` (a snag with its top\ngone), `broken` (snapped low), `stump` or `log` (fallen, lying along\nthe ground). Drawn as the skeleton of a living tree, it takes that\ntree's size and bark; listed in a biome on its own (a drowned wood),\nits own. Under v2 stand structure an entry a biome lists is drawn as\none of that biome's own trees, dead (picked by their density); a biome\nwith no such trees keeps the generic one (docs/PLANTS.md)."
     },
     "spread": {
       "default": 0.0,

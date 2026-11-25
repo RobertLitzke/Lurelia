@@ -1,0 +1,22 @@
+{
+  "notes": "Thornpan's dry delta: a pale gravel road, granite kerbs and walls, white sand verges.",
+  "story": "an inland delta in a dry country, golden grass and white sand",
+  "road": "fan_gravel",
+  "kerb": "granite",
+  "wall": "granite",
+  "deck": "granite",
+  "gate_post": "granite",
+  "pad": "boost_pad",
+  "world": {
+    "rock": [["granite", 1.0]],
+    "biomes": ["golden_savanna", "flood_meadow", "palm_island", "kopje_rock", "gallery_forest", "pan_floor", "delta_shallows", "salt_shore"],
+    "default_biome": "golden_savanna",
+    "seabed_biome": "delta_shallows",
+    "seasons": ["winter", "summer"],
+    "weather": {"sun": 1.6, "heat": 1.3, "clouds": 0.3, "rain": 0.1, "fog": 0.15},
+    "start_weather": "sun",
+    "weathering": 0.3,
+    "moss": 0.05
+  },
+  "look": "thornpan"
+}

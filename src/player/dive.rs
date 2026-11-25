@@ -14,7 +14,7 @@
 //! - Coming up fast breaks the surface in a leap, and the body falls back in.
 //! - Held onto a big swimmer (`hitch`), the game moves the body with it.
 
-use super::{Player, EYE, STAND_H};
+use super::{Player, EYE};
 use crate::physics::{hits_wet, move_body_with};
 use crate::world::store::{Cell, Store};
 use glam::Vec3;
@@ -251,7 +251,7 @@ impl Player {
         let _ = (store, level);
         self.pos = stood;
         self.prev_pos.y = self.pos.y;
-        self.body.height = STAND_H;
+        self.body.height = self.stand_h;
         self.eye_offset = 0.0;
         self.prev_eye_offset = 0.0;
     }

@@ -1,0 +1,79 @@
+{
+  "name": "saltmirror_array",
+  "title": "SALTMIRROR ARRAY",
+  "blurb": "A late-summer evening on a salt pan under eleven abandoned radio dishes: a pad-chained straight down the array, a fallen dish ridden as a 45-degree bowl, a slalom round the cactus knolls, a climb through the fynbos to the old shoreline, and the brine flat home.",
+  "size_m": 1024.0,
+  "height_m": 96,
+  "sea_level_m": 4,
+  "seed": 12198,
+  "plants": "v2",
+  "sun": {
+    "latitude": 27
+  },
+  "modes": [
+    "walk",
+    "drive",
+    "race",
+    "screenshot",
+    "camera"
+  ],
+  "games": [
+    "race"
+  ],
+  "vehicles": [
+    "kart"
+  ],
+  "start_hour": 18.0,
+  "rock": [
+    [
+      "quartzite",
+      0.7
+    ],
+    [
+      "quartzite_dark",
+      0.3
+    ]
+  ],
+  "biomes": [
+    "mirror_salt",
+    "brine_flat",
+    "brine_edge",
+    "white_dunes",
+    "gravel_fan",
+    "fynbos",
+    "fynbos_kloof",
+    "camp_yard",
+    "rock_island"
+  ],
+  "default_biome": "mirror_salt",
+  "seabed_biome": "brine_flat",
+  "seasons": [
+    "summer",
+    "autumn",
+    "winter",
+    "spring"
+  ],
+  "weather": {
+    "sun": 1.5,
+    "heat": 1.3,
+    "clouds": 0.5,
+    "rain": 0.2,
+    "storm": 0.6
+  },
+  "start_weather": "sun",
+  "weathering": 0.3,
+  "moss": 0.0,
+  "start_season": "summer",
+  "spawn": [
+    214,
+    700
+  ],
+  "spawn_bearing": 91,
+  "race": {
+    "circuit": "saltmirror_array_ring",
+    "track": "track.json",
+    "laps": 2,
+    "rivals": 5,
+    "vehicle": "kart"
+  }
+}

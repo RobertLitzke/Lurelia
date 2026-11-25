@@ -8,5 +8,6 @@
   "buttress": 0.5,
   "crown_radius": [2.6, 3.4],
   "max_slope": 9,
-  "like": "banyan"
+  "like": "banyan",
+  "site": {"rock": [0.25, 1.0], "wet": [0.2, 1.0]}
 }

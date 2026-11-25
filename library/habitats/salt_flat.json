@@ -1,0 +1,12 @@
+{
+  "name": "salt_flat",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Salt pans and brine edges: crusted ground that little can live on.",
+  "wet": 0.3,
+  "soil": 0.9,
+  "shade": 0.0,
+  "rock": 0.0,
+  "disturbed": 0.0,
+  "open": 1.0
+}

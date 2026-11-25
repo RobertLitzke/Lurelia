@@ -1,0 +1,8 @@
+{
+  "name": "kite_cloth_red",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Kitehold's madder-red cloth: awnings, kites and flags.",
+  "like": "canvas",
+  "texture": {"base": [164, 56, 44], "alt": [146, 48, 38], "calm": {"base": [176, 70, 54], "alt": [160, 60, 48]}}
+}

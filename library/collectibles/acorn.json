@@ -1,0 +1,14 @@
+{
+  "name": "acorn",
+  "version": 1,
+  "introduced_by": "displays",
+  "notes": "Not found lying about: what jays, crows, ravens and acorn woodpeckers carry when they cache (a display's food).",
+  "display": "acorn",
+  "voxel": 0.0025,
+  "colors": {"nut": [150, 104, 52], "cap": [96, 72, 44], "tip": [70, 52, 34]},
+  "ops": [
+    {"op": "ellipsoid", "centre": [16, 6, 16], "radius": [3.6, 5, 3.6], "mat": "nut"},
+    {"op": "ellipsoid", "centre": [16, 10, 16], "radius": [4.2, 2.2, 4.2], "mat": "cap"},
+    {"op": "ellipsoid", "centre": [16, 13, 16], "radius": [0.8, 1.2, 0.8], "mat": "tip"}
+  ]
+}

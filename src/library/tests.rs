@@ -121,6 +121,8 @@ fn kind_schemas_are_current() {
             ),
         ),
         ("biome", shape(serde_json::to_value(schemars::schema_for!(BiomeDef)).unwrap(), &[like()], true)),
+        ("habitat", shape(serde_json::to_value(schemars::schema_for!(HabitatDef)).unwrap(), &[], false)),
+        ("realm", shape(serde_json::to_value(schemars::schema_for!(RealmDef)).unwrap(), &[], false)),
         ("kit", shape(serde_json::to_value(schemars::schema_for!(crate::world::route::kit::KitDef)).unwrap(), &[], false)),
     ];
     let mut stale = Vec::new();
@@ -136,6 +138,12 @@ fn kind_schemas_are_current() {
         }
     }
     assert!(stale.is_empty(), "out of date, run WRITE_SCHEMA=1 cargo test kind_schemas: {stale:?}");
+}
+
+/// `src` up to its first `#[cfg(test)] mod`, or all of it when it has none.
+fn test_free(src: &str) -> &str {
+    let cut = src.match_indices("#[cfg(test)]").map(|(at, _)| at).find(|&at| src[at + "#[cfg(test)]".len()..].trim_start().starts_with("mod "));
+    &src[..cut.unwrap_or(src.len())]
 }
 
 /// A material this world cannot reach gets no id and no texture layer,
@@ -160,6 +168,9 @@ fn materials_named_in_code_are_reached_by_every_world() {
     let (lib, _) = Library::load(&data_root());
     for f in files {
         let src = std::fs::read_to_string(&f).unwrap_or_default();
+        // A test names the materials of the world it builds; only what the
+        // game itself runs has to find its material in every world.
+        let src = test_free(&src);
         for pat in ["id_of(\"", ".material(\""] {
             for (at, _) in src.match_indices(pat) {
                 let rest = &src[at + pat.len()..];
@@ -467,8 +478,12 @@ fn small_worlds_build_cleanly() {
         // (`worldload::library_for`). With every material counted as
         // reached the library no longer fits in 238 ids, so the ones that
         // missed out would come back as "unknown material".
+        // The coats and the passable copies of race posts and smashable
+        // props are reached the same way.
         let (mut lib, _) = Library::load(&root);
-        let reach = crate::worldload::reach(&root.join("library"), &dir, &lib);
+        let mut reach = crate::worldload::reach(&root.join("library"), &dir, &lib);
+        lib.reach_coats(&mut reach);
+        lib.ghost_twins(&crate::worldload::lamp_posts(&dir), &mut reach);
         lib.assign_ids(Some(reach));
         let world = crate::world::chronicle::build_world(&dir, lib).unwrap_or_else(|e| panic!("{}: {e}", dir.display()));
         assert!(world.warnings.is_empty(), "{}: {:#?}", dir.display(), world.warnings);

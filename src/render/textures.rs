@@ -331,6 +331,33 @@ fn to_srgb(c: f32) -> u8 {
     (c.max(0.0).powf(1.0 / 2.2) * 255.0).round().clamp(0.0, 255.0) as u8
 }
 
+/// Mips built ahead (`prebuild`): the set, the material table's generation
+/// they were painted from, and the mips.
+type Built = (bool, u32, Vec<Vec<Vec<u8>>>);
+static PREBUILT: std::sync::Mutex<Option<Built>> = std::sync::Mutex::new(None);
+
+/// Paint the blocks for `calm` now, off the main thread (a world's loader,
+/// once its materials are installed), for the renderer to take (`take_or_build`)
+/// rather than paint them itself in the first frame: about 300 ms.
+pub fn prebuild(calm: bool) {
+    let gen = crate::world::matlib::generation();
+    let mips = build(calm);
+    *PREBUILT.lock().unwrap_or_else(|e| e.into_inner()) = Some((calm, gen, mips));
+}
+
+/// `build(calm)`, from what `prebuild` left if it is that set painted from
+/// the material table now installed.
+pub fn take_or_build(calm: bool) -> Vec<Vec<Vec<u8>>> {
+    let gen = crate::world::matlib::generation();
+    let mut slot = PREBUILT.lock().unwrap_or_else(|e| e.into_inner());
+    // Another set (the renderer's start-up blocks) leaves it for its turn.
+    if slot.as_ref().is_some_and(|(c, g, _)| *c == calm && *g == gen) {
+        return slot.take().unwrap().2;
+    }
+    drop(slot);
+    build(calm)
+}
+
 /// RGBA8 sRGB data for every mip of every layer: `out[mip][layer]`.
 /// `calm` is the saturated style's flat set; otherwise the classic style's
 /// tiles (texsets.rs).

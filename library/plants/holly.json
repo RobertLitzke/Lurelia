@@ -16,5 +16,6 @@
   "max_slope": 0.9,
   "thin_limbs": 0.12,
   "flower": "red_berries",
-  "flower_seasons": ["autumn", "winter"]
+  "flower_seasons": ["autumn", "winter"],
+  "site": {"wet": [0.3, 0.8], "shade": [0.2, 1.0]}
 }

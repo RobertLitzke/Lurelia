@@ -1,0 +1,17 @@
+{
+  "name": "maple_crimson",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A maple at its deepest red in autumn, darker than maple_red. One of the autumn coats maples draw from (plants/maple.json morphs).",
+  "smooth": false,
+  "foliage": true,
+  "sprites": {"rule": "leaves", "shape": "maple"},
+  "texture": {
+    "pattern": "blotch",
+    "base": [150, 30, 30],
+    "alt": [184, 52, 40],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [156, 38, 36], "alt": [178, 58, 46]}
+  }
+}

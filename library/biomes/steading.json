@@ -3,12 +3,14 @@
   "version": 2,
   "introduced_by": "windbarrow",
   "notes": "The ground of a Windbarrow village: yards trodden to bare chalk between the round houses, barley plots behind hurdles, hearths, racks and pens, cattle and sheep standing about.",
+  "habitat": "settlement",
   "priority": 22,
   "rules": {"region": "steading"},
   "surface": "downland_grass",
   "subsurface": "chalk_white",
   "rock": null,
   "fringe": 0,
+  "soil": 0.8,
   "map_color": [172, 146, 110],
   "plants": [
     {

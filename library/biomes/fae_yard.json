@@ -4,6 +4,7 @@
   "introduced_by": "faerie",
   "notes": "The enchanted city's yards and verges: woodland coming back between the houses.",
   "surface": "moss_grass",
+  "soil": 0.5,
   "map_color": [96, 150, 80],
   "plants": [
     {

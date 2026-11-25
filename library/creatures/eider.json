@@ -13,11 +13,27 @@
     "legs": [96, 112, 90],
     "breast": [232, 214, 204]
   },
+  "forms": {"female": "eider_female"},
+  "behaviour": {
+    "voice": {
+      "calls": [
+        {
+          "cry": "hoot",
+          "on": "idle",
+          "hours": "day",
+          "size": 0.8,
+          "every_s": [60, 240],
+          "chorus": 0.3,
+          "chorus_m": 100
+        }
+      ]
+    }
+  },
   "like": "mallard",
   "extra_ops": [
-    {"op": "recolour", "at": [28, 10, 20], "until": [37, 15, 37], "from": "wing", "to": "body"},
-    {"op": "recolour", "at": [28, 5, 23], "until": [37, 10, 35], "from": "wing", "to": "body"},
-    {"op": "recolour", "at": [28, 2, 20], "until": [37, 8, 38], "from": "body", "to": "wing"},
-    {"op": "recolour", "at": [29, 13, 19], "until": [36, 14, 22], "from": "white", "to": "neck"}
+    {"op": "recolour", "at": [28, 13, 21], "until": [39, 19, 42], "from": "wing", "to": "body"},
+    {"op": "recolour", "at": [28, 6, 25], "until": [39, 13, 40], "from": "wing", "to": "body"},
+    {"op": "recolour", "at": [28, 3, 21], "until": [39, 10, 44], "from": "body", "to": "wing"},
+    {"op": "recolour", "at": [29, 16, 20], "until": [38, 18, 23], "from": "white", "to": "neck"}
   ]
 }

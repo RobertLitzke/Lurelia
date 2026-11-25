@@ -3,11 +3,13 @@
   "version": 2,
   "introduced_by": "underwater",
   "notes": "A motu: a low islet of coral sand on an atoll's ring, a few palms and scrub on it.",
+  "habitat": "hammock",
   "priority": 20,
   "rules": {"underwater": false, "region": "motu"},
   "surface": "sand",
   "subsurface": "sand",
   "fringe": 0,
+  "soil": 0.85,
   "map_color": [240, 230, 200],
   "plants": [
     {"plant": "cabbage_palm", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},

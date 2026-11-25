@@ -592,6 +592,7 @@ mod tests {
             amount: None,
             weapon: None,
             respawn_s: None,
+            pad_of: None,
         }
     }
 
@@ -605,6 +606,7 @@ mod tests {
                 amount: None,
                 weapon: w.map(|s| s.to_string()),
                 respawn_s: None,
+                pad_of: None,
             })
             .collect();
         Pickups::new(&defs, |x, z, _| (Vec3::new(x, 0.0, z), true), |w| panic!("{w}"))
@@ -720,6 +722,7 @@ mod tests {
                 amount: Some(a),
                 weapon: None,
                 respawn_s: None,
+                pad_of: None,
             })
             .collect();
         let p = Pickups::new(&defs, |x, z, _| (Vec3::new(x, 0.0, z), true), |w| panic!("{w}"));
@@ -753,6 +756,7 @@ mod tests {
                 amount: Some(a),
                 weapon: None,
                 respawn_s: None,
+                pad_of: None,
             })
             .collect();
         let p = Pickups::new(&defs, |x, z, _| (Vec3::new(x, 0.0, z), true), |w| panic!("{w}"));
@@ -832,6 +836,7 @@ mod tests {
                 amount: None,
                 weapon: None,
                 respawn_s: None,
+                pad_of: None,
             },
             PickupDef {
                 kind: "ammo".into(),
@@ -840,6 +845,7 @@ mod tests {
                 amount: None,
                 weapon: None,
                 respawn_s: None,
+                pad_of: None,
             },
         ];
         let p = Pickups::new(&defs, |x, z, _| (Vec3::new(x, 0.0, z), true), |w| said.push(w));

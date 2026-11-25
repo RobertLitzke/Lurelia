@@ -152,9 +152,10 @@ pub struct PlatformDef {
     /// A world states a lift's height against the spawn floor because that
     /// is the datum everything hand-written shares. A door the chronicle
     /// put on a hillside knows its own absolute height and nothing else, so
-    /// it says so. Not read from a world file: generated doors set it
-    /// (`doors_in`).
-    #[serde(skip)]
+    /// it says so. Generated doors set it (`doors_in`), and a world may too:
+    /// a ferry or a float on the sea knows the sea's height, not the spawn
+    /// floor's.
+    #[serde(default)]
     pub absolute: bool,
     /// The library material it is made of, which decides what standing on it
     /// costs: a pan of slag carries its `hurt` wherever it goes. Rock when
@@ -169,6 +170,19 @@ pub struct PlatformDef {
     /// Gives its own light, 0 to about 1.5, as a material's `glow` does.
     #[serde(default)]
     pub glow: f32,
+    /// A library structure drawn as its look instead of a plain plate
+    /// (Bonebight's chain ferry): at most 32 voxels each way, centred over
+    /// the plate, each material in its calm base colour. The plate (`size`)
+    /// is still all that is solid, so make it the deck.
+    #[serde(default)]
+    pub model: Option<String>,
+    /// Metres the model's bottom sits below the plate's: a hull under a deck.
+    #[serde(default)]
+    pub model_drop: f32,
+    /// It floats: the whole path goes down with the tide, so a ferry stated
+    /// at high water stays on the water at low.
+    #[serde(default)]
+    pub floats: bool,
 }
 
 fn default_speed() -> f32 {
@@ -193,6 +207,10 @@ enum Trigger {
     Near,
     /// Never stops.
     Loop,
+    /// Rides the tide: home at low water, the end of its path at high
+    /// water, in between as the sea stands (Bonebight's drift-bells, which
+    /// lift on their moorings as the tide comes in).
+    Tide,
 }
 
 impl Trigger {
@@ -201,6 +219,7 @@ impl Trigger {
             "" | "stand" => Some(Trigger::Stand),
             "near" => Some(Trigger::Near),
             "loop" => Some(Trigger::Loop),
+            "tide" => Some(Trigger::Tide),
             _ => None,
         }
     }
@@ -250,6 +269,9 @@ pub struct Platform {
     /// Metres from the lowest corner of the box to where the model is drawn
     /// from (its pivot is the bottom centre of a 32-voxel grid).
     draw_off: Vec3,
+    /// Goes down with the tide (`PlatformDef::floats`), and by how much now.
+    floats: bool,
+    sink: f32,
 }
 
 impl Platform {
@@ -382,7 +404,7 @@ impl Platform {
                 self.arrived();
             }
         }
-        self.at = home + self.along();
+        self.at = home + self.along() - Vec3::Y * self.sink;
         self.moved = self.at - was;
         self.travelled += self.moved.length();
     }
@@ -424,6 +446,11 @@ pub struct Platforms {
     /// Attempts left at finding the ground under a plate that has not been
     /// placed yet, while its chunks stream in.
     tries: u32,
+    /// How far the tide is in, 0 at low water and 1 at high, for `tide`
+    /// plates (`set_tide`). High water without a tide.
+    tide: f32,
+    /// Metres the sea stands below high water now, for floating plates.
+    tide_drop: f32,
 }
 
 impl Platforms {
@@ -463,7 +490,9 @@ impl Platforms {
                     model: first_model + b.model,
                     // The model's cells start at this corner of its grid, and
                     // it is drawn from the bottom centre (16, 0, 16).
-                    draw_off: Vec3::new((MAX_VOX / 2 - dims[0] / 2) as f32 - 16.0, 0.0, (MAX_VOX / 2 - dims[2] / 2) as f32 - 16.0) * -VOXEL_M,
+                    draw_off: Vec3::new((MAX_VOX / 2 - dims[0] / 2) as f32 - 16.0, 0.0, (MAX_VOX / 2 - dims[2] / 2) as f32 - 16.0) * -VOXEL_M - Vec3::Y * b.drop,
+                    floats: d.floats,
+                    sink: 0.0,
                 }
             })
             .collect();
@@ -472,11 +501,20 @@ impl Platforms {
             base: None,
             defs: defs.to_vec(),
             tries: SETTLE_TRIES,
+            tide: 1.0,
+            tide_drop: 0.0,
         }
     }
 
     pub fn is_empty(&self) -> bool {
         self.list.is_empty()
+    }
+
+    /// How far the tide is in now, 0 at low water and 1 at high, and how
+    /// many metres the sea has fallen: what `tide` and floating plates follow.
+    pub fn set_tide(&mut self, high: f32, drop: f32) {
+        self.tide = high.clamp(0.0, 1.0);
+        self.tide_drop = drop.max(0.0);
     }
 
     /// Place every platform at home, once the floor the world measures its
@@ -576,7 +614,7 @@ impl Platforms {
             plat.called = match plat.trigger {
                 Trigger::Stand => plat.carries(p, hw),
                 Trigger::Near => plat.home_centre_m().distance(p) <= plat.near_m,
-                Trigger::Loop => true,
+                Trigger::Loop | Trigger::Tide => true,
             };
         }
     }
@@ -588,7 +626,22 @@ impl Platforms {
         if self.list.is_empty() {
             return;
         }
+        let (tide, drop) = (self.tide, self.tide_drop);
         for p in &mut self.list {
+            if p.floats {
+                p.sink = drop;
+            }
+            if p.trigger == Trigger::Tide {
+                if let Some(home) = p.home {
+                    let was = p.at;
+                    let home = Vec3::new(home[0] as f32, home[1] as f32, home[2] as f32) * VOXEL_M;
+                    p.gone = p.mark(p.way.len() - 1) * tide;
+                    p.at = home + p.along();
+                    p.moved = p.at - was;
+                    p.travelled += p.moved.length();
+                }
+                continue;
+            }
             if p.trigger == Trigger::Loop {
                 p.called = true;
             }
@@ -738,6 +791,7 @@ impl Platforms {
                     shift: [0.0; 4],
                     flesh: [[0.0; 4]; 3],
                     glow: [0.0; 4],
+                    fade: [0.0; 4],
                 },
             ));
         }
@@ -750,6 +804,8 @@ pub struct Built {
     /// Index into the models `build` returned.
     pub model: usize,
     pub mat: u8,
+    /// Metres the model is drawn below the plate (`PlatformDef::model_drop`).
+    pub drop: f32,
 }
 
 /// Compile a world's platforms: a model each, the palette colours they need
@@ -769,7 +825,7 @@ pub fn build(defs: &[PlatformDef], lib: &Library, colours: &mut Vec<[f32; 4]>, p
     for d in defs {
         let who = if d.name.is_empty() { "a platform".to_string() } else { format!("platform {}", d.name) };
         if Trigger::parse(&d.trigger).is_none() {
-            problems.push(format!("{who}: no trigger called {} (stand, near or loop)", d.trigger));
+            problems.push(format!("{who}: no trigger called {} (stand, near, loop or tide)", d.trigger));
         }
         let mut dims = [0i32; 3];
         for (dim, size) in dims.iter_mut().zip(d.size) {
@@ -789,9 +845,59 @@ pub fn build(defs: &[PlatformDef], lib: &Library, colours: &mut Vec<[f32; 4]>, p
                 }
             },
         };
+        let drawn = d.model.as_ref().and_then(|n| {
+            let s = lib.structure(n);
+            if s.is_none() {
+                problems.push(format!("{who}: no structure called {n} to draw it as"));
+            }
+            s
+        });
+        if let Some(si) = drawn {
+            let sh = crate::world::chronicle::compile_structure(lib, si, &[]);
+            let [sx, sy, sz] = sh.size;
+            if sx > MAX_VOX || sy > MAX_VOX || sz > MAX_VOX {
+                problems.push(format!("{who}: its model is {sx} x {sy} x {sz} voxels, and a platform's can be {MAX_VOX} each way at most"));
+            }
+            let (wx, wy, wz) = (sx.min(MAX_VOX), sy.min(MAX_VOX), sz.min(MAX_VOX));
+            let start = colours.len();
+            let mut cells = vec![0u8; 32 * 32 * 32];
+            let (ox, oz) = (MAX_VOX / 2 - wx / 2, MAX_VOX / 2 - wz / 2);
+            let mut paint: Vec<(u8, u8)> = Vec::new();
+            for y in 0..wy {
+                for z in 0..wz {
+                    for x in 0..wx {
+                        let m = sh.mat[((y * sz + z) * sx + x) as usize];
+                        if m == 0 || m == crate::world::shape::CARVE {
+                            continue;
+                        }
+                        let c = match paint.iter().find(|p| p.0 == m) {
+                            Some(p) => p.1,
+                            None => {
+                                let (rgb, glow) = lib
+                                    .materials
+                                    .iter()
+                                    .find(|q| q.id == m)
+                                    .map(|q| (q.texture.calm.as_ref().map_or(q.texture.base, |c| c.base), q.glow))
+                                    .unwrap_or(([150.0, 150.0, 150.0], 0.0));
+                                let k = models::block_slot(colours, start, models::linear_colour(&[rgb[0], rgb[1], rgb[2], glow]));
+                                paint.push((m, k));
+                                k
+                            }
+                        };
+                        cells[((y * 32 + z + oz) * 32 + x + ox) as usize] = c;
+                    }
+                }
+            }
+            let half_w = wx.max(wz) as f32 * 0.5 * VOXEL_M;
+            built.push(Built { dims, model: out.len(), mat, drop: d.model_drop });
+            let mut model = models::from_cells(&cells, VOXEL_M, half_w, wy as f32 * VOXEL_M);
+            model.block = (models::FIXED_SLOTS + start) as u32;
+            out.push(model);
+            continue;
+        }
         let rgb = d.colour.unwrap_or([122.0, 128.0, 136.0]);
         if let Some((.., model)) = made.iter().find(|(dm, m, c, g, _)| *dm == dims && *m == mat && *c == rgb && *g == d.glow) {
-            built.push(Built { dims, model: *model, mat });
+            built.push(Built { dims, model: *model, mat, drop: 0.0 });
             continue;
         }
         // A plate reads as a plate because its tread is lighter than its
@@ -843,7 +949,7 @@ pub fn build(defs: &[PlatformDef], lib: &Library, colours: &mut Vec<[f32; 4]>, p
         }
         let half_w = dims[0].max(dims[2]) as f32 * 0.5 * VOXEL_M;
         made.push((dims, mat, rgb, d.glow, out.len()));
-        built.push(Built { dims, model: out.len(), mat });
+        built.push(Built { dims, model: out.len(), mat, drop: 0.0 });
         let mut model = models::from_cells(&cells, VOXEL_M, half_w, dims[1] as f32 * VOXEL_M);
         model.block = (models::FIXED_SLOTS + start) as u32;
         out.push(model);
@@ -869,12 +975,16 @@ mod tests {
             material: None,
             colour: None,
             glow: 0.0,
+            model: None,
+            model_drop: 0.0,
+            floats: false,
             absolute: false,
         };
         let built = [Built {
             dims: [12, 2, 12],
             model: 0,
             mat: STONE,
+            drop: 0.0,
         }];
         let mut p = Platforms::new(&[d], &built, 0);
         // The floor is right under the plate's underside, so it settles
@@ -902,12 +1012,16 @@ mod tests {
             material: None,
             colour: None,
             glow: 0.0,
+            model: None,
+            model_drop: 0.0,
+            floats: false,
             absolute: false,
         };
         let built = [Built {
             dims: [12, 2, 12],
             model: 0,
             mat: STONE,
+            drop: 0.0,
         }];
         let mut ps = Platforms::new(&[d], &built, 0);
         // The floor is level with the stated top: the plate's half metre
@@ -1276,6 +1390,9 @@ mod tests {
                 material: None,
                 colour: Some([40.0 + k as f32 * 4.0, 90.0, 200.0 - k as f32 * 3.0]),
                 glow: 0.0,
+                model: None,
+                model_drop: 0.0,
+                floats: false,
                 absolute: false,
             })
             .collect();
@@ -1380,6 +1497,9 @@ fn door_def(p: &crate::world::fields::Placed, s: &crate::world::shape::Shape, lo
         material: Some(leaf.to_string()),
         colour: Some(paint),
         glow: 0.0,
+        model: None,
+        model_drop: 0.0,
+        floats: false,
         absolute: true,
     })
 }

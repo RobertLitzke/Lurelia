@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saltmirror",
   "notes": "The Mirror: the salt pan, flat to the horizon, a crust of plates over grey mud with nothing growing on it. Pronghorn cross it in the mornings; the vultures and ravens work it from above.",
+  "habitat": "salt_flat",
   "priority": 2,
   "rules": {},
   "surface": "salt_plates",
   "subsurface": "salt_mud",
   "fringe": 0,
+  "soil": 0.5,
   "map_color": [226, 224, 216],
   "plants": [],
   "creatures": [

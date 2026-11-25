@@ -1,0 +1,20 @@
+{
+  "name": "fw_pale",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Where the pale from the black glass under Station Calypso has taken the kelp: glass growths like coral on the rock, pale kelp, the fish few and slow.",
+  "habitat": "kelp_forest",
+  "priority": 24,
+  "rules": {"underwater": true, "strange": [0.3, 1.0]},
+  "surface": "reef_rock",
+  "subsurface": "basalt",
+  "map_color": [200, 210, 220],
+  "plants": [
+    {"plant": "glass_staghorn", "density": 0.05, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "glass_fan", "density": 0.02, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "glass_table", "density": 0.015, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "pale_kelp", "density": 0.03, "placement": {"verb": "clustered", "params": {}}}
+  ],
+  "features": [{"structure": "glass_spikes", "density": 0.0006}],
+  "creatures": [{"creature": "moon_jelly", "count": 10}, {"creature": "kelp_perch", "count": 6}]
+}

@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "lowmouth",
   "notes": "The bay over the old parish: open brown water a metre or two deep, a church tower and the tops of tombs and roofs standing out of it, lily pads over the drowned lots.",
+  "habitat": "shallow_water_bed",
   "priority": 11,
   "rules": {"region": "parish", "amphibious": true},
   "surface": "delta_mud",
   "subsurface": "silt",
+  "soil": 0.5,
   "map_color": [110, 130, 140],
   "features": [{"structure": "hyacinth_raft", "density": 0.0002, "placement": {"verb": "scatter", "params": {}}}],
   "creatures": [

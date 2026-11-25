@@ -18,8 +18,15 @@
     "legs": [110, 100, 90],
     "white": [240, 236, 228]
   },
-  "behaviour": {"movement": "soar", "walk_speed": 7.0, "flee_speed": 14.0, "wary": 30, "flightiness": 0.8},
+  "behaviour": {
+    "movement": "soar",
+    "walk_speed": 7.0,
+    "flee_speed": 14.0,
+    "wary": 30,
+    "flightiness": 0.8,
+    "voice": {"calls": [{"cry": "hiss", "on": "flee", "size": 1.4, "chance": 0.5}]}
+  },
   "like": "condor",
   "scale": 0.75,
-  "extra_ops": [{"op": "recolour", "at": [27, 10, 21], "until": [37, 15, 28], "from": "body", "to": "white"}]
+  "extra_ops": [{"op": "recolour", "at": [31, 11, 22], "until": [41, 16, 30], "from": "body", "to": "white"}]
 }

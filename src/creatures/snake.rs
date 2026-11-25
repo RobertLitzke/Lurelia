@@ -12,7 +12,7 @@
 //!   of leaving.
 //! - tree: crawls to a trunk, climbs it in a slow spiral, drapes along a
 //!   branch with the front of its body hanging off and swaying, and lets go
-//!   and falls — limp, as a ragdoll — when someone comes right underneath.
+//!   and falls, limp, when someone comes right underneath.
 //! - water: swims at the surface with its head out and a long wave down its
 //!   body, ducks under when startled, and hauls out on the bank to lie in
 //!   the sun.
@@ -23,7 +23,6 @@ use super::plants::Flora;
 use super::startle::{self, Nerve, Threat};
 use super::terrain::{voxel_ground, water_voxel, Terrain};
 use super::{Creature, Look, Pathing, Species};
-use crate::anim::ragdoll::Ragdoll;
 use crate::anim::spine::{self, Chain, Spine, Wave};
 use crate::anim::Anim;
 use crate::models::Model;
@@ -124,6 +123,11 @@ impl Serpent {
             rng,
             side,
         }
+    }
+
+    /// Lying still, coiled or stretched out: free for a display.
+    pub fn resting(&self) -> bool {
+        matches!(self.mode, Mode::Rest { .. })
     }
 
     pub fn in_tree(&self) -> bool {
@@ -267,8 +271,17 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, habit: Habit, mode
 /// Step every snake.
 #[allow(clippy::too_many_arguments)]
 pub fn update(world: &mut hecs::World, species: &[Species], flora: &Flora, models: &[Model], dt: f32, threat: &Threat, terrain: &Terrain, stats: &mut Pathing) {
-    for (serp, look, me, morph, anim, age) in world.query_mut::<(&mut Serpent, &mut Look, &Creature, Option<&crate::variety::Morph>, &mut Anim, Option<&Age>)>() {
+    for (serp, look, me, morph, anim, age, show) in world.query_mut::<(&mut Serpent, &mut Look, &Creature, Option<&crate::variety::Morph>, &mut Anim, Option<&Age>, Option<&super::display::Show>)>() {
         look.begin_step();
+        // A display (creatures/display: two males rising and twining, a
+        // millipede curling up) holds it where it is, coiled if the display
+        // tucks it, and lays its overlay on the pose made below.
+        if let Some(s) = show {
+            if !matches!(serp.mode, Mode::Fall { .. }) {
+                serp.mode = Mode::Rest { coiled: s.out.pose.tuck > 0.5 };
+                serp.timer = serp.timer.max(0.5);
+            }
+        }
         let sp = &species[me.species];
         let m = &models[sp.model];
         let Some(rig) = m.rig.as_ref() else { continue };
@@ -396,7 +409,11 @@ pub fn update(world: &mut hecs::World, species: &[Species], flora: &Flora, model
                 if (bolts || to_player.length() < close * 0.4) && h > 0.8 {
                     serp.mode = Mode::Fall { vy: 0.0 };
                     serp.heading = away.x.atan2(away.z);
-                    anim.ragdoll = Some(Box::new(Ragdoll::new(rig, vox, serp.rng.state)));
+                    // Limp, held by the head where the fall has got to:
+                    // the frame is the head (`look.pos`), so it is held
+                    // at the frame's origin all the way down.
+                    let limp = anim.go_limp(rig, vox, m.pivot);
+                    limp.hold_bone(serp.chain.bones[0], Vec3::ZERO);
                     serp.timer = 4.0;
                 } else if serp.timer <= 0.0 {
                     serp.mode = Mode::Climb { tree, h, angle, to: h, up: false };
@@ -412,7 +429,7 @@ pub fn update(world: &mut hecs::World, species: &[Species], flora: &Flora, model
                         serp.spine = Spine::straight(&serp.chain, vox, head, serp.heading);
                         serp.mode = Mode::Crawl;
                         serp.timer = 3.0 + serp.rng.unit() * 4.0;
-                        anim.ragdoll = None;
+                        anim.limp = None;
                     }
                     _ => {
                         // Limp all the way down: the body trails from the head.
@@ -421,12 +438,10 @@ pub fn update(world: &mut hecs::World, species: &[Species], flora: &Flora, model
                             *p += shift;
                         }
                         serp.mode = Mode::Fall { vy };
-                        anim.step_ragdoll(rig, dt, Vec3::new(serp.side * 2.0, 0.0, vy.abs() * 0.3));
-                        // A ragdoll poses the body and places nothing, so the
-                        // head is held where the fall has got to.
-                        let joint = rig.bones[serp.chain.bones[0]].joint;
-                        anim.pose.root = -(joint - m.pivot) * vox;
-                        anim.prev.root = anim.pose.root;
+                        // The head falls faster than anything let go
+                        // would, so in its frame the body is pushed up
+                        // and trails above it, with a little sideways.
+                        anim.step_limp(rig, dt, &|_| -1.0e4, Vec3::new(serp.side * 2.0, 24.0, 0.0));
                     }
                 }
                 look.pos = serp.spine.head();
@@ -553,6 +568,10 @@ pub fn update(world: &mut hecs::World, species: &[Species], flora: &Flora, model
             if anim.prev.bones.len() != anim.pose.bones.len() {
                 anim.prev = anim.pose.clone();
             }
+            if let Some(s) = show {
+                let o = super::display::Overlay { tuck: 0.0, ..s.out.pose };
+                super::display::apply(rig, &mut anim.pose, &o, vox);
+            }
         }
     }
 }
@@ -663,6 +682,7 @@ mod tests {
             morphs: vec![],
             ages: Default::default(),
             aged_tint: [1.0; 3],
+            forms: Default::default(),
         }
     }
 
@@ -805,7 +825,7 @@ mod tests {
     }
 
     /// A snake up a tree with someone right underneath lets go, falls limp
-    /// (a ragdoll, anim/ragdoll.rs), lands on the ground and crawls off.
+    /// (anim/limp.rs), lands on the ground and crawls off.
     #[test]
     fn a_tree_snake_drops_when_you_stand_under_it() {
         let store = flat();
@@ -834,7 +854,7 @@ mod tests {
             let serp = world.get::<&Serpent>(e).unwrap();
             if matches!(serp.mode, Mode::Fall { .. }) {
                 fell = true;
-                limp |= world.get::<&Anim>(e).unwrap().ragdoll.is_some();
+                limp |= world.get::<&Anim>(e).unwrap().limp.is_some();
             }
         }
         assert!(fell, "it stayed on the branch with someone underneath");
@@ -842,7 +862,7 @@ mod tests {
         let serp = world.get::<&Serpent>(e).unwrap();
         assert!(matches!(serp.mode, Mode::Crawl | Mode::Rest { .. }), "it never landed: {:?}", serp.mode);
         assert!((serp.spine.head().y - GROUND).abs() < 0.3, "it landed {:.2} m off the ground", serp.spine.head().y - GROUND);
-        assert!(world.get::<&Anim>(e).unwrap().ragdoll.is_none(), "it is still limp after landing");
+        assert!(world.get::<&Anim>(e).unwrap().limp.is_none(), "it is still limp after landing");
     }
 
     #[test]

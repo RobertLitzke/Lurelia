@@ -1,0 +1,21 @@
+{
+  "name": "kh_sunflower",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A field of sunflowers grown for oil, head high in late summer.",
+  "habitat": "field_crop",
+  "priority": 24,
+  "rules": {"region": "sunflower", "crisp": true},
+  "surface": "meadow_grass",
+  "subsurface": "dirt",
+  "fringe": 0,
+  "soil": 0.65,
+  "map_color": [220, 190, 60],
+  "plants": [{"plant": "sunflower", "density": 0.35, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "bee", "count": 6},
+    {"creature": "sparrow", "count": 8},
+    {"creature": "starling", "count": 14},
+    {"creature": "crow", "count": 3}
+  ]
+}

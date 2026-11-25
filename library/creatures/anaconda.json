@@ -4,7 +4,15 @@
   "introduced_by": "jadewater",
   "notes": "A four-metre constrictor in the jade shallows and the cenote: olive-dark with blackish blotches, heavy enough that the whole wave of it shows from the bank. Rare, and in no hurry about anything, least of all you.",
   "colors": {"skin": [72, 80, 54], "dark": [30, 32, 26]},
-  "behaviour": {"walk_speed": 0.8, "flee_speed": 2.2, "wary": 9, "flightiness": 0.3, "spawn_chance": 0.15},
+  "behaviour": {
+    "displays": [{"kind": "snake_dance"}],
+    "walk_speed": 0.8,
+    "flee_speed": 2.2,
+    "wary": 9,
+    "flightiness": 0.3,
+    "spawn_chance": 0.15,
+    "voice": {"calls": [{"cry": "hiss", "on": "flee", "size": 2.0, "chance": 0.6}]}
+  },
   "like": "water_snake",
   "scale": 2.8,
   "ages": {"juvenile": 0.45, "aged": true, "bones": "none"}

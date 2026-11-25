@@ -2,8 +2,8 @@
 //!
 //! A library creature with a `rig` is sliced at load into one part model per
 //! bone (`slice.rs`), and, if it is big enough to leave bones, again into the
-//! skeleton inside it (`bones.rs`). `ragdoll.rs` poses a body with nothing
-//! holding it up.
+//! skeleton inside it (`bones.rs`). `limp.rs` is an animal's body with
+//! nothing holding it up; `ragdoll.rs` is the shooter figure's.
 //!
 //! Each frame a `Pose` (a root offset and one rotation per
 //! bone) is run through forward kinematics, and every part is drawn as its own
@@ -14,13 +14,14 @@ pub mod figure;
 pub mod flesh;
 pub mod flight;
 pub mod life;
+pub mod limp;
 pub mod motors;
 pub mod ragdoll;
 pub mod sheet;
 pub mod slice;
-pub mod slope;
 pub mod spine;
 pub mod trail;
+pub mod undead;
 
 use crate::library::{CreatureDef, Op};
 use crate::models::Instance;
@@ -76,10 +77,12 @@ pub struct RigDef {
     /// (life.rs): activity name -> { time: [lo, hi], next: { name: weight } }.
     #[serde(default)]
     pub activities: HashMap<String, life::ActDef>,
-    /// Mesh the parts with sloped corners and stretch them where they meet
-    /// their parents, instead of square voxel faces (slope.rs).
+    /// How far the body tips back when it sits, radians: past about 1 the
+    /// animal sits bolt upright on its haunches with its fore paws drawn up
+    /// to its chest (a prairie dog or a meerkat on lookout). Left out, it
+    /// sits the plan's usual way.
     #[serde(default)]
-    pub slope: bool,
+    pub sit_up: Option<f32>,
 }
 
 #[derive(Deserialize, Clone, Debug, schemars::JsonSchema)]
@@ -116,6 +119,18 @@ pub struct BoneDef {
     /// Flight opens toward these and beats on top of them (flight.rs).
     #[serde(default)]
     pub spread: Option<[f32; 3]>,
+    /// Never turns on its joint: no motor moves it, so it stays where its
+    /// parent puts it. For a piece split off only to fit the 32^3 window
+    /// (the salt tortoise's shell quarters).
+    #[serde(default)]
+    pub rigid: bool,
+    /// Baked as a smooth surface of its own instead of joined to the body,
+    /// for a sheet that lies against other parts at rest and swings away
+    /// from them (a pterosaur's wing panel, a frill over the shoulders).
+    /// Where it touches the rest at rest there is no surface, so without
+    /// this the parts it uncovers show holes (decimate.rs `bake_body`).
+    #[serde(default)]
+    pub loose: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -132,6 +147,14 @@ pub struct Bone {
     pub pair: u32,
     /// Its pose in flight, if the rig stands at rest (`BoneDef::spread`).
     pub spread: Option<Vec3>,
+    /// Never turns on its joint (`BoneDef::rigid`).
+    pub rigid: bool,
+    /// Its own smooth surface (`BoneDef::loose`).
+    pub loose: bool,
+    /// A few voxels on the outside of the part, model voxel units: what
+    /// touches the ground when the body lies on it (anim/limp.rs). Empty
+    /// for a rig made in code, which falls back on its joints.
+    pub hull: Vec<Vec3>,
 }
 
 #[derive(Clone, Debug)]
@@ -144,6 +167,9 @@ pub struct Rig {
     pub floor: f32,
     /// The soft body, if any bone has flesh (flesh.rs).
     pub soft: Option<flesh::Soft>,
+    /// How far the body tips back when it sits (`RigDef::sit_up`); 0 for
+    /// the plan's own sit.
+    pub sit_up: f32,
 }
 
 impl Rig {
@@ -221,7 +247,7 @@ pub struct Anim {
     /// Birds: wings and attitude from their flight.
     pub flight: Option<Box<flight::Flight>>,
     /// The dead and the carried: a body with nothing holding it up.
-    pub ragdoll: Option<Box<ragdoll::Ragdoll>>,
+    pub limp: Option<Box<limp::Limp>>,
     /// A soft body's jiggle spring (flesh.rs).
     pub jiggle: flesh::Jiggle,
 }
@@ -233,20 +259,36 @@ impl Anim {
             pose,
             life: None,
             flight: None,
-            ragdoll: None,
+            limp: None,
             jiggle: flesh::Jiggle::default(),
         }
     }
 
-    /// Advance a limp body one step (creatures/carry.rs). `shake` is what the
-    /// carrier's pace does to it.
-    pub fn step_ragdoll(&mut self, rig: &Rig, dt: f32, shake: Vec3) {
-        let Some(r) = self.ragdoll.as_mut() else {
+    /// Go limp in the pose it is in now (limp.rs).
+    pub fn go_limp(&mut self, rig: &Rig, voxel: f32, pivot: Vec3) -> &mut limp::Limp {
+        self.limp.insert(Box::new(limp::Limp::new(rig, voxel, pivot, &self.pose)))
+    }
+
+    /// Advance a limp body one step and draw it where it has got to. `ground`
+    /// and `push` are as `limp::Limp::step` takes them.
+    pub fn step_limp(&mut self, rig: &Rig, dt: f32, ground: &dyn Fn(Vec3) -> f32, push: Vec3) {
+        let Some(l) = self.limp.as_mut() else {
             return;
         };
-        r.step(rig, dt, shake);
-        self.prev = std::mem::replace(&mut self.pose, r.pose.clone());
-        if self.prev.bones.len() != self.pose.bones.len() {
+        l.step(dt, ground, push);
+        self.show_limp(rig);
+    }
+
+    /// Draw the limp body as it is now, drawing between this and the last
+    /// pose only where that makes sense (`limp::follow`).
+    pub fn show_limp(&mut self, rig: &Rig) {
+        let Some(l) = self.limp.as_ref() else {
+            return;
+        };
+        let mut pose = l.pose(rig);
+        let smooth = limp::follow(&mut pose, &self.pose);
+        self.prev = std::mem::replace(&mut self.pose, pose);
+        if !smooth {
             self.prev = self.pose.clone();
         }
     }
@@ -307,7 +349,7 @@ pub fn bone_rot(e: Vec3) -> Quat {
 pub fn forward(rig: &Rig, pose: &Pose, voxel: f32, pivot: Vec3, out: &mut Vec<(Vec3, Quat)>) {
     out.clear();
     for (i, b) in rig.bones.iter().enumerate() {
-        let r = pose.bones.get(i).map_or(Quat::IDENTITY, |e| bone_rot(*e));
+        let r = if b.rigid { Quat::IDENTITY } else { pose.bones.get(i).map_or(Quat::IDENTITY, |e| bone_rot(*e)) };
         match b.parent.filter(|&p| p < i) {
             None => out.push(((b.joint - pivot) * voxel + pose.root, r)),
             Some(p) => {
@@ -386,8 +428,8 @@ pub fn push_parts_at(
             scale
         };
         let w = at + yq * jp;
-        // The parent's rotation, for the corners of a sloped part that
-        // follow it (slope.rs): x, y, z of the quaternion with w kept >= 0.
+        // The parent's rotation, for the seam of a smooth part, which
+        // follows it (mesh/decimate.rs): x, y, z of the quaternion, w >= 0.
         let pq = b.parent.and_then(|p| fk.get(p)).map_or(Quat::IDENTITY, |f| f.1);
         let pq = if pq.w < 0.0 { -pq } else { pq };
         out.push((
@@ -400,6 +442,7 @@ pub fn push_parts_at(
                 shift: [shift[0], shift[1], shift[2], 0.0],
                 flesh: rig.soft.as_ref().map_or([[0.0; 4]; 3], |s| s.instance(rig, pose, &fk[..], voxel * scale, bi)),
                 glow: [0.0, pq.x, pq.y, pq.z],
+                fade: [0.0; 4],
             },
         ));
     }
@@ -529,12 +572,16 @@ mod tests {
             side: 0.0,
             pair: 0,
             spread: None,
+            rigid: false,
+            loose: false,
+            hull: Vec::new(),
         };
         Rig {
             plan: None,
             activities: HashMap::new(),
             floor: 0.0,
             soft: None,
+            sit_up: 0.0,
             bones: vec![b("body", None, [16.0, 10.0, 16.0]), b("neck", Some(0), [16.0, 12.0, 10.0]), b("head", Some(1), [16.0, 18.0, 10.0])],
         }
     }

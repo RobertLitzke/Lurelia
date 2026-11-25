@@ -609,7 +609,7 @@ link("egal_w", "ring_e", "drop")
 # the only principle a weapon pad has: the sniper rifle at the blind end of the
 # west gallery, which is the one place in the arena you can see a long way from
 # and be hard to reach; the bore on the east walkway, which looks across
-# the whole hall; the pulse gun in the west shop and the skipjack in the east,
+# the whole hall; the arc gun in the west shop and the skipjack in the east,
 # both rooms of corners at the range those two guns want; and the goo gun down
 # the sump ramp, where sludge on a wall is in somebody's way. The Digger
 # and the sidearm are on nobody's floor, because a fighter respawns holding
@@ -630,7 +630,7 @@ PADS = [
     # sidearm are never on the floor: you always have both.
     ("weapon", "wgal_w", None, "sniper_rifle", 25.0),
     ("weapon", "ring_e", None, "bore", 25.0),
-    ("weapon", "west_m", None, "pulse_gun", 20.0),
+    ("weapon", "west_m", None, "arc_gun", 20.0),
     ("weapon", "east_m", None, "skipjack", 20.0),
     ("weapon", "sump_ramp", None, "goo_gun", 20.0),
     ("ammo", "ring_se", None, "rocket_launcher", None),
@@ -640,7 +640,7 @@ PADS = [
     ("ammo", "ramp_e_foot", None, "scrap_gun", None),
     ("ammo", "wgal_n", None, "sniper_rifle", None),
     ("ammo", "egal_w", None, "bore", None),
-    ("ammo", "east_in_s", None, "pulse_gun", None),
+    ("ammo", "east_in_s", None, "arc_gun", None),
     ("ammo", "west_in_n", None, "goo_gun", None),
     ("ammo", "hall_w", None, "skipjack", None),
     ("ammo", "hall_e", None, "sidearm", None),

@@ -16,5 +16,6 @@
   "fill": 0.85,
   "spread": 0.6,
   "max_slope": 0.9,
-  "thin_limbs": 0.14
+  "thin_limbs": 0.14,
+  "site": {"soil": [0.35, 1.0], "exposure": [0.4, 1.0]}
 }

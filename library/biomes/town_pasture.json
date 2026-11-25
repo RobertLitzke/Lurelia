@@ -5,5 +5,6 @@
   "notes": "A generated town's field (region pasture): gh_pasture, with its edge exactly at the wall instead of ragged.",
   "priority": 14,
   "rules": {"region": "pasture", "crisp": true},
+  "soil": 0.6,
   "like": "gh_pasture"
 }

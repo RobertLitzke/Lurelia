@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "redrock",
   "notes": "The ground around Harlow, trampled and dug: rabbitbrush and the town's leftovers.",
+  "habitat": "settlement",
   "priority": 7,
   "rules": {"region": "harlow"},
   "surface": "red_sand",
   "subsurface": "red_sand",
+  "soil": 0.5,
   "map_color": [190, 150, 120],
   "plants": [
     {"plant": "rabbitbrush", "density": 0.01, "placement": {"verb": "scatter", "params": {}}},

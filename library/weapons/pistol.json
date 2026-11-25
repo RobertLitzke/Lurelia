@@ -1,0 +1,40 @@
+{
+  "name": "pistol",
+  "version": 1,
+  "introduced_by": "realistic",
+  "notes": "A service pistol: fifteen in the magazine, a quick reload, and as fast as you can pull the trigger. Accurate enough to be worth aiming and worth more to the head than anywhere else. The right button is a steadier aimed shot at a slower pace. It is what you come back with.",
+  "display": "PISTOL",
+  "slot": 2,
+  "ammo_max": 120,
+  "ammo_start": 60,
+  "mag": 15,
+  "reload_s": 1.3,
+  "fire": {
+    "kind": "hitscan",
+    "rpm": 300.0,
+    "damage": 14.0,
+    "spread_deg": 0.6,
+    "range": 120.0,
+    "falloff": 0.6,
+    "head_mult": 2.0,
+    "kick": 0.7,
+    "tracer": [1.0, 0.92, 0.7],
+    "tracer_s": 0.03
+  },
+  "alt": {
+    "kind": "hitscan",
+    "rpm": 150.0,
+    "damage": 15.0,
+    "spread_deg": 0.15,
+    "range": 140.0,
+    "falloff": 0.7,
+    "head_mult": 2.0,
+    "kick": 0.6,
+    "tracer": [1.0, 0.92, 0.7],
+    "tracer_s": 0.03
+  },
+  "view": "pistol_polymer",
+  "tint": [0.24, 0.25, 0.27],
+  "role": "sidearm",
+  "ammo_type": "pistol_rounds"
+}

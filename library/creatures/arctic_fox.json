@@ -5,6 +5,15 @@
   "notes": "An arctic fox in its winter coat, white to the tail tip, trotting the shore for whatever the tide and the ravens leave.",
   "colors": {"fox": [238, 238, 234], "white": [250, 250, 248], "dark": [44, 40, 38]},
   "morphs": [],
+  "behaviour": {
+    "voice": {
+      "size": 0.9,
+      "calls": [
+        {"cry": "bark", "on": "idle", "hours": "night", "every_s": [120, 500], "boost": 2},
+        {"cry": "bark", "on": "flee", "chance": 0.4}
+      ]
+    }
+  },
   "like": "fox",
   "scale": 0.85
 }

@@ -22,16 +22,24 @@
 //! - affordance.rs, plants.rs: what plants offer animals, and finding them.
 //! - age.rs: the four ages, and how long bones lie.
 //! - diel.rs: the hours each species keeps, and how drowsy it is outside them.
-//! - carry.rs: prey a predator has caught, carried or dragged in its mouth.
+//! - carry.rs: prey a predator has caught, hanging from its mouth or dragged.
+//! - carcass.rs: a kill on the ground, and the predators that eat from it.
+//! - display/: the rare things a species now and then does (a hummingbird's
+//!   dive, rams butting heads), and the scheduler that rations them.
+//! - sex.rs: each individual's sex.
+//! - voice.rs: who calls and when, for the call engine (sound/call.rs).
+//! - zoo.rs: every creature in a pen, held at one activity (worlds/zoo).
 
 pub mod affordance;
 pub mod age;
 pub mod birds;
+pub mod carcass;
 pub mod carry;
 pub mod census;
 pub mod circle;
 pub mod crowd;
 pub mod diel;
+pub mod display;
 pub mod flit;
 pub mod flock;
 pub mod flung;
@@ -39,20 +47,27 @@ pub mod fowl;
 pub mod herd;
 pub mod hummer;
 pub mod insects;
+pub mod inspect;
 pub mod locomotion;
 pub mod octopus;
 pub mod plants;
+pub mod roam;
+pub mod roost;
+pub mod roster;
 pub mod runner;
+pub mod sex;
 pub mod sign;
 pub mod snake;
 pub mod spawn;
 pub mod startle;
 pub mod trample;
+pub mod voice;
 pub mod swim;
 pub mod terrain;
 pub mod tracked;
 pub mod walk;
 pub mod woodpecker;
+pub mod zoo;
 
 use crate::library::Behaviour;
 use glam::Vec3;
@@ -92,6 +107,17 @@ pub struct Species {
     /// The tint that greys this species' coat, for an old individual
     /// (variety::aged_tint).
     pub aged_tint: [f32; 3],
+    /// Its other models by sex and age (`model_for`).
+    pub forms: Forms,
+}
+
+/// Model indices for a species' forms (library::Forms); None is its own
+/// model.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct Forms {
+    pub female: Option<usize>,
+    pub male: Option<usize>,
+    pub juvenile: Option<usize>,
 }
 
 /// A walker this tall or taller is a large animal unless its entry says
@@ -99,7 +125,26 @@ pub struct Species {
 /// a gallimimus and every big dinosaur, not a horse or an elk.
 pub const LARGE_M: f32 = 2.5;
 
+/// A walker this big or bigger, in height or across its collision box, is
+/// seen from far off (`Species::seen_far`), metres: a badger, a raccoon, a
+/// hare, a fox and up, not a rabbit, a skunk or a marmot.
+pub const SEEN_FAR_M: f32 = 0.38;
+
 impl Species {
+    /// The model an individual of this sex and age is drawn with: the
+    /// juvenile form for the young if there is one, else its sex's form,
+    /// else the species' own.
+    pub fn model_for(&self, sex: Option<sex::Sex>, stage: age::Stage) -> usize {
+        let f = &self.forms;
+        let by_sex = match sex {
+            Some(sex::Sex::Female) => f.female,
+            Some(sex::Sex::Male) => f.male,
+            None => None,
+        };
+        let young = if stage == age::Stage::Juvenile { f.juvenile } else { None };
+        young.or(by_sex).unwrap_or(self.model)
+    }
+
     /// How it moves (locomotion.rs).
     pub fn verb(&self) -> &'static locomotion::Verb {
         locomotion::verb(&self.beh.movement)
@@ -111,6 +156,20 @@ impl Species {
     /// height does (`LARGE_M`).
     pub fn large(&self, models: &[crate::models::Model]) -> bool {
         matches!(self.verb().mover, locomotion::Mover::Walk { .. }) && self.beh.large.unwrap_or_else(|| models.get(self.model).is_some_and(|m| m.height >= LARGE_M))
+    }
+
+    /// Its size as seen from off to one side, metres: the larger of its
+    /// height and the width of its collision box.
+    pub fn span(&self, models: &[crate::models::Model]) -> f32 {
+        models.get(self.model).map_or(0.0, |m| m.height.max(2.0 * m.half_w))
+    }
+
+    /// Whether it is a walker big enough to make out a few hundred metres
+    /// off (`SEEN_FAR_M`): set down in view out there, further the bigger it
+    /// is, and kept in view to there (spawn.rs `far_band_m`), so a plain
+    /// ahead has its animals on it.
+    pub fn seen_far(&self, models: &[crate::models::Model]) -> bool {
+        matches!(self.verb().mover, locomotion::Mover::Walk { .. }) && self.span(models) >= SEEN_FAR_M
     }
 }
 
@@ -302,6 +361,7 @@ mod tests {
             morphs: vec![],
             ages: Default::default(),
             aged_tint: [1.0; 3],
+            forms: Default::default(),
         }
     }
 

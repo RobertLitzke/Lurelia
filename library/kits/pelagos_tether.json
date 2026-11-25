@@ -1,0 +1,14 @@
+{
+  "name": "pelagos_tether",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "A thick yellow and black underwater tether cable laid along the sea floor from Pelagos Outpost's base out across the bay, for a diver to follow: a single cable half a metre thick on the bed with a weight block every 12 m.",
+  "ground": "follow",
+  "width": 0.0,
+  "rails": [{"side": "centre", "out": 0.0, "from": 0.0, "to": 0.5, "thick": 0.5, "mat": "pg_gold"}],
+  "posts": [
+    {"side": "centre", "out": 0.0, "every": 12.0, "size": [0.75, 0.75, 1.0], "mat": "rust_iron"},
+    {"side": "centre", "out": 0.0, "every": 3.0, "phase": 1.5, "size": [0.5, 0.5, 0.5], "mat": "pg_brown"}
+  ],
+  "tags": ["cable"]
+}

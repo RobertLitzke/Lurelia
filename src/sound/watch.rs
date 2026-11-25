@@ -31,7 +31,7 @@ pub fn ground_of(m: u8) -> Ground {
         Ground::Grass
     } else if let Some(s) = matlib::surface(m) {
         match s {
-            Surface::Rock => Ground::Stone,
+            Surface::Rock | Surface::Ice => Ground::Stone,
             Surface::Grass => Ground::Grass,
             Surface::Hardpack | Surface::SandWet | Surface::SandSoft | Surface::Mud | Surface::Snow => Ground::Soft,
         }
@@ -134,11 +134,40 @@ struct Bot {
     hurt_cd: f32,
 }
 
+/// Zombie groans sounding at once in the zombie round, at most, as for one
+/// species of animal (creatures/voice.rs `PER_SPECIES`), and how far off a
+/// zombie is still listened to.
+const GROANS: usize = 4;
+const GROAN_HEARD_M: f32 = 150.0;
+
+/// A zombie's voice: when its next idle call is due, whether it was after
+/// the party last frame, and the call it has sounding, posted again each
+/// frame from where it now is (as creatures/voice.rs does for an animal).
+#[derive(Clone, Default)]
+struct Groan {
+    /// Seconds until each idle call is due, by call index; empty until the
+    /// zombie is first heard.
+    due: Vec<f32>,
+    chasing: bool,
+    made: u32,
+    live: Option<LiveCall>,
+}
+
+#[derive(Clone, Copy)]
+struct LiveCall {
+    cry: crate::sound::call::Cry,
+    size: f32,
+    seed: u32,
+    boost: f32,
+    left: f32,
+}
+
 #[derive(Default)]
 pub struct Watch {
     me: Option<Me>,
     gait: Gait,
     bots: Vec<Bot>,
+    groans: Vec<Groan>,
     flags: usize,
     /// The player's hurt: seconds before the next sound may play, and the
     /// damage gathered while waiting.
@@ -152,10 +181,22 @@ impl Watch {
         // The match first: a respawn is heard as one, and the feet must not
         // hear the same jump across the map as a teleporter.
         match g.activity.as_ref().and_then(|a| a.shooter()) {
-            Some(sh) => self.match_(sh, &g.store, dt, ear),
+            Some(sh) => {
+                self.match_(sh, &g.store, dt, ear);
+                // The zombie round's zombies are bots, which the creature
+                // voices never see: their calls are the library zombie's.
+                if sh.zed.is_some() {
+                    let lib = g.library();
+                    let zombie = lib.and_then(|l| l.creature("zombie").map(|i| (i, &l.creatures[i])));
+                    if let Some((who, v)) = zombie.and_then(|(i, c)| c.behaviour.voice.as_ref().map(|v| (i as u16, v))) {
+                        self.zombie_voices(sh, v, who, dt, ear);
+                    }
+                }
+            }
             None => {
                 self.me = None;
                 self.bots.clear();
+                self.groans.clear();
                 self.flags = 0;
             }
         }
@@ -242,12 +283,15 @@ impl Watch {
                 })
                 .collect();
         }
-        for (b, was) in sh.bots.iter().zip(self.bots.iter_mut()) {
+        for (k, (b, was)) in sh.bots.iter().zip(self.bots.iter_mut()).enumerate() {
             let chest = b.body.pos + Vec3::Y * 1.2;
             let alive = b.fighter.alive();
-            if was.alive && !alive {
+            // A zombie is no robot: it neither clanks when hit nor powers
+            // down. Its voice is `zombie_voices`.
+            let robot = !sh.is_zombie(k + 1);
+            if was.alive && !alive && robot {
                 emit(Noise::at(Kind::Shutdown, chest, 1.2));
-            } else if alive && b.fighter.health < was.health - 0.5 && was.hurt_cd <= 0.0 {
+            } else if alive && robot && b.fighter.health < was.health - 0.5 && was.hurt_cd <= 0.0 {
                 emit(Noise::at(Kind::Clank, chest, 0.7));
                 was.hurt_cd = HURT_GAP;
             }
@@ -301,6 +345,85 @@ impl Watch {
             nth[by] = (nth[by] + 1).min(15);
         }
     }
+
+    /// The zombie round's groans, from the library zombie's `voice`: its
+    /// "idle" calls now and then while a zombie mills about, its "chase"
+    /// calls as it turns after the party. `who` is the zombie's creature
+    /// number, for the list of calls heard.
+    fn zombie_voices(&mut self, sh: &crate::shooter::Shooter, voice: &crate::library::VoiceDef, who: u16, dt: f32, ear: Vec3) {
+        use crate::sound::call::Cry;
+        let unit = |s: u32| (s >> 8) as f32 / (1u32 << 24) as f32;
+        self.groans.resize(sh.bots.len(), Groan::default());
+        let mut sounding = self.groans.iter().filter(|g| g.live.is_some()).count();
+        for (k, b) in sh.bots.iter().enumerate() {
+            let g = &mut self.groans[k];
+            let Some(chasing) = sh.zombie_chasing(k) else {
+                // Down or not in play: whatever it was saying stops with it.
+                if g.live.take().is_some() {
+                    sounding -= 1;
+                }
+                g.due.clear();
+                g.chasing = false;
+                continue;
+            };
+            let mouth = b.body.pos + Vec3::Y * b.height() * 0.9;
+            let key = 0x4000_0000 | k as u32;
+            if let Some(l) = g.live.as_mut() {
+                l.left -= dt;
+                if l.left > 0.0 {
+                    emit(Noise::call(mouth, l.cry, l.size, l.seed, who, key, l.boost));
+                } else {
+                    g.live = None;
+                    sounding -= 1;
+                }
+            }
+            let woke = chasing && !g.chasing;
+            g.chasing = chasing;
+            // A new seed for each call it makes.
+            let seed = crate::world::noise::hash32(key ^ g.made.wrapping_mul(0x9e37_79b9));
+            if g.due.is_empty() {
+                // Spread the first calls over the whole wait, so a horde
+                // that has just come up doesn't call as one.
+                g.due = voice.calls.iter().enumerate().map(|(i, c)| c.every_s.unwrap_or([60.0, 240.0])[1] * unit(seed ^ i as u32 ^ 0x1d1e)).collect();
+            }
+            let mut fire = None;
+            for (i, c) in voice.calls.iter().enumerate() {
+                let ready = match c.on.as_str() {
+                    "idle" => {
+                        let [lo, hi] = c.every_s.unwrap_or([60.0, 240.0]);
+                        let due = &mut g.due[i];
+                        *due -= dt;
+                        if *due > 0.0 {
+                            false
+                        } else {
+                            *due = lo + (hi - lo).max(0.0) * unit(seed ^ i as u32 ^ 0xd0e5);
+                            !chasing
+                        }
+                    }
+                    "chase" => woke,
+                    _ => false,
+                };
+                if ready && fire.is_none() && unit(seed ^ i as u32 ^ 0xc4a7) <= c.chance.unwrap_or(1.0) {
+                    fire = Some(c);
+                }
+            }
+            let Some(c) = fire else { continue };
+            let Some(cry) = Cry::parse(&c.cry) else { continue };
+            let far = (mouth - ear).length();
+            if g.live.is_some() || sounding >= GROANS || far > GROAN_HEARD_M {
+                continue;
+            }
+            // Each zombie's voice a little its own.
+            let size = voice.size.unwrap_or(1.0) * c.size.unwrap_or(1.0) * (0.92 + 0.16 * unit(crate::world::noise::hash32(key)));
+            g.made += 1;
+            // Stop posting a little before the engine lets it go, so a late
+            // post never starts it over.
+            let left = (cry.pattern(size, seed).len + far / 343.0 - 0.2).max(0.1);
+            emit(Noise::call(mouth, cry, size, seed, who, key, c.boost));
+            g.live = Some(LiveCall { cry, size, seed, boost: c.boost, left });
+            sounding += 1;
+        }
+    }
 }
 
 #[cfg(test)]
@@ -310,5 +433,23 @@ mod tests {
     #[test]
     fn air_is_soft_ground() {
         assert_eq!(ground_of(AIR), Ground::Soft);
+    }
+
+    /// The zombie round voices its zombies from the library zombie, which
+    /// must have calls this watcher plays: cries the engine knows, set off
+    /// by "idle" or "chase", one of each.
+    #[test]
+    fn the_zombie_has_a_voice_the_round_plays() {
+        let (lib, errs) = crate::library::Library::load(std::path::Path::new("."));
+        assert!(errs.is_empty(), "{errs:?}");
+        let z = &lib.creatures[lib.creature("zombie").expect("a zombie creature")];
+        let v = z.behaviour.voice.as_ref().expect("the zombie has a voice");
+        for c in &v.calls {
+            assert!(crate::sound::call::Cry::parse(&c.cry).is_some(), "no cry called {}", c.cry);
+            assert!(matches!(c.on.as_str(), "idle" | "chase"), "the round plays no {} call", c.on);
+        }
+        for on in ["idle", "chase"] {
+            assert!(v.calls.iter().any(|c| c.on == on), "no {on} call");
+        }
     }
 }

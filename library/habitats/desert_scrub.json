@@ -1,0 +1,13 @@
+{
+  "name": "desert_scrub",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Dry open ground with scattered shrubs and succulents.",
+  "wet": 0.15,
+  "soil": 0.55,
+  "shade": 0.0,
+  "rock": 0.3,
+  "disturbed": 0.0,
+  "open": 0.9,
+  "forage": ["browse", "nectar"]
+}

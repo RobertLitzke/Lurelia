@@ -1,0 +1,16 @@
+{
+  "name": "kh_dogtown_spill",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "The pale subsoil a prairie dog kicks out of its burrow: dry, grey-buff, nothing growing on it.",
+  "smooth": true,
+  "sprites": "none",
+  "texture": {
+    "pattern": "speckle",
+    "base": [188, 172, 140],
+    "alt": [166, 150, 120],
+    "scale": 6,
+    "contrast": 0.6,
+    "calm": {"base": [196, 182, 150], "alt": [176, 160, 128]}
+  }
+}

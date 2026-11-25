@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "lowmouth",
   "notes": "The sawgrass flats: a sheet of grass standing in a hand or two of clear water, running to the sky, with hammocks of palm and oak like islands.",
+  "habitat": "marsh",
   "priority": 9,
   "rules": {"region": "sawgrass", "elev": [-5, 0.25], "amphibious": true},
   "surface": "marsh_grass",
   "subsurface": "peat",
+  "soil": 0.5,
   "map_color": [176, 168, 96],
   "plants": [
     {

@@ -1,7 +1,7 @@
 use crate::util::FxHashMap as HashMap;
 use crate::world::chronicle::geom::{densify, each_near, spline};
 use crate::world::chronicle::{EventCtx, Process};
-use crate::world::falls::{Fall, FALL_MIN};
+use crate::world::falls::{joins, past_lip, Fall, FALL_MIN, HOLD};
 use crate::world::fields::{Fields, Pos, Wet};
 use crate::world::noise::perlin2;
 use glam::{Vec2, Vec3};
@@ -70,6 +70,10 @@ pub struct RiverRec {
     pub seed: u32,
     /// Deepest bed under the sea (`River::floor`).
     pub floor: Option<f32>,
+    /// Water this deep in the middle instead of `mid_depth`'s swimmable
+    /// 1.4 m or more: a wide knee-deep riffle over cobbles
+    /// (`Watercourse::shallow`).
+    pub shallow: Option<f32>,
 }
 
 /// Every river so far, by name.
@@ -90,7 +94,7 @@ impl Process for River {
         carve(cx, &line, *width, *depth, bed_m, *floor);
         let len = line.windows(2).map(|w| w[0].distance(w[1])).sum::<f32>();
         let seed = cx.seed;
-        cx.state.get::<Rivers>().0.insert(name.clone(), RiverRec { line, width: *width, depth: *depth, bed: bed_m, bank: bank_m, seed, floor: *floor });
+        cx.state.get::<Rivers>().0.insert(name.clone(), RiverRec { line, width: *width, depth: *depth, bed: bed_m, bank: bank_m, seed, floor: *floor, shallow: None });
         format!("{name}: {len:.0} m long, {width} m wide")
     }
 }
@@ -190,7 +194,7 @@ pub fn head(cx: &mut EventCtx, name: &str, line: &[Vec2], width: f32, depth: f32
         }
         let (w, d) = ((width * share_w).max(1.6), depth * share_d);
         carve(cx, piece, w, d, bed, floor);
-        cx.state.get::<Rivers>().0.insert(format!("{name}~{k}"), RiverRec { line: piece.to_vec(), width: w, depth: d, bed, bank, seed: seed.wrapping_add(k as u32 + 1), floor });
+        cx.state.get::<Rivers>().0.insert(format!("{name}~{k}"), RiverRec { line: piece.to_vec(), width: w, depth: d, bed, bank, seed: seed.wrapping_add(k as u32 + 1), floor, shallow: None });
     }
     cuts[3]
 }
@@ -270,6 +274,56 @@ pub fn settle_water(f: &mut Fields, lakes: &super::lake::Lakes, rivers: &Rivers)
             }
         });
     }
+    hold_water(f);
+}
+
+/// Water must stand in something. Where a cell's water shows above its own
+/// ground and the cell beside it is neither water of the same surface nor
+/// ground standing up to it (the bank beside a pool on a cascade falls away
+/// to the pool below, a margin reaches out past a cliff's edge), the water
+/// would hang in the air with its side open. Raise that neighbour into a rim
+/// of ground just over the water, so each pool on a cascade sits in a rock
+/// basin with a lip. A building's ground and the band a fall's sheet goes
+/// over are left alone; water past a lip beside that band has its own
+/// ground raised, as the ledge either side of the fall.
+fn hold_water(f: &mut Fields) {
+    let n = f.n as i32;
+    let mut rims: Vec<(usize, f32)> = Vec::new();
+    for (&i, w) in &f.inland {
+        let i = i as usize;
+        let p = f.centre(i);
+        if w.level <= f.sea + 0.02 || f.h[i] >= w.level - 0.05 {
+            continue;
+        }
+        match past_lip(&f.falls, p, w.level) {
+            Some(true) => continue,
+            Some(false) => {
+                // Beside the sheet, past the lip: ground, the lip's ledge.
+                rims.push((i, w.level + 0.15));
+                continue;
+            }
+            None => {}
+        }
+        let (x, z) = (i as i32 % n, i as i32 / n);
+        for (dx, dz) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
+            let (jx, jz) = (x + dx, z + dz);
+            if jx < 0 || jz < 0 || jx >= n || jz >= n {
+                continue;
+            }
+            let j = (jz * n + jx) as usize;
+            let chute = f.water[i] == 1 && f.water[j] == 1;
+            if f.inland.get(&(j as u32)).is_some_and(|o| joins(o.level, w.level, chute)) || f.h[j] >= w.level - HOLD {
+                continue;
+            }
+            if f.occupied[j] || past_lip(&f.falls, f.centre(j), w.level) == Some(true) {
+                continue;
+            }
+            rims.push((j, w.level + 0.15));
+        }
+    }
+    for (j, h) in rims {
+        f.h[j] = f.h[j].max(h);
+    }
 }
 
 /// Carry a river's line on past its end, a metre at a time, down to low water
@@ -308,6 +362,10 @@ fn extend_to_low(f: &Fields, line: &mut Vec<Vec2>, low: f32, owner: &HashMap<u32
 /// the ground rises through it.
 pub const MARGIN: f32 = 2.5;
 
+/// The longest stretch between two falls, in metre stations, that is one
+/// level pool (`settle_one`).
+const POOL_RUN: usize = 30;
+
 fn settle_one(f: &mut Fields, rec: &RiverRec, owner: &mut HashMap<u32, f32>) {
     if rec.line.len() < 2 {
         return;
@@ -322,7 +380,7 @@ fn settle_one(f: &mut Fields, rec: &RiverRec, owner: &mut HashMap<u32, f32>) {
     let line = line;
     let m = line.len();
     let half = rec.width * 0.5;
-    let deep = mid_depth(rec.depth);
+    let deep = rec.shallow.map_or_else(|| mid_depth(rec.depth), |d| d.clamp(0.2, 2.4));
     let dirs: Vec<Vec2> = (0..m).map(|k| (line[(k + 1).min(m - 1)] - line[k.saturating_sub(1)]).normalize_or_zero()).collect();
 
     // Lowest ground in the channel and on the banks just outside it, in a
@@ -463,6 +521,18 @@ fn settle_one(f: &mut Fields, rec: &RiverRec, owner: &mut HashMap<u32, f32>) {
         level[k] = pooled[a..=b].iter().sum::<f32>() / (b - a + 1) as f32;
         if k > span[s].0 {
             level[k] = level[k].min(level[k - 1]);
+        }
+    }
+    // A short stretch between two falls is one pool, level to the next lip:
+    // down a cascade each pool lies flat in its basin rather than stepping
+    // down a metre partway across it (the plunge pool at one level, the
+    // ledge before the next lip at another).
+    for (s, &(lo, hi)) in span.iter().enumerate() {
+        if s > 0 && s < falls.len() && hi < mouth && hi - lo <= POOL_RUN {
+            let l = level[hi];
+            for k in lo..=hi {
+                level[k] = l;
+            }
         }
     }
     // In the air the level runs straight from lip to foot (for the current).

@@ -23,5 +23,6 @@
   "thin_limbs": 0.15,
   "lean": 0.05,
   "affords": ["perch", "nest"],
-  "bole": 0.6
+  "bole": 0.6,
+  "site": {"wet": [0.0, 0.55], "sun": [0.4, 1.0]}
 }

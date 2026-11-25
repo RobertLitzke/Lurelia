@@ -129,6 +129,18 @@ pub struct BiomeDef {
     #[serde(default)]
     #[allow(dead_code)] // read by tools/libfmt.py
     pub introduced_by: String,
+    /// The habitat this biome is an instance of (`library/habitats/`): what
+    /// kind of ground it is, whatever world it is in. Inherited through
+    /// `like` unless the child names its own. Read by fill
+    /// (`WorldDef::fill`) and nothing else yet.
+    #[serde(default)]
+    pub habitat: Option<String>,
+    /// Realms whose life comes through here on top of the world's mix
+    /// (`WorldDef::realms`), with their strength 0 to 1: `{"fae": 0.8}` for
+    /// a faerie glade in a real wood. Painted over the biome's cells as realm
+    /// overlays (`world/realm_map.rs`), which fill and realm looks read.
+    #[serde(default)]
+    pub realm: Option<std::collections::BTreeMap<String, f32>>,
     /// Higher wins when several match.
     #[serde(default)]
     pub priority: i32,
@@ -152,6 +164,11 @@ pub struct BiomeDef {
     pub features: Vec<FeatureUse>,
     #[serde(default)]
     pub creatures: Vec<CreatureUse>,
+    /// Creatures for the caves under this biome (a lava tube, a passage):
+    /// wanted instead of `creatures` while the player is under a roof, and
+    /// out at any hour, since it is always dark down there.
+    #[serde(default)]
+    pub cave_creatures: Vec<CreatureUse>,
     #[serde(default)]
     pub collectibles: Vec<CollectibleUse>,
     /// Colour on the top-down map.
@@ -161,6 +178,11 @@ pub struct BiomeDef {
     /// renderer's mist map (Generator::mist_grid). Morning and dusk thicken it.
     #[serde(default)]
     pub mist: f32,
+    /// The ground's soil, 0 (acid and poor: heath, bog, pine sand) to 1
+    /// (base-rich: limestone, rich meadow); 0.5 if left out. Graded across
+    /// biome borders (world/site.rs).
+    #[serde(default)]
+    pub soil: Option<f32>,
     /// Water over this biome in other colours than the world's (cenotes,
     /// a peat lake): at most two such biomes per world are drawn.
     #[serde(default)]

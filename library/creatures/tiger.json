@@ -11,7 +11,21 @@
     "wary": 22,
     "flightiness": 0.3,
     "hunts": ["deer", "boar"],
-    "spawn_chance": 0.05
+    "spawn_chance": 0.05,
+    "voice": {
+      "calls": [
+        {
+          "cry": "roar",
+          "on": "idle",
+          "hours": "night",
+          "size": 1.1,
+          "every_s": [1200, 3000],
+          "chance": 0.5,
+          "boost": 4
+        },
+        {"cry": "growl", "on": "chase", "size": 1.4, "boost": 4}
+      ]
+    }
   },
   "like": "cougar",
   "scale": 1.35,
@@ -19,16 +33,16 @@
     {
       "op": "repeat",
       "count": 11,
-      "step": [0, 0, 2],
-      "ops": [{"op": "recolour", "at": [10, 7, 7], "until": [22, 20, 8], "from": "coat", "to": "stripe"}]
+      "step": [0, 0, 3],
+      "ops": [{"op": "recolour", "at": [6, 12, 13], "until": [26, 35, 15], "from": "coat", "to": "stripe"}]
     },
     {
       "op": "repeat",
       "count": 4,
-      "step": [0, 0, 2],
-      "ops": [{"op": "recolour", "at": [10, 7, 24], "until": [22, 14, 25], "from": "coat", "to": "stripe"}]
+      "step": [0, 0, 3],
+      "ops": [{"op": "recolour", "at": [6, 12, 43], "until": [26, 24, 45], "from": "coat", "to": "stripe"}]
     },
-    {"op": "recolour", "at": [12, 13, 2], "until": [20, 18, 6], "from": "coat", "to": "stripe"},
-    {"op": "recolour", "at": [12, 13, 3], "until": [20, 18, 5], "from": "stripe", "to": "coat"}
+    {"op": "recolour", "at": [9, 23, 5], "until": [23, 31, 12], "from": "coat", "to": "stripe"},
+    {"op": "recolour", "at": [9, 23, 6], "until": [23, 31, 10], "from": "stripe", "to": "coat"}
   ]
 }

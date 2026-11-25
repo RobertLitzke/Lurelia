@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "The Pucklands, where Chepworth Down turns strange: turf very short and very green, rings of toadstools tens of metres across that the sheep won't graze inside, a lone thorn or two, glassbloom round Puck's Barrow, pale hares at dusk and fae horses after dark.",
+  "habitat": "dry_grassland",
   "priority": 8,
   "rules": {"region": "pucklands"},
   "surface": "moss_grass",
   "subsurface": "dirt",
+  "soil": 0.65,
   "map_color": [150, 120, 200],
   "plants": [
     {
@@ -77,5 +79,6 @@
       "placement": {"verb": "ring", "params": {"x": 585, "z": 700, "radius": 17, "width": 1.4}}
     },
     {"item": "hag_stone", "density": 0.0006, "placement": {"verb": "scatter", "params": {}}}
-  ]
+  ],
+  "realm": {"fae": 0.8}
 }

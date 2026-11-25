@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "gannet",
   "notes": "The Cold River's banks: rounded rock and gravel, sword fern and moss, alder and bigleaf maple leaning over the water.",
+  "habitat": "riparian",
   "priority": 6,
   "rules": {"river": [0, 20], "elev": [0.3, 80]},
   "surface": "moss_grass",
   "subsurface": "dirt",
+  "soil": 0.55,
   "map_color": [70, 120, 96],
   "plants": [
     {"plant": "fern", "density": 0.12, "placement": {"verb": "clustered", "params": {"size": 10}}},

@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "windbarrow",
   "notes": "A hollow in the downs where the grass is rimed white and glittering at any hour of a high-summer afternoon. Nothing is wrong with it but that; the sheep will not go down into it.",
+  "habitat": "dry_grassland",
   "priority": 17,
   "rules": {"region": "frost"},
   "surface": "frost_grass",
   "subsurface": "chalk_white",
   "rock": null,
+  "soil": 0.8,
   "map_color": [216, 224, 224],
   "plants": [
     {

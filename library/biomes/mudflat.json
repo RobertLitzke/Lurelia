@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "lowmouth",
   "notes": "Mud where the river's silt comes out at the mouth's edge: a few wet bars, drift logs and dead snags, wading birds walking it, mist lying on it at dawn and dusk.",
+  "habitat": "mudflat",
   "priority": 11,
   "rules": {"region": "mouth", "elev": [0.0, 0.3]},
   "surface": "delta_mud",
   "subsurface": "silt",
+  "soil": 0.6,
   "map_color": [140, 124, 96],
   "plants": [
     {

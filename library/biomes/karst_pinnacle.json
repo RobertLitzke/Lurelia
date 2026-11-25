@@ -1,12 +1,14 @@
 {
   "name": "karst_pinnacle",
-  "version": 2,
+  "version": 3,
   "introduced_by": "jadewater",
-  "notes": "The tops and faces of the towers and the Old Wall: thin turf, wind-twisted pines, vine curtains over every lip, banyans out of the cliffs.",
+  "notes": "The tops and faces of the towers and the Old Wall: thin turf, wind-twisted pines, vine curtains over every lip, banyans out of the cliffs. Koi in the Order's rain pools on the tower tops.",
+  "habitat": "bare_rock",
   "priority": 7,
   "rules": {"elev": [20, 200]},
   "surface": "tower_grass",
   "subsurface": "karst_soil",
+  "soil": 0.8,
   "map_color": [168, 176, 180],
   "plants": [
     {
@@ -61,7 +63,8 @@
     {"creature": "starling", "count": 50},
     {"creature": "glossy_starling", "count": 40},
     {"creature": "langur", "count": 4.4},
-    {"creature": "fruit_bat", "count": 4.4}
+    {"creature": "fruit_bat", "count": 4.4},
+    {"creature": "koi", "count": 10}
   ],
   "sound": {"wind": 1.3, "ground": "stone"}
 }

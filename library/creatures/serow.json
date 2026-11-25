@@ -4,6 +4,8 @@
   "introduced_by": "jadewater",
   "notes": "graze: Serow: a small dark goat-antelope of the tower ledges and the top of the Old Wall, with a pale throat.",
   "colors": {"rabbit": [70, 64, 58], "rabbit_light": [150, 140, 126]},
+  "forms": {"female": "serow_female", "juvenile": "serow_juvenile"},
+  "behaviour": {"voice": {"calls": [{"cry": "snort", "on": "flee", "size": 1.1}]}},
   "like": "bighorn",
   "scale": 0.85
 }

@@ -4,15 +4,15 @@
   "introduced_by": "jadewater",
   "notes": "Slender green snake of the karst jungle: plain leaf-green above and yellow-cream below, so it is all but invisible until the hanging front of it sways. Spends its days draped along a limb or a bamboo cane and only crosses the ground to reach the next tree.",
   "colors": {"skin": [92, 146, 74], "pale": [206, 212, 152]},
-  "behaviour": {"movement": "climb", "walk_speed": 0.55, "flee_speed": 2.0, "wary": 5, "flightiness": 1.1},
+  "behaviour": {
+    "displays": [{"kind": "snake_dance"}],
+    "movement": "climb",
+    "walk_speed": 0.55,
+    "flee_speed": 2.0,
+    "wary": 5,
+    "flightiness": 1.1
+  },
   "like": "gopher_snake",
   "scale": 0.78,
-  "extra_ops": [
-    {"op": "box", "from": [15, 2, 5], "to": [17, 4, 6], "mat": "skin", "part": "n1"},
-    {"op": "box", "from": [15, 2, 9], "to": [17, 4, 10], "mat": "skin", "part": "b2"},
-    {"op": "box", "from": [15, 2, 13], "to": [17, 4, 14], "mat": "skin", "part": "b4"},
-    {"op": "box", "from": [15, 2, 17], "to": [17, 4, 18], "mat": "skin", "part": "b6"},
-    {"op": "box", "from": [15, 2, 21], "to": [17, 4, 22], "mat": "skin", "part": "b8"},
-    {"op": "box", "from": [15, 2, 25], "to": [17, 3, 26], "mat": "skin", "part": "tail"}
-  ]
+  "extra_ops": [{"op": "recolour", "at": [13, 2, 3], "until": [19, 6, 33], "from": "dark", "to": "skin"}]
 }

@@ -1,0 +1,23 @@
+{
+  "notes": "Gannet Harbor's whaling town: granite setts, granite kerbs and quay walls, plank piers.",
+  "story": "a whaling town's granite streets and plank piers",
+  "road": "granite_setts",
+  "kerb": "granite",
+  "wall": "granite",
+  "deck": "weathered_planks",
+  "gate_post": "weathered_planks",
+  "portal": "granite",
+  "pad": "boost_pad",
+  "world": {
+    "rock": [["granite", 0.6], ["stone_dark", 0.4]],
+    "biomes": ["gh_town", "gh_pasture", "gh_hayfield", "gh_spruce", "rib_beach", "gh_clam_flats", "gh_bay_floor"],
+    "default_biome": "gh_town",
+    "seabed_biome": "gh_bay_floor",
+    "seasons": ["autumn", "summer", "winter", "spring"],
+    "weather": {"fog": 1.4, "clouds": 1.4, "sun": 0.5, "rain": 1.1},
+    "start_weather": "fog",
+    "weathering": 0.3,
+    "moss": 0.3
+  },
+  "look": "gannet"
+}

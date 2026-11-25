@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "glassfall",
   "notes": "Where the skystone changed what grows. Strongest at the crater, fading along the strewn field.",
+  "habitat": "parkland",
   "priority": 10,
   "rules": {"strange": [0.38, 1.0]},
   "surface": "pale_grass",
   "subsurface": "ash",
+  "soil": 0.5,
   "map_color": [176, 160, 200],
   "plants": [
     {
@@ -40,5 +42,6 @@
       "density": 0.002,
       "placement": {"verb": "gradient", "params": {"min": 0.45, "max": 0.9}, "field": "strange"}
     }
-  ]
+  ],
+  "realm": {"bloom": 0.8}
 }

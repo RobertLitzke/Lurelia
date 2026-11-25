@@ -1,0 +1,106 @@
+{
+  "notes": "Winter fjord at the bottom of the year: snow that is rose where the low sun reaches and blue where it does not, dark water, and walls going blue-violet behind each other.",
+  "ramp": [
+    {
+      "at": 0,
+      "color": [
+        0.8,
+        0.84,
+        0.96
+      ]
+    },
+    {
+      "at": 0.3,
+      "color": [
+        0.6,
+        0.68,
+        0.92
+      ]
+    },
+    {
+      "at": 0.65,
+      "color": [
+        0.46,
+        0.52,
+        0.86
+      ]
+    },
+    {
+      "at": 1,
+      "color": [
+        0.4,
+        0.4,
+        0.78
+      ]
+    }
+  ],
+  "knobs": {
+    "ramp_reach": 520.0,
+    "ramp_value": 0.35,
+    "haze_density": 1.3,
+    "haze_height": 90.0,
+    "sky_ramp": 0.55,
+    "sky_reach": 0.45,
+    "shade_ramp": 0.85,
+    "sun_side": 0.3,
+    "sun_glow": 0.9,
+    "saturation": 1.08,
+    "contrast": 0.36,
+    "exposure": 0.96,
+    "time_tint": 0.6
+  },
+  "ambient": [
+    0.34,
+    0.66,
+    1.3
+  ],
+  "sun_tint": [
+    1.16,
+    0.9,
+    0.76
+  ],
+  "zenith": [
+    0.1,
+    0.3,
+    0.95
+  ],
+  "horizon": [
+    0.62,
+    0.74,
+    1.1
+  ],
+  "tint": [
+    {
+      "at": 0,
+      "color": [
+        0.88,
+        0.94,
+        1.14
+      ]
+    },
+    {
+      "at": 0.4,
+      "color": [
+        0.95,
+        0.98,
+        1.06
+      ]
+    },
+    {
+      "at": 0.8,
+      "color": [
+        1.06,
+        1.0,
+        0.96
+      ]
+    },
+    {
+      "at": 1,
+      "color": [
+        1.1,
+        1.02,
+        0.94
+      ]
+    }
+  ]
+}

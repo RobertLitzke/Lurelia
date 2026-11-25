@@ -1,0 +1,17 @@
+{
+  "name": "maple_turning",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A maple only part way through turning: olive going amber. The rarest of the autumn coats maples draw from (plants/maple.json morphs).",
+  "smooth": false,
+  "foliage": true,
+  "sprites": {"rule": "leaves", "shape": "maple"},
+  "texture": {
+    "pattern": "blotch",
+    "base": [132, 108, 38],
+    "alt": [170, 128, 46],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [136, 114, 44], "alt": [162, 128, 52]}
+  }
+}

@@ -1,0 +1,3103 @@
+{
+  "name": "pg_calypso",
+  "version": 2,
+  "introduced_by": "bonebight",
+  "notes": "Station Calypso: the maroon rim capsule, 11.7 m by 11.8 m and 24.9 m to the crane top, with pale glass crust over the weed band and glass spikes up its east and north sides and over the roof, and its crane snapped. The walkway door and landing are at 4.5 m on the +Z side.",
+  "size": [48, 100, 48],
+  "anchor": [24, 0, 24],
+  "foundation": 28,
+  "level": true,
+  "decays": true,
+  "base": "sea",
+  "tags": ["station", "anomaly"],
+  "ops": [
+    {"op": "cylinder", "base": [24.0, 0, 24.0], "radius": 21.9, "height": 2, "mat": "drowned_bone", "part": "wall"},
+    {"op": "cylinder", "base": [24.0, 2, 24.0], "radius": 21.7, "height": 6, "mat": "mussel_black", "part": "wall"},
+    {"op": "cylinder", "base": [24.0, 8, 24.0], "radius": 21.0, "height": 2, "mat": "drowned_bone", "part": "wall"},
+    {"op": "cylinder", "base": [24.0, 10, 24.0], "radius": 20.4, "height": 2, "mat": "mussel_black", "part": "wall"},
+    {"op": "cylinder", "base": [24.0, 19, 24.0], "radius": 20.4, "height": 1, "mat": "rust_iron", "part": "wall"},
+    {"op": "cylinder", "base": [24.0, 31, 24.0], "radius": 20.4, "height": 1, "mat": "rust_iron", "part": "wall"},
+    {"op": "cylinder", "base": [24.0, 43, 24.0], "radius": 20.4, "height": 1, "mat": "rust_iron", "part": "wall"},
+    {"op": "cylinder", "base": [24.0, 55, 24.0], "radius": 20.4, "height": 1, "mat": "rust_iron", "part": "wall"},
+    {"op": "cylinder", "base": [24.0, 67, 24.0], "radius": 20.4, "height": 1, "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [18, 20, 41], "to": [30, 22, 48], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [18, 18, 41], "to": [19, 20, 44], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [29, 18, 41], "to": [30, 20, 44], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [29, 21, 42], "to": [30, 23, 45], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [30, 21, 45], "to": [31, 23, 46], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [30, 22, 42], "to": [31, 24, 45], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [30, 23, 41], "to": [31, 25, 42], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [31, 23, 42], "to": [32, 25, 45], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [32, 23, 44], "to": [33, 25, 45], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [31, 24, 41], "to": [32, 26, 42], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [32, 24, 42], "to": [33, 26, 44], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [32, 25, 40], "to": [33, 27, 42], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [33, 25, 42], "to": [34, 27, 44], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [34, 25, 43], "to": [35, 27, 44], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [33, 26, 40], "to": [34, 28, 42], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [34, 26, 41], "to": [35, 28, 43], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [34, 27, 40], "to": [35, 29, 41], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [35, 27, 41], "to": [36, 29, 43], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [36, 27, 42], "to": [37, 29, 43], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [34, 28, 39], "to": [36, 30, 40], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [35, 28, 40], "to": [36, 30, 41], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [36, 28, 41], "to": [37, 30, 42], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [35, 29, 38], "to": [36, 31, 39], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [36, 29, 39], "to": [37, 31, 41], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [37, 29, 40], "to": [38, 31, 42], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [36, 30, 38], "to": [37, 32, 39], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [37, 30, 39], "to": [38, 32, 40], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 30, 40], "to": [39, 32, 41], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [37, 31, 37], "to": [38, 33, 39], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 31, 38], "to": [39, 33, 40], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [39, 31, 39], "to": [40, 33, 40], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 32, 37], "to": [39, 34, 38], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [39, 32, 38], "to": [40, 34, 39], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [39, 32, 34], "to": [42, 34, 38], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 32, 35], "to": [39, 34, 37], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [42, 32, 35], "to": [43, 34, 37], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [40, 32, 38], "to": [41, 34, 39], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [40, 33, 32], "to": [41, 35, 34], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [41, 33, 33], "to": [43, 35, 34], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [42, 33, 34], "to": [44, 35, 35], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [41, 34, 32], "to": [43, 36, 33], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [43, 34, 33], "to": [44, 36, 34], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [41, 35, 31], "to": [43, 37, 32], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [43, 35, 32], "to": [45, 37, 33], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [41, 36, 30], "to": [43, 38, 31], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [43, 36, 31], "to": [45, 38, 32], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [42, 37, 29], "to": [43, 39, 30], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [43, 37, 30], "to": [46, 39, 31], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [42, 38, 28], "to": [43, 40, 29], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [43, 38, 29], "to": [46, 40, 30], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [42, 39, 27], "to": [43, 41, 28], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [43, 39, 28], "to": [46, 41, 29], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [42, 40, 26], "to": [43, 42, 27], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [43, 40, 27], "to": [46, 42, 28], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [43, 41, 26], "to": [46, 43, 27], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [42, 42, 25], "to": [46, 44, 26], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [42, 43, 24], "to": [46, 45, 25], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [42, 44, 23], "to": [46, 46, 24], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [44, 44, 18], "to": [46, 46, 23], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [42, 44, 19], "to": [44, 46, 23], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [44, 45, 17], "to": [46, 47, 18], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [42, 45, 18], "to": [44, 47, 19], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [43, 46, 16], "to": [45, 48, 17], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [41, 46, 17], "to": [44, 48, 18], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [43, 47, 15], "to": [45, 49, 16], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [41, 47, 16], "to": [43, 49, 17], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [43, 48, 14], "to": [44, 50, 15], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [41, 48, 15], "to": [43, 50, 16], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [43, 49, 13], "to": [44, 51, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [41, 49, 14], "to": [43, 51, 15], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [40, 49, 15], "to": [41, 51, 16], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [42, 50, 12], "to": [43, 52, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [41, 50, 13], "to": [42, 52, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [40, 50, 14], "to": [41, 52, 15], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [42, 51, 11], "to": [43, 53, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [40, 51, 12], "to": [42, 53, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [39, 51, 13], "to": [41, 53, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [41, 52, 10], "to": [42, 54, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [40, 52, 11], "to": [41, 54, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [39, 52, 12], "to": [40, 54, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [40, 53, 10], "to": [41, 55, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [39, 53, 11], "to": [40, 55, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 53, 12], "to": [39, 55, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [39, 54, 9], "to": [41, 56, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 54, 10], "to": [40, 56, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 54, 11], "to": [39, 56, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [39, 55, 8], "to": [40, 57, 9], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 55, 9], "to": [39, 57, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [37, 55, 10], "to": [38, 57, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 56, 7], "to": [39, 58, 9], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [37, 56, 8], "to": [38, 58, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [34, 56, 5], "to": [37, 58, 9], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [37, 56, 6], "to": [38, 58, 8], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [33, 56, 7], "to": [34, 58, 8], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [35, 56, 9], "to": [37, 58, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [34, 57, 4], "to": [35, 59, 5], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [33, 57, 5], "to": [34, 59, 7], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [32, 57, 7], "to": [33, 59, 8], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [32, 58, 4], "to": [34, 60, 5], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [32, 58, 5], "to": [33, 60, 7], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [32, 59, 3], "to": [33, 61, 4], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [31, 59, 4], "to": [32, 61, 7], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [31, 60, 3], "to": [32, 62, 4], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [30, 60, 4], "to": [31, 62, 7], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [30, 61, 2], "to": [31, 63, 4], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [29, 61, 3], "to": [30, 63, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [29, 62, 2], "to": [30, 64, 3], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [28, 62, 3], "to": [29, 64, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [28, 63, 2], "to": [29, 65, 3], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [27, 63, 3], "to": [28, 65, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [26, 64, 2], "to": [28, 66, 3], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [26, 64, 3], "to": [27, 66, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [25, 65, 2], "to": [26, 67, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [24, 66, 2], "to": [25, 68, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [23, 67, 2], "to": [24, 69, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [22, 68, 2], "to": [23, 70, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [18, 68, 2], "to": [22, 70, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [17, 69, 2], "to": [18, 71, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [16, 70, 3], "to": [17, 72, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [17, 70, 6], "to": [18, 72, 7], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [15, 71, 3], "to": [16, 73, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [16, 71, 6], "to": [17, 73, 7], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [14, 72, 4], "to": [15, 74, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [15, 72, 6], "to": [16, 74, 8], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [13, 73, 4], "to": [14, 75, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [14, 73, 6], "to": [15, 75, 8], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 74, 5], "to": [13, 76, 7], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [13, 74, 6], "to": [14, 76, 8], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 75, 5], "to": [12, 77, 7], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 75, 7], "to": [13, 77, 8], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [13, 75, 8], "to": [14, 77, 9], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [10, 76, 6], "to": [11, 78, 7], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 76, 7], "to": [12, 78, 9], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 76, 8], "to": [13, 78, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [9, 77, 7], "to": [11, 79, 8], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [10, 77, 8], "to": [11, 79, 9], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 77, 9], "to": [12, 79, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [9, 78, 8], "to": [10, 80, 9], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [10, 78, 9], "to": [11, 80, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [8, 79, 8], "to": [9, 81, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [9, 79, 9], "to": [10, 81, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [10, 79, 10], "to": [11, 81, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [7, 80, 9], "to": [8, 82, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [8, 80, 10], "to": [9, 82, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [9, 80, 11], "to": [10, 82, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [6, 80, 10], "to": [8, 82, 15], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [5, 80, 11], "to": [6, 82, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [8, 80, 11], "to": [9, 82, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [9, 80, 12], "to": [10, 82, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [4, 80, 13], "to": [5, 82, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [19, 80, 2], "to": [29, 82, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [16, 80, 3], "to": [19, 82, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [29, 80, 3], "to": [32, 82, 6], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [14, 80, 4], "to": [16, 82, 8], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [32, 80, 4], "to": [34, 82, 8], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 80, 5], "to": [14, 82, 9], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [34, 80, 5], "to": [36, 82, 9], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 80, 6], "to": [12, 82, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [16, 80, 6], "to": [18, 82, 7], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [30, 80, 6], "to": [32, 82, 7], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [36, 80, 6], "to": [37, 82, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [9, 80, 7], "to": [11, 82, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [37, 80, 7], "to": [39, 82, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [8, 80, 8], "to": [9, 82, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [39, 80, 8], "to": [40, 82, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [7, 80, 9], "to": [8, 82, 16], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 80, 9], "to": [13, 82, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [35, 80, 9], "to": [36, 82, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [40, 80, 9], "to": [41, 82, 16], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [6, 80, 11], "to": [7, 82, 18], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [9, 80, 11], "to": [10, 82, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 80, 11], "to": [39, 82, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [41, 80, 11], "to": [42, 82, 18], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [5, 80, 12], "to": [6, 82, 36], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [42, 80, 12], "to": [43, 82, 36], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [4, 80, 14], "to": [5, 82, 34], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [43, 80, 14], "to": [44, 82, 34], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [3, 80, 16], "to": [4, 82, 32], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [44, 80, 16], "to": [45, 82, 32], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [2, 80, 19], "to": [3, 82, 29], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [45, 80, 19], "to": [46, 82, 29], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [6, 80, 30], "to": [7, 82, 37], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [41, 80, 30], "to": [42, 82, 37], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [7, 80, 32], "to": [8, 82, 39], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [40, 80, 32], "to": [41, 82, 39], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [8, 80, 34], "to": [9, 82, 40], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [39, 80, 34], "to": [40, 82, 40], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [9, 80, 35], "to": [10, 82, 41], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 80, 35], "to": [39, 82, 41], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [10, 80, 37], "to": [11, 82, 41], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [37, 80, 37], "to": [38, 82, 41], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 80, 38], "to": [13, 82, 42], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [35, 80, 38], "to": [37, 82, 42], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [13, 80, 39], "to": [14, 82, 43], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [34, 80, 39], "to": [35, 82, 43], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [14, 80, 40], "to": [16, 82, 44], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [32, 80, 40], "to": [34, 82, 44], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [16, 80, 41], "to": [18, 82, 45], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [30, 80, 41], "to": [32, 82, 45], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 80, 42], "to": [13, 82, 43], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [18, 80, 42], "to": [30, 82, 45], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [35, 80, 42], "to": [36, 82, 43], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [19, 80, 45], "to": [29, 82, 46], "mat": "rust_iron", "part": "metal"},
+    {"op": "cylinder", "base": [24.0, 0, 24.0], "radius": 19.5, "height": 84, "mat": "pg_brown", "part": "wall"},
+    {"op": "ellipsoid", "centre": [24.0, 84, 24.0], "radius": [19.1, 6, 19.1], "mat": "pg_brown", "part": "roof"},
+    {
+      "op": "ellipsoid",
+      "centre": [34.1377, 14.8168, 6.46006],
+      "radius": [2.30026, 3.48007, 2.30026],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [39.2066, 6.43333, 36.8736],
+      "radius": [2.4304, 3.11143, 2.4304],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [27.1786, 5.27244, 43.6081],
+      "radius": [2.30293, 3.77502, 2.30293],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [39.0831, 13.0763, 36.9966],
+      "radius": [2.6308, 2.14389, 2.6308],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [41.0064, 12.237, 13.5292],
+      "radius": [2.94519, 4.42684, 2.94519],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [36.2572, 9.05552, 39.9401],
+      "radius": [2.88646, 3.65133, 2.88646],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [33.1502, 10.2147, 41.2975],
+      "radius": [3.0615, 3.47652, 3.0615],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [40.2917, 7.00232, 35.6249],
+      "radius": [2.41425, 2.80853, 2.41425],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [39.4526, 6.25731, 11.8511],
+      "radius": [2.31833, 2.09733, 2.31833],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [30.8631, 14.0273, 42.7411],
+      "radius": [2.59697, 2.92413, 2.59697],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [31.6183, 13.5534, 42.2149],
+      "radius": [2.85879, 2.64605, 2.85879],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [19.276, 12.7786, 43.5648],
+      "radius": [3.19428, 2.59507, 3.19428],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [43.4604, 11.5197, 29.545],
+      "radius": [3.33456, 2.41815, 3.33456],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [30.6843, 9.57846, 5.63381],
+      "radius": [2.22804, 4.02391, 2.22804],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [43.8028, 13.8546, 19.6312],
+      "radius": [3.33859, 3.34649, 3.33859],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [29.9959, 8.80757, 4.81596],
+      "radius": [3.36927, 2.9425, 3.36927],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [25.2496, 10.1255, 43.5207],
+      "radius": [2.43597, 4.33395, 2.43597],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [32.2858, 6.13854, 6.15728],
+      "radius": [2.83476, 2.4242, 2.83476],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [43.3433, 7.78369, 29.6455],
+      "radius": [2.7061, 4.25218, 2.7061],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [39.9852, 14.8156, 35.6402],
+      "radius": [3.17651, 4.23795, 3.17651],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [43.3564, 12.6233, 19.6915],
+      "radius": [3.19578, 3.59878, 3.19578],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [28.3338, 9.50578, 43.2545],
+      "radius": [3.126, 3.39273, 3.126],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [43.4731, 6.19291, 29.2224],
+      "radius": [2.95749, 2.83126, 2.95749],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [43.6411, 7.73187, 28.5811],
+      "radius": [3.34182, 2.19644, 3.34182],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [43.4537, 7.58589, 28.3469],
+      "radius": [2.87302, 3.17682, 2.87302],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [40.4279, 5.04336, 35.5376],
+      "radius": [2.65261, 3.964, 2.65261],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [32.5892, 66.3087, 41.9509],
+      "radius": [2.08503, 6.40564, 2.08503],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [33.9828, 42.0608, 41.2149],
+      "radius": [2.39157, 3.409, 2.39157],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [43.0861, 43.8501, 18.3671],
+      "radius": [2.76461, 5.69567, 2.76461],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [43.8414, 46.5153, 25.5263],
+      "radius": [2.21691, 7.49377, 2.21691],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [29.9929, 66.8437, 42.9762],
+      "radius": [3.00885, 5.48903, 3.00885],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [41.6262, 55.0553, 14.7627],
+      "radius": [2.6471, 4.45813, 2.6471],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [39.5412, 36.264, 36.429],
+      "radius": [2.22304, 7.79851, 2.22304],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [40.1979, 38.4779, 35.5602],
+      "radius": [2.38738, 7.08247, 2.38738],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [43.1552, 48.1176, 29.3933],
+      "radius": [2.15767, 4.39035, 2.15767],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [30.1223, 28.601, 42.9348],
+      "radius": [2.16944, 7.26135, 2.16944],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [43.4548, 22.4026, 28.1856],
+      "radius": [2.44781, 3.60465, 2.44781],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [43.8741, 41.6438, 25.0159],
+      "radius": [3.0016, 4.29637, 3.0016],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [39.6009, 30.3609, 11.646],
+      "radius": [3.17566, 6.1709, 3.17566],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [27.8614, 62.8162, 43.5218],
+      "radius": [2.18591, 4.81123, 2.18591],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [32.803, 64.5712, 41.8471],
+      "radius": [1.92652, 6.69133, 1.92652],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [41.6323, 55.4077, 33.2257],
+      "radius": [2.21029, 3.39138, 2.21029],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [37.393, 53.9756, 9.28143],
+      "radius": [2.03756, 7.88096, 2.03756],
+      "mat": "glass_coral",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [37.5174, 26.5909, 9.39557],
+      "radius": [1.82674, 6.05499, 1.82674],
+      "mat": "coral_white",
+      "part": "floor"
+    },
+    {"op": "cylinder", "base": [24.0, 1, 24.0], "radius": 17.5, "height": 81, "mat": "air"},
+    {"op": "cylinder", "base": [24.0, 8, 24.0], "radius": 18.5, "height": 2, "mat": "pg_concrete", "part": "floor"},
+    {"op": "cylinder", "base": [24.0, 20, 24.0], "radius": 18.5, "height": 2, "mat": "pg_concrete", "part": "floor"},
+    {"op": "cylinder", "base": [24.0, 32, 24.0], "radius": 18.5, "height": 2, "mat": "pg_concrete", "part": "floor"},
+    {"op": "cylinder", "base": [24.0, 44, 24.0], "radius": 18.5, "height": 2, "mat": "pg_concrete", "part": "floor"},
+    {"op": "cylinder", "base": [24.0, 56, 24.0], "radius": 18.5, "height": 2, "mat": "pg_concrete", "part": "floor"},
+    {"op": "cylinder", "base": [24.0, 68, 24.0], "radius": 18.5, "height": 2, "mat": "pg_concrete", "part": "floor"},
+    {"op": "box", "from": [34, 20, 11], "to": [36, 22, 16], "mat": "air"},
+    {"op": "box", "from": [33, 20, 12], "to": [34, 22, 15], "mat": "air"},
+    {"op": "box", "from": [36, 20, 12], "to": [37, 22, 20], "mat": "air"},
+    {"op": "box", "from": [32, 20, 13], "to": [33, 22, 14], "mat": "air"},
+    {"op": "box", "from": [37, 20, 13], "to": [38, 22, 21], "mat": "air"},
+    {"op": "box", "from": [38, 20, 14], "to": [39, 22, 20], "mat": "air"},
+    {"op": "box", "from": [35, 20, 16], "to": [36, 22, 18], "mat": "air"},
+    {"op": "box", "from": [39, 20, 16], "to": [40, 22, 20], "mat": "air"},
+    {"op": "box", "from": [40, 20, 18], "to": [41, 22, 20], "mat": "air"},
+    {"op": "box", "from": [38, 9, 20], "to": [41, 11, 21], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [37, 9, 21], "to": [38, 11, 22], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 10, 19], "to": [41, 12, 20], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [37, 10, 20], "to": [38, 12, 21], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 11, 18], "to": [41, 13, 19], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [36, 11, 19], "to": [38, 13, 20], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 12, 17], "to": [40, 14, 18], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [36, 12, 18], "to": [38, 14, 19], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 13, 16], "to": [40, 15, 17], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [36, 13, 17], "to": [38, 15, 18], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [37, 14, 15], "to": [39, 16, 16], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [36, 14, 16], "to": [38, 16, 17], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [35, 14, 17], "to": [36, 16, 18], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [37, 15, 14], "to": [39, 17, 15], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [36, 15, 15], "to": [37, 17, 16], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [35, 15, 16], "to": [36, 17, 17], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [36, 16, 13], "to": [38, 18, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [35, 16, 14], "to": [37, 18, 15], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [34, 16, 15], "to": [36, 18, 16], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [36, 17, 12], "to": [37, 19, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [35, 17, 13], "to": [36, 19, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [34, 17, 14], "to": [35, 19, 15], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [35, 18, 11], "to": [36, 20, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [34, 18, 13], "to": [35, 20, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [33, 18, 14], "to": [34, 20, 15], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [34, 19, 11], "to": [35, 21, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [33, 19, 12], "to": [34, 21, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [32, 19, 13], "to": [33, 21, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [33, 20, 10], "to": [35, 22, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [33, 20, 11], "to": [34, 22, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [32, 20, 12], "to": [33, 22, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [22, 32, 7], "to": [30, 34, 11], "mat": "air"},
+    {"op": "box", "from": [30, 32, 8], "to": [32, 34, 12], "mat": "air"},
+    {"op": "box", "from": [32, 32, 9], "to": [33, 34, 10], "mat": "air"},
+    {"op": "box", "from": [28, 32, 11], "to": [30, 34, 12], "mat": "air"},
+    {"op": "box", "from": [30, 32, 12], "to": [31, 34, 13], "mat": "air"},
+    {"op": "box", "from": [33, 21, 9], "to": [34, 23, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [32, 21, 10], "to": [33, 23, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [31, 21, 12], "to": [32, 23, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [32, 22, 9], "to": [33, 24, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [31, 22, 10], "to": [32, 24, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [30, 22, 11], "to": [31, 24, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [31, 23, 8], "to": [32, 25, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [30, 23, 9], "to": [31, 25, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [29, 23, 11], "to": [30, 25, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [30, 24, 8], "to": [31, 26, 9], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [29, 24, 9], "to": [30, 26, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [29, 25, 7], "to": [30, 27, 9], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [28, 25, 8], "to": [29, 27, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [28, 26, 7], "to": [29, 28, 8], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [27, 26, 8], "to": [28, 28, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [26, 27, 7], "to": [28, 29, 8], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [26, 27, 8], "to": [27, 29, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [25, 28, 7], "to": [26, 30, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [24, 29, 7], "to": [25, 31, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [23, 30, 7], "to": [24, 32, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [22, 31, 7], "to": [23, 33, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [21, 32, 7], "to": [22, 34, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [18, 44, 7], "to": [20, 46, 12], "mat": "air"},
+    {"op": "box", "from": [16, 44, 8], "to": [18, 46, 13], "mat": "air"},
+    {"op": "box", "from": [14, 44, 9], "to": [16, 46, 14], "mat": "air"},
+    {"op": "box", "from": [13, 44, 10], "to": [14, 46, 16], "mat": "air"},
+    {"op": "box", "from": [20, 44, 10], "to": [21, 46, 11], "mat": "air"},
+    {"op": "box", "from": [12, 44, 11], "to": [13, 46, 15], "mat": "air"},
+    {"op": "box", "from": [11, 44, 12], "to": [12, 46, 14], "mat": "air"},
+    {"op": "box", "from": [14, 44, 14], "to": [15, 46, 15], "mat": "air"},
+    {"op": "box", "from": [20, 33, 7], "to": [21, 35, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [21, 33, 10], "to": [22, 35, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [19, 34, 7], "to": [20, 36, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [20, 34, 10], "to": [21, 36, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [18, 35, 7], "to": [19, 37, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [19, 35, 10], "to": [20, 37, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [17, 36, 8], "to": [18, 38, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [18, 36, 10], "to": [19, 38, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [16, 37, 8], "to": [17, 39, 10], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [17, 37, 10], "to": [18, 39, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [15, 38, 9], "to": [16, 40, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [16, 38, 10], "to": [17, 40, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [17, 38, 12], "to": [18, 40, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [14, 39, 9], "to": [15, 41, 11], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [15, 39, 11], "to": [16, 41, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [16, 39, 12], "to": [17, 41, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [13, 40, 10], "to": [14, 42, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [14, 40, 11], "to": [15, 42, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [15, 40, 13], "to": [16, 42, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 41, 11], "to": [13, 43, 12], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [13, 41, 12], "to": [14, 43, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [14, 41, 13], "to": [15, 43, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 42, 12], "to": [13, 44, 13], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 42, 13], "to": [14, 44, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [14, 42, 14], "to": [15, 44, 15], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 43, 13], "to": [12, 45, 14], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 43, 14], "to": [14, 45, 15], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [13, 43, 15], "to": [14, 45, 16], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [10, 44, 13], "to": [11, 46, 15], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 44, 14], "to": [12, 46, 15], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 44, 15], "to": [13, 46, 16], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [9, 56, 15], "to": [10, 58, 26], "mat": "air"},
+    {"op": "box", "from": [8, 56, 16], "to": [9, 58, 26], "mat": "air"},
+    {"op": "box", "from": [10, 56, 16], "to": [12, 58, 20], "mat": "air"},
+    {"op": "box", "from": [12, 56, 17], "to": [13, 58, 18], "mat": "air"},
+    {"op": "box", "from": [7, 56, 18], "to": [8, 58, 26], "mat": "air"},
+    {"op": "box", "from": [10, 56, 20], "to": [11, 58, 26], "mat": "air"},
+    {"op": "box", "from": [9, 45, 14], "to": [10, 47, 15], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [10, 45, 15], "to": [12, 47, 16], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 45, 16], "to": [13, 47, 17], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [9, 46, 15], "to": [10, 48, 17], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [10, 46, 16], "to": [12, 48, 17], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 46, 17], "to": [13, 48, 18], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [8, 47, 16], "to": [9, 49, 17], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [9, 47, 17], "to": [11, 49, 18], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 47, 18], "to": [12, 49, 19], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [8, 48, 17], "to": [9, 50, 18], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [9, 48, 18], "to": [11, 50, 19], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 48, 19], "to": [12, 50, 20], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [7, 49, 18], "to": [9, 51, 19], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [8, 49, 19], "to": [11, 51, 20], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [7, 50, 19], "to": [8, 52, 20], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [8, 50, 20], "to": [11, 52, 21], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [7, 51, 20], "to": [8, 53, 22], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [8, 51, 21], "to": [11, 53, 22], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [7, 52, 22], "to": [11, 54, 23], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [7, 53, 23], "to": [11, 55, 24], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [7, 54, 24], "to": [11, 56, 25], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [7, 55, 25], "to": [11, 57, 26], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [7, 56, 26], "to": [10, 58, 27], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [10, 68, 27], "to": [11, 70, 35], "mat": "air"},
+    {"op": "box", "from": [7, 68, 28], "to": [10, 70, 30], "mat": "air"},
+    {"op": "box", "from": [11, 68, 28], "to": [12, 70, 36], "mat": "air"},
+    {"op": "box", "from": [8, 68, 30], "to": [10, 70, 32], "mat": "air"},
+    {"op": "box", "from": [12, 68, 30], "to": [13, 70, 37], "mat": "air"},
+    {"op": "box", "from": [9, 68, 32], "to": [10, 70, 34], "mat": "air"},
+    {"op": "box", "from": [13, 68, 32], "to": [14, 70, 37], "mat": "air"},
+    {"op": "box", "from": [14, 68, 33], "to": [15, 70, 36], "mat": "air"},
+    {"op": "box", "from": [15, 68, 34], "to": [16, 70, 35], "mat": "air"},
+    {"op": "box", "from": [10, 57, 26], "to": [11, 59, 27], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [7, 57, 27], "to": [10, 59, 28], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [10, 58, 27], "to": [11, 60, 28], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [7, 58, 28], "to": [10, 60, 29], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [10, 59, 28], "to": [12, 61, 29], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [7, 59, 29], "to": [10, 61, 30], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [10, 60, 29], "to": [12, 62, 30], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [8, 60, 30], "to": [10, 62, 31], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [10, 61, 30], "to": [12, 63, 31], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [8, 61, 31], "to": [11, 63, 32], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 62, 30], "to": [13, 64, 31], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 62, 31], "to": [12, 64, 32], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [9, 62, 32], "to": [11, 64, 33], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 63, 31], "to": [13, 65, 33], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 63, 32], "to": [12, 65, 33], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [9, 63, 33], "to": [11, 65, 34], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [13, 64, 32], "to": [14, 66, 33], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 64, 33], "to": [13, 66, 34], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [10, 64, 34], "to": [12, 66, 35], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [13, 65, 33], "to": [14, 67, 34], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 65, 34], "to": [13, 67, 35], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [11, 65, 35], "to": [12, 67, 36], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [14, 66, 33], "to": [15, 68, 35], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [13, 66, 34], "to": [14, 68, 36], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [12, 66, 35], "to": [13, 68, 37], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [15, 67, 34], "to": [16, 69, 35], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [14, 67, 35], "to": [15, 69, 36], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [13, 67, 36], "to": [14, 69, 37], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [15, 68, 35], "to": [16, 70, 36], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [14, 68, 36], "to": [15, 70, 38], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [13, 68, 37], "to": [14, 70, 38], "mat": "rust_iron", "part": "metal"},
+    {
+      "op": "segment",
+      "points": [[36.43, 15.5, 21.39], [35.68, 18.5, 19.01], [34.48, 21.5, 16.82], [32.87, 24.5, 14.91], [31.61, 26.5, 13.83]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[36.43, 13.5, 21.39], [35.68, 16.5, 19.01], [34.48, 19.5, 16.82], [32.87, 22.5, 14.91], [31.61, 24.5, 13.83]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[35.68, 14.0, 19.01], [35.68, 18.5, 19.01]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[34.48, 17.0, 16.82], [34.48, 21.5, 16.82]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[32.87, 20.0, 14.91], [32.87, 24.5, 14.91]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[30.92, 27.5, 13.35], [28.71, 30.5, 12.21], [26.31, 33.5, 11.51], [23.83, 36.5, 11.3], [22.17, 38.5, 11.43]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[30.92, 25.5, 13.35], [28.71, 28.5, 12.21], [26.31, 31.5, 11.51], [23.83, 34.5, 11.3], [22.17, 36.5, 11.43]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[28.71, 26.0, 12.21], [28.71, 30.5, 12.21]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[26.31, 29.0, 11.51], [26.31, 33.5, 11.51]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[23.83, 32.0, 11.3], [23.83, 36.5, 11.3]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[21.35, 39.5, 11.58], [18.97, 42.5, 12.34], [16.79, 45.5, 13.55], [14.89, 48.5, 15.16], [13.81, 50.5, 16.42]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[21.35, 37.5, 11.58], [18.97, 40.5, 12.34], [16.79, 43.5, 13.55], [14.89, 46.5, 15.16], [13.81, 48.5, 16.42]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[18.97, 38.0, 12.34], [18.97, 42.5, 12.34]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[16.79, 41.0, 13.55], [16.79, 45.5, 13.55]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[14.89, 44.0, 15.16], [14.89, 48.5, 15.16]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[13.33, 51.5, 17.11], [12.19, 54.5, 19.33], [11.51, 57.5, 21.72], [11.3, 60.5, 24.21], [11.44, 62.5, 25.87]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[13.33, 49.5, 17.11], [12.19, 52.5, 19.33], [11.51, 55.5, 21.72], [11.3, 58.5, 24.21], [11.44, 60.5, 25.87]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[12.19, 50.0, 19.33], [12.19, 54.5, 19.33]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[11.51, 53.0, 21.72], [11.51, 57.5, 21.72]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[11.3, 56.0, 24.21], [11.3, 60.5, 24.21]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[11.59, 63.5, 26.69], [12.35, 66.5, 29.06], [13.57, 69.5, 31.24], [15.18, 72.5, 33.14], [16.45, 74.5, 34.22]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[11.59, 61.5, 26.69], [12.35, 64.5, 29.06], [13.57, 67.5, 31.24], [15.18, 70.5, 33.14], [16.45, 72.5, 34.22]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[12.35, 62.0, 29.06], [12.35, 66.5, 29.06]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[13.57, 65.0, 31.24], [13.57, 69.5, 31.24]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[15.18, 68.0, 33.14], [15.18, 72.5, 33.14]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {"op": "box", "from": [21, 22, 37], "to": [27, 32, 46], "mat": "air"},
+    {"op": "box", "from": [20, 22, 39], "to": [21, 33, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [27, 22, 39], "to": [28, 33, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [20, 32, 39], "to": [28, 33, 44], "mat": "rust_iron", "part": "wall"},
+    {
+      "op": "segment",
+      "points": [[18.5, 26.5, 42.5], [18.5, 26.5, 47.5]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[18.5, 24.5, 42.5], [18.5, 24.5, 47.5]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[18.5, 22, 44.5], [18.5, 26.5, 44.5]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[29.5, 26.5, 42.5], [29.5, 26.5, 47.5]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[29.5, 24.5, 42.5], [29.5, 24.5, 47.5]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[29.5, 22, 44.5], [29.5, 26.5, 44.5]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {"op": "box", "from": [20, 22, 44], "to": [21, 23, 45], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [38, 34, 33], "to": [40, 45, 36], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [40, 34, 34], "to": [41, 45, 36], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [37, 34, 35], "to": [38, 45, 36], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [39, 34, 36], "to": [40, 45, 37], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [39, 35, 31], "to": [40, 44, 33], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [40, 35, 32], "to": [42, 44, 34], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [36, 35, 36], "to": [39, 44, 37], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [37, 35, 37], "to": [39, 44, 38], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [39, 44, 32], "to": [40, 45, 33], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [40, 44, 33], "to": [41, 45, 34], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [37, 44, 36], "to": [39, 45, 37], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [38, 44, 37], "to": [39, 45, 38], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [38, 34, 33], "to": [40, 44, 36], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [40, 34, 34], "to": [41, 44, 35], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [37, 34, 35], "to": [38, 44, 36], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [39, 35, 32], "to": [40, 43, 33], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [40, 35, 33], "to": [41, 43, 34], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [37, 35, 36], "to": [39, 43, 37], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [42, 46, 19], "to": [44, 57, 22], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [41, 46, 20], "to": [42, 57, 23], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [42, 47, 17], "to": [43, 56, 19], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [40, 47, 18], "to": [42, 56, 19], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [43, 47, 18], "to": [44, 57, 19], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [41, 47, 19], "to": [42, 57, 20], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [42, 47, 22], "to": [44, 56, 24], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [41, 47, 23], "to": [42, 56, 25], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [42, 56, 18], "to": [43, 57, 19], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [42, 56, 22], "to": [44, 57, 23], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [41, 56, 23], "to": [42, 57, 24], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [42, 46, 19], "to": [43, 56, 22], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [41, 46, 20], "to": [42, 56, 23], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [43, 46, 21], "to": [44, 56, 22], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [42, 47, 18], "to": [43, 55, 19], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [41, 47, 19], "to": [42, 55, 20], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [42, 47, 22], "to": [44, 55, 23], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [41, 47, 23], "to": [42, 55, 24], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [34, 58, 7], "to": [36, 69, 10], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [33, 58, 8], "to": [34, 69, 10], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [36, 58, 8], "to": [37, 69, 9], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [32, 59, 6], "to": [34, 68, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [31, 59, 7], "to": [32, 68, 9], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [32, 59, 8], "to": [33, 69, 9], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [36, 59, 9], "to": [38, 68, 11], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [35, 59, 10], "to": [36, 69, 11], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [36, 59, 11], "to": [37, 68, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [33, 68, 6], "to": [34, 69, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [32, 68, 7], "to": [33, 69, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [36, 68, 9], "to": [37, 69, 10], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [34, 58, 7], "to": [35, 68, 10], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [33, 58, 8], "to": [34, 68, 10], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [35, 58, 8], "to": [36, 68, 10], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [32, 59, 7], "to": [34, 67, 8], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [32, 59, 8], "to": [33, 67, 9], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [36, 59, 9], "to": [37, 67, 10], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [35, 59, 10], "to": [36, 67, 11], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [19, 70, 4], "to": [22, 81, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [18, 71, 4], "to": [19, 81, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [22, 71, 4], "to": [24, 80, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [17, 71, 5], "to": [18, 80, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [22, 80, 4], "to": [23, 81, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [21, 70, 4], "to": [22, 80, 7], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [19, 70, 5], "to": [21, 80, 7], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [22, 71, 4], "to": [23, 79, 7], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [18, 71, 5], "to": [19, 79, 8], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [7, 82, 12], "to": [10, 93, 15], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 83, 10], "to": [10, 92, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [8, 83, 11], "to": [9, 93, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [10, 83, 11], "to": [12, 92, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [10, 83, 12], "to": [11, 93, 13], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 83, 14], "to": [7, 92, 16], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [5, 83, 15], "to": [6, 92, 16], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 83, 15], "to": [9, 92, 17], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 92, 11], "to": [10, 93, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 92, 14], "to": [7, 93, 15], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 92, 15], "to": [9, 93, 16], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [8, 92, 16], "to": [9, 93, 17], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [8, 82, 12], "to": [10, 92, 15], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [7, 82, 13], "to": [8, 92, 15], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [9, 83, 11], "to": [10, 91, 12], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [10, 83, 12], "to": [11, 91, 13], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [7, 83, 15], "to": [9, 91, 16], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [8, 83, 16], "to": [9, 91, 17], "mat": "window_dark", "part": "glass"},
+    {"op": "box", "from": [23, 15, 41], "to": [25, 20, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [22, 16, 41], "to": [23, 19, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [25, 16, 41], "to": [26, 19, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [23, 17, 41], "to": [25, 18, 44], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [23, 15, 4], "to": [25, 20, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [22, 16, 4], "to": [23, 19, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [25, 16, 4], "to": [26, 19, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [23, 17, 4], "to": [25, 18, 7], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 15, 9], "to": [12, 20, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 15, 10], "to": [10, 20, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [12, 15, 10], "to": [13, 20, 11], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [10, 15, 12], "to": [11, 20, 13], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [11, 16, 8], "to": [12, 19, 9], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [12, 16, 9], "to": [13, 19, 10], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [8, 16, 11], "to": [9, 19, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 16, 12], "to": [10, 19, 13], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [10, 16, 10], "to": [11, 19, 11], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [11, 16, 11], "to": [12, 19, 12], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [11, 17, 9], "to": [12, 18, 11], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [12, 17, 10], "to": [13, 18, 11], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [9, 17, 11], "to": [11, 18, 12], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 17, 12], "to": [11, 18, 13], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [4, 15, 23], "to": [7, 20, 25], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 16, 22], "to": [7, 19, 23], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 16, 25], "to": [7, 19, 26], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 17, 23], "to": [7, 18, 25], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 15, 35], "to": [11, 20, 39], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 15, 36], "to": [10, 20, 38], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [11, 15, 36], "to": [12, 20, 39], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [12, 15, 37], "to": [13, 20, 38], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 16, 35], "to": [10, 19, 36], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [8, 16, 36], "to": [9, 19, 37], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [12, 16, 38], "to": [13, 19, 39], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [11, 16, 39], "to": [12, 19, 40], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [11, 16, 36], "to": [12, 19, 37], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 16, 37], "to": [11, 19, 38], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 17, 35], "to": [11, 18, 37], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [9, 17, 36], "to": [10, 18, 37], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [11, 17, 37], "to": [13, 18, 38], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [11, 17, 38], "to": [12, 18, 39], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [16, 26, 5], "to": [18, 31, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [15, 26, 6], "to": [16, 31, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [18, 26, 7], "to": [19, 31, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [16, 26, 8], "to": [17, 31, 9], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [18, 27, 4], "to": [19, 30, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [14, 27, 6], "to": [15, 30, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [15, 27, 7], "to": [16, 30, 9], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [16, 27, 6], "to": [17, 30, 7], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [17, 27, 7], "to": [18, 30, 8], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [17, 28, 5], "to": [18, 29, 7], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [15, 28, 6], "to": [16, 29, 7], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [16, 28, 7], "to": [17, 29, 9], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [18, 28, 7], "to": [19, 29, 8], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [6, 26, 15], "to": [7, 31, 18], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [5, 26, 16], "to": [6, 31, 18], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 26, 16], "to": [9, 31, 17], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 26, 17], "to": [8, 31, 19], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 27, 14], "to": [8, 30, 15], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 27, 15], "to": [9, 30, 16], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 27, 18], "to": [7, 30, 19], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 27, 16], "to": [7, 30, 17], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 27, 17], "to": [8, 30, 18], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [6, 28, 15], "to": [7, 29, 16], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 28, 16], "to": [9, 29, 17], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [5, 28, 17], "to": [7, 29, 18], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 28, 18], "to": [8, 29, 19], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 26, 29], "to": [8, 31, 32], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [5, 26, 30], "to": [7, 31, 32], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [8, 26, 31], "to": [9, 31, 32], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 26, 32], "to": [7, 31, 33], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 27, 29], "to": [7, 30, 30], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 27, 32], "to": [9, 30, 33], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 27, 33], "to": [8, 30, 34], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 27, 30], "to": [8, 30, 31], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [6, 27, 31], "to": [7, 30, 32], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 28, 29], "to": [8, 29, 30], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [5, 28, 30], "to": [7, 29, 31], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 28, 31], "to": [9, 29, 32], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [6, 28, 32], "to": [7, 29, 33], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [23, 38, 41], "to": [25, 43, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [22, 39, 41], "to": [23, 42, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [25, 39, 41], "to": [26, 42, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [23, 40, 41], "to": [25, 41, 44], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [23, 38, 4], "to": [25, 43, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [22, 39, 4], "to": [23, 42, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [25, 39, 4], "to": [26, 42, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [23, 40, 4], "to": [25, 41, 7], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 38, 9], "to": [12, 43, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 38, 10], "to": [10, 43, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [12, 38, 10], "to": [13, 43, 11], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [10, 38, 12], "to": [11, 43, 13], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [11, 39, 8], "to": [12, 42, 9], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [12, 39, 9], "to": [13, 42, 10], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [8, 39, 11], "to": [9, 42, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 39, 12], "to": [10, 42, 13], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [10, 39, 10], "to": [11, 42, 11], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [11, 39, 11], "to": [12, 42, 12], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [11, 40, 9], "to": [12, 41, 11], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [12, 40, 10], "to": [13, 41, 11], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [9, 40, 11], "to": [11, 41, 12], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 40, 12], "to": [11, 41, 13], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [4, 38, 23], "to": [7, 43, 25], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 39, 22], "to": [7, 42, 23], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 39, 25], "to": [7, 42, 26], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 40, 23], "to": [7, 41, 25], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 38, 35], "to": [11, 43, 39], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 38, 36], "to": [10, 43, 38], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [11, 38, 36], "to": [12, 43, 39], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [12, 38, 37], "to": [13, 43, 38], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 39, 35], "to": [10, 42, 36], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [8, 39, 36], "to": [9, 42, 37], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [12, 39, 38], "to": [13, 42, 39], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [11, 39, 39], "to": [12, 42, 40], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [11, 39, 36], "to": [12, 42, 37], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 39, 37], "to": [11, 42, 38], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 40, 35], "to": [11, 41, 37], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [9, 40, 36], "to": [10, 41, 37], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [11, 40, 37], "to": [13, 41, 38], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [11, 40, 38], "to": [12, 41, 39], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [16, 50, 5], "to": [18, 55, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [15, 50, 6], "to": [16, 55, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [18, 50, 7], "to": [19, 55, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [16, 50, 8], "to": [17, 55, 9], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [18, 51, 4], "to": [19, 54, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [14, 51, 6], "to": [15, 54, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [15, 51, 7], "to": [16, 54, 9], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [16, 51, 6], "to": [17, 54, 7], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [17, 51, 7], "to": [18, 54, 8], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [17, 52, 5], "to": [18, 53, 7], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [15, 52, 6], "to": [16, 53, 7], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [16, 52, 7], "to": [17, 53, 9], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [18, 52, 7], "to": [19, 53, 8], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [6, 50, 15], "to": [7, 55, 18], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [5, 50, 16], "to": [6, 55, 18], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 50, 16], "to": [9, 55, 17], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 50, 17], "to": [8, 55, 19], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 51, 14], "to": [8, 54, 15], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 51, 15], "to": [9, 54, 16], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 51, 18], "to": [7, 54, 19], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 51, 16], "to": [7, 54, 17], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 51, 17], "to": [8, 54, 18], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [6, 52, 15], "to": [7, 53, 16], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 52, 16], "to": [9, 53, 17], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [5, 52, 17], "to": [7, 53, 18], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 52, 18], "to": [8, 53, 19], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 50, 29], "to": [8, 55, 32], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [5, 50, 30], "to": [7, 55, 32], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [8, 50, 31], "to": [9, 55, 32], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 50, 32], "to": [7, 55, 33], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 51, 29], "to": [7, 54, 30], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 51, 32], "to": [9, 54, 33], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 51, 33], "to": [8, 54, 34], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 51, 30], "to": [8, 54, 31], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [6, 51, 31], "to": [7, 54, 32], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 52, 29], "to": [8, 53, 30], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [5, 52, 30], "to": [7, 53, 31], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 52, 31], "to": [9, 53, 32], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [6, 52, 32], "to": [7, 53, 33], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [16, 50, 39], "to": [17, 55, 43], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [17, 50, 40], "to": [19, 55, 41], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [15, 50, 41], "to": [16, 55, 42], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [17, 50, 41], "to": [18, 55, 43], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [15, 51, 39], "to": [16, 54, 41], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [14, 51, 40], "to": [15, 54, 42], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [18, 51, 41], "to": [19, 54, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [17, 51, 40], "to": [18, 54, 41], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [16, 51, 41], "to": [17, 54, 42], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [16, 52, 39], "to": [17, 53, 41], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [18, 52, 40], "to": [19, 53, 41], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [15, 52, 41], "to": [16, 53, 42], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [17, 52, 41], "to": [18, 53, 43], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [23, 62, 41], "to": [25, 67, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [22, 63, 41], "to": [23, 66, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [25, 63, 41], "to": [26, 66, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [23, 64, 41], "to": [25, 65, 44], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 62, 9], "to": [12, 67, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 62, 10], "to": [10, 67, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [12, 62, 10], "to": [13, 67, 11], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [10, 62, 12], "to": [11, 67, 13], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [11, 63, 8], "to": [12, 66, 9], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [12, 63, 9], "to": [13, 66, 10], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [8, 63, 11], "to": [9, 66, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 63, 12], "to": [10, 66, 13], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [10, 63, 10], "to": [11, 66, 11], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [11, 63, 11], "to": [12, 66, 12], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [11, 64, 9], "to": [12, 65, 11], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [12, 64, 10], "to": [13, 65, 11], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [9, 64, 11], "to": [11, 65, 12], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 64, 12], "to": [11, 65, 13], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [4, 62, 23], "to": [7, 67, 25], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 63, 22], "to": [7, 66, 23], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 63, 25], "to": [7, 66, 26], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 64, 23], "to": [7, 65, 25], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 62, 35], "to": [11, 67, 39], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 62, 36], "to": [10, 67, 38], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [11, 62, 36], "to": [12, 67, 39], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [12, 62, 37], "to": [13, 67, 38], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 63, 35], "to": [10, 66, 36], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [8, 63, 36], "to": [9, 66, 37], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [12, 63, 38], "to": [13, 66, 39], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [11, 63, 39], "to": [12, 66, 40], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [11, 63, 36], "to": [12, 66, 37], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 63, 37], "to": [11, 66, 38], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [10, 64, 35], "to": [11, 65, 37], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [9, 64, 36], "to": [10, 65, 37], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [11, 64, 37], "to": [13, 65, 38], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [11, 64, 38], "to": [12, 65, 39], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 74, 29], "to": [8, 79, 32], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [5, 74, 30], "to": [7, 79, 32], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [8, 74, 31], "to": [9, 79, 32], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 74, 32], "to": [7, 79, 33], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 75, 29], "to": [7, 78, 30], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 75, 32], "to": [9, 78, 33], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 75, 33], "to": [8, 78, 34], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 75, 30], "to": [8, 78, 31], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [6, 75, 31], "to": [7, 78, 32], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 76, 29], "to": [8, 77, 30], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [5, 76, 30], "to": [7, 77, 31], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [7, 76, 31], "to": [9, 77, 32], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [6, 76, 32], "to": [7, 77, 33], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [16, 74, 39], "to": [17, 79, 43], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [17, 74, 40], "to": [19, 79, 41], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [15, 74, 41], "to": [16, 79, 42], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [17, 74, 41], "to": [18, 79, 43], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [15, 75, 39], "to": [16, 78, 41], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [14, 75, 40], "to": [15, 78, 42], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [18, 75, 41], "to": [19, 78, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [17, 75, 40], "to": [18, 78, 41], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [16, 75, 41], "to": [17, 78, 42], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [16, 76, 39], "to": [17, 77, 41], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [18, 76, 40], "to": [19, 77, 41], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [15, 76, 41], "to": [16, 77, 42], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [17, 76, 41], "to": [18, 77, 43], "mat": "pg_porthole", "part": "glass"},
+    {"op": "box", "from": [4, 12, 20], "to": [6, 18, 24], "mat": "drowned_bone", "part": "wall"},
+    {"op": "box", "from": [18, 13, 4], "to": [22, 19, 6], "mat": "drowned_bone", "part": "wall"},
+    {"op": "box", "from": [17, 13, 5], "to": [18, 19, 7], "mat": "drowned_bone", "part": "wall"},
+    {"op": "box", "from": [10, 14, 37], "to": [11, 18, 39], "mat": "drowned_bone", "part": "wall"},
+    {"op": "box", "from": [11, 14, 38], "to": [13, 18, 40], "mat": "drowned_bone", "part": "wall"},
+    {"op": "box", "from": [4, 15, 19], "to": [6, 18, 20], "mat": "drowned_bone", "part": "wall"},
+    {"op": "box", "from": [32, 9, 5], "to": [33, 14, 8], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [31, 9, 6], "to": [32, 14, 7], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [33, 9, 6], "to": [34, 14, 8], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [34, 9, 7], "to": [35, 14, 8], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [4, 9, 23], "to": [6, 14, 27], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [5, 9, 28], "to": [6, 15, 30], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [4, 9, 29], "to": [5, 15, 30], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [18, 10, 4], "to": [22, 15, 6], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [25, 10, 4], "to": [30, 14, 6], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [4, 10, 22], "to": [6, 14, 23], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [7, 10, 34], "to": [9, 14, 36], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [9, 10, 35], "to": [10, 14, 38], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [8, 10, 36], "to": [9, 14, 37], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [10, 10, 37], "to": [11, 14, 38], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [7, 12, 13], "to": [8, 17, 16], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [6, 12, 14], "to": [7, 17, 16], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [5, 12, 15], "to": [6, 17, 16], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [5, 13, 30], "to": [7, 15, 33], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [7, 13, 32], "to": [8, 15, 34], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [6, 13, 33], "to": [7, 15, 34], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [7, 14, 34], "to": [8, 15, 35], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [4, 15, 26], "to": [6, 20, 28], "mat": "mussel_black", "part": "wall"},
+    {"op": "box", "from": [4, 10, 26], "to": [6, 29, 27], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 10, 34], "to": [10, 29, 36], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [8, 10, 35], "to": [9, 29, 36], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [19, 10, 41], "to": [20, 30, 43], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [18, 10, 42], "to": [19, 30, 43], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [20, 10, 42], "to": [22, 27, 43], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [21, 10, 43], "to": [22, 27, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [9, 19, 11], "to": [10, 28, 12], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 20, 31], "to": [8, 31, 32], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 20, 32], "to": [7, 31, 33], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 22, 28], "to": [7, 27, 31], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [5, 22, 29], "to": [6, 27, 31], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [28, 23, 41], "to": [29, 36, 43], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [27, 23, 42], "to": [28, 36, 43], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [5, 26, 27], "to": [6, 39, 29], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 27, 28], "to": [7, 39, 29], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [20, 27, 42], "to": [21, 30, 43], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [4, 29, 22], "to": [6, 46, 23], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [15, 38, 6], "to": [16, 60, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [16, 38, 7], "to": [17, 56, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 41, 31], "to": [7, 49, 32], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [21, 43, 4], "to": [22, 54, 6], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [12, 43, 9], "to": [13, 54, 10], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [15, 50, 40], "to": [16, 64, 42], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [32, 54, 6], "to": [33, 63, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [31, 54, 7], "to": [32, 63, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [33, 54, 7], "to": [34, 63, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [20, 54, 42], "to": [22, 67, 43], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [21, 54, 43], "to": [22, 67, 44], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [15, 55, 7], "to": [16, 60, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [14, 55, 39], "to": [15, 62, 41], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [8, 57, 33], "to": [9, 68, 34], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [7, 57, 34], "to": [8, 68, 35], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [15, 68, 6], "to": [16, 77, 7], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [16, 68, 7], "to": [17, 77, 8], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [6, 71, 16], "to": [8, 80, 17], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [5, 71, 17], "to": [7, 80, 18], "mat": "rust_iron", "part": "wall"},
+    {
+      "op": "segment",
+      "points": [
+        [30.05, 27.5, 45.25],
+        [33.09, 30.5, 44.14],
+        [35.93, 33.5, 42.6],
+        [38.51, 36.5, 40.67],
+        [40.07, 38.5, 39.17],
+        [43.15, 38.5, 35.04]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [30.05, 25.5, 45.25],
+        [33.09, 28.5, 44.14],
+        [35.93, 31.5, 42.6],
+        [38.51, 34.5, 40.67],
+        [40.07, 36.5, 39.17],
+        [43.15, 36.5, 35.04]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[30.05, 23.0, 45.25], [30.05, 27.5, 45.25]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[35.93, 29.0, 42.6], [35.93, 33.5, 42.6]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[40.07, 34.0, 39.17], [40.07, 38.5, 39.17]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [43.41, 39.5, 34.57],
+        [44.74, 42.5, 31.62],
+        [45.63, 45.5, 28.52],
+        [46.06, 48.5, 25.31],
+        [46.08, 50.5, 23.16],
+        [45.29, 50.5, 18.07]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [43.41, 37.5, 34.57],
+        [44.74, 40.5, 31.62],
+        [45.63, 43.5, 28.52],
+        [46.06, 46.5, 25.31],
+        [46.08, 48.5, 23.16],
+        [45.29, 48.5, 18.07]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[43.41, 35.0, 34.57], [43.41, 39.5, 34.57]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[45.63, 41.0, 28.52], [45.63, 45.5, 28.52]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[46.08, 46.0, 23.16], [46.08, 50.5, 23.16]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [45.14, 51.5, 17.55],
+        [43.97, 54.5, 14.53],
+        [42.38, 57.5, 11.72],
+        [40.39, 60.5, 9.18],
+        [38.87, 62.5, 7.65],
+        [34.67, 62.5, 4.65]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [45.14, 49.5, 17.55],
+        [43.97, 52.5, 14.53],
+        [42.38, 55.5, 11.72],
+        [40.39, 58.5, 9.18],
+        [38.87, 60.5, 7.65],
+        [34.67, 60.5, 4.65]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[45.14, 47.0, 17.55], [45.14, 51.5, 17.55]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[42.38, 53.0, 11.72], [42.38, 57.5, 11.72]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[38.87, 58.0, 7.65], [38.87, 62.5, 7.65]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [34.2, 63.5, 4.39],
+        [31.23, 66.5, 3.12],
+        [28.11, 69.5, 2.29],
+        [24.9, 72.5, 1.92],
+        [22.74, 74.5, 1.94],
+        [17.67, 74.5, 2.83]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [34.2, 61.5, 4.39],
+        [31.23, 64.5, 3.12],
+        [28.11, 67.5, 2.29],
+        [24.9, 70.5, 1.92],
+        [22.74, 72.5, 1.94],
+        [17.67, 72.5, 2.83]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[34.2, 59.0, 4.39], [34.2, 63.5, 4.39]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[28.11, 65.0, 2.29], [28.11, 69.5, 2.29]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[22.74, 70.0, 1.94], [22.74, 74.5, 1.94]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [17.15, 75.5, 2.99],
+        [14.16, 78.5, 4.21],
+        [11.38, 81.5, 5.86],
+        [8.87, 84.5, 7.89],
+        [7.37, 86.5, 9.44],
+        [4.45, 86.5, 13.69]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [17.15, 73.5, 2.99],
+        [14.16, 76.5, 4.21],
+        [11.38, 79.5, 5.86],
+        [8.87, 82.5, 7.89],
+        [7.37, 84.5, 9.44],
+        [4.45, 84.5, 13.69]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[17.15, 71.0, 2.99], [17.15, 75.5, 2.99]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[11.38, 77.0, 5.86], [11.38, 81.5, 5.86]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[7.37, 82.0, 9.44], [7.37, 86.5, 9.44]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [24.0, 86.5, 45.8],
+        [26.85, 86.5, 45.61],
+        [29.64, 86.5, 45.06],
+        [32.34, 86.5, 44.14],
+        [34.9, 86.5, 42.88],
+        [37.27, 86.5, 41.3],
+        [39.41, 86.5, 39.41],
+        [41.3, 86.5, 37.27],
+        [42.88, 86.5, 34.9],
+        [44.14, 86.5, 32.34],
+        [45.06, 86.5, 29.64],
+        [45.61, 86.5, 26.85],
+        [45.8, 86.5, 24.0],
+        [45.61, 86.5, 21.15],
+        [45.06, 86.5, 18.36],
+        [44.14, 86.5, 15.66],
+        [42.88, 86.5, 13.1],
+        [41.3, 86.5, 10.73],
+        [39.41, 86.5, 8.59],
+        [37.27, 86.5, 6.7],
+        [34.9, 86.5, 5.12],
+        [32.34, 86.5, 3.86],
+        [29.64, 86.5, 2.94],
+        [26.85, 86.5, 2.39],
+        [24.0, 86.5, 2.2],
+        [21.15, 86.5, 2.39],
+        [18.36, 86.5, 2.94],
+        [15.66, 86.5, 3.86],
+        [13.1, 86.5, 5.12],
+        [10.73, 86.5, 6.7],
+        [8.59, 86.5, 8.59]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [24.0, 84.5, 45.8],
+        [26.85, 84.5, 45.61],
+        [29.64, 84.5, 45.06],
+        [32.34, 84.5, 44.14],
+        [34.9, 84.5, 42.88],
+        [37.27, 84.5, 41.3],
+        [39.41, 84.5, 39.41],
+        [41.3, 84.5, 37.27],
+        [42.88, 84.5, 34.9],
+        [44.14, 84.5, 32.34],
+        [45.06, 84.5, 29.64],
+        [45.61, 84.5, 26.85],
+        [45.8, 84.5, 24.0],
+        [45.61, 84.5, 21.15],
+        [45.06, 84.5, 18.36],
+        [44.14, 84.5, 15.66],
+        [42.88, 84.5, 13.1],
+        [41.3, 84.5, 10.73],
+        [39.41, 84.5, 8.59],
+        [37.27, 84.5, 6.7],
+        [34.9, 84.5, 5.12],
+        [32.34, 84.5, 3.86],
+        [29.64, 84.5, 2.94],
+        [26.85, 84.5, 2.39],
+        [24.0, 84.5, 2.2],
+        [21.15, 84.5, 2.39],
+        [18.36, 84.5, 2.94],
+        [15.66, 84.5, 3.86],
+        [13.1, 84.5, 5.12],
+        [10.73, 84.5, 6.7],
+        [8.59, 84.5, 8.59]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[24.0, 82, 45.8], [24.0, 86.5, 45.8]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[29.64, 82, 45.06], [29.64, 86.5, 45.06]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[34.9, 82, 42.88], [34.9, 86.5, 42.88]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[39.41, 82, 39.41], [39.41, 86.5, 39.41]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[42.88, 82, 34.9], [42.88, 86.5, 34.9]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[45.06, 82, 29.64], [45.06, 86.5, 29.64]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[45.8, 82, 24.0], [45.8, 86.5, 24.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[45.06, 82, 18.36], [45.06, 86.5, 18.36]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[42.88, 82, 13.1], [42.88, 86.5, 13.1]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[39.41, 82, 8.59], [39.41, 86.5, 8.59]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[34.9, 82, 5.12], [34.9, 86.5, 5.12]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[29.64, 82, 2.94], [29.64, 86.5, 2.94]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[24.0, 82, 2.2], [24.0, 86.5, 2.2]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[18.36, 82, 2.94], [18.36, 86.5, 2.94]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[13.1, 82, 5.12], [13.1, 86.5, 5.12]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[8.59, 82, 8.59], [8.59, 86.5, 8.59]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [3.86, 86.5, 15.66],
+        [2.94, 86.5, 18.36],
+        [2.39, 86.5, 21.15],
+        [2.2, 86.5, 24.0],
+        [2.39, 86.5, 26.85],
+        [2.94, 86.5, 29.64],
+        [3.86, 86.5, 32.34],
+        [5.12, 86.5, 34.9],
+        [6.7, 86.5, 37.27],
+        [8.59, 86.5, 39.41],
+        [10.73, 86.5, 41.3],
+        [13.1, 86.5, 42.88],
+        [15.66, 86.5, 44.14],
+        [18.36, 86.5, 45.06],
+        [21.15, 86.5, 45.61],
+        [24.0, 86.5, 45.8]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [3.86, 84.5, 15.66],
+        [2.94, 84.5, 18.36],
+        [2.39, 84.5, 21.15],
+        [2.2, 84.5, 24.0],
+        [2.39, 84.5, 26.85],
+        [2.94, 84.5, 29.64],
+        [3.86, 84.5, 32.34],
+        [5.12, 84.5, 34.9],
+        [6.7, 84.5, 37.27],
+        [8.59, 84.5, 39.41],
+        [10.73, 84.5, 41.3],
+        [13.1, 84.5, 42.88],
+        [15.66, 84.5, 44.14],
+        [18.36, 84.5, 45.06],
+        [21.15, 84.5, 45.61],
+        [24.0, 84.5, 45.8]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[3.86, 82, 15.66], [3.86, 86.5, 15.66]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[2.39, 82, 21.15], [2.39, 86.5, 21.15]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[2.39, 82, 26.85], [2.39, 86.5, 26.85]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[3.86, 82, 32.34], [3.86, 86.5, 32.34]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[6.7, 82, 37.27], [6.7, 86.5, 37.27]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[10.73, 82, 41.3], [10.73, 86.5, 41.3]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[15.66, 82, 44.14], [15.66, 86.5, 44.14]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[21.15, 82, 45.61], [21.15, 86.5, 45.61]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[11.26, 8, 40.31], [11.26, 9.2, 40.31]],
+      "radius": 1.7,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[11.26, 22, 40.31], [11.26, 23.2, 40.31]],
+      "radius": 1.7,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[11.26, 36, 40.31], [11.26, 37.2, 40.31]],
+      "radius": 1.7,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[11.26, 50, 40.31], [11.26, 51.2, 40.31]],
+      "radius": 1.7,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[11.26, 64, 40.31], [11.26, 65.2, 40.31]],
+      "radius": 1.7,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[11.26, 2, 40.31], [11.26, 80, 40.31]],
+      "radius": 1.0,
+      "mat": "pg_gold",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[15.01, 8, 42.43], [15.01, 9.2, 42.43]],
+      "radius": 1.4,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[15.01, 22, 42.43], [15.01, 23.2, 42.43]],
+      "radius": 1.4,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[15.01, 36, 42.43], [15.01, 37.2, 42.43]],
+      "radius": 1.4,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[15.01, 50, 42.43], [15.01, 51.2, 42.43]],
+      "radius": 1.4,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[15.01, 64, 42.43], [15.01, 65.2, 42.43]],
+      "radius": 1.4,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[15.01, 2, 42.43], [15.01, 80, 42.43]],
+      "radius": 0.7,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[11.26, 80, 40.31], [12.61, 80, 38.58]],
+      "radius": 1.0,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[14.93, 80, 42.61], [15.89, 80, 40.63]],
+      "radius": 1.0,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[6.02, 3, 32.99], [6.02, 22, 32.99]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[7.22, 3, 35.07], [7.22, 22, 35.07]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[6.02, 5, 32.99], [7.22, 5, 35.07]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[6.02, 8, 32.99], [7.22, 8, 35.07]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[6.02, 11, 32.99], [7.22, 11, 35.07]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[6.02, 14, 32.99], [7.22, 14, 35.07]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[6.02, 17, 32.99], [7.22, 17, 35.07]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[6.02, 20, 32.99], [7.22, 20, 35.07]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {"op": "cylinder", "base": [24.0, 86, 24.0], "radius": 8, "height": 4, "mat": "pg_concrete", "part": "wall"},
+    {"op": "cylinder", "base": [24.0, 90, 24.0], "radius": 8, "height": 1, "mat": "rust_iron", "part": "metal"},
+    {
+      "op": "segment",
+      "points": [
+        [24.0, 95.5, 31.4],
+        [25.92, 95.5, 31.15],
+        [27.7, 95.5, 30.41],
+        [29.23, 95.5, 29.23],
+        [30.41, 95.5, 27.7],
+        [31.15, 95.5, 25.92],
+        [31.4, 95.5, 24.0],
+        [31.15, 95.5, 22.08],
+        [30.41, 95.5, 20.3],
+        [29.23, 95.5, 18.77],
+        [27.7, 95.5, 17.59],
+        [25.92, 95.5, 16.85],
+        [24.0, 95.5, 16.6],
+        [22.08, 95.5, 16.85],
+        [20.3, 95.5, 17.59],
+        [18.77, 95.5, 18.77],
+        [17.59, 95.5, 20.3],
+        [16.85, 95.5, 22.08],
+        [16.6, 95.5, 24.0],
+        [16.85, 95.5, 25.92],
+        [17.59, 95.5, 27.7],
+        [18.77, 95.5, 29.23],
+        [20.3, 95.5, 30.41],
+        [22.08, 95.5, 31.15],
+        [24.0, 95.5, 31.4]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [
+        [24.0, 93.5, 31.4],
+        [25.92, 93.5, 31.15],
+        [27.7, 93.5, 30.41],
+        [29.23, 93.5, 29.23],
+        [30.41, 93.5, 27.7],
+        [31.15, 93.5, 25.92],
+        [31.4, 93.5, 24.0],
+        [31.15, 93.5, 22.08],
+        [30.41, 93.5, 20.3],
+        [29.23, 93.5, 18.77],
+        [27.7, 93.5, 17.59],
+        [25.92, 93.5, 16.85],
+        [24.0, 93.5, 16.6],
+        [22.08, 93.5, 16.85],
+        [20.3, 93.5, 17.59],
+        [18.77, 93.5, 18.77],
+        [17.59, 93.5, 20.3],
+        [16.85, 93.5, 22.08],
+        [16.6, 93.5, 24.0],
+        [16.85, 93.5, 25.92],
+        [17.59, 93.5, 27.7],
+        [18.77, 93.5, 29.23],
+        [20.3, 93.5, 30.41],
+        [22.08, 93.5, 31.15],
+        [24.0, 93.5, 31.4]
+      ],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[24.0, 91, 31.4], [24.0, 95.5, 31.4]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[27.7, 91, 30.41], [27.7, 95.5, 30.41]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[30.41, 91, 27.7], [30.41, 95.5, 27.7]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[31.4, 91, 24.0], [31.4, 95.5, 24.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[30.41, 91, 20.3], [30.41, 95.5, 20.3]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[27.7, 91, 17.59], [27.7, 95.5, 17.59]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[24.0, 91, 16.6], [24.0, 95.5, 16.6]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[20.3, 91, 17.59], [20.3, 95.5, 17.59]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[17.59, 91, 20.3], [17.59, 95.5, 20.3]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[16.6, 91, 24.0], [16.6, 95.5, 24.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[17.59, 91, 27.7], [17.59, 95.5, 27.7]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[20.3, 91, 30.41], [20.3, 95.5, 30.41]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[24.0, 91, 31.4], [24.0, 95.5, 31.4]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {"op": "cylinder", "base": [20.5, 91, 27.0], "radius": 2.5, "height": 6, "mat": "pg_teal", "part": "wall"},
+    {"op": "ellipsoid", "centre": [20.5, 97, 27.0], "radius": [2.5, 1.5, 2.5], "mat": "pg_teal", "part": "wall"},
+    {"op": "box", "from": [18, 91, 18], "to": [23, 96, 23], "mat": "pg_concrete", "part": "wall"},
+    {"op": "box", "from": [18, 96, 18], "to": [23, 97, 23], "mat": "rust_iron", "part": "metal"},
+    {"op": "box", "from": [19, 92, 23], "to": [20, 95, 24], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [20, 92, 23], "to": [21, 95, 24], "mat": "rust_iron", "part": "wall"},
+    {"op": "box", "from": [22, 92, 23], "to": [23, 95, 24], "mat": "rust_iron", "part": "wall"},
+    {"op": "cylinder", "base": [27.0, 91, 28.5], "radius": 1.5, "height": 6, "mat": "rust_iron", "part": "metal"},
+    {"op": "cylinder", "base": [27.0, 97, 28.5], "radius": 2.2, "height": 1, "mat": "rust_iron", "part": "metal"},
+    {"op": "cylinder", "base": [24.5, 91, 29.0], "radius": 1.0, "height": 4, "mat": "rust_iron", "part": "metal"},
+    {
+      "op": "segment",
+      "points": [[19.0, 91, 29.0], [19.0, 96, 29.0]],
+      "radius": 0.6,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[19.0, 96, 29.0], [19.0, 99, 29.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[17.0, 94, 29.0], [21.0, 94, 29.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[17.0, 96, 29.0], [21.0, 96, 29.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[17.0, 98, 29.0], [21.0, 98, 29.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {"op": "box", "from": [26, 91, 18], "to": [29, 94, 23], "mat": "pg_concrete", "part": "wall"},
+    {"op": "box", "from": [26, 94, 18], "to": [29, 95, 23], "mat": "rust_iron", "part": "metal"},
+    {
+      "op": "segment",
+      "points": [[30.5, 91, 22.0], [30.5, 98, 22.0]],
+      "radius": 1.0,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[18.0, 96, 22.0], [38.5, 96, 22.0]],
+      "radius": 0.6,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[29.0, 94, 22.0], [38.5, 94, 22.0]],
+      "radius": 0.6,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[29.0, 94, 22.0], [32.0, 96, 22.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[32.0, 96, 22.0], [35.0, 94, 22.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[35.0, 94, 22.0], [38.0, 96, 22.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[18.0, 96, 22.0], [29.0, 94, 22.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {"op": "box", "from": [15, 93, 20], "to": [19, 98, 23], "mat": "pg_concrete", "part": "wall"},
+    {
+      "op": "segment",
+      "points": [[30.5, 98, 22.0], [41.0, 96, 22.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[30.5, 98, 22.0], [18.0, 96, 22.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[38.5, 96, 22.0], [40.5, 89, 22.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "segment",
+      "points": [[38.5, 94, 22.0], [41.5, 89, 22.0]],
+      "radius": 0.5,
+      "mat": "rust_iron",
+      "part": "metal"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [39.5559, 88.9198, 29.1098],
+      "radius": [2.25526, 3.5246, 2.71552],
+      "mat": "skyglass",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [27.6832, 90.9771, 33.8439],
+      "radius": [3.53655, 2.2974, 2.49546],
+      "mat": "skyglass",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [33.325, 88.4219, 36.3899],
+      "radius": [2.31904, 3.65059, 2.49445],
+      "mat": "skyglass",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [24.7826, 90.7231, 35.6785],
+      "radius": [3.55183, 4.20861, 2.30527],
+      "mat": "skyglass",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [34.2011, 90.1138, 30.8365],
+      "radius": [2.89342, 2.15992, 3.85541],
+      "mat": "skyglass",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [30.0795, 89.1414, 36.1649],
+      "radius": [3.55839, 3.01319, 2.18492],
+      "mat": "skyglass",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [30.9578, 90.6499, 31.5134],
+      "radius": [2.80751, 3.99935, 2.75262],
+      "mat": "skyglass",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [29.9996, 91.4282, 25.8038],
+      "radius": [3.88878, 2.07113, 3.71679],
+      "mat": "skyglass",
+      "part": "floor"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [36.7156, 88.6049, 26.7477],
+      "radius": [3.46572, 4.31502, 3.25256],
+      "mat": "skyglass",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[39.63, 86.15, 19.52], [39.06, 90.76, 20.63]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[39.06, 90.76, 20.63], [38.49, 94.37, 21.75]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[25.96, 88.56, 30.9], [25.78, 92.99, 29.67]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[25.78, 92.99, 29.67], [25.6, 96.41, 28.43]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[35.51, 87.69, 20.96], [34.64, 92.28, 20.05]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[34.64, 92.28, 20.05], [33.78, 95.87, 19.15]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[32.35, 88.36, 21.92], [31.61, 93.15, 20.91]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[31.61, 93.15, 20.91], [30.88, 96.94, 19.89]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[29.41, 88.48, 29.55], [29.49, 92.25, 30.79]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[29.49, 92.25, 30.79], [29.58, 95.02, 32.04]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[28.33, 88.56, 29.76], [28.44, 92.2, 28.51]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[28.44, 92.2, 28.51], [28.56, 94.84, 27.27]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[33.96, 86.29, 36.48], [32.88, 91.16, 35.84]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[32.88, 91.16, 35.84], [31.81, 95.03, 35.21]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[30.83, 88.6, 23.62], [30.04, 92.3, 22.66]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[30.04, 92.3, 22.66], [29.25, 95.01, 21.69]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[31.1, 85.86, 39.21], [30.28, 90.1, 40.16]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[30.28, 90.1, 40.16], [29.46, 93.35, 41.1]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[25.96, 88.85, 27.84], [24.79, 93.44, 27.4]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[24.79, 93.44, 27.4], [23.62, 97.04, 26.96]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[31.54, 86.29, 38.08], [30.39, 91.49, 37.6]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[30.39, 91.49, 37.6], [29.23, 95.69, 37.12]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[39.95, 85.88, 18.83], [38.71, 89.63, 18.68]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[38.71, 89.63, 18.68], [37.47, 92.39, 18.53]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[37.12, 87.32, 25.83], [36.78, 91.42, 24.63]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[36.78, 91.42, 24.63], [36.45, 94.51, 23.42]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[37.47, 86.75, 30.37], [38.35, 90.34, 29.49]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[38.35, 90.34, 29.49], [39.23, 92.93, 28.6]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[32.0, 87.05, 35.59], [32.48, 90.76, 36.74]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[32.48, 90.76, 36.74], [32.95, 93.46, 37.9]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[25.02, 88.82, 28.51], [24.08, 93.08, 29.34]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[24.08, 93.08, 29.34], [23.15, 96.34, 30.17]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[26.78, 88.84, 27.43], [27.87, 93.51, 26.81]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[27.87, 93.51, 26.81], [28.95, 97.18, 26.19]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[35.98, 87.25, 30.15], [34.74, 91.55, 30.02]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[34.74, 91.55, 30.02], [33.49, 94.85, 29.89]],
+      "radius": 0.6,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.65, 69.92, 20.36], [46.12, 73.16, 17.72]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[38.28, 46.31, 36.53], [42.17, 49.5, 38.11]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[37.28, 68.07, 10.41], [39.38, 69.2, 7.3]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.65, 61.42, 27.62], [47.02, 63.74, 26.75]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[36.36, 72.22, 38.43], [37.72, 73.33, 42.28]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[35.93, 51.22, 9.21], [36.07, 53.98, 5.43]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[40.01, 66.84, 13.77], [42.76, 68.35, 11.88]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.72, 41.55, 20.72], [46.93, 43.17, 21.87]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[41.22, 12.11, 32.03], [45.24, 15.7, 31.51]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[34.32, 68.56, 39.95], [35.07, 71.47, 43.35]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[38.68, 25.69, 36.06], [40.09, 27.26, 39.16]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[34.53, 14.85, 8.19], [37.7, 18.01, 5.9]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[25.81, 37.26, 42.91], [23.91, 39.49, 46.96]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[39.66, 44.92, 34.75], [41.6, 48.52, 38.52]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[37.86, 64.5, 36.99], [38.83, 66.08, 40.48]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[29.87, 28.85, 42.07], [29.0, 32.41, 45.61]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.97, 45.76, 25.02], [46.66, 46.9, 23.75]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[27.96, 57.3, 42.58], [28.61, 60.18, 45.52]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[37.04, 12.05, 10.18], [40.08, 14.79, 8.23]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[27.34, 63.27, 42.7], [28.32, 66.27, 46.84]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[37.56, 69.38, 10.7], [40.51, 70.64, 7.89]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[38.94, 69.37, 12.27], [42.56, 73.3, 10.56]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.62, 33.24, 20.2], [46.78, 34.97, 20.7]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[34.81, 15.75, 8.38], [37.57, 18.47, 5.27]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[41.6, 73.38, 16.85], [45.29, 75.91, 17.4]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[36.15, 40.84, 38.61], [36.64, 43.54, 42.18]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[28.28, 30.13, 42.51], [27.2, 33.55, 46.28]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[34.97, 14.18, 8.49], [38.55, 17.37, 6.12]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[28.73, 62.69, 42.4], [28.63, 64.19, 46.75]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[40.07, 70.47, 34.13], [42.54, 74.17, 37.64]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[40.53, 77.09, 14.63], [45.0, 80.27, 14.0]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[26.9, 25.04, 42.78], [26.21, 26.69, 46.59]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[40.53, 43.24, 33.37], [44.37, 45.91, 35.09]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[41.01, 24.81, 15.53], [44.03, 28.25, 12.6]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.33, 48.84, 28.99], [45.27, 51.78, 29.99]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[32.85, 72.94, 7.19], [33.37, 76.51, 3.61]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[32.33, 58.28, 6.92], [32.23, 59.33, 3.13]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.97, 43.15, 23.02], [47.08, 44.75, 22.22]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[33.69, 14.45, 40.35], [36.87, 16.57, 43.04]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[36.13, 49.91, 38.63], [38.3, 51.94, 41.05]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[39.46, 59.0, 35.04], [41.7, 61.69, 37.61]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[33.22, 22.21, 7.38], [35.78, 24.16, 4.95]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.74, 67.78, 27.11], [46.08, 70.08, 26.63]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.96, 46.18, 22.79], [46.78, 49.03, 24.08]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[41.53, 65.32, 31.32], [44.84, 69.28, 33.18]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[34.28, 12.94, 39.98], [36.72, 14.21, 42.15]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[40.62, 18.0, 14.79], [43.3, 19.07, 12.65]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.08, 79.95, 29.84], [45.67, 83.68, 31.56]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.97, 67.14, 22.93], [46.44, 70.24, 23.29]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[39.95, 59.1, 13.67], [42.82, 61.05, 12.24]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[36.43, 19.91, 38.37], [37.69, 21.97, 42.45]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[26.61, 59.92, 42.82], [25.13, 63.77, 46.78]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[30.74, 63.0, 6.24], [31.25, 64.07, 2.12]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[37.97, 28.1, 36.88], [40.62, 30.88, 38.45]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[40.64, 62.88, 33.17], [43.02, 64.23, 35.65]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[36.58, 69.85, 38.24], [39.81, 73.46, 40.2]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.04, 36.56, 18.04], [46.64, 38.8, 18.67]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[35.65, 58.39, 8.99], [36.52, 61.66, 5.36]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[40.91, 30.12, 15.34], [44.02, 33.64, 12.91]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.91, 75.19, 25.82], [46.65, 77.93, 27.58]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[35.01, 53.99, 39.48], [38.83, 56.01, 40.82]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[39.09, 68.84, 12.45], [41.6, 70.54, 10.01]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[40.96, 41.87, 32.57], [44.48, 43.35, 34.31]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.3, 47.09, 18.89], [45.92, 50.69, 18.15]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.23, 56.99, 18.63], [45.86, 59.27, 18.05]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[41.83, 41.78, 17.43], [45.14, 42.94, 17.59]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[28.15, 36.43, 42.54], [28.71, 38.03, 45.99]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[36.5, 42.4, 38.31], [37.85, 44.88, 41.57]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[39.87, 16.13, 13.55], [42.52, 19.81, 12.09]],
+      "radius": 0.9,
+      "mat": "glass_spike",
+      "part": "floor"
+    },
+    {
+      "op": "segment",
+      "points": [[42.52, 36.81, 19.74], [46.46, 40.29, 17.94]],
+      "radius": 1.3,
+      "mat": "glass_spike",
+      "part": "floor"
+    }
+  ]
+}

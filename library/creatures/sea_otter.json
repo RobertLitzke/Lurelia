@@ -5,6 +5,7 @@
   "notes": "Sea otter: lying on its back in the kelp canopy, drifting, rolling now and then; it pays a diver little mind.",
   "colors": {},
   "behaviour": {
+    "displays": [{"kind": "raft"}],
     "movement": "school",
     "habit": "hover",
     "awash": true,
@@ -16,7 +17,8 @@
     "leap": 0,
     "shallows": 2,
     "swims": false,
-    "group": {"size": [1, 4], "spacing": 1.5, "range": 5}
+    "group": {"size": [1, 4], "spacing": 1.5, "range": 5},
+    "voice": {"calls": [{"cry": "pipe", "on": "idle", "size": 1.4, "every_s": [200, 600]}]}
   },
   "like": "otter",
   "scale": 1.3

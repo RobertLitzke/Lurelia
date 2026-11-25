@@ -8,5 +8,6 @@
   "crown_radius": [0.3, 0.45],
   "bark": "dead_wood",
   "leaf": "foxglove",
-  "max_slope": 0.9
+  "max_slope": 0.9,
+  "site": {"wet": [0.3, 0.8], "shade": [0.0, 0.5]}
 }

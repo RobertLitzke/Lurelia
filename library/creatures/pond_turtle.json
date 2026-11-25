@@ -4,7 +4,15 @@
   "introduced_by": "saurischia",
   "notes": "Pond turtle, a shell about 30 cm long: dark olive-brown, low and smooth, the skin streaked yellow. Basks on the banks of slow streams and slides into the water when you come close.",
   "colors": {"shell": [62, 60, 40], "scute": [44, 42, 30], "rim": [86, 78, 44], "belly": [196, 172, 96], "skin": [70, 72, 48]},
-  "behaviour": {"movement": "bask", "walk_speed": 0.12, "flee_speed": 0.4, "wary": 7, "flightiness": 0.7, "active": "diurnal"},
+  "behaviour": {
+    "movement": "bask",
+    "walk_speed": 0.12,
+    "flee_speed": 0.4,
+    "wary": 7,
+    "flightiness": 0.7,
+    "active": "diurnal",
+    "voice": {"size": 0.4, "calls": [{"cry": "hiss", "on": "flee", "chance": 0.4}]}
+  },
   "in_water": {
     "movement": "school",
     "walk_speed": 0.6,

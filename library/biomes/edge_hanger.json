@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "The beech hanger on the face of Hemlow Edge and the combes: bare oolite between beeches clinging to the slope, ferns, vines over the lip.",
+  "habitat": "broadleaf_forest",
   "priority": 9,
   "rules": {"slope": [0.9, 50]},
   "surface": "forest_floor",
   "subsurface": "dirt",
   "rock": "oolite",
+  "soil": 0.8,
   "map_color": [120, 130, 80],
   "plants": [
     {

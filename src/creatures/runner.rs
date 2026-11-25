@@ -25,6 +25,11 @@
 //!   on whirring wings, scatter low over the ground and come down 20 to 45 m
 //!   off.
 //!
+//! A display (creatures/display: a killdeer's broken wing, a roadrunner
+//! courting) takes a bird over for a while: it carries a `Show` and is put
+//! where the display says (`Sit` on its feet, `Place` in the air), and picks
+//! up on the ground where it was left.
+//!
 //! No physics body: a runner stands on the ground as it is drawn
 //! (`Terrain::drawn`) and refuses a step up a rock, into a trunk or into
 //! water. Wings and legs are animated by birds.rs like any other bird: on the
@@ -82,6 +87,8 @@ pub struct Runner {
     down: Vec3,
     /// Seconds before it hunts again (dash).
     pub fed: f32,
+    /// In a display last step.
+    shown: bool,
     /// Seconds it has been blocked on the way to its goal.
     stuck: f32,
     rng: Rng,
@@ -316,6 +323,7 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, style: Style, t: &
             along_timer,
             down,
             fed: 0.0,
+            shown: false,
             stuck: 0.0,
             rng: Rng::new(hash32(seed ^ k.wrapping_mul(0x9e37_79b9)) | 1),
         };
@@ -471,8 +479,25 @@ pub fn update(world: &mut hecs::World, species: &[Species], dt: f32, threat: &su
         .map(|(e, l, c, _)| (e, c.species, l.pos))
         .collect();
 
-    for (ent, r, look, me, morph) in world.query_mut::<(hecs::Entity, &mut Runner, &mut Look, &Creature, Option<&crate::variety::Morph>)>() {
+    for (ent, r, look, me, morph, show) in world.query_mut::<(hecs::Entity, &mut Runner, &mut Look, &Creature, Option<&crate::variety::Morph>, Option<&super::display::Show>)>() {
         look.begin_step();
+        if let Some(s) = show {
+            if let super::display::Drive::Place { pos, yaw } | super::display::Drive::Sit { pos, yaw } = s.out.drive {
+                (look.pos, look.yaw) = (pos, yaw);
+            }
+            r.shown = true;
+            continue;
+        }
+        if std::mem::take(&mut r.shown) {
+            // On its feet where it was left, a moment before it carries on.
+            if let Some(g) = t.drawn(look.pos.x, look.pos.z, look.pos.y + 2.0) {
+                look.pos.y = g;
+            }
+            r.state = State::Ground;
+            r.home = look.pos;
+            r.goal = look.pos;
+            r.timer = 1.0;
+        }
         let sp = &species[me.species];
         let (pace, _) = crate::variety::pace(morph);
         let walk = sp.beh.walk_speed.max(0.3) * pace;

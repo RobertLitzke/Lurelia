@@ -40,13 +40,30 @@ fn vs_shadow_entity(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii:
     let inst = einst[ii];
     // shift.w 2: drawn but casting nothing (the first-person cut of the
     // player's body; ride.rs `stand_in` casts the whole one instead).
-    // Below 0: cast thinned, -w of it (entities.rs `shadow_fade`).
-    out.fade = select(1.0, -inst.shift.w, inst.shift.w < 0.0);
+    // Below 0: cast thinned, -w of it (entities.rs `shadow_fade`). A
+    // creature part dissolved (`Instance::fade`) casts that much less.
+    out.fade = select(1.0, -inst.shift.w, inst.shift.w < 0.0) * (1.0 - inst.fade.x);
     if (inst.shift.w > 1.5 || out.fade <= 0.0) {
         out.pos = vec4<f32>(0.0, 0.0, -2.0, 1.0);
         return out;
     }
     let world = entity_world(q, k, qv.local, inst);
+    out.pos = cascade.light_view_proj * vec4<f32>(world, 1.0);
+    return out;
+}
+
+// The same, for a decimated mesh (scene.wgsl `vs_entity_tri`).
+@vertex
+fn vs_shadow_entity_tri(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -> ShadowEntityOut {
+    var out: ShadowEntityOut;
+    let q = equads[vi];
+    let inst = einst[ii];
+    out.fade = select(1.0, -inst.shift.w, inst.shift.w < 0.0) * (1.0 - inst.fade.x);
+    if (inst.shift.w > 1.5 || out.fade <= 0.0) {
+        out.pos = vec4<f32>(0.0, 0.0, -2.0, 1.0);
+        return out;
+    }
+    let world = entity_place(entity_local_seam(tri_local(q), tri_seam(q), inst), inst);
     out.pos = cascade.light_view_proj * vec4<f32>(world, 1.0);
     return out;
 }

@@ -5,6 +5,7 @@
   "notes": "Rockfish: orange-red and brown, loose schools hanging in the middle water between the kelp stipes.",
   "colors": {"herring": [176, 84, 52], "silver": [214, 150, 108], "fin": [176, 84, 52]},
   "behaviour": {
+    "displays": [{"kind": "bait_ball"}],
     "habit": "open",
     "walk_speed": 0.7,
     "flee_speed": 3.0,

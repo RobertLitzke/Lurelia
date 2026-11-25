@@ -1,0 +1,13 @@
+{
+  "name": "seagrass",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Shallow sea floor carpeted with seagrass.",
+  "wet": 1.0,
+  "soil": 0.6,
+  "shade": 0.0,
+  "rock": 0.0,
+  "disturbed": 0.0,
+  "open": 1.0,
+  "forage": ["graze"]
+}

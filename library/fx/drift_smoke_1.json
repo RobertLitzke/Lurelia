@@ -1,0 +1,19 @@
+{
+  "name": "drift_smoke_1",
+  "version": 1,
+  "introduced_by": "kart_race",
+  "notes": "Tyre smoke off a drifting kart once its drift has charged the first level of boost: fuller and tinted blue (fx/hooks.rs `drift`).",
+  "shape": "puff",
+  "count": [1, 1],
+  "speed": [0.4, 1.2],
+  "cone_deg": 40,
+  "life": [0.7, 1.4],
+  "size": [0.16, 0.85],
+  "size_jitter": 0.3,
+  "gravity": -0.4,
+  "drag": 2.4,
+  "wind": 0.8,
+  "color": [170, 205, 255],
+  "alpha": 0.38,
+  "near_fade": 0.6
+}

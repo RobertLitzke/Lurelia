@@ -1,0 +1,12 @@
+{
+  "name": "volcanic_barren",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Fresh lava, cinders and ash: young ground with almost nothing on it yet.",
+  "wet": 0.15,
+  "soil": 0.5,
+  "shade": 0.0,
+  "rock": 0.6,
+  "disturbed": 0.6,
+  "open": 1.0
+}

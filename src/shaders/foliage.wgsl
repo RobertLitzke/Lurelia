@@ -447,9 +447,9 @@ fn vs_sprite(@builtin(vertex_index) vi: u32) -> SpriteOut {
     let leaf_card = kind != 0u || ((q.w >> 18u) & 3u) == 2u;
     out.light = sprite_light(world, normal, leaf_card) * fog.a;
     if (leaf_card) {
-        // The canopy's broad clumps of sun and shade (scene.wgsl), the same
-        // field the voxels behind the cards take.
-        out.light *= canopy_dapple(root);
+        // The canopy's broad clumps of sun and shade and each crown's own
+        // tint (scene.wgsl), the same fields the voxels behind the cards take.
+        out.light *= canopy_dapple(root) * crown_tint(root);
     }
     if (layer == L_GLOW_THREADS) {
         // Glow-worm threads give their own light.

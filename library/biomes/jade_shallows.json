@@ -3,10 +3,12 @@
   "version": 3,
   "introduced_by": "jadewater",
   "notes": "The lagoon floor: white lime sand under one to four metres of green water, turquoise from above.",
+  "habitat": "sea_floor",
   "priority": 0,
   "rules": {"underwater": true},
   "surface": "white_sand",
   "subsurface": "white_sand",
+  "soil": 0.5,
   "map_color": [96, 186, 176],
   "creatures": [
     {"creature": "herring", "count": 44},

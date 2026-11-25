@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "redrock",
   "notes": "The ground the falling lake left: cracked mud and sand, tamarisk taking hold.",
+  "habitat": "mudflat",
   "priority": 7,
   "rules": {"coast": [0, 16], "elev": [0, 5]},
   "surface": "lake_mud",
   "subsurface": "shore_sand",
+  "soil": 0.65,
   "map_color": [176, 168, 146],
   "plants": [
     {

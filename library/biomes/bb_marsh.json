@@ -1,0 +1,20 @@
+{
+  "name": "bb_marsh",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "The Lessa's marsh on the north shore of the bay: reed and cattail on hummocks between tidal channels.",
+  "rules": {"region": "rivmarsh", "elev": [-1.5, 3], "amphibious": true},
+  "map_color": [110, 150, 90],
+  "creatures": [
+    {"creature": "heron", "count": 3},
+    {"creature": "great_egret", "count": 3},
+    {"creature": "mallard", "count": 10},
+    {"creature": "goose", "count": 8},
+    {"creature": "frog", "count": 8},
+    {"creature": "dragonfly", "count": 8},
+    {"creature": "otter", "count": 2},
+    {"creature": "sandhill_crane", "count": 4},
+    {"creature": "swan", "count": 4}
+  ],
+  "like": "kh_marsh"
+}

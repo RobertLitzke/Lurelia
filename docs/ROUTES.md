@@ -24,12 +24,22 @@ limit on placed structures does not apply. Where a kit only grades the land
 (a dirt road), the work happens at chronicle time on the height field
 instead, through `grade_strip`.
 
+A graded line is cut and painted by each cell's nearest line point, and its
+`smooth` window counts points as metres, so `route::lay` first fills in any
+line whose points are more than a metre apart (a `ribbon` with
+`"curve": false`). Without that, sparse points left a row of discs and a
+grade smoothed over hundreds of metres.
+
 **Networks** (the `network` event, routed by `world/route/cost.rs`) are
 nodes and links. A link is routed across the terrain by A\* over a cost field
 (slope, water, cliff, taken ground), so the world builder drops two points and
 the road finds the pass.
-Links meeting at a node are trimmed back and the junction is aproned, so
-crossings look built rather than overlaid. Two links that cross away from
+A node where exactly two links of the same kit meet is a bend in one road:
+the two are laid as one line, rounded through the node, so the grade runs on
+unbroken. Where three or more meet (or two of different kits), the links are
+trimmed back and the junction is aproned after they are laid, the apron
+tilted to a plane through the graded ends so no road steps onto it; crossings
+look built rather than overlaid. Two links that cross away from
 any node get an apron too, at the grade of the one laid second, which
 otherwise cut a step across the first; the event's summary lists where. Links carry a rank — highway,
 street, lane, path — and a rank change is where one kit hands over to

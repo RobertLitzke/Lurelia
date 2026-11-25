@@ -1,0 +1,57 @@
+{
+  "notes": "Ribshore's grey coast warmed toward the Plain and the south: cool, hazed distance, but neutral rather than green in the near ground so pale sand, bone and limewash read as themselves, with a little more sun and colour for Vila Azul's tile and the outpost's orange.",
+  "sun_tint": [
+    1.0,
+    0.97,
+    0.92
+  ],
+  "ramp": [
+    {
+      "at": 0.0,
+      "color": [
+        0.69,
+        0.69,
+        0.67
+      ]
+    },
+    {
+      "at": 0.3,
+      "color": [
+        0.63,
+        0.65,
+        0.66
+      ]
+    },
+    {
+      "at": 0.65,
+      "color": [
+        0.57,
+        0.6,
+        0.63
+      ]
+    },
+    {
+      "at": 1.0,
+      "color": [
+        0.52,
+        0.56,
+        0.6
+      ]
+    }
+  ],
+  "knobs": {
+    "ramp_reach": 680.0,
+    "ramp_value": 0.42,
+    "haze_density": 0.42,
+    "haze_height": 110.0,
+    "sky_ramp": 0.6,
+    "sky_reach": 0.5,
+    "shade_ramp": 0.15,
+    "sun_side": 0.12,
+    "sun_glow": 0.4,
+    "saturation": 0.88,
+    "contrast": 0.65,
+    "exposure": 0.97,
+    "time_tint": 0.35
+  }
+}

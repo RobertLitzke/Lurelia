@@ -115,6 +115,11 @@ pub fn write(plan: &Plan, ground: &dyn Ground, reach: f32, path: &std::path::Pat
             line(&mut px, a, bb, 0.4, if k == b.front { [255, 230, 80] } else { [110, 40, 35] });
         }
     }
+    for p in &plan.paths {
+        for s in p.windows(2) {
+            line(&mut px, s[0], s[1], 0.7, [175, 140, 95]);
+        }
+    }
     // Library structures: their turned footprints in purple.
     for s in &plan.sites {
         let h = s.size * 0.5;

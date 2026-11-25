@@ -1,0 +1,17 @@
+{
+  "name": "momiji",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "A Japanese maple: a small tree four to seven metres high, its fine limbs sweeping out in flat tiers, green in summer and deep crimson in autumn. Planted round the temple on Kagami Pond.",
+  "height": [4, 7],
+  "trunk_radius": [0.12, 0.2],
+  "buttress": 0.0,
+  "crown_radius": [1.5, 2.1],
+  "morphs": [
+    {"name": "crimson", "weight": 5, "notes": "Deep red.", "colors": {"autumn": "maple_crimson"}},
+    {"name": "red", "weight": 2, "notes": "Scarlet.", "colors": {"autumn": "maple_red"}}
+  ],
+  "curve": "sweep",
+  "canopy": "layers",
+  "like": "maple"
+}

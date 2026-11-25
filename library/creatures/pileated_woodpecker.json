@@ -4,12 +4,21 @@
   "introduced_by": "glassfall",
   "notes": "Pileated woodpecker: crow-sized, black with a flaming red crest and a white stripe down the neck. Hacks big oblong holes in snags and old trunks.",
   "colors": {"white": [240, 236, 228]},
-  "behaviour": {"wary": 12, "walk_speed": 6},
+  "behaviour": {
+    "wary": 12,
+    "walk_speed": 6,
+    "voice": {
+      "calls": [
+        {"cry": "drum", "on": "display:drum", "size": 1.5, "boost": 2},
+        {"cry": "chatter", "on": "idle", "hours": "day", "size": 1.6, "every_s": [120, 400], "chance": 0.6}
+      ]
+    }
+  },
   "like": "woodpecker",
   "scale": 2.1,
   "extra_ops": [
-    {"op": "recolour", "at": [10, 0, 0], "until": [23, 8, 32], "from": "white", "to": "body"},
-    {"op": "box", "from": [15, 11, 9], "to": [17, 13, 13], "mat": "red", "part": "head"},
-    {"op": "set", "at": [16, 13, 12], "mat": "red", "part": "head"}
+    {"op": "recolour", "at": [28, 0, -14], "until": [65, 22, 76], "from": "white", "to": "body"},
+    {"op": "box", "from": [42, 31, 11], "to": [48, 36, 23], "mat": "red", "part": "head"},
+    {"op": "box", "from": [45, 36, 20], "to": [48, 39, 23], "mat": "red", "part": "head"}
   ]
 }

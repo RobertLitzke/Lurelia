@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "kaldvik",
   "notes": "The hamlet's cleared ground: trodden snow between the houses, a few birches and rowans kept for shelter, nothing to stop a sledge.",
+  "habitat": "settlement",
   "priority": 8,
   "rules": {"region": "hamlet"},
   "surface": "snow",
   "subsurface": "snow",
+  "soil": 0.4,
   "map_color": [230, 228, 222],
   "plants": [
     {"plant": "birch", "density": 0.0015, "placement": {"verb": "lone", "params": {"spacing": 14}}},

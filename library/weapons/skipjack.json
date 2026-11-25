@@ -47,5 +47,6 @@
     "look": "grenade"
   },
   "view": "skipjack",
-  "tint": [0.78, 0.42, 0.18]
+  "tint": [0.78, 0.42, 0.18],
+  "role": "midrange"
 }

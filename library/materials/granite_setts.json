@@ -1,0 +1,17 @@
+{
+  "name": "granite_setts",
+  "version": 1,
+  "introduced_by": "gannet_harbor",
+  "notes": "Squared granite setts laid in courses: the streets of a whaling town, grey with a blue cast, worn smooth down the middle.",
+  "smooth": true,
+  "crisp": true,
+  "surface": "rock",
+  "texture": {
+    "pattern": "coursed",
+    "base": [118, 120, 124],
+    "alt": [96, 98, 104],
+    "scale": 2,
+    "contrast": 0.9,
+    "calm": {"base": [126, 128, 132], "alt": [104, 106, 112]}
+  }
+}

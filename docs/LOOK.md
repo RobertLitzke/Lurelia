@@ -214,6 +214,11 @@ the tint, the gradient map, saturation, contrast, vignette.
   Small amounts: the tone map has already rolled both ends off, so this bites
   quickly.
 - **VIGNETTE** — darkening toward the corners.
+- **SITE LUSHNESS** — how strongly the plant site fields show in grassy
+  ground: greener, taller grass in wet, sheltered hollows, ochre and shorter
+  on dry, sunny, wind-cut ground. 1 as tuned, 0 off, up to 3. The colour
+  follows at once, the grass when the land round you is built again a moment
+  after you let go (docs/PLANTS.md, "Ground cover").
 
 ## The look file
 

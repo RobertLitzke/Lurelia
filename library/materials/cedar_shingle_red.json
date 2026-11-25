@@ -1,0 +1,8 @@
+{
+  "name": "cedar_shingle_red",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Newer cedar shingles, still red-brown, on a roof patched or rebuilt.",
+  "like": "cedar_shingle_silver",
+  "texture": {"base": [146, 92, 62], "alt": [122, 76, 52], "calm": {"base": [154, 100, 70], "alt": [130, 84, 60]}}
+}

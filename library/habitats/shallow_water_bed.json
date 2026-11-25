@@ -1,0 +1,12 @@
+{
+  "name": "shallow_water_bed",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "The bed of shallow lake, delta or sea water.",
+  "wet": 1.0,
+  "soil": 0.55,
+  "shade": 0.0,
+  "rock": 0.05,
+  "disturbed": 0.0,
+  "open": 1.0
+}

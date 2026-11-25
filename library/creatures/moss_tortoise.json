@@ -4,7 +4,7 @@
   "introduced_by": "faerie",
   "notes": "The faerie wood's tortoise: big and ancient, its shell grown over with moss and small pale mushrooms that glow at dusk.",
   "colors": {"shell": [110, 100, 66], "moss": [74, 116, 50], "cap": [190, 240, 170, 1.4]},
-  "behaviour": {"wary": 3},
+  "behaviour": {"wary": 3, "voice": {"size": 0.7, "calls": [{"cry": "hiss", "on": "flee", "chance": 0.6}]}},
   "like": "tortoise",
   "scale": 1.5,
   "extra_ops": [
@@ -12,5 +12,6 @@
     {"op": "box", "from": [14, 10, 13], "to": [15, 12, 14], "mat": "cap"},
     {"op": "box", "from": [18, 10, 18], "to": [19, 11, 19], "mat": "cap"},
     {"op": "set", "at": [16, 11, 16], "mat": "cap"}
-  ]
+  ],
+  "realms": ["fae"]
 }

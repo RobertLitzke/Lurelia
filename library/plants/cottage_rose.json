@@ -17,5 +17,6 @@
   "flower": "rose_flowers",
   "flower_tips": true,
   "flower_seasons": ["summer"],
-  "autumn": "leaves_autumn"
+  "autumn": "leaves_autumn",
+  "site": {"soil": [0.4, 1.0], "shade": [0.0, 0.4]}
 }

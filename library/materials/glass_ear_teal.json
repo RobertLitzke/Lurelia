@@ -1,0 +1,9 @@
+{
+  "name": "glass_ear_teal",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "A glass-ear's shelf in its teal form, the colder colour of the same fungus.",
+  "like": "glass_ear_amber",
+  "glow": 1.4,
+  "texture": {"base": [48, 162, 160], "alt": [120, 220, 206], "calm": {"base": [60, 168, 164], "alt": [130, 224, 210]}}
+}

@@ -21,20 +21,35 @@
     "hunts": ["przewalski_horse", "saiga", "deer", "rabbit"],
     "spawn_chance": 0.05,
     "active": "crepuscular",
-    "off_hours": 0.15
+    "off_hours": 0.15,
+    "voice": {
+      "calls": [
+        {
+          "cry": "roar",
+          "on": "idle",
+          "hours": "night",
+          "size": 1.2,
+          "every_s": [1200, 3000],
+          "chance": 0.4,
+          "boost": 4
+        },
+        {"cry": "growl", "on": "chase", "size": 1.5, "boost": 3}
+      ]
+    }
   },
   "like": "cougar",
   "scale": 1.3,
   "extra_ops": [
-    {"op": "box", "from": [15, 7, 1], "to": [16, 11, 2], "mat": "tusk", "part": "head"},
-    {"op": "box", "from": [17, 7, 1], "to": [18, 11, 2], "mat": "tusk", "part": "head"},
-    {"op": "set", "at": [15, 6, 2], "mat": "tusk", "part": "head"},
-    {"op": "set", "at": [17, 6, 2], "mat": "tusk", "part": "head"},
-    {"op": "ellipsoid", "centre": [16, 13, 12], "radius": [4.0, 3.0, 3.4], "mat": "coat"},
-    {"op": "set", "at": [13, 11, 15], "mat": "spot"},
-    {"op": "set", "at": [19, 11, 17], "mat": "spot"},
-    {"op": "set", "at": [13, 10, 20], "mat": "spot"},
-    {"op": "set", "at": [19, 12, 13], "mat": "spot"}
+    {"op": "box", "from": [14, 12, 3], "to": [16, 19, 5], "mat": "tusk", "part": "head"},
+    {"op": "box", "from": [18, 12, 3], "to": [19, 19, 5], "mat": "tusk", "part": "head"},
+    {"op": "box", "from": [14, 10, 5], "to": [16, 12, 6], "mat": "tusk", "part": "head"},
+    {"op": "box", "from": [18, 10, 5], "to": [19, 12, 6], "mat": "tusk", "part": "head"},
+    {"op": "ellipsoid", "centre": [16.0, 22.555, 22.06], "radius": [6.94, 5.205, 5.899], "mat": "coat"},
+    {"op": "box", "from": [11, 19, 27], "to": [13, 21, 29], "mat": "spot"},
+    {"op": "box", "from": [21, 19, 31], "to": [23, 21, 32], "mat": "spot"},
+    {"op": "box", "from": [11, 17, 36], "to": [13, 19, 38], "mat": "spot"},
+    {"op": "box", "from": [21, 21, 24], "to": [23, 23, 26], "mat": "spot"}
   ],
-  "vary": {"size": 0.08, "shade": 0.1, "hue": 0.03}
+  "vary": {"size": 0.08, "shade": 0.1, "hue": 0.03},
+  "realms": ["ice_age"]
 }

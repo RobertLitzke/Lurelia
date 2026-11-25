@@ -1,0 +1,34 @@
+{
+  "name": "black_bear_fisher",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "A black bear of the Bonebight delta, come down out of the hills to fish the salmon run: the same bear, common here in autumn, and it wades into the riffle and fishes.",
+  "behaviour": {
+    "displays": [
+      {"kind": "fish", "food": "spawning_salmon", "rate": 14},
+      {"kind": "roll"},
+      {"kind": "rub", "params": {"style": "back"}}
+    ],
+    "movement": "graze",
+    "sleeps_on_side": true,
+    "walk_speed": 0.9,
+    "flee_speed": 6.0,
+    "wary": 14,
+    "flightiness": 0.3,
+    "juvenile_flightiness": 0.5,
+    "flees_from": ["player"],
+    "spawn_chance": 0.7,
+    "swims": true,
+    "active": "crepuscular",
+    "off_hours": 0.3,
+    "voice": {
+      "size": 1.8,
+      "calls": [
+        {"cry": "growl", "on": "chase", "boost": 3},
+        {"cry": "snort", "on": "flee", "size": 1.2, "chance": 0.6},
+        {"cry": "grunt", "on": "idle", "every_s": [300, 900], "chance": 0.3}
+      ]
+    }
+  },
+  "like": "bear"
+}

@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "local",
   "notes": "The wood that has taken an arena: deep moss underfoot, bigleaf maple and giant fir with ferns and salal between the trunks. It dresses the open ground an arena is sunk into, not the arena itself: nothing a biome scatters on the ground reaches a room under it, so what grows inside comes from the materials painted on the structure.",
+  "habitat": "broadleaf_forest",
   "priority": 12,
   "rules": {"elev": [-2, 200]},
   "surface": "moss_grass",
   "subsurface": "dirt",
   "fringe": 0,
+  "soil": 0.5,
   "map_color": [72, 118, 70],
   "plants": [
     {

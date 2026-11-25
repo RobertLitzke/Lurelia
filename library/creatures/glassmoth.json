@@ -16,7 +16,14 @@
       "colors": {"mothbody": [36, 28, 24], "wing": [255, 210, 120, 2.4]}
     }
   ],
-  "behaviour": {"movement": "flutter", "fly_height": 1.2, "flightiness": 0.35, "active": "nocturnal", "off_hours": 0.03},
+  "behaviour": {
+    "displays": [{"kind": "sync_flash", "params": {"rate": 0.5}}],
+    "movement": "flutter",
+    "fly_height": 1.2,
+    "flightiness": 0.35,
+    "active": "nocturnal",
+    "off_hours": 0.03
+  },
   "ops": [
     {"op": "ellipsoid", "centre": [16, 16, 16.5], "radius": [0.9, 0.9, 3.0], "mat": "mothbody"},
     {"op": "ellipsoid", "centre": [16, 16.2, 13], "radius": [1.0, 1.0, 1.0], "mat": "mothbody"},
@@ -28,5 +35,6 @@
     {"op": "set", "at": [14, 18, 10], "mat": "mothbody"},
     {"op": "set", "at": [17, 17, 11], "mat": "mothbody"},
     {"op": "set", "at": [18, 18, 10], "mat": "mothbody"}
-  ]
+  ],
+  "realms": ["bloom"]
 }

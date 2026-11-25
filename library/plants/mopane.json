@@ -17,5 +17,6 @@
   "max_slope": 0.8,
   "autumn": "leaves_autumn",
   "thin_limbs": 0.12,
-  "stems": [2, 4]
+  "stems": [2, 4],
+  "site": {"wet": [0.0, 0.55], "soil": [0.3, 0.9]}
 }

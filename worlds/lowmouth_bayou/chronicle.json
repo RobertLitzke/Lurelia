@@ -1,0 +1,213 @@
+{
+  "events": [
+    {
+      "year": -1000000,
+      "event": "heightmap",
+      "file": "ground.bin",
+      "cause": "the land the track is laid over, fitted to the road by tools/course/track_file.py"
+    },
+    {
+      "year": -999999,
+      "event": "terrain",
+      "mode": "add",
+      "base": 0,
+      "hills": 0.8,
+      "ridges": 0,
+      "rough": 1,
+      "vary": 0.4,
+      "warp": 30,
+      "cause": "rolling over the fitted land"
+    },
+    {
+      "year": 1850,
+      "event": "place",
+      "cause": "St. Anne of the Marrow, its square tower over the parish street",
+      "structure": "drowned_church",
+      "at": {
+        "along": 30,
+        "right": 30
+      }
+    },
+    {
+      "year": 1860,
+      "event": "place",
+      "cause": "the whitewashed tombs above the ground",
+      "structure": "raised_tombs",
+      "at": {
+        "along": 1250,
+        "right": 26
+      }
+    },
+    {
+      "year": 1861,
+      "event": "place",
+      "cause": "more of the tombs",
+      "structure": "raised_tombs",
+      "at": {
+        "along": 1200,
+        "right": 30
+      }
+    },
+    {
+      "year": 1880,
+      "event": "place",
+      "cause": "a cottage on the parish street",
+      "structure": "cane_cottage",
+      "at": {
+        "along": 70,
+        "right": 24
+      }
+    },
+    {
+      "year": 1881,
+      "event": "place",
+      "cause": "a cottage on the parish street",
+      "structure": "cane_cottage_b",
+      "at": {
+        "along": 110,
+        "left": 20
+      }
+    },
+    {
+      "year": 1840,
+      "event": "place",
+      "cause": "the sugar house on the high ground behind the levee",
+      "structure": "sugar_mill_ruin",
+      "at": {
+        "along": 600,
+        "left": 34
+      }
+    },
+    {
+      "year": 1915,
+      "event": "place",
+      "cause": "the Belle Marrow, lying where the flood left her on the old channel's bank",
+      "structure": "ghost_steamboat",
+      "at": [
+        180,
+        730
+      ],
+      "bearing": 270
+    },
+    {
+      "year": 1700,
+      "event": "place",
+      "cause": "cypress knees out of the black water",
+      "structure": "cypress_knees",
+      "at": {
+        "along": 950,
+        "left": 16
+      }
+    },
+    {
+      "year": 1701,
+      "event": "place",
+      "cause": "cypress knees out of the black water",
+      "structure": "cypress_knees",
+      "at": {
+        "along": 1020,
+        "right": 16
+      }
+    },
+    {
+      "year": 1702,
+      "event": "place",
+      "cause": "cypress knees out of the black water",
+      "structure": "cypress_knees",
+      "at": {
+        "along": 1090,
+        "left": 16
+      }
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Parish",
+      "kind": "delta",
+      "along": {
+        "from": 1230,
+        "to": 140,
+        "left": [
+          0,
+          40
+        ]
+      },
+      "cause": "the Parish"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Levee",
+      "kind": "delta",
+      "along": {
+        "from": 160,
+        "to": 565,
+        "left": [
+          0,
+          40
+        ]
+      },
+      "cause": "the Levee"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Breach",
+      "kind": "delta",
+      "along": {
+        "from": 330,
+        "to": 420,
+        "left": [
+          0,
+          60
+        ]
+      },
+      "cause": "the Breach"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Cane",
+      "kind": "delta",
+      "along": {
+        "from": 565,
+        "to": 900,
+        "left": [
+          0,
+          50
+        ]
+      },
+      "cause": "the Cane"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Back Swamp",
+      "kind": "delta",
+      "along": {
+        "from": 900,
+        "to": 1176,
+        "left": [
+          0,
+          60
+        ]
+      },
+      "cause": "the Back Swamp"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Belle Marrow",
+      "kind": "delta",
+      "along": {
+        "from": 1176,
+        "to": 1212,
+        "left": [
+          0,
+          30
+        ]
+      },
+      "cause": "the Belle Marrow"
+    }
+  ]
+}

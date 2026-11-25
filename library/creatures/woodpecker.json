@@ -14,24 +14,31 @@
     "red": [200, 50, 40]
   },
   "behaviour": {
+    "displays": [{"kind": "drum"}],
     "movement": "cling",
     "walk_speed": 5,
     "flee_speed": 9,
     "wary": 8,
     "flightiness": 1.2,
     "flight": "bound",
-    "group": {"size": [1, 2], "spacing": 4, "range": 10}
+    "group": {"size": [1, 2], "spacing": 4, "range": 10},
+    "voice": {
+      "calls": [
+        {"cry": "drum", "on": "display:drum"},
+        {"cry": "chatter", "on": "idle", "hours": "day", "size": 0.7, "every_s": [90, 300], "chance": 0.6}
+      ]
+    }
   },
   "like": "starling",
   "scale": 1.05,
   "extra_ops": [
-    {"op": "recolour_below", "y": 8, "from": "body", "to": "white"},
-    {"op": "recolour", "at": [14, 9, 8], "until": [19, 10, 12], "from": "head", "to": "white"},
-    {"op": "set", "at": [16, 11, 12], "mat": "red", "part": "head"},
-    {"op": "box", "from": [15, 9, 6], "to": [17, 10, 9], "mat": "beak", "part": "head"},
-    {"op": "set", "at": [12, 9, 14], "mat": "white", "part": "wing_l"},
-    {"op": "set", "at": [20, 9, 14], "mat": "white", "part": "wing_r"},
-    {"op": "set", "at": [13, 9, 16], "mat": "white", "part": "wing_l"},
-    {"op": "set", "at": [19, 9, 16], "mat": "white", "part": "wing_r"}
+    {"op": "recolour_below", "y": 22, "from": "body", "to": "white"},
+    {"op": "recolour", "at": [39, 25, 9], "until": [53, 28, 20], "from": "head", "to": "white"},
+    {"op": "box", "from": [45, 31, 20], "to": [48, 34, 23], "mat": "red", "part": "head"},
+    {"op": "box", "from": [42, 25, 3], "to": [48, 28, 11], "mat": "beak", "part": "head"},
+    {"op": "box", "from": [34, 25, 25], "to": [37, 28, 28], "mat": "white", "part": "wing_l"},
+    {"op": "box", "from": [56, 25, 25], "to": [59, 28, 28], "mat": "white", "part": "wing_r"},
+    {"op": "box", "from": [37, 25, 31], "to": [39, 28, 34], "mat": "white", "part": "wing_l"},
+    {"op": "box", "from": [53, 25, 31], "to": [56, 28, 34], "mat": "white", "part": "wing_r"}
   ]
 }

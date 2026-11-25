@@ -1,0 +1,15 @@
+{
+  "name": "va_awning_blue",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "A striped shade canopy, white and cobalt.",
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [236, 234, 228],
+    "alt": [46, 80, 160],
+    "scale": 2,
+    "contrast": 1.0,
+    "calm": {"base": [240, 238, 232], "alt": [58, 92, 170]}
+  }
+}

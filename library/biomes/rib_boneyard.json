@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "ribshore",
   "notes": "The sea floor round the titan's skull and jaw: silt with bone grit in it, mats of bacteria, white anemones on everything that stands.",
+  "habitat": "sea_floor",
   "priority": 6,
   "rules": {"underwater": true, "region": "boneyard"},
   "surface": "bone_silt",
   "subsurface": "sand",
+  "soil": 0.5,
   "map_color": [150, 160, 170],
   "plants": [],
   "features": [

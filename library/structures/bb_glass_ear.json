@@ -1,0 +1,29 @@
+{
+  "name": "bb_glass_ear",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "A cluster of glass-ear shelf fungi hung from the underside of a rib bone: twelve shelves 1 to 1.5 m across in four tiers 0.5 m apart, amber and teal, on a stalk 2.2 m long under a bone pad. It faces local -Z.",
+  "size": [12, 10, 12],
+  "anchor": [6, 9, 6],
+  "level": false,
+  "decays": false,
+  "base": "rim",
+  "tags": ["natural"],
+  "slots": {"bone": "titan_bone", "amber": "glass_ear_amber", "teal": "glass_ear_teal"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [6, 9, 6], "radius": [2.6, 1.6, 2.6], "mat": "bone", "part": "bone"},
+    {"op": "cylinder", "base": [6, 2, 6], "radius": 0.9, "height": 7, "mat": "bone", "part": "bone"},
+    {"op": "ellipsoid", "centre": [6, 7.5, 3], "radius": [2.8, 1.0, 2.2], "mat": "amber", "part": "fungus"},
+    {"op": "ellipsoid", "centre": [9.2, 7.5, 7], "radius": [2.0, 1.0, 2.0], "mat": "teal", "part": "fungus"},
+    {"op": "ellipsoid", "centre": [3, 7.5, 7.5], "radius": [2.0, 1.0, 1.8], "mat": "amber", "part": "fungus"},
+    {"op": "ellipsoid", "centre": [9, 5.5, 3.5], "radius": [2.4, 1.0, 2.2], "mat": "teal", "part": "fungus"},
+    {"op": "ellipsoid", "centre": [2.8, 5.5, 4], "radius": [2.4, 1.0, 2.0], "mat": "amber", "part": "fungus"},
+    {"op": "ellipsoid", "centre": [6, 5.5, 9], "radius": [2.0, 1.0, 1.7], "mat": "amber", "part": "fungus"},
+    {"op": "ellipsoid", "centre": [6, 3.5, 2.5], "radius": [3.0, 1.0, 2.4], "mat": "amber", "part": "fungus"},
+    {"op": "ellipsoid", "centre": [9.3, 3.5, 6.5], "radius": [2.0, 1.0, 2.0], "mat": "amber", "part": "fungus"},
+    {"op": "ellipsoid", "centre": [2.7, 3.5, 7], "radius": [1.8, 1.0, 1.8], "mat": "teal", "part": "fungus"},
+    {"op": "ellipsoid", "centre": [3.5, 1.5, 3], "radius": [2.4, 1.0, 2.0], "mat": "teal", "part": "fungus"},
+    {"op": "ellipsoid", "centre": [8.8, 1.5, 3.5], "radius": [2.2, 1.0, 2.0], "mat": "amber", "part": "fungus"},
+    {"op": "ellipsoid", "centre": [6, 1.5, 7], "radius": [1.5, 1.0, 1.5], "mat": "amber", "part": "fungus"}
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "name": "shovel",
+  "version": 1,
+  "introduced_by": "realistic",
+  "notes": "A long-handled shovel. No rounds and nothing to run out of: the left button swings the blade at whatever is within reach, and while it is held the blade bites the ground or the wall in front of you the way the Digger's spade does, so you can dig yourself a trench, cut a step up a bank or take a wall down a shovelful at a time. The right button is a slower two-handed swing you wind up by holding it, worth nearly twice as much. Half again to the head either way.",
+  "display": "SHOVEL",
+  "slot": 1,
+  "ammo_max": 0,
+  "ammo_start": 0,
+  "fire": {
+    "kind": "hitscan",
+    "rpm": 75.0,
+    "damage": 38.0,
+    "range": 2.7,
+    "falloff": 1.0,
+    "head_mult": 1.5,
+    "kick": 1.4,
+    "tracer": [0.9, 0.85, 0.75],
+    "tracer_s": 0.0
+  },
+  "alt": {
+    "kind": "hitscan",
+    "rpm": 40.0,
+    "damage": 42.0,
+    "range": 2.8,
+    "falloff": 1.0,
+    "head_mult": 1.5,
+    "charge_s": 0.8,
+    "charge_mult": 1.9,
+    "kick": 2.2,
+    "tracer": [0.9, 0.85, 0.75],
+    "tracer_s": 0.0
+  },
+  "dig": {"radius": 0.4, "rpm": 150.0, "range": 2.6},
+  "view": "shovel_spade",
+  "tint": [0.62, 0.5, 0.36],
+  "role": "melee"
+}

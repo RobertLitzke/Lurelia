@@ -10,5 +10,6 @@
   "bark": "dead_wood",
   "leaf": "glasswort",
   "squash": 0.5,
-  "max_slope": 0.4
+  "max_slope": 0.4,
+  "site": {"wet": [0.7, 1.0], "soil": [0.5, 1.0], "shade": [0.0, 0.2]}
 }

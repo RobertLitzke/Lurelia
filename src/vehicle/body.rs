@@ -6,7 +6,7 @@
 //! impulse acts at the contact, not the centre, so a clipped corner turns the
 //! car instead of stopping it dead.
 
-use crate::world::store::{Cell, Store};
+use crate::world::store::{Cell, VoxelRead};
 use glam::{Quat, Vec3};
 
 /// Position, orientation and their rates. `rot` takes the body frame to
@@ -67,7 +67,7 @@ impl Body {
     /// never a slant between the two, which turns speed into a kerb into
     /// speed upward. `walls` meets walls only: the kart's tyres, which leave
     /// the floor to the wheels.
-    pub fn collide(&mut self, store: &Store, spheres: &[[f32; 4]], slopes: bool, glance: Option<Vec3>, walls: bool) -> f32 {
+    pub fn collide(&mut self, store: &impl VoxelRead, spheres: &[[f32; 4]], slopes: bool, glance: Option<Vec3>, walls: bool) -> f32 {
         let mut hardest = 0.0f32;
         for s in spheres {
             let c = self.pos + self.rot * Vec3::new(s[0], s[1], s[2]);
@@ -120,7 +120,7 @@ impl Body {
 /// on a flat floor of many voxels is pushed straight up. With `slopes`, the
 /// ground is the drawn slope the wheels roll on: the open tops of the voxel
 /// steps under it, which stand up to a voxel proud of it, are not met.
-pub fn push_out(store: &Store, c: Vec3, r: f32, slopes: bool) -> Option<(Vec3, f32)> {
+pub fn push_out(store: &impl VoxelRead, c: Vec3, r: f32, slopes: bool) -> Option<(Vec3, f32)> {
     let lo = ((c - Vec3::splat(r)) * 4.0).floor();
     let hi = ((c + Vec3::splat(r)) * 4.0).floor();
     let mut sum = Vec3::ZERO;

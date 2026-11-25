@@ -5,6 +5,7 @@
   "notes": "Atlantic cod: olive and speckled, hanging over the kelp floor in the cold water.",
   "colors": {"herring": [118, 112, 74], "silver": [204, 184, 144], "fin": [118, 112, 74]},
   "behaviour": {
+    "displays": [{"kind": "bait_ball"}],
     "habit": "hover",
     "walk_speed": 0.5,
     "flee_speed": 2.5,

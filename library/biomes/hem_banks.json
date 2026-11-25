@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "hemlow",
   "notes": "The Hem's banks: willows and alders, reedmace in the slack water, kingfishers, herons and dragonflies.",
+  "habitat": "riparian",
   "priority": 10,
   "rules": {"river": [0, 9]},
   "surface": "meadow_grass",
   "subsurface": "dirt",
+  "soil": 0.6,
   "map_color": [90, 160, 120],
   "plants": [
     {"plant": "willow", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 8}}},

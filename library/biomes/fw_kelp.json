@@ -1,0 +1,33 @@
+{
+  "name": "fw_kelp",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Frondwell's kelp forest on the outer slope of the ring: giant kelp rising from the basalt to a canopy on the surface, rockfish and kelp perch among the stipes.",
+  "habitat": "kelp_forest",
+  "priority": 21,
+  "rules": {"underwater": true, "region": "frondwell_fore_reef"},
+  "surface": "reef_rock",
+  "subsurface": "basalt",
+  "map_color": [70, 110, 80],
+  "plants": [
+    {"plant": "kelp", "density": 0.12, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "bull_kelp", "density": 0.012, "placement": {"verb": "clustered", "params": {}}}
+  ],
+  "features": [
+    {"structure": "plumose_anemones", "density": 0.0008},
+    {"structure": "anemone_bed", "density": 0.0003},
+    {"structure": "sea_stars", "density": 0.0004}
+  ],
+  "creatures": [
+    {"creature": "kelp_perch", "count": 30},
+    {"creature": "rockfish", "count": 24},
+    {"creature": "sea_otter", "count": 4},
+    {"creature": "harbor_seal", "count": 3},
+    {"creature": "giant_octopus", "count": 2},
+    {"creature": "herring_shoal", "count": 60},
+    {"creature": "moon_jelly", "count": 8},
+    {"creature": "frond_dragon", "count": 10},
+    {"creature": "opal_squid", "count": 40},
+    {"creature": "wolf_eel", "count": 3}
+  ]
+}

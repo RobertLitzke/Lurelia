@@ -4,5 +4,6 @@
   "introduced_by": "hemlow",
   "notes": "Ferns on the Grimwold floor: the ordinary sword fern's shape in a darker, duller green.",
   "leaf": "grim_fern",
-  "like": "fern"
+  "like": "fern",
+  "site": {"wet": [0.18, 1.0], "shade": [0.1, 1.0]}
 }

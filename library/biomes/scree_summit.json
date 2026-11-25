@@ -2,11 +2,13 @@
   "name": "scree_summit",
   "version": 2,
   "introduced_by": "glassfall",
+  "habitat": "bare_rock",
   "priority": 4,
   "rules": {"elev": [62, 200]},
   "surface": "scree",
   "subsurface": "tuff",
   "rock": "basalt",
+  "soil": 0.4,
   "map_color": [140, 132, 128],
   "plants": [
     {"plant": "heather", "density": 0.015, "placement": {"verb": "clustered", "params": {"size": 12}}},

@@ -4,6 +4,7 @@
   "introduced_by": "faerie",
   "notes": "Lots and yards round the bigger buildings, filling with trees.",
   "surface": "moss_grass",
+  "soil": 0.5,
   "map_color": [130, 160, 110],
   "plants": [
     {

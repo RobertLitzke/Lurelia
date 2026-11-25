@@ -12,5 +12,6 @@
   "spread": 1.0,
   "max_slope": 1.2,
   "stems": [14, 22],
-  "stalk": ["agave_stalk", 0.18]
+  "stalk": ["agave_stalk", 0.18],
+  "site": {"wet": [0.0, 0.55], "sun": [0.4, 1.0], "shade": [0.0, 0.3], "rock": [0.0, 1.0]}
 }

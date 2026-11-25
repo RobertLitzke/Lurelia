@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "lowmouth",
   "notes": "The ghost forest on the bay's north shore: grey dead cypress standing in the water where the salt came in, cormorants and anhingas on every snag, lily pads between the dead trunks.",
+  "habitat": "swamp_forest",
   "priority": 11,
   "rules": {"region": "ghost", "amphibious": true},
   "surface": "delta_mud",
   "subsurface": "peat",
+  "soil": 0.35,
   "map_color": [150, 150, 140],
   "plants": [
     {

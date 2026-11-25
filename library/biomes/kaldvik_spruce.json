@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "kaldvik",
   "notes": "Snow-bound spruce on the lower walls and the valley floors of a northern fjord: dense dark firs, a few bare birches, deep snow between.",
+  "habitat": "conifer_forest",
   "priority": 3,
   "rules": {"elev": [1, 100]},
   "surface": "snow",
   "subsurface": "snow",
+  "soil": 0.3,
   "map_color": [40, 70, 62],
   "plants": [
     {"plant": "fir", "density": 0.03, "placement": {"verb": "clustered", "params": {"size": 34}}},

@@ -1,0 +1,12 @@
+{
+  "name": "settlement",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Towns, villages and yards: buildings, streets and the green between them.",
+  "wet": 0.4,
+  "soil": 0.6,
+  "shade": 0.1,
+  "rock": 0.1,
+  "disturbed": 0.8,
+  "open": 0.7
+}

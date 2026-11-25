@@ -1,0 +1,9 @@
+{
+  "name": "pale_kelp",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Giant kelp gone pale near the black glass in Frondwell's lagoon: the same stipes and canopy, bleached to bone white and a faint violet.",
+  "bark": "pale_bark",
+  "leaf": "pale_needles",
+  "like": "kelp"
+}

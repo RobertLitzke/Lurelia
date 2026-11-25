@@ -1,0 +1,23 @@
+{
+  "notes": "Kaldvik in early winter: an asphalt road between snow banks, ice kerbs, basalt walls and bridges.",
+  "story": "a northern fjord in early winter, dark basalt ruled in snow",
+  "road": "road_asphalt",
+  "kerb": "ice_kerb",
+  "wall": "basalt",
+  "deck": "basalt",
+  "gate_post": "basalt",
+  "portal": "basalt",
+  "pad": "boost_pad",
+  "world": {
+    "rock": [["basalt", 0.7], ["stone_dark", 0.3]],
+    "biomes": ["kaldvik_spruce", "kaldvik_fell", "kaldvik_shore", "kaldvik_green", "kaldvik_fjord", "black_sand_beach"],
+    "default_biome": "kaldvik_fell",
+    "seabed_biome": "kaldvik_fjord",
+    "seasons": ["winter"],
+    "weather": {"sun": 1.0, "clouds": 1.1, "snow": 1.0, "fog": 0.4},
+    "start_weather": "sun",
+    "weathering": 0.3,
+    "moss": 0.1
+  },
+  "look": "kaldvik"
+}

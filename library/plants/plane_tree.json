@@ -20,5 +20,6 @@
   "autumn": "apple_leaves_autumn",
   "trunk_taper": 0.5,
   "thin_limbs": 0.2,
-  "tube_limbs": true
+  "tube_limbs": true,
+  "site": {"wet": [0.2, 0.8], "soil": [0.4, 1.0]}
 }

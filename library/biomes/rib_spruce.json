@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "ribshore",
   "notes": "The strip of Sitka spruce behind the dunes: dark, wet, mossy, fern underneath.",
+  "habitat": "conifer_forest",
   "priority": 3,
   "rules": {"elev": [3, 200], "coast": [420, 5000]},
   "surface": "pine_duff",
   "subsurface": "dirt",
+  "soil": 0.3,
   "map_color": [42, 66, 54],
   "plants": [
     {"plant": "sitka_spruce", "density": 0.028, "placement": {"verb": "clustered", "params": {"size": 40}}},

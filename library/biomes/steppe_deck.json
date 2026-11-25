@@ -1,19 +1,26 @@
 {
   "name": "steppe_deck",
-  "version": 1,
+  "version": 2,
   "introduced_by": "megalith",
-  "notes": "The chalk steppe an arena is sunk into, after Windbarrow's downs: short turf with the chalk coming through, heather and lichen and nothing taller, starlings flocking over it, crows and an eagle in the sky. It dresses the plain round a buried arena, not the arena itself; what is inside comes from the materials the steppe style paints on the structure.",
+  "notes": "The chalk steppe an arena is sunk into, after Windbarrow's downs: short turf with the chalk coming through, thyme, rock-rose and lichen and nothing taller, starlings flocking over it, crows and an eagle in the sky. It dresses the plain round a buried arena, not the arena itself; what is inside comes from the materials the steppe style paints on the structure.",
+  "habitat": "dry_grassland",
   "priority": 12,
   "rules": {"elev": [-2, 200]},
   "surface": "downland_grass",
   "subsurface": "chalk_white",
   "fringe": 0,
+  "soil": 0.8,
   "map_color": [176, 168, 112],
   "plants": [
     {
-      "plant": "heather",
+      "plant": "wild_thyme",
       "density": 0.008,
       "placement": {"verb": "clustered", "params": {"size": 14, "min": 0.0, "max": 1.0}}
+    },
+    {
+      "plant": "rock_rose",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0.2, "max": 1.0}}
     },
     {"plant": "rock_lichen", "density": 0.2, "placement": {"verb": "scatter", "params": {}}}
   ],

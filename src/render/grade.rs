@@ -122,6 +122,10 @@ pub struct Grade {
     pub vignette: f32,
     /// The time of day's own warm/cool shift (golden hour, moonlight).
     pub time_tint: f32,
+    /// How strongly the site (world/site.rs `Site::lush`) shows in grassy
+    /// ground: its colour toward green or ochre and the grass's height. 1 as
+    /// tuned, 0 off.
+    pub site_lush: f32,
 }
 
 impl Default for Grade {
@@ -150,6 +154,7 @@ impl Default for Grade {
             contrast: 0.25,
             vignette: 0.22,
             time_tint: 1.0,
+            site_lush: 1.0,
         }
     }
 }
@@ -200,6 +205,7 @@ grade_fields!(
     contrast,
     vignette,
     time_tint,
+    site_lush,
 );
 
 impl Grade {
@@ -282,8 +288,9 @@ impl Grade {
         out
     }
 
-    /// The knobs, as the five vec4s of the shaders' Grade uniform.
-    pub fn uniform(&self) -> [f32; 20] {
+    /// The knobs, as the shaders' Grade uniform: five vec4s and the first
+    /// of a sixth (the buffer holds the rest as zero).
+    pub fn uniform(&self) -> [f32; 21] {
         [
             self.ramp_reach,
             self.ramp_value,
@@ -305,6 +312,7 @@ impl Grade {
             self.ramp_curve,
             self.ramp_bands,
             self.haze_height,
+            self.site_lush,
         ]
     }
 

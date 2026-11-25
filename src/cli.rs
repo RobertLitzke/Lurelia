@@ -40,6 +40,17 @@ pub struct Args {
     pub hud: bool,
     pub threads: usize,
     pub map: Option<PathBuf>,
+    /// `--eco-map LAYER`: draw the ecology map (game/eco.rs) in the shot.
+    pub eco_map: Option<String>,
+    /// `--eco-pin NAME`: pin the nearest walker whose species name has NAME
+    /// in it (or `nearest`) for the inspector.
+    pub eco_pin: Option<String>,
+    /// `--eco-dump FILE`: a JSON line of every animal each `eco_every` seconds.
+    pub eco_dump: Option<PathBuf>,
+    pub eco_every: f32,
+    /// `--eco-soak HOURS`: run the herd and pack records alone for HOURS game
+    /// hours, as fast as they compute, printing their numbers, then exit.
+    pub eco_soak: Option<f32>,
     /// `--seam out.png`: how the world meets its neighbours, with a map of
     /// it and them side by side.
     pub seam: Option<PathBuf>,
@@ -65,8 +76,11 @@ pub struct Args {
     pub gun_sheet: bool,
     /// (headless) the bots posed in a row of states (brain/sheet.rs).
     pub bot_sheet: bool,
+    pub zombie_sheet: bool,
     pub style: Option<Style>,
     pub blocky: bool,
+    /// Creatures drawn as voxels, not their decimated meshes.
+    pub voxel_creatures: bool,
     pub show_help: bool,
     pub show_worlds: bool,
     /// (headless) draw a menu screen: title, settings, worlds, loading or pause.
@@ -84,6 +98,10 @@ pub struct Args {
     pub season: Option<String>,
     pub gazetteer: bool,
     pub validate: bool,
+    /// Measure the world's survey afresh, write its survey.bin, print it, exit.
+    pub survey: bool,
+    /// Build the world and print its plant site fields' spread by biome, exit.
+    pub site_report: bool,
     /// Run the bot tournament: how many rounds each entrant plays.
     pub tourney: Option<u32>,
     pub tourney_seconds: Option<f32>,
@@ -131,6 +149,12 @@ pub struct Args {
     /// (src/sound/bake.rs), `secs` seconds of it.
     pub sound_bake: Option<PathBuf>,
     pub secs: f32,
+    /// Render animal calls alone into this folder (src/sound/bake.rs
+    /// `calls`): a WAV heard from `call_m` metres and a spectrogram of each.
+    pub call_bake: Option<PathBuf>,
+    /// Which calls, by name, comma-separated; every one when None.
+    pub calls: Option<String>,
+    pub call_m: f32,
     /// Open the EDIT page (src/editor) as soon as the world is in, on this
     /// creature or plant; an empty name opens it on the first creature.
     pub edit: Option<String>,
@@ -140,6 +164,10 @@ pub struct Args {
     pub matching: Option<String>,
     /// `--mode`: the way of playing, when the command line names one.
     pub mode: Option<String>,
+    /// `--kit <name>`: the weapon kit for a match, and the guns `--gun-sheet` shows.
+    pub kit: Option<String>,
+    /// `--sheet-guns a,b`: only these weapons on the gun sheet.
+    pub sheet_guns: Vec<String>,
     /// What the launch screen chose: the mode and its options (src/launch.rs).
     /// None on the command line and in the headless tools, where the world's
     /// own defaults stand (`launch::Chosen::for_world`).
@@ -164,9 +192,12 @@ into that world.
   --no-shadows          start with shadows off
   --style NAME          classic or calm (default: the saved choice)
   --blocky              square voxel steps instead of slopes
+  --voxel-creatures     creatures as voxels instead of smooth decimated meshes
   --bench               fly a fixed route and report frame times
   --bench-route field   walk a loop at eye height instead, round the spawn (or
                         --ground): in a field with animals, the work of playing
+  --bench-route race    (windowed, a race world) drive the race on autopilot, to the
+                        finish, and list the slowest frames with their parts
   --tour SECONDS        (headless) walk a loop round the island at walking pace, 2 m up,
                         and report how many of each creature turned up (stats key tour)
 
@@ -200,10 +231,26 @@ Headless (no window):
   --showcase            stand one of each creature model in front of the camera
   --anim-sheet NAME     (headless) a rigged creature with each bone bent in turn
   --gun-sheet           (headless) every weapon from several angles, one sheet
+                        (with --kit, that kit's guns and their model options)
+  --sheet-guns A,B      (with --gun-sheet) only these weapons
+  --kit NAME            the weapon kit a match is played with (library/weapon_kits)
   --bot-sheet           (headless) the bots posed in a row of states (idle, walk, run,
                         sprint, backpedal, strafe, aim up/down, jump, firing), side view
                         above and three-quarter view below; use with --pos and --look
+  --zombie-sheet        (headless) the zombie builds in each way of walking (shamble,
+                        lurch, runner, crawler), standing and moving, laid out as --bot-sheet
   --map FILE            write a shaded top-down map of the world as PNG and exit
+  --eco-map LAYER       (headless) draw the ecology map (backquote, then P) in the shot; LAYER is creatures,
+                        a survey channel (water, cover, ...) or a plant site field (wet, shade, ...)
+  --eco-pin NAME        (headless) pin the nearest walker whose species has NAME in it
+                        (or nearest) for the inspector; VG_ECO_WALK=S walks at it from
+                        S seconds in, VG_ECO_RUN=1 at a run; VG_ECO_FREEZE=S freezes
+                        the animals S seconds in
+  --eco-dump FILE       (headless) write every animal as one JSON line each --eco-every
+                        seconds (default 10)
+  --eco-soak HOURS      (headless) run the herd and pack records alone, nothing drawn,
+                        for HOURS game hours as fast as they compute; print each
+                        species' numbers as a JSON line every 6 hours, then exit
   --profile-gen         time terrain generation and meshing on one thread
   --world NAME          play worlds/NAME or local/worlds/NAME (default glassfall; random = a noise-generated island)
   --mode NAME           how to play it: explore or fps (default: what the world is built for)
@@ -212,6 +259,9 @@ Headless (no window):
   --season NAME         hold the year at spring, summer, autumn or winter (default: it turns)
   --gazetteer           build the world and print what its chronicle made, then exit
   --validate            check the library and the world, print problems, then exit
+  --survey              measure the world survey afresh, write survey.bin, print it, then exit
+  --site-report         build the world, print each site field's spread by biome and how well each
+                        plant's ground suits it, then exit (docs/PLANTS.md)
   --tourney N           score the bots on how they move, N rounds each (no window)
   --tourney-seconds S   how long each round lasts (default 60)
   --league N            five tuned bots in one match, N seeds x five slots, scored
@@ -266,6 +316,10 @@ Sound (see GUIDE.md, \"Sound\"):
                         --look, --hour, --weather, --season) into FILE.wav, print
                         what made it and how loud it came out, then exit
   --secs N              with --sound-bake: seconds to render (default 20)
+  --call-bake DIR       render each animal call (src/sound/call.rs) into DIR:
+                        NAME_SEED.wav heard from --call-m metres (default 10)
+                        and NAME_SEED.png, a spectrogram of it dry; --calls
+                        howl,roar for some of them. Needs no world
 ";
 
 pub fn parse_args() -> Args {
@@ -297,6 +351,11 @@ pub fn parse_args() -> Args {
         hud: true,
         threads: std::thread::available_parallelism().map(|n| n.get()).unwrap_or(4).saturating_sub(4).clamp(1, 8),
         map: None,
+        eco_map: None,
+        eco_pin: None,
+        eco_dump: None,
+        eco_every: 10.0,
+        eco_soak: None,
         seam: None,
         profile_gen: false,
         dig: 0,
@@ -309,8 +368,10 @@ pub fn parse_args() -> Args {
         anim_sheet: None,
         gun_sheet: false,
         bot_sheet: false,
+        zombie_sheet: false,
         style: None,
         blocky: false,
+        voxel_creatures: false,
         show_help: false,
         show_worlds: false,
         show_menu: None,
@@ -320,6 +381,8 @@ pub fn parse_args() -> Args {
         season: None,
         gazetteer: false,
         validate: false,
+        survey: false,
+        site_report: false,
         tourney: None,
         tourney_seconds: None,
         league: None,
@@ -348,9 +411,14 @@ pub fn parse_args() -> Args {
         catalog: None,
         sound_bake: None,
         secs: 20.0,
+        call_bake: None,
+        calls: None,
+        call_m: 10.0,
         only: None,
         matching: None,
         mode: None,
+        kit: None,
+        sheet_guns: Vec::new(),
         launch: None,
     };
     let v: Vec<String> = std::env::args().skip(1).collect();
@@ -445,7 +513,7 @@ pub fn parse_args() -> Args {
             "--bench-route" => {
                 a.bench = true;
                 let v = val(&mut i);
-                a.bench_route = crate::tools::bench::Route::parse(&v).unwrap_or_else(|| bad(&format!("no route {v}: fly or field")));
+                a.bench_route = crate::tools::bench::Route::parse(&v).unwrap_or_else(|| bad(&format!("no route {v}: fly, field or race")));
             }
             "--tour" => a.tour = Some(span(&mut i, 0.0, 36000.0)),
             "--vsync" => a.vsync = true,
@@ -466,9 +534,19 @@ pub fn parse_args() -> Args {
                 }
             }
             "--blocky" => a.blocky = true,
+            "--voxel-creatures" => a.voxel_creatures = true,
             "--world" => a.world = Some(val(&mut i)),
             // The launch screen's choice, for a run started from here: the
             // rest of its options keep their defaults.
+            "--sheet-guns" => a.sheet_guns = val(&mut i).split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect(),
+            "--kit" => {
+                let name = val(&mut i);
+                if crate::weapon_kit::get(&name).is_none() {
+                    eprintln!("--kit: no weapon kit called {name} in library/weapon_kits");
+                    std::process::exit(2);
+                }
+                a.kit = Some(name);
+            }
             "--mode" => {
                 let name = val(&mut i);
                 match crate::games::get(&name) {
@@ -489,6 +567,8 @@ pub fn parse_args() -> Args {
             "--season" => a.season = Some(val(&mut i)),
             "--gazetteer" => a.gazetteer = true,
             "--validate" => a.validate = true,
+            "--survey" => a.survey = true,
+            "--site-report" => a.site_report = true,
             "--tourney" => a.tourney = Some(count(&mut i)),
             "--tourney-seconds" => a.tourney_seconds = Some(span(&mut i, 1.0, 36000.0)),
             "--league" => a.league = Some(count(&mut i)),
@@ -515,9 +595,17 @@ pub fn parse_args() -> Args {
             "--catalog" => a.catalog = Some(val(&mut i).into()),
             "--sound-bake" => a.sound_bake = Some(val(&mut i).into()),
             "--secs" => a.secs = span(&mut i, 0.5, 600.0),
+            "--call-bake" => a.call_bake = Some(val(&mut i).into()),
+            "--calls" => a.calls = Some(val(&mut i)),
+            "--call-m" => a.call_m = span(&mut i, 0.5, 5000.0),
             "--only" => a.only = Some(val(&mut i)),
             "--match" => a.matching = Some(val(&mut i)),
             "--map" => a.map = Some(val(&mut i).into()),
+            "--eco-map" => a.eco_map = Some(val(&mut i)),
+            "--eco-pin" => a.eco_pin = Some(val(&mut i)),
+            "--eco-dump" => a.eco_dump = Some(val(&mut i).into()),
+            "--eco-every" => a.eco_every = span(&mut i, 0.1, 3600.0),
+            "--eco-soak" => a.eco_soak = Some(span(&mut i, 0.1, 10000.0)),
             "--seam" => a.seam = Some(val(&mut i).into()),
             "--profile-gen" => a.profile_gen = true,
             "--dig" => a.dig = count(&mut i),
@@ -536,6 +624,7 @@ pub fn parse_args() -> Args {
             "--anim-sheet" => a.anim_sheet = Some(val(&mut i)),
             "--gun-sheet" => a.gun_sheet = true,
             "--bot-sheet" => a.bot_sheet = true,
+            "--zombie-sheet" => a.zombie_sheet = true,
             "--threads" => a.threads = (count(&mut i) as usize).max(1),
             "-h" | "--help" => {
                 print!("{HELP}");

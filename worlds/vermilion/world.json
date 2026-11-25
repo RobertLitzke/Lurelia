@@ -6,6 +6,7 @@
   "height_m": 96,
   "sea_level_m": 4,
   "seed": 6878,
+  "plants": "v2",
   "sun": {
     "latitude": 37
   },

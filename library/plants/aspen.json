@@ -8,5 +8,6 @@
   "crown_radius": [1.1, 1.5],
   "curve": "sweep",
   "spread": 0.15,
-  "like": "birch"
+  "like": "birch",
+  "site": {"wet": [0.3, 1.0], "sun": [0.3, 1.0], "shade": [0.0, 0.4]}
 }

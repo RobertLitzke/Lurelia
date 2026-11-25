@@ -1,0 +1,14 @@
+{
+  "name": "rock_rose",
+  "version": 1,
+  "introduced_by": "windbarrow",
+  "notes": "Common rock-rose: sprawling clumps of yellow flowers on sunny chalk turf, with the thyme.",
+  "form": "herb",
+  "height": [0.12, 0.25],
+  "crown_radius": [0.25, 0.45],
+  "bark": "dead_wood",
+  "leaf": "rock_rose",
+  "max_slope": 1.0,
+  "affords": ["nectar"],
+  "site": {"wet": [0.0, 0.5], "soil": [0.55, 1.0], "sun": [0.35, 1.0], "shade": [0.0, 0.2]}
+}

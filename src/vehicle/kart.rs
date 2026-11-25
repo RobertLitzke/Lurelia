@@ -68,6 +68,20 @@ pub fn reach(s: &Spec, v: f32) -> f32 {
     s.grip * (s.gravity + s.downforce * v * v / s.mass)
 }
 
+/// The plain kart, `library/vehicles/kart.json`, read once: the kart the
+/// bots' kart style was tuned on (`bot::Style::kart`), which every other
+/// kart's driver is fitted against.
+pub fn plain() -> &'static Spec {
+    static PLAIN: std::sync::OnceLock<Spec> = std::sync::OnceLock::new();
+    PLAIN.get_or_init(|| super::Catalogue::load(&crate::library::data_root()).get("kart"))
+}
+
+/// The tightest bend, as a curvature (1/m), that kart `s` holds at its top
+/// speed with the grip it has at `v` m/s.
+pub fn flat_out_bend(s: &Spec, v: f32) -> f32 {
+    reach(s, v) / s.top_speed.max(1.0).powi(2)
+}
+
 /// How much of the grip the steering may ask for: a margin, so the kart
 /// turns as asked and never at the very edge.
 const MARGIN: f32 = 0.95;

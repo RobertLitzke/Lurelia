@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "windbarrow",
   "notes": "The open steppe: waist-high feathergrass gone gold over chalk, big tussocks standing out of it, a hawthorn or a juniper every few hundred metres. The default of Windbarrow.",
+  "habitat": "dry_grassland",
   "priority": 1,
   "rules": {},
   "surface": "feathergrass",
   "subsurface": "chalk_white",
   "rock": null,
+  "soil": 0.8,
   "map_color": [196, 176, 104],
   "plants": [
     {

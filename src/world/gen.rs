@@ -1699,7 +1699,8 @@ impl Generator {
         for z in 0..n {
             for x in 0..n {
                 let i = w.f.idx((x as f32 + 0.5) * cell, (z as f32 + 0.5) * cell);
-                out[z * n + x] = w.lib.biomes.get(w.f.biome[i] as usize).map_or(0.0, |b| b.mist.clamp(0.0, 1.0));
+                let biome = w.lib.biomes.get(w.f.biome[i] as usize).map_or(0.0, |b| b.mist.clamp(0.0, 1.0));
+                out[z * n + x] = biome.max(w.realm_mist_at((x as f32 + 0.5) * cell, (z as f32 + 0.5) * cell));
             }
         }
         // Sea fog: over open water a misty coast's mist drifts out for a
@@ -1903,7 +1904,7 @@ fn field_material(w: &super::fields::World, c: &ColInfo, ym: f32, depth: f32, vs
         } else if c.slope > 1.1 {
             bm.subsurface
         } else {
-            bm.surface
+            w.realm_ground(c.cell as usize, bm.surface)
         };
     }
     for l in f.layers.get(i).into_iter().flatten() {

@@ -40,9 +40,11 @@ mod sound;
 mod stream;
 mod tools;
 mod trace;
+mod tune;
 mod util;
 mod variety;
 mod vehicle;
+mod weapon_kit;
 mod world;
 mod world_parts;
 mod worldload;
@@ -69,9 +71,19 @@ use winit::keyboard::{KeyCode, PhysicalKey};
 use winit::window::{CursorGrabMode, Fullscreen, Window, WindowId};
 
 fn main() {
+    // The frame loop runs above normal, so another program at normal priority
+    // (a build, a browser) cannot hold its core for a scheduler quantum and
+    // show as a hitch. The sound device's thread is time-critical, above it.
+    util::set_thread_priority(util::Priority::AboveNormal);
     let args = parse_args();
     if let Some(w) = &args.world {
         worldload::select(w);
+    }
+    if args.survey {
+        std::process::exit(world::survey::command(&worldload::selected()));
+    }
+    if args.site_report {
+        std::process::exit(world::site::command(&worldload::selected()));
     }
     if args.gazetteer || args.validate {
         std::process::exit(check_world(&args));
@@ -115,6 +127,10 @@ fn main() {
         tools::catalog::run(&args);
         return;
     }
+    if args.call_bake.is_some() {
+        sound::bake::calls(&args);
+        return;
+    }
     if args.sound_bake.is_some() {
         sound::bake::run(&args);
         return;
@@ -136,6 +152,9 @@ pub(crate) fn new_game(args: &Args) -> Result<Game, String> {
     if let Some(g) = args.mode.as_deref().and_then(games::get) {
         chosen.set_game(g);
     }
+    if args.kit.is_some() {
+        chosen.kit = args.kit.clone();
+    }
     if args.rivals.is_some() {
         chosen.rivals = args.rivals;
     }
@@ -155,11 +174,15 @@ pub(crate) fn new_game(args: &Args) -> Result<Game, String> {
         shadows: args.shadows,
         style: args.style.unwrap_or_default(),
         slopes: !args.blocky,
+        smooth_creatures: !args.voxel_creatures,
         show_stats: true,
         minimap: false,
         drive_chase: args.drive_chase.unwrap_or(crate::game::Settings::default().drive_chase),
     };
     let mut game = Game::new(args.save_dir.clone(), args.view, args.threads, args.fresh || args.headless, chosen, settings)?;
+    // The material blocks for this world's materials, painted here on the
+    // loading thread rather than in the first frame (render/textures.rs).
+    render::textures::prebuild(settings.style == render::Style::Saturated);
     if let Some(f) = args.full_detail {
         game.streamer.full_m = f.min(args.view);
     }
@@ -219,6 +242,8 @@ struct Running {
     /// The clock for the menus' pictures and the loading bar.
     t0: Instant,
     grabbed: bool,
+    /// The ecology map has the mouse (game/eco.rs): the cursor is free over it.
+    map_free: bool,
     bench: Option<Bench>,
     screen: Screen,
     menu: Menu,
@@ -522,8 +547,8 @@ impl Running {
                 self.surface.configure(&self.gpu.device, &self.config);
             }
             Setting::View | Setting::Msaa => {}
-            Setting::Sound | Setting::Volume | Setting::Ambience | Setting::Effects | Setting::Music => self.sound.set_levels(p.sound),
-            Setting::Style | Setting::Shadows | Setting::Slopes | Setting::Stats => {
+            Setting::Sound | Setting::Volume | Setting::Ambience | Setting::Effects | Setting::Wildlife | Setting::Music => self.sound.set_levels(p.sound),
+            Setting::Style | Setting::Shadows | Setting::Slopes | Setting::Creatures | Setting::Stats => {
                 if let Some(g) = &mut self.game {
                     let resmooth = g.settings.slopes != p.settings.slopes;
                     g.settings = p.settings;
@@ -562,6 +587,7 @@ impl Running {
         a.style = Some(self.prefs.settings.style);
         a.shadows = self.prefs.settings.shadows;
         a.blocky = !self.prefs.settings.slopes;
+        a.voxel_creatures = !self.prefs.settings.smooth_creatures;
         a.drive_chase = Some(self.prefs.settings.drive_chase);
         a.view = self.prefs.view;
         let job = std::thread::Builder::new().name("load world".into()).spawn(move || new_game(&a)).expect("load thread");
@@ -1717,6 +1743,10 @@ impl Running {
         };
         self.pad_input = if racing {
             MoveInput {
+                // The stick up or down only aims the item (race/mod.rs reads
+                // `stick`): held back to fire behind it must not brake.
+                forward: false,
+                back: false,
                 jump: s.down(RB as u32),
                 throttle: s.rt.max(press(A)),
                 brake: s.lt.max(press(B)),
@@ -1753,6 +1783,21 @@ impl Running {
         if down && code == KeyCode::F9 {
             self.hearing = !self.hearing;
             return;
+        }
+        // A dev key: start a display (creatures/display) on the creature
+        // under the crosshair, the next of its kinds each press.
+        if down && code == KeyCode::F10 && matches!(self.screen, Screen::Playing) {
+            if let Some(g) = self.game.as_mut() {
+                g.force_display();
+            }
+            return;
+        }
+        // In a zoo world (creatures/zoo.rs), the next and previous pen.
+        if down && matches!(code, KeyCode::PageDown | KeyCode::PageUp) && matches!(self.screen, Screen::Playing) {
+            if let Some(g) = self.game.as_mut().filter(|g| g.ents.zoo.is_some()) {
+                g.zoo_jump(if code == KeyCode::PageDown { 1 } else { -1 });
+                return;
+            }
         }
         if down && code == KeyCode::F11 {
             self.prefs.fullscreen = self.window.fullscreen().is_none();
@@ -1882,6 +1927,14 @@ impl Running {
                 }
             }
             Action::Save => g.save(),
+            Action::EcoDebug => g.eco_toggle(),
+            Action::EcoMap => g.eco_toggle_map(),
+            Action::Pin => g.eco_pin(),
+            Action::Freeze => g.eco_freeze(),
+            Action::EcoStep => g.eco_step(),
+            Action::EcoSpeed => g.eco_speed(),
+            Action::EcoLayerBack => g.eco_layer(-1),
+            Action::EcoLayerOn => g.eco_layer(1),
             // F11 is handled above, on every screen.
             Action::Fullscreen => {}
             // Held actions returned above.
@@ -2183,19 +2236,59 @@ impl Running {
         let raw = (now - self.last).as_secs_f32();
         let dt = self.pacer.step(raw, self.config.present_mode == wgpu::PresentMode::Fifo);
         self.last = now;
+        // The ecology map frees the mouse while it is open, and the view takes
+        // it back when it closes.
+        if self.screen == Screen::Playing {
+            let free = self.game.as_ref().is_some_and(|g| g.eco.map);
+            if free != self.map_free {
+                self.map_free = free;
+                if let (true, Some(g)) = (free, self.game.as_mut()) {
+                    g.eco.cursor = Some(self.cursor);
+                }
+                self.grab(!free);
+            } else if free && self.grabbed {
+                self.grab(false);
+            }
+        }
         if self.screen == Screen::Loading {
             self.loading_step(args);
         }
         self.pad_frame(args, dt);
+        // SITE LUSHNESS on the LOOK page: the ground's colour follows it on
+        // the GPU at once; the grass is baked into the chunks, so once the
+        // knob has held still the land round the player is built again.
+        if let Some(g) = self.game.as_mut() {
+            let want = self.renderer.grade_of(g.settings.style).site_lush;
+            if world::site::settle_strength(want) {
+                let p = g.player.pos;
+                g.streamer.regen_all(p);
+            }
+        }
         let input = merge(&self.input, &self.pad_input);
         let (w, h) = (self.config.width, self.config.height);
         let in_world = self.game.is_some() && self.screen.over_world();
         self.hud.clear();
+        // A cup's next course, asked for on the results (race/cup.rs).
+        let mut next_cup = None;
         if in_world {
             let g = self.game.as_mut().unwrap();
             if let Some(b) = &mut self.bench {
-                let (p, yaw, pitch) = b.camera(g);
-                g.set_camera(p, yaw, pitch, true);
+                if b.route == tools::bench::Route::Race {
+                    // The race drives the camera; a bot drives the kart.
+                    if let Some(rc) = g.activity.as_mut().and_then(|a| a.race_mut()) {
+                        if !b.piloted {
+                            rc.autopilot();
+                            b.piloted = true;
+                            b.duration = 900.0;
+                        }
+                        if rc.all_home() {
+                            b.duration = b.t;
+                        }
+                    }
+                } else {
+                    let (p, yaw, pitch) = b.camera(g);
+                    g.set_camera(p, yaw, pitch, true);
+                }
                 b.t += dt;
                 b.times.push(raw * 1000.0);
                 b.steps.push(dt * 1000.0);
@@ -2219,6 +2312,9 @@ impl Running {
                 let tr = trace::start();
                 g.tick(dt, &input, &mut self.actions);
                 trace::end("tick", tr);
+                if let Some(cup) = g.activity.as_mut().and_then(|a| a.race_mut()).and_then(|r| r.take_next()) {
+                    next_cup = Some((g.launch.clone(), cup));
+                }
                 // A setting the tick changed (V in a car) is in the prefs
                 // before a menu can copy the prefs over the game's.
                 if self.prefs.settings != g.settings {
@@ -2243,6 +2339,12 @@ impl Running {
                 // The track picture shared this image: load it again when asked.
                 self.track_pic = None;
             }
+        }
+        if let Some((mut chosen, cup)) = next_cup {
+            chosen.world = cup.courses[cup.at].clone();
+            chosen.cup = Some(cup);
+            self.start_load(args, chosen, false);
+            return;
         }
         if matches!(self.screen, Screen::Edit { .. }) {
             self.edit_tick(dt);
@@ -2314,6 +2416,9 @@ impl Running {
         frame.present();
         wait += presenting.elapsed().as_secs_f32();
         let work = now.elapsed().as_secs_f32() - wait;
+        if let Some(b) = self.bench.as_mut().filter(|_| !loading) {
+            b.frame(work * 1000.0, wait * 1000.0, trace::peek);
+        }
         // A loading frame is slow on purpose.
         if loading {
             trace::take();
@@ -2424,6 +2529,8 @@ pub(crate) fn show_world(renderer: &mut Renderer, game: &Game) {
         }
     }
     renderer.set_mist(&gen.mist_grid(256), 256, gen.water_grid(256));
+    let lush = gen.world.as_ref().and_then(|w| w.site.as_ref().filter(|_| world::site::lush_on()).map(|s| s.lush_grid(w.f.size, render::SITE_N as usize)));
+    renderer.set_site(lush.as_deref(), render::SITE_N as usize);
     renderer.set_underwater(gen.world.as_ref().map(|w| w.def.underwater).unwrap_or_default());
     if let Some(w) = gen.world.as_ref() {
         let (water, sheets, spots) = world::rivers::buffers(&w.f);
@@ -2464,6 +2571,9 @@ impl ApplicationHandler for App {
         }
         if a.blocky {
             prefs.settings.slopes = false;
+        }
+        if a.voxel_creatures {
+            prefs.settings.smooth_creatures = false;
         }
         if a.vsync {
             prefs.vsync = true;
@@ -2531,6 +2641,7 @@ impl ApplicationHandler for App {
             trace: std::env::var("VOXEL_TRACE").is_ok(),
             t0: Instant::now(),
             grabbed: false,
+            map_free: false,
             bench: None,
             screen: Screen::Title,
             menu: Menu::default(),
@@ -2631,6 +2742,11 @@ impl ApplicationHandler for App {
             }
             WindowEvent::CursorMoved { position, .. } => {
                 r.cursor = (position.x as f32, position.y as f32);
+                if r.screen == Screen::Playing && r.map_free {
+                    if let Some(g) = r.game.as_mut() {
+                        g.eco_mouse_move(r.cursor.0, r.cursor.1);
+                    }
+                }
                 if let Some((i, x0, base)) = &r.tune_drag {
                     // A step for every 8 pixels across.
                     let steps = ((r.cursor.0 - x0) / 8.0).round();
@@ -2665,7 +2781,12 @@ impl ApplicationHandler for App {
                 if down {
                     r.pad_on = false;
                 }
+                let map_took = r.screen == Screen::Playing
+                    && r.map_free
+                    && matches!(button, MouseButton::Left | MouseButton::Right)
+                    && r.game.as_mut().is_some_and(|g| g.eco_mouse_button(button == MouseButton::Left, down));
                 match r.screen {
+                    Screen::Playing if map_took => {}
                     Screen::Playing => match button {
                         MouseButton::Left => {
                             r.held.0 = down;
@@ -2720,6 +2841,10 @@ impl ApplicationHandler for App {
                 if let (Some(game::TuneHit::Line(i)), true) = (tune, d != 0.0) {
                     if let Some(g) = r.game.as_mut() {
                         g.ride.tune_step(i, d.signum());
+                    }
+                } else if d != 0.0 && r.screen == Screen::Playing && r.map_free {
+                    if let Some(g) = r.game.as_mut() {
+                        g.eco_wheel(d);
                     }
                 } else if d != 0.0 && r.screen == Screen::Playing {
                     r.actions.brush_delta = if d > 0.0 { 1 } else { -1 };

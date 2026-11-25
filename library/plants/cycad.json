@@ -8,5 +8,7 @@
   "crown_radius": [1.0, 1.5],
   "bark": "palm_trunk",
   "leaf": "cycad_frond",
-  "max_slope": 0.8
+  "max_slope": 0.8,
+  "site": {"wet": [0.2, 0.8], "shade": [0.0, 0.7]},
+  "realms": ["dinosaur"]
 }

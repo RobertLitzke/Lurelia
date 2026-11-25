@@ -1,0 +1,144 @@
+# Gannet Harbor: a street circuit in the whaling town on Mercy Bay.
+# Units in metres: x east, z south, from the world's north-west corner.
+#
+# The bay is to the west. The lap runs north up Front Street along the
+# quay, out along the whaling pier and back, out along the cannery pier and
+# back, east up Church Hill, and then straight down the hill into the
+# ropewalk: one long fall carried into 170 m of shed. The cooper's yard at
+# its far end turns it back west to Front Street. No walls: a gravel run-off
+# either side that a kart can run wide onto and come back from. Only the
+# pier decks, over the water, have a rail. The corners are flat: the hill is
+# the only place the road leaves the level.
+track gannet_harbor size 512 style harbor
+title GANNET HARBOR
+blurb A street circuit in an empty whaling town in the autumn fog: granite setts between the houses, out and back along two plank piers over the bay, up Church Hill, and one long fall straight down it into the dark of the ropewalk.
+race laps 3 rivals 5 vehicle kart
+road 14.5 bank 1.2
+materials verge road_gravel
+verge 0 1337 - 6
+land 8 0.6
+hour 7
+lights 25
+
+# Mercy Bay: the sea floor west of the quay (the sea stands at 4).
+plateau -2 6 -20,-20 140,-20 140,532 -20,532
+# Church Hill, rising inland to the east.
+hill 400 170 150 24
+
+# Front Street, north along the quay.
+point 175 410 at 8   # start / finish
+point 175 375 at 8
+point 175 350 at 8
+# Out along the whaling pier (its south lane), round its head and back.
+point 172 332 at 8
+point 162 320 at 7.8
+point 146 315 at 7.5
+point 126 314 at 7.5
+point 108 314 at 7.5
+point 82 314 at 7.5
+point 69.3 308.7 at 7.5        # the pier head
+point 64 296 at 7.5
+point 69.3 283.3 at 7.5
+point 82 278 at 7.5
+point 108 278 at 7.5
+point 128 278 at 7.5
+point 148 277 at 7.6
+point 164 271 at 7.8
+point 174 257 at 8
+point 177 238 at 8
+point 177 218 at 8
+# Out along the cannery pier and back.
+point 174 199 at 8
+point 165 182 at 7.8
+point 150 171 at 7.6
+point 128 168 at 7.5
+point 108 168 at 7.5
+point 84 168 at 7.5
+point 71.3 162.7 at 7.5        # the pier head
+point 66 150 at 7.5
+point 71.3 137.3 at 7.5
+point 84 132 at 7.5
+point 108 132 at 7.5
+point 136 132 at 7.5
+point 160 132 at 7.5
+# East through the top of the town and up Church Hill.
+point 196 132 at 8.2
+point 230 130 at 10.5
+point 262 128 at 13.4
+point 290 130 at 16.2
+point 314 138 at 18.6
+point 328 156 at 20.6
+point 331 178 at 21.6          # the crest by the church
+# The fall: straight down the hill into the ropewalk.
+point 331 205 at 19.6
+point 331 235 at 16.4
+point 331 265 at 13
+point 331 290 at 10.4
+point 331 310 at 9.6           # into the ropewalk
+point 331 350 at 9.6
+point 331 400 at 9.6
+point 331 445 at 9.6
+point 331 462 at 9.6           # out at its far end
+# The cooper's yard, and west back to Front Street.
+point 325 479 at 9.4
+point 309 488 at 9.2
+point 288 488 at 8
+point 250 486 at 8
+point 216 484 at 8
+point 192 474 at 8
+point 180 456 at 8
+point 176 434 at 8
+
+# The piers: plank decks over the bay with a low rail (a deck's own, 1 m),
+# each leaving the quay on a short stone causeway (the land built up to the
+# road), so the step from land to deck is out past the corner.
+surface 106 302 pier_planks
+surface 424 612 pier_planks
+ramp 82 128 12
+ramp 282 332 12
+ramp 396 440 12
+ramp 598 642 12
+# Room round the pier heads, banked.
+bank 172 234 2.5
+bank 492 554 2.5
+# The quay corner off the whaling pier, taken off a long straight: room
+# for a pack.
+bank 290 340 2.5
+
+# The climb up Church Hill and the fall down it are on the hill itself.
+ramp 660 955 30
+
+# The ropewalk: plank shed over the road, lit from the roof, its ends
+# framed in granite; a pad in the dark middle of it.
+tunnel 958 1112 5.5 mat weathered_planks portal granite
+pad 1030 centre 8
+
+# Smashables: crates on the inside of the pier heads and the quay
+# corners, barrels in the cooper's yard.
+smash 92 left 4.2 crates
+smash 203 right 3.8 crates
+smash 316 left 4.2 crates
+smash 405 left 4.2 crates
+smash 523 right 3.8 crates
+smash 1131 right 4.2 crates
+
+items 30
+items 590
+items 1190
+
+# A whale's jawbones raised as an arch over Front Street, as whaling towns did.
+arch 30 22 11 2 mat titan_bone
+
+# Width: 14.5 m through the town; wide on Front Street for the start and
+# for passing, and in the cooper's yard; the pier lanes and the ropewalk
+# narrow, the shed dark and close.
+width 1200 80 16
+width 106 160 13
+width 250 302 13
+width 424 480 13
+width 560 612 13
+width 168 238 20
+width 488 558 20
+width 285 345 20
+width 958 1112 12
+width 1112 1200 18

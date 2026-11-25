@@ -1,0 +1,15 @@
+{
+  "name": "garden_bed",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A worked vegetable bed: dark dug soil speckled with the green of kale, beans and potato haulms.",
+  "smooth": true,
+  "texture": {
+    "pattern": "speckle",
+    "base": [90, 74, 56],
+    "alt": [88, 122, 54],
+    "scale": 6,
+    "contrast": 0.9,
+    "calm": {"base": [96, 80, 60], "alt": [96, 128, 60]}
+  }
+}

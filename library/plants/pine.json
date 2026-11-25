@@ -11,5 +11,6 @@
   "leaf": "pine",
   "max_slope": 0.7,
   "sweep": "up",
-  "taper": 0.85
+  "taper": 0.85,
+  "site": {"wet": [0.0, 0.85], "soil": [0.0, 0.5]}
 }

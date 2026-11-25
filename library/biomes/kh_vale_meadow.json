@@ -1,0 +1,41 @@
+{
+  "name": "kh_vale_meadow",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "The Lessa's valley floor north of Maplebridge: hay meadow and grazing down to the water, big old maples standing alone in the grass, hawthorn and apple by the lane, the maple wood starting where the slopes do.",
+  "habitat": "meadow",
+  "priority": 4,
+  "rules": {"region": "valemeadow"},
+  "surface": "wildflower_grass",
+  "subsurface": "dirt",
+  "rock": null,
+  "fringe": 8,
+  "soil": 0.7,
+  "map_color": [130, 170, 80],
+  "plants": [
+    {"plant": "bigleaf_maple", "density": 0.0008, "placement": {"verb": "lone", "params": {"spacing": 34}}},
+    {"plant": "maple", "density": 0.0012, "placement": {"verb": "lone", "params": {"spacing": 26}}},
+    {
+      "plant": "hawthorn",
+      "density": 0.001,
+      "placement": {"verb": "clustered", "params": {"size": 18, "min": 0.3, "max": 1}}
+    },
+    {"plant": "apple", "density": 0.0006, "placement": {"verb": "lone", "params": {"spacing": 30}}},
+    {
+      "plant": "lupine",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 10, "min": 0, "max": 1}}
+    },
+    {"plant": "willow", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 6}}}
+  ],
+  "creatures": [
+    {"creature": "sheep", "count": 14},
+    {"creature": "cow", "count": 6},
+    {"creature": "deer", "count": 3.6},
+    {"creature": "rabbit", "count": 8},
+    {"creature": "heron", "count": 2},
+    {"creature": "kingfisher", "count": 2},
+    {"creature": "otter", "count": 1},
+    {"creature": "sparrow", "count": 8}
+  ]
+}

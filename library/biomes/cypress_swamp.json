@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "lowmouth",
   "notes": "The back swamp: bald cypress and tupelo standing in black tea-coloured water, knees round their feet, moss in long beards, hyacinth on the still water, lily pads on the open water between the trunks.",
+  "habitat": "swamp_forest",
   "priority": 10,
   "rules": {"region": "swamp", "amphibious": true},
   "surface": "swamp_muck",
   "subsurface": "peat",
+  "soil": 0.3,
   "map_color": [70, 110, 80],
   "plants": [
     {

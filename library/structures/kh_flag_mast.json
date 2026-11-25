@@ -1,0 +1,45 @@
+{
+  "name": "kh_flag_mast",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "The plaza mast: a stepped round stone plinth 4 m across and 1.75 m high with one timber mast 15.5 m tall, tapering, with a 3.5 m crossyard on x at 11 m and a 2.5 m one on z at 13.5 m, no cloth. Carries no flags; the lines hang from the mast top and yard ends.",
+  "size": [20, 64, 20],
+  "anchor": [10, 0, 10],
+  "foundation": 3,
+  "decays": true,
+  "tags": ["kitehold", "mast"],
+  "slots": {"wall": "fieldstone", "base": "basalt", "timber": "timber_frame"},
+  "ops": [
+    {"op": "cylinder", "base": [10, 0, 10], "radius": 8, "height": 2, "mat": "base", "part": "stone"},
+    {"op": "cylinder", "base": [10, 2, 10], "radius": 6.5, "height": 2, "mat": "wall", "part": "stone"},
+    {"op": "cylinder", "base": [10, 4, 10], "radius": 5, "height": 2, "mat": "base", "part": "stone"},
+    {"op": "cylinder", "base": [10, 6, 10], "radius": 3, "height": 1, "mat": "wall", "part": "stone"},
+    {"op": "cylinder", "base": [10, 7, 10], "radius": 2.5, "height": 2, "mat": "timber", "part": "timber"},
+    {"op": "cylinder", "base": [10, 9, 10], "radius": 2, "height": 22, "mat": "timber", "part": "timber"},
+    {"op": "cylinder", "base": [10, 31, 10], "radius": 1.5, "height": 22, "mat": "timber", "part": "timber"},
+    {"op": "cylinder", "base": [10, 53, 10], "radius": 1, "height": 8, "mat": "timber", "part": "timber"},
+    {"op": "cylinder", "base": [10, 61, 10], "radius": 0.5, "height": 1, "mat": "timber", "part": "timber"},
+    {
+      "op": "segment",
+      "points": [[3.5, 44.5, 10.5], [17.5, 44.5, 10.5]],
+      "radius": 0.9,
+      "mat": "timber",
+      "part": "timber"
+    },
+    {
+      "op": "segment",
+      "points": [[10.5, 54.5, 5.5], [10.5, 54.5, 15.5]],
+      "radius": 0.8,
+      "mat": "timber",
+      "part": "timber"
+    },
+    {"op": "segment", "points": [[10.5, 44, 10.5], [6.5, 40, 10.5]], "radius": 0.6, "mat": "timber", "part": "timber"},
+    {
+      "op": "segment",
+      "points": [[10.5, 44, 10.5], [14.5, 40, 10.5]],
+      "radius": 0.6,
+      "mat": "timber",
+      "part": "timber"
+    }
+  ]
+}

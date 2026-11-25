@@ -4,30 +4,70 @@
   "introduced_by": "base",
   "notes": "Water buffalo: slate grey, low-slung and wide, under a great pair of horns swept back in a crescent. Keeps to the wet ground and wallows.",
   "colors": {"coat": [92, 92, 96], "wool": [84, 84, 88], "horn": [120, 112, 100], "dark": [36, 28, 24]},
+  "forms": {"female": "water_buffalo_female", "juvenile": "water_buffalo_juvenile"},
   "behaviour": {
     "walk_speed": 0.7,
     "flee_speed": 6.0,
     "wary": 14,
     "swims": true,
-    "group": {"size": [2, 6], "spacing": 3.0, "range": 16, "alignment": 0.9, "cohesion": 1.2}
+    "group": {"size": [2, 6], "spacing": 3.0, "range": 16, "alignment": 0.9, "cohesion": 1.2},
+    "voice": {"calls": [{"cry": "moo", "on": "idle", "size": 1.4, "every_s": [200, 600]}]}
   },
   "like": "bison",
   "scale": 0.633,
   "extra_ops": [
-    {"op": "box", "from": [9, 20, 5], "to": [23, 26, 17], "mat": "air"},
-    {"op": "ellipsoid", "centre": [16, 16, 12], "radius": [4.8, 4.4, 4.6], "mat": "coat"},
-    {"op": "box", "from": [13, 12, 5], "to": [19, 18, 10], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16, 13.5, 5], "radius": [3.4, 3.0, 3.4], "mat": "coat", "part": "head"},
-    {"op": "box", "from": [14, 10, 1], "to": [18, 13, 4], "mat": "coat", "part": "head"},
-    {"op": "box", "from": [14, 10, 1], "to": [18, 11, 3], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [13, 14, 3], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [18, 14, 3], "mat": "dark", "part": "head"},
-    {"op": "disc", "centre": [10.5, 17, 8], "radius": 5.4, "thick": 1.4, "axis": "x", "mat": "horn", "part": "head"},
-    {"op": "disc", "centre": [10.5, 17, 8], "radius": 4.0, "thick": 1.6, "axis": "x", "mat": "air", "part": "head"},
-    {"op": "box", "from": [9, 10, 2], "to": [13, 17, 9], "mat": "air", "part": "head"},
-    {"op": "disc", "centre": [21.5, 17, 8], "radius": 5.4, "thick": 1.4, "axis": "x", "mat": "horn", "part": "head"},
-    {"op": "disc", "centre": [21.5, 17, 8], "radius": 4.0, "thick": 1.6, "axis": "x", "mat": "air", "part": "head"},
-    {"op": "box", "from": [19, 10, 2], "to": [23, 17, 9], "mat": "air", "part": "head"},
-    {"op": "box", "from": [12, 17, 6], "to": [20, 19, 8], "mat": "horn", "part": "head"}
+    {"op": "box", "from": [10, 27, 8], "to": [28, 35, 24], "mat": "air"},
+    {"op": "ellipsoid", "centre": [19.0, 21.592, 17.602], "radius": [6.478, 5.938, 6.208], "mat": "coat"},
+    {"op": "box", "from": [15, 16, 8], "to": [23, 24, 15], "mat": "coat", "part": "neck"},
+    {
+      "op": "ellipsoid",
+      "centre": [19.0, 18.218, 8.156],
+      "radius": [4.588, 4.048, 4.588],
+      "mat": "coat",
+      "part": "head"
+    },
+    {"op": "box", "from": [16, 13, 3], "to": [22, 18, 7], "mat": "coat", "part": "head"},
+    {"op": "box", "from": [16, 13, 3], "to": [22, 15, 5], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [15, 19, 5], "to": [16, 20, 7], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [22, 19, 5], "to": [23, 20, 7], "mat": "dark", "part": "head"},
+    {
+      "op": "disc",
+      "centre": [11.578, 22.941, 12.204],
+      "radius": 7.287,
+      "thick": 1.889,
+      "axis": "x",
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "disc",
+      "centre": [11.578, 22.941, 12.204],
+      "radius": 5.398,
+      "thick": 2.159,
+      "axis": "x",
+      "mat": "air",
+      "part": "head"
+    },
+    {"op": "box", "from": [10, 13, 4], "to": [15, 23, 14], "mat": "air", "part": "head"},
+    {
+      "op": "disc",
+      "centre": [26.422, 22.941, 12.204],
+      "radius": 7.287,
+      "thick": 1.889,
+      "axis": "x",
+      "mat": "horn",
+      "part": "head"
+    },
+    {
+      "op": "disc",
+      "centre": [26.422, 22.941, 12.204],
+      "radius": 5.398,
+      "thick": 2.159,
+      "axis": "x",
+      "mat": "air",
+      "part": "head"
+    },
+    {"op": "box", "from": [23, 13, 4], "to": [28, 23, 14], "mat": "air", "part": "head"},
+    {"op": "box", "from": [14, 23, 10], "to": [24, 26, 12], "mat": "horn", "part": "head"}
   ]
 }

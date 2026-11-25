@@ -5,6 +5,9 @@
   "height_m": 256,
   "sea_level_m": 34,
   "seed": 8117,
+  "plants": "v2",
+  "strange_realm": "dinosaur",
+  "realms": {"real": 0.5, "dinosaur": 0.5},
   "neighbours": {
     "west": {
       "world": "hemlow",
@@ -29,10 +32,10 @@
     ]
   ],
   "spawn": [
-    1068,
-    738
+    1078,
+    712
   ],
-  "spawn_bearing": 165,
+  "spawn_bearing": 175,
   "seasons": [
     "spring",
     "summer",

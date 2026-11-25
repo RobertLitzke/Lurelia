@@ -25,5 +25,6 @@
       "placement": {"verb": "ring", "params": {"x": 120, "z": 1470, "radius": 5, "width": 1.4}}
     }
   ],
-  "like": "gh_faewood"
+  "like": "gh_faewood",
+  "realm": {"fae": 0.7}
 }

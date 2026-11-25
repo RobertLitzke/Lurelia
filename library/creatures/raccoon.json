@@ -5,21 +5,23 @@
   "notes": "Raccoon: a grizzled grey forager with a black mask and a ringed tail, out after dark along creek banks, levees and the backs of towns, slow to bolt and quick to come back.",
   "colors": {"coat": [118, 112, 104], "belly": [152, 146, 136], "white": [206, 200, 190], "dark": [32, 28, 26]},
   "behaviour": {
+    "displays": [{"kind": "wash", "food": "lobster"}],
     "walk_speed": 0.8,
     "flee_speed": 4.0,
     "wary": 6,
     "flightiness": 0.5,
     "spawn_chance": 0.5,
     "swims": true,
-    "off_hours": 0.06
+    "off_hours": 0.06,
+    "voice": {"calls": [{"cry": "chatter", "on": "idle", "hours": "night", "size": 1.4, "every_s": [200, 600], "chance": 0.5}]}
   },
   "like": "badger",
   "scale": 1.1,
   "extra_ops": [
-    {"op": "ellipsoid", "centre": [16, 7, 27], "radius": [2.2, 2.2, 3.6], "mat": "coat", "part": "tail"},
-    {"op": "recolour", "at": [13, 4, 26], "until": [19, 10, 27], "from": "coat", "to": "dark"},
-    {"op": "recolour", "at": [13, 4, 28], "until": [19, 10, 29], "from": "coat", "to": "dark"},
-    {"op": "recolour", "at": [13, 4, 30], "until": [19, 10, 31], "from": "coat", "to": "dark"}
+    {"op": "ellipsoid", "centre": [16.0, 9.8, 38.4], "radius": [3.08, 3.08, 5.04], "mat": "coat", "part": "tail"},
+    {"op": "recolour", "at": [12, 6, 37], "until": [20, 14, 38], "from": "coat", "to": "dark"},
+    {"op": "recolour", "at": [12, 6, 40], "until": [20, 14, 41], "from": "coat", "to": "dark"},
+    {"op": "recolour", "at": [12, 6, 43], "until": [20, 14, 44], "from": "coat", "to": "dark"}
   ],
   "vary": {"size": 0.1, "shade": 0.08}
 }

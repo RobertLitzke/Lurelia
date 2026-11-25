@@ -1,0 +1,137 @@
+{
+  "notes": "Faerie midsummer evening. Emerald at your feet, lilac over the wood, a violet sky. The gradient map is kept light and its middle is green, so the meadow stays emerald instead of going olive, and the shadows carry the violet.",
+  "ramp": [
+    {
+      "at": 0.0,
+      "color": [
+        0.5,
+        1.3,
+        0.6
+      ]
+    },
+    {
+      "at": 0.3,
+      "color": [
+        0.66,
+        0.9,
+        1.1
+      ]
+    },
+    {
+      "at": 1.0,
+      "color": [
+        0.72,
+        0.34,
+        1.2
+      ]
+    }
+  ],
+  "tint": [
+    {
+      "at": 0,
+      "color": [
+        0.9,
+        0.84,
+        1.18
+      ]
+    },
+    {
+      "at": 0.35,
+      "color": [
+        0.94,
+        1.0,
+        1.04
+      ]
+    },
+    {
+      "at": 0.7,
+      "color": [
+        1.04,
+        1.05,
+        0.92
+      ]
+    },
+    {
+      "at": 1,
+      "color": [
+        1.1,
+        1.03,
+        0.86
+      ]
+    }
+  ],
+  "map": [
+    {
+      "at": 0,
+      "color": [
+        0.26,
+        0.14,
+        0.5
+      ]
+    },
+    {
+      "at": 0.3,
+      "color": [
+        0.2,
+        0.44,
+        0.5
+      ]
+    },
+    {
+      "at": 0.62,
+      "color": [
+        0.3,
+        0.86,
+        0.42
+      ]
+    },
+    {
+      "at": 1,
+      "color": [
+        1.0,
+        0.95,
+        0.74
+      ]
+    }
+  ],
+  "ambient": [
+    0.5,
+    0.84,
+    1.24
+  ],
+  "sun_tint": [
+    1.14,
+    0.97,
+    0.7
+  ],
+  "sun_gain": 1.0,
+  "knobs": {
+    "ramp_reach": 260.0,
+    "ramp_curve": 0.5,
+    "ramp_value": 0.6,
+    "haze_ramp": 0.95,
+    "haze_density": 1.6,
+    "haze_height": 45.0,
+    "sky_ramp": 0.65,
+    "sky_reach": 0.4,
+    "shade_ramp": 0.9,
+    "sun_side": 0.3,
+    "sun_glow": 1.4,
+    "map_amount": 0.14,
+    "exposure": 1.0,
+    "tone": 1.25,
+    "saturation": 1.26,
+    "contrast": 0.3,
+    "time_tint": 0.5
+  },
+  "zenith": [
+    0.22,
+    0.3,
+    0.95
+  ],
+  "horizon": [
+    0.86,
+    0.62,
+    1.05
+  ]
+}

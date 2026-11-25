@@ -5,6 +5,7 @@
   "notes": "undulate: A ray that swims through the air of the faerie wood, a metre and a half across, violet-backed with glowing spots, circling slowly a few metres up on rippling wings.",
   "colors": {"back": [72, 70, 120], "belly": [210, 196, 220], "glow": [170, 120, 255, 1.8]},
   "behaviour": {
+    "displays": [{"kind": "barrel_roll"}],
     "movement": "undulate",
     "walk_speed": 2.0,
     "flee_speed": 3.0,
@@ -14,7 +15,11 @@
     "spawn_chance": 1,
     "group": null,
     "flight": "flap",
-    "wingbeat": 0.45
+    "wingbeat": 0.45,
+    "voice": {
+      "size": 0.5,
+      "calls": [{"cry": "moan", "on": "idle", "every_s": [60, 240], "chance": 0.5, "chorus": 0.3, "chorus_m": 300}]
+    }
   },
   "like": "manta_ray",
   "scale": 0.34,
@@ -26,5 +31,6 @@
     {"op": "set", "at": [25, 5, 17], "mat": "glow", "part": "wing_r_mid"},
     {"op": "set", "at": [21, 5, 19], "mat": "glow", "part": "wing_r"},
     {"op": "set", "at": [16, 5, 28], "mat": "glow", "part": "tail"}
-  ]
+  ],
+  "realms": ["fae"]
 }

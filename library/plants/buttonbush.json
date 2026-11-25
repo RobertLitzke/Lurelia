@@ -19,5 +19,6 @@
   "flower": "buttonbush_balls",
   "flower_tips": true,
   "flower_seasons": ["summer"],
-  "affords": ["nectar"]
+  "affords": ["nectar"],
+  "site": {"wet": [0.55, 1.0], "shade": [0.0, 0.5]}
 }

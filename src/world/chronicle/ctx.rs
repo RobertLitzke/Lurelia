@@ -179,6 +179,14 @@ impl<'a> EventCtx<'a> {
     /// Compile a structure with slot overrides (cached), level a pad under it,
     /// and add it to the placed list. Returns its index.
     pub fn place(&mut self, def: usize, p: Vec2, bearing: f32, slots: &HashMap<String, String>, age: f32, seed: u32) -> Option<usize> {
+        self.place_on(def, p, bearing, slots, age, seed, None)
+    }
+
+    /// `place`, levelling the pad of a levelled structure at `ground` m
+    /// (absolute) instead of the mean ground under it: a gate tower whose
+    /// floor must meet a bridge deck.
+    #[allow(clippy::too_many_arguments)]
+    pub fn place_on(&mut self, def: usize, p: Vec2, bearing: f32, slots: &HashMap<String, String>, age: f32, seed: u32, ground: Option<f32>) -> Option<usize> {
         let (lib, cause) = (self.lib, self.cause);
         let sd = &lib.structures[def];
         let mut over: Vec<(String, String)> = slots.iter().filter(|(k, _)| sd.slots.contains_key(*k)).map(|(k, v)| (k.clone(), v.clone())).collect();
@@ -211,7 +219,7 @@ impl<'a> EventCtx<'a> {
                 sum.1 += 1;
             }
         }
-        let mut g = sum.0 / sum.1.max(1) as f32;
+        let mut g = ground.unwrap_or(sum.0 / sum.1.max(1) as f32);
         let mut lift = 0;
         if sd.base.as_deref() == Some("sea") {
             g = f.sea - 1.0;

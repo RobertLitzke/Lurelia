@@ -22,15 +22,16 @@
     "flee_speed": 10.0,
     "wary": 12.0,
     "flightiness": 1.0,
-    "group": null
+    "group": null,
+    "voice": {"calls": [{"cry": "screech", "on": "idle", "hours": "dawn", "size": 0.6, "every_s": [60, 200]}]}
   },
   "like": "razorbill",
   "scale": 0.6,
   "extra_ops": [
-    {"op": "ellipsoid", "centre": [16, 11.6, 5.4], "radius": [1.4, 2, 2.6], "mat": "air", "part": "head"},
-    {"op": "ellipsoid", "centre": [16, 11.6, 6.4], "radius": [0.7, 0.7, 1.6], "mat": "bill", "part": "head"},
-    {"op": "recolour", "at": [12, 5, 9], "until": [15, 10, 13], "from": "body", "to": "mottle"},
-    {"op": "recolour", "at": [17, 7, 12], "until": [20, 12, 16], "from": "body", "to": "mottle"},
-    {"op": "recolour", "at": [13, 4, 16], "until": [18, 9, 20], "from": "body", "to": "mottle"}
+    {"op": "ellipsoid", "centre": [24.0, 16.571, 6.857], "radius": [2.0, 2.857, 3.714], "mat": "air", "part": "head"},
+    {"op": "ellipsoid", "centre": [24.0, 16.571, 8.286], "radius": [1.0, 1.0, 2.286], "mat": "bill", "part": "head"},
+    {"op": "recolour", "at": [18, 7, 12], "until": [23, 14, 18], "from": "body", "to": "mottle"},
+    {"op": "recolour", "at": [25, 10, 16], "until": [30, 17, 22], "from": "body", "to": "mottle"},
+    {"op": "recolour", "at": [20, 6, 22], "until": [27, 13, 28], "from": "body", "to": "mottle"}
   ]
 }

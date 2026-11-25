@@ -1,0 +1,15 @@
+{
+  "name": "sapling_conifer",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A young conifer near the tree that seeded it (placement v2 stand structure): a narrow cone from knee to twice head height. It wears its parent's bark and needles, so one shape stands for every conifer's young.",
+  "form": "sapling",
+  "height": [1.0, 3.4],
+  "trunk_radius": [0.05, 0.08],
+  "crown_radius": [0.45, 0.85],
+  "bark": "bark",
+  "leaf": "dark_needles",
+  "max_slope": 0.9,
+  "crown_base": 0.1,
+  "whorls": [4, 7]
+}

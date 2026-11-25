@@ -1,0 +1,13 @@
+{
+  "name": "meadow",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Grassy openings rich in flowers, in woods or by villages.",
+  "wet": 0.45,
+  "soil": 0.55,
+  "shade": 0.05,
+  "rock": 0.0,
+  "disturbed": 0.05,
+  "open": 0.9,
+  "forage": ["graze", "nectar", "seed"]
+}

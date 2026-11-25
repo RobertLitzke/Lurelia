@@ -47,6 +47,9 @@ pub struct Record {
     pub group: Option<u32>,
     pub morph: Option<crate::variety::Morph>,
     pub coat: Option<Coat>,
+    /// Kept with the morph: spawn.rs `roll_morphs` gives a sex only to an
+    /// animal with no Morph, so one put back with its Morph needs its own.
+    pub sex: Option<super::sex::Sex>,
 }
 
 #[derive(Default)]
@@ -60,8 +63,8 @@ impl Tracked {
     /// Remember the large animal `e` before it is despawned. Anything that
     /// is not a living walker is not kept.
     pub fn remember(&mut self, world: &hecs::World, e: hecs::Entity) {
-        let mut q = world.query_one::<(&Critter, &Creature, &Look, &Body, Option<&Age>, Option<&Kin>, Option<&crate::variety::Morph>, Option<&Coat>)>(e);
-        let Ok((crit, c, look, body, age, kin, morph, coat)) = q.get() else {
+        let mut q = world.query_one::<(&Critter, &Creature, &Look, &Body, Option<&Age>, Option<&Kin>, Option<&crate::variety::Morph>, Option<&Coat>, Option<&super::sex::Sex>)>(e);
+        let Ok((crit, c, look, body, age, kin, morph, coat, sex)) = q.get() else {
             return;
         };
         let stage = age.map_or(Stage::Adult, |a| a.stage);
@@ -86,6 +89,7 @@ impl Tracked {
             group: kin.map(|k| k.group),
             morph: morph.cloned(),
             coat: coat.copied(),
+            sex: sex.copied(),
         });
     }
 
@@ -137,6 +141,9 @@ impl Tracked {
             if let Some(c) = r.coat {
                 let _ = world.insert_one(e, c);
             }
+            if let Some(s) = r.sex {
+                let _ = world.insert_one(e, s);
+            }
             put += 1;
         }
         self.restored += put;
@@ -169,6 +176,7 @@ mod tests {
             group: Some(7),
             morph: None,
             coat: None,
+            sex: None,
         }
     }
 

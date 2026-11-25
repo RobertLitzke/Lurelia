@@ -1,0 +1,12 @@
+{
+  "name": "bare_rock",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Cliffs, scree, slickrock and badland: stone at the surface, thin soil in cracks.",
+  "wet": 0.15,
+  "soil": 0.5,
+  "shade": 0.0,
+  "rock": 0.85,
+  "disturbed": 0.0,
+  "open": 1.0
+}

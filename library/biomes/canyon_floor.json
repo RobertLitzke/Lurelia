@@ -1,12 +1,14 @@
 {
   "name": "canyon_floor",
-  "version": 3,
+  "version": 4,
   "introduced_by": "redrock",
   "notes": "The Sorrel's floodplain on the canyon floor: cottonwood and willow, tamarisk lower down.",
+  "habitat": "riparian",
   "priority": 7,
   "rules": {"river": [0, 14], "elev": [0, 70]},
   "surface": "wash_sand",
   "subsurface": "wash_sand",
+  "soil": 0.6,
   "map_color": [120, 150, 80],
   "plants": [
     {"plant": "hanging_vine", "density": 0.06, "placement": {"verb": "scatter", "params": {}}},
@@ -14,7 +16,9 @@
     {"plant": "tamarisk", "density": 0.01, "placement": {"verb": "riparian", "params": {"width": 5}}},
     {"plant": "rabbitbrush", "density": 0.01, "placement": {"verb": "scatter", "params": {}}},
     {"plant": "rock_lichen", "density": 0.06},
-    {"plant": "desert_willow", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 10}}}
+    {"plant": "desert_willow", "density": 0.004, "placement": {"verb": "riparian", "params": {"width": 10}}},
+    {"plant": "willow", "density": 0.003, "placement": {"verb": "riparian", "params": {"width": 8}}},
+    {"plant": "osier", "density": 0.005, "placement": {"verb": "riparian", "params": {"width": 6}}}
   ],
   "creatures": [
     {"creature": "heron", "count": 1},

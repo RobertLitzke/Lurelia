@@ -14,6 +14,7 @@ line as the agent's prompt, unchanged otherwise.
 | Rework existing structures | `structure_rework.md` | `{STRUCTURES}` (names and their worlds) | two to four structures per agent |
 | Add new buildings to a town | `new_structure.md` | `{WORLD}`, `{TOWN}`, `{BUILDINGS}`, `{PLACING}` | one per world, since it edits that world's chronicle |
 | Improve a creature's model | `creature_rework.md` | `{NAME}`, `{WORLD}`, `{CHILDREN}`, `{FOCUS}` | one per creature family, since children inherit the parent's ops |
+| Move a creature family to the voxel rule and decimation (docs/CREATURES.md "Model resolution and decimation"); also for any new creature | `creature_lod.md` | `{NAME}`, `{WORLD}`, `{CHILDREN}`, `{RESCALE}`, `{FOCUS}`, `{EXE}` | one per family, after running `tools/creature_rescale.py` on its root |
 | Improve plants | `plant_rework.md` | `{PLANTS}`, `{WORLD}`, `{FOCUS}` | two to four plants of one form or one biome per agent |
 | Improve a code-drawn feature | `feature_rework.md` | `{EVENT}`, `{FILES}`, `{INSTANCES}`, `{FOCUS}`, `{TARGET}` | one per event kind, since every world shares its Rust file |
 

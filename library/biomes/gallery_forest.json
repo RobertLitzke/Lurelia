@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "thornpan",
   "notes": "Gallery forest: closed high forest along the shaded bank of the upper river, figs rooted into the scarp, vines, ferns, and no view out of it at all.",
+  "habitat": "tropical_forest",
   "priority": 18,
   "rules": {"region": "green_bank", "river": [0, 70], "elev": [0.5, 40]},
   "surface": "jungle_floor",
   "subsurface": "dirt",
+  "soil": 0.55,
   "map_color": [56, 92, 54],
   "plants": [
     {"plant": "banyan", "density": 0.012, "placement": {"verb": "scatter", "params": {}}},

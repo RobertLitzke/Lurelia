@@ -16,5 +16,6 @@
   "fill": 0.85,
   "spread": 1.0,
   "limb": 0.5,
-  "max_slope": 1.0
+  "max_slope": 1.0,
+  "site": {"wet": [0.2, 0.9], "rock": [0.0, 0.6]}
 }

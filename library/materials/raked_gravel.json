@@ -1,0 +1,16 @@
+{
+  "name": "raked_gravel",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Raked gravel in a temple garden: pale grey, combed into ripples round the stones.",
+  "smooth": true,
+  "crisp": true,
+  "texture": {
+    "pattern": "ripples",
+    "base": [200, 198, 190],
+    "alt": [170, 168, 160],
+    "scale": 6,
+    "contrast": 0.8,
+    "calm": {"base": [206, 204, 196], "alt": [178, 176, 168]}
+  }
+}

@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "redrock",
   "notes": "A field of wind-blown coral-pink sand in the south-west: bare crests and slip faces, a few tough plants in the troughs, more toward the edges where the sand thins over the desert.",
+  "habitat": "dunes",
   "priority": 3,
   "rules": {"region": "dunes"},
   "surface": "coral_sand",
   "subsurface": "coral_sand",
+  "soil": 0.8,
   "map_color": [222, 160, 128],
   "plants": [
     {"plant": "sagebrush", "density": 0.004, "placement": {"verb": "edge", "params": {"width": 30, "inner": 0.15}}},

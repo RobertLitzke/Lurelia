@@ -58,6 +58,7 @@
 
 mod lean;
 pub use lean::{Thread, THREAD_MAX_R};
+pub mod decimate;
 pub mod quad;
 pub mod sprites;
 
@@ -555,13 +556,23 @@ pub fn ground_height(at: impl Fn(isize, isize, isize) -> u8, x: f32, z: f32, y: 
 /// coordinates as `at`): on gentle unedited ground the corners are exact, not
 /// rounded to quarter voxels as drawn, so a wheel rolls a smooth grade.
 pub fn ground_height_h(at: impl Fn(isize, isize, isize) -> u8, colh: impl Fn(isize, isize) -> Option<f32>, x: f32, z: f32, y: f32) -> Option<f32> {
+    ground_height_with(&at, |px, pz, t| ground_corner(&at, &colh, px, pz, t), x, z, y)
+}
+
+/// The height offset in voxels of the drawn ground's corner at lattice point
+/// (px, pz) on the surface at height t (`ground_height_h`'s corners).
+pub fn ground_corner(at: &impl Fn(isize, isize, isize) -> u8, colh: &impl Fn(isize, isize) -> Option<f32>, px: isize, pz: isize, t: isize) -> f32 {
+    let near = |x, z, t, r| ground_near(at, x, z, t, r);
+    let (q, exact) = corner_raw(at, &near, colh, px, pz, t);
+    exact.unwrap_or(q as f32 / 4.0)
+}
+
+/// `ground_height_h` with its corners from `corner(px, pz, t)`, which a
+/// caller sampling the same ground many times can remember.
+pub fn ground_height_with(at: &impl Fn(isize, isize, isize) -> u8, corner: impl Fn(isize, isize, isize) -> f32, x: f32, z: f32, y: f32) -> Option<f32> {
     let (cx, cz) = (x.floor() as isize, z.floor() as isize);
-    let near = |x, z, t, r| ground_near(&at, x, z, t, r);
-    let t = near(cx, cz, y.round() as isize, 2)?;
-    let o = |px, pz| {
-        let (q, exact) = corner_raw(&at, &near, &colh, px, pz, t);
-        exact.unwrap_or(q as f32 / 4.0)
-    };
+    let t = ground_near(at, cx, cz, y.round() as isize, 2)?;
+    let o = |px, pz| corner(px, pz, t);
     let (h0, h1, h2, h3) = (o(cx, cz), o(cx, cz + 1), o(cx + 1, cz + 1), o(cx + 1, cz));
     let (fx, fz) = (x - cx as f32, z - cz as f32);
     // Triangles (0, 1, 2) and (0, 2, 3), split along (x, z) - (x+1, z+1).
@@ -2099,5 +2110,61 @@ mod mesh_bench {
             }
             println!("smooth {smooth}: {best:.3} ms/chunk over {} chunks", chunks.len());
         }
+    }
+
+    /// Meshing a real world's columns with their leaning stems, one thread,
+    /// and a hash of every quad, so a faster lean.rs can be checked to draw
+    /// the same stems:
+    /// `WORLD=saurischia AT=330,600 cargo test --release lean_world -- --ignored --nocapture`.
+    #[test]
+    #[ignore]
+    fn lean_world() {
+        use crate::world::gen::GenScratch;
+        let name = std::env::var("WORLD").unwrap_or_else(|_| "saurischia".into());
+        let at: Vec<f32> = std::env::var("AT").unwrap_or_else(|_| "330,600".into()).split(',').filter_map(|s| s.parse().ok()).collect();
+        let _lock = crate::world::matlib::table_lock();
+        crate::worldload::select(&name);
+        let loaded = crate::worldload::load(&name).expect("world loads");
+        let g = Generator::with_world(loaded.world.clone());
+        let (cx, cz) = ((at[0] * 4.0 / 32.0).floor() as i32, (at[1] * 4.0 / 32.0).floor() as i32);
+        let mut scratch = GenScratch::default();
+        let mut chunks = Vec::new();
+        for dz in -3..=3 {
+            for dx in -3..=3 {
+                let key = ColKey { lod: 0, x: cx + dx, z: cz + dz };
+                let trees = g.tube_trees(key);
+                g.gen_column_with(key, None, &mut scratch, |cy, padded, colh| {
+                    let (threads, own) = g.chunk_threads(&trees, key, cy);
+                    chunks.push((Box::new(*padded), colh.to_vec(), threads, own));
+                });
+            }
+        }
+        let mut m = Mesh::default();
+        let (mut best, mut lean, mut hash, mut quads) = (f64::MAX, 0u64, 0u64, 0usize);
+        for _ in 0..3 {
+            MESH_NANOS[0].store(0, std::sync::atomic::Ordering::Relaxed);
+            let t = std::time::Instant::now();
+            (hash, quads) = (0xcbf2_9ce4_8422_2325, 0);
+            for (v, colh, threads, own) in &chunks {
+                mesh_chunk_t(v, true, Some(colh), true, threads, own, &mut m);
+                quads += m.quads.len();
+                for q in &m.quads {
+                    for &w in q {
+                        hash = (hash ^ w as u64).wrapping_mul(0x100_0000_01b3);
+                    }
+                }
+            }
+            let ms = t.elapsed().as_secs_f64() * 1e3;
+            if ms < best {
+                best = ms;
+                lean = MESH_NANOS[0].load(std::sync::atomic::Ordering::Relaxed);
+            }
+        }
+        let cols = 49.0;
+        println!(
+            "{name} at {at:?}: meshing {:.2} ms a column, lean {:.2} ms; {quads} quads, hash {hash:016x}",
+            best / cols,
+            lean as f64 / 1e6 / cols
+        );
     }
 }

@@ -1,0 +1,17 @@
+{
+  "name": "bromeliad",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Tank bromeliads on cloud-forest trunks: rosettes of stiff leaves, green with red hearts.",
+  "smooth": false,
+  "passable": true,
+  "sprites": "none",
+  "texture": {
+    "pattern": "blotch",
+    "base": [92, 126, 58],
+    "alt": [178, 58, 58],
+    "scale": 4,
+    "contrast": 1.0,
+    "calm": {"base": [98, 130, 62], "alt": [184, 72, 64]}
+  }
+}

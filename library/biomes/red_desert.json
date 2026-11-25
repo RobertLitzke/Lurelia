@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "redrock",
   "notes": "The open sandy bench south of the Red Cliffs: sagebrush, scattered juniper, yucca, boulders.",
+  "habitat": "desert_scrub",
   "priority": 1,
   "rules": {},
   "surface": "red_sand",
   "subsurface": "red_sand",
+  "soil": 0.5,
   "map_color": [206, 124, 84],
   "plants": [
     {

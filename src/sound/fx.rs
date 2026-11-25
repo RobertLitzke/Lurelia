@@ -64,8 +64,10 @@ impl Report {
             FireKind::Beam => Report::Pulse,
             FireKind::Hitscan if f.range < 6.0 => Report::Swing,
             FireKind::Hitscan if f.rpm >= 1000.0 => Report::Minigun,
-            FireKind::Hitscan if f.damage * f.pellets.max(1) as f32 >= 40.0 => Report::Sniper,
+            // Buckshot before the heavy round: nine pellets add up to a
+            // rifle's worth and must not sound like one.
             FireKind::Hitscan if f.pellets > 1 => Report::Scatter,
+            FireKind::Hitscan if f.damage * f.pellets.max(1) as f32 >= 40.0 => Report::Sniper,
             FireKind::Hitscan => Report::Pistol,
             FireKind::Shell if goo => Report::Goo,
             FireKind::Shell if splash >= 4.0 => Report::Rocket,
@@ -162,6 +164,17 @@ pub enum Kind {
     Lap(bool),
     /// Home: the race finished.
     Finish,
+    /// An animal's call (sound/call.rs), on the wildlife bus: what kind, the
+    /// caller's size (1 as the kind is made), the seed that makes it this
+    /// call, and the species (an index into `Entities::species`, or
+    /// `u16::MAX` for none) for the debug list. Posting the same key and
+    /// seed again moves the call rather than starting another.
+    Call {
+        cry: super::call::Cry,
+        size: f32,
+        seed: u32,
+        who: u16,
+    },
 }
 
 /// A sound posted by the game. `at` is where it happened, or None for a
@@ -210,7 +223,7 @@ impl Noise {
     pub fn beam(at: Vec3, f: &FireDef, by: usize) -> Noise {
         let r = Report::of(f);
         // The bore drones for as long as it is held, so it sits well under
-        // a shot that is over in a moment: 5 dB under the pulse gun.
+        // a shot that is over in a moment: 5 dB under the arc gun.
         let gain = if r == Report::Bore { 0.45 } else { 0.8 };
         Noise {
             kind: Kind::Beam(r),
@@ -241,6 +254,19 @@ impl Noise {
             gain: 0.7,
             key: 2000 + key,
             pitch: 0.6 + 0.9 * rpm.clamp(0.0, 1.0),
+        }
+    }
+
+    /// An animal's call from `at`. `key` is the caller (nonzero), so a call
+    /// posted again as it moves follows it; `boost` raises a marquee call,
+    /// dB.
+    pub fn call(at: Vec3, cry: super::call::Cry, size: f32, seed: u32, who: u16, key: u32, boost: f32) -> Noise {
+        Noise {
+            kind: Kind::Call { cry, size, seed, who },
+            at: Some(at),
+            gain: super::call::gain_of(cry.spl(), boost),
+            key,
+            pitch: 1.0,
         }
     }
 
@@ -769,6 +795,8 @@ fn recipe(k: Kind) -> Recipe {
         Dig(Ground::Stone) => r(&[band(2100.0, 1.0, 0.8, 0.03), low(600.0, 0.7, 0.05), later(band(3500.0, 1.0, 0.3, 0.06), 0.03)], 0.4),
         Dig(_) => r(&[low(800.0, 0.9, 0.06), band(1500.0, 0.8, 0.4, 0.08)], 0.3),
         Place => r(&[low(450.0, 0.9, 0.04), band(1300.0, 2.0, 0.5, 0.02)], 0.3),
+        // Played by sound/call.rs, never from a recipe.
+        Call { .. } => r(&[], 0.0),
     }
 }
 
@@ -811,9 +839,16 @@ pub fn place(n: &Noise, eye: Vec3, facing: [f32; 2], pitch: f32) -> Option<Shot>
             // quieter than the gun that fired it.
             let near = match n.kind {
                 Kind::Burst(r) => (r * 2.0).max(2.5),
+                Kind::Call { .. } => 2.0,
                 _ => 2.5,
             };
-            let att = near / d.max(near);
+            let mut att = near / d.max(near);
+            // A call carries far enough for the ground and the air to
+            // matter: a few dB a kilometre more, and the top taken first.
+            let call = matches!(n.kind, Kind::Call { .. });
+            if call {
+                att *= 10f32.powf(-super::call::EXCESS_DB_M * d / 20.0);
+            }
             let flat = glam::Vec2::new(to.x, to.z);
             let fl = glam::Vec2::new(facing[0], facing[1]).normalize_or(glam::Vec2::NEG_Y);
             let right = glam::Vec2::new(-fl.y, fl.x);
@@ -821,15 +856,18 @@ pub fn place(n: &Noise, eye: Vec3, facing: [f32; 2], pitch: f32) -> Option<Shot>
             let side = if flat.length() > 0.3 { flat.normalize().dot(right) * (d / (d + 1.5)) } else { 0.0 };
             // Behind the listener, a little duller.
             let behind = if flat.length() > 0.3 && flat.normalize().dot(fl) < 0.0 { 0.75 } else { 1.0 };
-            (n.gain * att, side, 18_000.0 / (1.0 + d / 60.0) * behind, d / 343.0)
+            let cut = if call { super::call::air_cut(d) } else { 18_000.0 / (1.0 + d / 60.0) };
+            (n.gain * att, side, cut * behind, d / 343.0)
         }
     };
-    if gain < 0.004 {
+    // Calls go further down before they are let go: the woods are quiet.
+    let floor = if matches!(n.kind, Kind::Call { .. }) { 0.0005 } else { 0.004 };
+    if gain < floor {
         return None;
     }
     Some(Shot {
         kind: n.kind,
-        gain: gain.min(2.0),
+        gain: gain.min(if matches!(n.kind, Kind::Call { .. }) { 4.0 } else { 2.0 }),
         pan: side,
         cut,
         delay,
@@ -1135,7 +1173,7 @@ mod tests {
         assert_eq!(of("goo_gun", false), Report::Goo);
         assert_eq!(of("skipjack", false), Report::Disc);
         assert_eq!(of("scrap_gun", false), Report::Scatter);
-        assert_eq!(of("pulse_gun", false), Report::Pulse);
+        assert_eq!(of("arc_gun", false), Report::Pulse);
         assert_eq!(of("bore", false), Report::Bore);
         assert_eq!(of("digger", false), Report::Swing);
     }

@@ -1,13 +1,15 @@
 {
   "name": "lizard",
-  "version": 1,
+  "version": 2,
   "introduced_by": "redrock",
-  "notes": "Side-blotched lizard: suns on warm rock and darts off when you come close.",
-  "voxel": 0.014,
+  "notes": "Side-blotched lizard: suns on warm rock and darts off when you come close. v2: segment legs and tail, flat feet, blotches by recolour.",
+  "voxel": 0.0075,
+  "grid": [32, 32, 60],
   "half_w": 0.08,
   "height": 0.06,
   "colors": {"rabbit": [140, 118, 96], "dark": [36, 28, 24], "rabbit_light": [210, 196, 176]},
   "behaviour": {
+    "displays": [{"kind": "push_up"}],
     "movement": "skulk",
     "walk_speed": 0.5,
     "flee_speed": 4,
@@ -16,33 +18,76 @@
     "flees_from": ["player", "coyote", "roadrunner"]
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [16, 2.5, 15], "radius": [2.6, 1.6, 6], "mat": "rabbit"},
-    {"op": "ellipsoid", "centre": [16, 3, 7.5], "radius": [2, 1.5, 2.6], "mat": "rabbit", "part": "head"},
-    {"op": "box", "from": [15, 1, 20], "to": [17, 3, 25], "mat": "rabbit", "part": "tail"},
-    {"op": "box", "from": [15, 1, 25], "to": [17, 2, 31], "mat": "rabbit", "part": "tail_tip"},
-    {"op": "box", "from": [12, 0, 10], "to": [14, 2, 12], "mat": "rabbit", "part": "leg_fl"},
-    {"op": "box", "from": [18, 0, 10], "to": [20, 2, 12], "mat": "rabbit", "part": "leg_fr"},
-    {"op": "box", "from": [12, 0, 18], "to": [14, 2, 20], "mat": "rabbit", "part": "leg_hl"},
-    {"op": "box", "from": [18, 0, 18], "to": [20, 2, 20], "mat": "rabbit", "part": "leg_hr"},
-    {"op": "recolour_below", "y": 2, "from": "rabbit", "to": "rabbit_light"},
-    {"op": "set", "at": [14, 3, 12], "mat": "dark"},
-    {"op": "set", "at": [18, 3, 14], "mat": "dark"},
-    {"op": "set", "at": [15, 4, 17], "mat": "dark"},
-    {"op": "set", "at": [17, 3, 10], "mat": "dark"},
-    {"op": "set", "at": [15, 4, 6], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [17, 4, 6], "mat": "dark", "part": "head"}
+    {"op": "ellipsoid", "centre": [16, 4.8, 28.1], "radius": [5, 3.1, 11.2], "mat": "rabbit"},
+    {"op": "ellipsoid", "centre": [16, 5.4, 14.6], "radius": [3.7, 2.8, 4.8], "mat": "rabbit", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 4.9, 11.4], "radius": [2.5, 1.9, 3.2], "mat": "rabbit", "part": "head"},
+    {
+      "op": "segment",
+      "points": [[16, 4.2, 36], [16, 3.9, 41], [16, 3.4, 46.8]],
+      "radius": 2.5,
+      "mat": "rabbit",
+      "part": "tail"
+    },
+    {
+      "op": "segment",
+      "points": [[16, 3.4, 46.5], [16, 2.6, 52], [16, 1.8, 58]],
+      "radius": 1.5,
+      "mat": "rabbit",
+      "part": "tail_tip"
+    },
+    {
+      "op": "segment",
+      "points": [[12.5, 3.2, 21], [8.5, 2.4, 20], [7.5, 1.0, 18.6]],
+      "radius": 1.5,
+      "mat": "rabbit",
+      "part": "leg_fl"
+    },
+    {"op": "ellipsoid", "centre": [7.4, 0.8, 17.4], "radius": [1.9, 0.8, 2.6], "mat": "rabbit", "part": "leg_fl"},
+    {
+      "op": "segment",
+      "points": [[12.5, 3.2, 35.5], [8.2, 2.4, 37], [7.6, 1.0, 35]],
+      "radius": 1.8,
+      "mat": "rabbit",
+      "part": "leg_hl"
+    },
+    {"op": "ellipsoid", "centre": [7.4, 0.8, 33.6], "radius": [2.0, 0.8, 2.8], "mat": "rabbit", "part": "leg_hl"},
+    {
+      "op": "segment",
+      "points": [[19.5, 3.2, 21], [23.5, 2.4, 20], [24.5, 1.0, 18.6]],
+      "radius": 1.5,
+      "mat": "rabbit",
+      "part": "leg_fr"
+    },
+    {"op": "ellipsoid", "centre": [24.6, 0.8, 17.4], "radius": [1.9, 0.8, 2.6], "mat": "rabbit", "part": "leg_fr"},
+    {
+      "op": "segment",
+      "points": [[19.5, 3.2, 35.5], [23.8, 2.4, 37], [24.4, 1.0, 35]],
+      "radius": 1.8,
+      "mat": "rabbit",
+      "part": "leg_hr"
+    },
+    {"op": "ellipsoid", "centre": [24.6, 0.8, 33.6], "radius": [2.0, 0.8, 2.8], "mat": "rabbit", "part": "leg_hr"},
+    {"op": "recolour_below", "y": 3, "from": "rabbit", "to": "rabbit_light"},
+    {"op": "recolour", "at": [10, 3, 24], "until": [14, 7, 28], "from": "rabbit", "to": "dark"},
+    {"op": "recolour", "at": [10, 3, 30], "until": [14, 6, 32], "from": "rabbit", "to": "dark"},
+    {"op": "recolour", "at": [11, 6, 11], "until": [13, 8, 13], "from": "rabbit", "to": "dark"},
+    {"op": "recolour", "at": [18, 3, 24], "until": [22, 7, 28], "from": "rabbit", "to": "dark"},
+    {"op": "recolour", "at": [18, 3, 30], "until": [22, 6, 32], "from": "rabbit", "to": "dark"},
+    {"op": "recolour", "at": [19, 6, 11], "until": [21, 8, 13], "from": "rabbit", "to": "dark"},
+    {"op": "recolour", "at": [14, 6, 29], "until": [18, 9, 31], "from": "rabbit", "to": "dark"},
+    {"op": "recolour", "at": [14, 6, 34], "until": [18, 9, 36], "from": "rabbit", "to": "dark"}
   ],
   "rig": {
     "plan": "sprawler",
     "bones": [
       {"name": "body", "role": "root"},
-      {"name": "head", "role": "head", "parent": "body", "joint": [16, 3, 10]},
-      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 2, 20]},
-      {"name": "tail_tip", "role": "tail", "parent": "tail", "joint": [16, 1.5, 25]},
-      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [14, 1, 11], "side": "l", "pair": 0},
-      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [18, 1, 11], "side": "r", "pair": 0},
-      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [14, 1, 19], "side": "l", "pair": 1},
-      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [18, 1, 19], "side": "r", "pair": 1}
+      {"name": "head", "role": "head", "parent": "body", "joint": [16, 5.4, 18.6]},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.0, 3.733, 37.467]},
+      {"name": "tail_tip", "role": "tail", "parent": "tail", "joint": [16.0, 2.8, 46.8]},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [12.267, 1.867, 20.667], "side": "l", "pair": 0},
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [19.733, 1.867, 20.667], "side": "r", "pair": 0},
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [12.267, 1.867, 35.6], "side": "l", "pair": 1},
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [19.733, 1.867, 35.6], "side": "r", "pair": 1}
     ]
   }
 }

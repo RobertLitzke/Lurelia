@@ -1,0 +1,325 @@
+{
+  "name": "bb_drift_wall",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "A heap of 19 storm-thrown trunks lying across each other, 30 m long and 5.5 m high, with gaps under the upper trunks that you can walk through and steps up the logs to the top. Built from logs and discs only.",
+  "size": [136, 24, 40],
+  "anchor": [68, 0, 20],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"wood": "silver_deadwood", "split": "stick_wood"},
+  "ops": [
+    {
+      "op": "log",
+      "base": [6.11, 4, 9.56],
+      "radius": 4,
+      "length": 56,
+      "axis": "x",
+      "yaw": 5,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [66.22, 3.5, 31.66],
+      "radius": 3.5,
+      "length": 60,
+      "axis": "x",
+      "yaw": -7,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [62.0, 4, 16.0],
+      "radius": 4,
+      "length": 20,
+      "axis": "x",
+      "yaw": 90,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [81.92, 4, 5.18],
+      "radius": 4,
+      "length": 24,
+      "axis": "x",
+      "yaw": 80,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [42.01, 3, 4.37],
+      "radius": 3,
+      "length": 36,
+      "axis": "x",
+      "yaw": 2,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [4.18, 3.5, 32.08],
+      "radius": 3.5,
+      "length": 24,
+      "axis": "x",
+      "yaw": -10,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [112.94, 3, 3.77],
+      "radius": 3,
+      "length": 20,
+      "axis": "x",
+      "yaw": 25,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [5.9, 10.5, 19.13],
+      "radius": 2.5,
+      "length": 30,
+      "axis": "x",
+      "yaw": -20,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [31.09, 12.5, 17.56],
+      "radius": 4.5,
+      "length": 70,
+      "axis": "x",
+      "yaw": 4,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [79.62, 10.5, 10.53],
+      "radius": 3.5,
+      "length": 40,
+      "axis": "x",
+      "yaw": 35,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [100.74, 8.5, 20.5],
+      "radius": 3,
+      "length": 26,
+      "axis": "x",
+      "yaw": -30,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [28.93, 8, 15.57],
+      "radius": 2.5,
+      "length": 22,
+      "axis": "x",
+      "yaw": 50,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [5.26, 8, 14.48],
+      "radius": 2.5,
+      "length": 16,
+      "axis": "x",
+      "yaw": 70,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [30.06, 19.5, 25.3],
+      "radius": 3.5,
+      "length": 44,
+      "axis": "x",
+      "yaw": -25,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [65.52, 20, 36.34],
+      "radius": 3,
+      "length": 50,
+      "axis": "x",
+      "yaw": -35,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [60.9, 15.5, 5.87],
+      "radius": 2,
+      "length": 30,
+      "axis": "x",
+      "yaw": 20,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [18.41, 15, 18.89],
+      "radius": 2.2,
+      "length": 24,
+      "axis": "x",
+      "yaw": 15,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [97.12, 17, 33.07],
+      "radius": 2.2,
+      "length": 24,
+      "axis": "x",
+      "yaw": -25,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [93.0, 18, 3.34],
+      "radius": 2.2,
+      "length": 20,
+      "axis": "x",
+      "yaw": 60,
+      "mat": "wood",
+      "part": "wood"
+    },
+    {"op": "disc", "centre": [7, 5, 14], "radius": 5, "thick": 2, "axis": "x", "mat": "wood", "part": "wood"},
+    {
+      "op": "log",
+      "base": [27.03, 7.8, 11.39],
+      "radius": 0.5,
+      "length": 14,
+      "axis": "x",
+      "yaw": 5,
+      "mat": "split",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [89.05, 6.8, 28.85],
+      "radius": 0.5,
+      "length": 14,
+      "axis": "x",
+      "yaw": -7,
+      "mat": "split",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [62.0, 7.8, 21.0],
+      "radius": 0.5,
+      "length": 10.0,
+      "axis": "x",
+      "yaw": 90,
+      "mat": "split",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [82.96, 7.8, 11.09],
+      "radius": 0.5,
+      "length": 12.0,
+      "axis": "x",
+      "yaw": 80,
+      "mat": "split",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [53.0, 5.8, 4.76],
+      "radius": 0.5,
+      "length": 14,
+      "axis": "x",
+      "yaw": 2,
+      "mat": "split",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [10.09, 6.8, 31.04],
+      "radius": 0.5,
+      "length": 12.0,
+      "axis": "x",
+      "yaw": -10,
+      "mat": "split",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [117.47, 5.8, 5.89],
+      "radius": 0.5,
+      "length": 10.0,
+      "axis": "x",
+      "yaw": 25,
+      "mat": "split",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [59.02, 16.8, 19.51],
+      "radius": 0.5,
+      "length": 14,
+      "axis": "x",
+      "yaw": 4,
+      "mat": "split",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [90.27, 13.8, 17.98],
+      "radius": 0.5,
+      "length": 14,
+      "axis": "x",
+      "yaw": 35,
+      "mat": "split",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [106.37, 11.3, 17.25],
+      "radius": 0.5,
+      "length": 13.0,
+      "axis": "x",
+      "yaw": -30,
+      "mat": "split",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [43.66, 22.8, 18.96],
+      "radius": 0.5,
+      "length": 14,
+      "axis": "x",
+      "yaw": -25,
+      "mat": "split",
+      "part": "wood"
+    },
+    {
+      "op": "log",
+      "base": [80.27, 22.8, 26.02],
+      "radius": 0.5,
+      "length": 14,
+      "axis": "x",
+      "yaw": -35,
+      "mat": "split",
+      "part": "wood"
+    }
+  ]
+}

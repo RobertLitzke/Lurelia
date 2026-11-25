@@ -1,0 +1,98 @@
+{
+  "name": "quetzal",
+  "version": 2,
+  "introduced_by": "kitehold",
+  "notes": "Resplendent quetzal: a pigeon-sized bird of the cloud forest, iridescent emerald above with a crimson belly, a rounded crest and two green tail streamers about twice its body length. It sits in the canopy and flits from top to top.",
+  "voxel": 0.015,
+  "grid": [46, 32, 82],
+  "half_w": 0.2,
+  "height": 0.3,
+  "colors": {
+    "green": [36, 190, 100, -0.5],
+    "crimson": [190, 24, 40],
+    "primary": [22, 44, 52],
+    "white": [236, 236, 228],
+    "bill": [232, 196, 48],
+    "eye": [14, 12, 12],
+    "legs": [150, 80, 70]
+  },
+  "behaviour": {
+    "displays": [{"kind": "streamer_flight"}],
+    "movement": "flit",
+    "walk_speed": 5,
+    "flee_speed": 9,
+    "wary": 8,
+    "flightiness": 1.0,
+    "fly_height": 0,
+    "flight": "bound",
+    "flees_from": ["player"],
+    "group": {"size": [1, 2], "spacing": 3, "range": 10, "alignment": 1.0, "cohesion": 1.0},
+    "rain": 0.3,
+    "voice": {"calls": [{"cry": "pipe", "on": "idle", "hours": "day", "size": 1.8, "every_s": [60, 200]}]}
+  },
+  "ops": [
+    {"op": "ellipsoid", "centre": [23, 12.5, 32.5], "radius": [5.6, 5.4, 10.5], "mat": "green"},
+    {"op": "ellipsoid", "centre": [23, 12, 27.5], "radius": [5.0, 5.0, 5.0], "mat": "green"},
+    {"op": "ellipsoid", "centre": [23, 11.5, 40], "radius": [3.6, 3.2, 5], "mat": "green"},
+    {"op": "recolour", "at": [16, 5, 25], "until": [31, 12, 45], "from": "green", "to": "crimson"},
+    {"op": "ellipsoid", "centre": [23, 16, 25], "radius": [3.7, 3.6, 3.8], "mat": "green", "part": "head"},
+    {"op": "ellipsoid", "centre": [23, 19.4, 26.2], "radius": [2.3, 2.6, 3.0], "mat": "green", "part": "head"},
+    {"op": "ellipsoid", "centre": [23, 14.6, 20.6], "radius": [1.6, 1.1, 2.6], "mat": "bill", "part": "head"},
+    {"op": "ellipsoid", "centre": [19.6, 16.8, 23.2], "radius": [1.2, 1.3, 1.3], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [26.4, 16.8, 23.2], "radius": [1.2, 1.3, 1.3], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [14.5, 14, 32.5], "radius": [5.8, 1.7, 5.0], "mat": "green", "part": "wing_l"},
+    {"op": "ellipsoid", "centre": [7, 14, 33], "radius": [5.2, 1.4, 4.2], "mat": "primary", "part": "wing_l_tip"},
+    {"op": "ellipsoid", "centre": [31.5, 14, 32.5], "radius": [5.8, 1.7, 5.0], "mat": "green", "part": "wing_r"},
+    {"op": "ellipsoid", "centre": [39, 14, 33], "radius": [5.2, 1.4, 4.2], "mat": "primary", "part": "wing_r_tip"},
+    {"op": "ellipsoid", "centre": [23, 11, 46], "radius": [3.4, 1.8, 6.5], "mat": "green", "part": "tail"},
+    {"op": "recolour", "at": [19, 8, 41], "until": [27, 10, 53], "from": "green", "to": "white"},
+    {
+      "op": "segment",
+      "points": [[21.1, 11.3, 44], [21.1, 10.9, 53], [21.1, 10.5, 62]],
+      "radius": 1.3,
+      "mat": "green",
+      "part": "tail"
+    },
+    {
+      "op": "segment",
+      "points": [[21.1, 10.5, 60], [21.1, 9.5, 70], [21.1, 7.4, 78.3]],
+      "radius": 1.0,
+      "mat": "green",
+      "part": "tail2"
+    },
+    {
+      "op": "segment",
+      "points": [[24.9, 11.3, 44], [24.9, 10.9, 53], [24.9, 10.5, 62]],
+      "radius": 1.3,
+      "mat": "green",
+      "part": "tail"
+    },
+    {
+      "op": "segment",
+      "points": [[24.9, 10.5, 60], [24.9, 9.5, 70], [24.9, 7.4, 78.3]],
+      "radius": 1.0,
+      "mat": "green",
+      "part": "tail2"
+    },
+    {"op": "segment", "points": [[21, 9.5, 32], [21, 6.2, 33]], "radius": 1.1, "mat": "legs", "part": "leg_l"},
+    {"op": "ellipsoid", "centre": [21, 5.6, 32.4], "radius": [1.3, 0.8, 2.3], "mat": "legs", "part": "leg_l"},
+    {"op": "segment", "points": [[25, 9.5, 32], [25, 6.2, 33]], "radius": 1.1, "mat": "legs", "part": "leg_r"},
+    {"op": "ellipsoid", "centre": [25, 5.6, 32.4], "radius": [1.3, 0.8, 2.3], "mat": "legs", "part": "leg_r"}
+  ],
+  "rig": {
+    "plan": "bird",
+    "bones": [
+      {"name": "body", "role": "root"},
+      {"name": "head", "role": "head", "parent": "body", "joint": [23.0, 14.0, 27.667]},
+      {"name": "wing_l", "role": "wing", "parent": "body", "joint": [19.0, 14.0, 31.667], "side": "l"},
+      {"name": "wing_l_tip", "role": "wing", "parent": "wing_l", "joint": [11.0, 14.0, 31.667], "side": "l"},
+      {"name": "wing_r", "role": "wing", "parent": "body", "joint": [27.0, 14.0, 31.667], "side": "r"},
+      {"name": "wing_r_tip", "role": "wing", "parent": "wing_r", "joint": [35.0, 14.0, 31.667], "side": "r"},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [23.0, 11.333, 41.0]},
+      {"name": "tail2", "role": "tail", "parent": "tail", "joint": [23.0, 10.6, 61.0]},
+      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [21.0, 8.0, 32.333], "side": "l", "pair": 0},
+      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [25.0, 8.0, 32.333], "side": "r", "pair": 0}
+    ]
+  },
+  "vary": {"size": 0.06, "shade": 0.05}
+}

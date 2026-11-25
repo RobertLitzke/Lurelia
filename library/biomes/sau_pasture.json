@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saurischia",
   "notes": "Pasture and hay round the farms and Spray Meadow, with hawthorn along the edges and the odd ginkgo.",
+  "habitat": "pasture",
   "priority": 18,
   "rules": {"region": "pasture"},
   "surface": "meadow_grass",
   "subsurface": "dirt",
   "fringe": 6,
+  "soil": 0.6,
   "map_color": [134, 170, 84],
   "plants": [
     {"plant": "hawthorn", "density": 0.002, "placement": {"verb": "edge", "params": {"width": 4, "inner": 0.0}}},
@@ -23,5 +25,6 @@
     {"creature": "triceratops", "count": 8},
     {"creature": "compsognathus", "count": 6},
     {"creature": "skylark", "count": 6}
-  ]
+  ],
+  "realm": {"real": 1.0}
 }

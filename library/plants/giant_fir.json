@@ -10,5 +10,6 @@
   "max_slope": 0.6,
   "like": "fir",
   "sweep": "ragged",
-  "affords": ["perch"]
+  "affords": ["perch"],
+  "site": {"wet": [0.3, 0.8], "exposure": [0.4, 1.0]}
 }

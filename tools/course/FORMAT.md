@@ -41,6 +41,7 @@ line (`1400 60`).
 | `plateau TOP EDGE x,z x,z x,z ...` | Flat land at height TOP (metres, as `at`) inside the outline, falling to the land round it over EDGE metres outside it: a mesa or a bench with EDGE 3 to 6, a broad rise with 40 or more. Played after the hills, in order, so a later plateau stands on an earlier one. |
 | `point X Z [RISE] [at Y]` | The centreline, **in the order the race runs**. The first point is the start line, and the race heads toward the second. RISE lifts the road above the land there (default 0; negative cuts down). `at Y` gives the road's height outright. |
 | `hour H` | The hour the race is set at (default 14). |
+| `shoulder M` | Land lower than the road is filled up level with it for M m past the run-off (default 10) before it eases away, so the road never has a ditch or a drop beside it; land higher than the road still comes down to it as a bank or a cliff. Decks, tunnels and covered stretches leave the land alone (a pier keeps its water). `shoulder 0` turns it off. |
 | `lights EVERY` | Lamps along the road after dark, one every EVERY metres (about 25), alternating sides, each on a post (the gate's `post` material, or `bridge_steel`) with an arm over the kerb and a glass head. Where the ground beside the road is more than 2 m above or below it (a deck, an embankment, a cutting, a tunnel) the light hangs with no post. |
 | `grid N` | Grid boxes painted behind the line (default 8). |
 
@@ -67,6 +68,18 @@ What makes a good track:
 
 - **Length.** 1 to 1.5 km is a lap of 50 to 70 s. The kart tops out near
   108 km/h.
+- **Width.** About 14.5 m as a base (`road 14.5`) for a field of six; 12
+  m is tight and anything under 10 m is a squeeze. Vary it with `width`
+  stretches: 16 to 20 m on the start straight, in hairpins and on a
+  landing, so those are forgiving and there's room to pass; 10 to 13 m
+  through a technical run of bends, a lane, a bridge or a town, where a
+  narrow road is the difficulty. Leave the road under a jump at the width
+  `--check` flew it at: a lip much wider than its landing throws karts off
+  the outside lanes clear of the road. Butt neighbouring stretches
+  together (one's TO is the next one's FROM): a short gap between them
+  eases out to the base width and back, a bulge that pinches the road just
+  where the next stretch starts. A railless deck wants the road before it
+  no wider than itself.
 - **Bends.** Nothing under 15 m radius; 20 to 30 m is a good tight corner and
   60 m or more is taken flat out. One hairpin a lap is plenty.
 - **Straights.** One long one (150 m or more) for the start and for
@@ -121,11 +134,15 @@ names any `add` that stands into the road and isn't cut away by a later
 
 | line | what |
 |---|---|
-| `surface FROM TO MAT` | The road is MAT on this stretch: a sand stretch, wet planks, ice. Grip is the material's `surface`: `hardpack`, `rock`, `sand_wet`, `sand_soft`, `grass`, `mud` or `snow`. |
+| `surface FROM TO MAT` | The road is MAT on this stretch, on a deck as on the land: a sand stretch, a plank pier, ice. Use a smooth material (`pier_planks`, not `weathered_planks`): one that isn't draws a sloping road as voxel steps and stands a lip where it meets the next. Grip is the material's `surface`: `hardpack`, `rock`, `sand_wet`, `sand_soft`, `grass`, `mud` or `snow`. |
 | `width FROM TO W` | The road is W wide on this stretch, eased over about 10 m at each end. |
-| `walls FROM TO H` | Wall height on this stretch (0: open), in place of `road`'s. |
+| `walls FROM TO H` | Wall height on this stretch (0: open), in place of `road`'s. On a deck the rail is as high as the walls, 1 m with none, and none at all with a negative H (a railless boardwalk). Behind a wall a kart is out of bounds: it is put back after 3 s. |
 | `verge FROM TO MAT [RUNOFF]` | The run-off on this stretch is MAT (`-` keeps the ground's own), RUNOFF metres wide. |
 | `bank FROM TO K` | Banking on this stretch. |
+| `bank FROM TO deg A` | A fixed bank of A degrees (up to 45, the steepest a voxel slope draws smooth), the outside of the turn up: a bowl's wall. The road is tipped about its inner edge, rising to it over 50 m either side. Use a smooth road material (`"smooth": true`) or it draws as steps a kart can't climb; and no walls, which stand on the centreline's height. 24 degrees is what the race's drivers handle round a 36 m bowl. |
+| `ford FROM TO DEPTH` | The road dips DEPTH under the water's level (its height at the stretch's ends), eased over the first and last quarter, and the race fills the dip with water as the ground loads (race/course.rs). Karts wade (`wade` in the vehicle): water past half a metre slows them hard, and one that floats is drowned and put back. |
+| `flood FROM TO D1 [D2 ...] [dip DEPTH]` | Water over the stretch that changes lap by lap: Dk metres over the road's height at the stretch's ends on lap k (negative: under it, none on the road), laid as the leader starts each lap. With `dip` the road dips as for a ford. A kart that drowns in a flood is put back on its far side, the metres skipped counted. |
+| `landing FROM TO [V] [GAP]` | A landing hill: from the take-off at FROM (a `jump` there sets the launch slope) the road is shaped to the flight of a kart leaving at V m/s (default 30), GAP m (default 3) under its path, meeting it where it falls at 0.7, on down at that slope and curving level by TO. A long drop lands along the ground, as a ski jumper does. |
 | `ramp FROM TO [WIDTH]` | The land is built up or cut down to the road on this stretch, eased out over WIDTH metres either side (default 30), so the road climbs on the land and never on a deck. For a road up onto a plateau. Across flat land it is a causeway; to make a slope of it, put a broad low `plateau` under it. |
 | `tunnel FROM TO [HEIGHT] [mat M] [portal M]` | The road is bored through the land here (above), HEIGHT metres clear (default 6), lined in M (default the wall material), its portals framed in the portal material (default concrete). No walls or run-off inside. |
 
@@ -136,13 +153,21 @@ names any `add` that stands into the road and isn't cut away by a later
 | `items S [ACROSS] [KIND ...]` | A row of pickups across the road at S: ACROSS of them (default 4, or as many KINDs as given), the KINDs from the left: `gun rocket goo block disc boost shield overdrive repair`. Places without a KIND take the next from the race's cycle. With no `items` lines the race puts up to three rows on the straights. |
 | `pad S [left\|centre\|right] [LEN]` | A boost pad starting at S, LEN long (default 6) and 3 m across, in the middle of the road or toward one side. A kart driving over it gets a full drift's kick. Bots with nobody to pass steer for one. |
 | `jump S HEIGHT [LEN] [SKEW]` | A lip across the road: the road curves up HEIGHT over LEN metres (default 8) to S, steepening as it goes (a parabola: no kink where it starts, and 2 x HEIGHT / LEN steep at the lip), then falls back down a slip face, 1 in 2 and at least 3 m long, so a kart too slow to fly rolls down it. Give the ramp twice the length a straight one would need. SKEW turns the lip that many degrees from square, its right side further along (negative: its left), so it can lie along a dune crest that crosses the road at a slant; one side of a kart takes off first. S is where the lip crosses the centreline. `--check` works out where a kart at full speed lands and names a landing on a bend; it also flies karts off the lip from every lane across the road at full speed down to 30%, and names a jump where a wheel hits the ramp in flight or a kart comes down harder than 11 m/s square on (a level landing from full speed is about 9): a landing on the rise to the next crest, or into the next ramp. Put the road's dips about 40 m past each lip, so karts land going downhill. The race's drivers take a jump flat out, where any other crest they ease over. |
+| `jump S HEIGHT [LEN] [SKEW] boost` | A jump meant to be flown from a pad: `--check` flies it at pad speed (about 137 km/h) and judges the landing only at that speed; a kart without the pad is meant to fall short. |
+| `smash S left\|centre\|right OFFSET KIND [LEN] [mat M] [slow K]` | A prop a kart breaks by driving into it: `bale`, `stones`, `gate`, `cane`, `logs`, `crates`, OFFSET metres off the centreline (put it on the inside of a corner). It is stamped in a passable copy of its material, and the race takes its voxels away as a kart reaches it, throws debris and keeps K of the kart's speed: a tight line costs a little on lap 1 and is open after. |
+| `wind FROM TO ACCEL BEARING [GUST]` | A side push of ACCEL m/s² toward BEARING (degrees clockwise from north), steady, or in gusts GUST seconds long every three times that. Dust streams across the road 1.2 s before each gust. |
+| `gravity FROM TO G` | Karts weigh G times their own on this stretch. |
+| `glide FROM TO G` | A kart that leaves the ground here glides until it lands: G of its weight, its fall checked, its path swinging toward its nose and turned by its bank. It is never out of bounds while gliding, and a glide over a loop of road counts as the shortcut it is. |
+| `thermal X Z RADIUS LIFT [BASE]` | Rising air at X, Z: a gliding kart within RADIUS is lifted LIFT m/s². Seeds and leaves rise in it from BASE. |
+| `herd FROM TO SPECIES N OFF1 [OFF2 ...]` | N animals put down along the stretch as the player comes up to it each lap: OFFk metres either side of the centreline on lap k (0: across the road; negative: none that lap). They graze and scatter, and the player's kart shoves them. Each lap's herd takes the place of the last lap's (a lap with no herd clears it), and a restarted race starts with none. |
+| `arch S [SPAN] [HEIGHT] [THICK] [mat M]` | An arch over the road at S, square to it at any angle: its legs just outside the opening (SPAN m across, default the road and kerbs and 4 m), its underside a half ellipse HEIGHT m clear at the middle (default 8), its top squared off 3 m above, THICK m deep along the road (default 5). `--check` gives its clearance over the kerbs and names one under 5 m. Things close to the road and over it fill the chase camera's view: give a course one or two. |
 | `checkpoint S` | A checkpoint. Going past one far out of bounds (more than 15 m past the kerb) gains nothing: the kart's progress waits at the checkpoint and it drives what it skipped again. Without any, there are two, at a third and two thirds of the lap. The HUD's splits are taken at them. |
 
 ## Shapes and structures
 
 | line | what |
 |---|---|
-| `add SHAPE ... [mat M]` | A solid shape (below): `box`, `prism`, `section`, `pyramid`, `stairs`, `ramp`, in the same coordinates as the points, Y in metres. `mat` names its material (default: the wall's). For arches, grandstands, spires, a tunnel's block. |
+| `add SHAPE ... [mat M] [drive]` | A solid shape (below): `box`, `prism`, `section`, `pyramid`, `stairs`, `ramp`, in the same coordinates as the points, Y in metres. `mat` names its material (default: the wall's). For arches, grandstands, spires, a tunnel's block. `drive` marks one karts are meant to drive on (a shoal, a log ramp up to a boardwalk), which the check leaves alone. |
 | `carve SHAPE ...` | The same shape cut out of whatever is there: a tunnel's hollow, a cutting. |
 | `structure NAME X Z [BEARING] [at Y]` | A library structure (`library/structures/`), facing BEARING, on the ground or with its anchor at Y. |
 | `structure NAME along S left\|right OFFSET [TURN] [at Y]` | The same, OFFSET metres off the centreline at S, facing the road (TURN turns it further, degrees). |

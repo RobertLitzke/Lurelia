@@ -181,6 +181,10 @@ pub struct TownKit {
     /// Hedges between fields.
     #[serde(default)]
     pub hedge: Option<String>,
+    /// Library structures for the sheds and shacks in field corners
+    /// (`field_shed` and `field_shack` where the kit names none).
+    #[serde(default)]
+    pub shacks: Vec<String>,
 }
 
 /// What a town or a farm is made of where its kit names nothing. A world
@@ -198,6 +202,8 @@ pub mod town_default {
     pub const FENCE: &str = "timber_fence";
     pub const TOWN_WALL: &str = "dry_stone_wall";
     pub const HEDGE: &str = "hedgerow";
+    /// Sheds in field corners.
+    pub const SHACKS: [&str; 2] = ["field_shed", "field_shack"];
     /// The region a town paints over its parks, for a biome to take.
     pub const PARK_REGION: &str = "city_park";
 }
@@ -234,6 +240,13 @@ impl TownKit {
             vec![town_default::TREE.to_string()]
         } else {
             self.trees.clone()
+        }
+    }
+    pub fn shack_list(&self) -> Vec<String> {
+        if self.shacks.is_empty() {
+            town_default::SHACKS.iter().map(|s| s.to_string()).collect()
+        } else {
+            self.shacks.clone()
         }
     }
     pub fn field_wall_kit(&self) -> &str {

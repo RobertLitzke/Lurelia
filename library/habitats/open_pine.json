@@ -1,0 +1,13 @@
+{
+  "name": "open_pine",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Pines standing apart over grass, kept open by fire.",
+  "wet": 0.3,
+  "soil": 0.4,
+  "shade": 0.3,
+  "rock": 0.1,
+  "disturbed": 0.05,
+  "open": 0.5,
+  "forage": ["browse", "seed"]
+}

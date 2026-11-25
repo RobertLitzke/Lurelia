@@ -11,7 +11,12 @@
     "breast": [210, 196, 176],
     "head_cap": [150, 230, 200, 1.2]
   },
-  "behaviour": {"active": "crepuscular", "off_hours": 0.15},
+  "behaviour": {
+    "active": "crepuscular",
+    "off_hours": 0.15,
+    "voice": {"calls": [{"cry": "song", "on": "idle", "hours": "twilight", "size": 0.8, "every_s": [10, 40]}]}
+  },
   "like": "sparrow",
-  "scale": 0.8
+  "scale": 0.8,
+  "realms": ["fae"]
 }

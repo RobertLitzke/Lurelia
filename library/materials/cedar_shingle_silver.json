@@ -1,0 +1,15 @@
+{
+  "name": "cedar_shingle_silver",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Cedar shingles weathered silver-grey by the salt wind: Bonebight's walls and roofs.",
+  "smooth": false,
+  "texture": {
+    "pattern": "planks",
+    "base": [124, 110, 94],
+    "alt": [96, 84, 72],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [136, 122, 104], "alt": [106, 94, 80]}
+  }
+}

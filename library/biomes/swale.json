@@ -3,11 +3,13 @@
   "version": 2,
   "introduced_by": "windbarrow",
   "notes": "The damp bottoms of the dry valleys, where the soil is deep: feathergrass shoulder-high and greener, big tussocks, a birch or a willow in the wettest heads.",
+  "habitat": "meadow",
   "priority": 8,
   "rules": {"moist": [0.62, 1.0], "slope": [0, 0.2]},
   "surface": "feathergrass",
   "subsurface": "dirt",
   "rock": null,
+  "soil": 0.6,
   "map_color": [168, 170, 92],
   "plants": [
     {

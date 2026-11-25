@@ -55,9 +55,13 @@ pub const MAX_SLOTS: u32 = 65536;
 pub const SHADOW_SIZE: u32 = 2048;
 /// Cells across the mist map (see `set_mist`).
 pub const MIST_N: u32 = 256;
-pub const MAX_ENTITY_QUADS: u32 = 1 << 18;
+/// Every loaded model's quads, stored once (16 bytes each). Raised from 1 << 18 when
+/// creatures moved to finer voxels (docs/CREATURES.md "Model resolution and decimation").
+pub const MAX_ENTITY_QUADS: u32 = 1 << 20;
 pub const MAX_INSTANCES: u32 = 8192;
 pub const MAX_HUD: u32 = 16384;
+/// Side of the site map (`set_site`): how lush the ground grows, for its colour.
+pub const SITE_N: u32 = 256;
 /// Side of the heightmap the water and mist read (set_world).
 pub const HEIGHTS_N: u32 = 512;
 /// Most river surface cells a world can draw (one quad per 1 m cell).
@@ -439,6 +443,9 @@ pub struct FrameParams<'a> {
     /// Entity instances, sorted by model index.
     pub entities: &'a [(usize, Instance)],
     pub shadows: bool,
+    /// Creatures drawn as their decimated meshes rather than voxels
+    /// (`Settings::smooth_creatures`).
+    pub decimated: bool,
     pub style: Style,
     /// Sloped ground and rounded trees: tilted quads can face away from their
     /// direction, so they are drawn whenever they might show.
@@ -836,7 +843,53 @@ fn shift_phase(phase: glam::Vec2, old_raw: Mat4, new_raw: Mat4, cam: Vec3) -> gl
 pub struct ModelRange {
     pub offset: u32,
     pub count: u32,
+    /// A creature model's other levels (models.rs `Lods`): the 2x2x2 voxel
+    /// mesh as quads, and the decimated near and far meshes as vertices,
+    /// each (offset, count) in the entity buffer. Counts of 0 when it has
+    /// none.
+    pub coarse: (u32, u32),
+    pub near: (u32, u32),
+    pub far: (u32, u32),
 }
+
+/// Which of a model's meshes an instance draws (`Renderer::lod_of`).
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Lod {
+    /// The model's own quads.
+    Square,
+    /// The 2x2x2 voxel mesh: voxel mode, far.
+    Coarse,
+    /// The decimated meshes: decimated mode, near and far.
+    Near,
+    Far,
+}
+
+/// How an entity is drawn: whole, dissolving in or out (`Instance::fade`),
+/// or see-through (`models::GLASS`). Sorted in this order.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum Kind {
+    Solid,
+    Fade,
+    Glass,
+}
+
+impl Kind {
+    fn of(bits: u64) -> Kind {
+        match bits {
+            0 => Kind::Solid,
+            1 => Kind::Fade,
+            _ => Kind::Glass,
+        }
+    }
+}
+
+/// The switch between a creature's near and far meshes, in pixels one model
+/// voxel covers on screen: a sauropod and a sparrow switch at the same
+/// apparent detail, not the same distance. The decimated levels look alike
+/// from about 96 px across (docs/CREATURES.md); square voxels hold up to
+/// about 48 px across before the 2x2x2 merge shows, about one pixel a voxel.
+pub const DECIMATED_SWITCH_PX: f32 = 2.0;
+pub const VOXEL_SWITCH_PX: f32 = 1.0;
 
 pub struct Renderer {
     prof: Option<gpuprof::GpuProf>,
@@ -857,6 +910,8 @@ pub struct Renderer {
     horizon_tex: wgpu::Texture,
     /// The polish map, which race its marks are of, and how many are sent.
     polish_tex: wgpu::Texture,
+    /// How lush the ground grows by its site (`set_site`).
+    site_tex: wgpu::Texture,
     polish_race: u32,
     polish_sent: usize,
     mist_base: Vec<f32>,
@@ -895,6 +950,8 @@ pub struct Renderer {
     p_entity: wgpu::RenderPipeline,
     /// Entities drawn see-through (`models::GLASS`): blended, writing no depth.
     p_entity_glass: wgpu::RenderPipeline,
+    /// Entities part dissolved (`Instance::fade`): opaque, dropping pixels.
+    p_entity_fade: wgpu::RenderPipeline,
     p_water: wgpu::RenderPipeline,
     p_water_basin: wgpu::RenderPipeline,
     p_river: wgpu::RenderPipeline,
@@ -922,6 +979,15 @@ pub struct Renderer {
     font_samp: wgpu::Sampler,
     p_shadow_terrain: wgpu::RenderPipeline,
     p_shadow_entity: wgpu::RenderPipeline,
+    p_shadow_entity_tri: wgpu::RenderPipeline,
+    p_entity_tri: wgpu::RenderPipeline,
+    p_entity_tri_glass: wgpu::RenderPipeline,
+    p_entity_tri_fade: wgpu::RenderPipeline,
+    /// This frame's `FrameParams::decimated`.
+    decimated: bool,
+    /// This frame's draw order of the entities: a sort key, the entity's
+    /// index and the level it draws.
+    ent_order: Vec<(u64, u32, Lod)>,
     p_post: wgpu::RenderPipeline,
     p_rays: wgpu::RenderPipeline,
     tl: TargetLayouts,
@@ -953,8 +1019,9 @@ pub struct Renderer {
     /// How many times each outer cascade has had to be redrawn whole.
     cascade_redraws: [u64; 2],
     inst_scratch: Vec<Instance>,
-    /// Entity draws: model, first instance, count, and whether they are glass.
-    runs: Vec<(usize, u32, u32, bool)>,
+    /// Entity draws: model, first instance, count, how they are drawn
+    /// (`Kind`) and at what level.
+    runs: Vec<(usize, u32, u32, Kind, Lod)>,
     /// One per shadow map layer.
     cascades: [CascadeCache; SHADOW_LAYERS as usize],
     frame_no: u64,
@@ -1011,6 +1078,8 @@ struct SceneRes<'a> {
     font_samp: &'a wgpu::Sampler,
     /// A race's polished line (polish.rs).
     polish: &'a wgpu::TextureView,
+    /// How lush the ground grows by its site (`set_site`).
+    site: &'a wgpu::TextureView,
 }
 
 fn scene_bind_group(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, r: &SceneRes) -> wgpu::BindGroup {
@@ -1106,6 +1175,10 @@ fn scene_bind_group(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, r: &S
                 binding: 21,
                 resource: wgpu::BindingResource::TextureView(r.polish),
             },
+            wgpu::BindGroupEntry {
+                binding: 22,
+                resource: wgpu::BindingResource::TextureView(r.site),
+            },
         ],
     })
 }
@@ -1160,7 +1233,7 @@ fn blocks_view(tex: &wgpu::Texture) -> wgpu::TextureView {
 }
 
 fn upload_blocks(queue: &wgpu::Queue, tex: &wgpu::Texture, style: Style) {
-    let mips = textures::build(style == Style::Saturated);
+    let mips = textures::take_or_build(style == Style::Saturated);
     for (m, level) in mips.iter().enumerate() {
         let s = (textures::SIZE >> m) as u32;
         for (l, data) in level.iter().enumerate() {
@@ -1425,6 +1498,23 @@ impl Renderer {
         // lays some (`upload_polish`).
         let polish_tex = polish_texture(&device, 1);
         let polish_view = polish_tex.create_view(&Default::default());
+        // The site map: r how lush the ground grows, a 1 where a world set
+        // it. All zero until then, which the shader reads as ordinary ground.
+        let site_tex = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("site"),
+            size: wgpu::Extent3d {
+                width: SITE_N,
+                height: SITE_N,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8Unorm,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        let site_view = site_tex.create_view(&Default::default());
 
         // The land's skyline per compass direction, and how much sky each
         // cell of the world can see (horizon.rs). Baked in set_world; until
@@ -1610,6 +1700,7 @@ impl Renderer {
                 bgl_entry(19, storage_ro()),
                 bgl_entry(20, storage_ro()),
                 bgl_entry(21, tex_ty(Dim::D2, true)),
+                bgl_entry(22, tex_ty(Dim::D2, true)),
             ],
         });
         let shadow_in_bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -1705,7 +1796,7 @@ impl Renderer {
         });
         let grade_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("grade"),
-            size: 80,
+            size: 96,
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
@@ -1750,6 +1841,7 @@ impl Renderer {
                 grade_strip: &grade_tex.create_view(&Default::default()),
                 grade: &grade_buf,
                 polish: &polish_view,
+                site: &site_view,
             },
         );
         let shadow_in_bg = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -1869,6 +1961,10 @@ impl Renderer {
         let p_terrain = scene("terrain", "vs_terrain", "fs_terrain", Some(wgpu::Face::Back), (true, ge, nobias), None, tri);
         let p_entity = scene("entity", "vs_entity", "fs_entity", Some(wgpu::Face::Back), (true, ge, nobias), None, tri);
         let p_entity_glass = scene("entity glass", "vs_entity", "fs_entity_glass", Some(wgpu::Face::Back), (false, ge, nobias), blend, tri);
+        let p_entity_tri = scene("entity tri", "vs_entity_tri", "fs_entity", Some(wgpu::Face::Back), (true, ge, nobias), None, tri);
+        let p_entity_tri_glass = scene("entity tri glass", "vs_entity_tri", "fs_entity_glass", Some(wgpu::Face::Back), (false, ge, nobias), blend, tri);
+        let p_entity_fade = scene("entity fade", "vs_entity", "fs_entity_fade", Some(wgpu::Face::Back), (true, ge, nobias), None, tri);
+        let p_entity_tri_fade = scene("entity tri fade", "vs_entity_tri", "fs_entity_fade", Some(wgpu::Face::Back), (true, ge, nobias), None, tri);
         // Water blends its colour over the bed as usual, but adds its
         // coverage to the bed's alpha rather than blending it: alpha over 1
         // is what marks a mirror for the reflections in post (post.wgsl
@@ -1886,7 +1982,11 @@ impl Renderer {
         // tide) writes its depth, so the reflections in post.wgsl take it as
         // a pool at its own surface rather than the open sea's level.
         let p_water_basin = scene("water basin", "vs_water", "fs_water", None, (true, ge, nobias), water_blend, tri);
-        let p_river = scene("river", "vs_river", "fs_water", None, (false, ge, nobias), water_blend, tri);
+        // Rivers and lakes write their depth for the same reason: without it
+        // the buffer holds the bed, and the reflections were cast from a metre
+        // or two under the surface, where the banks hid most of what the
+        // water should show and the rest came and went with the ripple.
+        let p_river = scene("river", "vs_river", "fs_water", None, (true, ge, nobias), water_blend, tri);
         let p_fall = scene("waterfall", "vs_fall", "fs_fall", None, (false, ge, nobias), blend, tri);
         let p_spray = scene("spray", "vs_spray", "fs_spray", None, (false, ge, nobias), blend, tri);
         let p_box = scene("box", "vs_box", "fs_box", None, (false, ge, nobias), blend, wgpu::PrimitiveTopology::LineList);
@@ -1928,6 +2028,7 @@ impl Renderer {
         // face is compared against the far side of its own body and can take
         // the tight shadow bias (scene.wgsl SHADOW_TIGHT).
         let p_shadow_entity = shadow_pipe("shadow entity", "vs_shadow_entity", Some("fs_shadow_entity"), if std::env::var("VOXEL_SHADOW_BIAS").is_ok_and(|v| v == "legacy") { None } else { Some(wgpu::Face::Front) });
+        let p_shadow_entity_tri = shadow_pipe("shadow entity tri", "vs_shadow_entity_tri", Some("fs_shadow_entity"), Some(wgpu::Face::Front));
         let p_rays = pipeline(
             &device,
             PipeDesc {
@@ -2005,6 +2106,7 @@ impl Renderer {
             mist_tex,
             horizon_tex,
             polish_tex,
+            site_tex,
             polish_race: u32::MAX,
             polish_sent: 0,
             mist_base,
@@ -2049,6 +2151,7 @@ impl Renderer {
             p_terrain,
             p_entity,
             p_entity_glass,
+            p_entity_fade,
             p_water,
             p_water_basin,
             p_river,
@@ -2073,6 +2176,12 @@ impl Renderer {
             font_samp: mip_samp,
             p_shadow_terrain,
             p_shadow_entity,
+            p_shadow_entity_tri,
+            p_entity_tri,
+            p_entity_tri_glass,
+            p_entity_tri_fade,
+            decimated: true,
+            ent_order: Vec::new(),
             p_post,
             p_rays,
             tl,
@@ -2557,6 +2666,45 @@ impl Renderer {
         w
     }
 
+    /// How lush the ground grows across the world (world/site.rs
+    /// `Site::lush_grid`, `n` square, 128 ordinary), which tilts the colour
+    /// of grassy ground toward green or ochre; None for a world without site
+    /// fields, which leaves every colour as it was.
+    pub fn set_site(&mut self, lush: Option<&[u8]>, n: usize) {
+        let m = SITE_N as usize;
+        let mut px = vec![0u8; m * m * 4];
+        if let Some(l) = lush.filter(|l| l.len() == n * n && n > 0) {
+            for z in 0..m {
+                for x in 0..m {
+                    let sx = ((x as f32 + 0.5) / m as f32 * n as f32) as usize;
+                    let sz = ((z as f32 + 0.5) / m as f32 * n as f32) as usize;
+                    let i = (z * m + x) * 4;
+                    px[i] = l[sz.min(n - 1) * n + sx.min(n - 1)];
+                    px[i + 3] = 255;
+                }
+            }
+        }
+        self.queue.write_texture(
+            wgpu::TexelCopyTextureInfo {
+                texture: &self.site_tex,
+                mip_level: 0,
+                origin: wgpu::Origin3d::ZERO,
+                aspect: wgpu::TextureAspect::All,
+            },
+            &px,
+            wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(m as u32 * 4),
+                rows_per_image: Some(m as u32),
+            },
+            wgpu::Extent3d {
+                width: SITE_N,
+                height: SITE_N,
+                depth_or_array_layers: 1,
+            },
+        );
+    }
+
     pub fn set_mist(&mut self, mist: &[f32], n: usize, water: ([[f32; 4]; 6], Vec<[f32; 2]>)) {
         self.water = water.0;
         let shares = water.1;
@@ -2648,6 +2796,7 @@ impl Renderer {
                     grade_strip: &self.grade_tex.create_view(&Default::default()),
                     grade: &self.tl.grade_buf,
                     polish: &self.polish_tex.create_view(&Default::default()),
+                    site: &self.site_tex.create_view(&Default::default()),
                 },
             );
         }
@@ -2732,14 +2881,81 @@ impl Renderer {
         self.models.clear();
         for m in models {
             assert!(m.block <= 0xffff, "palette block {} past what a quad holds", m.block);
-            self.models.push(ModelRange {
-                offset: all.len() as u32,
-                count: m.mesh.quads.len() as u32,
-            });
-            all.extend(m.mesh.quads.iter().map(|q| [q[0], (q[1] & 0xffff) | m.block << crate::mesh::quad::SLOT_SHIFT, q[2], q[3]]));
+            let quads = |q: &[[u32; 4]], all: &mut Vec<[u32; 4]>| -> (u32, u32) {
+                let at = all.len() as u32;
+                all.extend(q.iter().map(|q| [q[0], (q[1] & 0xffff) | m.block << crate::mesh::quad::SLOT_SHIFT, q[2], q[3]]));
+                (at, q.len() as u32)
+            };
+            // A decimated mesh's vertex keeps its palette block where a quad
+            // does, in the top half of its second word.
+            let verts = |v: &[[u32; 4]], all: &mut Vec<[u32; 4]>| -> (u32, u32) {
+                let at = all.len() as u32;
+                all.extend(v.iter().map(|v| [v[0], (v[1] & 0xffff) | m.block << 16, v[2], v[3]]));
+                (at, v.len() as u32)
+            };
+            let (offset, count) = quads(&m.mesh.quads, &mut all);
+            let (coarse, near, far) = match &m.lod {
+                Some(l) => (quads(&l.coarse.quads, &mut all), verts(&l.near, &mut all), verts(&l.far, &mut all)),
+                None => ((0, 0), (0, 0), (0, 0)),
+            };
+            self.models.push(ModelRange { offset, count, coarse, near, far });
         }
-        assert!(all.len() as u32 <= MAX_ENTITY_QUADS, "{} entity quads, past MAX_ENTITY_QUADS", all.len());
+        // The buffer grows to hold them: a world's creatures with all their
+        // levels are a few times what their square models alone were.
+        let bytes = (all.len() * 16) as u64;
+        if bytes > self.equad_buf.size() {
+            self.equad_buf = self.device.create_buffer(&wgpu::BufferDescriptor {
+                label: Some("entity quads"),
+                size: bytes.next_power_of_two(),
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            });
+            self.rebuild_scene_bg();
+        }
         self.queue.write_buffer(&self.equad_buf, 0, bytemuck::cast_slice(&all));
+    }
+
+    /// The level an instance of model `m` draws at, by how many pixels one
+    /// of its voxels covers at its distance (`px_per_m`: the pixels a metre
+    /// covers a metre away).
+    fn lod_of(&self, m: usize, inst: &Instance, cam: Vec3, px_per_m: f32) -> Lod {
+        let Some(r) = self.models.get(m) else { return Lod::Square };
+        if r.near.1 == 0 && r.coarse.1 == 0 {
+            return Lod::Square;
+        }
+        let d = (Vec3::new(inst.pos_yaw[0], inst.pos_yaw[1], inst.pos_yaw[2]) - cam).length().max(0.01);
+        let px = inst.info[0].abs() * px_per_m / d;
+        if self.decimated && r.near.1 > 0 {
+            if px >= DECIMATED_SWITCH_PX || r.far.1 == 0 {
+                Lod::Near
+            } else {
+                Lod::Far
+            }
+        } else if px < VOXEL_SWITCH_PX && r.coarse.1 > 0 {
+            Lod::Coarse
+        } else {
+            Lod::Square
+        }
+    }
+
+    /// What a run of instances at a level draws: the vertex range (six a
+    /// quad, three a triangle) and whether it is triangles.
+    fn lod_range(r: &ModelRange, lod: Lod) -> (u32, u32, bool) {
+        match lod {
+            Lod::Square => (r.offset * 6, (r.offset + r.count) * 6, false),
+            Lod::Coarse => (r.coarse.0 * 6, (r.coarse.0 + r.coarse.1) * 6, false),
+            Lod::Near => (r.near.0, r.near.0 + r.near.1, true),
+            Lod::Far => (r.far.0, r.far.0 + r.far.1, true),
+        }
+    }
+
+    /// The cheapest level of the mode in use, which is what shadows cast.
+    fn shadow_lod(r: &ModelRange, lod: Lod) -> Lod {
+        match lod {
+            Lod::Near | Lod::Far if r.far.1 > 0 => Lod::Far,
+            Lod::Square | Lod::Coarse if r.coarse.1 > 0 => Lod::Coarse,
+            l => l,
+        }
     }
 
     pub fn render(&mut self, streamer: &Streamer, p: &FrameParams, hud: &Hud, target: &wgpu::TextureView) -> FrameStats {
@@ -2748,14 +2964,16 @@ impl Renderer {
         let view_proj = p.proj * p.view;
         let shadows = p.shadows;
         self.upload_polish(p.polish);
+        // New materials and a new style together (the first frame of a
+        // world) paint the blocks once, in the new style.
+        let restyle = p.style != self.style;
+        self.style = p.style;
         if crate::world::matlib::generation() != self.mat_gen {
             self.mat_gen = crate::world::matlib::generation();
             self.queue.write_buffer(&self.mat_buf, 0, bytemuck::cast_slice(&material_rows()));
             self.reload_blocks();
-        }
-        if p.style != self.style {
-            upload_blocks(&self.queue, &self.blocks, p.style);
-            self.style = p.style;
+        } else if restyle {
+            upload_blocks(&self.queue, &self.blocks, self.style);
         }
         self.upload_grade(self.style, &p.sky, &p.season, p.plain_grade);
         // 1 for the saturated style's soft path (shaders still call it calm).
@@ -3255,24 +3473,54 @@ impl Renderer {
         };
         self.queue.write_buffer(&self.globals_buf, 0, bytemuck::bytes_of(&globals));
 
-        // Entities.
+        // Entities: each picks its level, then they are uploaded sorted by
+        // model and level, so the same part of a whole herd is one draw.
         let n_inst = p.entities.len().min(MAX_INSTANCES as usize);
+        self.decimated = p.decimated;
+        let px_per_m = p.proj.y_axis.y.abs() * self.height as f32 * 0.5;
+        let mut order = std::mem::take(&mut self.ent_order);
+        order.clear();
+        for (i, (m, inst)) in p.entities[..n_inst].iter().enumerate() {
+            let lod = self.lod_of(*m, inst, p.cam_pos, px_per_m);
+            let kind = if inst.shift[3] > crate::models::GLASS - 0.5 {
+                Kind::Glass
+            } else if inst.fade[0] > 0.0 {
+                Kind::Fade
+            } else {
+                Kind::Solid
+            };
+            order.push(((*m as u64) << 4 | (lod as u64) << 2 | kind as u64, i as u32, lod));
+        }
+        order.sort_unstable_by_key(|o| o.0);
         if n_inst > 0 {
             self.inst_scratch.clear();
-            self.inst_scratch.extend(p.entities[..n_inst].iter().map(|(_, i)| *i));
+            self.inst_scratch.extend(order.iter().map(|o| p.entities[o.1 as usize].1));
             self.queue.write_buffer(&self.einst_buf, 0, bytemuck::cast_slice(&self.inst_scratch));
         }
         let mut runs = std::mem::take(&mut self.runs);
         runs.clear();
-        for (i, (m, inst)) in p.entities[..n_inst].iter().enumerate() {
-            let glass = inst.shift[3] > crate::models::GLASS - 0.5;
+        for (i, o) in order.iter().enumerate() {
+            let m = p.entities[o.1 as usize].0;
+            let kind = Kind::of(o.0 & 3);
             match runs.last_mut() {
-                Some(r) if r.0 == *m && r.3 == glass => r.2 += 1,
-                _ => runs.push((*m, i as u32, 1, glass)),
+                Some(r) if r.0 == m && r.3 == kind && r.4 == o.2 => r.2 += 1,
+                _ => runs.push((m, i as u32, 1, kind, o.2)),
             }
         }
+        self.ent_order = order;
         stats.entities = n_inst as u32;
-        stats.entity_quads = runs.iter().map(|&(m, _, n, _)| self.models.get(m).map_or(0, |r| r.count as u64) * n as u64).sum();
+        // Quads drawn, a decimated mesh counting as a square one of the same
+        // triangles would (two to a quad).
+        stats.entity_quads = runs
+            .iter()
+            .map(|&(m, _, n, _, lod)| {
+                self.models.get(m).map_or(0, |r| {
+                    // Six vertices are a quad, or two triangles.
+                    let (a, b, _) = Self::lod_range(r, lod);
+                    (b - a) as u64 / 6 * n as u64
+                })
+            })
+            .sum();
 
         // HUD.
         let n_hud = self.upload_hud(hud);
@@ -3307,10 +3555,15 @@ impl Renderer {
                 }
                 // Creatures cast shadows in cascades 0 and 1 (on the last slice of 1).
                 if !runs.is_empty() && job.creatures {
-                    pass.set_pipeline(&self.p_shadow_entity);
-                    for &(m, first, n, _) in &runs {
-                        let r = &self.models[m];
-                        pass.draw(r.offset * 6..(r.offset + r.count) * 6, first..first + n);
+                    for tris in [false, true] {
+                        pass.set_pipeline(if tris { &self.p_shadow_entity_tri } else { &self.p_shadow_entity });
+                        for &(m, first, n, _, lod) in &runs {
+                            let r = &self.models[m];
+                            let (a, b, t) = Self::lod_range(r, Self::shadow_lod(r, lod));
+                            if t == tris && b > a {
+                                pass.draw(a..b, first..first + n);
+                            }
+                        }
                     }
                 }
             }
@@ -3360,11 +3613,18 @@ impl Renderer {
             if let Some(pr) = prof {
                 pr.in_pass(&mut pass, 2);
             }
-            if !runs.is_empty() {
-                pass.set_pipeline(&self.p_entity);
-                for &(m, first, n, _) in runs.iter().filter(|r| !r.3) {
-                    let r = &self.models[m];
-                    pass.draw(r.offset * 6..(r.offset + r.count) * 6, first..first + n);
+            for (kind, quads, tris_p) in [(Kind::Solid, &self.p_entity, &self.p_entity_tri), (Kind::Fade, &self.p_entity_fade, &self.p_entity_tri_fade)] {
+                if !runs.iter().any(|r| r.3 == kind) {
+                    continue;
+                }
+                for tris in [false, true] {
+                    pass.set_pipeline(if tris { tris_p } else { quads });
+                    for &(m, first, n, _, lod) in runs.iter().filter(|r| r.3 == kind) {
+                        let (a, b, t) = Self::lod_range(&self.models[m], lod);
+                        if t == tris && b > a {
+                            pass.draw(a..b, first..first + n);
+                        }
+                    }
                 }
             }
             if let Some(pr) = prof {
@@ -3431,11 +3691,15 @@ impl Renderer {
             self.particles.draw_soft(&mut pass);
             // See-through entities (a pickup turning over its pad): over
             // everything solid, writing no depth, in no particular order.
-            if runs.iter().any(|r| r.3) {
-                pass.set_pipeline(&self.p_entity_glass);
-                for &(m, first, n, _) in runs.iter().filter(|r| r.3) {
-                    let r = &self.models[m];
-                    pass.draw(r.offset * 6..(r.offset + r.count) * 6, first..first + n);
+            if runs.iter().any(|r| r.3 == Kind::Glass) {
+                for tris in [false, true] {
+                    pass.set_pipeline(if tris { &self.p_entity_tri_glass } else { &self.p_entity_glass });
+                    for &(m, first, n, _, lod) in runs.iter().filter(|r| r.3 == Kind::Glass) {
+                        let (a, b, t) = Self::lod_range(&self.models[m], lod);
+                        if t == tris && b > a {
+                            pass.draw(a..b, first..first + n);
+                        }
+                    }
                 }
             }
             if let Some(pr) = prof {

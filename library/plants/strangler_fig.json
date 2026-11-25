@@ -9,5 +9,6 @@
   "crown_radius": [11, 15],
   "stems": [3, 5],
   "like": "banyan",
-  "affords": ["perch"]
+  "affords": ["perch"],
+  "site": {"wet": [0.4, 1.0]}
 }

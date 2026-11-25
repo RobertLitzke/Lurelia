@@ -16,5 +16,6 @@
   "taper": 0.88,
   "affords": ["perch"],
   "whorls": [10, 18],
-  "lean": 0.05
+  "lean": 0.05,
+  "site": {"wet": [0.25, 1.0]}
 }

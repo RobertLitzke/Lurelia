@@ -844,6 +844,7 @@ fn put(out: &mut Vec<(usize, Instance)>, models: &[Model], i: usize, pos: Vec3, 
             shift: [0.0, 0.0, 0.0, shadow],
             flesh: [[0.0; 4]; 3],
             glow: [0.0; 4],
+            fade: [0.0; 4],
         },
     ));
 }

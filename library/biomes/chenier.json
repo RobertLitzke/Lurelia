@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "lowmouth",
   "notes": "The chenier: an old shell ridge on the south point, live oaks bent by the Gulf wind, palms, oyster shell underfoot, the tombs of the parish and the light at its tip.",
+  "habitat": "hammock",
   "priority": 9,
   "rules": {"region": "chenier"},
   "surface": "marsh_grass",
   "subsurface": "oyster_shell",
+  "soil": 0.65,
   "map_color": [140, 160, 110],
   "plants": [
     {

@@ -3,11 +3,13 @@
   "version": 3,
   "introduced_by": "jadewater",
   "notes": "The rims and walls of the flooded sinkholes: moss lit by the film beneath, vine curtains, banyans on the walls, kite rays rising.",
+  "habitat": "tropical_forest",
   "priority": 11,
   "rules": {"region": "cenotes"},
   "surface": "lumen_moss",
   "subsurface": "dirt",
   "rock": "karst_streaked",
+  "soil": 0.7,
   "map_color": [80, 210, 210],
   "plants": [
     {"plant": "karst_vine", "density": 0.95, "placement": {"verb": "scatter", "params": {}}},

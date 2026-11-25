@@ -5,6 +5,7 @@
   "notes": "Barracuda: long, silver and still, hanging in the open water off the wall, then gone in one flick.",
   "colors": {"herring": [112, 120, 126], "silver": [150, 158, 168], "fin": [36, 28, 24]},
   "behaviour": {
+    "displays": [{"kind": "bait_ball"}, {"kind": "patrol"}],
     "habit": "patrol",
     "walk_speed": 1.2,
     "flee_speed": 5.0,

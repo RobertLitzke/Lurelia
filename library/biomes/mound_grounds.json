@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "lowmouth",
   "notes": "The mound grounds: short grass kept down by deer on the great bird mound and the low half rings east of it, a few old oaks.",
+  "habitat": "pasture",
   "priority": 10,
   "rules": {"region": "mounds"},
   "surface": "meadow_grass",
   "subsurface": "silt",
+  "soil": 0.65,
   "map_color": [196, 200, 140],
   "plants": [
     {"plant": "live_oak", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 50}}},

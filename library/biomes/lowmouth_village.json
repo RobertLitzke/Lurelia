@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "lowmouth",
   "notes": "Lowmouth, the stilt village on the old channel: houses and camps on posts, boardwalks and footbridges over the water, boats tied under them.",
+  "habitat": "settlement",
   "priority": 12,
   "rules": {"region": "lowmouth", "amphibious": true},
   "surface": "swamp_muck",
   "subsurface": "silt",
   "fringe": 0,
+  "soil": 0.6,
   "map_color": [190, 150, 110],
   "plants": [
     {"plant": "bald_cypress", "density": 0.002, "placement": {"verb": "scatter", "params": {}}},

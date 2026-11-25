@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "gannet",
   "notes": "The old groves in the redwoods: the giants alone, bare trunks over a floor of fern, nothing else growing in their shade.",
+  "habitat": "conifer_forest",
   "priority": 6,
   "rules": {"region": "grove", "elev": [1.5, 200]},
   "surface": "pine_duff",
   "subsurface": "dirt",
+  "soil": 0.4,
   "map_color": [40, 60, 42],
   "plants": [
     {"plant": "giant_redwood", "density": 0.003, "placement": {"verb": "lone", "params": {"spacing": 22}}},

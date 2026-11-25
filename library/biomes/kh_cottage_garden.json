@@ -1,0 +1,34 @@
+{
+  "name": "kh_cottage_garden",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "The cottage gardens along the holloway north of Maplebridge: dug beds, sunflowers and lupins against the fence, a rose by the door, an apple tree.",
+  "habitat": "garden",
+  "priority": 30,
+  "rules": {"region": "cottage_garden"},
+  "surface": "garden_bed",
+  "subsurface": "dirt",
+  "fringe": 0,
+  "soil": 0.7,
+  "map_color": [120, 110, 70],
+  "plants": [
+    {
+      "plant": "sunflower",
+      "density": 0.03,
+      "placement": {"verb": "clustered", "params": {"size": 4, "min": 0.3, "max": 1}}
+    },
+    {
+      "plant": "lupine",
+      "density": 0.05,
+      "placement": {"verb": "clustered", "params": {"size": 4, "min": 0.2, "max": 1}}
+    },
+    {"plant": "cottage_rose", "density": 0.01, "placement": {"verb": "scatter", "params": {}}},
+    {
+      "plant": "foxglove",
+      "density": 0.02,
+      "placement": {"verb": "clustered", "params": {"size": 3, "min": 0.2, "max": 1}}
+    },
+    {"plant": "apple", "density": 0.004, "placement": {"verb": "lone", "params": {"spacing": 14}}}
+  ],
+  "creatures": [{"creature": "sparrow", "count": 4}, {"creature": "bumblebee", "count": 6}, {"creature": "bee", "count": 4}]
+}

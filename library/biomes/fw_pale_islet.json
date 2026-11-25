@@ -1,0 +1,17 @@
+{
+  "name": "fw_pale_islet",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Frondwell's islet nearest Calypso, gone pale: spiral pines, bleached turf, glass pushing up through it.",
+  "habitat": "rocky_shore",
+  "priority": 24,
+  "rules": {"underwater": false, "strange": [0.3, 1.0]},
+  "surface": "pale_grass",
+  "plants": [
+    {"plant": "spiral_pine", "density": 0.012, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "pale_birch", "density": 0.004, "placement": {"verb": "clustered", "params": {}}}
+  ],
+  "features": [{"structure": "glass_spikes", "density": 0.002}],
+  "creatures": [{"creature": "pale_hare", "count": 2}, {"creature": "gull", "count": 3}, {"creature": "glassmoth", "count": 5}],
+  "like": "fw_islet"
+}

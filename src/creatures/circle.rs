@@ -2,6 +2,10 @@
 //! moths round a lamp. Each goes round a fixed centre; seabirds that `float`
 //! now and then glide down to sit on the sea, drift, and fly back up, and
 //! the ones that `plunge` (gannets) fold their wings and drop into it.
+//!
+//! A display (creatures/display: a crow's tumble, an owl on a post) takes a
+//! circler off its circle for a while: it carries a `Show` and is put where
+//! the display says, and when it ends it flies back up to its circle.
 
 use super::terrain::Terrain;
 use super::{Creature, Look, Pathing, Species};
@@ -16,6 +20,8 @@ pub struct Gull {
     rest: GullRest,
     /// Seconds until it next thinks of coming down.
     next: f32,
+    /// In a display last step.
+    shown: bool,
 }
 
 #[derive(Clone, Copy, PartialEq, Debug)]
@@ -52,6 +58,11 @@ enum GullRest {
 }
 
 impl Gull {
+    /// On the water rather than in the air.
+    pub fn sitting(&self) -> bool {
+        matches!(self.rest, GullRest::Float { .. })
+    }
+
     pub fn new(centre: Vec3, radius: f32, angle: f32, speed: f32) -> Self {
         Gull {
             centre,
@@ -60,12 +71,19 @@ impl Gull {
             speed,
             rest: GullRest::Circling,
             next: 20.0 + (angle * 37.0).rem_euclid(40.0),
+            shown: false,
         }
     }
 
     /// On the water, under it or plunging into it: wings folded each way.
     pub fn floating(&self) -> bool {
         matches!(self.rest, GullRest::Float { .. } | GullRest::Under { .. } | GullRest::Plunge { .. })
+    }
+
+    /// Going round its circle, free for a display (not still in one, or
+    /// just out of one and not yet back up).
+    pub fn circling(&self) -> bool {
+        matches!(self.rest, GullRest::Circling) && !self.shown
     }
 
     pub fn landing(&self) -> bool {
@@ -104,9 +122,25 @@ pub fn update(
 ) {
     let player = threat.pos;
     let sea = terrain.sea;
-    for (gull, look, me, morph) in world.query_mut::<(&mut Gull, &mut Look, Option<&Creature>, Option<&crate::variety::Morph>)>() {
+    for (gull, look, me, morph, show) in world.query_mut::<(&mut Gull, &mut Look, Option<&Creature>, Option<&crate::variety::Morph>, Option<&super::display::Show>)>() {
         look.begin_step();
         gull.angle += gull.speed * dt / gull.radius;
+        // In a display: where it says. Afterwards, back up to the circle.
+        // Only a display that puts it somewhere takes it over; one that
+        // only sets its glow (fireflies flashing together) leaves it flying.
+        let show = show.filter(|s| matches!(s.out.drive, super::display::Drive::Place { .. } | super::display::Drive::Sit { .. }));
+        if let Some(s) = show {
+            if let super::display::Drive::Place { pos, yaw } | super::display::Drive::Sit { pos, yaw } = s.out.drive {
+                look.pos = pos;
+                look.yaw = yaw;
+            }
+            gull.rest = GullRest::Circling;
+            gull.shown = true;
+            continue;
+        }
+        if std::mem::take(&mut gull.shown) {
+            gull.rest = GullRest::Up { from: look.pos, t: 0.0 };
+        }
         let (s, c) = gull.angle.sin_cos();
         let on_circle = gull.centre + Vec3::new(c * gull.radius, (gull.angle * 0.7).sin() * 1.5, s * gull.radius);
         // Tangent direction, banking ignored.

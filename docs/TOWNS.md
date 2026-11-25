@@ -130,8 +130,18 @@ Each is the caller's choice:
   get footprint houses, so give the kit materials that match.
 - `green`: the market is a village green, left as grass on the lie of the
   land with the lanes running across it, not a levelled, paved square.
+- `infill`: up to this many more of `houses` on the ground the street plots
+  leave (back plots, corners), nearest the streets first, each turned to
+  face its street, kept 2.5 m in from the town's edge, and only where a
+  footpath can reach it. For a small top where few streets run square to the
+  compass (Kitehold).
+- `paths`: a footpath 1.4 m wide (the kit's `path` street, else its `lane`)
+  from the door of every library structure to the nearest street, square or
+  path, routed round the buildings and sharing the paths already laid.
+  Later infill houses keep these paths clear.
 - `footprints` (default true): false leaves the plots a library house can't
-  take empty, so the town is all library structures. The town's structures
+  take empty, so the town is all library structures; with `infill`, those
+  plots are free ground for it. The town's structures
   are registered under its `name` like a `settlement`'s, so an `abandon`
   event can age them (Glassfall's village).
 - `walkways`: a town on stilts over shallow water. Every street is laid with
@@ -187,14 +197,27 @@ off whatever roads run near it:
 It needs a road near the area to start from, and comes after the events
 that lay those roads.
 
+### Field sheds
+
+Each field big enough (about 0.1 ha) has a corner away from the road, and by
+the event's `shacks` rate a shed stands there, its back to the corner and
+its door to the field, stepped further in where the corner is narrow and
+left out where the ground is taken or steep. `shacks` is one chance for
+every field (`0.2`), or a chance by crop region with a `default`
+(`{"default": 0.15, "pasture": 0.3, "orchard": 0}`); 0 is none. Left out it
+is 0.15. A `town` takes the same `shacks` for its own fields. The kit's
+`shacks` list names the structures (`field_shed` and `field_shack` where it
+names none; Kitehold's uses `field_bothy`). The summary says how many stood
+and how many corners were crowded or steep.
+
 ## The kit
 
 What a town is made of comes from the `town` section of a city kit
 (`library/cities/`, named by `"kit"`): wall and roof materials by district
 style, trims, street surfaces by rank (`main`, `street`, `lane`, `quay`, ...,
 or `<style>_<rank>`), the plaza, flat roofs, the church, street and park
-trees, and route kits for field walls, rail fences, hedges, garden fences and
-the town wall. `old_town` is a European town, `harbor_town` a New England
+trees, route kits for field walls, rail fences, hedges, garden fences and
+the town wall, and the sheds for field corners (`shacks`). `old_town` is a European town, `harbor_town` a New England
 one, `cotswold_village` a limestone village with dry-stone walls (made for a
 town that stands its world's own cottages on its plots), `settler_village` a
 frontier settlement of dirt lanes, `cane_town` a Gulf-coast cane town of dirt

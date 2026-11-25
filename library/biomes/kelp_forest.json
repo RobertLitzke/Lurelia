@@ -3,10 +3,12 @@
   "version": 3,
   "introduced_by": "glassfall",
   "notes": "Giant kelp on rocky reef 3 to 16 m down along the coast: stipes to the surface, a floating canopy, herring and the odd manta among them.",
+  "habitat": "kelp_forest",
   "priority": 2,
   "rules": {"underwater": true, "elev": [-16, -3], "coast": [-70, 0]},
   "surface": "reef_rock",
   "subsurface": "stone_dark",
+  "soil": 0.5,
   "map_color": [70, 100, 70],
   "plants": [
     {

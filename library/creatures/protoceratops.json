@@ -1,0 +1,36 @@
+{
+  "name": "protoceratops",
+  "version": 1,
+  "introduced_by": "saurischia",
+  "notes": "Protoceratops: a sheep-sized frilled herbivore about 1.8 m long, the hornless little cousin of triceratops, beaked and stocky, sandy olive with a darker frill. Grazes in herds in the open woods and glades, and is what the velociraptors hunt.",
+  "voxel": 0.038,
+  "half_w": 0.28,
+  "height": 0.75,
+  "colors": {
+    "hide": [150, 132, 96],
+    "limb": [128, 112, 82],
+    "back": [112, 98, 70],
+    "belly": [196, 182, 150],
+    "frill": [124, 96, 72],
+    "rim": [96, 72, 54],
+    "spot": [108, 92, 66],
+    "horn": [150, 132, 96],
+    "beak": [70, 62, 52],
+    "nail": [60, 54, 46],
+    "eye": [24, 20, 16],
+    "mouth": [90, 60, 50]
+  },
+  "behaviour": {
+    "movement": "graze",
+    "sleeps_on_side": true,
+    "walk_speed": 0.9,
+    "flee_speed": 5.5,
+    "wary": 14,
+    "flightiness": 0.9,
+    "juvenile_flightiness": 1.1,
+    "flees_from": ["player", "velociraptor", "utahraptor"],
+    "group": {"size": [4, 10], "spacing": 2.2, "range": 14, "alignment": 0.9, "cohesion": 1.1},
+    "voice": {"calls": [{"cry": "grunt", "on": "idle", "size": 0.9, "every_s": [120, 400]}]}
+  },
+  "like": "triceratops_juvenile"
+}

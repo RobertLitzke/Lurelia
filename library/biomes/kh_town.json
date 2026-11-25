@@ -1,0 +1,18 @@
+{
+  "name": "kh_town",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Kitehold's streets and yards on top of the Kite: beaten earth and worn basalt, a juniper or a thorn in a yard, sparrows and crows.",
+  "habitat": "settlement",
+  "priority": 10,
+  "rules": {"region": "kitehold"},
+  "surface": "steppe_grass",
+  "subsurface": "dirt",
+  "soil": 0.5,
+  "map_color": [180, 160, 130],
+  "plants": [
+    {"plant": "juniper", "density": 0.0008, "placement": {"verb": "lone", "params": {"spacing": 20}}},
+    {"plant": "hawthorn", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 30}}}
+  ],
+  "creatures": [{"creature": "sparrow", "count": 10}, {"creature": "crow", "count": 4}, {"creature": "starling", "count": 8}]
+}

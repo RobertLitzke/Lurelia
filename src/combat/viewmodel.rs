@@ -5,10 +5,12 @@
 //! `src/shooter.rs` decides where to hold one and how it bobs, sways and
 //! kicks; this file only builds the shapes.
 //!
-//! Model space: x right, y up, the muzzle toward -z, the pivot at the grip's
-//! foot (16, 0, 16) as every model here has it. The minigun's barrels are a
-//! model of their own with the pivot on their axis, so they can spin without
-//! swinging the gun round with them.
+//! The guns themselves are drawn in `combat::real`, each at its own real
+//! size; this file turns them into models, with the shells in flight, the
+//! muzzle flash and the ammunition looks. Model space: x right, y up, the
+//! muzzle toward -z, the pivot at the foot of the grip. The minigun's
+//! barrels are a model of their own with the pivot on their axis, so they
+//! can spin without swinging the gun round with them.
 
 use crate::models::{srgb, Grid, Model};
 use glam::Vec3;
@@ -66,70 +68,125 @@ pub fn palette(p: &mut [[f32; 4]]) {
     p[BLACK as usize] = srgb(28, 29, 32, 0.0);
     p[COPPER as usize] = srgb(168, 104, 56, 0.0);
     p[GLASS as usize] = srgb(104, 134, 148, 0.25);
+    super::real::palette(p);
 }
 
-/// Model voxels to the metre: 32 voxels is 0.7 m, which held at arm's
-/// length fills about a third of the screen's width.
+/// The arena guns' frame: model voxels to the metre that a point handed out
+/// by `muzzle`, `fore` and `spin_axis` is measured in, with the grip at
+/// (16, 0, 16). Every gun has a voxel size of its own (`combat::real`), so
+/// the points are put into this one frame for whoever places them.
 const VOX: f32 = 1.0 / 58.0;
 
-/// The shapes a weapon file may ask for by name (`"view"`). The minigun is
-/// first because it is the one with turning barrels, which `MINIGUN` names.
-pub const SHAPES: [&str; 10] = ["minigun", "launcher", "scrap", "sidearm", "digger", "goo", "bore", "pulse", "skipjack", "sniper"];
+/// Every shape a weapon file may wear (`"view"`): one per `combat::real`
+/// model, in the same order.
+pub const SHAPE_COUNT: usize = super::real::REAL.len();
 
-/// The one shape with a barrel assembly of its own that turns.
-pub const MINIGUN: usize = 0;
+/// The model a shape index is.
+pub fn real(shape: usize) -> Option<&'static super::real::Real> {
+    super::real::REAL.get(shape)
+}
 
-/// How high up its own grid the barrel assembly's pivot sits, in model
-/// voxels: it is on the axis they spin about, not at the grip like every
-/// other model here, so anybody placing one beside the gun has to lift it
-/// by this much.
-pub const BARREL_AXIS: f32 = 13.0;
+/// Every shape's name, in order.
+pub fn shape_names() -> &'static [&'static str] {
+    static N: std::sync::OnceLock<Vec<&'static str>> = std::sync::OnceLock::new();
+    N.get_or_init(|| super::real::REAL.iter().map(|r| r.name).collect())
+}
 
-/// Model voxels to the metre, for whoever places one.
+/// The models' marks and voxel sizes, worked out once: the muzzle is asked
+/// for on every shot.
+fn real_marks() -> &'static [(super::real::Marks, f32)] {
+    static M: std::sync::OnceLock<Vec<(super::real::Marks, f32)>> = std::sync::OnceLock::new();
+    M.get_or_init(|| {
+        super::real::REAL
+            .iter()
+            .map(|r| {
+                let (_, m) = super::real::build(r);
+                (m, super::real::voxel(r, &m))
+            })
+            .collect()
+    })
+}
+
+/// A point of a model, put into the shared frame: the grid coordinates it
+/// would have in a model with its grip at (16, 0, 16) and voxels of `VOX`.
+/// Everything that places a point of a held gun (the muzzle, the flash, a
+/// bot's hand, the minigun's barrels) works in that frame.
+fn real_point(k: usize, p: [f32; 3]) -> Vec3 {
+    let Some((m, vox)) = real_marks().get(k) else { return Vec3::new(16.0, 13.0, 1.0) };
+    Vec3::new(16.0, 0.0, 16.0) + (Vec3::from(p) - Vec3::from(m.grip)) * (vox / VOX)
+}
+
+/// How a body carries a shape.
+pub fn hands(shape: usize) -> super::real::Hands {
+    real(shape).map_or(super::real::Hands::Shoulder, |r| r.hands)
+}
+
+/// Where the left hand goes on a shape held in two, in the shared frame;
+/// None for a one-handed one.
+pub fn fore(shape: usize) -> Option<Vec3> {
+    real_marks().get(shape)?.0.fore.map(|f| real_point(shape, f))
+}
+
+/// The butt of a shape, in metres of the gun from the foot of its grip
+/// (x right, y up, +z back toward the shoulder).
+pub fn butt(shape: usize) -> Vec3 {
+    match real_marks().get(shape) {
+        Some((m, _)) => (real_point(shape, m.butt) - Vec3::new(16.0, 0.0, 16.0)) * VOX,
+        None => Vec3::new(0.0, 0.1, 0.2),
+    }
+}
+
+/// How a bot holds a shape, in metres of the gun from the foot of its grip.
+pub fn grasp(shape: usize) -> crate::anim::figure::Grasp {
+    use super::real::Hands;
+    use crate::anim::figure::{Grasp, Style};
+    let metres = |p: Vec3| (p - Vec3::new(16.0, 0.0, 16.0)) * VOX;
+    let (Some(r), Some((m, _))) = (real(shape), real_marks().get(shape)) else { return Grasp::default() };
+    let bore = metres(real_point(shape, m.muzzle)).y;
+    let back = metres(real_point(shape, m.butt)).z.max(0.0);
+    match r.hands {
+        Hands::One => Grasp { style: Style::One, bore: 0.04, reach: 0.30, fore: None },
+        Hands::Haft => Grasp { style: Style::Haft, bore: 0.04, reach: 0.30, fore: fore(shape).map(metres) },
+        Hands::Pistol => Grasp { style: Style::Pistol, bore, reach: 0.34, fore: Some(Vec3::new(-0.035, 0.03, 0.01)) },
+        Hands::Shoulder => Grasp { style: Style::Shoulder, bore, reach: back.max(0.12), fore: fore(shape).map(metres) },
+        Hands::Tube => Grasp { style: Style::Tube, bore, reach: back.max(0.12) * 0.5, fore: fore(shape).map(metres) },
+    }
+}
+
+/// Whether a shape has barrels that turn: the minigun's, which are the
+/// `BARRELS` model.
+pub fn spins(shape: usize) -> bool {
+    real(shape).is_some_and(|r| r.name == super::real::SPINNER)
+}
+
+/// Where the turning barrels' axis is, in the shared frame: the point the
+/// `BARRELS` model is placed at.
+pub fn spin_axis() -> Vec3 {
+    match super::real::REAL.iter().position(|r| r.name == super::real::SPINNER) {
+        Some(k) => real_point(k, super::real::arena_c::MINIGUN_AXIS),
+        None => Vec3::new(16.0, 13.0, 16.0),
+    }
+}
+
+/// Model voxels to the metre of the shared frame, for whoever places a
+/// point in it.
 pub const VOXEL: f32 = VOX;
 
-/// What each shape is scaled by, in `SHAPES` order.
-///
-/// Every gun is drawn inside the same 32 cube, which is a convenience for
-/// drawing them and a lie about the arsenal: a sidearm came out the size of
-/// a rocket launcher, and ten weapons that are all the same box on screen
-/// are ten weapons you cannot tell apart at a glance. The grid stays one
-/// size; what leaves it does not.
-const SCALE: [f32; SHAPES.len()] = [
-    1.06, // minigun: a lump of a thing
-    1.14, // launcher: the longest tube in the arsenal
-    0.96, // scrap gun: a slab of a forge
-    0.62, // sidearm: a stubby bullpup, still the smallest thing carried
-    0.94, // digger
-    0.94, // goo gun
-    1.06, // bore
-    1.0,  // pulse gun
-    1.0,  // skipjack
-    1.18, // sniper rifle: the longest thing anybody carries
-];
-
-/// The point of each shape's grid the shot leaves from.
+/// The point of each shape the shot leaves from, in the shared frame.
 pub fn muzzle(shape: usize) -> Vec3 {
-    match SHAPES.get(shape).copied().unwrap_or("minigun") {
-        "scrap" => Vec3::new(16.0, 12.0, 1.0),
-        "sidearm" => Vec3::new(16.0, 14.0, 0.0),
-        // The Digger lays its blast on whatever the nozzle is against.
-        "digger" => Vec3::new(16.0, 14.0, 1.0),
-        "goo" => Vec3::new(16.0, 12.0, 2.0),
-        "bore" | "sniper" => Vec3::new(16.0, 14.0, 0.0),
-        "pulse" => Vec3::new(16.0, 13.0, 2.0),
-        "skipjack" => Vec3::new(16.0, 14.0, 2.0),
-        _ => Vec3::new(16.0, 13.0, 1.0),
+    match real_marks().get(shape) {
+        Some((m, _)) => real_point(shape, m.muzzle),
+        None => Vec3::new(16.0, 13.0, 1.0),
     }
 }
 
 /// Index into `models()` of the shape called `name`, if there is one.
 pub fn shape_of(name: &str) -> Option<usize> {
-    SHAPES.iter().position(|s| *s == name)
+    super::real::REAL.iter().position(|r| r.name == name)
 }
 
 /// The same, falling back to the first shape, for a weapon file that names
-/// none: better a generic gun in hand than nothing at all.
+/// none: better a gun in hand than nothing at all.
 pub fn shape(name: &str) -> usize {
     shape_of(name).unwrap_or(0)
 }
@@ -157,16 +214,16 @@ pub fn shell_look(f: &crate::library::FireDef) -> usize {
     }
 }
 
-/// One per name in `SHAPES`, then the spinning barrels, the muzzle flash and
+/// One per shape, then the minigun's turning barrels, the muzzle flash and
 /// one per name in `SHELLS`.
-pub const BARRELS: usize = SHAPES.len();
-pub const FLASH: usize = SHAPES.len() + 1;
+pub const BARRELS: usize = SHAPE_COUNT;
+pub const FLASH: usize = SHAPE_COUNT + 1;
 /// The first of the shell bodies.
-pub const SHELL: usize = SHAPES.len() + 2;
+pub const SHELL: usize = SHAPE_COUNT + 2;
 /// What a pad of rounds is drawn as, one look per kind of ammunition, so a
 /// pad of rockets can be told from a pad of bullets across a hall without
 /// reading anything. Guns that share a store (`ammo_type`) share a look.
-pub const AMMOS: [&str; 8] = ["bullets", "rockets", "scrap", "goo", "bore", "cells", "discs", "sniper"];
+pub const AMMOS: [&str; 12] = ["bullets", "rockets", "scrap", "goo", "bore", "cells", "discs", "sniper", "shells", "grenades", "fuel", "heavy"];
 /// The first of the ammunition looks.
 pub const AMMO: usize = SHELL + SHELLS.len();
 /// How many models `models()` returns, so whatever is appended after them
@@ -178,20 +235,24 @@ pub const COUNT: usize = AMMO + AMMOS.len();
 const AMMO_VOX: f32 = 1.0 / 44.0;
 
 /// Which look a pad of a weapon's rounds is drawn as: its `ammo_type` where
-/// that names one, else read off the gun's own shape.
+/// that names one, else read off which gun it is.
 pub fn ammo_look(w: &crate::library::WeaponDef) -> usize {
     let by_type = w.ammo_type.as_deref().and_then(|t| AMMOS.iter().position(|a| *a == t));
-    let by_view = match w.view.as_str() {
-        "launcher" => "rockets",
-        "scrap" => "scrap",
-        "goo" => "goo",
+    let by_gun = match w.name.as_str() {
+        "rpg" | "rocket_launcher" => "rockets",
+        "grenade_launcher" => "grenades",
+        "flamethrower" => "fuel",
+        "shotgun" => "shells",
+        "bolt_rifle" | "sniper_rifle" => "sniper",
+        "anti_materiel_rifle" => "heavy",
+        "scrap_gun" => "scrap",
+        "goo_gun" => "goo",
         "bore" => "bore",
-        "pulse" => "cells",
+        "arc_gun" => "cells",
         "skipjack" => "discs",
-        "sniper" => "sniper",
         _ => "bullets",
     };
-    AMMO + by_type.unwrap_or_else(|| AMMOS.iter().position(|a| *a == by_view).unwrap_or(0))
+    AMMO + by_type.unwrap_or_else(|| AMMOS.iter().position(|a| *a == by_gun).unwrap_or(0))
 }
 
 /// Shell bodies are a tenth the guns' scale: a rocket is about 0.5 m long
@@ -199,35 +260,22 @@ pub fn ammo_look(w: &crate::library::WeaponDef) -> usize {
 /// seen edge-on at thirty metres to read as a speck and not a crate.
 const SHELL_VOX: f32 = 1.0 / 56.0;
 
-/// Draw one shape by name into a grid. Named rather than inline so that
-/// anything measuring the arsenal works from the same shapes the game does.
-fn build_shape(name: &str, g: &mut Grid) {
-    match name {
-        "minigun" => minigun(g),
-        "launcher" => launcher(g),
-        "sidearm" => sidearm(g),
-        "digger" => digger(g),
-        "goo" => goo_gun(g),
-        "bore" => bore(g),
-        "pulse" => pulse(g),
-        "skipjack" => skipjack(g),
-        "sniper" => sniper(g),
-        _ => scrap(g),
-    }
-}
-
 pub fn models() -> Vec<Model> {
     let mut out = Vec::new();
-    for (i, name) in SHAPES.iter().enumerate() {
-        let mut g = Grid::new();
-        build_shape(name, &mut g);
-        out.push(g.build(VOX * SCALE[i], 0.2, 0.5));
+    // Every gun at its own voxel size, held by its grip.
+    for (r, (m, vox)) in super::real::REAL.iter().zip(real_marks()) {
+        let (g, _) = super::real::build(r);
+        let mut model = g.build(*vox, 0.2, 0.5);
+        model.pivot = Vec3::from(m.grip);
+        out.push(model);
     }
+    // The minigun's barrels, in its grid and at its voxel size, turning
+    // about their own axis.
     let mut b = Grid::new();
-    barrels(&mut b);
-    let mut m = b.build(VOX, 0.2, 0.5);
-    // Its own axis, so a spin about z turns the barrels and nothing else.
-    m.pivot = Vec3::new(16.0, BARREL_AXIS, 16.0);
+    super::real::arena_c::minigun_barrels(&mut b);
+    let vox = super::real::REAL.iter().zip(real_marks()).find(|(r, _)| r.name == super::real::SPINNER).map_or(VOX, |(_, (_, v))| *v);
+    let mut m = b.build(vox, 0.2, 0.5);
+    m.pivot = Vec3::from(super::real::arena_c::MINIGUN_AXIS);
     out.push(m);
     let mut f = Grid::new();
     flash(&mut f);
@@ -320,7 +368,7 @@ fn ammo(name: &str, g: &mut Grid) {
                 post(g, 16.0 + dx * 4.0, 16.0 + dz * 4.0, 3, 19, 0.9, STEEL);
             }
         }
-        // A cell for the pulse gun: a dark can with lit windows and copper
+        // A cell for the arc gun: a dark can with lit windows and copper
         // at its ends.
         "cells" => {
             post(g, 16.0, 16.0, 0, 18, 4.5, DARK);
@@ -356,6 +404,40 @@ fn ammo(name: &str, g: &mut Grid) {
                 post(g, cx, 16.0, 24, 26, 0.7, COPPER);
             }
             post(g, 16.0, 16.0, 2, 3, 6.0, PLASMA);
+        }
+        // Shotgun shells: a box of red hulls with brass heads, a few
+        // standing loose on the lid.
+        "shells" => {
+            g.fill([9, 0, 11], [23, 7, 21], DARK);
+            for (cx, cz) in [(12.0f32, 14.0f32), (16.0, 14.0), (20.0, 14.0), (14.0, 18.5), (18.0, 18.5)] {
+                post(g, cx, cz, 7, 9, 1.8, BRASS);
+                post(g, cx, cz, 9, 16, 1.6, RUST);
+            }
+        }
+        // Forty-millimetre grenades: four fat rounds in a bandolier strip.
+        "grenades" => {
+            g.fill([7, 0, 13], [25, 3, 19], OLIVE);
+            for cx in [10.0f32, 14.0, 18.0, 22.0] {
+                post(g, cx, 16.0, 3, 9, 1.9, BRASS);
+                post(g, cx, 16.0, 9, 13, 1.9, OLIVE);
+                post(g, cx, 16.0, 13, 14, 1.2, BRASS);
+            }
+        }
+        // Fuel: a red jerrycan with its spout up.
+        "fuel" => {
+            g.fill([10, 0, 12], [22, 18, 20], RUST);
+            g.fill([10, 6, 11], [22, 7, 21], DARK);
+            g.fill([12, 18, 13], [16, 20, 19], DARK);
+            post(g, 19.0, 16.0, 18, 22, 1.3, STEEL);
+            post(g, 19.0, 16.0, 22, 23, 0.8, HOT);
+        }
+        // Fifty-calibre rounds: three long ones on a link, laid down.
+        "heavy" => {
+            for cx in [11.0f32, 16.0, 21.0] {
+                rod(g, cx, 3.0, 6, 22, 2.2, BRASS);
+                rod(g, cx, 3.0, 22, 28, 1.6, COPPER);
+            }
+            g.fill([9, 0, 12], [23, 2, 16], DARK);
         }
         // Bullets: an ammunition can with a row of rounds standing out of it.
         _ => {
@@ -475,337 +557,16 @@ fn rod(g: &mut Grid, cx: f32, cy: f32, z0: i32, z1: i32, r: f32, c: u8) {
     }
 }
 
-/// The gearbox, drum and grip; the barrels are a model of their own.
-fn minigun(g: &mut Grid) {
-    // A short receiver at the back: a minigun is mostly barrel, and the one
-    // that was here was mostly box.
-    g.fill([13, 8, 19], [20, 17, 28], STEEL);
-    g.fill([12, 10, 21], [21, 15, 27], DARK);
-    // Ammunition drum on the right, and the belt into the breech.
-    rod(g, 22.5, 11.0, 20, 28, 4.2, DARK);
-    g.fill([19, 10, 21], [22, 13, 25], BRASS);
-    // Top rail and rear sight.
-    g.fill([14, 17, 20], [19, 19, 27], DARK);
-    g.fill([15, 19, 24], [18, 21, 26], DARK);
-    // Grip and trigger guard.
-    g.fill([14, 0, 24], [19, 8, 28], GRIP);
-    g.fill([14, 6, 22], [19, 8, 25], DARK);
-    // Front handguard at the root of the barrels, where a hand holds it
-    // clear of what is turning.
-    g.fill([13, 8, 16], [20, 12, 20], DARK);
-    g.fill([14, 3, 16], [19, 9, 20], GRIP);
-}
 
-/// Six barrels on a ring, in their own model so they can turn.
-fn barrels(g: &mut Grid) {
-    for k in 0..6 {
-        let a = k as f32 / 6.0 * std::f32::consts::TAU;
-        rod(g, 16.0 + 3.0 * a.cos(), 13.0 + 3.0 * a.sin(), 0, 19, 1.0, BARREL);
-    }
-    // The plate they are held in, front and back.
-    rod(g, 16.0, 13.0, 0, 2, 4.2, STEEL);
-    rod(g, 16.0, 13.0, 16, 19, 4.4, STEEL);
-}
 
-fn launcher(g: &mut Grid) {
-    // The tube, with a flare at the muzzle and a vent at the back.
-    rod(g, 16.0, 13.0, 2, 25, 4.0, OLIVE);
-    rod(g, 16.0, 13.0, 1, 4, 5.2, DARK);
-    rod(g, 16.0, 13.0, 25, 29, 5.0, DARK);
-    rod(g, 16.0, 13.0, 3, 28, 2.6, GRIP);
-    // Shoulder body, optical sight on a bracket, and the grip.
-    g.fill([12, 6, 20], [21, 12, 29], OLIVE);
-    g.fill([14, 17, 9], [19, 19, 15], DARK);
-    g.fill([14, 19, 10], [19, 22, 14], STEEL);
-    g.fill([15, 15, 11], [18, 18, 13], DARK);
-    g.fill([14, 0, 21], [19, 8, 25], GRIP);
-    g.fill([14, 6, 19], [19, 8, 22], DARK);
-    // A forward hand grip on the tube.
-    g.fill([14, 3, 11], [19, 9, 15], GRIP);
-}
 
-/// The scrap gun: a forge. A slab of black iron with a letterbox muzzle as
-/// wide as the spread it throws, a grille of glowing slits down both sides,
-/// cooling fins across the top and a firebox at the back. Under it a raked
-/// grip in the P90's manner, with the trigger guard as one loop in front of
-/// it, so the hand sits back under the firebox and the gun reads as held
-/// rather than as a box with a handle bolted to it.
-fn scrap(g: &mut Grid) {
-    g.fill([8, 10, 0], [25, 17, 3], DARK);
-    g.fill([10, 12, 0], [23, 15, 1], HOT);
-    g.fill([10, 8, 3], [23, 18, 22], BLACK);
-    for z in (5..20).step_by(3) {
-        g.fill([9, 11, z], [10, 15, z + 1], HOT);
-        g.fill([23, 11, z], [24, 15, z + 1], HOT);
-    }
-    for z in (4..21).step_by(2) {
-        g.fill([11, 18, z], [22, 20, z + 1], DARK);
-    }
-    g.fill([12, 7, 22], [21, 16, 28], RUST);
-    g.fill([14, 10, 28], [19, 12, 29], HOT);
-    // The grip, raked back: each row down sits half a voxel further back.
-    for y in 0..8 {
-        let z0 = 18 + (8 - y) / 2;
-        g.fill([14, y, z0], [19, y + 1, z0 + 4], GRIP);
-    }
-    // The trigger guard: a bar down from the body, a bar back along the
-    // bottom to the grip, and the trigger hanging in the loop.
-    g.fill([14, 2, 11], [19, 8, 13], DARK);
-    g.fill([14, 2, 11], [19, 4, 21], DARK);
-    g.fill([15, 5, 16], [17, 8, 17], STEEL);
-}
 
-/// The sidearm: a bullpup PDW in the P90's shape. A stubby barrel out of a
-/// sloped nose, the smoky magazine lying along the top with the rounds
-/// showing through it, a ring sight on the magazine's front, a loop at the
-/// front for the trigger hand's fingers, and the thumbhole behind the grip
-/// that makes the stock and the grip one piece.
-fn sidearm(g: &mut Grid) {
-    // Upper body, nose stepped down toward the muzzle.
-    g.fill([13, 11, 6], [19, 17, 30], DARK);
-    g.fill([13, 12, 4], [19, 16, 6], DARK);
-    g.fill([14, 13, 3], [18, 15, 4], BLACK);
-    // The barrel and its flash hider, short: most of it is inside the body.
-    rod(g, 16.0, 14.0, 0, 3, 1.0, BARREL);
-    rod(g, 16.0, 14.0, 0, 1, 1.4, BLACK);
-    // The magazine along the top: smoky and lit a little from inside, with
-    // a stripe of brass down the middle where the rounds lie across it.
-    g.fill([13, 17, 7], [19, 19, 28], GLASS);
-    g.fill([15, 18, 8], [17, 19, 27], BRASS);
-    g.fill([13, 17, 27], [19, 19, 29], BLACK);
-    // The ring sight on its block at the front of the magazine.
-    g.fill([14, 19, 8], [18, 20, 13], BLACK);
-    g.fill([14, 20, 9], [18, 23, 10], DARK);
-    g.fill([14, 20, 12], [18, 23, 13], DARK);
-    g.fill([14, 22, 10], [18, 23, 12], DARK);
-    g.fill([15, 20, 10], [17, 22, 12], GLASS);
-    // Lower body: the front loop, the grip, the thumbhole and the butt, all
-    // one moulding, built round the two holes rather than cut from a block.
-    // The front loop: a bar down the front, a bar along the bottom, a strip
-    // under the body, and the trigger hanging in the hole between them.
-    g.fill([13, 4, 5], [19, 11, 7], BLACK);
-    g.fill([13, 2, 7], [19, 4, 14], BLACK);
-    g.fill([13, 10, 7], [19, 11, 14], BLACK);
-    g.fill([13, 2, 13], [19, 11, 14], BLACK);
-    g.fill([15, 7, 11], [17, 10, 12], STEEL);
-    // The grip, under where the trigger hand sits.
-    g.fill([13, 0, 14], [19, 11, 19], GRIP);
-    // The thumbhole, right through: a bar below it and one above.
-    g.fill([13, 0, 19], [19, 4, 23], BLACK);
-    g.fill([13, 10, 19], [19, 11, 23], BLACK);
-    // The butt, with a rubber plate on the back.
-    g.fill([13, 0, 23], [19, 11, 29], BLACK);
-    g.fill([13, 0, 29], [19, 11, 30], GRIP);
-    // Charging handle and the ejection slot under the body.
-    g.fill([12, 13, 9], [13, 15, 11], STEEL);
-    g.fill([15, 1, 20], [17, 2, 23], DARK);
-}
 
-/// The Digger: a cartridge in a skeleton frame, a nozzle at the front, a
-/// plunger rod out the back, a squeeze handle, and a spade welded under the
-/// nozzle. It is a tool off a shelf in the works with the cartridge swapped
-/// for something that goes off, and it should look like one -- the joke only
-/// lands if the thing is plainly a caulk gun and plainly lethal.
-fn digger(g: &mut Grid) {
-    // The nozzle: a cone, stepped, with a bead of whatever it lays sitting
-    // at the tip. The bead is the one bright thing on it.
-    rod(g, 16.0, 14.0, 0, 3, 1.6, PLASTIC);
-    rod(g, 16.0, 14.0, 3, 6, 2.6, PLASTIC);
-    rod(g, 16.0, 14.0, 6, 8, 3.4, DARK);
-    g.ellipsoid([16.0, 14.0, 0.5], [1.5, 1.5, 1.5], FOAM);
-    // The cartridge, a fat tube most of the length of it, with a label band
-    // and a crimp at the back.
-    rod(g, 16.0, 14.0, 8, 25, 4.0, PALE);
-    rod(g, 16.0, 14.0, 12, 17, 4.3, PLASTIC);
-    rod(g, 16.0, 14.0, 24, 26, 3.4, DARK);
-    // The frame: two side bars down the length, a half-ring holding the
-    // cartridge at the front and a back plate the plunger comes through.
-    for x in [11, 20] {
-        g.fill([x, 9, 7], [x + 1, 12, 27], STEEL);
-    }
-    g.fill([11, 9, 7], [21, 12, 9], STEEL);
-    g.fill([12, 8, 25], [20, 20, 27], DARK);
-    // The plunger rod, out the back with its disc of a handle.
-    rod(g, 16.0, 14.0, 26, 31, 0.9, STEEL);
-    g.fill([13, 11, 30], [20, 18, 31], STEEL);
-    // The squeeze handle and its trigger, and the bar the front hand takes.
-    g.fill([14, 0, 24], [19, 9, 28], GRIP);
-    g.fill([14, 7, 21], [19, 9, 25], DARK);
-    g.fill([11, 4, 9], [21, 9, 12], GRIP);
-    // The spade: a blade under the nozzle, lying flat the way an entrenching
-    // tool's does, so it shows its face from the side rather than its edge.
-    // It is widest at the cutting edge and narrows back to the socket, which
-    // is the only thing that makes it read as a spade rather than a tongue.
-    for (z, half) in [(0, 5), (1, 6), (2, 6), (3, 6), (4, 5), (5, 5), (6, 4), (7, 3)] {
-        let c = if z < 2 { EDGE } else { STEEL };
-        g.fill([16 - half, 7, z], [17 + half, 9, z + 1], c);
-        // Dished: the sides stand a voxel proud of the middle.
-        for x in [16 - half, 16 + half] {
-            g.fill([x, 9, z], [x + 1, 10, z + 1], c);
-        }
-    }
-    // The shank that holds it on, back and up into the frame under the
-    // nozzle, and the collar round the cartridge it is clamped to.
-    g.fill([14, 8, 6], [19, 12, 11], DARK);
-    g.fill([12, 7, 10], [21, 13, 12], STEEL);
-}
 
-/// The goo gun: a tank of sludge over a short wide nozzle, with the stuff
-/// visible in a sight glass down the side.
-fn goo_gun(g: &mut Grid) {
-    // Nozzle: wide, short, and open at the end.
-    rod(g, 16.0, 12.0, 2, 13, 4.4, OLIVE);
-    rod(g, 16.0, 12.0, 1, 3, 5.6, DARK);
-    rod(g, 16.0, 12.0, 2, 12, 3.0, GOO);
-    // Body.
-    g.fill([12, 6, 12], [21, 17, 27], OLIVE);
-    g.fill([11, 8, 14], [22, 15, 25], DARK);
-    // The tank on top, strapped down, with a window of sludge along it.
-    rod(g, 16.0, 20.0, 13, 27, 4.2, STEEL);
-    g.fill([11, 19, 15], [12, 22, 25], GOO);
-    g.fill([21, 19, 15], [22, 22, 25], GOO);
-    for z in [15, 19, 23] {
-        rod(g, 16.0, 20.0, z, z + 1, 4.6, DARK);
-    }
-    // A sight glass down each side, with the sludge behind it: the gun is
-    // held to the right of the screen, so only its left side is ever seen.
-    g.fill([21, 9, 16], [22, 15, 24], GOO);
-    g.fill([11, 9, 16], [12, 15, 24], GOO);
-    g.fill([21, 15, 16], [22, 16, 24], GLASS);
-    g.fill([11, 15, 16], [12, 16, 24], GLASS);
-    g.fill([14, 14, 11], [19, 18, 14], COPPER);
-    // Grip and fore grip.
-    g.fill([14, 0, 21], [19, 8, 25], GRIP);
-    g.fill([14, 6, 19], [19, 8, 22], DARK);
-    g.fill([13, 2, 8], [20, 8, 12], GRIP);
-}
 
-/// The bore: a rock drill with the feed taken off it. A heavy barrel
-/// sleeve, a cutting head of copper teeth at the muzzle, a cooling jacket
-/// with fins, and a bit that glows because of what it has been doing.
-fn bore(g: &mut Grid) {
-    // The cutting head: a ring of teeth round a hot bit.
-    rod(g, 16.0, 14.0, 0, 4, 4.4, COPPER);
-    rod(g, 16.0, 14.0, 0, 5, 2.6, DARK);
-    rod(g, 16.0, 14.0, 0, 2, 1.4, HOT);
-    for k in 0..8 {
-        let a = k as f32 / 8.0 * std::f32::consts::TAU;
-        rod(g, 16.0 + 3.6 * a.cos(), 14.0 + 3.6 * a.sin(), 0, 3, 0.8, EDGE);
-    }
-    // The barrel sleeve, with cooling fins down it.
-    rod(g, 16.0, 14.0, 4, 20, 3.0, STEEL);
-    for z in [7, 10, 13, 16] {
-        rod(g, 16.0, 14.0, z, z + 1, 4.2, RUST);
-    }
-    // The body, the motor housing over it, and a vent.
-    g.fill([13, 9, 18], [20, 19, 28], DARK);
-    rod(g, 16.0, 19.0, 19, 27, 2.6, STEEL);
-    for z in [21, 24] {
-        g.fill([12, 18, z], [21, 22, z + 1], BLACK);
-    }
-    // Grip, trigger, and the bar the front hand takes on a drill this heavy.
-    g.fill([14, 0, 23], [19, 9, 27], GRIP);
-    g.fill([14, 7, 21], [19, 9, 24], DARK);
-    g.fill([11, 3, 13], [21, 9, 17], GRIP);
-}
 
-/// The pulse gun: three prongs round an emitter, which is where the beam
-/// strikes from, and a coil pack behind them.
-fn pulse(g: &mut Grid) {
-    // The emitter: a small glowing eye held between three prongs.
-    g.ellipsoid([16.0, 13.0, 6.0], [1.8, 1.8, 1.8], PULSE);
-    for (dx, dy) in [(0.0f32, 1.0f32), (-0.87, -0.5), (0.87, -0.5)] {
-        let (x, y) = (16.0 + dx * 4.0, 13.0 + dy * 4.0);
-        rod(g, x, y, 2, 14, 1.3, EDGE);
-        g.fill([x as i32 - 1, y as i32 - 1, 1], [x as i32 + 1, y as i32 + 1, 2], PULSE);
-    }
-    // The body and the coil pack over it.
-    rod(g, 16.0, 13.0, 12, 24, 4.0, STEEL);
-    g.fill([12, 7, 18], [21, 18, 28], DARK);
-    for z in (13..23).step_by(3) {
-        rod(g, 16.0, 19.0, z, z + 2, 3.2, COPPER);
-    }
-    rod(g, 16.0, 19.0, 13, 23, 1.2, PULSE);
-    // Grip and fore grip.
-    g.fill([14, 0, 22], [19, 8, 26], GRIP);
-    g.fill([14, 6, 20], [19, 8, 23], DARK);
-    g.fill([13, 3, 13], [20, 9, 17], GRIP);
-}
 
-/// The skipjack: a toy. Orange shell, blue furniture, a drum of discs on
-/// its side and a muzzle three times wider than the slot a disc comes out
-/// of. Everything on it is a size too big, which is what makes a thing read
-/// as plastic rather than as machined steel -- an iron gun is all thin
-/// edges, and this has none.
-fn skipjack(g: &mut Grid) {
-    // The muzzle: a fat collar round a slot, with a pale ring at its lip.
-    rod(g, 16.0, 14.0, 0, 9, 4.2, PLASTIC);
-    rod(g, 16.0, 14.0, 0, 2, 4.8, PALE);
-    g.fill([12, 12, 0], [21, 16, 8], BLACK);
-    g.fill([13, 12, 0], [20, 16, 2], EDGE);
-    // The shell, in two colours with a seam between them, because a toy is
-    // moulded in halves and never lets you forget it.
-    g.fill([13, 8, 8], [20, 21, 27], PLASTIC);
-    g.fill([12, 11, 11], [21, 18, 24], PLASTIC_B);
-    g.fill([12, 17, 11], [21, 18, 24], PALE);
-    // The drum of discs, out on the right with the top one showing.
-    rod(g, 22.0, 14.0, 11, 22, 5.2, PLASTIC_B);
-    rod(g, 22.0, 14.0, 13, 20, 3.6, FOAM);
-    rod(g, 22.0, 14.0, 15, 18, 1.4, PLASTIC);
-    // A cocking handle along the top and a sight that is pure decoration.
-    g.fill([15, 21, 16], [18, 24, 23], PALE);
-    g.fill([15, 21, 9], [18, 23, 12], PLASTIC_B);
-    // The grip, with a pale band, and a trigger guard a size too big.
-    g.fill([14, 0, 21], [19, 11, 27], PLASTIC);
-    g.fill([14, 3, 21], [19, 6, 27], PLASTIC_B);
-    g.fill([13, 7, 16], [20, 10, 22], PLASTIC);
-    g.fill([14, 9, 19], [19, 11, 22], BLACK);
-}
 
-/// The sniper rifle: a long barrel, a heavy scope on rings, a bolt out to
-/// the right, and a stock that reaches back past the eye.
-fn sniper(g: &mut Grid) {
-    // A long thin barrel is most of what makes a rifle read as one, so it
-    // runs most of the model and nothing else is allowed to be as thick.
-    rod(g, 16.0, 14.0, 0, 20, 1.7, BARREL);
-    // Muzzle brake: a fatter collar with two slots cut across it.
-    rod(g, 16.0, 14.0, 0, 3, 2.4, DARK);
-    for z in [1, 2] {
-        g.fill([13, 15, z], [19, 17, z + 1], BLACK);
-    }
-    // Slim receiver, five voxels wide against the minigun's nine, and in
-    // steel rather than black: a rifle that is all one dark mass at arm's
-    // length is a dark mass, not a rifle.
-    g.fill([14, 11, 18], [19, 17, 25], STEEL);
-    g.fill([14, 16, 17], [19, 18, 26], DARK);
-    // The stock: a wrist that drops behind the grip, a comb to lay a cheek
-    // on, and a butt plate. This is the shape an eye reads as a rifle
-    // rather than as a pipe with a handle on it.
-    g.fill([14, 9, 24], [19, 16, 28], OLIVE);
-    g.fill([14, 12, 27], [19, 17, 31], OLIVE);
-    g.fill([14, 10, 30], [19, 17, 31], DARK);
-    // Fore-end: wood under the barrel where the front hand goes, stopping
-    // well short of the muzzle so the barrel is seen to be bare.
-    g.fill([14, 10, 12], [19, 14, 19], OLIVE);
-    // The bolt handle, out to the right where it can be seen.
-    g.fill([19, 13, 21], [23, 15, 23], STEEL);
-    g.ellipsoid([23.0, 14.0, 22.0], [1.4, 1.4, 1.4], EDGE);
-    // The scope: a tube on two low rings, an objective bell at the front
-    // and glass at the eye. Low on purpose -- a scope on tall rings makes
-    // the silhouette square, and square is what everything in here was.
-    rod(g, 16.0, 19.5, 10, 26, 1.7, BLACK);
-    rod(g, 16.0, 19.5, 10, 13, 2.4, BLACK);
-    g.fill([14, 17, 13], [19, 19, 15], STEEL);
-    g.fill([14, 17, 22], [19, 19, 24], STEEL);
-    g.fill([14, 18, 25], [19, 21, 26], GLASS);
-    // Pistol grip and the magazine ahead of it.
-    g.fill([14, 4, 23], [19, 12, 27], GRIP);
-    g.fill([14, 10, 21], [19, 12, 24], DARK);
-    g.fill([14, 7, 19], [19, 12, 22], BRASS);
-    // A sling swivel under the fore-end, which is all the furniture it
-    // needs: a bipod read as legs on a spider at this size.
-    g.fill([15, 8, 15], [18, 10, 16], STEEL);
-}
 
 /// A rough star of light, a few frames long.
 fn flash(g: &mut Grid) {
@@ -815,49 +576,5 @@ fn flash(g: &mut Grid) {
             let t = k as f32;
             g.ellipsoid([16.0 + dx * t, 16.0 + dy * t, 16.0], [1.6 - t * 0.2, 1.6 - t * 0.2, 1.4 - t * 0.15], HOT);
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    /// Every weapon fills a different box. Ten guns drawn in the same 32
-    /// cube come out the same size and shape unless somebody is watching:
-    /// a sidearm has to be small, a rifle long and thin, a minigun deep.
-    /// This prints the measurements and fails when the arsenal has gone
-    /// square again.
-    #[test]
-    fn the_guns_are_not_all_the_same_box() {
-        let mut shape = Vec::new();
-        for (i, name) in SHAPES.iter().enumerate() {
-            let mut g = Grid::new();
-            build_shape(name, &mut g);
-            // The minigun's barrels are a model of their own, and a minigun
-            // measured without them is a stub: they go in the same grid
-            // here, which is where they sit in the world anyway.
-            if i == MINIGUN {
-                barrels(&mut g);
-            }
-            let (lo, hi) = g.bounds().expect("a shape with nothing in it");
-            // Centimetres, which is what reaches the screen: the grid is one
-            // size for every gun and the scale is not.
-            let k = VOX * SCALE[i] * 100.0;
-            let (w, t, l) = ((hi[0] - lo[0] + 1) as f32 * k, (hi[1] - lo[1] + 1) as f32 * k, (hi[2] - lo[2] + 1) as f32 * k);
-            println!("{name:10} {w:5.1} wide {t:5.1} tall {l:5.1} long cm   long/tall {:.2}  bulk {:.0}", l / t, w * t * l);
-            shape.push((*name, w, t, l));
-        }
-        // Length against height: a rifle is a line, the Digger is a tube,
-        // a pistol is a block.
-        let slim = shape.iter().map(|(_, _, t, l)| l / t).fold(0.0f32, f32::max);
-        let squat = shape.iter().map(|(_, _, t, l)| l / t).fold(f32::MAX, f32::min);
-        assert!(slim > 1.7, "the longest gun is only {slim:.2} times its own height: they are all boxes");
-        assert!(slim > squat * 1.6, "every gun has the same proportions: {squat:.2} to {slim:.2}");
-        // And the longest is well clear of the shortest, which a single
-        // scale for the whole arsenal is exactly what prevents.
-        let long: Vec<f32> = shape.iter().map(|(_, _, _, l)| *l).collect();
-        let big = long.iter().cloned().fold(0.0f32, f32::max);
-        let small = long.iter().cloned().fold(f32::MAX, f32::min);
-        assert!(big > small * 1.9, "the longest gun is only {:.1} times the shortest", big / small);
     }
 }

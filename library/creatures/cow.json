@@ -10,28 +10,36 @@
     "horn": [214, 196, 160],
     "dark": [36, 28, 24]
   },
+  "forms": {"female": "cow_female", "juvenile": "cow_juvenile"},
   "behaviour": {
     "walk_speed": 0.6,
     "flee_speed": 4.0,
     "wary": 5,
     "flightiness": 0.15,
-    "group": {"size": [2, 5], "spacing": 3.2, "range": 20, "alignment": 0.7, "cohesion": 1.0}
+    "group": {"size": [2, 5], "spacing": 3.2, "range": 20, "alignment": 0.7, "cohesion": 1.0},
+    "voice": {"calls": [{"cry": "moo", "on": "idle", "every_s": [60, 300], "chorus": 0.2, "chorus_m": 80}]}
   },
   "like": "bison",
   "scale": 0.567,
   "extra_ops": [
-    {"op": "box", "from": [9, 19, 5], "to": [23, 26, 17], "mat": "air"},
-    {"op": "ellipsoid", "centre": [16, 15, 13], "radius": [4.4, 4.2, 4.4], "mat": "coat"},
-    {"op": "box", "from": [13, 12, 5], "to": [19, 17, 10], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16, 13, 5], "radius": [3.2, 3.2, 3.2], "mat": "coat", "part": "head"},
-    {"op": "box", "from": [14, 10, 1], "to": [18, 13, 4], "mat": "patch", "part": "head"},
-    {"op": "set", "at": [13, 14, 3], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [18, 14, 3], "mat": "dark", "part": "head"},
-    {"op": "recolour", "at": [10, 13, 14], "until": [23, 20, 19], "from": "coat", "to": "patch"},
-    {"op": "recolour", "at": [10, 15, 21], "until": [23, 20, 25], "from": "coat", "to": "patch"},
-    {"op": "recolour", "at": [10, 8, 10], "until": [23, 12, 14], "from": "coat", "to": "patch"},
-    {"op": "box", "from": [12, 15, 4], "to": [13, 16, 5], "mat": "horn", "part": "head"},
-    {"op": "box", "from": [19, 15, 4], "to": [20, 16, 5], "mat": "horn", "part": "head"},
-    {"op": "ellipsoid", "centre": [16, 11, 21], "radius": [2.2, 1.6, 2.2], "mat": "patch"}
+    {"op": "box", "from": [10, 26, 8], "to": [28, 35, 24], "mat": "air"},
+    {"op": "ellipsoid", "centre": [19.0, 20.242, 18.952], "radius": [5.938, 5.668, 5.938], "mat": "coat"},
+    {"op": "box", "from": [15, 16, 8], "to": [23, 23, 15], "mat": "coat", "part": "neck"},
+    {
+      "op": "ellipsoid",
+      "centre": [19.0, 17.543, 8.156],
+      "radius": [4.318, 4.318, 4.318],
+      "mat": "coat",
+      "part": "head"
+    },
+    {"op": "box", "from": [16, 13, 3], "to": [22, 18, 7], "mat": "patch", "part": "head"},
+    {"op": "box", "from": [15, 19, 5], "to": [16, 20, 7], "mat": "dark", "part": "head"},
+    {"op": "box", "from": [22, 19, 5], "to": [23, 20, 7], "mat": "dark", "part": "head"},
+    {"op": "recolour", "at": [11, 18, 20], "until": [28, 27, 27], "from": "coat", "to": "patch"},
+    {"op": "recolour", "at": [11, 20, 30], "until": [28, 27, 35], "from": "coat", "to": "patch"},
+    {"op": "recolour", "at": [11, 11, 15], "until": [28, 16, 20], "from": "coat", "to": "patch"},
+    {"op": "box", "from": [14, 20, 7], "to": [15, 22, 8], "mat": "horn", "part": "head"},
+    {"op": "box", "from": [23, 20, 7], "to": [24, 22, 8], "mat": "horn", "part": "head"},
+    {"op": "ellipsoid", "centre": [19.0, 14.844, 29.747], "radius": [2.969, 2.159, 2.969], "mat": "patch"}
   ]
 }

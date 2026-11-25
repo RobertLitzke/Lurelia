@@ -106,8 +106,10 @@ pub struct Spec {
     /// The kart's drift: Space hops, and held with the steering over at
     /// speed it drifts, the rear loose (`drift_grip` of its grip) and the
     /// nose held about `drift_angle` degrees into the turn. Every
-    /// `drift_charge` seconds of drift is a tier of boost, up to two, each
-    /// `drift_boost` m/s on letting go. 0 boost is no drift: Space hops as
+    /// `drift_charge` seconds of drift is a tier of boost, up to three. A
+    /// drift let go after one tier kicks `drift_boost` m/s, and the kick
+    /// and its seconds grow with the drift's length to twice that at three
+    /// (vehicle/mod.rs `kart_hop`). 0 boost is no drift: Space hops as
     /// on any car. On `handling: kart` the drift turns the kart's path with
     /// up to `drift_grip` of its grip (more than 1 turns tighter than the
     /// steering can), and charges fastest steered into the turn.
@@ -181,6 +183,10 @@ pub struct Spec {
     pub clean_impact: f32,
     /// Speed given back by a clean landing, m/s.
     pub clean_kick: f32,
+    /// Water this deep over the ground starts to drown the engine, which
+    /// is gone at half as deep again, metres (0: the wheel's radius). A
+    /// kart splashes through a ford up to the floor pan.
+    pub wade: f32,
     /// How far the drawn chassis rolls and pitches with the acceleration,
     /// radians per g, on top of the body's own pose.
     pub visual_roll: f32,
@@ -266,6 +272,7 @@ impl Default for Spec {
             hop_loaded: 5.0,
             clean_impact: 4.5,
             clean_kick: 1.5,
+            wade: 0.0,
             visual_roll: 0.06,
             visual_pitch: 0.04,
             bump_box: None,
@@ -387,12 +394,21 @@ impl Catalogue {
         for e in &errors {
             eprintln!("vehicles: {e}");
         }
-        // A file that will not parse while it is being edited keeps the
-        // last good tune rather than taking the vehicle away.
-        if !specs.is_empty() || self.specs.is_empty() {
-            self.specs = specs;
-            self.files = files;
+        // A file that will not parse while it is being edited keeps that
+        // vehicle's last good tune rather than taking the vehicle away (and
+        // handing the driver the built-in default instead).
+        if !errors.is_empty() {
+            for (name, s) in std::mem::take(&mut self.specs) {
+                if !specs.contains_key(&name) {
+                    if let Some(f) = self.files.remove(&name) {
+                        files.insert(name.clone(), f);
+                    }
+                    specs.insert(name, s);
+                }
+            }
         }
+        self.specs = specs;
+        self.files = files;
         self.errors = errors;
     }
 

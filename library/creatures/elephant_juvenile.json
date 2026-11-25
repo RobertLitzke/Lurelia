@@ -1,0 +1,62 @@
+{
+  "name": "elephant_juvenile",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "The elephant's juvenile form (elephant `forms`): a calf with no tusks showing yet, drawn small at a juvenile's scale with its big head. Written once from the elephant's ops; edit it as its own model.",
+  "ops": [
+    {"op": "ellipsoid", "centre": [16.0, 19.2, 20.2], "radius": [6.5, 6.7, 9.7], "mat": "coat"},
+    {"op": "recolour_below", "y": 14, "from": "coat", "to": "hide"},
+    {
+      "op": "segment",
+      "points": [[12.3, 17.5, 11.5], [12.3, 9, 11.5], [12.3, 2.0, 11.5]],
+      "radius": 3.0,
+      "mat": "coat",
+      "part": "leg_fl"
+    },
+    {"op": "ellipsoid", "centre": [12.3, 0.9, 11.2], "radius": [2.7, 1.1, 3.0], "mat": "nail", "part": "leg_fl"},
+    {
+      "op": "segment",
+      "points": [[19.7, 17.5, 11.5], [19.7, 9, 11.5], [19.7, 2.0, 11.5]],
+      "radius": 3.0,
+      "mat": "coat",
+      "part": "leg_fr"
+    },
+    {"op": "ellipsoid", "centre": [19.7, 0.9, 11.2], "radius": [2.7, 1.1, 3.0], "mat": "nail", "part": "leg_fr"},
+    {
+      "op": "segment",
+      "points": [[12.3, 17.5, 25.0], [12.3, 9, 25.0], [12.3, 2.0, 25.0]],
+      "radius": 3.0,
+      "mat": "coat",
+      "part": "leg_hl"
+    },
+    {"op": "ellipsoid", "centre": [12.3, 0.9, 24.7], "radius": [2.7, 1.1, 3.0], "mat": "nail", "part": "leg_hl"},
+    {
+      "op": "segment",
+      "points": [[19.7, 17.5, 25.0], [19.7, 9, 25.0], [19.7, 2.0, 25.0]],
+      "radius": 3.0,
+      "mat": "coat",
+      "part": "leg_hr"
+    },
+    {"op": "ellipsoid", "centre": [19.7, 0.9, 24.7], "radius": [2.7, 1.1, 3.0], "mat": "nail", "part": "leg_hr"},
+    {"op": "ellipsoid", "centre": [16.0, 21.5, 11.8], "radius": [4.6, 4.8, 3.8], "mat": "coat", "part": "neck"},
+    {"op": "ellipsoid", "centre": [16.0, 22.0, 7.6], "radius": [4.6, 5.0, 4.6], "mat": "coat", "part": "head"},
+    {"op": "ellipsoid", "centre": [9.6, 21.5, 11.5], "radius": [1.5, 5.5, 4.5], "mat": "hide", "part": "ear_l"},
+    {"op": "ellipsoid", "centre": [22.4, 21.5, 11.5], "radius": [1.5, 5.5, 4.5], "mat": "hide", "part": "ear_r"},
+    {"op": "ellipsoid", "centre": [11.9, 23.0, 5.8], "radius": [1.1, 1.1, 1.1], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [20.1, 23.0, 5.8], "radius": [1.1, 1.1, 1.1], "mat": "dark", "part": "head"},
+    {"op": "segment", "points": [[16, 19.8, 5.4], [16, 15.5, 3.8]], "radius": 2.7, "mat": "coat", "part": "head"},
+    {"op": "segment", "points": [[16, 15.5, 3.8], [16, 10.5, 3.4]], "radius": 2.4, "mat": "coat", "part": "head"},
+    {"op": "segment", "points": [[16, 10.5, 3.4], [16, 6, 4.2]], "radius": 2.0, "mat": "coat", "part": "head"},
+    {"op": "segment", "points": [[16, 6, 4.2], [16, 2.6, 5.6]], "radius": 1.6, "mat": "coat", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 2.6, 5.6], "radius": [1.3, 1.3, 1.3], "mat": "coat", "part": "head"},
+    {
+      "op": "segment",
+      "points": [[16, 23, 28.5], [16, 19, 31], [16, 15.5, 31.5]],
+      "radius": 1.0,
+      "mat": "hide",
+      "part": "tail"
+    },
+    {"op": "ellipsoid", "centre": [16, 14.3, 31.5], "radius": [1.1, 1.6, 1.1], "mat": "dark", "part": "tail"}
+  ],
+  "like": "elephant"
+}

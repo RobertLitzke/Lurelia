@@ -11,5 +11,6 @@
   "leaf": "bamboo_leaves",
   "max_slope": 0.8,
   "stems": [7, 13],
-  "crown_base": 0.5
+  "crown_base": 0.5,
+  "site": {"wet": [0.5, 1.0], "soil": [0.4, 1.0]}
 }

@@ -64,6 +64,10 @@ pub struct TrackFile {
     pub shapes: Vec<TrackShape>,
     #[serde(default)]
     pub structures: Vec<TrackStructure>,
+    #[serde(default)]
+    pub zones: Vec<crate::world::fields::Zone>,
+    #[serde(default)]
+    pub smash: Vec<crate::world::fields::Smash>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -360,7 +364,17 @@ pub fn stamp(cx: &mut EventCtx, t: &TrackFile, world_placed: usize) -> String {
     }
     let decks = if deck.iter().any(|&d| d) {
         let parapet = t.mats.wall.clone();
-        lay_decks(cx, &line, &y, &raw, &deck, &half, &wall, [&t.mats.road, &t.mats.kerb, &t.mats.deck, &parapet])
+        // A deck's top is the road's material there: a `surface` stretch
+        // over a pier is planks on the deck as on the land.
+        let mut roads = vec![t.mats.road.as_str(); n];
+        for (from, to, m) in &t.surfaces {
+            for k in 0..n {
+                if in_run(along[k], *from, *to) {
+                    roads[k] = m.as_str();
+                }
+            }
+        }
+        lay_decks(cx, &line, &y, &raw, &deck, &half, &wall, &roads, [&t.mats.kerb, &t.mats.deck, &parapet])
     } else {
         0
     };
@@ -381,6 +395,26 @@ pub fn stamp(cx: &mut EventCtx, t: &TrackFile, world_placed: usize) -> String {
                 cx.shapes.push(crate::world::shape::compile(&ops, s.size, &|m| or_carve(lib, m)));
                 cx.placed.push(Placed { shape: cx.shapes.len() - 1, def, origin: s.at, rot: 0, age: 0.0, cause, seed });
                 shapes += 1;
+            }
+            // The props a kart smashes, in the passable copy of their
+            // material (`Library::ghost_twins`, worldload.rs): the race
+            // takes them away as a kart reaches them, so none is ever hit.
+            for s in &t.smash {
+                let Some(lo) = s.boxes.iter().map(|b| [b[0], b[1], b[2]]).reduce(|a, b| [a[0].min(b[0]), a[1].min(b[1]), a[2].min(b[2])]) else { continue };
+                let hi = s.boxes.iter().map(|b| [b[3], b[4], b[5]]).fold(lo, |a, b| [a[0].max(b[0]), a[1].max(b[1]), a[2].max(b[2])]);
+                let mat = crate::library::ghost(&s.mat);
+                if lib.material(&mat).is_none() {
+                    cx.warnings.push(format!("track {}: no passable {} for a smashable prop", t.name, s.mat));
+                    continue;
+                }
+                let ops: Vec<crate::library::Op> = s
+                    .boxes
+                    .iter()
+                    .map(|b| crate::library::Op::Box { from: [b[0] - lo[0], b[1] - lo[1], b[2] - lo[2]], to: [b[3] - lo[0], b[4] - lo[1], b[5] - lo[2]], mat: mat.clone(), part: None })
+                    .collect();
+                let size = [hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]];
+                cx.shapes.push(crate::world::shape::compile(&ops, size, &|m| or_carve(lib, m)));
+                cx.placed.push(Placed { shape: cx.shapes.len() - 1, def, origin: lo, rot: 0, age: 0.0, cause, seed });
             }
         }
         None if !t.shapes.is_empty() => cx.warnings.push("track: the library has no structure called track_shape, so no shapes".into()),
@@ -421,6 +455,12 @@ pub fn stamp(cx: &mut EventCtx, t: &TrackFile, world_placed: usize) -> String {
     for j in &t.jumps {
         for (k, l) in lip.iter_mut().enumerate() {
             *l |= (along[k] - (j.s - j.len - 2.0)).rem_euclid(length) < j.len + 14.0;
+        }
+    }
+    // A flooded channel's banks are steep on purpose too.
+    for z in t.zones.iter().filter(|z| z.kind == "flood" || z.kind == "landing") {
+        for (k, l) in lip.iter_mut().enumerate() {
+            *l |= z.on(along[k]);
         }
     }
     let step = 10usize.min(n / 4).max(1);
@@ -464,6 +504,10 @@ pub fn stamp(cx: &mut EventCtx, t: &TrackFile, world_placed: usize) -> String {
         pads: t.pads.clone(),
         checkpoints,
         jumps: t.jumps.iter().map(|j| ((j.s - j.len).rem_euclid(length), (j.s + JUMP_FLIGHT).rem_euclid(length))).collect(),
+        gate: t.gate.as_ref().map(|_| Gate::default().height),
+        zones: t.zones.clone(),
+        smash: t.smash.clone(),
+        walls: if wall.iter().any(|&w| w > 0.0) { wall.clone() } else { Vec::new() },
     });
     let (lo, hi) = y.iter().fold((f32::MAX, f32::MIN), |(a, b), &h| (a.min(h), b.max(h)));
     format!(
@@ -970,7 +1014,22 @@ mod tests {
         assert_eq!(h, PEREGRINE, "Peregrine's corridor hash is now {h:#018x}");
     }
 
-    const PEREGRINE: u64 = 0x793d_1bf8_b94a_c277;
+    /// Ribstrand's lamp posts are built of a passable copy of their bone,
+    /// so a kart drives through them; the gantry's posts stay solid.
+    #[test]
+    #[ignore = "builds Ribstrand: cargo test --release lamp_posts_are_passable -- --ignored"]
+    fn lamp_posts_are_passable() {
+        let loaded = crate::worldload::load("ribstrand").expect("ribstrand builds");
+        let w = &loaded.world;
+        let ghost = w.lib.material(&crate::library::ghost("titan_bone")).expect("no passable copy of the post bone");
+        assert!(crate::world::store::passable(ghost), "the copy is not passable");
+        let bone = w.lib.material("titan_bone").unwrap();
+        assert!(!crate::world::store::passable(bone), "the gantry's own bone became passable");
+        let used = w.placed.iter().any(|p| w.shapes[p.shape].mat.contains(&ghost));
+        assert!(used, "no lamp post is built of it");
+    }
+
+    const PEREGRINE: u64 =0x793d_1bf8_b94a_c277;
 
     /// Whatever the world does round the track (rougher land, a structure
     /// stood on the road), the track comes out the same, and what stood on

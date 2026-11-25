@@ -1,0 +1,16 @@
+{
+  "name": "marrow_crystal",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Raw marrow-crystal from the oldest titan bone: pale, milky, faintly lit from inside, and it hums when it is warm.",
+  "smooth": false,
+  "glow": 0.9,
+  "texture": {
+    "pattern": "glass",
+    "base": [214, 222, 236],
+    "alt": [246, 236, 214],
+    "scale": 3,
+    "contrast": 0.6,
+    "calm": {"base": [220, 226, 238], "alt": [248, 240, 220]}
+  }
+}

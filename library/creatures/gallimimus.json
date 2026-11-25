@@ -1,10 +1,10 @@
 {
   "name": "gallimimus",
-  "version": 1,
+  "version": 2,
   "introduced_by": "saurischia",
   "notes": "Gallimimus: an ostrich-like dinosaur 5.5 m long and 1.9 m at the hip, with a small toothless beak on a long S-curved neck, long running legs, short arms and a long stiff tail held level. Sandy with a paler belly and a darker stripe down the back; runs in fast, flighty flocks over open grass.",
-  "voxel": 0.08,
-  "grid": [32, 44, 72],
+  "voxel": 0.1,
+  "grid": [32, 38, 62],
   "half_w": 0.5,
   "height": 3.1,
   "colors": {
@@ -19,6 +19,7 @@
     "eye": [216, 150, 40]
   },
   "behaviour": {
+    "displays": [{"kind": "gallop"}],
     "movement": "graze",
     "walk_speed": 1.6,
     "flee_speed": 14.0,
@@ -27,905 +28,138 @@
     "juvenile_flightiness": 1.5,
     "flees_from": ["player", "tyrannosaurus", "utahraptor"],
     "active": "diurnal",
-    "group": {"size": [6, 14], "spacing": 3.0, "range": 22, "alignment": 1.0, "cohesion": 1.0}
+    "group": {"size": [6, 14], "spacing": 3.0, "range": 22, "alignment": 1.0, "cohesion": 1.0},
+    "voice": {
+      "size": 1.5,
+      "calls": [
+        {"cry": "honk", "on": "idle", "every_s": [60, 200], "chorus": 0.4, "chorus_m": 200},
+        {"cry": "honk", "on": "flee", "boost": 2, "chorus": 0.6, "chorus_m": 100}
+      ]
+    }
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [16, 25, 30], "radius": [5.2, 6.16, 9], "mat": "coat"},
-    {"op": "ellipsoid", "centre": [16, 26.5, 23], "radius": [4.4, 5.6, 5.5], "mat": "coat"},
-    {"op": "ellipsoid", "centre": [16, 25.5, 38], "radius": [4.8, 5.82, 5], "mat": "coat"},
-    {"op": "recolour", "at": [10, 18, 19], "until": [22, 24, 45], "from": "coat", "to": "belly"},
-    {"op": "ellipsoid", "centre": [16.0, 27.0, 22.0], "radius": [2.85, 2.85, 2.85], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 27.44, 21.75], "radius": [2.79, 2.79, 2.79], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 27.88, 21.5], "radius": [2.73, 2.73, 2.73], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 28.31, 21.25], "radius": [2.66, 2.66, 2.66], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 28.75, 21.0], "radius": [2.6, 2.6, 2.6], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 29.19, 20.75], "radius": [2.54, 2.54, 2.54], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 29.62, 20.5], "radius": [2.48, 2.48, 2.48], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 30.06, 20.25], "radius": [2.41, 2.41, 2.41], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 30.5, 20.0], "radius": [2.35, 2.35, 2.35], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 30.89, 19.76], "radius": [2.31, 2.31, 2.31], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 31.28, 19.51], "radius": [2.26, 2.26, 2.26], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 31.67, 19.27], "radius": [2.22, 2.22, 2.22], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 32.06, 19.02], "radius": [2.17, 2.17, 2.17], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 32.44, 18.78], "radius": [2.13, 2.13, 2.13], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 32.83, 18.53], "radius": [2.08, 2.08, 2.08], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 33.22, 18.29], "radius": [2.04, 2.04, 2.04], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 33.61, 18.04], "radius": [1.99, 1.99, 1.99], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 34.0, 17.8], "radius": [1.95, 1.95, 1.95], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 34.44, 17.6], "radius": [1.92, 1.92, 1.92], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 34.88, 17.4], "radius": [1.89, 1.89, 1.89], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 35.31, 17.2], "radius": [1.86, 1.86, 1.86], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 35.75, 17.0], "radius": [1.82, 1.82, 1.82], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 36.19, 16.8], "radius": [1.79, 1.79, 1.79], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 36.62, 16.6], "radius": [1.76, 1.76, 1.76], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 37.06, 16.4], "radius": [1.73, 1.73, 1.73], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 37.5, 16.2], "radius": [1.7, 1.7, 1.7], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 37.9, 15.86], "radius": [1.69, 1.69, 1.69], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 38.3, 15.52], "radius": [1.68, 1.68, 1.68], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 38.7, 15.18], "radius": [1.67, 1.67, 1.67], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 39.1, 14.84], "radius": [1.66, 1.66, 1.66], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16.0, 39.5, 14.5], "radius": [1.65, 1.65, 1.65], "mat": "coat", "part": "neck"},
-    {"op": "ellipsoid", "centre": [16, 40, 11.5], "radius": [1.7, 1.6, 3.0], "mat": "head", "part": "head"},
-    {"op": "ellipsoid", "centre": [16.0, 39.4, 9.0], "radius": [1.35, 1.35, 1.35], "mat": "beak", "part": "head"},
-    {"op": "ellipsoid", "centre": [16.0, 39.29, 8.5], "radius": [1.3, 1.3, 1.3], "mat": "beak", "part": "head"},
-    {"op": "ellipsoid", "centre": [16.0, 39.17, 8.0], "radius": [1.25, 1.25, 1.25], "mat": "beak", "part": "head"},
-    {"op": "ellipsoid", "centre": [16.0, 39.06, 7.5], "radius": [1.2, 1.2, 1.2], "mat": "beak", "part": "head"},
-    {"op": "ellipsoid", "centre": [16.0, 38.94, 7.0], "radius": [1.15, 1.15, 1.15], "mat": "beak", "part": "head"},
-    {"op": "ellipsoid", "centre": [16.0, 38.83, 6.5], "radius": [1.1, 1.1, 1.1], "mat": "beak", "part": "head"},
-    {"op": "ellipsoid", "centre": [16.0, 38.71, 6.0], "radius": [1.05, 1.05, 1.05], "mat": "beak", "part": "head"},
-    {"op": "ellipsoid", "centre": [16.0, 38.6, 5.5], "radius": [1.0, 1.0, 1.0], "mat": "beak", "part": "head"},
-    {"op": "ellipsoid", "centre": [16.0, 38.48, 5.04], "radius": [0.96, 0.96, 0.96], "mat": "beak", "part": "head"},
-    {"op": "ellipsoid", "centre": [16.0, 38.36, 4.58], "radius": [0.92, 0.92, 0.92], "mat": "beak", "part": "head"},
-    {"op": "ellipsoid", "centre": [16.0, 38.24, 4.12], "radius": [0.88, 0.88, 0.88], "mat": "beak", "part": "head"},
-    {"op": "ellipsoid", "centre": [16.0, 38.12, 3.66], "radius": [0.84, 0.84, 0.84], "mat": "beak", "part": "head"},
-    {"op": "ellipsoid", "centre": [16.0, 38.0, 3.2], "radius": [0.8, 0.8, 0.8], "mat": "beak", "part": "head"},
-    {"op": "set", "at": [14, 40, 10], "mat": "eye", "part": "head"},
-    {"op": "set", "at": [17, 40, 10], "mat": "eye", "part": "head"},
-    {"op": "ellipsoid", "centre": [11.4, 26.5, 23.0], "radius": [1.2, 1.2, 1.2], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [11.36, 26.13, 22.72], "radius": [1.18, 1.18, 1.18], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [11.31, 25.77, 22.44], "radius": [1.16, 1.16, 1.16], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [11.27, 25.4, 22.17], "radius": [1.13, 1.13, 1.13], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [11.22, 25.03, 21.89], "radius": [1.11, 1.11, 1.11], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [11.18, 24.67, 21.61], "radius": [1.09, 1.09, 1.09], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [11.13, 24.3, 21.33], "radius": [1.07, 1.07, 1.07], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [11.09, 23.93, 21.06], "radius": [1.04, 1.04, 1.04], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [11.04, 23.57, 20.78], "radius": [1.02, 1.02, 1.02], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [11.0, 23.2, 20.5], "radius": [1.0, 1.0, 1.0], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [10.99, 22.91, 20.11], "radius": [0.99, 0.99, 0.99], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [10.97, 22.63, 19.73], "radius": [0.97, 0.97, 0.97], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [10.96, 22.34, 19.34], "radius": [0.96, 0.96, 0.96], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [10.94, 22.06, 18.96], "radius": [0.94, 0.94, 0.94], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [10.93, 21.77, 18.57], "radius": [0.93, 0.93, 0.93], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [10.91, 21.49, 18.19], "radius": [0.91, 0.91, 0.91], "mat": "coat", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [10.9, 21.2, 17.8], "radius": [0.9, 0.9, 0.9], "mat": "coat", "part": "arm_l"},
-    {"op": "set", "at": [10, 20, 16], "mat": "claw", "part": "arm_l"},
-    {"op": "set", "at": [10, 20, 17], "mat": "claw", "part": "arm_l"},
-    {"op": "ellipsoid", "centre": [20.6, 26.5, 23.0], "radius": [1.2, 1.2, 1.2], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.56, 26.13, 22.72], "radius": [1.18, 1.18, 1.18], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.51, 25.77, 22.44], "radius": [1.16, 1.16, 1.16], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.47, 25.4, 22.17], "radius": [1.13, 1.13, 1.13], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.42, 25.03, 21.89], "radius": [1.11, 1.11, 1.11], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.38, 24.67, 21.61], "radius": [1.09, 1.09, 1.09], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.33, 24.3, 21.33], "radius": [1.07, 1.07, 1.07], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.29, 23.93, 21.06], "radius": [1.04, 1.04, 1.04], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.24, 23.57, 20.78], "radius": [1.02, 1.02, 1.02], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.2, 23.2, 20.5], "radius": [1.0, 1.0, 1.0], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.19, 22.91, 20.11], "radius": [0.99, 0.99, 0.99], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.17, 22.63, 19.73], "radius": [0.97, 0.97, 0.97], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.16, 22.34, 19.34], "radius": [0.96, 0.96, 0.96], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.14, 22.06, 18.96], "radius": [0.94, 0.94, 0.94], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.13, 21.77, 18.57], "radius": [0.93, 0.93, 0.93], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.11, 21.49, 18.19], "radius": [0.91, 0.91, 0.91], "mat": "coat", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [20.1, 21.2, 17.8], "radius": [0.9, 0.9, 0.9], "mat": "coat", "part": "arm_r"},
-    {"op": "set", "at": [19, 20, 16], "mat": "claw", "part": "arm_r"},
-    {"op": "set", "at": [19, 20, 17], "mat": "claw", "part": "arm_r"},
-    {"op": "ellipsoid", "centre": [16.0, 27.0, 41.0], "radius": [3.7, 3.7, 3.7], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.99, 41.47], "radius": [3.65, 3.65, 3.65], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.97, 41.93], "radius": [3.59, 3.59, 3.59], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.96, 42.4], "radius": [3.54, 3.54, 3.54], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.95, 42.87], "radius": [3.49, 3.49, 3.49], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.93, 43.33], "radius": [3.43, 3.43, 3.43], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.92, 43.8], "radius": [3.38, 3.38, 3.38], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.91, 44.27], "radius": [3.33, 3.33, 3.33], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.89, 44.73], "radius": [3.27, 3.27, 3.27], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.88, 45.2], "radius": [3.22, 3.22, 3.22], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.87, 45.67], "radius": [3.17, 3.17, 3.17], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.85, 46.13], "radius": [3.11, 3.11, 3.11], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.84, 46.6], "radius": [3.06, 3.06, 3.06], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.83, 47.07], "radius": [3.01, 3.01, 3.01], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.81, 47.53], "radius": [2.95, 2.95, 2.95], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.8, 48.0], "radius": [2.9, 2.9, 2.9], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.78, 48.47], "radius": [2.86, 2.86, 2.86], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.76, 48.94], "radius": [2.82, 2.82, 2.82], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.74, 49.41], "radius": [2.79, 2.79, 2.79], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.73, 49.88], "radius": [2.75, 2.75, 2.75], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.71, 50.34], "radius": [2.71, 2.71, 2.71], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.69, 50.81], "radius": [2.67, 2.67, 2.67], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.67, 51.28], "radius": [2.64, 2.64, 2.64], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.65, 51.75], "radius": [2.6, 2.6, 2.6], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.63, 52.22], "radius": [2.56, 2.56, 2.56], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.61, 52.69], "radius": [2.52, 2.52, 2.52], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.59, 53.16], "radius": [2.49, 2.49, 2.49], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.57, 53.62], "radius": [2.45, 2.45, 2.45], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.56, 54.09], "radius": [2.41, 2.41, 2.41], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.54, 54.56], "radius": [2.38, 2.38, 2.38], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.52, 55.03], "radius": [2.34, 2.34, 2.34], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.5, 55.5], "radius": [2.3, 2.3, 2.3], "mat": "coat", "part": "tail_1"},
-    {"op": "ellipsoid", "centre": [16.0, 26.5, 56.0], "radius": [2.3, 2.3, 2.3], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.47, 56.47], "radius": [2.26, 2.26, 2.26], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.44, 56.94], "radius": [2.22, 2.22, 2.22], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.41, 57.41], "radius": [2.18, 2.18, 2.18], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.38, 57.88], "radius": [2.14, 2.14, 2.14], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.35, 58.35], "radius": [2.09, 2.09, 2.09], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.32, 58.82], "radius": [2.05, 2.05, 2.05], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.29, 59.29], "radius": [2.01, 2.01, 2.01], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.26, 59.76], "radius": [1.97, 1.97, 1.97], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.24, 60.24], "radius": [1.93, 1.93, 1.93], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.21, 60.71], "radius": [1.89, 1.89, 1.89], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.18, 61.18], "radius": [1.85, 1.85, 1.85], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.15, 61.65], "radius": [1.81, 1.81, 1.81], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.12, 62.12], "radius": [1.76, 1.76, 1.76], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.09, 62.59], "radius": [1.72, 1.72, 1.72], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.06, 63.06], "radius": [1.68, 1.68, 1.68], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.03, 63.53], "radius": [1.64, 1.64, 1.64], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 26.0, 64.0], "radius": [1.6, 1.6, 1.6], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.97, 64.47], "radius": [1.56, 1.56, 1.56], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.93, 64.93], "radius": [1.52, 1.52, 1.52], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.9, 65.4], "radius": [1.48, 1.48, 1.48], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.87, 65.87], "radius": [1.44, 1.44, 1.44], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.83, 66.33], "radius": [1.4, 1.4, 1.4], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.8, 66.8], "radius": [1.36, 1.36, 1.36], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.77, 67.27], "radius": [1.32, 1.32, 1.32], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.73, 67.73], "radius": [1.28, 1.28, 1.28], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.7, 68.2], "radius": [1.24, 1.24, 1.24], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.67, 68.67], "radius": [1.2, 1.2, 1.2], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.63, 69.13], "radius": [1.16, 1.16, 1.16], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.6, 69.6], "radius": [1.12, 1.12, 1.12], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.57, 70.07], "radius": [1.08, 1.08, 1.08], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.53, 70.53], "radius": [1.04, 1.04, 1.04], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [16.0, 25.5, 71.0], "radius": [1.0, 1.0, 1.0], "mat": "coat", "part": "tail_2"},
-    {"op": "ellipsoid", "centre": [11.6, 23.0, 37.0], "radius": [3.0, 3.0, 3.0], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.58, 22.55, 36.8], "radius": [2.95, 2.95, 2.95], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.56, 22.1, 36.6], "radius": [2.9, 2.9, 2.9], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.54, 21.65, 36.4], "radius": [2.85, 2.85, 2.85], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.52, 21.2, 36.2], "radius": [2.8, 2.8, 2.8], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.5, 20.75, 36.0], "radius": [2.75, 2.75, 2.75], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.48, 20.3, 35.8], "radius": [2.7, 2.7, 2.7], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.46, 19.85, 35.6], "radius": [2.65, 2.65, 2.65], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.44, 19.4, 35.4], "radius": [2.6, 2.6, 2.6], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.42, 18.95, 35.2], "radius": [2.55, 2.55, 2.55], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.4, 18.5, 35.0], "radius": [2.5, 2.5, 2.5], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.42, 18.05, 34.8], "radius": [2.44, 2.44, 2.44], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.44, 17.6, 34.6], "radius": [2.38, 2.38, 2.38], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.46, 17.15, 34.4], "radius": [2.32, 2.32, 2.32], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.48, 16.7, 34.2], "radius": [2.26, 2.26, 2.26], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.5, 16.25, 34.0], "radius": [2.2, 2.2, 2.2], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.52, 15.8, 33.8], "radius": [2.14, 2.14, 2.14], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.54, 15.35, 33.6], "radius": [2.08, 2.08, 2.08], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.56, 14.9, 33.4], "radius": [2.02, 2.02, 2.02], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.58, 14.45, 33.2], "radius": [1.96, 1.96, 1.96], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.6, 14.0, 33.0], "radius": [1.9, 1.9, 1.9], "mat": "coat", "part": "leg_l"},
-    {"op": "ellipsoid", "centre": [11.6, 14.0, 33.0], "radius": [1.6, 1.6, 1.6], "mat": "scale", "part": "leg_l_low"},
+    {"op": "ellipsoid", "centre": [16, 20.6, 25.6], "radius": [4.3, 5.0, 8.4], "mat": "coat"},
+    {"op": "ellipsoid", "centre": [16, 20.8, 32.4], "radius": [4.0, 4.8, 4.8], "mat": "coat"},
+    {"op": "recolour", "at": [11, 14, 17], "until": [21, 19, 38], "from": "coat", "to": "belly"},
+    {"op": "recolour", "at": [15, 23, 18], "until": [17, 27, 40], "from": "coat", "to": "dark"},
+    {"op": "segment", "points": [[16, 21.6, 20.6], [16, 23.8, 19.8]], "radius": 2.4, "mat": "coat", "part": "neck"},
+    {"op": "segment", "points": [[16, 23.8, 19.8], [16, 26.6, 17.8]], "radius": 2.0, "mat": "coat", "part": "neck"},
+    {"op": "segment", "points": [[16, 26.6, 17.8], [16, 29.2, 15.8]], "radius": 1.65, "mat": "coat", "part": "neck"},
+    {"op": "segment", "points": [[16, 29.2, 15.8], [16, 31.2, 14.6]], "radius": 1.4, "mat": "coat", "part": "neck"},
+    {"op": "ellipsoid", "centre": [16, 32.2, 11.6], "radius": [1.75, 1.6, 2.7], "mat": "head", "part": "head"},
+    {"op": "ellipsoid", "centre": [16, 31.3, 8.0], "radius": [1.25, 0.85, 2.7], "mat": "beak", "part": "head"},
+    {"op": "ellipsoid", "centre": [14.6, 32.4, 11.9], "radius": [0.85, 0.85, 1.0], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [17.4, 32.4, 11.9], "radius": [0.85, 0.85, 1.0], "mat": "eye", "part": "head"},
     {
-      "op": "ellipsoid",
-      "centre": [11.6, 13.58, 33.21],
-      "radius": [1.58, 1.58, 1.58],
+      "op": "segment",
+      "points": [[12.4, 21.0, 20.6], [12.0, 18.6, 18.6]],
+      "radius": 1.15,
+      "mat": "coat",
+      "part": "arm_l"
+    },
+    {
+      "op": "segment",
+      "points": [[12.0, 18.6, 18.6], [11.9, 17.0, 16.4]],
+      "radius": 0.95,
+      "mat": "coat",
+      "part": "arm_l"
+    },
+    {"op": "ellipsoid", "centre": [11.9, 16.5, 15.5], "radius": [0.85, 0.8, 1.5], "mat": "claw", "part": "arm_l"},
+    {
+      "op": "segment",
+      "points": [[19.6, 21.0, 20.6], [20.0, 18.6, 18.6]],
+      "radius": 1.15,
+      "mat": "coat",
+      "part": "arm_r"
+    },
+    {
+      "op": "segment",
+      "points": [[20.0, 18.6, 18.6], [20.1, 17.0, 16.4]],
+      "radius": 0.95,
+      "mat": "coat",
+      "part": "arm_r"
+    },
+    {"op": "ellipsoid", "centre": [20.1, 16.5, 15.5], "radius": [0.85, 0.8, 1.5], "mat": "claw", "part": "arm_r"},
+    {"op": "segment", "points": [[16, 21.6, 34], [16, 21.4, 40.5]], "radius": 3.0, "mat": "coat", "part": "tail_1"},
+    {"op": "segment", "points": [[16, 21.4, 40.5], [16, 21.2, 47.2]], "radius": 2.4, "mat": "coat", "part": "tail_1"},
+    {"op": "segment", "points": [[16, 21.2, 47], [16, 21.0, 53]], "radius": 1.8, "mat": "coat", "part": "tail_2"},
+    {"op": "segment", "points": [[16, 21.0, 53], [16, 20.5, 59.4]], "radius": 1.1, "mat": "coat", "part": "tail_2"},
+    {
+      "op": "segment",
+      "points": [[12.6, 18.8, 31.8], [12.5, 15.0, 30.2]],
+      "radius": 2.7,
+      "mat": "coat",
+      "part": "leg_l"
+    },
+    {
+      "op": "segment",
+      "points": [[12.5, 15.0, 30.2], [12.48, 11.2, 28.6]],
+      "radius": 1.8,
+      "mat": "coat",
+      "part": "leg_l"
+    },
+    {
+      "op": "segment",
+      "points": [[12.48, 11.2, 28.6], [12.48, 3.8, 32.0]],
+      "radius": 1.45,
       "mat": "scale",
       "part": "leg_l_low"
     },
     {
-      "op": "ellipsoid",
-      "centre": [11.6, 13.17, 33.42],
-      "radius": [1.55, 1.55, 1.55],
+      "op": "segment",
+      "points": [[12.48, 3.8, 32.0], [12.48, 1.6, 29.6]],
+      "radius": 1.05,
       "mat": "scale",
       "part": "leg_l_low"
     },
+    {"op": "ellipsoid", "centre": [12.5, 0.95, 27.6], "radius": [1.5, 0.95, 3.3], "mat": "scale", "part": "leg_l_low"},
+    {"op": "ellipsoid", "centre": [12.5, 0.8, 24.4], "radius": [0.95, 0.75, 1.1], "mat": "claw", "part": "leg_l_low"},
     {
-      "op": "ellipsoid",
-      "centre": [11.6, 12.75, 33.62],
-      "radius": [1.53, 1.53, 1.53],
-      "mat": "scale",
-      "part": "leg_l_low"
+      "op": "segment",
+      "points": [[19.4, 18.8, 31.8], [19.5, 15.0, 30.2]],
+      "radius": 2.7,
+      "mat": "coat",
+      "part": "leg_r"
     },
     {
-      "op": "ellipsoid",
-      "centre": [11.6, 12.33, 33.83],
-      "radius": [1.5, 1.5, 1.5],
-      "mat": "scale",
-      "part": "leg_l_low"
+      "op": "segment",
+      "points": [[19.5, 15.0, 30.2], [19.52, 11.2, 28.6]],
+      "radius": 1.8,
+      "mat": "coat",
+      "part": "leg_r"
     },
     {
-      "op": "ellipsoid",
-      "centre": [11.6, 11.92, 34.04],
-      "radius": [1.48, 1.48, 1.48],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 11.5, 34.25],
-      "radius": [1.45, 1.45, 1.45],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 11.08, 34.46],
-      "radius": [1.43, 1.43, 1.43],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 10.67, 34.67],
-      "radius": [1.4, 1.4, 1.4],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 10.25, 34.88],
-      "radius": [1.38, 1.38, 1.38],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 9.83, 35.08],
-      "radius": [1.35, 1.35, 1.35],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 9.42, 35.29],
-      "radius": [1.33, 1.33, 1.33],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {"op": "ellipsoid", "centre": [11.6, 9.0, 35.5], "radius": [1.3, 1.3, 1.3], "mat": "scale", "part": "leg_l_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 8.55, 35.7],
-      "radius": [1.28, 1.28, 1.28],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 8.1, 35.9],
-      "radius": [1.26, 1.26, 1.26],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 7.65, 36.1],
-      "radius": [1.24, 1.24, 1.24],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 7.2, 36.3],
-      "radius": [1.22, 1.22, 1.22],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {"op": "ellipsoid", "centre": [11.6, 6.75, 36.5], "radius": [1.2, 1.2, 1.2], "mat": "scale", "part": "leg_l_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 6.3, 36.7],
-      "radius": [1.18, 1.18, 1.18],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 5.85, 36.9],
-      "radius": [1.16, 1.16, 1.16],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 5.4, 37.1],
-      "radius": [1.14, 1.14, 1.14],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 4.95, 37.3],
-      "radius": [1.12, 1.12, 1.12],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {"op": "ellipsoid", "centre": [11.6, 4.5, 37.5], "radius": [1.1, 1.1, 1.1], "mat": "scale", "part": "leg_l_low"},
-    {"op": "ellipsoid", "centre": [11.6, 4.5, 37.5], "radius": [1.1, 1.1, 1.1], "mat": "scale", "part": "leg_l_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 4.21, 37.14],
-      "radius": [1.09, 1.09, 1.09],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 3.93, 36.79],
-      "radius": [1.07, 1.07, 1.07],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 3.64, 36.43],
-      "radius": [1.06, 1.06, 1.06],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 3.36, 36.07],
-      "radius": [1.04, 1.04, 1.04],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 3.07, 35.71],
-      "radius": [1.03, 1.03, 1.03],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 2.79, 35.36],
-      "radius": [1.01, 1.01, 1.01],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {"op": "ellipsoid", "centre": [11.6, 2.5, 35.0], "radius": [1.0, 1.0, 1.0], "mat": "scale", "part": "leg_l_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 2.2, 34.6],
-      "radius": [0.98, 0.98, 0.98],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 1.9, 34.2],
-      "radius": [0.96, 0.96, 0.96],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 1.6, 33.8],
-      "radius": [0.94, 0.94, 0.94],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 1.3, 33.4],
-      "radius": [0.92, 0.92, 0.92],
-      "mat": "scale",
-      "part": "leg_l_low"
-    },
-    {"op": "ellipsoid", "centre": [11.6, 1.0, 33.0], "radius": [0.9, 0.9, 0.9], "mat": "scale", "part": "leg_l_low"},
-    {"op": "ellipsoid", "centre": [10.72, 1.0, 33.0], "radius": [0.8, 0.8, 0.8], "mat": "claw", "part": "leg_l_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [10.69, 0.96, 32.5],
-      "radius": [0.77, 0.77, 0.77],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [10.66, 0.91, 32.0],
-      "radius": [0.74, 0.74, 0.74],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [10.63, 0.87, 31.5],
-      "radius": [0.71, 0.71, 0.71],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [10.59, 0.83, 31.0],
-      "radius": [0.69, 0.69, 0.69],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [10.56, 0.79, 30.5],
-      "radius": [0.66, 0.66, 0.66],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [10.53, 0.74, 30.0],
-      "radius": [0.63, 0.63, 0.63],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {"op": "ellipsoid", "centre": [10.5, 0.7, 29.5], "radius": [0.6, 0.6, 0.6], "mat": "claw", "part": "leg_l_low"},
-    {"op": "ellipsoid", "centre": [11.6, 1.0, 33.0], "radius": [0.8, 0.8, 0.8], "mat": "claw", "part": "leg_l_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 0.96, 32.5],
-      "radius": [0.77, 0.77, 0.77],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 0.91, 32.0],
-      "radius": [0.74, 0.74, 0.74],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 0.87, 31.5],
-      "radius": [0.71, 0.71, 0.71],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 0.83, 31.0],
-      "radius": [0.69, 0.69, 0.69],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 0.79, 30.5],
-      "radius": [0.66, 0.66, 0.66],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [11.6, 0.74, 30.0],
-      "radius": [0.63, 0.63, 0.63],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {"op": "ellipsoid", "centre": [11.6, 0.7, 29.5], "radius": [0.6, 0.6, 0.6], "mat": "claw", "part": "leg_l_low"},
-    {"op": "ellipsoid", "centre": [12.48, 1.0, 33.0], "radius": [0.8, 0.8, 0.8], "mat": "claw", "part": "leg_l_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [12.51, 0.96, 32.5],
-      "radius": [0.77, 0.77, 0.77],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [12.54, 0.91, 32.0],
-      "radius": [0.74, 0.74, 0.74],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [12.57, 0.87, 31.5],
-      "radius": [0.71, 0.71, 0.71],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [12.61, 0.83, 31.0],
-      "radius": [0.69, 0.69, 0.69],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [12.64, 0.79, 30.5],
-      "radius": [0.66, 0.66, 0.66],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [12.67, 0.74, 30.0],
-      "radius": [0.63, 0.63, 0.63],
-      "mat": "claw",
-      "part": "leg_l_low"
-    },
-    {"op": "ellipsoid", "centre": [12.7, 0.7, 29.5], "radius": [0.6, 0.6, 0.6], "mat": "claw", "part": "leg_l_low"},
-    {"op": "ellipsoid", "centre": [20.4, 23.0, 37.0], "radius": [3.0, 3.0, 3.0], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.38, 22.55, 36.8], "radius": [2.95, 2.95, 2.95], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.36, 22.1, 36.6], "radius": [2.9, 2.9, 2.9], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.34, 21.65, 36.4], "radius": [2.85, 2.85, 2.85], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.32, 21.2, 36.2], "radius": [2.8, 2.8, 2.8], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.3, 20.75, 36.0], "radius": [2.75, 2.75, 2.75], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.28, 20.3, 35.8], "radius": [2.7, 2.7, 2.7], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.26, 19.85, 35.6], "radius": [2.65, 2.65, 2.65], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.24, 19.4, 35.4], "radius": [2.6, 2.6, 2.6], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.22, 18.95, 35.2], "radius": [2.55, 2.55, 2.55], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.2, 18.5, 35.0], "radius": [2.5, 2.5, 2.5], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.22, 18.05, 34.8], "radius": [2.44, 2.44, 2.44], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.24, 17.6, 34.6], "radius": [2.38, 2.38, 2.38], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.26, 17.15, 34.4], "radius": [2.32, 2.32, 2.32], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.28, 16.7, 34.2], "radius": [2.26, 2.26, 2.26], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.3, 16.25, 34.0], "radius": [2.2, 2.2, 2.2], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.32, 15.8, 33.8], "radius": [2.14, 2.14, 2.14], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.34, 15.35, 33.6], "radius": [2.08, 2.08, 2.08], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.36, 14.9, 33.4], "radius": [2.02, 2.02, 2.02], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.38, 14.45, 33.2], "radius": [1.96, 1.96, 1.96], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.4, 14.0, 33.0], "radius": [1.9, 1.9, 1.9], "mat": "coat", "part": "leg_r"},
-    {"op": "ellipsoid", "centre": [20.4, 14.0, 33.0], "radius": [1.6, 1.6, 1.6], "mat": "scale", "part": "leg_r_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 13.58, 33.21],
-      "radius": [1.58, 1.58, 1.58],
+      "op": "segment",
+      "points": [[19.52, 11.2, 28.6], [19.52, 3.8, 32.0]],
+      "radius": 1.45,
       "mat": "scale",
       "part": "leg_r_low"
     },
     {
-      "op": "ellipsoid",
-      "centre": [20.4, 13.17, 33.42],
-      "radius": [1.55, 1.55, 1.55],
+      "op": "segment",
+      "points": [[19.52, 3.8, 32.0], [19.52, 1.6, 29.6]],
+      "radius": 1.05,
       "mat": "scale",
       "part": "leg_r_low"
     },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 12.75, 33.62],
-      "radius": [1.53, 1.53, 1.53],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 12.33, 33.83],
-      "radius": [1.5, 1.5, 1.5],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 11.92, 34.04],
-      "radius": [1.48, 1.48, 1.48],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 11.5, 34.25],
-      "radius": [1.45, 1.45, 1.45],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 11.08, 34.46],
-      "radius": [1.43, 1.43, 1.43],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 10.67, 34.67],
-      "radius": [1.4, 1.4, 1.4],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 10.25, 34.88],
-      "radius": [1.38, 1.38, 1.38],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 9.83, 35.08],
-      "radius": [1.35, 1.35, 1.35],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 9.42, 35.29],
-      "radius": [1.33, 1.33, 1.33],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {"op": "ellipsoid", "centre": [20.4, 9.0, 35.5], "radius": [1.3, 1.3, 1.3], "mat": "scale", "part": "leg_r_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 8.55, 35.7],
-      "radius": [1.28, 1.28, 1.28],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 8.1, 35.9],
-      "radius": [1.26, 1.26, 1.26],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 7.65, 36.1],
-      "radius": [1.24, 1.24, 1.24],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 7.2, 36.3],
-      "radius": [1.22, 1.22, 1.22],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {"op": "ellipsoid", "centre": [20.4, 6.75, 36.5], "radius": [1.2, 1.2, 1.2], "mat": "scale", "part": "leg_r_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 6.3, 36.7],
-      "radius": [1.18, 1.18, 1.18],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 5.85, 36.9],
-      "radius": [1.16, 1.16, 1.16],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 5.4, 37.1],
-      "radius": [1.14, 1.14, 1.14],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 4.95, 37.3],
-      "radius": [1.12, 1.12, 1.12],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {"op": "ellipsoid", "centre": [20.4, 4.5, 37.5], "radius": [1.1, 1.1, 1.1], "mat": "scale", "part": "leg_r_low"},
-    {"op": "ellipsoid", "centre": [20.4, 4.5, 37.5], "radius": [1.1, 1.1, 1.1], "mat": "scale", "part": "leg_r_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 4.21, 37.14],
-      "radius": [1.09, 1.09, 1.09],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 3.93, 36.79],
-      "radius": [1.07, 1.07, 1.07],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 3.64, 36.43],
-      "radius": [1.06, 1.06, 1.06],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 3.36, 36.07],
-      "radius": [1.04, 1.04, 1.04],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 3.07, 35.71],
-      "radius": [1.03, 1.03, 1.03],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 2.79, 35.36],
-      "radius": [1.01, 1.01, 1.01],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {"op": "ellipsoid", "centre": [20.4, 2.5, 35.0], "radius": [1.0, 1.0, 1.0], "mat": "scale", "part": "leg_r_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 2.2, 34.6],
-      "radius": [0.98, 0.98, 0.98],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 1.9, 34.2],
-      "radius": [0.96, 0.96, 0.96],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 1.6, 33.8],
-      "radius": [0.94, 0.94, 0.94],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 1.3, 33.4],
-      "radius": [0.92, 0.92, 0.92],
-      "mat": "scale",
-      "part": "leg_r_low"
-    },
-    {"op": "ellipsoid", "centre": [20.4, 1.0, 33.0], "radius": [0.9, 0.9, 0.9], "mat": "scale", "part": "leg_r_low"},
-    {"op": "ellipsoid", "centre": [19.52, 1.0, 33.0], "radius": [0.8, 0.8, 0.8], "mat": "claw", "part": "leg_r_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [19.49, 0.96, 32.5],
-      "radius": [0.77, 0.77, 0.77],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [19.46, 0.91, 32.0],
-      "radius": [0.74, 0.74, 0.74],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [19.43, 0.87, 31.5],
-      "radius": [0.71, 0.71, 0.71],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [19.39, 0.83, 31.0],
-      "radius": [0.69, 0.69, 0.69],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [19.36, 0.79, 30.5],
-      "radius": [0.66, 0.66, 0.66],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [19.33, 0.74, 30.0],
-      "radius": [0.63, 0.63, 0.63],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {"op": "ellipsoid", "centre": [19.3, 0.7, 29.5], "radius": [0.6, 0.6, 0.6], "mat": "claw", "part": "leg_r_low"},
-    {"op": "ellipsoid", "centre": [20.4, 1.0, 33.0], "radius": [0.8, 0.8, 0.8], "mat": "claw", "part": "leg_r_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 0.96, 32.5],
-      "radius": [0.77, 0.77, 0.77],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 0.91, 32.0],
-      "radius": [0.74, 0.74, 0.74],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 0.87, 31.5],
-      "radius": [0.71, 0.71, 0.71],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 0.83, 31.0],
-      "radius": [0.69, 0.69, 0.69],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 0.79, 30.5],
-      "radius": [0.66, 0.66, 0.66],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [20.4, 0.74, 30.0],
-      "radius": [0.63, 0.63, 0.63],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {"op": "ellipsoid", "centre": [20.4, 0.7, 29.5], "radius": [0.6, 0.6, 0.6], "mat": "claw", "part": "leg_r_low"},
-    {"op": "ellipsoid", "centre": [21.28, 1.0, 33.0], "radius": [0.8, 0.8, 0.8], "mat": "claw", "part": "leg_r_low"},
-    {
-      "op": "ellipsoid",
-      "centre": [21.31, 0.96, 32.5],
-      "radius": [0.77, 0.77, 0.77],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [21.34, 0.91, 32.0],
-      "radius": [0.74, 0.74, 0.74],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [21.37, 0.87, 31.5],
-      "radius": [0.71, 0.71, 0.71],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [21.41, 0.83, 31.0],
-      "radius": [0.69, 0.69, 0.69],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [21.44, 0.79, 30.5],
-      "radius": [0.66, 0.66, 0.66],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {
-      "op": "ellipsoid",
-      "centre": [21.47, 0.74, 30.0],
-      "radius": [0.63, 0.63, 0.63],
-      "mat": "claw",
-      "part": "leg_r_low"
-    },
-    {"op": "ellipsoid", "centre": [21.5, 0.7, 29.5], "radius": [0.6, 0.6, 0.6], "mat": "claw", "part": "leg_r_low"},
-    {"op": "recolour", "at": [15, 30, 18], "until": [17, 33, 47], "from": "coat", "to": "dark"}
+    {"op": "ellipsoid", "centre": [19.5, 0.95, 27.6], "radius": [1.5, 0.95, 3.3], "mat": "scale", "part": "leg_r_low"},
+    {"op": "ellipsoid", "centre": [19.5, 0.8, 24.4], "radius": [0.95, 0.75, 1.1], "mat": "claw", "part": "leg_r_low"}
   ],
   "rig": {
     "plan": "quadruped",
     "bones": [
       {"name": "body", "role": "root"},
-      {"name": "neck", "role": "neck", "parent": "body", "joint": [16, 27, 22]},
-      {"name": "head", "role": "head", "parent": "neck", "joint": [16, 39.5, 14.5]},
-      {"name": "arm_l", "role": "arm", "parent": "body", "joint": [11.4, 26.5, 23], "side": "l"},
-      {"name": "arm_r", "role": "arm", "parent": "body", "joint": [20.6, 26.5, 23], "side": "r"},
-      {"name": "tail_1", "role": "tail", "parent": "body", "joint": [16, 27, 41]},
-      {"name": "tail_2", "role": "tail", "parent": "tail_1", "joint": [16, 26.5, 56]},
-      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [11.6, 23, 37], "side": "l", "pair": 1},
-      {"name": "leg_l_low", "role": "leg", "parent": "leg_l", "joint": [11.6, 14, 33], "side": "l", "pair": 1},
-      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [20.4, 23, 37], "side": "r", "pair": 1},
-      {"name": "leg_r_low", "role": "leg", "parent": "leg_r", "joint": [20.4, 14, 33], "side": "r", "pair": 1}
+      {"name": "neck", "role": "neck", "parent": "body", "joint": [16.0, 21.6, 19.8]},
+      {"name": "head", "role": "head", "parent": "neck", "joint": [16.0, 31.6, 13.8]},
+      {"name": "arm_l", "role": "arm", "parent": "body", "joint": [12.32, 21.2, 20.6], "side": "l"},
+      {"name": "arm_r", "role": "arm", "parent": "body", "joint": [19.68, 21.2, 20.6], "side": "r"},
+      {"name": "tail_1", "role": "tail", "parent": "body", "joint": [16.0, 21.6, 35.0]},
+      {"name": "tail_2", "role": "tail", "parent": "tail_1", "joint": [16.0, 21.2, 47.0]},
+      {"name": "leg_l", "role": "leg", "parent": "body", "joint": [12.48, 18.4, 31.8], "side": "l", "pair": 1},
+      {"name": "leg_l_low", "role": "leg", "parent": "leg_l", "joint": [12.48, 11.2, 28.6], "side": "l", "pair": 1},
+      {"name": "leg_r", "role": "leg", "parent": "body", "joint": [19.52, 18.4, 31.8], "side": "r", "pair": 1},
+      {"name": "leg_r_low", "role": "leg", "parent": "leg_r", "joint": [19.52, 11.2, 28.6], "side": "r", "pair": 1}
     ]
-  }
+  },
+  "realms": ["dinosaur"]
 }

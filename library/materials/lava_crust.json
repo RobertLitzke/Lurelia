@@ -1,9 +1,9 @@
 {
   "name": "lava_crust",
-  "version": 1,
+  "version": 2,
   "introduced_by": "saurischia",
   "notes": "Cinderhorn's young lava: black ropy crust broken in plates, oxblood in the cracks.",
-  "smooth": false,
+  "smooth": true,
   "texture": {
     "pattern": "cracks",
     "base": [38, 34, 34],

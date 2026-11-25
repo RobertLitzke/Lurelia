@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "hemlow",
   "notes": "The clearing round the Hob Stones: short grass where no tree grows, a ring of glassbloom round it, sky rays turning overhead.",
+  "habitat": "meadow",
   "priority": 12,
   "rules": {"region": "hob"},
   "surface": "moss_grass",
   "subsurface": "dirt",
+  "soil": 0.5,
   "map_color": [170, 120, 220],
   "plants": [
     {
@@ -24,5 +26,6 @@
     {"creature": "fae_toad", "count": 2.2},
     {"creature": "fae_elephant", "count": 1.1}
   ],
-  "collectibles": [{"item": "hag_stone", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}]
+  "collectibles": [{"item": "hag_stone", "density": 0.002, "placement": {"verb": "scatter", "params": {}}}],
+  "realm": {"fae": 0.8}
 }

@@ -1,0 +1,627 @@
+{
+  "name": "bonebight",
+  "title": "Bonebight",
+  "blurb": "East of Ribshore and south of the Kitehold Plain: a town built inside a titan's ribcage in the dunes, the Lessa's marsh and driftwood, a tiled tower town on the south shore, and a chain ferry out to an abandoned 1970s research outpost on a drowned caldera ringed with kelp.",
+  "size_m": 1536,
+  "height_m": 256,
+  "sea_level_m": 34,
+  "seed": 4423,
+  "plants": "v2",
+  "neighbours": {
+    "west": {
+      "world": "ribshore",
+      "offset": 0
+    },
+    "north": {
+      "world": "kitehold",
+      "offset": 0
+    }
+  },
+  "tide": {
+    "range": 3.0
+  },
+  "surf": {
+    "height": 0.7
+  },
+  "underwater": {
+    "visibility": 18,
+    "light": 0.2
+  },
+  "rock": [
+    [
+      "basalt",
+      0.65
+    ],
+    [
+      "stone_dark",
+      0.35
+    ]
+  ],
+  "spawn": [
+    480,
+    410
+  ],
+  "spawn_bearing": 176,
+  "modes": [
+    "walk",
+    "drive",
+    "glide",
+    "climb",
+    "rope",
+    "kayak",
+    "screenshot",
+    "camera"
+  ],
+  "vehicles": [
+    "sand_rail",
+    "beach_buggy"
+  ],
+  "seasons": [
+    "spring",
+    "summer",
+    "autumn",
+    "winter"
+  ],
+  "start_season": "autumn",
+  "weather": {
+    "sun": 1.0,
+    "clouds": 1.1,
+    "fog": 1.0,
+    "rain": 0.9,
+    "storm": 0.1
+  },
+  "start_weather": "sun",
+  "start_hour": 15.5,
+  "sun": {
+    "latitude": 46
+  },
+  "moss": 0.8,
+  "weathering": 1.0,
+  "default_biome": "rib_spruce",
+  "seabed_biome": "rib_shelf",
+  "biomes": [
+    "rib_spruce",
+    "bb_spruce_hollow",
+    "rib_plain",
+    "bb_dunes",
+    "rib_blowout",
+    "rib_wrack_giants",
+    "rib_beach",
+    "rib_shoals",
+    "rib_shelf",
+    "bb_plain",
+    "bb_town",
+    "va_town",
+    "bb_temple",
+    "bb_salmon_run",
+    "bb_marsh",
+    "fw_kelp",
+    "fw_kelp_groove",
+    "fw_wall",
+    "fw_apron",
+    "fw_flat",
+    "fw_crest",
+    "fw_lagoon",
+    "fw_patch",
+    "fw_islet",
+    "fw_pale",
+    "fw_pale_islet"
+  ],
+  "water": {
+    "shallow": [
+      78,
+      110,
+      108
+    ],
+    "deep": [
+      24,
+      50,
+      60
+    ]
+  },
+  "glide": {
+    "thermals": 0.5,
+    "ridge_from": 300,
+    "ridge_speed": 7
+  },
+  "platforms": [
+    {
+      "name": "the chain ferry",
+      "at": [
+        352.0,
+        1309.0
+      ],
+      "up": 34.5,
+      "absolute": true,
+      "size": [
+        6.5,
+        0.25,
+        2.75
+      ],
+      "path": [
+        [
+          823.0,
+          0.0,
+          -137.0
+        ]
+      ],
+      "speed": 2.5,
+      "wait": 25.0,
+      "trigger": "loop",
+      "floats": true,
+      "material": "weathered_planks",
+      "colour": [
+        150,
+        128,
+        100
+      ],
+      "model": "bb_ferry_skiff",
+      "model_drop": 1.25
+    },
+    {
+      "name": "drift-bell 1",
+      "at": [
+        797.4,
+        716.8
+      ],
+      "up": 32.68,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          4.17,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    },
+    {
+      "name": "drift-bell 2",
+      "at": [
+        802.1,
+        714.9
+      ],
+      "up": 32.46,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          4.21,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    },
+    {
+      "name": "drift-bell 3",
+      "at": [
+        797.2,
+        715.9
+      ],
+      "up": 32.43,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          4.04,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    },
+    {
+      "name": "drift-bell 4",
+      "at": [
+        801.0,
+        718.3
+      ],
+      "up": 32.61,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          3.83,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    },
+    {
+      "name": "drift-bell 5",
+      "at": [
+        797.7,
+        713.5
+      ],
+      "up": 32.6,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          4.29,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    },
+    {
+      "name": "drift-bell 6",
+      "at": [
+        797.6,
+        755.1
+      ],
+      "up": 32.56,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          3.85,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    },
+    {
+      "name": "drift-bell 7",
+      "at": [
+        798.9,
+        755.8
+      ],
+      "up": 32.41,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          4.17,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    },
+    {
+      "name": "drift-bell 8",
+      "at": [
+        795.6,
+        752.9
+      ],
+      "up": 32.56,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          4.31,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    },
+    {
+      "name": "drift-bell 9",
+      "at": [
+        799.9,
+        753.6
+      ],
+      "up": 32.54,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          4.02,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    },
+    {
+      "name": "drift-bell 10",
+      "at": [
+        794.4,
+        751.7
+      ],
+      "up": 32.65,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          4.37,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    },
+    {
+      "name": "drift-bell 11",
+      "at": [
+        313.3,
+        1363.6
+      ],
+      "up": 32.49,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          3.86,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    },
+    {
+      "name": "drift-bell 12",
+      "at": [
+        314.2,
+        1359.7
+      ],
+      "up": 32.65,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          4.11,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    },
+    {
+      "name": "drift-bell 13",
+      "at": [
+        317.6,
+        1361.0
+      ],
+      "up": 32.4,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          3.97,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    },
+    {
+      "name": "drift-bell 14",
+      "at": [
+        316.1,
+        1360.7
+      ],
+      "up": 32.69,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          4.12,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    },
+    {
+      "name": "drift-bell 15",
+      "at": [
+        316.7,
+        1363.3
+      ],
+      "up": 32.63,
+      "absolute": true,
+      "size": [
+        0.5,
+        0.25,
+        0.5
+      ],
+      "path": [
+        [
+          0.0,
+          4.02,
+          0.0
+        ]
+      ],
+      "trigger": "tide",
+      "material": "drift_bell_dome",
+      "colour": [
+        212,
+        202,
+        236
+      ],
+      "glow": 0.35,
+      "model": "drift_bell",
+      "model_drop": 2.0
+    }
+  ]
+}

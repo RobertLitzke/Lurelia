@@ -2,11 +2,13 @@
   "name": "basalt_coast",
   "version": 2,
   "introduced_by": "glassfall",
+  "habitat": "rocky_shore",
   "priority": 5,
   "rules": {"coast": [0, 45], "region": "west_coast"},
   "surface": "shore_grass",
   "subsurface": "black_sand",
   "rock": "basalt",
+  "soil": 0.5,
   "map_color": [120, 130, 90],
   "plants": [
     {"plant": "hanging_vine", "density": 0.08, "placement": {"verb": "scatter", "params": {}}},

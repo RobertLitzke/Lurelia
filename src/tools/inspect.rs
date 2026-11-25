@@ -136,6 +136,9 @@ pub fn check_world(args: &Args) -> i32 {
             }
             problems.extend(w.warnings.iter().map(|x| format!("world {name}: {x}")));
             problems.extend(w.def.gravity.problem().map(|x| format!("world {name}: {x}")));
+            if worldload::explorable(&name) {
+                problems.extend(world::survey::Survey::check(&w, &dir).map(|x| format!("world {name}: {x}")));
+            }
             if let Some(sh) = w.def.shooter.as_ref() {
                 problems.extend(crate::shooter::teams::check(sh).into_iter().map(|x| format!("world {name}: {x}")));
                 // Every fighter its own spawn: the player and the most bots
@@ -155,8 +158,9 @@ pub fn check_world(args: &Args) -> i32 {
             // 17..=254, grain copies included). Creature colours have no
             // budget (each model has a palette block of its own), so they
             // are only counted.
-            let ids = (17u8..255).filter(|&m| world::matlib::key(m).is_some()).count();
-            println!("world {name}: budgets: {ids} of 238 material ids; {} creature and collectible colours", colours.len());
+            let ids = (17u8..255).filter(|&m| world::matlib::key(m).is_some() || world::matlib::faces(m).is_some()).count();
+            let short = world::matlib::grainless();
+            println!("world {name}: budgets: {ids} of 238 material ids{}; {} creature and collectible colours", if short > 0 { format!(" ({short} woods drawn without grain: no ids left for it)") } else { String::new() }, colours.len());
             let used = worldload::used_entries(&w);
             println!(
                 "world {name}: built in {:.0} ms; {} of {} creature species used",

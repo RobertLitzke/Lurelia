@@ -4,6 +4,10 @@
 //! to a trunk farther off when the player comes close. Trunks come from the
 //! world's placed plants (plants.rs): anything at least 4 m tall with a
 //! trunk, snags included.
+//!
+//! A display (creatures/display: drumming on a snag, an acorn woodpecker
+//! storing acorns) holds a bird where it clings while it runs: it carries a
+//! `Show` and is put where the display says, and carries on clinging after.
 
 use super::plants::Flora;
 use super::terrain::Terrain;
@@ -115,8 +119,14 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, flora: &Flora, at:
 /// Step every woodpecker.
 pub fn update(world: &mut hecs::World, species: &[Species], flora: &Flora, dt: f32, threat: &super::startle::Threat, _t: &Terrain) {
     let player = threat.pos;
-    for (c, look, me, morph) in world.query_mut::<(&mut Clinger, &mut Look, &Creature, Option<&crate::variety::Morph>)>() {
+    for (c, look, me, morph, show) in world.query_mut::<(&mut Clinger, &mut Look, &Creature, Option<&crate::variety::Morph>, Option<&super::display::Show>)>() {
         look.begin_step();
+        if let Some(s) = show {
+            if let super::display::Drive::Place { pos, yaw } | super::display::Drive::Sit { pos, yaw } = s.out.drive {
+                (look.pos, look.yaw) = (pos, yaw);
+            }
+            continue;
+        }
         let sp = &species[me.species];
         let (pace, _) = crate::variety::pace(morph);
         let nerve = super::startle::Nerve::of(sp, morph, super::age::Stage::Adult);

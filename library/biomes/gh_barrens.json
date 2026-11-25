@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "gannet",
   "notes": "The low barrens behind the beach south of the bay: lowbush blueberry carpeting sandy ground, crimson in autumn, with heather and a bent pine or two.",
+  "habitat": "heath_moor",
   "priority": 4,
   "rules": {"region": "barrens", "elev": [2, 40]},
   "surface": "shore_grass",
   "subsurface": "dirt",
+  "soil": 0.2,
   "map_color": [150, 120, 96],
   "plants": [
     {"plant": "lowbush_blueberry", "density": 0.3, "placement": {"verb": "clustered", "params": {"size": 16}}},

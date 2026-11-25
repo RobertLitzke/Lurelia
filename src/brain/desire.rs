@@ -183,7 +183,7 @@ pub fn mode_rating(g: &Held, f: &FireDef, dist: f32, accuracy: f32) -> f32 {
             let arc = 1.0 + flight * 0.8 + drop * 0.8;
             // Direct damage has to be led onto a man who is moving, and a
             // sixth of a second is long enough for him to be somewhere
-            // else. The bench measured the pulse gun's bolts landing on 7%
+            // else. The bench measured the arc gun's bolts landing on 7%
             // of the shots a ray out of the same gun landed on everything
             // it was pointed at, with the old flight term charging them
             // thirteen per cent for it. Splash does not need the shot to
@@ -316,12 +316,12 @@ mod tests {
         let sniper = held(&lib, "sniper_rifle");
         let scrap = held(&lib, "scrap_gun");
         let skipjack = held(&lib, "skipjack");
-        let pulse = held(&lib, "pulse_gun");
+        let pulse = held(&lib, "arc_gun");
         let goo = held(&lib, "goo_gun");
         assert!(rating(&hammer, 2.0, a) > rating(&sidearm, 2.0, a), "the sidearm won a brawl");
         assert_eq!(rating(&hammer, 6.0, a), 0.0, "the hammer reached six metres");
         assert!(rating(&scrap, 2.0, a) > rating(&hammer, 2.0, a), "the hammer beat a shell of scrap point blank");
-        assert!(rating(&sniper, 90.0, a) > rating(&pulse, 90.0, a), "the pulse gun won across the hall");
+        assert!(rating(&sniper, 90.0, a) > rating(&pulse, 90.0, a), "the arc gun won across the hall");
         assert!(rating(&skipjack, 40.0, a) > rating(&scrap, 40.0, a), "scrap carried forty metres");
         assert!(rating(&goo, 5.0, a) > rating(&goo, 60.0, a), "a lobbed glob is as good far off as near");
         // Every gun in the library is worth something somewhere, which is

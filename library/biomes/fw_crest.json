@@ -1,0 +1,9 @@
+{
+  "name": "fw_crest",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "The outer lip of Frondwell's ring, where the swell breaks.",
+  "habitat": "rocky_shore",
+  "rules": {"underwater": true, "region": "frondwell_reef_crest"},
+  "like": "fw_flat"
+}

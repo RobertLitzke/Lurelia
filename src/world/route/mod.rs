@@ -195,8 +195,30 @@ fn lay_inner(cx: &mut EventCtx, line: &[Vec2], kit_ix: usize, smooth: f32, heigh
             piers: 0,
         };
     }
-    let at = heights.is_some();
     let kit = cx.state.get::<Ribbons>().kits[kit_ix].clone();
+    // A graded strip is cut and painted by each cell's nearest line point,
+    // so points further apart than its width leave a row of discs: fill in
+    // a straight line given by a few far-apart points (`curve: false`).
+    let dense;
+    let (line, heights) = if kit.ground == Ground::Grade && line.windows(2).any(|w| w[0].distance(w[1]) > 1.0) {
+        let mut pts = vec![line[0]];
+        let mut hs = heights.as_ref().map(|h| vec![h[0]]);
+        for k in 1..line.len() {
+            let n = line[k - 1].distance(line[k]).ceil().max(1.0) as usize;
+            for j in 1..=n {
+                let t = j as f32 / n as f32;
+                pts.push(line[k - 1].lerp(line[k], t));
+                if let (Some(hs), Some(h)) = (hs.as_mut(), heights.as_ref()) {
+                    hs.push(h[k - 1] + (h[k] - h[k - 1]) * t);
+                }
+            }
+        }
+        dense = pts;
+        (&dense[..], hs)
+    } else {
+        (line, heights)
+    };
+    let at = heights.is_some();
     let length: f32 = line.windows(2).map(|w| w[0].distance(w[1])).sum();
     // The height the surface runs at, point by point.
     let base: Vec<f32> = match (heights, kit.ground) {
@@ -219,9 +241,12 @@ fn lay_inner(cx: &mut EventCtx, line: &[Vec2], kit_ix: usize, smooth: f32, heigh
     };
     // A line that sits on the ground stops at the waterline: a fence does not
     // wade out to sea, and a wall round a village stops at the beach.
+    // Nor does it cross the head of a bridge: a field wall along the bank
+    // leaves a gap where the bridge lands.
     let skip: Vec<bool> = if kit.ground == Ground::Follow {
         let sea = cx.f.sea;
-        line.iter().map(|p| cx.f.height(p.x, p.y) < sea + 0.3 || cx.f.water[cx.f.idx(p.x, p.y)] == 1).collect()
+        let heads = cx.state.get::<BridgeHeads>().0.clone();
+        line.iter().map(|p| cx.f.height(p.x, p.y) < sea + 0.3 || cx.f.water[cx.f.idx(p.x, p.y)] == 1 || heads.iter().any(|h| h.covers(*p))).collect()
     } else {
         vec![false; line.len()]
     };
@@ -251,10 +276,242 @@ fn lay_inner(cx: &mut EventCtx, line: &[Vec2], kit_ix: usize, smooth: f32, heigh
     let base = sagged(&base, &airborne, kit.sag);
     let segs = emit(cx, line, &base, &airborne, &skip, kit_ix, &kit);
     let piers = piers(cx, line, &base, &airborne, &kit);
+    // A deck held at a given height (a wharf, a landing stage) that starts or
+    // ends on land meets it: the ground under the deck where it is on land
+    // is cut or filled to the deck, a ramp graded off its end, and the
+    // nearest road or street carried on to it.
+    if kit.ground == Ground::Deck && at && line.len() >= 2 {
+        let n = line.len();
+        for (end, step) in [(0usize, 1isize), (n - 1, -1isize)] {
+            let top = base[end];
+            let ground = |cx: &EventCtx, k: usize| cx.f.height(line[k].x, line[k].y);
+            if ground(cx, end) < top - 0.5 {
+                continue;
+            }
+            let mut k = end;
+            loop {
+                let cause = cx.cause;
+                let (p, y) = (line[k], base[k]);
+                crate::world::chronicle::geom::each_near(&mut cx.f, p, kit.half + 0.5, |f, i, _, _| {
+                    if !wet(f, i) {
+                        f.h[i] = y;
+                        f.cliff[i] = 0.0;
+                        f.occupied[i] = true;
+                        f.cause[i] = cause;
+                    }
+                });
+                let next = k as isize + step;
+                if next < 0 || next >= n as isize || ground(cx, next as usize) < base[next as usize] - 0.5 {
+                    break;
+                }
+                k = next as usize;
+            }
+            let inward = line[(end as isize + step) as usize];
+            let out = (line[end] - inward).normalize_or_zero();
+            if grade_landing(cx, line[end], out, top, kit.half) {
+                join_road(cx, line[end], out, top);
+            }
+        }
+    }
     if kit.half > 0.8 && kit.ground != Ground::Bore {
         cx.state.get::<RoadLines>().0.push((line.to_vec(), kit.half));
     }
     Laid { length, segs, spans, piers }
+}
+
+/// Water for a landing: a river or lake, or ground under the sea (the sea
+/// is not flagged cell by cell).
+pub fn wet(f: &Fields, i: usize) -> bool {
+    f.water[i] == 1 || f.h[i] < f.sea
+}
+
+/// Grade the ground where a deck lands: at `tip`, the deck's surface `top`
+/// m (absolute) and `half` m wide, running off it toward `out`. The ground is
+/// cut or filled to the deck from 2.5 m back under it out to the foot of a
+/// ramp of about 1 in 5 (6 to 24 m), with a 3 m feather each side. Water
+/// and ground already taken are left alone. Returns false, changing nothing, when the ground just off the
+/// tip is all water or more than 5 m off the deck (a cliff, a canyon rim).
+pub fn grade_landing(cx: &mut EventCtx, tip: Vec2, out: Vec2, top: f32, half: f32) -> bool {
+    let side = Vec2::new(-out.y, out.x);
+    let f = &cx.f;
+    let (mut sum, mut n) = (0.0, 0);
+    for s in [0.5, 1.5, 2.5, 3.0] {
+        for j in -2..=2 {
+            let p = tip + out * s + side * (half * j as f32 / 2.0);
+            if !wet(f, f.idx(p.x, p.y)) {
+                sum += f.height(p.x, p.y);
+                n += 1;
+            }
+        }
+    }
+    if n == 0 {
+        return false;
+    }
+    let g = sum / n as f32;
+    if (g - top).abs() > 5.0 {
+        return false;
+    }
+    let ramp = ((g - top).abs() * 5.0).clamp(6.0, 24.0);
+    let cause = cx.cause;
+    crate::world::chronicle::geom::each_near(&mut cx.f, tip + out * (ramp * 0.5), ramp + half + 4.0, |f, i, _, p| {
+        // Water, and ground something already stands on (a quay's houses).
+        if wet(f, i) || f.occupied[i] {
+            return;
+        }
+        let v = p - tip;
+        let (s, c) = (v.dot(out), v.dot(side).abs());
+        if !(-2.5..=ramp).contains(&s) {
+            return;
+        }
+        let w = crate::world::noise::smoothstep(half + 3.0, half + 0.5, c);
+        if w <= 0.0 {
+            return;
+        }
+        let orig = f.h[i];
+        let target = if s <= 0.0 { top } else { top + (orig - top) * crate::world::noise::smoothstep(0.0, ramp, s) };
+        f.h[i] = orig + (target - orig) * w;
+        f.cliff[i] *= 1.0 - w;
+        if w > 0.5 {
+            f.occupied[i] = true;
+            f.cause[i] = cause;
+        }
+    });
+    true
+}
+
+/// Carry the nearest road on the landing's own side (within 45 m, not back
+/// across the water) on to a deck's `tip`, whose surface is `top` m and
+/// which is left toward `out`: a graded route road (`network`, `route`,
+/// `ribbon`) or a town street. The join runs from the road's nearest point,
+/// easing from the road's height to the deck's and holding the deck's over
+/// its last few metres. A route road gets a line of its own kit, and an
+/// apron where a road passing by meets it; a town street gets a street
+/// piece of its own surface on ground graded to the same heights. Returns
+/// the join's length.
+pub fn join_road(cx: &mut EventCtx, tip: Vec2, out: Vec2, top: f32) -> Option<f32> {
+    enum From {
+        Kit(usize),
+        Street(f32, u8),
+    }
+    let from = tip + out;
+    let mut cands: Vec<(f32, Vec2, f32, From)> = Vec::new();
+    let consider = |q: Vec2, y: f32, src: From, cands: &mut Vec<(f32, Vec2, f32, From)>| {
+        let d = q.distance(tip);
+        if d <= 45.0 && (q - tip).dot(out) >= -1.0 {
+            cands.push((d, q, y, src));
+        }
+    };
+    let nearest = |a: Vec2, b: Vec2| {
+        let ab = b - a;
+        let u = ((from - a).dot(ab) / ab.length_squared().max(1e-6)).clamp(0.0, 1.0);
+        (a + ab * u, u)
+    };
+    {
+        let r = cx.state.get::<Ribbons>();
+        for seg in &r.segs {
+            let kit = &r.kits[seg.kit as usize];
+            if seg.decked || kit.ground != Ground::Grade || kit.half < 0.8 {
+                continue;
+            }
+            let (q, u) = nearest(Vec2::new(seg.a.x, seg.a.z), Vec2::new(seg.b.x, seg.b.z));
+            consider(q, seg.a.y + (seg.b.y - seg.a.y) * u, From::Kit(seg.kit as usize), &mut cands);
+        }
+    }
+    let city = cx.state.get::<crate::world::city::City>();
+    let streets: Vec<(Vec2, Vec2, f32, u8)> = city.streets.iter().filter(|s| s.half >= 0.8).map(|s| (s.a, s.b, s.half, s.mat)).collect();
+    // Building footprints near the tip, as boxes (the city is not indexed
+    // until the chronicle has run).
+    let houses: Vec<(Vec2, Vec2)> = city.buildings.iter().filter(|b| b.lo.distance(tip) < 120.0).map(|b| (b.lo, b.hi)).collect();
+    for (a, b, half, mat) in streets {
+        let (q, _) = nearest(a, b);
+        consider(q, cx.f.height(q.x, q.y), From::Street(half, mat), &mut cands);
+    }
+    cands.sort_by(|a, b| a.0.total_cmp(&b.0));
+    // The nearest whose join stays off the water (a road on the other side)
+    // and out of the houses.
+    let f = &cx.f;
+    let line_to = |q: Vec2, d: f32| -> Vec<Vec2> {
+        let n = d.ceil().max(1.0) as usize;
+        (0..=n).map(|j| q.lerp(tip, j as f32 / n as f32)).collect()
+    };
+    let clear = |line: &[Vec2]| {
+        line[..line.len().saturating_sub(2)].iter().all(|p| !wet(f, f.idx(p.x, p.y)) && !houses.iter().any(|(lo, hi)| p.x > lo.x - 0.5 && p.x < hi.x + 0.5 && p.y > lo.y - 0.5 && p.y < hi.y + 0.5))
+    };
+    let (d, q, y, src) = cands.into_iter().find(|(d, q, _, _)| clear(&line_to(*q, *d)))?;
+    if d < 1.5 {
+        return None;
+    }
+    let line = line_to(q, d);
+    let flat = (d * 0.3).min(3.0);
+    let heights: Vec<f32> = line
+        .iter()
+        .map(|p| {
+            let u = (p.distance(q) / (d - flat).max(0.5)).min(1.0);
+            y + (top - y) * crate::world::noise::smoothstep(0.0, 1.0, u)
+        })
+        .collect();
+    match src {
+        From::Kit(kit) => {
+            let r = cx.state.get::<Ribbons>();
+            let (half, mat) = (r.kits[kit].half, r.kits[kit].mat);
+            // The road ends there if exactly one piece has an end at that point.
+            let end = r.segs.iter().filter(|s| [s.a, s.b].iter().any(|e| Vec2::new(e.x, e.z).distance(q) < 0.6)).count() == 1;
+            lay_heights(cx, &line, kit, heights);
+            if !end {
+                junction(cx, q, half + 1.5, mat);
+            }
+        }
+        From::Street(half, mat) => {
+            let cause = cx.cause;
+            for (p, &h) in line.iter().zip(&heights) {
+                crate::world::chronicle::geom::each_near(&mut cx.f, *p, half + 3.0, |f, i, dist, _| {
+                    if wet(f, i) {
+                        return;
+                    }
+                    let w = crate::world::noise::smoothstep(half + 3.0, half + 0.5, dist);
+                    f.h[i] += (h - f.h[i]) * w;
+                    f.cliff[i] *= 1.0 - w;
+                    if w > 0.5 {
+                        f.occupied[i] = true;
+                        f.cause[i] = cause;
+                    }
+                });
+            }
+            cx.state.get::<crate::world::city::City>().streets.push(crate::world::city::Street {
+                a: q,
+                b: tip,
+                half,
+                strip: 0.0,
+                walk: 0.0,
+                mat,
+                square_a: false,
+                square_b: true,
+            });
+        }
+    }
+    Some(d)
+}
+
+/// Where each bridge placed so far lands: its tip, the way off it, and its
+/// half width. Walls and fences laid later leave these clear.
+#[derive(Default)]
+pub struct BridgeHeads(pub Vec<BridgeHead>);
+
+#[derive(Clone, Copy)]
+pub struct BridgeHead {
+    pub tip: Vec2,
+    pub out: Vec2,
+    pub half: f32,
+}
+
+impl BridgeHead {
+    /// Is the point on the landing: within the deck's width plus 1.5 m of
+    /// its line, from the tip out to 8 m beyond it?
+    pub fn covers(&self, p: Vec2) -> bool {
+        let v = p - self.tip;
+        let s = v.dot(self.out);
+        (-1.0..=8.0).contains(&s) && v.dot(Vec2::new(-self.out.y, self.out.x)).abs() <= self.half + 1.5
+    }
 }
 
 /// Every road laid so far that carries traffic (a surface wider than a
@@ -418,6 +675,64 @@ pub fn junction(cx: &mut EventCtx, at: Vec2, r: f32, mat: u8) {
         } else {
             let t = crate::world::noise::smoothstep(r + 3.0, r, d);
             f.h[i] += (base - f.h[i]) * t;
+            f.cliff[i] *= 1.0 - t;
+        }
+    });
+}
+
+/// A junction apron tilted to meet the graded road ends round it: a plane
+/// fitted through their heights (level at the ground's height with none).
+pub fn junction_fit(cx: &mut EventCtx, at: Vec2, r: f32, mat: u8, ends: &[Vec2]) {
+    let hs: Vec<(Vec2, f32)> = ends.iter().map(|&e| (e - at, cx.f.height(e.x, e.y))).collect();
+    let (base, grad) = match hs.len() {
+        0 => (cx.f.height(at.x, at.y), Vec2::ZERO),
+        1 => (hs[0].1, Vec2::ZERO),
+        _ => {
+            // Least squares for h = base + grad . d.
+            let n = hs.len() as f32;
+            let md = hs.iter().map(|h| h.0).sum::<Vec2>() / n;
+            let mh = hs.iter().map(|h| h.1).sum::<f32>() / n;
+            let (mut sxx, mut sxy, mut syy, mut sxh, mut syh) = (0.0, 0.0, 0.0, 0.0, 0.0);
+            for &(d, h) in &hs {
+                let (x, y, z) = (d.x - md.x, d.y - md.y, h - mh);
+                sxx += x * x;
+                sxy += x * y;
+                syy += y * y;
+                sxh += x * z;
+                syh += y * z;
+            }
+            let det = sxx * syy - sxy * sxy;
+            let grad = if det.abs() > 1e-3 {
+                Vec2::new((sxh * syy - syh * sxy) / det, (syh * sxx - sxh * sxy) / det)
+            } else if sxx + syy > 1e-3 {
+                // The ends in a line: slope along it only.
+                let dir = if sxx >= syy { Vec2::X } else { Vec2::Y };
+                let s = if sxx >= syy { sxh / sxx } else { syh / syy };
+                dir * s
+            } else {
+                Vec2::ZERO
+            };
+            // No steeper than a road would climb.
+            let grad = grad.clamp_length_max(0.15);
+            (mh - grad.dot(md), grad)
+        }
+    };
+    let cause = cx.cause;
+    crate::world::chronicle::geom::each_near(&mut cx.f, at, r + 3.0, |f: &mut Fields, i, d, q| {
+        if f.water[i] == 1 {
+            return;
+        }
+        let target = base + grad.dot(q - at);
+        if d <= r {
+            f.h[i] = target;
+            f.surface[i] = mat;
+            f.occupied[i] = true;
+            f.water[i] = 3;
+            f.cliff[i] = 0.0;
+            f.cause[i] = cause;
+        } else {
+            let t = crate::world::noise::smoothstep(r + 3.0, r, d);
+            f.h[i] += (target - f.h[i]) * t;
             f.cliff[i] *= 1.0 - t;
         }
     });

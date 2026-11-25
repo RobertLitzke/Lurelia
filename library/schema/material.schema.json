@@ -1,5 +1,25 @@
 {
   "$defs": {
+    "BloomDef": {
+      "additionalProperties": false,
+      "description": "One flower through a ground's grass (`bloom` in its file).",
+      "properties": {
+        "flower": {
+          "description": "`white` (daisy), `blue` (lupine), `yellow` (balsamroot), `red`\n(paintbrush) or `orange` (poppy).",
+          "type": "string"
+        },
+        "share": {
+          "description": "Share of the tufts that flower, on average.",
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "required": [
+        "flower",
+        "share"
+      ],
+      "type": "object"
+    },
     "CalmColours": {
       "properties": {
         "alt": {
@@ -242,6 +262,17 @@
       "default": false,
       "description": "Faceted only where the surface is stepped: a corner where every face\nthat meets it runs flat for two voxels (the edge of a box, a wall\ncorner, the foot of a wall) stays square, and a staggered edge of\none-voxel pieces is bevelled. For built things; implies `facet`. The\narenas set it per world (`round_edges` in world.json).",
       "type": "boolean"
+    },
+    "bloom": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BloomDef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "One kind of wildflower standing through this ground's own grass: a\n`share` of the tufts (0 to 1, thicker and thinner in drifts) drawn as\nthat `flower` instead. Kitehold's buried stream beds are prairie grass\nwith lupine, paintbrush or poppies through it, so they read as waves\nof one colour in the tan grass, not as a different ground."
     },
     "bottom": {
       "anyOf": [

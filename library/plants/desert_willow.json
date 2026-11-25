@@ -19,5 +19,6 @@
   "flower": "desert_willow_flowers",
   "flower_tips": true,
   "flower_seasons": ["spring", "summer"],
-  "affords": ["nectar"]
+  "affords": ["nectar"],
+  "site": {"wet": [0.35, 1.0], "sun": [0.4, 1.0], "shade": [0.0, 0.3]}
 }

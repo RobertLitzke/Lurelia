@@ -15,5 +15,6 @@
   "limb": 1.0,
   "max_slope": 0.9,
   "affords": ["nectar", "nest"],
-  "thin_limbs": 0.2
+  "thin_limbs": 0.2,
+  "site": {"wet": [0.0, 0.5], "sun": [0.4, 1.0], "shade": [0.0, 0.3]}
 }

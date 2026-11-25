@@ -55,6 +55,12 @@ pub fn draw(sh: &Shooter, hud: &mut Hud, w: f32, h: f32, s: f32) {
     standing(sh, hud, w, h, s);
     alert(sh, hud, w, h, s);
     score(sh, hud, w, h, s);
+    if sh.zed.is_some() {
+        zombie_round(sh, hud, w, h, s);
+        if !sh.alive() {
+            return;
+        }
+    }
 
     if !sh.alive() {
         let (cx, cy) = ((w * 0.5).floor(), (h * 0.5).floor());
@@ -101,7 +107,13 @@ fn crosshair(sh: &Shooter, hud: &mut Hud, w: f32, h: f32, s: f32) {
         hud.rect(w - band, 0.0, band, h, dim);
         return;
     }
-    let spread = sh.me.arsenal.current().map_or(1.0, |g| 1.0 + g.def.fire.spread_deg * 0.9);
+    // The spread a shot would go out with now: the gun's own, what the burst
+    // has added, and what moving adds where the game says so.
+    let (vel, ground) = sh.me_motion;
+    let spread = sh.me.arsenal.current().map_or(1.0, |g| {
+        let f = &g.def.fire;
+        1.0 + (f.spread_deg + g.bloom() + f.move_spread.map_or(0.0, |m| m.degrees(vel, ground))) * 0.9
+    });
     let gap = (3.0 * s * spread).min(w * 0.08);
     let len = 5.0 * s;
     let t = (1.0 * s).max(1.0);
@@ -251,8 +263,13 @@ fn weapon(sh: &Shooter, hud: &mut Hud, w: f32, h: f32, s: f32) {
 fn score(sh: &Shooter, hud: &mut Hud, w: f32, h: f32, s: f32) {
     let mut c = Corner::new(Side::TopRight, w, h, s);
     let mut rows: Vec<(String, Score, Option<u8>)> = vec![("YOU".into(), sh.me.score, sh.me.team)];
-    for b in &sh.bots {
-        rows.push((b.name.to_uppercase(), b.fighter.score, b.fighter.team));
+    for (i, b) in sh.bots.iter().enumerate() {
+        // The zombie round lists the party, not forty zombies.
+        if sh.is_zombie(i + 1) {
+            continue;
+        }
+        let name = if sh.zed.is_some() && !b.fighter.alive() { format!("{} (DOWN)", b.name.to_uppercase()) } else { b.name.to_uppercase() };
+        rows.push((name, b.fighter.score, b.fighter.team));
     }
     // In a team match the player's side first, each side best first.
     let mine = sh.me.team;
@@ -297,6 +314,11 @@ fn alert(sh: &Shooter, hud: &mut Hud, w: f32, h: f32, s: f32) {
 /// the flag, where each flag is, with the clock between them.
 fn standing(sh: &Shooter, hud: &mut Hud, w: f32, _h: f32, s: f32) {
     let Some(_) = sh.me.team else { return };
+    // The zombie round puts the party on a side without there being a
+    // second one to count against.
+    if sh.zed.is_some() {
+        return;
+    }
     let ctf = !sh.flags.is_empty();
     let totals = if ctf { sh.flags.caps } else { super::round::team_kills(&sh.scores(), &sh.sides()) };
     let y = (8.0 * s).floor();
@@ -343,4 +365,67 @@ fn carrying(sh: &Shooter, hud: &mut Hud, w: f32, h: f32, s: f32) {
     hud.rect(0.0, h - t, w, t, c);
     hud.rect(0.0, 0.0, t, h, c);
     hud.rect(w - t, 0.0, t, h, c);
+}
+
+/// The zombie round's readouts: the way to the refuge, the party, the time,
+/// and across the middle how it ended.
+fn zombie_round(sh: &Shooter, hud: &mut Hud, w: f32, h: f32, s: f32) {
+    let Some(z) = sh.zed.as_ref() else { return };
+    let (up, of) = z.standing(sh);
+    let clock = format!("{}:{:02}", (z.clock / 60.0) as u32, (z.clock % 60.0) as u32);
+    let (cx, cy) = ((w * 0.5).floor(), (h * 0.5).floor());
+    let line = 10.0 * s;
+    // Across the top, where a match keeps its score.
+    let stage = match z.stage {
+        super::zombies::Stage::Leg if z.last_leg() => format!("LEG {}/{}: TO THE EXTRACTION", z.leg + 1, z.legs.len()),
+        super::zombies::Stage::Leg => format!("LEG {}/{}: TO THE REFUGE", z.leg + 1, z.legs.len()),
+        super::zombies::Stage::Refuge => "SAFE FOR NOW: LEAVE WHEN READY".to_string(),
+        super::zombies::Stage::Finale => {
+            let left = (z.finale_len - z.stage_t).max(0.0) as u32;
+            format!("HOLD OUT {}:{:02}", left / 60, left % 60)
+        }
+        super::zombies::Stage::Out => "THE WAY OUT IS OPEN".to_string(),
+    };
+    let top = [
+        (format!("PARTY {up}/{of}    {clock}"), s * 1.4, [0.85, 1.0, 0.85, 0.9]),
+        (format!("{stage}    {}", z.condition.title().to_uppercase()), s, [0.85, 1.0, 0.85, 0.8]),
+        (if z.hold.is_some() { "X: THE PARTY HOLDS HERE".to_string() } else { "X: THE PARTY FOLLOWS".to_string() }, s, [1.0, 0.95, 0.9, 0.65]),
+    ];
+    let mut y = (8.0 * s).floor();
+    for (text, k, ink) in &top {
+        let wt = Hud::text_width(text, *k);
+        hud.label(cx - wt * 0.5 + s, y + s, *k, [0.0, 0.0, 0.0, 0.5], text);
+        hud.label(cx - wt * 0.5, y, *k, *ink, text);
+        y += 10.0 * k + 4.0 * s;
+    }
+    let Some((how, _)) = z.over else { return };
+    let (msg, tint) = match how {
+        super::zombies::Outcome::Made => ("YOU MADE IT", [0.7, 1.0, 0.75, 0.95]),
+        super::zombies::Outcome::Lost => ("THE DEAD GOT YOU", [1.0, 0.86, 0.8, 0.95]),
+    };
+    let wm = Hud::text_width(msg, s * 3.0);
+    hud.label(cx - wm * 0.5, cy - line * 5.0, s * 3.0, tint, msg);
+    // Who made it, by name.
+    let mut made: Vec<String> = Vec::new();
+    if sh.me.alive() {
+        made.push("YOU".to_string());
+    }
+    made.extend(sh.bots.iter().take(z.party).filter(|b| b.fighter.alive()).map(|b| b.name.clone()));
+    let first = match how {
+        super::zombies::Outcome::Made => format!("{clock}   {}   MADE IT: {}", z.condition.title().to_uppercase(), made.join(", ")),
+        super::zombies::Outcome::Lost => format!("{clock}   {}   LOST ON LEG {} OF {}", z.condition.title().to_uppercase(), z.leg + 1, z.legs.len()),
+    };
+    let tags = z.tags(sh);
+    let mut lines = vec![
+        first,
+        format!("HEALTH SPENT {:.0}   {} ZOMBIES DOWN   {} HORDES   NOISE {:.0}", z.hurt, z.kills, z.hordes, z.noise),
+    ];
+    if !tags.is_empty() {
+        lines.push(tags.join("   "));
+    }
+    lines.push("ENTER FOR ANOTHER GO".to_string());
+    for (k, l) in lines.iter().enumerate() {
+        let wl = Hud::text_width(l, s);
+        hud.label(cx - wl * 0.5, cy - line * (2.5 - 1.4 * k as f32), s, [1.0, 0.95, 0.9, 0.85], l);
+    }
 }

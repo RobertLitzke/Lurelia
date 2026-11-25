@@ -24,7 +24,11 @@ exists with `ls library/materials/<name>.json`.
 
 **Keep:** `name`, the slot names (add slots freely, use every one, existing
 materials only), `base`, `level`, `decays`, `tags`. If you change `size`,
-keep the `anchor` on the same physical spot. Set `"version": 2`. If a `sign` event in the chronicle paints text on it, keep that board's size and place and leave it plain.
+keep the `anchor` on the same physical spot. Set `"version": 2`. A bridge
+(`base: "rim"`, tag `bridge`) keeps its long axis and its deck centred on the
+anchor, and the column at each tip on the anchor's line stays solid from the
+bottom up to the deck: the game reads the deck height there to meet the road
+(see "Bridges" in the schema doc). If a `sign` event in the chronicle paints text on it, keep that board's size and place and leave it plain.
 
 **Scale:** voxels are 0.25 m; the player is 1.75 m. Doors at least 2.25 m by
 1 m, storeys about 3 m, railings 1.1 m. Only a real door leaf uses a

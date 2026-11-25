@@ -1,0 +1,9 @@
+{
+  "name": "maple_planks",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Sawn maple boards, warm honey brown: Maplebridge's houses, bridge and mill.",
+  "like": "weathered_planks",
+  "sprites": "none",
+  "texture": {"base": [156, 112, 70], "alt": [176, 128, 82], "calm": {"base": [176, 128, 84], "alt": [190, 140, 94]}}
+}

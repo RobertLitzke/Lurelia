@@ -1,4 +1,4 @@
-use super::coral_reef::{fore_ground, paint, undercuts, Fore, Zone};
+use super::coral_reef::{fore_ground, named, paint_as, undercuts, Fore, Zone};
 use super::lava_tube::Tubes;
 use crate::world::chronicle::{EventCtx, Process};
 use crate::world::fields::{Fields, Poi, Pos, Tube};
@@ -49,6 +49,13 @@ pub struct Atoll {
     sand: String,
     #[serde(default)]
     poi: Option<String>,
+    /// A prefix for the regions it paints: `"fw"` names them `fw_reef_flat`,
+    /// `fw_lagoon`, `fw_motu` and so on, so a world's own biomes claim them
+    /// and the tropical reef biomes (named after the plain regions) are not
+    /// pulled in with their corals. Without it the regions are the plain
+    /// names the reef biomes match.
+    #[serde(default)]
+    regions: Option<String>,
 }
 
 fn default_ring() -> f32 {
@@ -96,6 +103,7 @@ impl Process for Atoll {
         let c = cx.pos(&self.at);
         let rock = cx.mat(&self.rock);
         let sand = cx.mat(&self.sand);
+        let pre = self.regions.clone().unwrap_or_default();
         let sea = cx.f.sea;
         let fore = self.fore;
         let r0 = self.radius;
@@ -159,7 +167,7 @@ impl Process for Atoll {
                             }
                         }
                     }
-                    paint(f, i, y, zone, rock, sand, cause);
+                    paint_as(f, i, y, zone, rock, sand, cause, &pre);
                 }
                 return;
             }
@@ -193,11 +201,11 @@ impl Process for Atoll {
                 if y > sea + 0.2 {
                     f.h[i] = y;
                     f.surface[i] = sand;
-                    f.region[i] = f.region_id("motu");
+                    f.region[i] = f.region_id(&named(&pre, "motu"));
                     f.cause[i] = cause;
                     motu_cells += 1;
                 } else {
-                    paint(f, i, y, zone, rock, sand, cause);
+                    paint_as(f, i, y, zone, rock, sand, cause, &pre);
                 }
                 return;
             }
@@ -236,7 +244,7 @@ impl Process for Atoll {
             }
             f.h[i] = y;
             f.surface[i] = surface;
-            f.region[i] = f.region_id(region);
+            f.region[i] = f.region_id(&named(&pre, region));
             f.cause[i] = cause;
         });
         // Caves under the outer wall, all the way round.

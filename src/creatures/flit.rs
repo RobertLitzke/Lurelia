@@ -3,6 +3,10 @@
 //! top nearby, drop to the ground now and then to peck, and burst away to a
 //! farther perch when the player comes close. Each bird moves on its own; a
 //! group shares a home it drifts back toward.
+//!
+//! A display (creatures/display: a lark's song flight, a jay caching) takes
+//! a bird over for a while: it carries a `Show` and is put where the display
+//! says, and when it ends it carries on from there.
 
 use super::terrain::Terrain;
 use super::{Creature, Look, Species};
@@ -19,6 +23,8 @@ pub struct Flit {
     pub state: State,
     pub home: Vec3,
     rng: Rng,
+    /// In a display last step: whether it was sitting.
+    shown: Option<bool>,
 }
 
 impl Flit {
@@ -40,6 +46,7 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, at: Vec3, n: u32, 
         let mut f = Flit {
             state: State::Sit { timer: 0.0 },
             home: at,
+            shown: None,
             rng: Rng::new(crate::world::noise::hash32(seed ^ k.wrapping_mul(0x85eb_ca6b)) | 1),
         };
         f.state = State::Sit { timer: 0.2 + f.rand() * 2.0 };
@@ -54,9 +61,36 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, at: Vec3, n: u32, 
 /// included); never on wet ground or below the sea.
 pub fn update(world: &mut hecs::World, species: &[Species], dt: f32, threat: &super::startle::Threat, ter: &Terrain) {
     let player = threat.pos;
-    for (f, look, me, morph) in world.query_mut::<(&mut Flit, &mut Look, &Creature, Option<&crate::variety::Morph>)>() {
+    for (f, look, me, morph, show) in world.query_mut::<(&mut Flit, &mut Look, &Creature, Option<&crate::variety::Morph>, Option<&super::display::Show>)>() {
         look.begin_step();
         let sp = &species[me.species];
+        if let Some(s) = show {
+            use super::display::Drive;
+            match s.out.drive {
+                Drive::Place { pos, yaw } => {
+                    (look.pos, look.yaw) = (pos, yaw);
+                    f.shown = Some(false);
+                }
+                Drive::Sit { pos, yaw } => {
+                    (look.pos, look.yaw) = (pos, yaw);
+                    f.shown = Some(true);
+                }
+                _ => {}
+            }
+            continue;
+        }
+        // Out of a display: sit on where it was put, or if it was left in
+        // the air, fly to a perch.
+        if let Some(sat) = f.shown.take() {
+            f.state = State::Sit { timer: 0.8 + f.rand() * 2.0 };
+            if !sat {
+                let to = choose(f, look.pos, None, 3.0, 14.0, ter).or_else(|| ground_spot(f, look.pos, ter));
+                if let Some(to) = to {
+                    let dur = ((to - look.pos).length() / sp.beh.walk_speed.max(2.0)).clamp(0.35, 4.0);
+                    f.state = State::Fly { from: look.pos, to, t: 0.0, dur };
+                }
+            }
+        }
         let (pace, _) = crate::variety::pace(morph);
         let hop_speed = sp.beh.walk_speed.max(2.0) * pace;
         let flee_speed = sp.beh.flee_speed.max(hop_speed) * pace;

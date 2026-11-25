@@ -2,7 +2,7 @@
   "name": "drift_smoke",
   "version": 1,
   "introduced_by": "kart_race",
-  "notes": "Tyre smoke off a kart's back wheels while it drifts (fx/hooks.rs `drift`).",
+  "notes": "Tyre smoke off a kart's back wheels while it drifts, before the drift has charged a boost (fx/hooks.rs `drift`). The charged levels are drift_smoke_1 to drift_smoke_3.",
   "shape": "puff",
   "count": [1, 1],
   "speed": [0.4, 1.2],

@@ -2,25 +2,13 @@
 //! it and where, and what the hits do to the karts. Kart 0 is the player's,
 //! kart `i + 1` is rival `i`.
 
-use super::arms::{assist, Harm, Item, Pose, Slot, BLOCK_DAMAGE, BLOCK_HOP, BLOCK_KEEP, KART_SIZE, OVER_SECS, REPAIR, SHIELD_SECS, SPIN_SECS, TURNED_SECS};
+use super::arms::{assist, Harm, Item, Pose, Slot, KART_SIZE, TURNED_SECS};
 use super::{boost_kick, Bot, Race, NAMES};
 use crate::player::Player;
 use crate::ride::Ride;
 use crate::vehicle::{Controls, Vehicle};
 use glam::{Quat, Vec3};
 
-/// A spun kart keeps this share of its speed.
-const SPIN_KEEP: f32 = 0.35;
-/// Overdrive: top speed raised by this share, pushed toward it this hard
-/// (m/s²).
-const OVER_TOP: f32 = 1.15;
-const OVER_PUSH: f32 = 8.0;
-/// The small boost with nothing carried: seconds of it when full, and
-/// seconds to refill.
-const SMALL_BOOST_SECS: f32 = 1.2;
-const SMALL_BOOST_REFILL: f32 = 8.0;
-/// Seconds the BOOST item holds a kart at its boosted top speed.
-const BOOST_SECS: f32 = 2.0;
 /// The pickups: how big each is drawn, and how far over the road it turns.
 const PICKUP_SIZE: f32 = 2.2;
 /// The shield's bubble round a kart (avatar `BUBBLE_M`): the scale it is
@@ -47,8 +35,15 @@ pub(super) enum Aim {
 /// metres.
 const BACK_GUN: f32 = 45.0;
 const BACK_ROCKET: f32 = 50.0;
+/// The climb an unlocked rocket steers at, as a slope (about 2 degrees),
+/// so it clears gentle rises in the road ahead.
+const UNLOCKED_LIFT: f32 = 0.035;
 /// Seconds a rival holds a weapon with nobody ahead before it fires back.
 const REAR_PATIENCE: f32 = 3.0;
+/// How far off a rocket locked on a kart its brain notices it, and how
+/// close it lets it come before dropping a block in its way, metres.
+const LOCK_SEEN: f32 = 60.0;
+const DODGE_BLOCK: f32 = 30.0;
 
 /// Kart `k`'s car.
 pub(super) fn kart<'a>(bots: &'a mut [Bot], ride: &'a mut Ride, k: usize) -> Option<&'a mut Vehicle> {
@@ -115,12 +110,12 @@ impl Race {
         };
         for (k, item) in self.arms.boxes_taken(dt, wants) {
             if item == Item::Repair {
-                self.harm[k].hurt(-REPAIR);
+                self.harm[k].hurt(&self.arms.rules, -self.arms.rules.repair);
                 if k == 0 {
                     self.note = Some("REPAIRED".into());
                 }
             } else {
-                self.slots[k] = Slot::Have(item, item.uses());
+                self.slots[k] = Slot::Have(item, self.arms.rules.uses(item));
             }
             if k == 0 {
                 let pick = if item == Item::Repair { crate::sound::Pick::Health } else { crate::sound::Pick::Weapon };
@@ -130,7 +125,7 @@ impl Race {
         for k in 0..n {
             if self.arms.all && !matches!(self.slots[k], Slot::Have(..)) {
                 let item = if k == 0 { Item::WEAPONS[self.pick % Item::WEAPONS.len()] } else { self.arms.roll_weapon() };
-                self.slots[k] = Slot::Have(item, item.uses());
+                self.slots[k] = Slot::Have(item, self.arms.rules.uses(item));
             }
             self.reload[k] = (self.reload[k] - dt).max(0.0);
         }
@@ -138,27 +133,28 @@ impl Race {
             if let Slot::Have(i, _) = self.slots[0] {
                 let want = Item::WEAPONS[self.pick % Item::WEAPONS.len()];
                 if i != want {
-                    self.slots[0] = Slot::Have(want, want.uses());
+                    self.slots[0] = Slot::Have(want, self.arms.rules.uses(want));
                 }
             }
         }
 
         // The small boost on Shift: short and slow to come back, and only
         // with nothing carried (ride.rs `race_boost`).
-        ride.race_boost = Some((SMALL_BOOST_SECS, SMALL_BOOST_REFILL, self.slots[0] == Slot::Empty && self.me.finish.is_none()));
+        ride.race_boost = Some((self.arms.rules.small_boost_s, self.arms.rules.small_boost_refill_s, self.slots[0] == Slot::Empty && self.me.finish.is_none()));
 
-        // The player: the button, pressed or held.
-        let pressed = self.trigger && !self.trigger_was;
-        self.trigger_was = self.trigger;
+        // The player: the left button or the right, pressed or held.
+        let pressed = (self.trigger && !self.trigger_was) || (self.ahead && !self.ahead_was);
+        (self.trigger_was, self.ahead_was) = (self.trigger, self.ahead);
         if self.me.finish.is_none() && self.harm[0].spin <= 0.0 {
             if let Slot::Have(item, _) = self.slots[0] {
-                let go = if item.held() { self.trigger && self.reload[0] <= 0.0 } else { pressed };
+                let go = if item.held() { (self.trigger || self.ahead) && self.reload[0] <= 0.0 } else { pressed };
                 if go {
                     // The stick or S held back, or looking behind: behind.
-                    // The stick held forward: goo or a block thrown ahead.
+                    // The stick held forward or the right button: goo or a
+                    // block thrown ahead.
                     let aim = if self.stick_back || self.look_back {
                         Aim::Back
-                    } else if self.stick_ahead {
+                    } else if self.stick_ahead || self.ahead {
                         Aim::Ahead
                     } else {
                         Aim::Usual
@@ -177,7 +173,7 @@ impl Race {
             }
             if self.arms.all && self.held_t[k] > 6.0 {
                 let item = self.arms.roll_weapon();
-                self.slots[k] = Slot::Have(item, item.uses());
+                self.slots[k] = Slot::Have(item, self.arms.rules.uses(item));
                 self.held_t[k] = 0.0;
             }
             let out = self.laps_of(k).finish.is_some() || (k > 0 && self.bots[k - 1].ghost);
@@ -196,8 +192,11 @@ impl Race {
             }
         }
 
-        // Each guided shell steers after its kart's target, or the player's
-        // look.
+        // Each guided shell steers after its kart's target, or the way the
+        // player looks (or the kart points) held level with a little lift:
+        // the chase camera looks down at the road a few metres ahead, and a
+        // rocket steered at that point goes into the road.
+        let level = |d: Vec3, or: Vec3| (Vec3::new(d.x, 0.0, d.z).normalize_or(or) + Vec3::Y * UNLOCKED_LIFT).normalize();
         for k in 0..n {
             let pose = self.arms.poses[k];
             let eye = pose.pos + Vec3::Y * 0.6;
@@ -206,8 +205,8 @@ impl Race {
                     let to = self.arms.poses[t].pos + Vec3::Y * 0.3 - eye;
                     Some((eye, to.normalize_or(pose.fwd)))
                 }
-                _ if k == 0 => Some((eye, player.forward())),
-                _ => Some((eye, pose.fwd)),
+                _ if k == 0 => Some((eye, level(player.forward(), pose.fwd))),
+                _ => Some((eye, level(pose.fwd, Vec3::Z))),
             };
         }
     }
@@ -239,6 +238,17 @@ impl Race {
         };
         let s = self.lap_s(k);
         let straight = || (0..8).all(|i| self.track.curve_at(s + i as f32 * 6.0).abs() < 1.0 / 70.0);
+        // A rocket locked on it: the shield or overdrive turns it, a block
+        // dropped behind may take it.
+        if brain.rocket_dodge {
+            if let Some(d) = self.locked_on(k) {
+                match item {
+                    Item::Shield | Item::Overdrive => return Some(Aim::Usual),
+                    Item::Block if d < DODGE_BLOCK => return Some(Aim::Usual),
+                    _ => {}
+                }
+            }
+        }
         match item {
             Item::Gun => or_back(
                 assist(&self.arms.poses, k, me.pos, me.fwd, brain.gun_cone.to_radians(), brain.gun_range).is_some_and(|(t, _)| self.gap(k, t) > 0.0),
@@ -268,6 +278,20 @@ impl Race {
             Item::Overdrive => usual(!brain.over_straight || straight()),
             Item::Repair => Some(Aim::Usual),
         }
+    }
+
+    /// How far off the nearest guided rocket after kart `k` is, metres, if
+    /// one is within `LOCK_SEEN`.
+    pub(super) fn locked_on(&self, k: usize) -> Option<f32> {
+        let at = self.arms.poses.get(k)?.pos;
+        self.arms
+            .combat
+            .shells
+            .iter()
+            .filter(|s| s.guide > 0.0 && !s.stuck && s.by != k && self.targets.get(s.by) == Some(&Some(k)))
+            .map(|s| s.pos.distance(at))
+            .filter(|&d| d < LOCK_SEEN)
+            .min_by(f32::total_cmp)
     }
 
     /// Kart `k` uses `item`; `look` is where the player is looking (None for
@@ -305,6 +329,9 @@ impl Race {
                 let from = pose.pos + up * 0.6;
                 let lock = assist(&self.arms.poses, k, from, way, if k == 0 { 6f32.to_radians() } else { 25f32.to_radians() }, 90.0);
                 self.targets[k] = lock.map(|(t, _)| t);
+                if k != 0 && self.targets[k] == Some(0) {
+                    self.note = Some(format!("{} ROCKET LOCKED ON YOU", name(k)));
+                }
                 let dir = lock.map_or(way, |(_, w)| w);
                 self.arms.shoot(k, item, from, from + dir * 1.4, dir);
             }
@@ -332,23 +359,61 @@ impl Race {
             }
             Item::Boost => {
                 if let Some(car) = kart(&mut self.bots, ride, k) {
-                    boost_kick(car, BOOST_SECS);
+                    boost_kick(car, self.arms.rules.boost_s);
                 }
             }
             Item::Shield => {
-                self.harm[k].shield = SHIELD_SECS;
+                self.harm[k].shield = self.arms.rules.shield_s;
                 crate::sound::emit(crate::sound::Noise::at(crate::sound::Kind::Pickup(crate::sound::Pick::Armour), pose.pos, 0.8));
                 if k == 0 {
                     self.note = Some("SHIELD UP".into());
                 }
             }
-            Item::Overdrive => self.harm[k].over = OVER_SECS,
-            Item::Repair => self.harm[k].hurt(-REPAIR),
+            Item::Overdrive => self.harm[k].over = self.arms.rules.overdrive_s,
+            Item::Repair => self.harm[k].hurt(&self.arms.rules, -self.arms.rules.repair),
         }
         if let Slot::Have(i, left) = self.slots[k] {
             self.slots[k] = if left > 1 { Slot::Have(i, left - 1) } else { Slot::Empty };
         }
         self.held_t[k] = 0.0;
+    }
+
+    /// Kart `who` has just spun out (`Harm::spin_out`), hit by kart `by`:
+    /// it loses most of its speed and any drift or boost, and the player
+    /// hears and is told.
+    fn spun(&mut self, ride: &mut Ride, who: usize, by: usize) {
+        let keep = self.arms.rules.spin_keep;
+        if let Some(car) = kart(&mut self.bots, ride, who) {
+            let v = car.b.vel;
+            car.b.vel = Vec3::new(v.x * keep, v.y, v.z * keep);
+            car.drift = None;
+            car.kick_t = 0.0;
+            crate::sound::emit(crate::sound::Noise::at(crate::sound::Kind::Clank, car.pos(), 0.9));
+        }
+        if who == 0 {
+            self.note = Some(format!("HIT BY {}", name(by)));
+            ride.jolt(10.0);
+        } else if by == 0 {
+            self.note = Some(format!("HIT {}", name(who)));
+        }
+    }
+
+    /// Overdrive: a kart in it spins any kart it touches that isn't, as a
+    /// heavy hit would (a shield turns it). `touched` is each pair of karts
+    /// that met this step.
+    pub(super) fn rammed(&mut self, ride: &mut Ride, touched: &[(usize, usize)]) {
+        for &(a, b) in touched {
+            let over = |k: usize| self.harm.get(k).is_some_and(|h| h.over > 0.0);
+            let (by, who) = match (over(a), over(b)) {
+                (true, false) => (a, b),
+                (false, true) => (b, a),
+                _ => continue,
+            };
+            let r = &self.arms.rules;
+            if self.harm.get_mut(who).is_some_and(|h| h.spin_out(r)) {
+                self.spun(ride, who, by);
+            }
+        }
     }
 
     /// What the hits since last step did, and what being hit, slowed or in
@@ -360,14 +425,12 @@ impl Race {
             if h.who >= n {
                 continue;
             }
-            let (spun, slow, knock) = if self.arms.is_disc(&h) { self.harm[h.who].graze() } else { self.harm[h.who].take(&h) };
+            let r = &self.arms.rules;
+            let (spun, slow, knock) = if self.arms.is_disc(&h) { self.harm[h.who].graze(r) } else { self.harm[h.who].take(r, &h) };
+            if spun {
+                self.spun(ride, h.who, h.by);
+            }
             if let Some(car) = kart(&mut self.bots, ride, h.who) {
-                if spun {
-                    let v = car.b.vel;
-                    car.b.vel = Vec3::new(v.x * SPIN_KEEP, v.y, v.z * SPIN_KEEP);
-                    car.drift = None;
-                    car.kick_t = 0.0;
-                }
                 if slow > 0.0 {
                     let flat = Vec3::new(car.b.vel.x, 0.0, car.b.vel.z);
                     let v = flat.length();
@@ -377,25 +440,19 @@ impl Race {
                 }
                 car.b.vel += knock;
             }
-            if spun {
-                crate::sound::emit(crate::sound::Noise::at(crate::sound::Kind::Clank, self.arms.poses[h.who].pos, 0.9));
-                if h.who == 0 {
-                    self.note = Some(format!("HIT BY {}", name(h.by)));
-                    ride.jolt(10.0);
-                } else if h.by == 0 {
-                    self.note = Some(format!("HIT {}", name(h.who)));
-                }
-            }
         }
         for k in 0..n {
             // Running over a block: it breaks, and the kart rattles over it,
-            // thrown up a little and 5% slower.
+            // damaged, slower, and held slow for a moment after.
             let pose = self.arms.poses[k];
             if pose.on && self.arms.run_into_block(pose.pos, pose.fwd) && self.harm[k].over <= 0.0 && self.harm[k].shield <= 0.0 {
-                self.harm[k].hurt(BLOCK_DAMAGE);
+                let r = &self.arms.rules;
+                let (keep, hop) = (r.block_keep, r.block_hop);
+                self.harm[k].hurt(r, r.block_damage);
+                self.harm[k].slowed = r.block_slow_s;
                 if let Some(car) = kart(&mut self.bots, ride, k) {
                     let v = car.b.vel;
-                    car.b.vel = Vec3::new(v.x * BLOCK_KEEP, v.y.max(0.0) + BLOCK_HOP, v.z * BLOCK_KEEP);
+                    car.b.vel = Vec3::new(v.x * keep, v.y.max(0.0) + hop, v.z * keep);
                 }
                 crate::sound::emit(crate::sound::Noise::at(crate::sound::Kind::Clank, pose.pos, 0.7));
                 if k == 0 {
@@ -405,22 +462,31 @@ impl Race {
                 }
             }
             let h = self.harm[k];
+            let (spin_s, over_top, over_push, slow_top) = (self.arms.rules.spin_s, self.arms.rules.overdrive_top, self.arms.rules.overdrive_push, self.arms.rules.block_slow_top);
             let Some(car) = kart(&mut self.bots, ride, k) else { continue };
             if h.spin > 0.0 {
                 // A full turn over the spin, about the kart's own up.
-                let turn = std::f32::consts::TAU / SPIN_SECS * dt;
+                let turn = std::f32::consts::TAU / spin_s.max(0.1) * dt;
                 car.b.rot = (Quat::from_rotation_y(turn) * car.b.rot).normalize();
             }
             let top = car.spec.top_speed;
             let flat = Vec3::new(car.b.vel.x, 0.0, car.b.vel.z);
             let v = flat.length();
-            if h.over > 0.0 && v < top * OVER_TOP && car.grounded > 0 {
+            if h.over > 0.0 && v < top * over_top && car.grounded > 0 {
                 let fwd = car.forward();
-                car.b.vel += Vec3::new(fwd.x, 0.0, fwd.z).normalize_or_zero() * OVER_PUSH * dt;
+                car.b.vel += Vec3::new(fwd.x, 0.0, fwd.z).normalize_or_zero() * over_push * dt;
+            }
+            // Held slow after a block: speed over the cap is braked off at
+            // 25 m/s², so it drags down rather than snapping.
+            let cap = top * slow_top;
+            if h.slowed > 0.0 && v > cap {
+                let to = (v - 25.0 * dt).max(cap);
+                car.b.vel.x *= to / v;
+                car.b.vel.z *= to / v;
             }
         }
         for h in &mut self.harm {
-            h.cool(dt);
+            h.cool(&self.arms.rules, dt);
         }
         ride.flash = self.harm.first().is_some_and(|h| h.flashing());
         // The player's controls while spun; none at all once home
@@ -443,7 +509,7 @@ impl Race {
 
     /// The bursts lighting the road for a moment, for `Game`'s lamps.
     pub fn flashes(&self) -> Vec<(Vec3, f32, [f32; 3], f32)> {
-        self.arms.combat.flashes().collect()
+        self.arms.combat.flashes().chain(self.gantry_glow()).collect()
     }
 
     /// The shells in the air, drawn as the shooter draws them, and the item
@@ -469,6 +535,7 @@ impl Race {
                     shift: [0.0; 4],
                     flesh: [[0.0; 4]; 3],
                     glow: [0.0; 4],
+                    fade: [0.0; 4],
                 },
             ));
         }

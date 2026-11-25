@@ -76,16 +76,95 @@ range and timing:
 
 | Slot | Gun | Left | Right |
 |---|---|---|---|
-| 1 | Digger | a three-metre blast that takes none of its own (nozzle to the floor and ride the shove onto the gantry), and a spade that bites the wall while the handle is squeezed | a weaker squeeze that throws them much further |
+| 1 | Digger | a three-metre blast that takes none of its own (head to the floor and ride the shove onto the gantry), and a spade that bites the wall while the handle is squeezed | a weaker squeeze that throws them much further |
 | 2 | sidearm | a P90-style bullpup, 40 rounds along the top, half again for a head shot; takes the minigun's bullets | bursts of six that open out as the muzzle climbs |
 | 3 | goo gun | lobbed globs that land as real sludge: they cling, stack and go off in a chain | hold to grow one glob, up to three times the burst |
 | 4 | bore | a cutting beam sixty metres that takes a metre of wall with it | the same thing wide and short: a doorway through a partition |
-| 5 | pulse gun | a beam held on a target, damage by the second | the same stream focused: half again the reach, steadier |
+| 5 | arc gun | a beam held on a target, damage by the second | the same stream focused: half again the reach, steadier |
 | 6 | skipjack | razor discs that bounce four times, out of a bright plastic toy | one that bursts where it lands |
 | 7 | minigun | a wall of bullets after a spin-up | all six barrels at once: a ring of burning flechettes at the scrap gun's pace, each biting a voxel out of what it hits |
 | 8 | scrap gun | nine shards you can watch fly | one shell lobbed whole |
 | 9 | rocket launcher | a rocket that bursts on what it meets and takes a few voxels out of it | a guided rocket that follows the crosshair with a lag, a fifth weaker |
 | 0 | sniper rifle | one shot, no falloff, twice the damage in the head | the sight, and a held charge worth half again that goes through 1.25 m of wall; the left button fires it, and letting the sight down drops it |
+
+## Weapon kits
+
+A map names the arena's guns, but what a pad stands for is the gun's
+`role`. Every weapon file names one (`weapon_kit::ROLES`), and the role
+fixes the digit it sits on:
+
+| Slot | Role | Arena | Realistic |
+|---|---|---|---|
+| 1 | melee | Digger | shovel (digs, like the Digger's spade) or knife |
+| 2 | sidearm | sidearm | pistol |
+| 3 | lobber | goo gun | grenade launcher |
+| 4 | breacher | bore | anti-materiel rifle (goes through a metre of wall) |
+| 5 | stream | arc gun | flamethrower |
+| 6 | midrange | skipjack | assault rifle |
+| 7 | heavy | minigun | machine gun |
+| 8 | spread | scrap gun | shotgun |
+| 9 | explosive | rocket launcher | shoulder rocket |
+| 0 | marksman | sniper rifle | bolt-action sniper rifle |
+
+A kit (`library/weapon_kits/*.json`) lists the guns that may fill each role.
+When a match starts, `weapon_kit::apply` swaps every gun the rules issue and
+every weapon and ammunition pad on the floor for the kit's gun in the same
+role. A gun the kit lists in its own role is left alone, which is why the
+arena kit plays a map exactly as it was written; a role the kit leaves out
+takes its gun and every pad for it off the map.
+
+A role may offer more than one gun: the realistic kit's melee is a shovel or a
+knife. One is drawn per role for the match (from the clock, or from the
+world's seed in a run that has to repeat), and every pad of that role takes
+it, so there is never ammunition lying about for a gun the map does not
+have. The platform under a swapped pad keeps the map gun's colour
+(`PickupDef::pad_of`): it says what kind of gun lies there, and that is the
+role, so a spot reads the same whichever kit is in play.
+
+Which kit: the launch screen's WEAPONS line, else the game's `kit`, else the
+map's `shooter.kit`, else `arena`. `--kit realistic` does the same from the
+command line. The realistic guns share ammunition the way real ones would:
+the assault rifle and the machine gun both take `rifle_rounds`.
+
+Both kits' guns are drawn at their real size ("What they look like"), and
+the marks on each model are how a bot carries it (`figure::Grasp`): a long
+gun in the shoulder with the left hand on its fore-end, a rocket tube higher
+over the shoulder, a pistol out in both hands, a knife in the right hand
+only, a shovel in both on its haft. A knife or a shovel rests raised and
+swings rather than recoiling, in the player's view and in a bot's arms alike.
+
+## A game's own mechanics
+
+A kit picks which guns a match has; a game file can also change how they
+and the ground behave, for its own matches only (`src/tune.rs`). There are
+three layers: the engine's rules (the walk, the physics) are the same
+everywhere, the library's entries are what every game gets by default, and
+a game's overrides sit on top.
+
+- `weapon_tune` is JSON merged onto each weapon's own file when a match is
+  armed: `"*"` for every gun, then the gun's role, then its name, later ones
+  winning. Objects merge key by key, so `{"fire": {"kick": 0.6}}` changes
+  only the kick, and `{"times": x}` scales a number instead of replacing it
+  (and is skipped where the gun has no such key: a shovel has no reload).
+  The party bots' guns are tuned the same way.
+- A tune can also switch on mechanics no weapon file uses, which the code
+  carries for whichever game wants them and leaves off everywhere else.
+  The first is `move_spread` on a fire mode: degrees of spread added for
+  each metre a second of speed over the ground (`per_mps`), up to
+  `most_deg`, and `air_deg` more off the ground, for the player and bots
+  alike (`library::MoveSpread`). The crosshair's gap opens with it, and
+  with a burst's bloom, so what it shows is the spread a shot would go out
+  with now. New ones go the same way: an optional
+  block with its own numbers, absent by default.
+- `terrain_pace` is the share of their pace bodies keep on each terrain
+  class (`world::survey::terrain`): marsh (ankle-deep or wading water),
+  town, beach (sand underfoot), forest, rock, flats, meadow, ground. The
+  classes come from the survey's channels and the material underfoot, not
+  from biome names, so a new biome falls into one without being listed.
+  `Player::ground_pace` carries it, set each step by the shooter.
+
+The zombie game is the only one that uses either so far ("The zombie
+round").
 
 ## The bench
 
@@ -132,24 +211,31 @@ touching distance is ever the question.
 
 ## What they look like
 
-Every weapon is a voxel model in a 32 cube (`src/combat/viewmodel.rs`), drawn
-as an ordinary entity rather than a HUD overlay, so it takes the light of the
-room it is in. `--gun-sheet` lays all ten out side by side, turned through
-half a revolution, which is the only way to see a model that is otherwise
-only ever viewed from the one place it is held.
+Every weapon is a voxel model drawn at its real size (`src/combat/real/`),
+drawn as an ordinary entity rather than a HUD overlay, so it takes the light
+of the room it is in. Each model fills its 32 grid along its length, marks its
+grip, muzzle, butt and where the left hand goes, and is scaled so muzzle to
+butt is its length in centimetres: the sidearm is 48, the minigun 115, the
+sniper rifle 135; in the realistic kit the pistol is 19 and the anti-materiel
+rifle 145. `the_real_guns_are_their_real_size` checks the marks and the
+lengths. The marks are also the hold (see "Weapon kits"): where the bot's
+hands go, where the muzzle flash and the shot leave from, and how far out a
+long gun sits in the player's view, which is pushed out until its butt is
+half a metre ahead of the eye so a long stock does not fill the screen.
 
-The cube is a convenience for drawing them: ten guns built to fill the same
-box would come out the same size. `SCALE` gives each shape a size of its own,
-from the sidearm at 0.62 to the sniper rifle at 1.18, and
-`the_guns_are_not_all_the_same_box` measures the arsenal in centimetres and
-fails if they come out too alike. The sidearm is 32 cm long and the sniper
-rifle 63.
+The arena's guns are painted the way the realistic ones are, gunmetal,
+black, tan and silver, with one or two colours of their own so each reads
+across a hall: the skipjack's orange plastic and blue disc drum, the goo
+gun's lit jar, the bore's yellow core drill and plasma bit. The palette has
+sixteen slots for that paint (64..80, `real::c`), four of them lit. The
+minigun's six barrels are a model of their own (`arena_c::minigun_barrels`,
+`viewmodel::BARRELS`) that spins about its axis in the player's hands.
 
-Two of them are not iron. The Digger is a tool off a shelf in the works with
-the cartridge swapped for something that goes off and a spade welded under
-the nozzle, and the skipjack is bright orange plastic with a blue drum -- the palette carries four plastic
-colours for them (slots 18..22). A thing that is plainly a toy and plainly
-lethal reads across a hall in a way no amount of grey does.
+`--gun-sheet` lays a kit's guns out side by side at one scale (`--kit`, the
+arena's by default; `--sheet-guns` keeps a few), turned through half a
+revolution, which is the only way to see a model that is otherwise only ever
+viewed from the one place it is held. `--bot-sheet --sheet-guns a,b` stands a
+bot holding each, still on the top row and swinging or firing below.
 
 ## A weapon that writes to the world
 
@@ -568,7 +654,7 @@ always route to the thing it wants, because the thing it wants *is* a node.
 
 The weapon pads are placed by the range each gun is for: the sniper rifle at
 the blind end of the west gallery, the bore on the east walkway over the
-hall, the pulse gun in the west shop and the skipjack in the east, and the
+hall, the arc gun in the west shop and the skipjack in the east, and the
 goo gun down the sump ramp. The four health pads are one pack on the open
 deck, the crate on the far corner where standing still costs something, and
 a vial on each wing. The Digger and the sidearm are on nobody's floor.
@@ -598,3 +684,150 @@ swimmer forever, because the float keeps the eyes at the waterline and that
 leaves the feet a body's length below the rim. Swimming into a wall with a
 floor just above the surface pushes off hard enough to land on it
 (`Player::haul_out`).
+
+## The zombie round
+
+The game `zombies` (`library/games/zombies.json`, `launch::Mode::Zombies`)
+plays the shooter's rules on an explore world, from the brief in
+`notes/ZOMBIES.md`. Every explore world offers it; it needs the world's
+survey, which only explore worlds carry. It is `src/shooter/zombies.rs`,
+with two brains, `brain/zombie.rs` and `brain/companion.rs`.
+
+- **The legs.** When the round starts, `zombies::plan` takes a refuge
+  anchor within 90 m of where the player stands as the start (else the
+  player's own spot), then three legs of 400-750 m by the survey's walking
+  route: two to refuges and the last to an extraction site (a focal anchor
+  where there is one). Each goal is 250 m from every earlier stop and
+  further from the start than the leg begins, widening to 250-1100 m, then
+  to other anchor kinds, then to any direction when nothing fits; a world
+  too small for three gets fewer. Up to three caches go beside each leg's
+  route (nooks and rooms within 45 m, 70 m apart): a gun, rounds for it and
+  a medical kit, heavier guns the further on. Each refuge between legs holds
+  two medical kits, rounds for the pistol, shotgun and assault rifle, and
+  one long gun with its rounds. The guns are named by role
+  (`zombies::FOUND`) and taken from the kit the round is played with
+  (realistic, from the game file), so a kit with no gun for a role leaves
+  its caches out. The map this makes is an ordinary `ShooterDef`, and the
+  game file applies to it as to any arena. A world with no refuge in reach
+  says so once, and the round is planned again when you have walked 120 m
+  from there. You start with a shovel or knife, the pistol, a shotgun and an
+  assault rifle, each with as much as it carries. Each cache whose gun is
+  still there is marked on screen within 250 m. On foot only: no wheels,
+  kayak, glider or wingsuit.
+- **The party.** Up to three bots on your side (the BOTS line, 0-3, one by
+  default), each
+  with a long gun and the pistol. They walk in a loose formation round you,
+  one behind and one out to each flank (`zombies::FORMATION`), falling back
+  to a point on your trail where a place cannot be walked to or cannot see
+  you. They push off each other like boids, run to keep up, and with
+  nothing to shoot each watches its own arc: the rear guard behind, the
+  others to the sides. X (the bike's key) has them hold where you stood.
+  They have rounds to spare, fire short bursts only at zombies that are
+  close or coming at the party, prefer the ones in their own arc, and past
+  14 m fire shorter, sparser bursts only with the aim within half a metre
+  of the target (about 30% fewer rounds), and hold
+  fire (stepping sideways) while anybody in the party is within a metre of
+  the line. Their rounds never hurt the party in this mode.
+- **The zombies.** A pool of 40 bot slots; a slot not in play is a dead
+  fighter whose respawn never comes. They walk where the director sends
+  them: a 4 m flow field over the survey's person-passable cells for the
+  approach, and close in a 0.5 m field measured on the voxels, 96 m a
+  side, which finds doorways (door leaves count as open, since a door opens
+  for any body near it) and refuses windows. A zombie in reach of a
+  survivor lands a blow of 15 (2 more or less for each difficulty level
+  either side), then stands for a second holding on. Whoever it hit keeps
+  0.35 less of their pace for that second for each zombie that has hold
+  of them, down to a quarter (`GRAB_S`, `Player::slowed`): you can sprint
+  away from one while it stands, and two or three together pin you. A
+  zombie has 82.5 health, half again the first cut's.
+  One after the party goes at 6 m/s, a little over your 5 m/s walk and
+  under your 8.3 m/s sprint; a runner at 7.2; one milling about at 1.4
+  (`Player::walk_speed`, set by the rules each step). One ambient zombie in
+  ten is a crawler: 1.9 m/s after you, 0.6 milling, a 0.7 m body that
+  climbs nothing, with its hitbox moved forward to cover the head.
+  Zombies groan with the library zombie's `voice` (`sound/watch.rs`): its
+  idle call now and then while one mills about, its chase call as one turns
+  after you, at most four at once.
+  A chasing zombie looks for the party every 1-5 s (`LOOK_S`), out to 70 m
+  on a clear day (28 at night, 16 in fog; within its close range it always
+  knows). Each look it takes where they are as the place to make for, and
+  until the next look it makes for that place, on a slant of up to 20
+  degrees off the straight line when it is more than 8 m off. Where it can
+  see them it takes the fields' way, round walls and in at doors. Break
+  line of sight (a hill, trees, a house) and it goes to where it last saw
+  you, pokes about within 7 m of it at 2.4 m/s for 10-15 s, then gives up
+  and mills about. A shot it hears is where it goes instead.
+  Anything up to 2.1 m with clear ground beyond (a hedge, a garden wall, a
+  fence) is climbed over: a body held up against it for a third of a
+  second goes up the face, across and down (`zombies::vault_over`, the
+  figure's `vault` pose), and the fine field counts a way over as three
+  metres of walking, so a gap close by is still taken first. A house wall
+  goes on past that height and a window has wall over it, so neither is a
+  way in. The party climbs the same way.
+  A round or shell going into a zombie throws a puff of blood and a few
+  falling drops back out of the hit (`Cue::Flesh`, `fx/blood_puff`,
+  `fx/blood_drops`; the rules' `bleeds` says what bleeds, so robots and
+  karts do not), and its body flashes at a quarter of a bot's flash.
+  A hit to the head drops one, from any weapon, except the labourer in
+  the hard hat (a build with a `hat` colour, `Body::hard_head`).
+  The bodies and gaits are `avatar::zombie_build` and
+  `figure::Walk::for_zombie`.
+- **The director.** Build-up (ambient zombies, more as it goes), peak (three
+  waves of a horde from one direction), relief (nothing new, two kept
+  about), and again. Spawns are 42-85 m off, on unlit ground the fine field
+  reaches, out of the player's sight. Four in five come from the way ahead,
+  within about 45 degrees of the route 70 m on and mostly near the inside
+  of the band; the rest from anywhere. Average difficulty has 0.85 of the
+  first cut's numbers, 0.12 more or less for each level either side, and
+  that is for a party of three bots: with two it is 0.8 of it, with one
+  0.6, alone 0.4 (`PARTY_SHARE`). Rounds fired add heat (the player's
+  at full weight, the party's at half), wake every idle zombie within 70 m,
+  and past a threshold buy a horde of their own. A zombie 115 m off, or
+  50 m behind the party and out of sight, or stuck for six seconds out of
+  sight, goes back in the pool. The director's numbers are the constants
+  at the top of `zombies.rs`, from `FIRST_BUILD_S` to `RUNNER_SHARE`.
+- **Refuges.** Reaching a refuge stops the director: nothing new comes,
+  zombies out of sight are let go, and a party bot that died comes back at
+  half health beside you. The next leg starts when you go 25 m from the
+  refuge, and each leg has a quarter more zombies than the one before.
+- **The finale.** Reaching the extraction calls it: a holdout of 4-6
+  minutes with a horde from any side every 20 s and a crowd of eight about
+  between them. When the clock runs out the way out opens, and getting
+  within 5 m of the mark wins the round. The extraction is marked on screen
+  from the start, more faintly, so the party can scout it on the way.
+- **Conditions.** The launch screen's CONDITION line (`zombies::Condition`)
+  picks, or rolls when it is left on Random, what the round is played in,
+  held for the whole round: a clear day (sun at 11:00), night (23:00),
+  rain, heavy fog or a dry windstorm (breezy cloud; the wind itself is only
+  the rules'). Night and fog shorten how far a zombie sees and how close it
+  wakes, how far a party bot sees, and how near zombies are brought up;
+  rain halves how far a shot carries and what it adds to the heat; an idle
+  zombie downwind of the party smells it within 20 m, 40 m in the
+  windstorm and 10 m in rain. Fire in dry grass is not built.
+- **The end.** Get out and the round is won; die and it is lost. The
+  screen says how long it took, the condition, who made it or which leg it
+  was lost on, the health the party spent, zombies down, hordes and noise,
+  and the run's tags (`Run::tags`): Ghost Run (under 6 noise a minute),
+  Demolition Crew (6 or more rounds from the explosive guns), Swam For It
+  (40 s or more swimming), Left Behind (out, with a bot dead), Last One
+  Standing (out, with every bot dead). Enter plays the same round again
+  from the start.
+
+- **Its own mechanics.** The game file overrides the guns and the going
+  for this game alone (`src/tune.rs`): `weapon_tune` halves the rounds
+  every gun carries and starts with, makes reloads 15% slower and kick 30%
+  harder, and spreads your aim on the move (0.35 degrees per m/s, at most
+  3, and 2.5 more in the air), merged onto each weapon's own file; `terrain_pace` keeps 0.7 of
+  your pace in a marsh, 0.9 on rock and 0.92 on sand, for zombies and the
+  party too. Explore and the arenas set neither, so their guns and ground
+  are as they were.
+
+Headless, the `--stats` JSON carries `shooter.zombies`: the legs, the
+stage, the phase, heat, spawns, kills, tags and each of the party.
+`VG_ZOMBIE_WALK=1` walks the player down the route through the fine field
+and keeps them whole (and leaves a refuge after 8 s), which is how a round
+is run without anybody at the keys; `VG_ZOMBIE_CONDITION` names the
+condition where the launch screen is not used. `VG_ZOMBIE_JUMP=1` stands
+the player at each leg's goal after ten seconds on it, and
+`VG_ZOMBIE_FINALE_S` sets the holdout's length, to run the refuges and the
+finale through in a short run. These three are read when the round starts.

@@ -511,6 +511,34 @@ fn draw_layer(l: u32) -> Img {
                 }
             }
         }
+        layer::FLOWERS_ORANGE => {
+            // Poppies: grass at the foot, then wiry stems each holding up a
+            // cup of four orange petals, a few still in bud.
+            for _ in 0..7 {
+                let bx = S * 0.5 + r.range(-0.12, 0.12) * S;
+                let h = r.range(0.25, 0.5) * S;
+                let tip = [bx + r.range(-0.3, 0.3) * S, S - h];
+                blade(&mut img, [bx, S + 1.0], [bx, S - h * 0.5], tip, 3.5, 0.6, 0.5, 1.0, [0.16, 0.26, 0.07]);
+            }
+            for k in 0..6 {
+                let bx = S * 0.5 + r.range(-0.18, 0.18) * S;
+                let h = r.range(0.45, 0.85) * S;
+                let tip = [bx + r.range(-0.15, 0.15) * S, S - h];
+                blade(&mut img, [bx, S + 1.0], [bx, S - h * 0.5], tip, 1.6, 1.2, 0.6, 1.0, [0.22, 0.32, 0.12]);
+                if k == 5 {
+                    dot(&mut img, tip, 2.4, [0.30, 0.40, 0.14]);
+                    continue;
+                }
+                let pr = r.range(5.5, 8.0);
+                let tone = r.range(0.88, 1.05);
+                for side in [-1.0f32, 1.0] {
+                    let q = [tip[0] + side * pr * 0.42, tip[1] - pr * 0.15];
+                    leaf(&mut img, q, -std::f32::consts::FRAC_PI_2 + side * 0.55, pr, pr * 0.75, 1.0, [0.97 * tone, 0.46 * tone, 0.06]);
+                }
+                leaf(&mut img, [tip[0], tip[1] - pr * 0.3], -std::f32::consts::FRAC_PI_2, pr * 0.9, pr * 0.8, 1.0, [1.0 * tone, 0.56 * tone, 0.10]);
+                dot(&mut img, [tip[0], tip[1] + 0.5], pr * 0.22, [0.85, 0.62, 0.12]);
+            }
+        }
         layer::FLOWERS_YELLOW | layer::FLOWERS_RED => {
             // Same build as the white and blue: grass at the foot, a few tall stems.
             let stem = [0.10, 0.20, 0.05];
@@ -878,6 +906,7 @@ pub const NAMES: [&str; layer::COUNT as usize] = [
     "kelp_stipe",
     "kelp_blade",
     "kelp_float",
+    "flowers_orange",
 ];
 
 fn sprite_dir() -> std::path::PathBuf {
@@ -1127,6 +1156,7 @@ const PREVIEW_TINT: [[f32; 3]; layer::COUNT as usize] = [
     [0.30, 0.26, 0.12],
     [0.36, 0.32, 0.12],
     [0.32, 0.26, 0.10],
+    [1.0, 1.0, 1.0],
 ];
 
 #[cfg(test)]

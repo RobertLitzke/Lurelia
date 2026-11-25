@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saurischia",
   "notes": "Thunderfield: open grass to the north horizon, a lone monkey-puzzle here and there, where the horned and crested herds graze and the long-necks nest.",
+  "habitat": "parkland",
   "priority": 6,
   "rules": {"region": "plains"},
   "surface": "savanna_grass",
   "subsurface": "dirt",
   "fringe": 16,
+  "soil": 0.5,
   "map_color": [176, 160, 96],
   "plants": [
     {"plant": "araucaria", "density": 8e-05, "placement": {"verb": "lone", "params": {"spacing": 120}}},
@@ -17,7 +19,10 @@
       "placement": {"verb": "clustered", "params": {"size": 24, "min": 0.5, "max": 1.0}}
     }
   ],
-  "features": [{"structure": "boulder", "density": 5e-05, "placement": {"verb": "lone", "params": {"spacing": 80}}}],
+  "features": [
+    {"structure": "boulder", "density": 5e-05, "placement": {"verb": "lone", "params": {"spacing": 80}}},
+    {"structure": "rock_outcrop", "density": 0.00012}
+  ],
   "creatures": [
     {"creature": "triceratops", "count": 10},
     {"creature": "parasaurolophus", "count": 12},
@@ -26,6 +31,9 @@
     {"creature": "skylark", "count": 8},
     {"creature": "gallimimus", "count": 20},
     {"creature": "quetzalcoatlus", "count": 2},
-    {"creature": "compsognathus", "count": 2}
-  ]
+    {"creature": "compsognathus", "count": 2},
+    {"creature": "protoceratops", "count": 4},
+    {"creature": "utahraptor", "count": 3}
+  ],
+  "realm": {"dinosaur": 1.0}
 }

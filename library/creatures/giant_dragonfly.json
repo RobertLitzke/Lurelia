@@ -11,5 +11,6 @@
     "dark": [40, 46, 30]
   },
   "like": "dragonfly",
-  "scale": 3.2
+  "scale": 3.2,
+  "realms": ["dinosaur"]
 }

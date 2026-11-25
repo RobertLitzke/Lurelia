@@ -55,6 +55,11 @@ pub fn take() -> Vec<(&'static str, f32)> {
     STATE.with(|s| std::mem::take(&mut s.borrow_mut().parts))
 }
 
+/// This frame's parts line so far, without emptying them.
+pub fn peek() -> String {
+    STATE.with(|s| line(&s.borrow().parts))
+}
+
 /// "tick 14.5 creatures 12.1 player 0.4": parts over 0.05 ms, in the order
 /// they were first marked.
 pub fn line(parts: &[(&'static str, f32)]) -> String {

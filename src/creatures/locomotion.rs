@@ -42,6 +42,9 @@ pub enum Mover {
         /// Lies out by the sea and, when startled, humps to the water and
         /// dives in, gone with a splash (seals).
         dives: bool,
+        /// Keeps near its own burrow and, when startled, runs to it and goes
+        /// underground until the danger has passed (prairie dogs).
+        burrows: bool,
     },
     /// Circling a fixed centre in the air (circle.rs). Radius and speed are
     /// each a low value plus a random share of a spread.
@@ -92,6 +95,7 @@ const fn walk(name: &'static str, routine: Routine, hops: bool, still: bool, wad
             wades,
             hides: false,
             dives: false,
+            burrows: false,
         },
         routine,
         flight: Pattern::Flap,
@@ -108,7 +112,7 @@ const fn other(name: &'static str, mover: Mover, flight: Pattern) -> Verb {
 }
 
 /// Every verb. The first is what an unknown name falls back to.
-pub const VERBS: [Verb; 32] = [
+pub const VERBS: [Verb; 33] = [
     walk("graze", Routine::Graze, false, false, false),
     walk("hop", Routine::Hop, true, false, false),
     // Hops, and keeps to the water edge: frogs and toads.
@@ -158,6 +162,7 @@ pub const VERBS: [Verb; 32] = [
             wades: false,
             hides: true,
             dives: false,
+            burrows: false,
         },
         routine: Routine::Still,
         flight: Pattern::Flap,
@@ -173,6 +178,7 @@ pub const VERBS: [Verb; 32] = [
             wades: true,
             hides: true,
             dives: true,
+            burrows: false,
         },
         routine: Routine::Still,
         flight: Pattern::Flap,
@@ -186,6 +192,7 @@ pub const VERBS: [Verb; 32] = [
             wades: true,
             hides: false,
             dives: true,
+            burrows: false,
         },
         routine: Routine::Still,
         flight: Pattern::Flap,
@@ -219,6 +226,21 @@ pub const VERBS: [Verb; 32] = [
     other("covey", Mover::Run { style: super::runner::Style::Covey }, Pattern::FlapGlide),
     // Hummingbirds (hummer.rs).
     other("hum", Mover::Hum, Pattern::Hover),
+    // A colony animal that keeps to its burrow, bolts for it when startled
+    // and goes under until the danger has gone (prairie dogs).
+    Verb {
+        name: "burrow",
+        mover: Mover::Walk {
+            hops: false,
+            still: false,
+            wades: false,
+            hides: false,
+            dives: false,
+            burrows: true,
+        },
+        routine: Routine::Graze,
+        flight: Pattern::Flap,
+    },
 ];
 
 /// The verb names, for validation.
@@ -253,6 +275,9 @@ impl Verb {
     }
     pub fn hides(&self) -> bool {
         matches!(self.mover, Mover::Walk { hides: true, .. })
+    }
+    pub fn burrows(&self) -> bool {
+        matches!(self.mover, Mover::Walk { burrows: true, .. })
     }
     /// A snake, whatever its habit.
     pub fn slithers(&self) -> bool {

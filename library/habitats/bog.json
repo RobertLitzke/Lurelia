@@ -1,0 +1,12 @@
+{
+  "name": "bog",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Peat and moss on waterlogged, acid ground.",
+  "wet": 0.85,
+  "soil": 0.1,
+  "shade": 0.0,
+  "rock": 0.0,
+  "disturbed": 0.0,
+  "open": 0.95
+}

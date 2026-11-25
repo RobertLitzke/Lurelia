@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "thornpan",
   "notes": "The flooded grass: short green sward on sand a hand or two under the water for two months of the year, standing in water you can see your feet through. The lechwe herds and everything that follows them.",
+  "habitat": "wet_meadow",
   "priority": 11,
   "rules": {"elev": [-1.2, 1.9], "slope": [0, 0.35], "amphibious": true},
   "surface": "marsh_grass",
   "subsurface": "shore_sand",
+  "soil": 0.6,
   "map_color": [122, 154, 96],
   "plants": [
     {"plant": "sawgrass", "density": 0.05, "placement": {"verb": "scatter", "params": {}}},

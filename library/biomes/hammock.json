@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "lowmouth",
   "notes": "A hammock: a tree island in the sawgrass, a little higher and dry, thick with cabbage palm, oak, strangler fig and palmetto.",
+  "habitat": "hammock",
   "priority": 10,
   "rules": {"region": "sawgrass", "elev": [0.25, 20]},
   "surface": "marsh_grass",
   "subsurface": "dirt",
+  "soil": 0.5,
   "map_color": [80, 120, 60],
   "plants": [
     {"plant": "cabbage_palm", "density": 0.008, "placement": {"verb": "scatter", "params": {}}},

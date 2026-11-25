@@ -10,5 +10,6 @@
   "bark": "juniper_bark",
   "leaf": "sage",
   "squash": 0.8,
-  "max_slope": 0.9
+  "max_slope": 0.9,
+  "site": {"wet": [0.0, 0.5], "sun": [0.4, 1.0], "shade": [0.0, 0.2]}
 }

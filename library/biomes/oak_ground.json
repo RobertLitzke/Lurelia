@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "windbarrow",
   "notes": "The few metres round the great oak below Durn: the same turf as the village keeps, and one tree in it. A small region plus `lone` spacing wider than the region is how a world plants exactly one tree.",
+  "habitat": "pasture",
   "priority": 26,
   "rules": {"region": "greatoak"},
   "surface": "downland_grass",
   "subsurface": "dirt",
   "rock": null,
+  "soil": 0.65,
   "map_color": [120, 150, 80],
   "plants": [{"plant": "mother_oak", "density": 0.02, "placement": {"verb": "lone", "params": {"spacing": 40}}}],
   "creatures": [

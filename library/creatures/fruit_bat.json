@@ -4,14 +4,33 @@
   "introduced_by": "base",
   "notes": "Fruit bat: a flying fox three times the size of a little bat, rust-collared and dog-faced, circling the fruiting trees in wide slow loops.",
   "colors": {"body": [122, 84, 50], "membrane": [72, 56, 48], "ear": [72, 56, 48], "dark": [36, 28, 24]},
-  "behaviour": {"walk_speed": 5.0, "flee_speed": 9.0, "wary": 12, "fly_height": 9.0, "wingbeat": 3.0},
+  "behaviour": {
+    "walk_speed": 5.0,
+    "flee_speed": 9.0,
+    "wary": 12,
+    "fly_height": 9.0,
+    "wingbeat": 3.0,
+    "voice": {
+      "calls": [
+        {
+          "cry": "chatter",
+          "on": "idle",
+          "hours": "night",
+          "size": 0.5,
+          "every_s": [30, 120],
+          "chorus": 0.3,
+          "chorus_m": 30
+        }
+      ]
+    }
+  },
   "like": "bat",
   "scale": 3.0,
   "extra_ops": [
-    {"op": "ellipsoid", "centre": [16, 9.5, 14], "radius": [1.9, 1.8, 2.6], "mat": "body", "part": "head"},
-    {"op": "box", "from": [13, 10, 13], "to": [14, 13, 14], "mat": "air", "part": "head"},
-    {"op": "box", "from": [18, 10, 13], "to": [19, 13, 14], "mat": "air", "part": "head"},
-    {"op": "box", "from": [14, 10, 13], "to": [15, 12, 14], "mat": "ear", "part": "head"},
-    {"op": "box", "from": [17, 10, 13], "to": [18, 12, 14], "mat": "ear", "part": "head"}
+    {"op": "ellipsoid", "centre": [39.0, 24.7, 15.8], "radius": [4.94, 4.68, 6.76], "mat": "body", "part": "head"},
+    {"op": "box", "from": [31, 26, 13], "to": [34, 34, 16], "mat": "air", "part": "head"},
+    {"op": "box", "from": [44, 26, 13], "to": [47, 34, 16], "mat": "air", "part": "head"},
+    {"op": "box", "from": [34, 26, 13], "to": [36, 31, 16], "mat": "ear", "part": "head"},
+    {"op": "box", "from": [42, 26, 13], "to": [44, 31, 16], "mat": "ear", "part": "head"}
   ]
 }

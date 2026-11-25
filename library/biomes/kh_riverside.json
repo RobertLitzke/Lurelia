@@ -1,0 +1,32 @@
+{
+  "name": "kh_riverside",
+  "version": 2,
+  "introduced_by": "kitehold",
+  "notes": "The banks of the Lessa and its becks: willow, alder and osier, ferns and mossy boulders. Black bears come down to fish the salmon.",
+  "habitat": "riparian",
+  "priority": 5,
+  "rules": {"river": [0, 16], "elev": [0.4, 140]},
+  "surface": "meadow_grass",
+  "subsurface": "dirt",
+  "soil": 0.65,
+  "map_color": [100, 140, 90],
+  "plants": [
+    {"plant": "willow", "density": 0.008, "placement": {"verb": "riparian", "params": {"width": 10}}},
+    {"plant": "alder", "density": 0.008, "placement": {"verb": "riparian", "params": {"width": 14}}},
+    {"plant": "osier", "density": 0.006, "placement": {"verb": "riparian", "params": {"width": 6}}},
+    {"plant": "fern", "density": 0.03, "placement": {"verb": "scatter", "params": {}}},
+    {"plant": "cattail", "density": 0.02, "placement": {"verb": "riparian", "params": {"width": 3}}}
+  ],
+  "features": [{"structure": "boulder", "density": 0.0006}],
+  "creatures": [
+    {"creature": "otter", "count": 4},
+    {"creature": "heron", "count": 3},
+    {"creature": "kingfisher", "count": 3},
+    {"creature": "dipper", "count": 3},
+    {"creature": "mallard", "count": 6},
+    {"creature": "trout", "count": 10},
+    {"creature": "salmon", "count": 10},
+    {"creature": "black_bear_fisher", "count": 2},
+    {"creature": "spawning_salmon", "count": 12}
+  ]
+}

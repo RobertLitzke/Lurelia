@@ -5,6 +5,7 @@
   "notes": "Blue-green chromis: finger-length fish in a shimmering cloud over one coral head, dropping into it all at once when something comes too near.",
   "colors": {"herring": [60, 160, 160], "silver": [150, 214, 222], "fin": [60, 160, 160]},
   "behaviour": {
+    "displays": [{"kind": "bait_ball"}, {"kind": "drop"}],
     "habit": "cloud",
     "walk_speed": 0.6,
     "flee_speed": 2.5,

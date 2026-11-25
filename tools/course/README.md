@@ -25,4 +25,6 @@ chronicle.json, story.md, look.json) for the style in `styles/`.
 `maps/` holds the tracks: `peregrine.track`, Peregrine Ridge on the chalk
 downs; `vermilion.track`, Vermilion Mesa, a figure-eight in red rock country
 with a long tunnel under its own road; and `ribstrand.track`, Ribstrand, a
-lap of a grey northern beach and its dunes.
+lap of a grey northern beach and its dunes; and one course for each explore world: `hemlow.track` (Hemlow Lanes), `gannet.track` (Gannet Harbor), `thornpan.track` (Thornpan Delta), `kaldvik.track` (Kaldvik Fjord), `kitehold.track` (Kitehold Rock), `saltmirror.track` (Saltmirror Array) and `lowmouth.track` (Lowmouth Bayou).
+
+What a course adds to a plain race at runtime (props that smash, wind, low gravity, glides, floods that rise lap by lap, herds) is `src/race/course.rs`.

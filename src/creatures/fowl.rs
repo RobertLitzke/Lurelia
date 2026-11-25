@@ -115,6 +115,8 @@ fn take_off(parties: &mut Vec<Party>, s: usize, p: &mut Paddler, pos: Vec3, away
 
 pub struct Paddler {
     pub state: State,
+    /// In a display last step (creatures/display: a pair bowing).
+    shown: bool,
     /// Height of the water surface it floats on (sea level or a river's).
     level: f32,
     home: Vec3,
@@ -211,6 +213,7 @@ pub fn spawn(world: &mut hecs::World, s: usize, sp: &Species, models: &[Model], 
         let off = if on_water(t, at.x + off.x, at.z + off.z, at.y, 0.6) { off } else { off * 0.1 };
         let pos = at + off - Vec3::Y * sink(&models[sp.model], 1.0);
         let p = Paddler {
+            shown: false,
             state: State::Float,
             level: at.y,
             home: at,
@@ -241,8 +244,21 @@ pub fn update(world: &mut hecs::World, species: &[Species], models: &[Model], dt
         .map(|(_, l, _)| l.pos)
         .collect();
     let mut parties: Vec<Party> = Vec::new();
-    for (p, look, me, morph) in world.query_mut::<(&mut Paddler, &mut Look, &Creature, Option<&crate::variety::Morph>)>() {
+    for (p, look, me, morph, show) in world.query_mut::<(&mut Paddler, &mut Look, &Creature, Option<&crate::variety::Morph>, Option<&super::display::Show>)>() {
         look.begin_step();
+        // In a display: put where it says, on the water; afterwards it
+        // floats on from there.
+        if let Some(s) = show {
+            if let super::display::Drive::Place { pos, yaw } | super::display::Drive::Sit { pos, yaw } = s.out.drive {
+                (look.pos, look.yaw) = (pos, yaw);
+            }
+            p.shown = true;
+            continue;
+        }
+        if std::mem::take(&mut p.shown) && p.floating() {
+            p.state = State::Float;
+            p.home = Vec3::new(look.pos.x, p.level, look.pos.z);
+        }
         let sp = &species[me.species];
         let (pace, _) = crate::variety::pace(morph);
         let scale = morph.map_or(1.0, |m| m.scale);

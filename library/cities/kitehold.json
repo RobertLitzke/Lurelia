@@ -1,0 +1,53 @@
+{
+  "name": "kitehold",
+  "version": 2,
+  "introduced_by": "kitehold",
+  "notes": "Kitehold on the Kite: houses of basalt and fieldstone with lime-rendered upper floors, flat earth roofs and a few slate ones, beaten-earth lanes, a flagged plaza, dry-stone walls round the fields below. Meant for a town that stands the world's own houses (kh_house, kh_house_b, kh_kite_loft, kh_pilgrim_house) on its plots, with stone bothies and sheds in the field corners.",
+  "like": "cotswold_village",
+  "deck": "basalt",
+  "deck_top": "stone_tiles",
+  "rail": "fieldstone",
+  "town": {
+    "walls": {
+      "village": ["fieldstone", "basalt", "stucco_tan"],
+      "ribbon": ["fieldstone", "basalt"],
+      "maze": ["basalt", "fieldstone", "stucco_tan"],
+      "grid": ["fieldstone", "stucco_tan"],
+      "radial": ["basalt", "stucco_tan", "fieldstone", "stucco_tan"],
+      "suburb": ["fieldstone"]
+    },
+    "roofs": {
+      "village": ["tile_slate", "shingle_dark"],
+      "ribbon": ["tile_slate"],
+      "maze": ["tile_slate", "shingle_dark"],
+      "grid": ["tile_slate"],
+      "radial": ["tile_slate", "shingle_dark"],
+      "suburb": ["tile_slate"]
+    },
+    "trims": ["trim_dark"],
+    "streets": {
+      "main": "road_gravel",
+      "ring": "path_dirt",
+      "street": "path_dirt",
+      "lane": "path_dirt",
+      "close": "path_dirt",
+      "alley": "path_dirt",
+      "country": "road_gravel",
+      "quay": "stone_tiles",
+      "village_main": "road_gravel",
+      "village_street": "path_dirt",
+      "ribbon_main": "road_gravel",
+      "drive": "path_dirt"
+    },
+    "plaza": "stone_tiles",
+    "flat_roof": "packed_dirt",
+    "church": "fieldstone",
+    "trees": ["hawthorn"],
+    "field_wall": "dry_stone_wall",
+    "rail": "timber_fence",
+    "town_wall": "dry_stone_wall",
+    "garden": "dry_stone_wall",
+    "hedge": "hedgerow",
+    "shacks": ["field_bothy", "field_shed"]
+  }
+}

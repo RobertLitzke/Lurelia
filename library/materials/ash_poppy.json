@@ -1,0 +1,16 @@
+{
+  "name": "ash_poppy",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Ash poppies (drawn as sprites): orange cups on the ash soil of the Plain.",
+  "smooth": false,
+  "sprites": "poppy",
+  "texture": {
+    "pattern": "noise",
+    "base": [96, 118, 72],
+    "alt": [232, 132, 40],
+    "scale": 5,
+    "contrast": 1.0,
+    "calm": {"base": [100, 122, 76], "alt": [236, 142, 56]}
+  }
+}

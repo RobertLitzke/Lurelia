@@ -3,10 +3,12 @@
   "version": 2,
   "introduced_by": "hemlow",
   "notes": "The Hollins: old oak and beech wood with hazel and fern beneath, turning strange near the Hob Stones (gold maples, cherry trees, blossom vines, pale birch, glassbloom). The default of Hemlow.",
+  "habitat": "broadleaf_forest",
   "priority": 1,
   "rules": {},
   "surface": "moss_grass",
   "subsurface": "dirt",
+  "soil": 0.55,
   "map_color": [62, 120, 64],
   "plants": [
     {

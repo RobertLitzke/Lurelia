@@ -30,6 +30,9 @@ pub struct FieldsEvent {
     /// Farmhouses and barns along the roads.
     #[serde(default = "yes")]
     farmsteads: bool,
+    /// The chance a field has a shed or shack in its corner (`Shacks`).
+    #[serde(default)]
+    shacks: Shacks,
     #[serde(default)]
     seed: u32,
 }
@@ -166,6 +169,103 @@ impl Process for FieldsEvent {
                 metres += route::lay(cx, &pts, k, 4.0).length;
             }
         }
-        format!("{} field boundaries, {metres:.0} m of walls, hedges and fences; {} farmsteads", laid.boundaries.len(), farm_buildings.len() / 2)
+        let (sheds, why) = place_shacks(cx, &laid.corners, &self.crops, &self.shacks, &tk.shack_list(), seed);
+        format!("{} field boundaries, {metres:.0} m of walls, hedges and fences; {} farmsteads; {sheds} field sheds ({why})", laid.boundaries.len(), farm_buildings.len() / 2)
     }
+}
+
+/// How often a field has a shed or shack in a corner: one chance for every
+/// field (`0.2`), or a chance by crop region with a `default` for the rest
+/// (`{"default": 0.1, "kh_flax": 0.3, "pasture": 0}`). 0 is none at all.
+#[derive(Deserialize, Debug, Clone)]
+#[serde(untagged)]
+pub enum Shacks {
+    All(f32),
+    ByRegion(std::collections::HashMap<String, f32>),
+}
+
+impl Default for Shacks {
+    fn default() -> Self {
+        Shacks::All(DEFAULT_SHACKS)
+    }
+}
+
+/// The chance a field has a shed when the event says nothing.
+pub const DEFAULT_SHACKS: f32 = 0.15;
+
+impl Shacks {
+    fn rate(&self, region: Option<&str>) -> f32 {
+        match self {
+            Shacks::All(r) => *r,
+            Shacks::ByRegion(m) => region.and_then(|n| m.get(n)).or_else(|| m.get("default")).copied().unwrap_or(DEFAULT_SHACKS),
+        }
+    }
+}
+
+/// Sheds and shacks in the corners of fields: for each corner, by its
+/// field's rate, one of the kit's `shacks` set in just inside the walls,
+/// its back to the corner and its door to the field. Skipped where the
+/// ground is taken (a wall, a road, a building) or too steep. How many, and
+/// a word on the rest.
+pub(super) fn place_shacks(cx: &mut EventCtx, corners: &[town::country::Corner], crops: &[String], rates: &Shacks, names: &[String], seed: u32) -> (usize, String) {
+    let defs: Vec<usize> = names
+        .iter()
+        .filter_map(|n| {
+            let d = cx.lib.structure(n);
+            if d.is_none() {
+                cx.warnings.push(format!("fields: unknown shack structure {n}"));
+            }
+            d
+        })
+        .collect();
+    if defs.is_empty() {
+        return (0, String::new());
+    }
+    let (mut crowded, mut steep) = (0, 0);
+    let none = std::collections::HashMap::default();
+    let mut n = 0;
+    for c in corners {
+        let region = (c.crop != 255 && !crops.is_empty()).then(|| crops[c.crop as usize % crops.len()].as_str());
+        let rate = rates.rate(region);
+        if rate <= 0.0 || (hash32(c.hash ^ seed ^ 0x5ac) % 10_000) as f32 >= rate * 10_000.0 {
+            continue;
+        }
+        let d = defs[hash32(c.hash ^ 0x51) as usize % defs.len()];
+        let sd = &cx.lib.structures[d];
+        let half = (sd.size[0].max(sd.size[2]) as f32) * crate::world::gen::VOXEL * 0.5;
+        // In from the corner along the diagonal, clear of the walls: a
+        // narrow corner pushes it further in.
+        let f = &cx.f;
+        let clear_at = |at: Vec2| {
+            (0..9).all(|k| {
+                let q = if k == 0 {
+                    at
+                } else {
+                    let a = k as f32 * std::f32::consts::TAU / 8.0;
+                    at + Vec2::new(a.cos(), a.sin()) * (half + 0.6)
+                };
+                let i = f.idx(q.x, q.y);
+                f.water[i] == 0 && !f.occupied[i]
+            })
+        };
+        let Some(at) = (0..4).map(|k| c.at + c.into * (half * 1.45 + 1.5 + k as f32 * 2.5)).find(|&p| clear_at(p)) else {
+            crowded += 1;
+            continue;
+        };
+        let hs: Vec<f32> = (0..4).map(|k| {
+            let a = k as f32 * std::f32::consts::FRAC_PI_2 + 0.785;
+            let q = at + Vec2::new(a.cos(), a.sin()) * half;
+            f.height(q.x, q.y)
+        }).collect();
+        let fall = hs.iter().cloned().fold(f32::MIN, f32::max) - hs.iter().cloned().fold(f32::MAX, f32::min);
+        if fall > 1.2 {
+            steep += 1;
+            continue;
+        }
+        let bearing = crate::util::bearing(c.into).to_degrees();
+        if cx.place(d, at, bearing, &none, 0.0, hash32(c.hash ^ seed)).is_some() {
+            n += 1;
+        }
+    }
+    (n, format!("{} corners, {crowded} crowded, {steep} steep", corners.len()))
 }

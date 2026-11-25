@@ -1,0 +1,140 @@
+# Hemlow Lanes: a kart course in Hemlow's honey-stone country.
+# Units in metres: x east, z south, from the world's north-west corner.
+#
+# The lanes follow old field boundaries, so most of the lap is short runs
+# and square field corners between drystone walls. It starts on the village
+# green, runs the three corners of Mill Lane, humps over the brook just
+# before a corner, crosses the water meadow and the Hem at the ford, climbs
+# a combe in Hemlow Edge with two hairpins, takes the one long curve along
+# the top of the Edge, and comes down a hollow way to the green.
+track hemlow_lanes size 512 style oolite
+title HEMLOW LANES
+blurb Honey-stone lanes on a midsummer evening: square field corners between drystone walls, a humpback bridge, a ford across the Hem, a climb up a combe in Hemlow Edge and a long curve along its top.
+race laps 3 rivals 5 vehicle kart
+road 11 bank 1.4
+land 30 2
+hour 19.5
+materials verge lawn_grass
+
+# Hemlow Edge: the upland north of the scarp, 18 m over the vale. The combe
+# the road climbs is a notch in it (x 380 to 490).
+plateau 48 26 -20,-20 532,-20 532,72 490,72 470,82 440,84 400,80 380,96 300,104 200,108 120,112 60,110 -20,108
+hill 220 300 70 2       # the knoll the village stands on
+
+# The green, heading east.
+point 140 462                  # start / finish
+point 190 462
+point 236 461
+# Corner A, left into Mill Lane.
+point 262 458
+point 275 446
+point 278 428
+point 278 400
+# Corner B, right.
+point 280 380
+point 290 369
+point 308 366
+point 330 366
+# Corner C, left.
+point 350 365
+point 360 354
+point 362 334
+point 362 314
+# The humpback over Fleece Brook, and Corner D right after it.
+point 362 298 0.4
+point 362 284 1.7              # the crown of the bridge
+point 362 270 0.3
+point 364 252
+point 376 240                  # Corner D, right
+point 394 237
+# The water meadow.
+point 420 237
+point 444 233
+# Corner E, left, down to the ford.
+point 458 224
+point 464 208
+point 465 190
+point 465 170                  # the ford across the Hem
+point 465 150
+# The combe: two hairpins up into Hemlow Edge.
+point 466 132 at 31
+point 469 114 at 32.8
+point 467 96 at 35         # hairpin A, left
+point 454 86 at 37
+point 438 90 at 39
+point 428 106 at 41
+point 427 124 at 42.6      # hairpin B, right
+point 417 139 at 43.8
+point 400 144 at 45
+point 385 135 at 46.2
+point 379 117 at 47.4
+point 376 98 at 48
+point 368 80 at 48             # the top of the Edge
+# The long curve along the top.
+point 360 64 at 48
+point 336 52 at 48
+point 296 46 at 48
+point 252 48 at 48
+point 210 56 at 48
+point 172 70 at 48
+point 142 88 at 48
+# The hollow way down off the Edge.
+point 122 108 at 47.2
+point 106 134 at 44.8
+point 94 164 at 41.6
+point 86 198 at 38
+point 82 234 at 34.4
+point 81 270 at 31.5
+point 82 306 at 30
+# Back round onto the green.
+point 84 350
+point 90 395
+point 104 432
+point 118 452
+
+# No walls: grass run-off either side the whole way, which a kart can run
+# wide onto and come back from. The green and the run onto it are wider.
+# The hollow way is cut down into the Edge, its banks rising off the
+# run-off.
+verge 540 590 river_gravel 6
+
+# The ford across the Hem, its far bank's pad.
+ford 538 582 0.35
+pad 592 centre 8
+
+# The climb up the combe and the hollow way down are on the land, built up
+# and cut down to the road.
+ramp 585 835 26
+ramp 1030 1290 26
+bank 630 770 2.2       # the two hairpins
+
+# Smashables on the inside of the field corners: a tight line takes them
+# out on lap 1 and leaves the cut open for laps 2 and 3.
+smash 138 left 3.4 bale
+smash 222 right 2.7 gate
+smash 297 left 2.9 stones
+smash 417 right 2.9 bale
+smash 520 left 3.6 bale
+smash 1398 left 4.4 stones
+
+items 60
+items 460
+items 950
+
+# Stone arches over the lanes: a gateway into Mill Lane, and the field
+# track's bridge over the hollow way.
+arch 258 18 7.5 3 mat cotswold_stone
+arch 1150 18 8 4 mat oolite
+
+# Width: 11 m lanes. The green is wide for the start; Mill Lane's three
+# corners are narrow between the field walls, and narrowest over the
+# humpback; the water meadow and the ford open out; the hairpins have room;
+# the top of the Edge is a fast open curve; the hollow way is a sunk lane.
+width 1380 110 15
+width 125 348 10.5
+width 348 388 9
+width 436 530 13
+width 530 590 14
+width 620 780 14
+width 820 1070 13
+width 1093 1300 10

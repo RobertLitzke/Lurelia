@@ -21,19 +21,25 @@
     "wary": 7,
     "flightiness": 2.0,
     "fly_height": 4,
-    "group": {"size": [3, 8], "spacing": 1.2, "range": 5, "separation": 1.0, "alignment": 1.2, "cohesion": 1.2}
+    "group": {"size": [3, 8], "spacing": 1.2, "range": 5, "separation": 1.0, "alignment": 1.2, "cohesion": 1.2},
+    "voice": {
+      "calls": [
+        {"cry": "chatter", "on": "idle", "size": 2.5, "every_s": [120, 400]},
+        {"cry": "flap", "on": "takeoff", "size": 0.45, "boost": 3}
+      ]
+    }
   },
   "like": "gambels_quail",
   "scale": 1.9,
   "extra_ops": [
-    {"op": "box", "from": [15, 15, 8], "to": [17, 19, 11], "mat": "air", "part": "head"},
-    {"op": "recolour", "at": [10, 4, 10], "until": [22, 12, 24], "from": "black", "to": "white"},
-    {"op": "recolour", "at": [12, 10, 6], "until": [20, 16, 13], "from": "black", "to": "white"},
-    {"op": "box", "from": [14, 13, 7], "to": [15, 14, 9], "mat": "eye", "part": "head"},
-    {"op": "box", "from": [17, 13, 7], "to": [18, 14, 9], "mat": "eye", "part": "head"},
-    {"op": "box", "from": [15, 9, 22], "to": [17, 10, 23], "mat": "white", "part": "tail"},
-    {"op": "box", "from": [14, 9, 23], "to": [18, 10, 25], "mat": "black", "part": "tail"},
-    {"op": "box", "from": [13, 2, 14], "to": [16, 5, 17], "mat": "legs", "part": "leg_l"},
-    {"op": "box", "from": [16, 2, 14], "to": [19, 5, 17], "mat": "legs", "part": "leg_r"}
+    {"op": "box", "from": [16, 20, 5], "to": [18, 25, 9], "mat": "air", "part": "head"},
+    {"op": "recolour", "at": [9, 5, 8], "until": [25, 16, 27], "from": "black", "to": "white"},
+    {"op": "recolour", "at": [12, 13, 3], "until": [22, 21, 12], "from": "black", "to": "white"},
+    {"op": "box", "from": [14, 17, 4], "to": [16, 19, 7], "mat": "eye", "part": "head"},
+    {"op": "box", "from": [18, 17, 4], "to": [20, 19, 7], "mat": "eye", "part": "head"},
+    {"op": "box", "from": [16, 12, 24], "to": [18, 13, 25], "mat": "white", "part": "tail"},
+    {"op": "box", "from": [14, 12, 25], "to": [20, 13, 28], "mat": "black", "part": "tail"},
+    {"op": "box", "from": [13, 3, 13], "to": [17, 7, 17], "mat": "legs", "part": "leg_l"},
+    {"op": "box", "from": [17, 3, 13], "to": [21, 7, 17], "mat": "legs", "part": "leg_r"}
   ]
 }

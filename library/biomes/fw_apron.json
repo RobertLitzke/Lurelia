@@ -1,0 +1,11 @@
+{
+  "name": "fw_apron",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Rubble and silt at the foot of Frondwell's wall, with sponges and the odd anemone.",
+  "habitat": "sea_floor",
+  "rules": {"underwater": true, "region": "frondwell_reef_apron"},
+  "surface": "bone_silt",
+  "subsurface": "dune_sand",
+  "like": "fw_wall"
+}

@@ -143,7 +143,10 @@ pub mod layer {
     pub const KELP_STIPE: u32 = 45;
     pub const KELP_BLADE: u32 = 46;
     pub const KELP_FLOAT: u32 = 47;
-    pub const COUNT: u32 = 48;
+    /// Poppies: cups of orange petals on thin stems over grass, the fourth
+    /// colour a ground's `bloom` can name.
+    pub const FLOWERS_ORANGE: u32 = 48;
+    pub const COUNT: u32 = 49;
 
     /// Layers numbered after FROND that are still drawn small (sprite_tex.rs).
     pub fn small(l: u32) -> bool {
@@ -195,6 +198,9 @@ enum Rule {
         /// Height of the shortest grass, 1.0 being what every grass had
         /// before the material's `grass` block could raise it.
         short: f32,
+        /// One flower standing through the grass: (layer, share), from the
+        /// material's `bloom`. In place of the meadow's own wildflowers.
+        bloom: Option<(u32, f32)>,
     },
     /// Clusters on open faces of a canopy.
     /// `tint` is the material whose colour the leaf cards take; 0 is the
@@ -245,7 +251,7 @@ fn grove(wx: i32, wz: i32) -> &'static [u32] {
 pub const LEAF_SHAPES: [(&str, &[u32]); 6] = [("pointed", POINTED), ("broad", BROAD), ("lobed", LOBED), ("narrow", NARROW), ("heart", HEART), ("maple", MAPLE)];
 
 /// The rules a material's `sprites` entry may name (`library_rule`).
-pub const SPRITE_RULES: [&str; 40] = [
+pub const SPRITE_RULES: [&str; 41] = [
     "agave stalk",
     "yucca stalk",
     "cattail leaves",
@@ -255,6 +261,7 @@ pub const SPRITE_RULES: [&str; 40] = [
     "palmetto",
     "fern",
     "lupine",
+    "poppy",
     "fireweed",
     "heather",
     "glassbloom",
@@ -430,6 +437,7 @@ fn rule(m: u8) -> Option<Rule> {
             prairie: false,
             wild: false,
             short: 1.0,
+            bloom: None,
         }),
         // Dune grass, thin and tinted like the meadow.
         SAND => Some(Rule::Ground {
@@ -441,6 +449,7 @@ fn rule(m: u8) -> Option<Rule> {
             prairie: false,
             wild: false,
             short: 1.0,
+            bloom: None,
         }),
         LEAVES | LEAVES_AUTUMN => Some(Rule::Canopy {
             mix: true,
@@ -503,6 +512,7 @@ fn rule_for(m: u8, spec: Option<(&str, Option<&str>)>) -> Option<Rule> {
             prairie,
             wild,
             short,
+            bloom: crate::world::matlib::bloom(m),
         })
     };
     let clumps = |layer, count, spread, height, aspect| Some(Rule::Herb(Herb::Clumps { layer, count, spread, height, aspect }));
@@ -543,6 +553,8 @@ fn rule_for(m: u8, spec: Option<(&str, Option<&str>)>) -> Option<Rule> {
         "palmetto" => clumps(layer::PALMETTO, (2, 3), 1.3, (3.0, 4.6), 1.3),
         "fern" => Some(Rule::Herb(Herb::Fern)),
         "lupine" => clumps(layer::LUPINE, (3, 4), 1.4, (2.6, 4.2), 0.75),
+        // A few poppies together, knee-low orange cups on wiry stems.
+        "poppy" => clumps(layer::FLOWERS_ORANGE, (2, 3), 0.9, (1.3, 1.9), 1.0),
         "fireweed" => clumps(layer::FIREWEED, (2, 3), 1.2, (4.0, 6.6), 0.6),
         // A low mat: several wide, short clumps run together.
         "heather" => clumps(layer::HEATHER, (4, 6), 2.4, (1.4, 2.6), 1.4),
@@ -582,6 +594,7 @@ fn rule_for(m: u8, spec: Option<(&str, Option<&str>)>) -> Option<Rule> {
             prairie: false,
             wild: false,
             short: 1.0,
+            bloom: None,
         }),
         // Scale-leaved sprays feathering the juniper's clumps, in its own colour.
         "juniper" => canopy(&[layer::SAGE], 0.7, (1.6, 2.4)),
@@ -702,6 +715,10 @@ fn extras_on() -> bool {
 /// the same way (they face the camera) combs the hillside into corduroy;
 /// near enough to square, the same field reads as fuzz.
 pub const PATCH_W: f32 = 6.4;
+/// How far a lush or dry site (`lush` 1 or 0) moves a meadow's tall share,
+/// and the density of ground without meadows, either way.
+const LUSH_TALL: f32 = 0.8;
+const LUSH_THICK: f32 = 0.8;
 /// The cells the cards stand in, in voxels: 1 m at full detail. The cards are
 /// wider than the cells, so each piece of ground lies under two or three of
 /// them and they run together into one stand of grass instead of reading as
@@ -734,6 +751,19 @@ const KEEP_BELOW: f32 = 1.7;
 
 pub fn marker(m: u8) -> bool {
     m >= 17 && matches!(rules()[m as usize], Some(Rule::Herb(_)))
+}
+
+/// The sprite layer a material's `bloom` names: white, blue, yellow, red or
+/// orange.
+pub fn flower_layer(name: &str) -> Option<u32> {
+    Some(match name {
+        "white" => layer::FLOWERS_WHITE,
+        "blue" | "purple" => layer::FLOWERS_BLUE,
+        "yellow" => layer::FLOWERS_YELLOW,
+        "red" => layer::FLOWERS_RED,
+        "orange" => layer::FLOWERS_ORANGE,
+        _ => return None,
+    })
 }
 
 /// The flower layer for a meadow tuft at voxel (fx, fz), if it flowers. `pick`
@@ -883,7 +913,22 @@ fn pack_ext(p: [f32; 3], tint: u8, kind: u32, angle: u32, w: f32, h: f32, seed: 
 /// (out to foliage::STALK_FAR) just before the patches. Returns the lengths of
 /// the fill, grass, patch and stalk runs.
 #[allow(clippy::too_many_arguments)]
-pub fn scatter(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, origin: [i32; 3], scale: f32, cover_only: bool, water: &dyn Fn(f32, f32) -> f32, out: &mut Vec<Quad>) -> (u32, u32, u32, u32) {
+/// `lush` is how lush the ground at a point (metres) grows by its site
+/// (world/site.rs `Site::lush`), 0.5 where nothing says otherwise: it moves
+/// grass a little taller and thicker on wet, sheltered ground and shorter and
+/// thinner on dry, exposed ground, round the patterns it already has.
+#[allow(clippy::too_many_arguments)]
+pub fn scatter(
+    v: &[u8; PAD3],
+    smooth: bool,
+    colh: Option<&[f32]>,
+    origin: [i32; 3],
+    scale: f32,
+    cover_only: bool,
+    water: &dyn Fn(f32, f32) -> f32,
+    lush: &dyn Fn(f32, f32) -> f32,
+    out: &mut Vec<Quad>,
+) -> (u32, u32, u32, u32) {
     // Sizes are stored in the column's own voxels, so a card doubles in
     // metres with every coarser level. That is right for its width, which
     // has to keep up with the ring it covers, but grass four metres tall
@@ -963,19 +1008,23 @@ pub fn scatter(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, origin: [i32;
                         prairie,
                         wild,
                         short,
+                        bloom: one_flower,
                     } => {
                         if at(px, py + 1, pz) != AIR {
                             continue;
                         }
-                        // Meadows: broad patches where most of the grass grows tall.
+                        // Meadows: broad patches where most of the grass grows
+                        // tall, leaning taller where the site is lush and
+                        // shorter where it is dry (`lush`, 0.5 neutral).
                         let (fx, fz) = (wx as f32, wz as f32);
+                        let site = lush((fx + 0.5) * scale, (fz + 0.5) * scale) - 0.5;
                         let tall = if meadow {
                             let n = perlin2(fx * 0.018, fz * 0.018, 501) * 0.7 + perlin2(fx * 0.07, fz * 0.07, 502) * 0.3;
-                            smoothstep(-0.15, 0.3, n)
+                            (smoothstep(-0.15, 0.3, n) + site * LUSH_TALL).clamp(0.0, 1.0)
                         } else {
                             tall
                         };
-                        let d = sparse + (dense - sparse) * tall;
+                        let d = (sparse + (dense - sparse) * tall) * if meadow { 1.0 } else { 1.0 + site * LUSH_THICK };
                         // A drowned meadow (eelgrass): its cards are not hidden
                         // at the waterline the way land grass is.
                         let wet = if crate::world::matlib::has(m, crate::world::matlib::flag::UNDERWATER) { WET } else { 0 };
@@ -1068,7 +1117,12 @@ pub fn scatter(v: &[u8; PAD3], smooth: bool, colh: Option<&[f32]>, origin: [i32;
                                 }
                                 ((hgt * 1.1).clamp(1.2, 2.6), hgt)
                             };
-                            let bloom = if !near && !is_long && meadow {
+                            let bloom = if let Some((l, share)) = one_flower {
+                                // Drifts of the one flower: thick in some
+                                // stretches, thin in others, never gone.
+                                let drift = smoothstep(-0.4, 0.5, perlin2(fx * 0.02, fz * 0.02, 509));
+                                (!is_long && pick < share * (0.45 + 1.1 * drift)).then_some(l)
+                            } else if !near && !is_long && meadow {
                                 if wild {
                                     flower(fx, fz, tall.max(0.7), pick * 0.4, true)
                                 } else {
@@ -1389,7 +1443,7 @@ mod tests {
         // The chunk starts at 0 m, the bed is at 1 m, the lake surface 3 m up.
         let level = 3.0f32;
         let mut out = Vec::new();
-        scatter(&v, false, None, [0, 0, 0], scale, false, &|_, _| level, &mut out);
+        scatter(&v, false, None, [0, 0, 0], scale, false, &|_, _| level, &|_, _| 0.5, &mut out);
         let pads: Vec<f32> = out.iter().filter(|q| (q[1] >> 8) & 255 == FLOAT).map(|q| (((q[0] >> 20) & 2047) as f32 / 16.0 - 2.0) * scale).collect();
         assert!(!pads.is_empty(), "no pads were laid at all");
         for y in &pads {
@@ -1413,7 +1467,7 @@ mod tests {
     fn grass_grows_tufts_on_its_surface() {
         let v = meadow();
         let mut out = Vec::new();
-        scatter(&v, true, None, [0, 0, 0], crate::world::gen::VOXEL, false, &|_, _| f32::MIN, &mut out);
+        scatter(&v, true, None, [0, 0, 0], crate::world::gen::VOXEL, false, &|_, _| f32::MIN, &|_, _| 0.5, &mut out);
         assert!(out.len() > 100, "{} sprites", out.len());
         for q in &out {
             let y = (q[0] >> 20) as f32 / 16.0 - 2.0;
@@ -1430,7 +1484,7 @@ mod tests {
         let mut out = Vec::new();
         // A spot where the meadow is tall and long grass grows, and one where it doesn't.
         for origin in [[0, 0, 0], [640, 0, 320], [-900, 0, 1500]] {
-            let (n_fill, n_grass, n_patch, _) = scatter(&v, true, None, origin, crate::world::gen::VOXEL, false, &|_, _| f32::MIN, &mut out);
+            let (n_fill, n_grass, n_patch, _) = scatter(&v, true, None, origin, crate::world::gen::VOXEL, false, &|_, _| f32::MIN, &|_, _| 0.5, &mut out);
             assert!(n_fill > 0 && n_grass > 0 && n_patch > 0, "{n_fill} fill, {n_grass} grass, {n_patch} patches at {origin:?}");
             assert_eq!((n_fill + n_grass + n_patch) as usize, out.len(), "nothing but grass on a meadow");
             // At most one far cover card per cell, and a chunk holds
@@ -1461,7 +1515,7 @@ mod tests {
             }
         }
         let mut out = Vec::new();
-        scatter(&v, false, None, [0, 0, 0], crate::world::gen::VOXEL, false, &|_, _| f32::MIN, &mut out);
+        scatter(&v, false, None, [0, 0, 0], crate::world::gen::VOXEL, false, &|_, _| f32::MIN, &|_, _| 0.5, &mut out);
         assert!(out.is_empty());
     }
 
@@ -1472,7 +1526,7 @@ mod tests {
             v[pidx(M + 4 * i, MY + 10, M + 5)] = PINE;
         }
         let mut out = Vec::new();
-        scatter(&v, false, None, [0, 0, 0], crate::world::gen::VOXEL, false, &|_, _| f32::MIN, &mut out);
+        scatter(&v, false, None, [0, 0, 0], crate::world::gen::VOXEL, false, &|_, _| f32::MIN, &|_, _| 0.5, &mut out);
         assert!(!out.is_empty());
         for q in &out {
             assert_eq!(q[1] >> 8 & 255, SPRAY);
@@ -1491,7 +1545,7 @@ mod tests {
         for i in 0..8 {
             v[pidx(M + 4 * i, MY + 10, M + 5)] = LEAVES;
         }
-        scatter(&v, false, None, [0, 0, 0], crate::world::gen::VOXEL, false, &|_, _| f32::MIN, &mut out);
+        scatter(&v, false, None, [0, 0, 0], crate::world::gen::VOXEL, false, &|_, _| f32::MIN, &|_, _| 0.5, &mut out);
         assert!(!out.is_empty());
         for q in &out {
             assert_eq!(q[1] >> 8 & 255, BILLBOARD);

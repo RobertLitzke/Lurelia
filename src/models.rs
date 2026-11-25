@@ -84,6 +84,207 @@ pub struct Model {
     /// the ride, the guns and the bots, which use the fixed block; a library
     /// model has a block of its own (see FIXED_SLOTS).
     pub block: u32,
+    /// The levels of detail of a library creature's model or part: its
+    /// cells until `bake_all` runs, then the baked meshes. None for
+    /// everything else, which is always drawn as built.
+    pub lod: Option<Box<Lods>>,
+}
+
+/// A creature model's other meshes (docs/CREATURES.md "Model resolution and
+/// decimation"). Smooth mode draws `near` up close and `far` beyond the
+/// switch; voxel mode draws the model's own quads up close and `coarse`
+/// beyond. The renderer picks per instance (render/mod.rs `lod_of`).
+#[derive(Default)]
+pub struct Lods {
+    /// The 32^3 cells the model was meshed from, kept until the bake.
+    pub cells: Vec<u8>,
+    /// A rig's part: its smooth meshes come from its creature's `body`
+    /// bake, not from its own cells, so it is one surface with the rest.
+    pub of_body: bool,
+    /// On a rigged creature's whole model: the bake that makes its parts'
+    /// smooth meshes.
+    pub body: Option<BodyBake>,
+    /// The model merged 2x2x2 (majority colour), as quads in the model's own
+    /// voxel units.
+    pub coarse: Mesh,
+    /// Decimated triangle meshes, packed vertices (mesh/decimate.rs): half
+    /// and a quarter of the square model's triangles.
+    pub near: Vec<crate::mesh::decimate::Vert>,
+    pub far: Vec<crate::mesh::decimate::Vert>,
+}
+
+/// A rigged creature's whole body, to be baked as one surface and split
+/// into its parts (mesh/decimate.rs `Body`).
+pub struct BodyBake {
+    pub cells: Vec<u8>,
+    pub dims: [i32; 3],
+    pub owner: Vec<u8>,
+    pub parent: Vec<Option<usize>>,
+    /// Bones baked as surfaces of their own (`BoneDef::loose`).
+    pub loose: Vec<bool>,
+    pub origins: Vec<[i32; 3]>,
+    /// Each bone's part model, as an index into the models being baked.
+    pub parts: Vec<usize>,
+}
+
+impl Model {
+    /// Keep this model's cells for `bake_all`: a creature's model or part.
+    pub fn for_lod(mut self, cells: &[u8]) -> Model {
+        if !self.mesh.quads.is_empty() {
+            self.lod = Some(Box::new(Lods { cells: cells.to_vec(), ..Default::default() }));
+        }
+        self
+    }
+}
+
+enum Baked {
+    /// Model k's coarse mesh, and its own near and far if it is not a part.
+    One(usize, Mesh, Option<(Vec<crate::mesh::decimate::Vert>, Vec<crate::mesh::decimate::Vert>)>),
+    /// Each part's near and far from a body bake.
+    Parts(Vec<(usize, Vec<crate::mesh::decimate::Vert>, Vec<crate::mesh::decimate::Vert>)>),
+}
+
+/// Bake every model that kept its cells (`Model::for_lod`) and every rigged
+/// creature's body, on every core: the smooth near and far meshes and the
+/// 2x2x2 voxel mesh.
+pub fn bake_all(models: &mut [Model]) {
+    bake_with(models, Vec::new());
+}
+
+/// `bake_all`, and these bodies as well: rigs whose whole model is not in
+/// `models` (the bots' builds, brain/avatar.rs), their `parts` indices into
+/// `models`.
+pub fn bake_with(models: &mut [Model], extra: Vec<BodyBake>) {
+    #[derive(Clone, Copy)]
+    enum Job {
+        One(usize),
+        Body(usize),
+        Extra(usize),
+    }
+    let mut jobs: Vec<Job> = Vec::new();
+    for (k, m) in models.iter().enumerate() {
+        if let Some(l) = &m.lod {
+            if !l.cells.is_empty() {
+                jobs.push(Job::One(k));
+            }
+            if l.body.is_some() {
+                jobs.push(Job::Body(k));
+            }
+        }
+    }
+    jobs.extend((0..extra.len()).map(Job::Extra));
+    if jobs.is_empty() {
+        return;
+    }
+    let threads = std::thread::available_parallelism().map_or(4, |n| n.get()).max(1);
+    let next = std::sync::atomic::AtomicUsize::new(0);
+    let done = std::sync::Mutex::new(Vec::with_capacity(jobs.len()));
+    {
+        let models: &[Model] = models;
+        std::thread::scope(|sc| {
+            for _ in 0..threads.min(jobs.len()) {
+                sc.spawn(|| loop {
+                    let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    let Some(&job) = jobs.get(i) else { break };
+                    let r = match job {
+                        Job::One(k) => bake_one(&models[k], k),
+                        Job::Body(k) => bake_body(models, models[k].lod.as_ref().and_then(|l| l.body.as_ref()).expect("a body to bake")),
+                        Job::Extra(e) => bake_body(models, &extra[e]),
+                    };
+                    done.lock().unwrap().push(r);
+                });
+            }
+        });
+    }
+    for r in done.into_inner().unwrap() {
+        match r {
+            Baked::One(k, coarse, own) => {
+                if let Some(l) = models[k].lod.as_mut() {
+                    l.cells = Vec::new();
+                    l.coarse = coarse;
+                    if let Some((near, far)) = own {
+                        l.near = near;
+                        l.far = far;
+                    }
+                }
+            }
+            Baked::Parts(parts) => {
+                for (k, near, far) in parts {
+                    if let Some(l) = models.get_mut(k).and_then(|m| m.lod.as_mut()) {
+                        l.near = near;
+                        l.far = far;
+                    }
+                }
+            }
+        }
+    }
+    for m in models.iter_mut() {
+        if let Some(l) = m.lod.as_mut() {
+            l.body = None;
+        }
+    }
+}
+
+/// The square model draws two triangles a quad; the near mesh has half
+/// that, the far a quarter.
+fn bake_one(m: &Model, k: usize) -> Baked {
+    let l = m.lod.as_ref().expect("a model to bake");
+    let own = (!l.of_body).then(|| {
+        let tris = 2 * m.mesh.quads.len();
+        crate::mesh::decimate::bake(&l.cells, (tris / 2).max(12), (tris / 4).max(8))
+    });
+    Baked::One(k, coarse(&l.cells), own)
+}
+
+/// A rigged creature baked as one surface, the budget the sum of its parts'.
+fn bake_body(models: &[Model], b: &BodyBake) -> Baked {
+    let tris: usize = b.parts.iter().map(|&p| 2 * models.get(p).map_or(0, |m| m.mesh.quads.len())).sum();
+    let body = crate::mesh::decimate::Body { cells: &b.cells, dims: b.dims, owner: Some(&b.owner), parent: &b.parent, loose: &b.loose, origins: &b.origins };
+    let meshes = crate::mesh::decimate::bake_body(&body, (tris / 2).max(12), (tris / 4).max(8));
+    Baked::Parts(b.parts.iter().zip(meshes).map(|(&p, (near, far))| (p, near, far)).collect())
+}
+
+/// The cells merged 2x2x2: a block is solid when a quarter of it is, and
+/// takes its commonest colour. Meshed at half size, then put back in the
+/// model's own voxel units (each coordinate and size doubled).
+fn coarse(cells: &[u8]) -> Mesh {
+    let mut g = Grid::new();
+    for y in 0..16 {
+        for z in 0..16 {
+            for x in 0..16 {
+                let mut seen = [0u8; 8];
+                let mut n = 0;
+                for k in 0..8 {
+                    let (dx, dy, dz) = (k & 1, k >> 1 & 1, k >> 2 & 1);
+                    let c = cells[(((2 * y + dy) * 32 + 2 * z + dz) * 32 + 2 * x + dx) as usize];
+                    seen[k as usize] = c;
+                    n += (c != 0) as u32;
+                }
+                if n >= 2 {
+                    let best = seen.iter().filter(|&&c| c != 0).max_by_key(|&&c| seen.iter().filter(|&&d| d == c).count()).copied().unwrap_or(0);
+                    g.set(x, y, z, best - 1);
+                }
+            }
+        }
+    }
+    let mut mesh = Mesh::default();
+    crate::mesh::mesh_model_t(&g.v, &[], &mut mesh);
+    for q in mesh.quads.iter_mut() {
+        let [px, py, pz] = crate::mesh::quad::pos(q);
+        let d = crate::mesh::quad::dir(q);
+        let (w, h) = crate::mesh::quad::size(q);
+        // A face on the positive side of its voxel sits a voxel further out
+        // (the shader adds the normal), so it lands at 2c + 2 from 2c + 1.
+        let along = d / 2;
+        let positive = d % 2 == 0;
+        let mut p = [2 * px, 2 * py, 2 * pz];
+        if positive {
+            p[along] += 1;
+        }
+        let keep = q[0] & !(0x1ff_ffff);
+        q[0] = keep | crate::mesh::quad::word0(p, 2 * w, 2 * h, d, false) & 0x1ff_ffff;
+    }
+    mesh
 }
 
 pub(crate) struct Grid {
@@ -207,6 +408,7 @@ impl Grid {
             rig: None,
             skeleton: None,
             block: 0,
+            lod: None,
         }
     }
 }
@@ -224,11 +426,12 @@ pub const PALETTE_SLOTS: usize = 192;
 
 /// The palette's first block, shared by every model whose `block` is 0:
 /// 0..17 are the built-in models' colours, 18..38 the guns
-/// (combat/viewmodel.rs), 38..48 the bots (brain/avatar.rs) and 48..64 the
-/// ride (ride.rs). Each library creature, collectible and platform model
-/// gets a block of its own after this one, so a world has no limit on its
-/// colours, only each model (PALETTE_SLOTS).
-pub const FIXED_SLOTS: usize = 64;
+/// (combat/viewmodel.rs), 38..48 the bots (brain/avatar.rs), 48..64 the
+/// ride (ride.rs) and 64..80 the arena guns' paint (combat/real). Each
+/// library creature, collectible and platform model gets a block of its own
+/// after this one, so a world has no limit on its colours, only each model
+/// (PALETTE_SLOTS).
+pub const FIXED_SLOTS: usize = 80;
 
 /// The slot (plus 1, as `from_cells` wants it) of colour `lin` in the block
 /// that starts at `colours[start]`, appending it if the block lacks it. A
@@ -431,10 +634,15 @@ pub struct Instance {
     /// not glow.
     ///
     /// `[1..]`: on a rig's part, the parent bone's rotation as the x, y, z
-    /// of a quaternion whose w is kept at or above zero, for the corners of
-    /// a sloped part that follow the parent (anim/mod.rs `push_parts_at`,
-    /// anim/slope.rs). Zero is no rotation. None of the four is spare.
+    /// of a quaternion whose w is kept at or above zero, for the seam of
+    /// its smooth mesh, which follows the parent (anim/mod.rs
+    /// `push_parts_at`, mesh/decimate.rs). Zero is no rotation.
     pub glow: [f32; 4],
+    /// `[0]`: how much of it has dissolved away, 0 drawn whole to 1 gone: a
+    /// creature appearing or at the far edge of where it is kept
+    /// (entities.rs `instances`). Above 0 it draws in the dissolving
+    /// pipeline (scene.wgsl `fs_entity_fade`). The rest is unused.
+    pub fade: [f32; 4],
 }
 
 /// `Instance::shift[3]` at and above this draws the instance see-through:

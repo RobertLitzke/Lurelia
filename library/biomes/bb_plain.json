@@ -1,0 +1,23 @@
+{
+  "name": "bb_plain",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "The last of the Kitehold Plain, sloping down off the ash and loess into the dunes: the same gold bunchgrass, thinning toward the sand.",
+  "priority": 3,
+  "rules": {"region": "plain"},
+  "map_color": [196, 170, 96],
+  "plants": [
+    {"plant": "feather_tussock", "density": 0.006, "placement": {"verb": "clustered", "params": {}}},
+    {"plant": "lupine", "density": 0.003, "placement": {"verb": "clustered", "params": {}}}
+  ],
+  "creatures": [
+    {"creature": "horse", "count": 4},
+    {"creature": "pronghorn", "count": 4},
+    {"creature": "skylark", "count": 6},
+    {"creature": "eagle", "count": 1},
+    {"creature": "jackrabbit", "count": 4},
+    {"creature": "meadowhawk", "count": 4},
+    {"creature": "wolf", "count": 6}
+  ],
+  "like": "kh_plain"
+}

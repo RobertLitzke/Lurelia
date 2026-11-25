@@ -1,0 +1,11 @@
+{
+  "name": "fw_kelp_groove",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Sand grooves between the kelp-covered spurs of Frondwell's outer slope.",
+  "habitat": "kelp_forest",
+  "rules": {"underwater": true, "region": "frondwell_reef_groove"},
+  "surface": "dune_sand",
+  "subsurface": "dune_sand",
+  "like": "fw_kelp"
+}

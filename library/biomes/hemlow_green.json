@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "hemlow",
   "notes": "The village on the top of the Knap: lawns, cottage-garden roses and cherries, the great oak on the green.",
+  "habitat": "settlement",
   "priority": 9,
   "rules": {"region": "hemlow"},
   "surface": "lawn_grass",
   "subsurface": "dirt",
+  "soil": 0.55,
   "map_color": [180, 200, 110],
   "plants": [
     {"plant": "great_oak", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 45}}},

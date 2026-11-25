@@ -3,12 +3,14 @@
   "version": 1,
   "introduced_by": "underwater",
   "notes": "Glassfall's strange reef, nearest the strewn field: staghorn, tables and fans of pale glass, faintly lit, among the ordinary coral.",
+  "habitat": "coral_reef",
   "priority": 23,
   "rules": {"underwater": true, "region": "fore_reef", "strange": [0.25, 1.0]},
   "surface": "reef_lime",
   "subsurface": "reef_lime",
   "rock": "reef_lime",
   "fringe": 0,
+  "soil": 0.5,
   "map_color": [170, 220, 240],
   "plants": [
     {
@@ -28,5 +30,6 @@
     {"creature": "butterflyfish", "count": 11},
     {"creature": "angelfish", "count": 4.4},
     {"creature": "reef_manta", "count": 2.2}
-  ]
+  ],
+  "realm": {"bloom": 0.8}
 }

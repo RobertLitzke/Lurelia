@@ -12,6 +12,11 @@
 //!   seconds, and sometimes ends a dive by going deep and driving up out of
 //!   the water, twisting onto its side before it falls back in a big splash.
 //!
+//! A display (creatures/display: a bait ball, a salmon's leap, eels swaying
+//! together) takes fish over for a while: each carries a `Show`, is put where
+//! it says and wags along at the speed it was moved, and swims on with the
+//! school after.
+//!
 //! Neither has a physics body: water has no voxels (the sea is a plane at
 //! sea level), so they are kept between the bed and the surface by hand.
 //! `Terrain::bed` is the height of the sea or lake bed.
@@ -116,9 +121,9 @@ pub struct School {
 
 pub struct Fish {
     pub school: hecs::Entity,
-    vel: Vec3,
+    pub vel: Vec3,
     wag: f32,
-    air: bool,
+    pub air: bool,
     rng: Rng,
     /// Where in its depth band this one swims, 0 to 1, so a school is
     /// spread up and down a little, not all at one level.
@@ -553,8 +558,17 @@ pub fn update(
     let land_form: Vec<Option<usize>> = species.iter().map(|s| s.water.filter(|_| s.is_water_form).filter(|&p| species[p].verb().dives())).collect();
     let mut hauled: Vec<(hecs::Entity, Vec3, f32, usize)> = Vec::new();
     // Fish.
-    for (fe, f, l, me, anim, morph) in world.query_mut::<(hecs::Entity, &mut Fish, &mut Look, &Creature, Option<&mut crate::anim::Anim>, Option<&crate::variety::Morph>)>() {
+    for (fe, f, l, me, anim, morph, show) in world.query_mut::<(hecs::Entity, &mut Fish, &mut Look, &Creature, Option<&mut crate::anim::Anim>, Option<&crate::variety::Morph>, Option<&super::display::Show>)>() {
         l.begin_step();
+        // A display's place for it this step, if it gives one.
+        let placed = show.and_then(|s| match s.out.drive {
+            super::display::Drive::Place { pos, yaw } | super::display::Drive::Sit { pos, yaw } => Some((pos, yaw)),
+            _ => None,
+        });
+        let faced = show.and_then(|s| match s.out.drive {
+            super::display::Drive::Stay { face } => face,
+            _ => None,
+        });
         stats.fish += 1;
         let sp = &species[me.species];
         let big = big_swimmer(sp, &models[l.model]);
@@ -571,13 +585,17 @@ pub fn update(
             let len = models[l.model].height;
             l.pos = Vec3::new(f.anchor.x, b - (1.0 - f.ext) * len * 0.95, f.anchor.z);
             f.wag += dt;
-            l.yaw = (f.wag * 0.4 + f.lane * 6.0).sin() * 0.6 + f.lane * TAU;
+            l.yaw = faced.unwrap_or((f.wag * 0.4 + f.lane * 6.0).sin() * 0.6 + f.lane * TAU);
             continue;
         }
         if habit == Habit::Pulse {
             // A jellyfish: drifting, a slow beat lifting it a hand at a
             // time, sinking a little between.
             f.wag += dt;
+            if let Some((pos, yaw)) = placed {
+                (l.pos, l.yaw) = (pos, yaw);
+                continue;
+            }
             let beat = (f.wag * 1.3 + f.lane * TAU).sin();
             let top_here = surf(p0.x, p0.z);
             let want = band_y(sp, habit, bed(p0.x, p0.z), top_here, f.lane);
@@ -602,7 +620,11 @@ pub fn update(
         let p = l.pos;
         let top_here = surf(p.x, p.z);
         let river = in_river(p.x, p.z);
-        if f.air {
+        if let Some((pos, yaw)) = placed {
+            f.vel = (pos - l.pos) / dt.max(1e-4);
+            (l.pos, l.yaw) = (pos, yaw);
+            f.air = pos.y > top_here + 0.05;
+        } else if f.air {
             f.vel.y -= 9.8 * dt;
             l.pos += f.vel * dt;
             if l.pos.y < top_here && f.vel.y < 0.0 {
@@ -756,7 +778,9 @@ pub fn update(
         }
         let flat = Vec3::new(f.vel.x, 0.0, f.vel.z);
         let to_me = Vec3::new(player.x - l.pos.x, 0.0, player.z - l.pos.z);
-        if habit == Habit::Hover && paused && to_me.length() < 7.0 && player.y < surf(l.pos.x, l.pos.z) {
+        if placed.is_some() {
+            // Faced as the display put it.
+        } else if habit == Habit::Hover && paused && to_me.length() < 7.0 && player.y < surf(l.pos.x, l.pos.z) {
             // Hanging still with a diver about: turn to look at them.
             let want = to_me.x.atan2(to_me.z) + PI;
             l.yaw = crate::util::turn_toward(l.yaw, want, (dt * 2.0).min(1.0));
@@ -812,6 +836,9 @@ pub fn update(
             if sp.beh.back_float {
                 back_pose(rig, &mut a.pose, f.back, f.wag);
             }
+            if let Some(s) = show {
+                super::display::apply(rig, &mut a.pose, &s.out.pose, models[l.model].voxel);
+            }
         }
     }
 
@@ -833,11 +860,30 @@ pub fn update(
     }
 
     // Whales.
-    for (w, l, me, anim, morph) in world.query_mut::<(&mut Whale, &mut Look, &Creature, Option<&mut crate::anim::Anim>, Option<&crate::variety::Morph>)>() {
+    for (w, l, me, anim, morph, show) in world.query_mut::<(&mut Whale, &mut Look, &Creature, Option<&mut crate::anim::Anim>, Option<&crate::variety::Morph>, Option<&super::display::Show>)>() {
         l.begin_step();
         stats.whales += 1;
         let sp = &species[me.species];
         let m = &models[l.model];
+        // A display (creatures/display: a spyhop, a tail slap): where it
+        // says, its body pitched and rolled by the overlay; it goes back to
+        // lying at the surface after.
+        if let Some(s) = show {
+            if let super::display::Drive::Place { pos, yaw } | super::display::Drive::Sit { pos, yaw } = s.out.drive {
+                (l.pos, l.yaw) = (pos, yaw);
+                w.heading = yaw - PI;
+            }
+            w.phase = Phase::Surface;
+            w.vy = 0.0;
+            w.pitch = 0.0;
+            w.roll = 0.0;
+            if let (Some(a), Some(rig)) = (anim, m.rig.as_ref()) {
+                a.prev = a.pose.clone();
+                a.pose = crate::anim::Pose::rest(rig.bones.len());
+                super::display::apply(rig, &mut a.pose, &s.out.pose, m.voxel * morph.map_or(1.0, |x| x.scale));
+            }
+            continue;
+        }
         let p = l.pos;
         let d = depth(p.x, p.z);
         let cruise = sp.beh.walk_speed.max(0.5) * crate::variety::pace(morph).0;
@@ -998,6 +1044,7 @@ mod tests {
             morphs: vec![],
             ages: Default::default(),
             aged_tint: [1.0; 3],
+            forms: Default::default(),
         };
         // Over a bed at 10 m under a surface at 24: between 10.5 and 12.
         for lane in [0.0, 0.5, 1.0] {

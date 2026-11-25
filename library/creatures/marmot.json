@@ -1,49 +1,109 @@
 {
   "name": "marmot",
-  "version": 1,
+  "version": 2,
   "introduced_by": "glassfall",
-  "notes": "Lives in the scree: a long, heavy-bodied ground squirrel, grizzled brown with a pale muzzle and a bushy tail. Sits up on a boulder to whistle.",
-  "voxel": 0.03125,
+  "notes": "Lives in the scree: a long, heavy-bodied ground squirrel, grizzled brown with a pale muzzle and a bushy dark-tipped tail. Sits up on a boulder to whistle. v2: two overlapping body ellipsoids, capsule legs with flattened paws, ellipsoid head, muzzle, ears and eyes. Drawn at 15 voxels per height, not the rule's 20 (Rob's choice, 2026-11-23): its long body made 20 cost more than a deer.",
+  "voxel": 0.02,
+  "grid": [32, 32, 50],
   "half_w": 0.16,
   "height": 0.3,
-  "colors": {"marmot": [128, 96, 60], "belly": [210, 180, 140], "dark": [36, 28, 24]},
+  "colors": {"marmot": [128, 96, 60], "belly": [210, 180, 140], "dark": [36, 28, 24], "eye": [12, 9, 8]},
   "behaviour": {
+    "displays": [{"kind": "sentinel"}],
     "movement": "graze",
     "walk_speed": 0.7,
     "flee_speed": 4.5,
     "wary": 9,
     "flightiness": 1.4,
-    "flees_from": ["player", "fox"]
+    "flees_from": ["player", "fox"],
+    "voice": {"size": 2.5, "calls": [{"cry": "pipe", "on": "flee", "boost": 4, "chorus": 0.4, "chorus_m": 120}]}
   },
   "ops": [
-    {"op": "ellipsoid", "centre": [16, 5.5, 16.5], "radius": [4.6, 3.8, 7.6], "mat": "marmot"},
-    {"op": "ellipsoid", "centre": [16, 6, 13], "radius": [4.4, 3.8, 4], "mat": "marmot"},
-    {"op": "recolour_below", "y": 3, "from": "marmot", "to": "belly"},
-    {"op": "ellipsoid", "centre": [16, 6.5, 7.5], "radius": [3.0, 2.4, 2.8], "mat": "marmot", "part": "head"},
-    {"op": "box", "from": [15, 5, 4], "to": [17, 7, 5], "mat": "belly", "part": "head"},
-    {"op": "set", "at": [15, 6, 4], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [16, 6, 4], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [14, 8, 6], "mat": "dark", "part": "head"},
-    {"op": "set", "at": [18, 8, 6], "mat": "dark", "part": "head"},
-    {"op": "box", "from": [13, 8, 8], "to": [14, 10, 9], "mat": "marmot", "part": "head"},
-    {"op": "box", "from": [18, 8, 8], "to": [19, 10, 9], "mat": "marmot", "part": "head"},
-    {"op": "box", "from": [12, 0, 10], "to": [14, 3, 12], "mat": "dark", "part": "leg_fl"},
-    {"op": "box", "from": [18, 0, 10], "to": [20, 3, 12], "mat": "dark", "part": "leg_fr"},
-    {"op": "box", "from": [12, 0, 20], "to": [14, 3, 22], "mat": "marmot", "part": "leg_hl"},
-    {"op": "box", "from": [18, 0, 20], "to": [20, 3, 22], "mat": "marmot", "part": "leg_hr"},
-    {"op": "ellipsoid", "centre": [16, 5, 26], "radius": [1.8, 1.8, 3], "mat": "marmot", "part": "tail"},
-    {"op": "box", "from": [15, 4, 28], "to": [17, 6, 30], "mat": "dark", "part": "tail"}
+    {"op": "ellipsoid", "centre": [16.0, 8.7, 22.75], "radius": [6.975, 5.55, 9.0], "mat": "marmot"},
+    {"op": "ellipsoid", "centre": [16.0, 8.85, 29.5], "radius": [7.2, 5.85, 8.25], "mat": "marmot"},
+    {"op": "recolour_below", "y": 4, "from": "marmot", "to": "belly"},
+    {"op": "ellipsoid", "centre": [16.0, 9.75, 11.5], "radius": [4.725, 4.05, 4.95], "mat": "marmot", "part": "head"},
+    {"op": "ellipsoid", "centre": [16.0, 8.475, 7.45], "radius": [2.7, 2.25, 2.55], "mat": "belly", "part": "head"},
+    {"op": "ellipsoid", "centre": [16.0, 9.15, 5.05], "radius": [1.425, 1.125, 0.975], "mat": "dark", "part": "head"},
+    {"op": "ellipsoid", "centre": [12.4, 11.4, 9.25], "radius": [1.05, 1.05, 1.05], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [19.6, 11.4, 9.25], "radius": [1.05, 1.05, 1.05], "mat": "eye", "part": "head"},
+    {"op": "ellipsoid", "centre": [12.4, 13.65, 13.0], "radius": [1.05, 1.725, 1.5], "mat": "marmot", "part": "head"},
+    {"op": "ellipsoid", "centre": [19.6, 13.65, 13.0], "radius": [1.05, 1.725, 1.5], "mat": "marmot", "part": "head"},
+    {
+      "op": "segment",
+      "points": [[11.5, 6.375, 17.5], [10.975, 2.25, 17.125]],
+      "radius": 2.175,
+      "mat": "marmot",
+      "part": "leg_fl"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [10.975, 0.975, 16.45],
+      "radius": [1.725, 1.05, 2.55],
+      "mat": "dark",
+      "part": "leg_fl"
+    },
+    {
+      "op": "segment",
+      "points": [[11.35, 7.125, 32.5], [10.975, 2.625, 33.625]],
+      "radius": 2.55,
+      "mat": "marmot",
+      "part": "leg_hl"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [10.975, 1.05, 32.35],
+      "radius": [1.725, 1.125, 2.85],
+      "mat": "marmot",
+      "part": "leg_hl"
+    },
+    {
+      "op": "segment",
+      "points": [[20.5, 6.375, 17.5], [21.025, 2.25, 17.125]],
+      "radius": 2.175,
+      "mat": "marmot",
+      "part": "leg_fr"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [21.025, 0.975, 16.45],
+      "radius": [1.725, 1.05, 2.55],
+      "mat": "dark",
+      "part": "leg_fr"
+    },
+    {
+      "op": "segment",
+      "points": [[20.65, 7.125, 32.5], [21.025, 2.625, 33.625]],
+      "radius": 2.55,
+      "mat": "marmot",
+      "part": "leg_hr"
+    },
+    {
+      "op": "ellipsoid",
+      "centre": [21.025, 1.05, 32.35],
+      "radius": [1.725, 1.125, 2.85],
+      "mat": "marmot",
+      "part": "leg_hr"
+    },
+    {
+      "op": "segment",
+      "points": [[16.0, 8.25, 36.625], [16.0, 7.5, 41.5]],
+      "radius": 2.625,
+      "mat": "marmot",
+      "part": "tail"
+    },
+    {"op": "ellipsoid", "centre": [16.0, 7.2, 44.95], "radius": [2.325, 2.325, 3.0], "mat": "dark", "part": "tail"}
   ],
   "rig": {
     "plan": "quadruped",
     "bones": [
       {"name": "body", "role": "root"},
-      {"name": "head", "role": "head", "parent": "body", "joint": [16, 6, 10]},
-      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [13, 3, 11], "side": "l", "pair": 0},
-      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [19, 3, 11], "side": "r", "pair": 0},
-      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [13, 3, 21], "side": "l", "pair": 1},
-      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [19, 3, 21], "side": "r", "pair": 1},
-      {"name": "tail", "role": "tail", "parent": "body", "joint": [16, 5, 23.5]}
+      {"name": "head", "role": "head", "parent": "body", "joint": [16.0, 9.375, 15.625]},
+      {"name": "leg_fl", "role": "leg", "parent": "body", "joint": [11.312, 5.625, 17.187], "side": "l", "pair": 0},
+      {"name": "leg_fr", "role": "leg", "parent": "body", "joint": [20.688, 5.625, 17.187], "side": "r", "pair": 0},
+      {"name": "leg_hl", "role": "leg", "parent": "body", "joint": [11.312, 5.625, 32.813], "side": "l", "pair": 1},
+      {"name": "leg_hr", "role": "leg", "parent": "body", "joint": [20.688, 5.625, 32.813], "side": "r", "pair": 1},
+      {"name": "tail", "role": "tail", "parent": "body", "joint": [16.0, 7.813, 36.719]}
     ],
     "activities": {
       "stand": {"time": [2, 6], "next": {"walk": 3, "graze": 4, "look": 2, "sit": 2, "lie": 0.3}},

@@ -1,0 +1,22 @@
+{
+  "name": "kh_ribbon",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A buried stream bed under the Plain: the same tan grass as round it, but with lupine through about two tufts in five, a wandering band of violet in the gold. kh_ribbon_red and kh_ribbon_orange are the same with paintbrush and poppies.",
+  "habitat": "dry_grassland",
+  "priority": 6,
+  "rules": {"region": "ribbon_purple"},
+  "surface": "kh_ribbon_lupine",
+  "subsurface": "dirt",
+  "fringe": 6,
+  "soil": 0.6,
+  "map_color": [150, 140, 160],
+  "plants": [{"plant": "feather_tussock", "density": 0.008, "placement": {"verb": "scatter", "params": {}}}],
+  "creatures": [
+    {"creature": "bumblebee", "count": 8},
+    {"creature": "bee", "count": 8},
+    {"creature": "annas_hummingbird", "count": 3},
+    {"creature": "meadowhawk", "count": 6},
+    {"creature": "horse", "count": 2.7}
+  ]
+}

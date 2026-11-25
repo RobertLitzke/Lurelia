@@ -18,5 +18,6 @@
   "dome": 1.0,
   "max_slope": 0.45,
   "autumn": "leaves_autumn",
-  "thin_limbs": 0.12
+  "thin_limbs": 0.12,
+  "site": {"wet": [0.3, 0.8], "soil": [0.4, 1.0]}
 }

@@ -1,0 +1,28 @@
+{
+  "name": "dinosaur",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "The Mesozoic world: dinosaurs and pterosaurs among cycads, ginkgos, monkey-puzzles, tree ferns and giant horsetails.",
+  "habitats": {
+    "marsh": {
+      "plants": [{"plant": "giant_horsetail", "density": 0.02}],
+      "creatures": [{"creature": "parasaurolophus", "count": 2}]
+    },
+    "swamp_forest": {"plants": [{"plant": "dawn_redwood", "density": 0.003}, {"plant": "giant_horsetail", "density": 0.01}]},
+    "conifer_forest": {
+      "plants": [
+        {"plant": "araucaria", "density": 0.0015},
+        {"plant": "tree_fern", "density": 0.003},
+        {"plant": "cycad", "density": 0.004}
+      ],
+      "creatures": [{"creature": "brachiosaurus", "count": 1}]
+    },
+    "broadleaf_forest": {"plants": [{"plant": "ginkgo", "density": 0.0015}, {"plant": "cycad", "density": 0.004}]},
+    "parkland": {
+      "plants": [{"plant": "araucaria", "density": 0.0008}, {"plant": "cycad", "density": 0.003}],
+      "creatures": [{"creature": "triceratops", "count": 2}]
+    },
+    "meadow": {"plants": [{"plant": "seed_fern", "density": 0.004}]}
+  },
+  "ground": {"meadow_grass": "fernwood_floor"}
+}

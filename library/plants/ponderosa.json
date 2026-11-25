@@ -17,5 +17,6 @@
   "lean": 0.06,
   "crown_base_vary": 0.1,
   "open": 0.25,
-  "trunk_taper": 0.65
+  "trunk_taper": 0.65,
+  "site": {"wet": [0.0, 0.45], "sun": [0.4, 1.0]}
 }

@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "redrock",
   "notes": "A sandbar standing out of a desert lake or river, watered from underneath: palms, figs and reeds in a green tuft, and the animals that swam out to it.",
+  "habitat": "riparian",
   "priority": 9,
   "rules": {"region": "oasis", "elev": [-0.5, 6]},
   "surface": "shore_sand",
   "subsurface": "shore_sand",
+  "soil": 0.6,
   "map_color": [120, 168, 92],
   "plants": [
     {

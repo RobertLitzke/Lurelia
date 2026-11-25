@@ -1,0 +1,18 @@
+{
+  "name": "pelagos_walk",
+  "version": 1,
+  "introduced_by": "bonebight",
+  "notes": "Pelagos Outpost's walkway between its capsules: a 2.5 m steel grating deck with rusted truss sides a metre and a half high, on thin steel legs every 10 m, held at a height over the water by its ribbon.",
+  "ground": "deck",
+  "width": 2.5,
+  "mat": "rust_iron",
+  "lift": 3.0,
+  "deck": {"thick": 0.25, "mat": "rust_iron", "under": "bridge_steel"},
+  "rails": [
+    {"side": "both", "out": 0.0, "from": 1.25, "to": 1.5, "thick": 0.25, "mat": "rust_iron"},
+    {"side": "both", "out": 0.0, "from": 0.0, "to": 0.25, "thick": 0.25, "mat": "rust_iron"}
+  ],
+  "posts": [{"side": "both", "out": 0.0, "every": 1.5, "size": [0.25, 1.25, 0.25], "mat": "bridge_steel"}],
+  "piers": {"every": 10.0, "radius": 0.4, "mat": "rust_iron", "min_drop": 0.4},
+  "tags": ["walkway"]
+}

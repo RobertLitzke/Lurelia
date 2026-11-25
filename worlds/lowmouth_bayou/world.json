@@ -1,0 +1,73 @@
+{
+  "name": "lowmouth_bayou",
+  "title": "LOWMOUTH BAYOU",
+  "blurb": "A humid summer morning in the delta, fog on the water: the levee top with the river below, a jump across the breach, blind bends through the cane, railless boardwalks over the cypress swamp and a run through a wrecked steamboat's hull.",
+  "size_m": 768.0,
+  "height_m": 96,
+  "sea_level_m": 29,
+  "seed": 10749,
+  "plants": "v2",
+  "sun": {
+    "latitude": 34
+  },
+  "modes": [
+    "walk",
+    "drive",
+    "race",
+    "screenshot",
+    "camera"
+  ],
+  "games": [
+    "race"
+  ],
+  "vehicles": [
+    "kart"
+  ],
+  "start_hour": 8.0,
+  "rock": [
+    [
+      "silt",
+      1.0
+    ]
+  ],
+  "biomes": [
+    "bottomland",
+    "levee",
+    "cane_field",
+    "cypress_swamp",
+    "backwater_flats",
+    "lowmouth_village",
+    "sawgrass",
+    "hammock"
+  ],
+  "default_biome": "bottomland",
+  "seabed_biome": "backwater_flats",
+  "seasons": [
+    "summer",
+    "autumn"
+  ],
+  "weather": {
+    "sun": 1.0,
+    "fog": 0.9,
+    "clouds": 1.0,
+    "rain": 0.8,
+    "storm": 0.5,
+    "heat": 1.0
+  },
+  "start_weather": "fog",
+  "weathering": 0.4,
+  "moss": 0.5,
+  "start_season": "summer",
+  "spawn": [
+    150,
+    640
+  ],
+  "spawn_bearing": 7,
+  "race": {
+    "circuit": "lowmouth_bayou_ring",
+    "track": "track.json",
+    "laps": 3,
+    "rivals": 5,
+    "vehicle": "kart"
+  }
+}

@@ -12,7 +12,8 @@
 //! - `NAME:herd`: twenty individuals, each with its own size, coat and
 //!   habits, then the species' rare morphs.
 //! - `NAME:ages`: the four ages side by side (creatures/age.rs) — juvenile,
-//!   adult and aged standing and mid-stride, then the skeleton settled from
+//!   adult (male and female, where its forms draw them apart) and aged
+//!   standing and mid-stride, then the skeleton settled from
 //!   three different falls, and the side-sleeping pose if it has one.
 
 use super::life::{Act, Life};
@@ -205,8 +206,16 @@ fn ages(ents: &Entities, models: &[Model], si: usize) -> [Vec<Cell>; 2] {
     let sp = &ents.species[si];
     let m = &models[sp.model];
     let mut rows: [Vec<Cell>; 2] = [Vec::new(), Vec::new()];
-    let living = [Stage::Juvenile, Stage::Adult, Stage::Aged];
-    for (k, stage) in living.into_iter().enumerate() {
+    use crate::creatures::sex::Sex;
+    // Each living stage, and an adult of each sex where the sexes are drawn
+    // differently (library::Forms).
+    let two_sexes = sp.forms.female.is_some() || sp.forms.male.is_some();
+    let mut living = vec![(Stage::Juvenile, None), (Stage::Adult, Some(Sex::Male))];
+    if two_sexes {
+        living.push((Stage::Adult, Some(Sex::Female)));
+    }
+    living.push((Stage::Aged, Some(Sex::Male)));
+    for (k, (stage, sex)) in living.into_iter().enumerate() {
         // Skip a stage this creature doesn't have, so the sheet shows the
         // truth about it rather than a pretend juvenile.
         let has = match stage {
@@ -217,12 +226,18 @@ fn ages(ents: &Entities, models: &[Model], si: usize) -> [Vec<Cell>; 2] {
         if !has {
             continue;
         }
+        let model = sp.model_for(sex, stage);
+        let m = &models[model];
+        let name = match (stage, sex) {
+            (Stage::Adult, Some(x)) if two_sexes => format!("adult {}", x.name()),
+            _ => stage.name().to_string(),
+        };
         let mut mo = Morph::roll(&sp.vary, crate::world::noise::hash32(k as u32 + 11));
         mo.age(stage, &sp.ages, sp.aged_tint);
         let stand = m.rig.as_ref().map(|r| Pose::rest(r.bones.len()));
         rows[0].push(Cell {
-            label: stage.name().to_string(),
-            model: sp.model,
+            label: name.clone(),
+            model,
             pose: stand,
             morph: Some(mo.clone()),
             age: None,
@@ -238,8 +253,8 @@ fn ages(ents: &Entities, models: &[Model], si: usize) -> [Vec<Cell>; 2] {
             l.compose(rig, m.voxel)
         });
         rows[1].push(Cell {
-            label: format!("{} walking", stage.name()),
-            model: sp.model,
+            label: format!("{name} walking"),
+            model,
             pose: walk,
             morph: Some(mo),
             age: None,
@@ -248,7 +263,7 @@ fn ages(ents: &Entities, models: &[Model], si: usize) -> [Vec<Cell>; 2] {
     // Lying on its side, for the creatures that sleep that way.
     if sp.beh.sleeps_on_side {
         if let Some(rig) = m.rig.as_ref() {
-            let pose = super::ragdoll::on_side(rig, m.voxel, 1.0, 5);
+            let pose = super::limp::on_side(rig, m.voxel, m.pivot, 1.0, 5);
             rows[1].push(Cell {
                 label: "asleep on its side".into(),
                 model: sp.model,
@@ -261,7 +276,7 @@ fn ages(ents: &Entities, models: &[Model], si: usize) -> [Vec<Cell>; 2] {
     // Three falls of the same skeleton, to show the spread.
     if let Some(rig) = m.skeleton.as_ref() {
         for seed in [1u32, 2, 3] {
-            let pose = super::ragdoll::settled(rig, m.voxel, seed);
+            let pose = super::limp::settled(rig, m.voxel, m.pivot, seed);
             let row = if seed == 1 { 0 } else { 1 };
             rows[row].push(Cell {
                 label: format!("deceased (fall {seed})"),
@@ -432,7 +447,7 @@ fn serpent_moves(rig: &Rig, voxel: f32, pivot: Vec3) -> [Vec<(String, Pose)>; 2]
         ("climbing".to_string(), along(&trunk)),
         ("draped".to_string(), along(&spine::drape(&ch, voxel, Vec3::ZERO, Vec3::Z, ch.n() / 3, 0.0))),
         ("draped, swaying".to_string(), along(&spine::drape(&ch, voxel, Vec3::ZERO, Vec3::Z, ch.n() / 3, len * 0.035))),
-        ("limp".to_string(), crate::anim::ragdoll::settled(rig, voxel, 5)),
+        ("limp".to_string(), crate::anim::limp::settled(rig, voxel, pivot, 5)),
     ];
     [lower, upper]
 }

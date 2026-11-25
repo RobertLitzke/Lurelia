@@ -28,6 +28,43 @@ pub struct Fall {
 /// The least drop that makes a waterfall rather than rapids, metres.
 pub const FALL_MIN: f32 = 2.5;
 
+/// Water levels closer than this in neighbouring cells are one surface and
+/// are drawn joined; further apart they are separate water with a step
+/// between (world/rivers.rs).
+pub const JOIN: f32 = 0.6;
+/// The same for two cells of a channel: down rapids the water runs on as
+/// one steep surface. Further apart than this they are pools of a cascade,
+/// with ground between that only a fall's sheet crosses.
+pub const CHUTE: f32 = 1.5;
+
+/// Are water levels `a` and `b` in neighbouring cells one surface? `chute`
+/// when both cells are in a channel.
+pub fn joins(a: f32, b: f32, chute: bool) -> bool {
+    (a - b).abs() < if chute { CHUTE } else { JOIN }
+}
+/// Ground this far or less below a cell's water still holds it in.
+pub const HOLD: f32 = 0.2;
+
+/// Where water of `level` at `p` stands past a fall's lip, at its upper
+/// level: `Some(true)` in the band the sheet goes over (no water drawn, no
+/// ground raised there), `Some(false)` beside that band (ground, raised to
+/// hold the water above: the lip's ledges either side of the notch the fall
+/// goes through), `None` not past a lip.
+pub fn past_lip(falls: &[Fall], p: Vec2, level: f32) -> Option<bool> {
+    let mut beside = false;
+    for fl in falls {
+        let d = p - Vec2::new(fl.lip.x, fl.lip.z);
+        let across = d.perp_dot(fl.dir).abs();
+        if (level - fl.lip.y).abs() < 0.3 && d.dot(fl.dir) > 0.7 && across < fl.width * 0.6 + 3.0 {
+            if across < fl.width * 0.5 + 1.0 {
+                return Some(true);
+            }
+            beside = true;
+        }
+    }
+    beside.then_some(false)
+}
+
 const G: f32 = 9.8;
 /// Rows of the sheet are this far apart in drop, metres.
 const ROW: f32 = 0.5;

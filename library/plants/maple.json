@@ -1,8 +1,8 @@
 {
   "name": "maple",
-  "version": 2,
+  "version": 3,
   "introduced_by": "glassfall",
-  "notes": "A maple: a straight trunk under a dense, rounded crown; most of them have turned red.",
+  "notes": "A maple: a straight trunk under a dense, rounded crown. In autumn each tree or pair of trees turns its own colour: mostly scarlet, crimson or orange, some ochre gold, a few still olive. v3: autumn coats instead of one red for the whole wood.",
   "form": "branching",
   "height": [12, 16],
   "trunk_radius": [0.36, 0.5],
@@ -10,6 +10,19 @@
   "crown_radius": [3.9, 4.7],
   "bark": "bark",
   "leaf": "maple_leaves",
+  "morphs": [
+    {"name": "crimson", "weight": 3, "notes": "Deep red.", "colors": {"autumn": "maple_crimson"}},
+    {"name": "red", "weight": 4, "notes": "Scarlet going orange.", "colors": {"autumn": "maple_red"}},
+    {"name": "orange", "weight": 3.5, "notes": "Clear orange.", "colors": {"autumn": "maple_orange"}},
+    {"name": "gold", "weight": 1.5, "notes": "Ochre gold.", "colors": {"autumn": "maple_gold"}},
+    {
+      "name": "turning",
+      "weight": 0.5,
+      "notes": "Still part green, going amber.",
+      "colors": {"autumn": "maple_turning"}
+    }
+  ],
+  "morph_blob_m": 7,
   "curve": "sweep",
   "canopy": "lobes",
   "leader": 0.6,
@@ -19,5 +32,6 @@
   "max_slope": 0.55,
   "autumn": "maple_red",
   "thin_limbs": 0.12,
-  "trunk_taper": 0.3
+  "trunk_taper": 0.3,
+  "site": {"wet": [0.3, 0.8], "soil": [0.4, 1.0]}
 }

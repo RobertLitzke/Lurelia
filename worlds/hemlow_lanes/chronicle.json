@@ -1,0 +1,576 @@
+{
+  "events": [
+    {
+      "year": -1000000,
+      "event": "heightmap",
+      "file": "ground.bin",
+      "cause": "the land the track is laid over, fitted to the road by tools/course/track_file.py"
+    },
+    {
+      "year": -999999,
+      "event": "terrain",
+      "mode": "add",
+      "base": 0,
+      "hills": 1.2,
+      "ridges": 0,
+      "rough": 1,
+      "vary": 0.4,
+      "warp": 30,
+      "cause": "rolling over the fitted land"
+    },
+    {
+      "year": -11000,
+      "event": "lake",
+      "cause": "the mill pond, where the Hem and Fleece Brook meet below the village",
+      "name": "millpond",
+      "at": [
+        302,
+        228
+      ],
+      "radius": 24,
+      "depth": 2.2,
+      "bed": "river_mud",
+      "bank": "river_gravel",
+      "ragged": 0.25,
+      "stretch": 1.4,
+      "bearing": 70
+    },
+    {
+      "year": -10900,
+      "event": "river",
+      "cause": "the Hem, in from the east under Hemlow Edge, across the lane at the ford and down to the mill pond",
+      "name": "hem",
+      "path": [
+        [
+          505,
+          160
+        ],
+        [
+          486,
+          168
+        ],
+        [
+          465,
+          172
+        ],
+        [
+          440,
+          184
+        ],
+        [
+          412,
+          196
+        ],
+        [
+          380,
+          206
+        ],
+        [
+          345,
+          216
+        ],
+        [
+          302,
+          228
+        ]
+      ],
+      "width": 7,
+      "depth": 1.6,
+      "bed": "river_gravel",
+      "bank": "river_mud",
+      "meander": 2,
+      "curve": true
+    },
+    {
+      "year": -10900,
+      "event": "river",
+      "cause": "Fleece Brook, from the spring in the water meadow west under the humpback bridge to the mill pond",
+      "name": "fleece",
+      "path": [
+        [
+          452,
+          304
+        ],
+        [
+          420,
+          296
+        ],
+        [
+          390,
+          288
+        ],
+        [
+          362,
+          284
+        ],
+        [
+          336,
+          268
+        ],
+        [
+          302,
+          228
+        ]
+      ],
+      "width": 3,
+      "depth": 0.9,
+      "bed": "river_cobbles",
+      "bank": "river_gravel",
+      "meander": 1,
+      "curve": true
+    },
+    {
+      "year": 1150,
+      "event": "place",
+      "cause": "the church on the green, built with the wool money",
+      "structure": "wool_church",
+      "at": {
+        "along": 70,
+        "left": 34
+      }
+    },
+    {
+      "year": 1400,
+      "event": "place",
+      "cause": "the inn across the green from the church",
+      "structure": "village_inn",
+      "at": {
+        "along": 30,
+        "right": 24
+      }
+    },
+    {
+      "year": 1300,
+      "event": "place",
+      "cause": "the cross on the green",
+      "structure": "market_cross",
+      "at": {
+        "along": 45,
+        "left": 24
+      }
+    },
+    {
+      "year": 1500,
+      "event": "place",
+      "cause": "a cottage on the green",
+      "structure": "cotswold_cottage",
+      "at": {
+        "along": 85,
+        "right": 20
+      }
+    },
+    {
+      "year": 1500,
+      "event": "place",
+      "cause": "a cottage on the green",
+      "structure": "cotswold_thatch",
+      "at": {
+        "along": 1420,
+        "right": 22
+      }
+    },
+    {
+      "year": 1550,
+      "event": "place",
+      "cause": "a house at the foot of Mill Lane",
+      "structure": "cotswold_house",
+      "at": {
+        "along": 175,
+        "right": 18
+      }
+    },
+    {
+      "year": 1500,
+      "event": "place",
+      "cause": "the smithy at the corner",
+      "structure": "hemlow_smithy",
+      "at": {
+        "along": 230,
+        "left": 22
+      }
+    },
+    {
+      "year": 1450,
+      "event": "place",
+      "cause": "the mill on the pond",
+      "structure": "mill",
+      "at": [
+        318,
+        196
+      ],
+      "bearing": 200
+    },
+    {
+      "year": 1400,
+      "event": "place",
+      "cause": "the tithe barn out by the meadow",
+      "structure": "tithe_barn",
+      "at": {
+        "along": 455,
+        "right": 26
+      }
+    },
+    {
+      "year": 1600,
+      "event": "place",
+      "cause": "a dovecote on the Edge",
+      "structure": "dovecote",
+      "at": {
+        "along": 960,
+        "right": 22
+      }
+    },
+    {
+      "year": 1800,
+      "event": "sign",
+      "cause": "the finger post at the ford",
+      "at": {
+        "along": 528,
+        "right": 18
+      },
+      "text": [
+        "HEMLOW FORD",
+        "THE EDGE 1/2 MILE"
+      ],
+      "style": "timber_sign",
+      "bearing": 270
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "Hemlow Green",
+      "kind": "green",
+      "along": {
+        "from": 1400,
+        "to": 110,
+        "left": [
+          0,
+          40
+        ]
+      },
+      "cause": "the village green the race starts on"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "Mill Lane",
+      "kind": "lane",
+      "along": {
+        "from": 130,
+        "to": 400,
+        "left": [
+          0,
+          20
+        ]
+      },
+      "cause": "the lane's three corners"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Water Meadow",
+      "kind": "meadow",
+      "along": {
+        "from": 420,
+        "to": 540,
+        "right": [
+          0,
+          60
+        ]
+      },
+      "cause": "the meadow along the Hem"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "Hemlow Ford",
+      "kind": "ford",
+      "at": [
+        465,
+        172
+      ],
+      "radius": 25,
+      "cause": "the ford"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "Hemlow Edge",
+      "kind": "scarp",
+      "along": {
+        "from": 830,
+        "to": 1040,
+        "left": [
+          0,
+          80
+        ]
+      },
+      "cause": "the top of the Edge"
+    },
+    {
+      "year": 1,
+      "event": "area",
+      "name": "the Hollow Way",
+      "kind": "lane",
+      "along": {
+        "from": 1045,
+        "to": 1280,
+        "left": [
+          0,
+          20
+        ]
+      },
+      "cause": "the sunken lane down off the Edge"
+    },
+    {
+      "year": 1300,
+      "event": "ribbon",
+      "cause": "a field walled with the stone the ploughs turned up",
+      "path": [
+        [
+          130,
+          150
+        ],
+        [
+          240,
+          146
+        ],
+        [
+          246,
+          240
+        ],
+        [
+          132,
+          246
+        ]
+      ],
+      "kit": "dry_stone_wall",
+      "closed": true,
+      "curve": false
+    },
+    {
+      "year": 1300,
+      "event": "region",
+      "cause": "the walled field",
+      "name": "field0",
+      "poly": [
+        [
+          130,
+          150
+        ],
+        [
+          240,
+          146
+        ],
+        [
+          246,
+          240
+        ],
+        [
+          132,
+          246
+        ]
+      ]
+    },
+    {
+      "year": 1301,
+      "event": "ribbon",
+      "cause": "a field walled with the stone the ploughs turned up",
+      "path": [
+        [
+          132,
+          262
+        ],
+        [
+          246,
+          256
+        ],
+        [
+          250,
+          330
+        ],
+        [
+          136,
+          336
+        ]
+      ],
+      "kit": "dry_stone_wall",
+      "closed": true,
+      "curve": false
+    },
+    {
+      "year": 1301,
+      "event": "region",
+      "cause": "the walled field",
+      "name": "field1",
+      "poly": [
+        [
+          132,
+          262
+        ],
+        [
+          246,
+          256
+        ],
+        [
+          250,
+          330
+        ],
+        [
+          136,
+          336
+        ]
+      ]
+    },
+    {
+      "year": 1302,
+      "event": "ribbon",
+      "cause": "a field walled with the stone the ploughs turned up",
+      "path": [
+        [
+          138,
+          350
+        ],
+        [
+          250,
+          346
+        ],
+        [
+          256,
+          420
+        ],
+        [
+          140,
+          428
+        ]
+      ],
+      "kit": "dry_stone_wall",
+      "closed": true,
+      "curve": false
+    },
+    {
+      "year": 1302,
+      "event": "region",
+      "cause": "the walled field",
+      "name": "field2",
+      "poly": [
+        [
+          138,
+          350
+        ],
+        [
+          250,
+          346
+        ],
+        [
+          256,
+          420
+        ],
+        [
+          140,
+          428
+        ]
+      ]
+    },
+    {
+      "year": 1303,
+      "event": "ribbon",
+      "cause": "a field walled with the stone the ploughs turned up",
+      "path": [
+        [
+          392,
+          310
+        ],
+        [
+          468,
+          318
+        ],
+        [
+          470,
+          400
+        ],
+        [
+          396,
+          396
+        ]
+      ],
+      "kit": "dry_stone_wall",
+      "closed": true,
+      "curve": false
+    },
+    {
+      "year": 1303,
+      "event": "region",
+      "cause": "the walled field",
+      "name": "field3",
+      "poly": [
+        [
+          392,
+          310
+        ],
+        [
+          468,
+          318
+        ],
+        [
+          470,
+          400
+        ],
+        [
+          396,
+          396
+        ]
+      ]
+    },
+    {
+      "year": 1304,
+      "event": "ribbon",
+      "cause": "a field walled with the stone the ploughs turned up",
+      "path": [
+        [
+          392,
+          410
+        ],
+        [
+          470,
+          412
+        ],
+        [
+          472,
+          470
+        ],
+        [
+          396,
+          468
+        ]
+      ],
+      "kit": "dry_stone_wall",
+      "closed": true,
+      "curve": false
+    },
+    {
+      "year": 1304,
+      "event": "region",
+      "cause": "the walled field",
+      "name": "field4",
+      "poly": [
+        [
+          392,
+          410
+        ],
+        [
+          470,
+          412
+        ],
+        [
+          472,
+          470
+        ],
+        [
+          396,
+          468
+        ]
+      ]
+    }
+  ]
+}

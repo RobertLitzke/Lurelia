@@ -18,5 +18,6 @@
   "flower": "red_berries",
   "flower_tips": true,
   "flower_seasons": ["summer"],
-  "autumn": "leaves_autumn"
+  "autumn": "leaves_autumn",
+  "site": {"wet": [0.22, 0.9], "shade": [0.2, 0.7]}
 }

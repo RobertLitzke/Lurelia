@@ -1,0 +1,14 @@
+{
+  "name": "ash_poppy",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Ash poppies: orange cups on the Plain's ash soil and the edges of the old lava.",
+  "form": "herb",
+  "height": [0.25, 0.4],
+  "crown_radius": [0.25, 0.4],
+  "bark": "dead_wood",
+  "leaf": "ash_poppy",
+  "max_slope": 0.9,
+  "affords": ["nectar"],
+  "site": {"sun": [0.4, 1.0], "shade": [0.0, 0.2], "rock": [0.0, 0.8]}
+}

@@ -363,7 +363,7 @@ impl Studio {
             return true;
         }
         let models = std::mem::take(&mut game.models);
-        let placed = game.ents.place_one(s, (self.at.x, self.at.z), &game.store, &models, seed);
+        let placed = game.ents.place_one(s, (self.at.x, self.at.z), &game.store, &models, seed).is_some();
         game.models = models;
         if !placed {
             // The spawner refuses a spot that does not suit the animal: an

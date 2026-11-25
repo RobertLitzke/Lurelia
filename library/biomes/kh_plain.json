@@ -1,0 +1,50 @@
+{
+  "name": "kh_plain",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "The Plain: tall gold bunchgrass on ash and loess, feathergrass tussocks, a wind-bent thorn here and there, wild horses and bison.",
+  "habitat": "dry_grassland",
+  "priority": 1,
+  "rules": {},
+  "surface": "kh_plains_grass",
+  "subsurface": "dirt",
+  "soil": 0.65,
+  "map_color": [196, 174, 104],
+  "plants": [
+    {
+      "plant": "feather_tussock",
+      "density": 0.006,
+      "placement": {"verb": "clustered", "params": {"size": 40, "min": 0.2, "max": 1.0}}
+    },
+    {
+      "plant": "ash_poppy",
+      "density": 0.004,
+      "placement": {"verb": "clustered", "params": {"size": 25, "min": 0.0, "max": 1.0}}
+    },
+    {
+      "plant": "lupine",
+      "density": 0.0015,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0.0, "max": 1.0}}
+    },
+    {"plant": "hawthorn", "density": 0.00012, "placement": {"verb": "lone", "params": {"spacing": 110}}},
+    {
+      "plant": "rabbitbrush",
+      "density": 0.001,
+      "placement": {"verb": "clustered", "params": {"size": 30, "min": 0, "max": 1}}
+    }
+  ],
+  "features": [{"structure": "boulder", "density": 4e-05}],
+  "creatures": [
+    {"creature": "horse", "count": 12.6},
+    {"creature": "przewalski_horse", "count": 10.8},
+    {"creature": "bison", "count": 9},
+    {"creature": "pronghorn", "count": 10.8},
+    {"creature": "lion", "count": 0.8},
+    {"creature": "compsognathus", "count": 7.8},
+    {"creature": "skylark", "count": 10},
+    {"creature": "eagle", "count": 2},
+    {"creature": "jackrabbit", "count": 5},
+    {"creature": "meadowhawk", "count": 6}
+  ],
+  "sound": {"wind": 1.3}
+}

@@ -1,0 +1,9 @@
+{
+  "name": "kh_cloud_high",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Cloud forest on the foot of the high moor, above the back face of the Steps where the cloud sits.",
+  "rules": {"region": "highland", "elev": [0, 172]},
+  "soil": 0.3,
+  "like": "kh_cloud"
+}

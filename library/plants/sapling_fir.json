@@ -11,5 +11,6 @@
   "leaf": "dark_needles",
   "max_slope": 0.9,
   "crown_base": 0.1,
-  "whorls": [5, 7]
+  "whorls": [5, 7],
+  "site": {"shade": [0.25, 1.0]}
 }

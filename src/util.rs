@@ -2,6 +2,32 @@
 
 use std::hash::{BuildHasherDefault, Hasher};
 
+/// A thread's scheduling priority, relative to its process.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Priority {
+    /// Background work that may wait: the chunk workers.
+    Lowest = -2,
+    /// The frame loop, so nothing at normal priority (another program, a
+    /// build) can hold its core.
+    AboveNormal = 1,
+}
+
+/// Set the calling thread's priority. Windows only; elsewhere it does nothing.
+pub fn set_thread_priority(p: Priority) {
+    #[cfg(windows)]
+    {
+        extern "system" {
+            fn GetCurrentThread() -> isize;
+            fn SetThreadPriority(thread: isize, priority: i32) -> i32;
+        }
+        unsafe {
+            SetThreadPriority(GetCurrentThread(), p as i32);
+        }
+    }
+    #[cfg(not(windows))]
+    let _ = p;
+}
+
 /// The "Fx" hash used inside rustc: one rotate, xor and multiply per word.
 /// Several times faster than the standard SipHash for the small integer keys
 /// of the voxel store, the streamer and the world grids, and deterministic,

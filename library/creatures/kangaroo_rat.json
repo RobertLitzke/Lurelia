@@ -5,13 +5,15 @@
   "notes": "Kangaroo rat: a pale sand-coloured desert rodent on long hind legs that comes out of its burrow after dark and bounds off in zigzags.",
   "colors": {"rabbit": [196, 170, 130], "rabbit_light": [230, 218, 196]},
   "behaviour": {
+    "displays": [{"kind": "drum", "params": {"beat": 10}}],
     "walk_speed": 1.2,
     "flee_speed": 5.0,
     "wary": 4,
     "flightiness": 2.0,
     "flees_from": ["player", "coyote", "fox", "rattlesnake"],
     "active": "nocturnal",
-    "off_hours": 0.04
+    "off_hours": 0.04,
+    "voice": {"size": 0.6, "calls": [{"cry": "thump", "on": "display:drum"}]}
   },
   "like": "rabbit",
   "scale": 0.4

@@ -11,7 +11,21 @@
     "skin": [128, 96, 60],
     "dark": [36, 28, 24]
   },
-  "behaviour": {"walk_speed": 0.25, "flee_speed": 0.25, "wary": 4, "flightiness": 0.5, "active": "nocturnal", "off_hours": 0.05},
+  "behaviour": {
+    "displays": [{"kind": "threat", "params": {"style": "curl"}}],
+    "walk_speed": 0.25,
+    "flee_speed": 0.25,
+    "wary": 4,
+    "flightiness": 0.5,
+    "active": "nocturnal",
+    "off_hours": 0.05,
+    "voice": {
+      "calls": [
+        {"cry": "snort", "on": "idle", "hours": "night", "size": 0.2, "every_s": [60, 240]},
+        {"cry": "snort", "on": "display:threat", "size": 0.25}
+      ]
+    }
+  },
   "like": "tortoise",
   "scale": 0.6
 }

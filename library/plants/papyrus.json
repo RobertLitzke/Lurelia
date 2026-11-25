@@ -16,5 +16,6 @@
   "cane_bend": 0.0,
   "cane_spurs": 0.0,
   "cane_leaves": 0.0,
-  "cane_umbel": 0.5
+  "cane_umbel": 0.5,
+  "site": {"wet": [0.7, 1.0]}
 }

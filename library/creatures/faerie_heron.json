@@ -4,10 +4,21 @@
   "introduced_by": "faerie",
   "notes": "A heron of the faerie wood: white with a trailing plume that glows pale violet, and wings that leave a shimmer as it lifts off.",
   "colors": {"heron": [230, 226, 236], "white": [240, 236, 228], "dark": [110, 100, 140], "glow": [170, 120, 255, 1.8]},
-  "behaviour": {"wary": 9, "flightiness": 0.8},
+  "behaviour": {
+    "wary": 9,
+    "flightiness": 0.8,
+    "voice": {
+      "size": 1.7,
+      "calls": [
+        {"cry": "caw", "on": "takeoff", "boost": 2},
+        {"cry": "caw", "on": "idle", "every_s": [300, 900], "chance": 0.5}
+      ]
+    }
+  },
   "like": "heron",
   "extra_ops": [
-    {"op": "box", "from": [16, 18, 12], "to": [17, 19, 16], "mat": "glow", "part": "head"},
-    {"op": "box", "from": [15, 11, 23], "to": [18, 12, 27], "mat": "glow", "part": "tail"}
-  ]
+    {"op": "box", "from": [29, 30, 14], "to": [31, 31, 21], "mat": "glow", "part": "head"},
+    {"op": "box", "from": [27, 18, 33], "to": [32, 20, 39], "mat": "glow", "part": "tail"}
+  ],
+  "realms": ["fae"]
 }

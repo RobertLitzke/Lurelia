@@ -1,0 +1,18 @@
+{
+  "name": "burrow_mound",
+  "version": 2,
+  "introduced_by": "kitehold",
+  "notes": "A prairie dog's burrow mound: a cone of bare packed soil 2.5 m across and 0.8 m high round a hole going straight down, on a pale apron of kicked-out soil 5 m across where nothing grows. Natural feature; the anchor is on the hole, which is carved into the ground.",
+  "size": [21, 6, 21],
+  "anchor": [10, 0, 10],
+  "level": false,
+  "decays": false,
+  "tags": ["feature", "burrow"],
+  "slots": {"soil": "packed_dirt", "spill": "kh_dogtown_spill"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [10.5, 0.5, 10.5], "radius": [10.2, 1.6, 9.6], "mat": "spill"},
+    {"op": "ellipsoid", "centre": [10.5, 0.5, 10.5], "radius": [5.4, 3.8, 5.2], "mat": "soil"},
+    {"op": "ellipsoid", "centre": [10.5, 4.3, 10.5], "radius": [1.8, 1.2, 1.8], "mat": "carve"},
+    {"op": "cylinder", "base": [10.5, -2, 10.5], "radius": 0.9, "height": 9, "mat": "carve"}
+  ]
+}

@@ -16,7 +16,7 @@
 //!   `"like": "quartzite", "shade": 0.78`.
 //! - Identity is never inherited: name, version, introduced_by, notes, rarity,
 //!   a material's legacy `id` and its old names (`was`), and nor are
-//!   `morphs`, whose colours are absolute.
+//!   `morphs`, whose colours are absolute, or a creature's `forms`.
 //! - Chains are allowed (a child of a child); cycles and unknown parents are
 //!   errors and the entry is skipped.
 
@@ -33,7 +33,8 @@ const RECIPES: [&str; 3] = ["texture", "top", "bottom"];
 /// absolute: a child is a different animal or plant, so its parent's coats
 /// would paint it the parent's colours. A child that comes in coats says so
 /// itself.
-const OWN: [&str; 9] = ["name", "version", "introduced_by", "notes", "rarity", "like", "morphs", "id", "was"];
+/// A creature's `forms` likewise: an elk's hind is an elk, not a deer.
+const OWN: [&str; 10] = ["name", "version", "introduced_by", "notes", "rarity", "like", "morphs", "forms", "id", "was"];
 /// Sizes `scale` multiplies: single numbers or [lo, hi] ranges.
 const SCALED: [&str; 6] = ["voxel", "half_w", "height", "trunk_radius", "crown_radius", "fly_height"];
 
@@ -144,6 +145,13 @@ fn root_map(own: &Map<String, Value>) -> Map<String, Value> {
 /// Child over resolved parent.
 fn merge(parent: &Map<String, Value>, child: &Map<String, Value>) -> Map<String, Value> {
     let mut out: Map<String, Value> = parent.iter().filter(|(k, _)| !OWN.contains(&k.as_str())).map(|(k, v)| (k.clone(), v.clone())).collect();
+    // A creature's voice is its own (`Behaviour::voice`): `like` is mostly
+    // about shape, and a crow built on a starling doesn't sing.
+    for b in ["behaviour", "in_water"] {
+        if let Some(Value::Object(o)) = out.get_mut(b) {
+            o.remove("voice");
+        }
+    }
     if let Some(s) = child.get("scale").and_then(|s| s.as_f64()) {
         scale_sizes(&mut out, s, child);
     }

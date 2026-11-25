@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saurischia",
   "notes": "Cinderhorn's young lava running south off the cone: bare broken black crust, nothing growing yet.",
+  "habitat": "volcanic_barren",
   "priority": 12,
   "rules": {"region": "lava"},
   "surface": "lava_crust",
   "subsurface": "basalt",
   "fringe": 0,
+  "soil": 0.4,
   "map_color": [44, 38, 38],
   "plants": [],
   "creatures": []

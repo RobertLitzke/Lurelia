@@ -15,5 +15,6 @@
   "stems": [8, 14],
   "cane_lean": 0.5,
   "cane_bend": 0.05,
-  "cane_spurs": 0.6
+  "cane_spurs": 0.6,
+  "site": {"soil": [0.0, 0.5], "exposure": [0.4, 1.0], "shade": [0.0, 0.3]}
 }

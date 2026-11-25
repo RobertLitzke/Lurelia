@@ -11,5 +11,6 @@
   "leaf": "glass_coral_violet",
   "max_slope": 1.4,
   "water_depth": [0.8, 22],
-  "stems": [4, 7]
+  "stems": [4, 7],
+  "realms": ["bloom"]
 }

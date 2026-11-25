@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "ribshore",
   "notes": "A spruce forest the sea drowned: tall silver poles standing in the water and the wet sand, stumps between them.",
+  "habitat": "swamp_forest",
   "priority": 7,
   "rules": {"region": "stumps", "elev": [-1.2, 4.5], "amphibious": true},
   "surface": "wet_sand",
   "subsurface": "sand",
+  "soil": 0.5,
   "map_color": [120, 112, 100],
   "plants": [
     {

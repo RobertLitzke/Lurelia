@@ -12,6 +12,7 @@
     "legs": [90, 72, 56]
   },
   "behaviour": {
+    "displays": [{"kind": "wing_clap"}],
     "movement": "circle",
     "fly_height": 2.5,
     "walk_speed": 3.0,
@@ -19,7 +20,13 @@
     "wary": 6.0,
     "flightiness": 0.8,
     "active": "nocturnal",
-    "off_hours": 0.03
+    "off_hours": 0.03,
+    "voice": {
+      "calls": [
+        {"cry": "trill", "on": "idle", "hours": "night", "size": 1.8, "every_s": [20, 90], "boost": 2},
+        {"cry": "flap", "on": "display:wing_clap", "size": 0.5}
+      ]
+    }
   },
   "like": "starling",
   "scale": 1.4,

@@ -1,8 +1,8 @@
 {
   "name": "lava_glow",
-  "version": 1,
+  "version": 2,
   "introduced_by": "saurischia",
-  "notes": "Lava still running in the channels at the bottom of the flow: orange under a dark skin, lit from inside.",
+  "notes": "Lava still running in the channels at the bottom of the flow: dull orange under a dark skin by day, lit from inside at night. v2: glows only after dark, so the channels don't shine at noon.",
   "smooth": true,
   "glow": 1.2,
   "texture": {
@@ -12,5 +12,6 @@
     "scale": 3,
     "contrast": 1.0,
     "calm": {"base": [240, 128, 44], "alt": [140, 46, 24]}
-  }
+  },
+  "night_glow": true
 }

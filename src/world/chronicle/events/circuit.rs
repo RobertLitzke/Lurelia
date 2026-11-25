@@ -182,7 +182,7 @@ impl Process for Circuit {
         }
         let decks = if deck.iter().any(|&d| d) {
             let parapet = self.wall_mat.clone().unwrap_or_else(|| self.deck_mat.clone());
-            lay_decks(cx, &line, &road_y, &raw, &deck, &halfs, &walls, [&self.mat, &self.kerb, &self.deck_mat, &parapet])
+            lay_decks(cx, &line, &road_y, &raw, &deck, &halfs, &walls, &vec![self.mat.as_str(); line.len()], [&self.kerb, &self.deck_mat, &parapet])
         } else {
             0
         };
@@ -227,7 +227,8 @@ impl Process for Circuit {
             ));
         }
         let runs = if decks > 0 { format!(" ({})", deck_runs(&line, &deck)) } else { String::new() };
-        cx.state.get::<Circuits>().0.push(Line { name: self.name.clone(), points: line, heights: road_y, width: self.width, ..Default::default() });
+        let beam = self.gate.on.then_some(self.gate.height);
+        cx.state.get::<Circuits>().0.push(Line { name: self.name.clone(), points: line, heights: road_y, width: self.width, gate: beam, ..Default::default() });
         format!(
             "circuit {}: {:.0} m round, {:.0} m from its lowest to highest, steepest grade {:.0}% {} {:.0} m round{gate}{}",
             self.name,
@@ -508,19 +509,22 @@ pub(crate) fn tight_crossings(line: &[Vec2], heights: &[f32]) -> Vec<(Vec2, f32)
     out
 }
 
-/// The decks: for each stretch on `deck`, a slab of road 0.75 m thick with
+/// The decks: for each stretch on `deck`, a slab of road 0.75 m thick (its
+/// top in `roads[k]`, the road's material at each point) with
 /// its kerbs, a parapet either side (the walls' height, or 1 m), and pillars
 /// down to the ground every `PILLAR_EVERY` m, built as voxels in pieces. No
 /// pillar stands on another stretch of road. Returns how many metres of deck.
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn lay_decks(cx: &mut EventCtx, line: &[Vec2], heights: &[f32], raw: &[f32], deck: &[bool], halfs: &[f32], walls: &[f32], mats: [&str; 4]) -> usize {
+pub(crate) fn lay_decks(cx: &mut EventCtx, line: &[Vec2], heights: &[f32], raw: &[f32], deck: &[bool], halfs: &[f32], walls: &[f32], roads: &[&str], mats: [&str; 3]) -> usize {
     let Some(def) = cx.lib.structure(DECK_STRUCTURE) else {
         cx.warnings.push("circuit: the library has no structure called race_deck, so no decks".into());
         return 0;
     };
-    let [road, kerb, slab, parapet] = mats;
+    let [kerb, slab, parapet] = mats;
     let n = line.len();
-    let rail_at = |k: usize| if walls[k] > 0.0 { walls[k] } else { 1.0 };
+    // A deck's rail is as high as the walls, 1 m with none, and none at all
+    // where the wall height is negative (a railless boardwalk).
+    let rail_at = |k: usize| if walls[k] > 0.0 { walls[k] } else if walls[k] < 0.0 { 0.0 } else { 1.0 };
     let dir = |k: usize| (line[(k + 1) % n] - line[(k + n - 1) % n]).normalize_or(Vec2::X);
     let lib = cx.lib;
     let mut metres = 0;
@@ -566,7 +570,7 @@ pub(crate) fn lay_decks(cx: &mut EventCtx, line: &[Vec2], heights: &[f32], raw: 
                     if along <= 0.75 {
                         if x < half + 1.0 {
                             cols.column(lx, lz, ry - 0.75, ry - V, slab);
-                            cols.column(lx, lz, ry - V, ry, if x < half { road } else { kerb });
+                            cols.column(lx, lz, ry - V, ry, if x < half { roads[k] } else { kerb });
                         } else if x < half + 1.5 {
                             cols.column(lx, lz, ry - 0.75, ry + rail_at(k), parapet);
                         }
@@ -627,6 +631,10 @@ pub(crate) fn light_road(cx: &mut EventCtx, line: &[Vec2], heights: &[f32], half
     let mut since = every * 0.5;
     let mut side = 1.0f32;
     let def = cx.lib.structure(GATE_STRUCTURE);
+    // Built of the post's passable copy where the world has one
+    // (`Library::ghost_twins`): a kart drives through a lamp post.
+    let ghost = crate::library::ghost(post);
+    let post = if cx.lib.material(&ghost).is_some() { ghost.as_str() } else { post };
     let mut posts: Vec<(Vec2, Vec<([i32; 3], String)>)> = Vec::new();
     for k in 0..n {
         since += line[k].distance(line[(k + 1) % n]);

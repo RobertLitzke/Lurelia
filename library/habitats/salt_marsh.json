@@ -1,0 +1,13 @@
+{
+  "name": "salt_marsh",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Grasses and succulents on mud the tide covers.",
+  "wet": 0.85,
+  "soil": 0.8,
+  "shade": 0.0,
+  "rock": 0.0,
+  "disturbed": 0.0,
+  "open": 1.0,
+  "forage": ["graze"]
+}

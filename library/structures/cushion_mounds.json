@@ -1,0 +1,28 @@
+{
+  "name": "cushion_mounds",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "A cushion bog: a dozen hard domes of tiny-leaved plants grown into one another, bright green, a metre or two across and knee high, holding water like a sponge.",
+  "size": [36, 8, 36],
+  "anchor": [18, 0, 18],
+  "level": false,
+  "decays": false,
+  "tags": ["natural"],
+  "slots": {"cushion": "cushion_bog", "cushion_alt": "cushion_bog"},
+  "ops": [
+    {"op": "ellipsoid", "centre": [12.3, 0.5, 7.2], "radius": [6.3, 3.5, 6.2], "mat": "cushion"},
+    {"op": "ellipsoid", "centre": [11.4, 0.5, 21.7], "radius": [4.9, 3.6, 3.7], "mat": "cushion"},
+    {"op": "ellipsoid", "centre": [20.6, 0.5, 12.3], "radius": [3.5, 2.0, 4.2], "mat": "cushion"},
+    {"op": "ellipsoid", "centre": [23.7, 0.5, 23.7], "radius": [4.0, 2.9, 4.6], "mat": "cushion"},
+    {"op": "ellipsoid", "centre": [17.1, 0.5, 26.5], "radius": [4.1, 3.3, 5.0], "mat": "cushion"},
+    {"op": "ellipsoid", "centre": [15.4, 0.5, 8.6], "radius": [5.7, 3.6, 6.2], "mat": "cushion"},
+    {"op": "ellipsoid", "centre": [30.8, 0.5, 6.7], "radius": [4.1, 3.6, 3.4], "mat": "cushion"},
+    {"op": "ellipsoid", "centre": [12.4, 0.5, 10.5], "radius": [5.4, 2.3, 5.8], "mat": "cushion"},
+    {"op": "ellipsoid", "centre": [29.3, 0.5, 8.7], "radius": [4.6, 2.7, 4.5], "mat": "cushion"},
+    {"op": "ellipsoid", "centre": [20.4, 0.5, 8.8], "radius": [5.4, 1.8, 5.9], "mat": "cushion"},
+    {"op": "ellipsoid", "centre": [25.1, 0.5, 5.5], "radius": [3.8, 2.9, 3.4], "mat": "cushion"},
+    {"op": "ellipsoid", "centre": [21.3, 1.3, 9.9], "radius": [2.2, 1.4, 2.0], "mat": "cushion_alt"},
+    {"op": "ellipsoid", "centre": [12.8, 2.4, 6.5], "radius": [2.2, 1.4, 2.0], "mat": "cushion_alt"},
+    {"op": "ellipsoid", "centre": [24.9, 2.0, 4.8], "radius": [2.2, 1.4, 2.0], "mat": "cushion_alt"}
+  ]
+}

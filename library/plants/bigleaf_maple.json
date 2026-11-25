@@ -1,14 +1,21 @@
 {
   "name": "bigleaf_maple",
-  "version": 1,
+  "version": 2,
   "introduced_by": "city",
-  "notes": "The Northwest's big maple: green, broad, mossy-limbed. Street and yard tree.",
+  "notes": "The Northwest's big maple: green, broad, mossy-limbed. Street and yard tree. Goes gold in autumn, now and then orange. v2: was the sugar maple's red.",
   "height": [11, 17],
   "trunk_radius": [0.5, 0.7],
   "buttress": 0.55,
   "crown_radius": [3.5, 5.0],
+  "morphs": [
+    {"name": "gold", "weight": 4, "colors": {"autumn": "maple_gold"}},
+    {"name": "orange", "weight": 1, "colors": {"autumn": "maple_orange"}}
+  ],
+  "morph_blob_m": 8,
   "leader": 0.5,
   "fill": 0.6,
   "max_slope": 0.6,
-  "like": "maple"
+  "like": "maple",
+  "autumn": "maple_gold",
+  "site": {"wet": [0.25, 1.0], "exposure": [0.0, 0.65]}
 }

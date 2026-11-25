@@ -17,6 +17,7 @@
 //! list of `Hit`s for the rules to apply, so a bot's rocket reaches the
 //! player down the same path the player's reaches the bot.
 
+pub mod real;
 pub mod sheet;
 pub mod shot;
 pub mod sludge;
@@ -228,6 +229,10 @@ pub enum Cue {
     /// Sparks thrown off something breaking, such as a dead bot's chest
     /// lamp.
     Sparks { at: Vec3 },
+    /// A round or a shell went into fighter `who` at `at`, travelling along
+    /// `dir`. Whether that bleeds is the rules' to say: a zombie does, a
+    /// robot does not (`Shooter::bleeds`).
+    Flesh { at: Vec3, dir: Vec3, who: usize },
 }
 
 /// Cues kept waiting for somebody to take them; a fight nobody draws (the
@@ -371,6 +376,7 @@ impl Combat {
     pub fn fire(&mut self, scene: &mut Scene, eye: Vec3, muzzle: Vec3, dir: Vec3, f: &FireDef, by: usize, strength: f32) {
         let dir = dir.normalize_or(Vec3::NEG_Z);
         let strength = strength.max(0.01);
+        let muzzle = clear_muzzle(scene.store, eye, muzzle);
         if f.kind != FireKind::Beam {
             self.cue(Cue::Muzzle { at: muzzle, dir });
             crate::sound::emit(crate::sound::Noise::fire(muzzle, f));
@@ -857,6 +863,7 @@ impl Combat {
                     risky: false,
                     look: None,
                 });
+                self.cue(Cue::Flesh { at: from + dir * t, dir, who });
                 from + dir * t
             }
             (None, None) => {
@@ -1014,6 +1021,7 @@ impl Combat {
                             risky: s.self_hit > 0.0 || s.splash.is_some_and(|sp| sp.self_damage > 0.0),
                             look: Some(s.look),
                         });
+                        self.cue(Cue::Flesh { at, dir: s.vel, who });
                     }
                     // A glob of sludge that found a wall or the floor, or
                     // that ran its fuse out in the air, becomes matter rather
@@ -1237,6 +1245,24 @@ impl Combat {
     }
 }
 
+/// Where a shot leaves from: the drawn gun's muzzle, unless something solid
+/// is between the eye and it, as it is when a long gun held low is pointed
+/// at the floor or pushed against a wall. Then it leaves from just short of
+/// what is in the way, so a rocket fired at your feet bursts where you can
+/// feel it rather than inside the floor.
+fn clear_muzzle(store: &Store, eye: Vec3, muzzle: Vec3) -> Vec3 {
+    let d = muzzle - eye;
+    let len = d.length();
+    if len < 1e-3 {
+        return muzzle;
+    }
+    let dir = d / len;
+    match store.ray(eye, dir, len, |m| m != AIR && !crate::world::store::passable(m)) {
+        Some(h) => eye + dir * (h.t - 0.1).max(0.0),
+        None => muzzle,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1320,6 +1346,7 @@ mod tests {
             tracer: [1.0, 0.5, 0.2],
             tracer_s: 0.08,
             look: String::new(),
+            move_spread: None,
         }
     }
 
@@ -1601,16 +1628,16 @@ mod tests {
         assert!(c.take_edits().is_empty(), "a block that hit a body laid itself down anyway");
     }
 
-    /// The pulse gun's right button, held on one of a crowd: it jumps on to
+    /// The arc gun's right button, held on one of a crowd: it jumps on to
     /// the nearest body in sight within reach, and on from that one, at
     /// half the damage each time. It does not jump through a wall, to
     /// somebody out of reach, back to anybody it has already been in, or
     /// into whoever is holding it.
     #[test]
     fn the_arc_jumps_body_to_body_at_half_each_time() {
-        let text = std::fs::read_to_string("library/weapons/pulse_gun.json").unwrap();
+        let text = std::fs::read_to_string("library/weapons/arc_gun.json").unwrap();
         let w: crate::library::WeaponDef = serde_json::from_str(&text).unwrap();
-        let f = w.alt.expect("the pulse gun has a second mode");
+        let f = w.alt.expect("the arc gun has a second mode");
         assert!(f.arc_jumps >= 2 && (f.arc_keep - 0.5).abs() < 1e-6);
         let store = room();
         let mut ents = Entities::new(Default::default(), 1);
@@ -1647,13 +1674,13 @@ mod tests {
         assert_eq!(hits.len(), 3, "somebody was hit twice: {hits:?}");
     }
 
-    /// The pulse gun's right button bends onto a foe just off the reticule,
+    /// The arc gun's right button bends onto a foe just off the reticule,
     /// not onto one well off it, and never onto a teammate.
     #[test]
     fn the_arc_bends_onto_a_foe_near_the_reticule() {
-        let text = std::fs::read_to_string("library/weapons/pulse_gun.json").unwrap();
+        let text = std::fs::read_to_string("library/weapons/arc_gun.json").unwrap();
         let w: crate::library::WeaponDef = serde_json::from_str(&text).unwrap();
-        let mut f = w.alt.expect("the pulse gun has a second mode");
+        let mut f = w.alt.expect("the arc gun has a second mode");
         assert!(f.bend_m > 0.0 && f.bend_m < 1.0, "a bend of {} m is not slight", f.bend_m);
         f.arc_jumps = 0;
         let store = room();
@@ -1974,11 +2001,14 @@ mod tests {
         assert!(errs.is_empty(), "{errs:#?}");
         let store = room();
         let foot = Vec3::new(0.0, 2.0, 0.0);
-        let fighters = [me(foot), me(foot + Vec3::X * 4.0)];
         let eye = foot + Vec3::Y * 1.5;
-        let aim = Vec3::new(4.0, -0.6, 0.0).normalize();
         let mut zeroes: Vec<String> = Vec::new();
         for def in &lib.weapons {
+            // A blade or a shovel is tried at arm's length, everything else
+            // at four metres.
+            let away = if def.fire.range < 4.0 { 1.6 } else { 4.0 };
+            let fighters = [me(foot), me(foot + Vec3::X * away)];
+            let aim = Vec3::new(away, -0.6, 0.0).normalize();
             for t in [Trigger::Fire, Trigger::Alt] {
                 let mut g = crate::combat::weapon::Held::new(std::sync::Arc::new(def.clone()), true);
                 if g.mode(t).is_none() {
@@ -2017,7 +2047,7 @@ mod tests {
                 }
             }
         }
-        assert!(zeroes.is_empty(), "these modes put nothing on a man four metres away: {zeroes:?}");
+        assert!(zeroes.is_empty(), "these modes put nothing on a man four metres away (a melee one at arm's length): {zeroes:?}");
     }
 
     /// The flight predictor finds a wall that sends a shell back onto a man

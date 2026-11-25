@@ -125,7 +125,7 @@ impl Process for Network {
                 }
             }
         }
-        // Junctions: how far back each line is trimmed at a shared end.
+        // How many links end at each node, and the widest of them.
         let mut deg: HashMap<String, (usize, f32, u8)> = HashMap::default();
         for (k, l) in self.links.iter().enumerate() {
             if lines[k].is_none() {
@@ -141,14 +141,28 @@ impl Process for Network {
                 }
             }
         }
+        // A node where just two links of one kit meet is a bend in one road,
+        // not a junction: the two are laid as one line, rounded through the
+        // node, so the grade runs on unbroken and no apron caps the corner.
+        let through = |n: &String| -> bool {
+            if self.height.is_some() || deg.get(n).is_none_or(|d| d.0 != 2) {
+                return false;
+            }
+            let ks: Vec<usize> = (0..self.links.len()).filter(|&k| lines[k].is_some() && (&self.links[k].from == n || &self.links[k].to == n)).collect();
+            ks.len() == 2 && ks[0] != ks[1] && kits[ks[0]] == kits[ks[1]]
+        };
+        let bends: std::collections::HashSet<String> = deg.keys().filter(|n| through(n)).cloned().collect();
+
+        // Junctions: how far back each line is trimmed at a shared end.
         let mut junctions = 0;
+        let mut aprons: Vec<(Vec2, f32, u8)> = Vec::new();
         for (n, (count, half, mat)) in deg.clone() {
             if self.height.is_some() {
                 // Passages run into each other at a node; nothing to pave.
                 junctions += (count >= 2) as usize;
                 continue;
             }
-            if count < 2 {
+            if count < 2 || bends.contains(&n) {
                 continue;
             }
             let r = (half + 1.5).max(2.5);
@@ -163,22 +177,74 @@ impl Process for Network {
                     line.reverse();
                 }
             }
-            route::junction(cx, at[&n], r, mat);
+            aprons.push((at[&n], r, mat));
             junctions += 1;
         }
+
+        // Chains: links joined end to end through the bends.
+        let mut used = vec![false; self.links.len()];
+        let mut chains: Vec<(Vec<Vec2>, usize)> = Vec::new();
+        for k0 in 0..self.links.len() {
+            if used[k0] || lines[k0].is_none() || kits[k0].is_none() {
+                continue;
+            }
+            used[k0] = true;
+            let mut chain = lines[k0].clone().unwrap();
+            let (mut head, mut tail) = (self.links[k0].from.clone(), self.links[k0].to.clone());
+            // Grow at the tail, then at the head.
+            for front in [false, true] {
+                loop {
+                    let n = if front { head.clone() } else { tail.clone() };
+                    if !bends.contains(&n) {
+                        break;
+                    }
+                    let Some(k) = (0..self.links.len()).find(|&k| !used[k] && lines[k].is_some() && (self.links[k].from == n || self.links[k].to == n)) else { break };
+                    used[k] = true;
+                    let mut next = lines[k].clone().unwrap();
+                    let other = if self.links[k].from == n { self.links[k].to.clone() } else { next.reverse(); self.links[k].from.clone() };
+                    // `next` now runs from n to `other`.
+                    if front {
+                        next.reverse();
+                        next.pop();
+                        next.extend(chain);
+                        chain = next;
+                        head = other;
+                    } else {
+                        chain.pop();
+                        chain.extend(next);
+                        tail = other;
+                    }
+                    chain = round_bend(&chain, at[&n], 14.0);
+                }
+            }
+            chains.push((chain, kits[k0].unwrap()));
+        }
+
         let mut total = 0.0;
         let mut spans = 0;
         let mut laid = 0;
-        for (k, line) in lines.iter().enumerate() {
-            let (Some(line), Some(ki)) = (line, kits[k]) else { continue };
+        for (line, ki) in &chains {
             if line.len() < 2 {
                 continue;
             }
-            let l = if self.height.is_some() { route::lay_at(cx, line, ki, self.smooth, self.height) } else { route::lay(cx, line, ki, self.smooth) };
+            let l = if self.height.is_some() { route::lay_at(cx, line, *ki, self.smooth, self.height) } else { route::lay(cx, line, *ki, self.smooth) };
             total += l.length;
             spans += l.spans.len();
             laid += 1;
         }
+        // The junctions after the roads, each tilted to meet the graded ends
+        // running into it, so no road steps up or down onto its apron.
+        for &(p, r, mat) in &aprons {
+            let ends: Vec<Vec2> = chains
+                .iter()
+                .flat_map(|(l, _)| [l[0], l[l.len() - 1]])
+                .filter(|e| e.distance(p) < r + 3.0)
+                .collect();
+            route::junction_fit(cx, p, r, mat, &ends);
+        }
+        let lines: Vec<Option<Vec<Vec2>>> = chains.iter().map(|(l, _)| Some(l.clone())).collect();
+        let halves: Vec<f32> = chains.iter().map(|(_, ki)| cx.state.get::<Ribbons>().kits[*ki].half).collect();
+        let kits: Vec<Option<usize>> = chains.iter().map(|(_, ki)| Some(*ki)).collect();
         // Two links that cross away from any node: without a junction the
         // one laid second cuts its grade through the first, leaving a step
         // across it. The crossing is aproned at the later grade, and the
@@ -217,6 +283,49 @@ impl Process for Network {
             if failed == 0 { String::new() } else { format!(", {failed} with no way through") },
         )
     }
+}
+
+/// The corner of a line at `node` rounded: the points within `reach` m of it
+/// (or less, on a short leg) give way to a curve from where the line comes
+/// in to where it goes out, through the middle of the corner.
+fn round_bend(line: &[Vec2], node: Vec2, reach: f32) -> Vec<Vec2> {
+    let Some(k) = (0..line.len()).min_by(|&a, &b| line[a].distance(node).total_cmp(&line[b].distance(node))) else {
+        return line.to_vec();
+    };
+    if k == 0 || k + 1 >= line.len() {
+        return line.to_vec();
+    }
+    // How far along each leg to start the curve: at most half the shorter leg.
+    let leg = |range: &mut dyn Iterator<Item = usize>| {
+        let mut d = 0.0;
+        let mut last = k;
+        let mut out = k;
+        for j in range {
+            d += line[j].distance(line[last]);
+            last = j;
+            out = j;
+            if d >= reach {
+                break;
+            }
+        }
+        (out, d)
+    };
+    let (i0, d0) = leg(&mut (0..k).rev());
+    let (i1, d1) = leg(&mut (k + 1..line.len()));
+    let d = d0.min(d1);
+    if d < 2.0 {
+        return line.to_vec();
+    }
+    let (p0, p1, c) = (line[i0], line[i1], line[k]);
+    let n = ((d0 + d1) / 1.0).ceil().max(2.0) as usize;
+    let mut out: Vec<Vec2> = line[..i0].to_vec();
+    for j in 0..=n {
+        let t = j as f32 / n as f32;
+        let u = 1.0 - t;
+        out.push(p0 * (u * u) + c * (2.0 * u * t) + p1 * (t * t));
+    }
+    out.extend_from_slice(&line[i1 + 1..]);
+    out
 }
 
 /// Drop the points at the front of a line that fall inside `r` of the node,

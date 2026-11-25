@@ -1,0 +1,16 @@
+{
+  "name": "fae",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "The faerie world: glowing moss, fae horses and lantern flowers, where the old stories are true.",
+  "habitats": {
+    "broadleaf_forest": {
+      "plants": [{"plant": "gold_maple", "density": 0.002}],
+      "creatures": [{"creature": "mossback_deer", "count": 1}, {"creature": "glow_bee", "count": 4}]
+    },
+    "meadow": {"creatures": [{"creature": "glow_bee", "count": 4}, {"creature": "fae_horse", "count": 1}]},
+    "bog": {"creatures": [{"creature": "marsh_light", "count": 3}]}
+  },
+  "ground": {"meadow_grass": "moss_grass", "lawn_grass": "moss_grass"},
+  "mist": 0.25
+}

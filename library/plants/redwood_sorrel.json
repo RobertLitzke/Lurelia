@@ -8,5 +8,6 @@
   "crown_radius": [0.5, 0.8],
   "bark": "dead_wood",
   "leaf": "redwood_sorrel",
-  "max_slope": 0.9
+  "max_slope": 0.9,
+  "site": {"wet": [0.22, 1.0], "shade": [0.15, 1.0]}
 }

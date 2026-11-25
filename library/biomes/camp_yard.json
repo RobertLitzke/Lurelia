@@ -3,10 +3,12 @@
   "version": 1,
   "introduced_by": "saltmirror",
   "notes": "The camp: trodden sand over the gravel round the cabins, tamarisks planted for shade and gone wild, rabbitbrush coming up through the motor pool.",
+  "habitat": "settlement",
   "priority": 13,
   "rules": {"region": "camp"},
   "surface": "fan_sand",
   "subsurface": "fan_gravel",
+  "soil": 0.5,
   "map_color": [170, 150, 120],
   "plants": [
     {

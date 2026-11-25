@@ -11,5 +11,6 @@
   "leaf": "willow_leaves",
   "max_slope": 0.4,
   "autumn": "leaves_autumn",
-  "thin_limbs": 0.12
+  "thin_limbs": 0.12,
+  "site": {"wet": [0.4, 1.0]}
 }

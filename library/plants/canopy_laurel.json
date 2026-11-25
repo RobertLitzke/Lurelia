@@ -14,5 +14,6 @@
   "canopy": "lobes",
   "leader": 0.45,
   "fill": 0.65,
-  "max_slope": 0.6
+  "max_slope": 0.6,
+  "site": {"wet": [0.4, 1.0], "rock": [0.0, 0.4]}
 }

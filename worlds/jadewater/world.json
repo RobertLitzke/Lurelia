@@ -8,6 +8,7 @@
   "surf": {"height": 0.35},
   "underwater": {"visibility": 30, "light": 0.07},
   "seed": 400,
+  "plants": "v2",
   "sun": {"latitude": 32},
   "seeds": 1,
   "snow_line_m": 1000,

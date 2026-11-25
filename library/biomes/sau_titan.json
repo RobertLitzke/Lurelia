@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saurischia",
   "notes": "The Titan Stand: the oldest monkey-puzzles in the country, enormous grey columns standing far apart over a floor of ferns and deep moss.",
+  "habitat": "conifer_forest",
   "priority": 8,
   "rules": {"region": "titan"},
   "surface": "grim_moss",
   "subsurface": "dirt",
   "fringe": 12,
+  "soil": 0.35,
   "map_color": [34, 70, 44],
   "plants": [
     {"plant": "titan_araucaria", "density": 0.0018, "placement": {"verb": "lone", "params": {"spacing": 22}}},
@@ -25,5 +27,6 @@
     {"creature": "archaeopteryx", "count": 6},
     {"creature": "giant_millipede", "count": 4},
     {"creature": "compsognathus", "count": 1}
-  ]
+  ],
+  "realm": {"dinosaur": 1.0}
 }

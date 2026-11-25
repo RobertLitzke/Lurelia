@@ -10,5 +10,6 @@
   "bark": "palm_trunk",
   "leaf": "palm_frond",
   "squash": 0.5,
-  "max_slope": 0.6
+  "max_slope": 0.6,
+  "site": {"wet": [0.3, 0.9], "shade": [0.0, 0.5]}
 }

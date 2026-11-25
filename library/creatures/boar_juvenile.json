@@ -1,0 +1,14 @@
+{
+  "name": "boar_juvenile",
+  "version": 1,
+  "introduced_by": "glassfall",
+  "notes": "The boar's juvenile form (boar `forms`): a piglet, red-brown with cream stripes running the length of its body and no bristly mane yet. Only its model is used.",
+  "colors": {"coat": [132, 88, 54], "belly": [150, 108, 70], "mane": [118, 80, 50], "stripe": [214, 184, 134]},
+  "like": "boar",
+  "extra_ops": [
+    {"op": "recolour", "at": [0, 17, 10], "until": [32, 18, 50], "from": "coat", "to": "stripe"},
+    {"op": "recolour", "at": [0, 20, 10], "until": [32, 21, 50], "from": "coat", "to": "stripe"},
+    {"op": "recolour", "at": [0, 23, 10], "until": [32, 24, 50], "from": "coat", "to": "stripe"},
+    {"op": "recolour", "at": [0, 26, 10], "until": [32, 27, 50], "from": "coat", "to": "stripe"}
+  ]
+}

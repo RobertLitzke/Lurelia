@@ -3,11 +3,13 @@
   "version": 2,
   "introduced_by": "kaldvik",
   "notes": "The high fell above the fjord walls: wind-packed snow over basalt, a few junipers hunched in the lee of boulders.",
+  "habitat": "alpine_fell",
   "priority": 4,
   "rules": {"elev": [95, 400]},
   "surface": "snow",
   "subsurface": "snow",
   "rock": "basalt",
+  "soil": 0.4,
   "map_color": [226, 232, 238],
   "plants": [
     {"plant": "juniper", "density": 0.0012, "placement": {"verb": "clustered", "params": {"size": 8}}},

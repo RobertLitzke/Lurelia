@@ -14,6 +14,7 @@
     "tip": [26, 26, 30]
   },
   "behaviour": {
+    "displays": [{"kind": "long_call", "params": {"on": "water"}}],
     "movement": "circle",
     "walk_speed": 9,
     "flee_speed": 12,
@@ -28,13 +29,19 @@
     "winter": 0.3,
     "floats": true,
     "plunge": true,
-    "dive_depth": 5
+    "dive_depth": 5,
+    "voice": {
+      "calls": [
+        {"cry": "caw", "on": "display:long_call", "at": "jaw", "size": 1.6},
+        {"cry": "caw", "on": "idle", "size": 1.6, "every_s": [60, 200], "chorus": 0.4, "chorus_m": 100}
+      ]
+    }
   },
   "like": "albatross",
   "scale": 0.4,
   "extra_ops": [
-    {"op": "recolour", "at": [2, 4, 14], "until": [7, 5, 18], "from": "wing", "to": "tip"},
-    {"op": "recolour", "at": [25, 4, 14], "until": [30, 5, 18], "from": "wing", "to": "tip"},
-    {"op": "box", "from": [16, 4, 8], "to": [17, 5, 11], "mat": "beak", "part": "head"}
+    {"op": "recolour", "at": [2, 13, 22], "until": [18, 16, 34], "from": "wing", "to": "tip"},
+    {"op": "recolour", "at": [76, 13, 22], "until": [92, 16, 34], "from": "wing", "to": "tip"},
+    {"op": "box", "from": [47, 13, 2], "to": [50, 16, 12], "mat": "beak", "part": "head"}
   ]
 }

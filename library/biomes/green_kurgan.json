@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "windbarrow",
   "notes": "The one mound in the field that is green when the rest are gold, and the ring of ground round it: thick wet-looking turf, and no grazing marks on it.",
+  "habitat": "dry_grassland",
   "priority": 20,
   "rules": {"region": "green_kurgan"},
   "surface": "moss_grass",
   "subsurface": "dirt",
   "rock": null,
+  "soil": 0.6,
   "map_color": [80, 170, 90],
   "plants": [
     {

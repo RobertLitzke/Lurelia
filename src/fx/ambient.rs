@@ -54,9 +54,18 @@ impl Default for State {
 impl State {
     pub fn of(lib: &crate::library::Library) -> State {
         let mut s = State::default();
-        for p in &lib.plants {
+        for (pi, p) in lib.plants.iter().enumerate() {
             if let Some(m) = p.autumn.as_deref().and_then(|n| lib.material(n)) {
                 s.autumn[m as usize] = true;
+            }
+            // A plant whose coats turn different colours (crimson, orange and
+            // gold maples) drops leaves of each.
+            for (which, c) in lib.plant_coats(pi).iter().enumerate() {
+                for k in 0..c.shades.max(1) {
+                    if let Some(m) = lib.worn(pi, which, k).get("autumn") {
+                        s.autumn[m as usize] = true;
+                    }
+                }
             }
             if let Some(m) = p.leaf_alt.as_ref().and_then(|(n, _)| lib.material(n)) {
                 s.blossom[m as usize] = true;

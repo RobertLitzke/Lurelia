@@ -1,0 +1,43 @@
+{
+  "name": "grenade_launcher",
+  "version": 1,
+  "introduced_by": "realistic",
+  "notes": "Forty-millimetre grenades lobbed in an arc. The left button fires one that goes off on whatever it hits first; the right fires one that bounces about and goes off when its fuse runs out, for the room you cannot see into. Slow to reload and very much your own problem at close range.",
+  "display": "GRENADE LAUNCHER",
+  "slot": 3,
+  "ammo_max": 24,
+  "ammo_start": 10,
+  "mag": 6,
+  "reload_s": 2.6,
+  "fire": {
+    "kind": "shell",
+    "rpm": 70.0,
+    "damage": 30.0,
+    "speed": 38.0,
+    "gravity": 12.0,
+    "fuse_s": 6.0,
+    "kick": 1.6,
+    "splash": {"damage": 85.0, "radius": 4.0, "push": 9.0, "self_damage": 0.6, "self_push": 1.0, "crater": 0.25, "curve": 1.2},
+    "tracer": [1.0, 0.7, 0.35],
+    "tracer_s": 0.06,
+    "look": "grenade"
+  },
+  "alt": {
+    "kind": "shell",
+    "rpm": 70.0,
+    "damage": 20.0,
+    "speed": 30.0,
+    "gravity": 12.0,
+    "bounces": 4,
+    "fuse_s": 2.2,
+    "kick": 1.4,
+    "splash": {"damage": 85.0, "radius": 4.0, "push": 9.0, "self_damage": 0.6, "self_push": 1.0, "crater": 0.25, "curve": 1.2},
+    "tracer": [1.0, 0.7, 0.35],
+    "tracer_s": 0.06,
+    "look": "grenade"
+  },
+  "view": "gl_drum",
+  "tint": [0.36, 0.38, 0.3],
+  "role": "lobber",
+  "ammo_type": "grenades"
+}

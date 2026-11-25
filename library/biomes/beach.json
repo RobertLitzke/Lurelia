@@ -2,10 +2,12 @@
   "name": "beach",
   "version": 2,
   "introduced_by": "glassfall",
+  "habitat": "beach",
   "priority": 5,
   "rules": {"coast": [0, 9], "elev": [0, 2.5]},
   "surface": "sand",
   "subsurface": "sand",
+  "soil": 0.5,
   "map_color": [222, 206, 150],
   "plants": [
     {

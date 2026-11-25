@@ -3,11 +3,13 @@
   "version": 2,
   "introduced_by": "windbarrow",
   "notes": "The face of the Barrow Edge and the walls of its combes: bare white chalk with the flint band running level along it, junipers out of the cracks, lichen.",
+  "habitat": "bare_rock",
   "priority": 10,
   "rules": {"slope": [1.5, 50]},
   "surface": "chalk_rubble",
   "subsurface": "chalk_white",
   "rock": "chalk_white",
+  "soil": 0.9,
   "map_color": [214, 210, 196],
   "plants": [
     {

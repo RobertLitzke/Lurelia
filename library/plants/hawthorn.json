@@ -21,5 +21,6 @@
   "flower": "hawthorn_flower",
   "flower_seasons": ["spring"],
   "affords": ["nectar"],
-  "thin_limbs": 0.12
+  "thin_limbs": 0.12,
+  "site": {"soil": [0.5, 1.0], "shade": [0.0, 0.5]}
 }

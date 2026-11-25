@@ -1,0 +1,16 @@
+{
+  "name": "pier_planks",
+  "version": 1,
+  "introduced_by": "gannet_harbor",
+  "notes": "Weathered pier planking laid as a road surface: smooth, so a gentle slope draws as a slope and the planks meet setts flush, where weathered_planks would step a voxel at a time.",
+  "smooth": true,
+  "crisp": true,
+  "texture": {
+    "pattern": "planks",
+    "base": [126, 116, 102],
+    "scale": 4,
+    "contrast": 1.0,
+    "alt": [150, 140, 124],
+    "calm": {"base": [160, 146, 126], "alt": [172, 158, 136]}
+  }
+}

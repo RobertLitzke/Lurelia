@@ -6,9 +6,9 @@
 //! it. The engine knows nothing about voxels, biomes or weather; `bed.rs` is
 //! the one file that does.
 //!
-//! The mix is three buses -- ambience, effects (the guns, the player's own
-//! noises, the animals) and music -- each with its own level in the
-//! settings, through one master.
+//! The mix is four buses -- ambience, effects (the guns, the player's own
+//! noises), wildlife (the animals' calls, call.rs) and music -- each with
+//! its own level in the settings, through one master.
 //!
 //! Two rules hold for everything that runs in the audio callback: nothing
 //! allocates, locks or blocks there (the moment's numbers cross over through
@@ -17,11 +17,13 @@
 
 pub mod bake;
 pub mod bed;
+pub mod call;
 pub mod dsp;
 pub mod fx;
 pub mod voice;
 pub mod watch;
 
+pub use call::Cry;
 pub use fx::{Kind, Noise, Pick};
 
 use dsp::{Glide, OnePole, Room, Wander};
@@ -137,8 +139,11 @@ pub struct Levels {
     pub on: bool,
     pub volume: u8,
     pub ambience: u8,
-    /// The guns, the player's own noises and the animals.
+    /// The guns and the player's own noises.
     pub effects: u8,
+    /// The animals' calls: low by default, so they add to a place without
+    /// taking it over.
+    pub wildlife: u8,
     pub music: u8,
 }
 
@@ -149,6 +154,7 @@ impl Default for Levels {
             volume: 70,
             ambience: 100,
             effects: 100,
+            wildlife: 60,
             music: 60,
         }
     }
@@ -159,6 +165,7 @@ impl Default for Levels {
 pub enum Bus {
     Ambience,
     Effects,
+    Wildlife,
     #[allow(dead_code)] // the score, when there is one
     Music,
 }
@@ -173,6 +180,7 @@ impl Levels {
         let bus = match b {
             Bus::Ambience => self.ambience,
             Bus::Effects => self.effects,
+            Bus::Wildlife => self.wildlife,
             Bus::Music => self.music,
         };
         let c = |v: u8| (v.min(100) as f32 / 100.0).powi(2);
@@ -220,6 +228,69 @@ const AMBIENCE_LEVEL: f32 = 0.05;
 /// How loud the effects are at full strength, before the levels: a sidearm
 /// round at the ear peaks about -10 dBFS (`tests::a_round_at_the_ear`).
 const EFFECTS_LEVEL: f32 = 0.45;
+
+/// How loud the calls are at full strength, before the levels: a songbird
+/// ten metres off peaks about -26 dBFS, a few dB over a breezy wood's bed
+/// so the calls stand out of the grass and leaves.
+const WILDLIFE_LEVEL: f32 = 0.95;
+
+/// A call heard: what, from whom, how far and which way (a compass bearing,
+/// radians, 0 north), about how loud at its peak (dBFS at the current
+/// levels), and when it will have finished. For the debug list.
+#[derive(Clone, Copy, Debug)]
+pub struct Audible {
+    pub cry: Cry,
+    pub who: u16,
+    pub key: u32,
+    pub seed: u32,
+    pub dist: f32,
+    pub bearing: f32,
+    pub db: f32,
+    pub until: Instant,
+}
+
+static AUDIBLE: Mutex<Vec<Audible>> = Mutex::new(Vec::new());
+
+/// Note a call placed for the ear, or move the row of one already heard.
+pub(crate) fn note_audible(n: &Noise, s: &fx::Shot, eye: glam::Vec3, levels: &Levels) {
+    let Kind::Call { cry, size, seed, who } = n.kind else { return };
+    let at = n.at.unwrap_or(eye);
+    let to = at - eye;
+    let bearing = crate::util::bearing(glam::Vec2::new(to.x, to.z));
+    // Patterns peak a few dB under full scale dry (call.rs tests).
+    let db = 20.0 * (s.gain * WILDLIFE_LEVEL * levels.gain(Bus::Wildlife) * 0.6).max(1e-9).log10();
+    let Ok(mut q) = AUDIBLE.lock() else { return };
+    let now = Instant::now();
+    q.retain(|a| a.until > now);
+    if let Some(a) = q.iter_mut().find(|a| a.key == n.key && a.seed == seed && a.cry == cry && n.key != 0) {
+        a.dist = to.length();
+        a.bearing = bearing;
+        a.db = db;
+        return;
+    }
+    if q.len() >= 64 {
+        return;
+    }
+    let len = cry.pattern(size, seed).len;
+    q.push(Audible {
+        cry,
+        who,
+        key: n.key,
+        seed,
+        dist: to.length(),
+        bearing,
+        db,
+        until: now + std::time::Duration::from_secs_f32(s.delay + len + 0.1),
+    });
+}
+
+/// Every call that is sounding or on its way, loudest first.
+pub fn audible() -> Vec<Audible> {
+    let now = Instant::now();
+    let mut v: Vec<Audible> = AUDIBLE.lock().map(|q| q.iter().filter(|a| a.until > now).copied().collect()).unwrap_or_default();
+    v.sort_by(|a, b| b.db.total_cmp(&a.db));
+    v
+}
 
 /// Sounds posted and not yet taken (`emit`, `take_noises`). Nobody listens
 /// in a headless match or a tournament, so posting is a no-op until a
@@ -282,6 +353,7 @@ struct Glides {
     facing: [Glide; 2],
     ambience: Glide,
     effects: Glide,
+    wildlife: Glide,
     motor: Glide,
     motor_hz: Glide,
     motor_load: Glide,
@@ -319,6 +391,7 @@ impl Glides {
             facing: [Glide::new(0.0, 0.04, br), Glide::new(-1.0, 0.04, br)],
             ambience: g(0.6),
             effects: Glide::new(0.0, 0.05, br),
+            wildlife: g(0.6),
             motor: g(0.15),
             motor_hz: Glide::new(30.0, 0.06, br),
             motor_load: g(0.08),
@@ -366,6 +439,7 @@ impl Glides {
         self.facing[1].to = c.facing[1];
         self.ambience.to = c.levels.gain(Bus::Ambience) * c.duck.clamp(0.0, 1.0);
         self.effects.to = c.levels.gain(Bus::Effects) * c.duck.clamp(0.0, 1.0);
+        self.wildlife.to = c.levels.gain(Bus::Wildlife) * c.duck.clamp(0.0, 1.0);
     }
 }
 
@@ -405,6 +479,7 @@ pub struct Engine {
     motor: Motor,
     room: Room,
     fx: Fx,
+    calls: call::Calls,
     muffle: [[OnePole; 2]; 2],
     l: [f32; BLOCK],
     r: [f32; BLOCK],
@@ -432,6 +507,7 @@ impl Engine {
             motor: Motor::new(900),
             room: Room::new(sr),
             fx: Fx::new(),
+            calls: call::Calls::new(),
             muffle: Default::default(),
             l: [0.0; BLOCK],
             r: [0.0; BLOCK],
@@ -445,7 +521,10 @@ impl Engine {
 
     /// Start a one-shot (or keep a held one up).
     pub fn start(&mut self, s: Shot) {
-        self.fx.start(s, self.sr);
+        match s.kind {
+            Kind::Call { cry, size, seed, .. } => self.calls.start(&s, cry, size, seed, self.sr),
+            _ => self.fx.start(s, self.sr),
+        }
     }
 
     /// One block of the mix into `self.l` and `self.r`.
@@ -490,6 +569,7 @@ impl Engine {
         let size = g.room_size.step();
         let amb = g.ambience.step();
         let eff = g.effects.step();
+        let wild = g.wildlife.step();
         self.l = [0.0; BLOCK];
         self.r = [0.0; BLOCK];
         let mut m = Mix {
@@ -517,6 +597,8 @@ impl Engine {
         }
         let (mut fl, mut fr, mut fs) = ([0.0f32; BLOCK], [0.0f32; BLOCK], [0.0f32; BLOCK]);
         self.fx.run(&mut fl, &mut fr, &mut fs, self.sr);
+        let (mut cl, mut cr, mut cs) = ([0.0f32; BLOCK], [0.0f32; BLOCK], [0.0f32; BLOCK]);
+        self.calls.run(&mut cl, &mut cr, &mut cs, self.sr);
         // The car's engine rides the effects bus, under the guns.
         let (mut ml, mut mr) = ([0.0f32; BLOCK], [0.0f32; BLOCK]);
         let (mg, mh, mload, ms) = (g.motor.step(), g.motor_hz.step(), g.motor_load.step(), g.scrub.step());
@@ -527,13 +609,16 @@ impl Engine {
         }
         let amb = AMBIENCE_LEVEL * amb;
         let eff = EFFECTS_LEVEL * eff;
-        // Outdoors a shot still wants a little of the land answering it.
+        let wild = WILDLIFE_LEVEL * wild;
+        // Outdoors a shot still wants a little of the land answering it,
+        // and a call a little more: it is heard from further off.
         let shot_room = 0.25 + 0.75 * room;
+        let call_room = 0.35 + 0.65 * room;
         for i in 0..BLOCK {
-            let into = (self.l[i] + self.r[i]) * 0.5 * room * amb + fs[i] * shot_room * eff;
+            let into = (self.l[i] + self.r[i]) * 0.5 * room * amb + fs[i] * shot_room * eff + cs[i] * call_room * wild;
             let (wl, wr) = self.room.run(into);
-            let mut l = self.l[i] * amb + fl[i] * eff + wl * 0.7;
-            let mut r = self.r[i] * amb + fr[i] * eff + wr * 0.7;
+            let mut l = self.l[i] * amb + fl[i] * eff + cl[i] * wild + wl * 0.7;
+            let mut r = self.r[i] * amb + fr[i] * eff + cr[i] * wild + wr * 0.7;
             l = self.muffle[0][0].lp(l);
             l = self.muffle[0][1].lp(l);
             r = self.muffle[1][0].lp(r);
@@ -628,6 +713,7 @@ impl Sound {
             for n in noises {
                 let pitch = 1.0 + (self.rng.unit() - 0.5) * 0.06;
                 if let Some(s) = fx::place(n, eye, facing, pitch) {
+                    note_audible(n, &s, eye, &self.levels);
                     if q.len() < SHOTS_KEPT {
                         q.push(s);
                     }

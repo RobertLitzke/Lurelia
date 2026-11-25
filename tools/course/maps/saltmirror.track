@@ -1,0 +1,134 @@
+# Saltmirror Array: mostly flat-out on the salt, broken by two banks and a
+# run through the fynbos range. Units in metres: x east, z south.
+#
+# East down the array's arm, 600 m between the dish pedestals with a pad
+# every 120 m; round the inside wall of a dish that fell off its mount, a
+# bowl banked at 45 degrees; out over its rim past the first cactus knoll
+# (a kart that kept its boosts and takes the pad high on the wall flies
+# straight over the knoll); a slalom round the other two; north into the
+# fynbos over blind crests and up onto the old shoreline, where a long
+# sweeper round a spur is the second bank; down off the benches through the
+# gypsum dunes and across the brine flat, slick as ice, to the line.
+track saltmirror_array size 1024 style saltpan
+title SALTMIRROR ARRAY
+blurb A late-summer evening on a salt pan under eleven abandoned radio dishes: a pad-chained straight down the array, a fallen dish ridden as a 45-degree bowl, a slalom round the cactus knolls, a climb through the fynbos to the old shoreline, and the brine flat home.
+race laps 2 rivals 5 vehicle kart
+road 18 bank 1.2
+land 30 0.6
+hour 18
+materials verge salt_plates
+
+# The range in the north: the old shorelines as benches, 12 and 26 m over
+# the pan, and a spur the upper one goes round.
+plateau 56 60 -20,-20 1044,-20 1044,300 700,320 560,330 470,320 380,330 260,330 -20,320
+plateau 42 40 -20,320 260,330 380,330 470,330 470,400 300,420 -20,410
+# The gypsum dunes in the west.
+hill 190 470 70 5
+# The cactus knolls on the pan.
+hill 700 632 12 4
+hill 620 616 11 3.5
+hill 540 640 11 3.5
+
+# The array's arm, east.
+point 214 700                  # start / finish
+point 270 700
+point 390 700
+point 510 700
+point 630 700
+point 720 698
+point 762 696
+# The fallen dish: half way round its wall.
+point 790 696
+point 815.5 685.5
+point 826 660
+point 815.5 634.5
+point 790 624
+# Over the rim, and the slalom round the knolls.
+point 758 622
+point 728 616
+point 700 604
+point 672 610
+point 646 630
+point 620 644
+point 594 638
+point 568 620
+point 540 610
+point 512 616
+point 486 630
+# North into the fynbos.
+point 462 620
+point 446 594
+point 440 560 at 30.6
+point 440 520 at 33.4
+point 438 480 at 37.4
+point 432 440 at 42
+point 428 400 at 46
+point 432 362 at 51
+point 444 326 at 55
+point 446 296 at 56
+# The sweeper round the spur on the upper shoreline.
+point 432 270 at 56
+point 404 254 at 56
+point 366 248 at 56
+point 326 254 at 56
+point 292 270 at 56
+point 266 296 at 55
+# Down off the benches.
+point 246 330 at 51
+point 228 366 at 46
+point 214 400 at 41.5
+# The gypsum dunes.
+point 202 440 at 38.6
+point 194 480 at 36
+point 186 520 at 33.4
+# The brine flat, and round onto the arm.
+point 172 570 at 30
+point 158 612 at 30
+point 148 650 at 30
+point 156 682 at 30
+point 178 698 at 30
+
+# The arm: a micro-pad every 120 m between the dish pedestals. A kart that
+# takes them all holds its overspeed the whole way down.
+pad 40 centre 4
+pad 160 centre 4
+pad 280 centre 4
+pad 400 centre 4
+
+# The fallen dish: its painted inside wall banked at 24 degrees. A kart
+# carrying the arm's boosts rides high on it, where a last pad sits on the
+# outer lane by the rim, and the lip over the rim throws a fast kart clean
+# over the first knoll.
+bank 568 700 deg 24
+surface 560 706 dish_floor
+pad 655 right 5
+
+ramp 505 765 24
+
+
+# The range: the climb, the shoreline benches and the way down are on the
+# land; the long sweeper round the spur is the second bank.
+ramp 1070 1980 26
+bank 1410 1676 2.6
+jump 1880 0.8 12
+jump 1938 0.8 12
+
+# The brine flat: slick as ice to the line.
+surface 1985 2100 brine_skin
+verge 1985 2100 brine_skin 10
+
+items 100
+items 900
+items 1700
+
+# A quartzite arch in the fynbos, where the climb leaves the pan.
+arch 1200 24 11 6 mat quartzite
+
+# Width: 18 m on the pan. Wider in the dish and on the brine flat; the
+# slalom round the knolls and the climb over the blind crests narrower;
+# the dunes narrower again.
+width 560 708 20
+width 725 1030 16
+width 1060 1385 15
+width 1710 1880 15
+width 1985 2060 20

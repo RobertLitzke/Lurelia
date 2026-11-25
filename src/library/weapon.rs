@@ -13,7 +13,7 @@ pub enum FireKind {
     Shell,
     /// A ray held on a target rather than fired: damage is per second and
     /// the beam is resolved afresh every step the trigger is down. The
-    /// pulse gun's secondary.
+    /// arc gun's secondary.
     Beam,
 }
 
@@ -210,7 +210,7 @@ pub struct FireDef {
     pub twist: f32,
     /// Beams: how many times the beam jumps on from the body it is held on
     /// to the nearest other body, within `arc_m` metres and in sight of the
-    /// last, and the share of its damage it keeps at each jump. The pulse
+    /// last, and the share of its damage it keeps at each jump. The arc
     /// gun's right button: held on one of a crowd, it is in all of them.
     /// 0 jumps is a beam that stops where it lands.
     #[serde(default)]
@@ -285,6 +285,33 @@ pub struct FireDef {
     /// shell with a burst a rocket, one without a shard.
     #[serde(default)]
     pub look: String,
+    /// Aim that suffers on the move: spread added by how fast the body is
+    /// going and whether it is off the ground. No weapon file sets it; a
+    /// game that wants it adds it to every gun (`weapon_tune`, src/tune.rs).
+    #[serde(default)]
+    pub move_spread: Option<MoveSpread>,
+}
+
+/// Degrees of spread added on the move (`FireDef::move_spread`).
+#[derive(Deserialize, Clone, Copy, Debug)]
+pub struct MoveSpread {
+    /// For each metre a second of speed over the ground.
+    #[serde(default)]
+    pub per_mps: f32,
+    /// The most that speed adds.
+    #[serde(default)]
+    pub most_deg: f32,
+    /// On top of that while off the ground: jumping, falling, climbing over.
+    #[serde(default)]
+    pub air_deg: f32,
+}
+
+impl MoveSpread {
+    /// What a body going `vel` adds, `on_ground` or not.
+    pub fn degrees(&self, vel: glam::Vec3, on_ground: bool) -> f32 {
+        let speed = vel.x.hypot(vel.z);
+        (speed * self.per_mps).min(self.most_deg) + if on_ground { 0.0 } else { self.air_deg }
+    }
 }
 
 /// One gun. A world hands some of them out (`"shooter"` in world.json); the
@@ -300,8 +327,13 @@ pub struct WeaponDef {
     pub introduced_by: String,
     /// What the HUD calls it.
     pub display: String,
-    /// Which digit picks it, 1 to 9.
+    /// Which digit picks it, 1 to 10 (the 0 key); the role's own digit.
     pub slot: u32,
+    /// What it is for on a map (`weapon_kit::ROLES`): the slot a weapon kit
+    /// fills with it. A pad for any gun is a pad for its role, so a map
+    /// played with another kit gets that kit's gun of the same role there.
+    #[serde(default)]
+    pub role: String,
     /// Rounds the player may carry. 0 is a weapon that needs no ammunition
     /// at all and can never be emptied, which is what the Digger is:
     /// there is nothing in it to run out of.
@@ -338,7 +370,7 @@ pub struct WeaponDef {
     #[serde(default)]
     pub dig: Option<DigDef>,
     /// Which built-in shape is drawn in the player's hands
-    /// (`combat::viewmodel::SHAPES`). The shapes are Rust, not data, so a
+    /// (`combat::real::REAL`). The models are Rust, not data, so a
     /// weapon file picks one rather than describing one.
     #[serde(default)]
     pub view: String,

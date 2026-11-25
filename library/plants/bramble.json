@@ -17,5 +17,6 @@
   "cane_spurs": 0.4,
   "flower": "blackberries",
   "flower_seasons": ["summer", "autumn"],
-  "affords": ["nectar"]
+  "affords": ["nectar"],
+  "site": {"wet": [0.25, 0.85], "shade": [0.0, 0.6]}
 }

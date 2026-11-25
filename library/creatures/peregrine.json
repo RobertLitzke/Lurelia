@@ -20,40 +20,48 @@
     "legs": [226, 200, 70]
   },
   "behaviour": {
+    "displays": [{"kind": "sky_dance", "params": {"height": 25, "wave_m": 40}}],
     "movement": "circle",
     "fly_height": 30,
     "walk_speed": 1.2,
     "flee_speed": 9.0,
     "wary": 14.0,
     "flightiness": 0.7,
-    "group": null
+    "group": null,
+    "voice": {
+      "size": 0.8,
+      "calls": [
+        {"cry": "screech", "on": "display:sky_dance", "boost": 2},
+        {"cry": "screech", "on": "idle", "hours": "day", "every_s": [120, 400]}
+      ]
+    }
   },
   "like": "hawk",
   "scale": 0.8,
   "extra_ops": [
-    {"op": "recolour", "at": [27, 4, 13], "until": [37, 5, 27], "from": "belly", "to": "bars"},
-    {"op": "recolour", "at": [27, 4, 13], "until": [37, 5, 27], "from": "band", "to": "bars"},
-    {"op": "recolour", "at": [27, 6, 13], "until": [37, 7, 27], "from": "belly", "to": "bars"},
-    {"op": "recolour", "at": [27, 6, 13], "until": [37, 7, 27], "from": "band", "to": "bars"},
-    {"op": "recolour", "at": [27, 8, 13], "until": [37, 9, 27], "from": "belly", "to": "bars"},
-    {"op": "recolour", "at": [27, 8, 13], "until": [37, 9, 27], "from": "band", "to": "bars"},
-    {"op": "recolour", "at": [27, 10, 13], "until": [37, 11, 27], "from": "belly", "to": "bars"},
-    {"op": "recolour", "at": [27, 10, 13], "until": [37, 11, 27], "from": "band", "to": "bars"},
-    {"op": "recolour", "at": [27, 12, 13], "until": [37, 13, 27], "from": "belly", "to": "bars"},
-    {"op": "recolour", "at": [27, 12, 13], "until": [37, 13, 27], "from": "band", "to": "bars"},
-    {"op": "recolour", "at": [28, 13, 11], "until": [31, 15, 15], "from": "head", "to": "cheek"},
-    {"op": "recolour", "at": [33, 13, 11], "until": [36, 15, 15], "from": "head", "to": "cheek"},
-    {"op": "box", "from": [13, 10, 27], "to": [28, 15, 32], "mat": "air"},
-    {"op": "box", "from": [6, 10, 26], "to": [14, 15, 32], "mat": "air"},
-    {"op": "box", "from": [2, 10, 17], "to": [10, 15, 21], "mat": "air"},
-    {"op": "box", "from": [2, 10, 24], "to": [10, 15, 32], "mat": "air"},
-    {"op": "box", "from": [1, 12, 22], "to": [3, 13, 23], "mat": "wing_tip", "part": "wing_l_tip"},
-    {"op": "box", "from": [36, 10, 27], "to": [51, 15, 32], "mat": "air"},
-    {"op": "box", "from": [50, 10, 26], "to": [58, 15, 32], "mat": "air"},
-    {"op": "box", "from": [54, 10, 17], "to": [62, 15, 21], "mat": "air"},
-    {"op": "box", "from": [54, 10, 24], "to": [62, 15, 32], "mat": "air"},
-    {"op": "box", "from": [61, 12, 22], "to": [63, 13, 23], "mat": "wing_tip", "part": "wing_r_tip"},
-    {"op": "box", "from": [20, 6, 29], "to": [29, 10, 38], "mat": "air"},
-    {"op": "box", "from": [35, 6, 29], "to": [44, 10, 38], "mat": "air"}
+    {"op": "recolour", "at": [31, 4, 14], "until": [41, 5, 28], "from": "belly", "to": "bars"},
+    {"op": "recolour", "at": [31, 4, 14], "until": [41, 5, 28], "from": "band", "to": "bars"},
+    {"op": "recolour", "at": [31, 6, 14], "until": [41, 7, 28], "from": "belly", "to": "bars"},
+    {"op": "recolour", "at": [31, 6, 14], "until": [41, 7, 28], "from": "band", "to": "bars"},
+    {"op": "recolour", "at": [31, 9, 14], "until": [41, 10, 28], "from": "belly", "to": "bars"},
+    {"op": "recolour", "at": [31, 9, 14], "until": [41, 10, 28], "from": "band", "to": "bars"},
+    {"op": "recolour", "at": [31, 11, 14], "until": [41, 12, 28], "from": "belly", "to": "bars"},
+    {"op": "recolour", "at": [31, 11, 14], "until": [41, 12, 28], "from": "band", "to": "bars"},
+    {"op": "recolour", "at": [31, 13, 14], "until": [41, 14, 28], "from": "belly", "to": "bars"},
+    {"op": "recolour", "at": [31, 13, 14], "until": [41, 14, 28], "from": "band", "to": "bars"},
+    {"op": "recolour", "at": [32, 14, 11], "until": [35, 16, 16], "from": "head", "to": "cheek"},
+    {"op": "recolour", "at": [37, 14, 11], "until": [40, 16, 16], "from": "head", "to": "cheek"},
+    {"op": "box", "from": [16, 11, 28], "to": [32, 16, 34], "mat": "air"},
+    {"op": "box", "from": [8, 11, 27], "to": [17, 16, 34], "mat": "air"},
+    {"op": "box", "from": [4, 11, 18], "to": [13, 16, 22], "mat": "air"},
+    {"op": "box", "from": [4, 11, 25], "to": [13, 16, 34], "mat": "air"},
+    {"op": "box", "from": [3, 13, 23], "to": [5, 14, 24], "mat": "wing_tip", "part": "wing_l_tip"},
+    {"op": "box", "from": [40, 11, 28], "to": [56, 16, 34], "mat": "air"},
+    {"op": "box", "from": [55, 11, 27], "to": [64, 16, 34], "mat": "air"},
+    {"op": "box", "from": [59, 11, 18], "to": [68, 16, 22], "mat": "air"},
+    {"op": "box", "from": [59, 11, 25], "to": [68, 16, 34], "mat": "air"},
+    {"op": "box", "from": [67, 13, 23], "to": [69, 14, 24], "mat": "wing_tip", "part": "wing_r_tip"},
+    {"op": "box", "from": [23, 6, 31], "to": [33, 11, 40], "mat": "air"},
+    {"op": "box", "from": [39, 6, 31], "to": [49, 11, 40], "mat": "air"}
   ]
 }

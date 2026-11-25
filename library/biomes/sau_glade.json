@@ -3,11 +3,13 @@
   "version": 1,
   "introduced_by": "saurischia",
   "notes": "A fern glade in the Fernwood: an opening of waist-high ferns and cycads with the forest standing round it.",
+  "habitat": "meadow",
   "priority": 8,
   "rules": {"region": "glade"},
   "surface": "fernwood_floor",
   "subsurface": "dirt",
   "fringe": 10,
+  "soil": 0.4,
   "map_color": [92, 128, 70],
   "plants": [
     {
@@ -36,6 +38,9 @@
     {"creature": "compsognathus", "count": 8},
     {"creature": "stegosaurus", "count": 3},
     {"creature": "brachiosaurus", "count": 2},
-    {"creature": "diplodocus", "count": 3}
-  ]
+    {"creature": "diplodocus", "count": 3},
+    {"creature": "protoceratops", "count": 4},
+    {"creature": "velociraptor", "count": 4}
+  ],
+  "realm": {"dinosaur": 1.0}
 }

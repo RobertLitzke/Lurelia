@@ -1,4 +1,4 @@
-//! Plant growth forms and placement rules: the verbs that library plants and
+﻿//! Plant growth forms and placement rules: the verbs that library plants and
 //! biome entries choose from. A growth form turns a plant's parameters into a
 //! tree the generator can draw; a placement rule decides where in its biome a
 //! plant or a natural feature (a boulder, a fallen log) appears.
@@ -775,6 +775,19 @@ pub fn grow(lib: &Library, p: &PlantDef, base: Vec3, seed: u32, worn: Worn) -> T
 pub const TRUNK_TAPER: f32 = 0.3;
 
 crate::util::named! {
+    /// What is left of a dead tree (plant `skeleton`).
+    pub enum Skeleton {
+        /// Still standing, its top gone, a few bare limb stubs.
+        Standing = "standing",
+        /// Snapped a few metres up.
+        Broken = "broken",
+        Stump = "stump",
+        /// Fallen, lying along the ground.
+        Log = "log",
+    }
+}
+
+crate::util::named! {
     /// The shape a branching plant's limb takes (`curve`).
     pub enum Curve {
         Straight = "straight",
@@ -812,8 +825,8 @@ crate::util::named! {
 /// A conifer: a leader with whorls of branches up it, each whorl clothed in
 /// needles, over a core of needles round the trunk.
 ///
-/// Until 2026-11-14 this was one cone — a radius function of height, scalloped
-/// into tiers and wobbled by noise — which read as a smooth green tent with a
+/// Until 2026-11-14 this was one cone â€” a radius function of height, scalloped
+/// into tiers and wobbled by noise â€” which read as a smooth green tent with a
 /// fringe of needle cards and nothing in between, and whose thin waists fell
 /// under one leaf cell and let the bark show through (see GUIDE "Tree crowns").
 /// Built from `canopy.rs` shapes instead, a conifer gets the ragged edge, the
@@ -942,15 +955,15 @@ pub fn conifer_crown(
     // Enough segments that the core steps down smoothly instead of standing
     // in two or three flat-sided storeys. It runs the whole way to the tip: a
     // sleeve is a capsule, so its top is already a rounded cap and the tree
-    // needs no separate apex clump — one that did not quite reach the core
+    // needs no separate apex clump â€” one that did not quite reach the core
     // below it left a feathery spire floating over a gap.
     let segs = n.clamp(4, 9);
     for s in 0..segs {
         let (t0, t1) = (s as f32 / segs as f32, (s + 1) as f32 / segs as f32);
         let tm = (t0 + t1) * 0.5;
         // Above the trunk the floor draws in toward the tip. Held flat it is
-        // the whole of a small tree — a 3 m sapling came out a box with a flat
-        // top — and on a big one it is the pipe the tip must not become.
+        // the whole of a small tree â€” a 3 m sapling came out a box with a flat
+        // top â€” and on a big one it is the pipe the tip must not become.
         let r = (cone(tm) * 0.80).max(if tm < ft { clothe } else { floor(TIP_NEEDLE) * (1.0 - tm * 0.55) });
         let a = base + Vec3::Y * (lo + span * t0);
         blobs.push(Blob::sleeve(a, r, Vec3::Y * span * (t1 - t0)));
@@ -1012,7 +1025,7 @@ pub fn conifer_crown(
 /// cell that holds no bark, and a cell is 50 cm across with its corners 35 cm
 /// from its middle. Under about 0.7 m of needles every cell round the trunk
 /// is part bark, none of them is leaves, and the wood shows through a crown
-/// that looks solid — which is exactly what it did at 0.5.
+/// that looks solid â€” which is exactly what it did at 0.5.
 pub const CONIFER_CLOTHE: f32 = 0.75;
 
 /// How far the needles have to stand outside a trunk of radius `trunk_r`,
@@ -1022,7 +1035,7 @@ pub const CONIFER_CLOTHE: f32 = 0.75;
 /// really depends on is how many voxels of bark there are: a sapling's stem is
 /// one voxel across and the cells beside it are already all leaves, while a
 /// redwood's fills cells three deep. Charging every conifer the full 0.75 m
-/// made the saplings — whole trees barely a metre wide — into flat-topped
+/// made the saplings â€” whole trees barely a metre wide â€” into flat-topped
 /// slabs of needles.
 pub fn conifer_clothe(trunk_r: f32) -> f32 {
     CONIFER_CLOTHE.min(2.5 * trunk_r + 0.12)
@@ -1034,7 +1047,7 @@ pub fn conifer_clothe(trunk_r: f32) -> f32 {
 ///
 /// It is deliberately not large enough to guarantee a full leaf cell. Holding
 /// every clump to that (0.7) made the top of each tree a flat-sided pipe of
-/// needles as tall as the crown is thin — a 25 m fir tapers to well under a
+/// needles as tall as the crown is thin â€” a 25 m fir tapers to well under a
 /// metre across, and at 25 cm voxels nothing can be both that narrow and that
 /// solid. The tip is allowed to go thin and lean on its leaf cards for the
 /// outline; what must never fail is the needles round the *trunk*, which is
@@ -1073,7 +1086,7 @@ fn share_r(parent_r: f32, share: f32) -> f32 {
 /// How far a curve turns a limb over its whole length, as (outward, upward)
 /// radians. A limb is aimed half this much the other way before it is traced,
 /// so the bow fits inside the crown the plant asked for instead of being added
-/// to it — an arching limb used to end half as far out again as it was aimed.
+/// to it â€” an arching limb used to end half as far out again as it was aimed.
 fn bend(curve: Curve) -> glam::Vec2 {
     match curve {
         Curve::Arch => glam::Vec2::new(0.78, -0.16),
@@ -1197,7 +1210,7 @@ fn branching(
         // A limb is aimed by the box the crown is meant to fill: so far out
         // (`run`) and so far up (`rise`). The lowest limbs reach furthest out
         // and climb least, the top ones the other way about, and the two
-        // together set the limb's length — a tall tree's crown then reaches
+        // together set the limb's length â€” a tall tree's crown then reaches
         // its height instead of spreading in a low flat plate.
         let deep = height - trunk_h;
         // The limb covers a little over half the crown's reach; the forks off
@@ -1508,10 +1521,58 @@ fn weight(w: &World, pl: &Placement, p: Vec2, biome: u8, seed: u32) -> f32 {
 /// are decided in.
 enum Sow {
     /// A library plant. `depth` is the water over it, for one that grows up
-    /// to the surface.
-    Plant { gi: usize, depth: Option<f32>, base: Vec3, seed: u32, worn: Worn },
+    /// to the surface. `size` scales it (placement v2's age classes: under 1
+    /// young, over 1 old); `like` is a plant whose bark and leaves it wears
+    /// (a generic sapling in its parent's colours).
+    Plant { gi: usize, depth: Option<f32>, base: Vec3, seed: u32, worn: Worn, size: f32, like: Option<usize> },
     /// The flower stalk from the heart of a rosette.
     Stalk { mat: u8, base: Vec3, seed: u32 },
+}
+
+/// `plant` at `size` (heights by it, the trunk by a little more and the
+/// crown by a little less, as a tree thickens and spreads with age), in the
+/// colours of `like` if given.
+fn aged(plant: &PlantDef, size: f32, like: Option<&PlantDef>) -> PlantDef {
+    let mut g = plant.clone();
+    // A dead tree's skeleton, measured from the living tree it was.
+    if let (Some(k), Some(p)) = (plant.skeleton, like) {
+        let ph = (p.height[0] + p.height[1]) * 0.5 * size;
+        let tr = p.trunk_radius.map(|r| r * size.powf(1.3));
+        let cr = (p.crown_radius[0] + p.crown_radius[1]) * 0.5 * size.powf(0.8);
+        g.height = match k {
+            Skeleton::Standing => [ph * 0.55, ph * 0.85],
+            Skeleton::Broken => [(ph * 0.15).max(1.5), (ph * 0.35).max(2.5)],
+            Skeleton::Stump => [(tr[0] * 2.0).clamp(0.35, 0.8), (tr[1] * 3.0).clamp(0.5, 1.3)],
+            Skeleton::Log => [ph * 0.45, ph * 0.8],
+        };
+        g.trunk_radius = tr;
+        g.crown_radius = match k {
+            Skeleton::Standing => [cr * 0.3, cr * 0.5],
+            Skeleton::Broken => [cr * 0.15, cr * 0.25],
+            Skeleton::Stump | Skeleton::Log => [0.0, 0.0],
+        };
+        g.buttress = p.buttress * size;
+        g.bark = p.bark.clone();
+        g.leaf = None;
+        g.autumn = None;
+        g.flower = None;
+        g.leaf_alt = None;
+        return g;
+    }
+    if size != 1.0 {
+        g.height = g.height.map(|h| h * size);
+        g.trunk_radius = g.trunk_radius.map(|r| r * size.powf(1.3));
+        g.crown_radius = g.crown_radius.map(|r| r * size.powf(0.8));
+        g.buttress *= size.powf(1.5);
+    }
+    if let Some(p) = like {
+        g.bark = p.bark.clone();
+        g.leaf = p.leaf.clone();
+        g.autumn = p.autumn.clone();
+        g.flower = None;
+        g.leaf_alt = None;
+    }
+    g
 }
 
 /// Grow what the scan decided on, in the order it decided.
@@ -1519,10 +1580,13 @@ fn grow_all(w: &World, sow: &[Sow]) -> Vec<super::gen::Tree> {
     let threads = crate::world::fields::build_threads();
     let per = sow.len().div_ceil(threads).max(1);
     let lib = &w.lib;
-    let one = |s: &Sow| match s {
+    let grown = |s: &Sow| match s {
         Sow::Stalk { mat, base, seed } => stalk_marker(*mat, *base, *seed),
-        Sow::Plant { gi, depth, base, seed, worn } => {
+        Sow::Plant { gi, depth, base, seed, worn, size, like } => {
             let plant = &lib.plants[*gi];
+            if *size != 1.0 || like.is_some() {
+                return grow(lib, &aged(plant, *size, like.map(|p| &lib.plants[p])), *base, *seed, *worn);
+            }
             match depth {
                 // Kelp's height is a share of the water over it: up to the
                 // surface. Coral keeps its own.
@@ -1544,6 +1608,14 @@ fn grow_all(w: &World, sow: &[Sow]) -> Vec<super::gen::Tree> {
             }
         }
     };
+    // A fallen log grows as a standing trunk and is then laid down.
+    let one = |s: &Sow| {
+        let t = grown(s);
+        match s {
+            Sow::Plant { gi, .. } if lib.plants[*gi].skeleton == Some(Skeleton::Log) => lay_down(w, t),
+            _ => t,
+        }
+    };
     let mut bands: Vec<Vec<super::gen::Tree>> = Vec::new();
     std::thread::scope(|sc| {
         let mut handles = Vec::new();
@@ -1556,6 +1628,126 @@ fn grow_all(w: &World, sow: &[Sow]) -> Vec<super::gen::Tree> {
     bands.into_iter().flatten().collect()
 }
 
+/// Water over a cell from a lake or cenote (not the sea's own level, which a
+/// river's channel runs on at past its mouth, for the tide), metres.
+fn inland_depth(w: &World, i: usize) -> Option<f32> {
+    w.f.inland.get(&(i as u32)).filter(|wet| wet.level > w.f.sea).map(|wet| wet.level - w.f.h[i])
+}
+
+/// How far round a trunk the ground must be clear of other plants, metres.
+fn clear_of(form: Form) -> f32 {
+    match form {
+        Form::Herb => 0.7,
+        Form::Shrub => 0.8,
+        _ => 1.6,
+    }
+}
+
+/// Whether plant `plant` of biome `bi` may stand at `p` at all: in the
+/// world, in its biome, on free ground with room overhead, not too steep, at
+/// the water depth it takes. The cell's index and the water over it if so.
+/// Pure: the same answer in either placement. With `any_biome` the spot may
+/// lie in another biome (placement v2's border zones); the caller decides.
+fn spot(w: &World, plant: &PlantDef, bi: usize, p: Vec2, taken: &[bool], room: &[f32], any_biome: bool) -> Option<(usize, f32)> {
+    let size = w.f.size;
+    if p.x < 2.0 || p.y < 2.0 || p.x > size - 2.0 || p.y > size - 2.0 {
+        return None;
+    }
+    let i = w.f.idx(p.x, p.y);
+    if (!any_biome && w.f.biome[i] as usize != bi) || taken[i] || room[i] < plant.height[1] + 1.0 {
+        return None;
+    }
+    // A tree whose crown would stand round a high deck (a canopy platform, a
+    // walkway) grows somewhere else: from the deck you would see nothing but
+    // its leaves.
+    if plant.height[1] > super::route::HIGH_DECK && plant.form != Form::Herb && !w.ribbons.is_empty() {
+        let g = w.f.h[i];
+        let crown = (g + plant.crown_base.unwrap_or(0.35) * plant.height[0] - 2.0, g + plant.height[1] + 2.0);
+        if w.ribbons.deck_in(p, plant.crown_radius[1] + 1.5, g + super::route::HIGH_DECK, crown.0, crown.1) {
+            return None;
+        }
+    }
+    if w.f.slope[i] > plant.max_slope {
+        return None;
+    }
+    // Beside a sheer drop the smoothed height is somewhere in the air between
+    // the top and the foot: nothing grows there.
+    if (w.f.height(p.x, p.y) - w.f.h[i]).abs() > 0.75 {
+        return None;
+    }
+    // Land plants keep out of the sea; water plants grow only under their
+    // depth of it. Under a lake or a cenote, its own surface; else the sea's.
+    let depth = inland_depth(w, i).filter(|_| w.f.water[i] == 1).unwrap_or(w.f.sea - w.f.h[i]);
+    match (plant.water_depth, plant.standing_water) {
+        (Some([lo, hi]), _) | (None, Some([lo, hi])) if depth < lo || depth > hi => return None,
+        (None, None) if depth > -0.6 => return None,
+        _ => {}
+    }
+    // A coral needs room under the surface for its smallest colony; on a flat
+    // too shallow for it, something lower grows instead.
+    if plant.form.is_coral() && depth - 0.35 < plant.height[0] * 0.75 {
+        return None;
+    }
+    Some((i, depth))
+}
+
+/// Whether another plant's trunk stands within `clear` of `p`.
+fn crowded(taken: &[bool], n: usize, p: Vec2, clear: f32) -> bool {
+    let r = (clear / CELL) as i32;
+    let (ix, iz) = ((p.x / CELL) as i32, (p.y / CELL) as i32);
+    for dz in -r..=r {
+        for dx in -r..=r {
+            let (x, z) = (ix + dx, iz + dz);
+            if x >= 0 && z >= 0 && (x as usize) < n && (z as usize) < n && taken[z as usize * n + x as usize] && (dx != 0 || dz != 0) {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+/// Sow plant `pi` (or now and then one of its rare morphs) at `p`, with a
+/// flower stalk from the heart of some rosettes.
+#[allow(clippy::too_many_arguments)]
+fn sow_at(w: &World, sow: &mut Vec<Sow>, pi: usize, morphs: &[(usize, f32)], pick: Option<&MorphPick>, p: Vec2, depth: f32, h0: u32, seed: u32, size: f32) {
+    let base = Vec3::new(p.x, w.f.height(p.x, p.y) - 0.1, p.y);
+    let gi = crate::variety::pick(morphs, unit(hash32(h0 ^ 0x6d6f_7270))).unwrap_or(pi);
+    let grown = &w.lib.plants[gi];
+    // What this patch of ground is growing: one coat for the blob, so a
+    // cluster is of one colour.
+    let worn = coat_at(&w.lib, gi, pick, p.x, p.y, seed);
+    sow.push(Sow::Plant {
+        gi,
+        depth: grown.water_depth.is_some().then_some(depth),
+        base,
+        seed: hash32(h0 ^ 0x1234_5678),
+        worn,
+        size,
+        like: None,
+    });
+    if let Some((mat, share)) = &grown.stalk {
+        if unit(hash32(h0 ^ 0x7374_616c)) < *share {
+            if let Some(m) = worn.get("stalk").or_else(|| w.lib.material(mat)) {
+                sow.push(Sow::Stalk {
+                    mat: m,
+                    base,
+                    seed: hash32(h0 ^ 0x5157),
+                });
+            }
+        }
+    }
+}
+
+/// Whether this world places its plants by site (world.json `"plants":
+/// "v2"`). `VG_PLANTS=v1` or `v2` overrides it, for comparing the two.
+pub fn placement_v2(w: &World) -> bool {
+    match std::env::var("VG_PLANTS").ok().as_deref() {
+        Some("v2") => true,
+        Some("v1") => false,
+        _ => w.def.plants.as_deref() == Some("v2"),
+    }
+}
+
 pub fn place_plants(w: &mut World) {
     let n = w.f.n;
     let mut taken = vec![false; n * n];
@@ -1564,14 +1756,11 @@ pub fn place_plants(w: &mut World) {
     // planks.
     // Water plants may grow in a lake or a cenote deeper than a couple of
     // metres; everything else keeps out of open water.
-    // Water at the sea's own level is the sea's (a river's channel on past
-    // its mouth, for the tide), as `Generator::water_m` has it.
-    let inland_depth = |i: usize| w.f.inland.get(&(i as u32)).filter(|wet| wet.level > w.f.sea).map(|wet| wet.level - w.f.h[i]);
     // Under a high deck (a canopy walk) the ground still grows, but only
     // what stays under the planks: the room there, per cell, metres.
     let mut room = vec![f32::MAX; n * n];
     for i in 0..n * n {
-        let deep_inland = w.f.water[i] == 1 && inland_depth(i).is_some_and(|d| d > 2.0);
+        let deep_inland = w.f.water[i] == 1 && inland_depth(w, i).is_some_and(|d| d > 2.0);
         if w.f.occupied[i] || (w.f.water[i] != 0 && !deep_inland) {
             taken[i] = true;
         }
@@ -1587,10 +1776,36 @@ pub fn place_plants(w: &mut World) {
             }
         }
     }
-    let size = w.f.size;
-    let sea = w.f.sea;
     let mut sow: Vec<Sow> = Vec::new();
     let mut vines = Vec::new();
+    if placement_v2(w) && w.site.is_some() {
+        let (counts, young, dead, filled) = place_by_site(w, &mut taken, &room, &mut sow, &mut vines);
+        if filled > 0 {
+            w.log.push(format!("plants v2: fill adds {filled} plant uses from the world's pool by habitat"));
+        }
+        let by: Vec<String> = LAYERS.iter().zip(counts).map(|(l, c)| format!("{c} {l}")).collect();
+        w.log.push(format!("plants v2, by site, tallest first: {}, {young} saplings round their parents and {dead} dead trees", by.join(", ")));
+    } else {
+        place_by_list(w, &mut taken, &room, &mut sow, &mut vines);
+    }
+    let mut trees = grow_all(w, &sow);
+    trees.extend(place_growths(w));
+    for (bi, ui, pi) in vines {
+        if w.lib.plants[pi].form == Form::Crust {
+            place_crusts(w, &mut trees, bi, ui, pi);
+        } else {
+            place_vines(w, &mut trees, bi, ui, pi);
+        }
+    }
+    w.trees = trees;
+}
+
+/// Placement v1: each present biome's plant list in order. Every plant
+/// placed blocks the ground round it for the ones after, so whichever is
+/// listed first takes a spot.
+fn place_by_list(w: &World, taken: &mut [bool], room: &[f32], sow: &mut Vec<Sow>, vines: &mut Vec<(usize, usize, usize)>) {
+    let n = w.f.n;
+    let size = w.f.size;
     // Only the biomes some cell took: the library holds every world's, and
     // each plant entry walks the whole map.
     let mut present = vec![false; w.lib.biomes.len()];
@@ -1620,55 +1835,14 @@ pub fn place_plants(w: &mut World) {
             let spacing = pl_spacing(&u.placement);
             let mut lone: Vec<Vec2> = Vec::new();
             let cells = (size / g).ceil() as i32;
-            let clear = match plant.form {
-                Form::Herb => 0.7,
-                Form::Shrub => 0.8,
-                _ => 1.6,
-            };
+            let clear = clear_of(plant.form);
             for cz in 0..cells {
                 for cx in 0..cells {
                     let h0 = hash2(cx, cz, seed);
                     let p = Vec2::new((cx as f32 + 0.15 + 0.7 * unit(h0)) * g, (cz as f32 + 0.15 + 0.7 * unit(hash32(h0 ^ 1))) * g);
-                    if p.x < 2.0 || p.y < 2.0 || p.x > size - 2.0 || p.y > size - 2.0 {
+                    let Some((i, depth)) = spot(w, plant, bi, p, taken, room, false) else {
                         continue;
-                    }
-                    let i = w.f.idx(p.x, p.y);
-                    if w.f.biome[i] as usize != bi || taken[i] || room[i] < plant.height[1] + 1.0 {
-                        continue;
-                    }
-                    // A tree whose crown would stand round a high deck (a
-                    // canopy platform, a walkway) grows somewhere else: from
-                    // the deck you would see nothing but its leaves.
-                    if plant.height[1] > super::route::HIGH_DECK && plant.form != Form::Herb && !w.ribbons.is_empty() {
-                        let g = w.f.h[i];
-                        let crown = (g + plant.crown_base.unwrap_or(0.35) * plant.height[0] - 2.0, g + plant.height[1] + 2.0);
-                        if w.ribbons.deck_in(p, plant.crown_radius[1] + 1.5, g + super::route::HIGH_DECK, crown.0, crown.1) {
-                            continue;
-                        }
-                    }
-                    if w.f.slope[i] > plant.max_slope {
-                        continue;
-                    }
-                    // Beside a sheer drop the smoothed height is somewhere in
-                    // the air between the top and the foot: nothing grows there.
-                    if (w.f.height(p.x, p.y) - w.f.h[i]).abs() > 0.75 {
-                        continue;
-                    }
-                    // Land plants keep out of the sea; water plants grow only
-                    // under their depth of it.
-                    // Under a lake or a cenote, its own surface; else the sea's.
-                    let depth = inland_depth(i).filter(|_| w.f.water[i] == 1).unwrap_or(sea - w.f.h[i]);
-                    match (plant.water_depth, plant.standing_water) {
-                        (Some([lo, hi]), _) | (None, Some([lo, hi])) if depth < lo || depth > hi => continue,
-                        (None, None) if depth > -0.6 => continue,
-                        _ => {}
-                    }
-                    // A coral needs room under the surface for its smallest
-                    // colony; on a flat too shallow for it, something lower
-                    // grows instead.
-                    if plant.form.is_coral() && depth - 0.35 < plant.height[0] * 0.75 {
-                        continue;
-                    }
+                    };
                     if unit(hash32(h0 ^ 2)) > weight(w, &u.placement, p, bi as u8, seed) {
                         continue;
                     }
@@ -1679,62 +1853,742 @@ pub fn place_plants(w: &mut World) {
                         lone.push(p);
                     }
                     // Keep trunks apart.
-                    let r = (clear / CELL) as i32;
-                    let (ix, iz) = ((p.x / CELL) as i32, (p.y / CELL) as i32);
-                    let mut blocked = false;
-                    'chk: for dz in -r..=r {
-                        for dx in -r..=r {
-                            let (x, z) = (ix + dx, iz + dz);
-                            if x >= 0 && z >= 0 && (x as usize) < n && (z as usize) < n && taken[z as usize * n + x as usize] && (dx != 0 || dz != 0) {
-                                blocked = true;
-                                break 'chk;
-                            }
-                        }
-                    }
-                    if blocked {
+                    if crowded(taken, n, p, clear) {
                         continue;
                     }
                     taken[i] = true;
-                    let base = Vec3::new(p.x, w.f.height(p.x, p.y) - 0.1, p.y);
-                    // Now and then a rare morph grows in its place.
-                    let gi = crate::variety::pick(&morphs, unit(hash32(h0 ^ 0x6d6f_7270))).unwrap_or(pi);
-                    let grown = &w.lib.plants[gi];
-                    // What this patch of ground is growing: one coat for the
-                    // blob, so a cluster is of one colour.
-                    let worn = coat_at(&w.lib, gi, u.morph.as_ref(), p.x, p.y, seed);
-                    sow.push(Sow::Plant {
-                        gi,
-                        depth: grown.water_depth.is_some().then_some(depth),
-                        base,
-                        seed: hash32(h0 ^ 0x1234_5678),
-                        worn,
-                    });
-                    // A flower stalk from the heart of some rosettes.
-                    if let Some((mat, share)) = &grown.stalk {
-                        if unit(hash32(h0 ^ 0x7374_616c)) < *share {
-                            if let Some(m) = worn.get("stalk").or_else(|| w.lib.material(mat)) {
-                                sow.push(Sow::Stalk {
-                                    mat: m,
-                                    base,
-                                    seed: hash32(h0 ^ 0x5157),
-                                });
-                            }
-                        }
-                    }
+                    sow_at(w, sow, pi, &morphs, u.morph.as_ref(), p, depth, h0, seed, 1.0);
                 }
             }
         }
     }
-    let mut trees = grow_all(w, &sow);
-    trees.extend(place_growths(w));
-    for (bi, ui, pi) in vines {
-        if w.lib.plants[pi].form == Form::Crust {
-            place_crusts(w, &mut trees, bi, ui, pi);
-        } else {
-            place_vines(w, &mut trees, bi, ui, pi);
+}
+
+/// Whether placement v2 shares the ground near biome borders (P5);
+/// `VG_BORDER=0` keeps each biome's plants inside it, for comparing.
+fn border_zones_on() -> bool {
+    static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *ON.get_or_init(|| std::env::var("VG_BORDER").map_or(true, |v| v.trim() != "0"))
+}
+
+/// A biome that keeps a hard edge: its ground neither spills over its edge
+/// nor is spilled into (`fringe` 0: a field, a garden, a town, a reef), or
+/// one that grows no plants of its own.
+fn hard_edge(w: &World, b: usize) -> bool {
+    w.biome_mats.get(b).is_none_or(|m| m.fringe <= 0.0) || w.lib.biomes.get(b).is_none_or(|d| d.plants.is_empty())
+}
+
+/// A plant of biome `bi`'s share of the 1 m cell `i` at `p` (v2): across a
+/// zone `site::BORDER_M` either side of a border with its neighbour the two
+/// biomes' plants share the ground, each fading linearly from all of it
+/// deep inside its own biome, through half at the line, to none that far
+/// into the other. With zones off, or at a hard edge, it is 1 in its own
+/// biome and 0 elsewhere.
+fn zone_share(w: &World, site: &super::site::Site, i: usize, p: Vec2, bi: usize) -> f32 {
+    use super::site::BORDER_M;
+    let here = w.f.biome[i] as usize;
+    let k = site.idx(p.x, p.y);
+    // The site's 4 m cell may be counted in the other biome when the plant
+    // stands at its very edge: count that as on the line.
+    let border = if site.biome[k] as usize == here { site.border[k] as f32 } else { 0.0 };
+    let reach = (border / BORDER_M).min(1.0);
+    if here == bi {
+        let other = if site.biome[k] as usize == here { site.other[k] as usize } else { site.biome[k] as usize };
+        if other == bi || site.border[k] == 255 || hard_edge(w, bi) || hard_edge(w, other) || !border_zones_on() {
+            return 1.0;
+        }
+        0.5 + 0.5 * reach
+    } else {
+        let next = if site.biome[k] as usize == here { site.other[k] as usize } else { site.biome[k] as usize };
+        if next != bi || hard_edge(w, bi) || hard_edge(w, here) || !border_zones_on() {
+            return 0.0;
+        }
+        0.5 - 0.5 * reach
+    }
+}
+
+/// Plants by height, tallest first: canopy, sub-canopy, shrub, herb.
+pub fn layer_of(plant: &PlantDef) -> usize {
+    let h = (plant.height[0] + plant.height[1]) * 0.5;
+    if h >= 8.0 {
+        0
+    } else if h >= 3.0 {
+        1
+    } else if h >= 0.8 {
+        2
+    } else {
+        3
+    }
+}
+
+pub const LAYERS: [&str; 4] = ["canopy", "sub-canopy", "shrub", "herb"];
+
+/// The least a plant's mean suitability over its biome counts as (v2): one
+/// that suits its biome worse than this thins out rather than filling the
+/// ground it doesn't suit.
+const MEAN_FLOOR: f32 = 0.2;
+
+/// Edge of a cell of the shade map placement v2 keeps, metres.
+const SHADE_CELL: f32 = 2.0;
+
+/// How dark a plant's crown is, 0 to 1, from its form and how open it grows.
+fn crown_dark(plant: &PlantDef) -> f32 {
+    let d = match plant.form {
+        Form::Conifer | Form::Spiral | Form::Columnar | Form::Mangrove => 0.75,
+        Form::Broad | Form::Branching | Form::Gnarled | Form::Weeping | Form::Bamboo => 0.6,
+        Form::Birch | Form::Umbrella => 0.4,
+        Form::Shrub | Form::Canes | Form::Sapling | Form::Pads => 0.45,
+        Form::Cactus | Form::Snag => 0.1,
+        _ => 0.0,
+    };
+    d * (1.0 - 0.6 * plant.open.unwrap_or(0.0)) * (0.7 + 0.3 * plant.fill.unwrap_or(0.55))
+}
+
+/// Darken the shade map under a plant at `p`: its crown's disc, pushed away
+/// from the noon sun by its height (`away` is the shift per metre of height).
+fn stamp_crown(shade: &mut [f32], ns: usize, p: Vec2, plant: &PlantDef, away: Vec2, size: f32) {
+    let dark = crown_dark(plant);
+    if dark <= 0.0 {
+        return;
+    }
+    let h = (plant.height[0] + plant.height[1]) * 0.5 * size;
+    let r = ((plant.crown_radius[0] + plant.crown_radius[1]) * 0.5 * size.powf(0.8)).max(1.0);
+    let c = p + away * (h * 0.6);
+    let reach = r * 1.1;
+    let lo = |v: f32| ((v - reach) / SHADE_CELL).floor().max(0.0) as usize;
+    let hi = |v: f32| (((v + reach) / SHADE_CELL).ceil().max(0.0) as usize).min(ns - 1);
+    for z in lo(c.y)..=hi(c.y) {
+        for x in lo(c.x)..=hi(c.x) {
+            let q = Vec2::new((x as f32 + 0.5) * SHADE_CELL, (z as f32 + 0.5) * SHADE_CELL);
+            let f = 1.0 - super::noise::smoothstep(r * 0.6, reach, q.distance(c));
+            if f > 0.0 {
+                let k = z * ns + x;
+                shade[k] = 1.0 - (1.0 - shade[k]) * (1.0 - dark * f);
+            }
         }
     }
-    w.trees = trees;
+}
+
+/// The shade map at a world point, read bilinearly.
+fn shade_at(shade: &[f32], ns: usize, p: Vec2) -> f32 {
+    let fx = (p.x / SHADE_CELL - 0.5).clamp(0.0, (ns - 1) as f32);
+    let fz = (p.y / SHADE_CELL - 0.5).clamp(0.0, (ns - 1) as f32);
+    let (x0, z0) = (fx as usize, fz as usize);
+    let (x1, z1) = ((x0 + 1).min(ns - 1), (z0 + 1).min(ns - 1));
+    let (tx, tz) = (fx - x0 as f32, fz - z0 as f32);
+    let a = shade[z0 * ns + x0] * (1.0 - tx) + shade[z0 * ns + x1] * tx;
+    let b = shade[z1 * ns + x0] * (1.0 - tx) + shade[z1 * ns + x1] * tx;
+    a * (1.0 - tz) + b * tz
+}
+
+/// Placement v2 (notes/PLANT_SIM_PLAN.md P3): by the ground each plant
+/// suits. Biomes still say which plants may grow where. The plants go in by
+/// layer, tallest first; in a layer each plant bids for spots on its own
+/// grid at its density over its mean suitability in its biome, keeping a
+/// spot with chance verb weight times site suitability (`Site::suits`), so
+/// a plant keeps about its density there but moves to its best ground; the
+/// bids are taken in a lottery where
+/// the better suited plant tends to come first. Each layer then darkens the
+/// shade map under its crowns, which the next layer's `shade` reads. With
+/// stand structure (P6) the trees take an age, the canopy has gaps, and
+/// saplings come up round their parents, and some trees stand or lie dead
+/// (`skeleton`). Returns how many plants went in each layer, how many
+/// saplings, how many dead trees and how many fill uses joined.
+fn place_by_site(w: &World, taken: &mut [bool], room: &[f32], sow: &mut Vec<Sow>, vines: &mut Vec<(usize, usize, usize)>) -> ([usize; 4], usize, usize, usize) {
+    use super::site::SiteChan;
+    let site = w.site.as_ref().expect("placement v2 needs the site fields");
+    let n = w.f.n;
+    let size = w.f.size;
+    struct Entry<'a> {
+        bi: usize,
+        pi: usize,
+        u: &'a crate::library::PlantUse,
+        seed: u32,
+        g: f32,
+        spacing: Option<f32>,
+        morphs: Vec<(usize, f32)>,
+        layer: usize,
+        /// Joined by fill: kept by its realms' share of each spot too.
+        fill: bool,
+    }
+    let mut present = vec![false; w.lib.biomes.len()];
+    for &b in &w.f.biome {
+        present[b as usize] = true;
+    }
+    let stands = stands_on();
+    // Fill: plants from the world's pool joining biomes whose habitat suits
+    // them (`WorldDef::fill`). Held here so the entries can borrow them.
+    let fill = fill_uses(w, site, &present);
+    let mut entries = Vec::new();
+    // Each biome's trees that leave a skeleton when they die, weighted by
+    // their density: the generic snags, stumps and logs its list names are
+    // drawn as the dead of these (stand structure).
+    let mut dead_of: Vec<Vec<(usize, f32)>> = vec![Vec::new(); w.lib.biomes.len()];
+    for (bi, b) in w.lib.biomes.iter().enumerate() {
+        if !present[bi] {
+            continue;
+        }
+        if stands {
+            dead_of[bi] = b
+                .plants
+                .iter()
+                .filter(|u| u.density > 0.0)
+                .filter_map(|u| w.lib.plant(&u.plant).map(|i| (i, u.density)))
+                .filter(|&(i, _)| can_die(w.lib.plants[i].form) && w.lib.plants[i].height[1] >= DEAD_TALL)
+                .collect();
+        }
+        for (ui, u) in b.plants.iter().enumerate() {
+            let Some(pi) = w.lib.plant(&u.plant) else {
+                continue;
+            };
+            let plant = &w.lib.plants[pi];
+            if u.density <= 0.0 {
+                continue;
+            }
+            if plant.form == Form::Vine || plant.form == Form::Crust {
+                vines.push((bi, ui, pi));
+                continue;
+            }
+            entries.push(Entry {
+                bi,
+                pi,
+                u,
+                seed: hash32(w.def.seed ^ name_key(&b.name) ^ use_key(w.def.seeds_v1(), ui, &u.plant, 0x9e37_79b9)),
+                g: (1.0 / u.density).sqrt().max(0.8),
+                spacing: pl_spacing(&u.placement),
+                morphs: w.lib.plant_morphs(pi),
+                layer: layer_of(plant),
+                fill: false,
+            });
+        }
+    }
+    for (bi, u) in &fill {
+        let Some(pi) = w.lib.plant(&u.plant) else { continue };
+        entries.push(Entry {
+            bi: *bi,
+            pi,
+            u,
+            seed: hash32(w.def.seed ^ name_key(&w.lib.biomes[*bi].name) ^ name_key(&u.plant) ^ 0x6669_6c6c),
+            g: (1.0 / u.density).sqrt().max(0.8),
+            spacing: None,
+            morphs: w.lib.plant_morphs(pi),
+            layer: layer_of(&w.lib.plants[pi]),
+            fill: true,
+        });
+    }
+    // The shade map starts as the land's own.
+    let ns = (size / SHADE_CELL).ceil() as usize;
+    let mut shade: Vec<f32> = (0..ns * ns)
+        .map(|k| site.value(SiteChan::Shade, ((k % ns) as f32 + 0.5) * SHADE_CELL, ((k / ns) as f32 + 0.5) * SHADE_CELL))
+        .collect();
+    let noon = super::site::sun_path(w).dir(12.0);
+    let away = -Vec2::new(noon.x, noon.z) / noon.y.max(0.2);
+    struct Bid {
+        key: f32,
+        p: Vec2,
+        entry: u32,
+        i: u32,
+        depth: f32,
+        h0: u32,
+        /// Grown there and died (`skeleton`).
+        dead: bool,
+    }
+    // Each biome's site cells, to measure how well a plant suits its biome
+    // on the whole.
+    let mut cells_of: Vec<Vec<u32>> = vec![Vec::new(); w.lib.biomes.len()];
+    for (k, &b) in site.biome.iter().enumerate() {
+        if !site.water[k] {
+            cells_of[b as usize].push(k as u32);
+        }
+    }
+    let zones = border_zones_on();
+    let skeletons: Vec<Option<usize>> = Skeleton::ALL.iter().map(|k| w.lib.plants.iter().position(|p| p.skeleton == Some(*k))).collect();
+    let mut young = 0usize;
+    let mut dead = 0usize;
+    let mut counts = [0usize; 4];
+    for (layer, count) in counts.iter_mut().enumerate() {
+        // Each plant's bids read only what the layers above left, so they
+        // are made side by side; the sort below fixes their order.
+        let layer_entries: Vec<usize> = entries.iter().enumerate().filter(|(_, en)| en.layer == layer).map(|(e, _)| e).collect();
+        let (taken_now, shade_now) = (&*taken, &shade);
+        let bid_entry = |e: usize| -> Vec<Bid> {
+            let en = &entries[e];
+            let (taken, shade) = (taken_now, shade_now);
+            let mut bids = Vec::new();
+            let plant = &w.lib.plants[en.pi];
+            // The plant keeps about its density in its biome but moves to the
+            // ground there it suits best: it bids on a grid denser by its mean
+            // suitability over the biome (shaded as the layers above left
+            // it) and keeps each spot by its suitability there. The mean is
+            // floored, so a plant that suits nowhere stays thin.
+            let mean = match plant.site.as_ref() {
+                Some(prefs) if !cells_of[en.bi].is_empty() => {
+                    let cs = &cells_of[en.bi];
+                    let step = (cs.len() / 4000).max(1);
+                    let (mut sum, mut cnt) = (0.0f32, 0usize);
+                    for &k in cs.iter().step_by(step) {
+                        let q = Vec2::new(((k as usize % site.n) as f32 + 0.5) * super::survey::CELL_M, ((k as usize / site.n) as f32 + 0.5) * super::survey::CELL_M);
+                        sum += site.suits(prefs, q.x, q.y, shade_at(shade, ns, q));
+                        cnt += 1;
+                    }
+                    (sum / cnt as f32).max(MEAN_FLOOR)
+                }
+                _ => 1.0,
+            };
+            let g = (en.g * mean.sqrt()).max(0.8);
+            let cells = (size / g).ceil() as i32;
+            for cz in 0..cells {
+                for cx in 0..cells {
+                    let h0 = hash2(cx, cz, en.seed);
+                    let p = Vec2::new((cx as f32 + 0.15 + 0.7 * unit(h0)) * g, (cz as f32 + 0.15 + 0.7 * unit(hash32(h0 ^ 1))) * g);
+                    let Some((i, depth)) = spot(w, plant, en.bi, p, taken, room, zones) else {
+                        continue;
+                    };
+                    // Its share of the spot by where it stands in a border
+                    // zone: all of it deep in its own biome, half at the line,
+                    // none 15 m into the neighbour's.
+                    let share = zone_share(w, site, i, p, en.bi);
+                    if share <= 0.0 {
+                        continue;
+                    }
+                    // Suitability only where the verb's weight alone would
+                    // keep the spot: it costs a read of every field.
+                    let roll = unit(hash32(h0 ^ 2));
+                    let wt = weight(w, &en.u.placement, p, en.bi as u8, en.seed);
+                    if roll > wt * share {
+                        continue;
+                    }
+                    // Gaps where the canopy fell (stand structure): most
+                    // of the trees that stood there are gone, some lie or
+                    // stand dead; elsewhere a few have died where they
+                    // stood.
+                    let mortal = stands && layer <= 1 && can_die(plant.form) && plant.height[1] >= DEAD_TALL;
+                    let fell = mortal && layer == 0 && roll > wt * canopy_at(p, w.def.seed) * share;
+                    let dead = mortal && unit(hash32(h0 ^ 5)) < if fell { GAP_DEAD } else { DEAD };
+                    if fell && !dead {
+                        continue;
+                    }
+                    let mut suit = plant.site.as_ref().map_or(1.0, |s| site.suits(s, p.x, p.y, shade_at(shade, ns, p)));
+                    // Fill keeps to its realms: a dinosaur plant only where
+                    // the dinosaur realm comes through.
+                    if en.fill {
+                        suit *= site.realms.share(p.x, p.y, &realms_of(&plant.realms));
+                    }
+                    if roll > wt * suit * share {
+                        continue;
+                    }
+                    // An exponential race: the better suited bid tends to
+                    // come first, the worse now and then.
+                    let key = -unit(hash32(h0 ^ 3)).max(1e-9).ln() / suit.max(1e-4);
+                    bids.push(Bid { key, p, entry: e as u32, i: i as u32, depth, h0, dead });
+                }
+            }
+            bids
+        };
+        let next = std::sync::atomic::AtomicUsize::new(0);
+        let mut parts: Vec<(usize, Vec<Bid>)> = std::thread::scope(|sc| {
+            let hs: Vec<_> = (0..crate::world::fields::build_threads().min(layer_entries.len().max(1)))
+                .map(|_| {
+                    sc.spawn(|| {
+                        let mut out = Vec::new();
+                        loop {
+                            let k = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                            let Some(&e) = layer_entries.get(k) else { break };
+                            out.push((e, bid_entry(e)));
+                        }
+                        out
+                    })
+                })
+                .collect();
+            hs.into_iter().flat_map(|h| h.join().expect("a plant's bids")).collect()
+        });
+        parts.sort_by_key(|p| p.0);
+        let mut bids: Vec<Bid> = parts.into_iter().flat_map(|p| p.1).collect();
+        bids.sort_unstable_by(|a, b| a.key.total_cmp(&b.key).then(a.entry.cmp(&b.entry)).then(a.h0.cmp(&b.h0)));
+        let mut lone: Vec<Vec<Vec2>> = (0..entries.len()).map(|_| Vec::new()).collect();
+        // What went in: where, the plant, its biome, its age's size, its
+        // hash and its entry's seed.
+        let mut placed: Vec<(Vec2, usize, usize, f32, u32, u32)> = Vec::new();
+        for b in &bids {
+            let en = &entries[b.entry as usize];
+            let plant = &w.lib.plants[en.pi];
+            if taken[b.i as usize] {
+                continue;
+            }
+            if let Some(sp) = en.spacing {
+                let l = &mut lone[b.entry as usize];
+                if l.iter().any(|q| q.distance(b.p) < sp) {
+                    continue;
+                }
+                l.push(b.p);
+            }
+            if crowded(taken, n, b.p, clear_of(plant.form)) {
+                continue;
+            }
+            taken[b.i as usize] = true;
+            let size = if stands && layer <= 1 && woody(plant.form) { age_size(b.h0, plant, room[b.i as usize]) } else { 1.0 };
+            if b.dead {
+                let fell = layer == 0 && canopy_at(b.p, w.def.seed) < 0.5;
+                if let Some(gi) = skeletons[skeleton_kind(b.h0, fell) as usize] {
+                    sow.push(Sow::Plant {
+                        gi,
+                        depth: None,
+                        base: Vec3::new(b.p.x, w.f.height(b.p.x, b.p.y) - 0.1, b.p.y),
+                        seed: hash32(b.h0 ^ 0x1234_5678),
+                        worn: coat_at(&w.lib, en.pi, None, b.p.x, b.p.y, en.seed),
+                        size,
+                        like: Some(en.pi),
+                    });
+                    dead += 1;
+                    continue;
+                }
+            }
+            // A generic snag, stump or log in a wood: one of its own trees,
+            // dead.
+            let pool = &dead_of[en.bi];
+            if plant.skeleton.is_some() && !pool.is_empty() {
+                let total: f32 = pool.iter().map(|q| q.1).sum();
+                let mut r = unit(hash32(b.h0 ^ 0x6465_6164)) * total;
+                let parent = pool.iter().find(|q| {
+                    r -= q.1;
+                    r <= 0.0
+                });
+                let parent = parent.unwrap_or(&pool[pool.len() - 1]).0;
+                let size = age_size(b.h0, &w.lib.plants[parent], room[b.i as usize]);
+                sow.push(Sow::Plant {
+                    gi: en.pi,
+                    depth: None,
+                    base: Vec3::new(b.p.x, w.f.height(b.p.x, b.p.y) - 0.1, b.p.y),
+                    seed: hash32(b.h0 ^ 0x1234_5678),
+                    worn: coat_at(&w.lib, parent, None, b.p.x, b.p.y, en.seed),
+                    size,
+                    like: Some(parent),
+                });
+                placed.push((b.p, en.pi, en.bi, 0.0, b.h0, en.seed));
+                continue;
+            }
+            sow_at(w, sow, en.pi, &en.morphs, en.u.morph.as_ref(), b.p, b.depth, b.h0, en.seed, size);
+            placed.push((b.p, en.pi, en.bi, size, b.h0, en.seed));
+        }
+        *count = placed.len();
+        for &(p, pi, _, size, _, _) in &placed {
+            stamp_crown(&mut shade, ns, p, &w.lib.plants[pi], away, size);
+        }
+        if stands && layer <= 1 {
+            young += recruit(w, site, taken, room, sow, &mut shade, ns, away, &placed, zones);
+        }
+    }
+    (counts, young, dead, fill.len())
+}
+
+/// Habitats people keep: what grows only in these (crops, orchard trees,
+/// garden roses) is planted, and fill leaves it out of wild biomes.
+const TENDED: [&str; 3] = ["field_crop", "garden", "settlement"];
+
+/// A species' realms (`realms` on a plant or creature): `real` where it
+/// names none.
+pub fn realms_of(list: &[String]) -> Vec<String> {
+    if list.is_empty() {
+        vec!["real".to_string()]
+    } else {
+        list.to_vec()
+    }
+}
+
+/// The realms a biome's life comes from in this world: the world's mix and
+/// every overlay painted on any of its cells (`Site::realms`).
+pub fn realms_of_biome(site: &super::site::Site, bi: usize) -> Vec<String> {
+    site.realms.present_in(site.biome.iter().enumerate().filter(|(_, &b)| b as usize == bi).map(|(k, _)| k))
+}
+
+/// How well a pool plant must suit a biome's habitat on the whole to join
+/// it as fill.
+const FILL_SUIT: f32 = 0.5;
+
+/// Fill (`WorldDef::fill`, 0 by default; `VG_FILL` overrides it): for each
+/// biome here with a habitat, first each realm's cast for that habitat
+/// (`RealmDef::habitats`) where the realm comes through, then plants from
+/// the world's pool (every plant some biome here
+/// lists, with a site block, on land, and neither vine, crust nor dead
+/// tree) that its list lacks and that suit its habitat (`HabitatDef::suits`
+/// at least `FILL_SUIT`) join it, scattered. Only in layers the biome
+/// already fills: a grassland that lists no trees takes none. Each layer's
+/// fill is `fill` times what the biome lists in that layer, shared among
+/// the newcomers by how well they suit. Placement v2 then puts them on the
+/// ground they suit, as it does the listed plants.
+fn fill_uses(w: &World, site: &super::site::Site, present: &[bool]) -> Vec<(usize, crate::library::PlantUse)> {
+    // `VG_FILL=0.2` overrides the world's setting, for trying it.
+    let share = std::env::var("VG_FILL").ok().and_then(|v| v.trim().parse::<f32>().ok()).or(w.def.fill).unwrap_or(0.0).clamp(0.0, 1.0);
+    if share <= 0.0 {
+        return Vec::new();
+    }
+    let lib = &w.lib;
+    let usable = |pi: usize| {
+        let p = &lib.plants[pi];
+        p.site.is_some() && p.skeleton.is_none() && p.water_depth.is_none() && !matches!(p.form, Form::Vine | Form::Crust)
+    };
+    let mut pool: Vec<usize> = Vec::new();
+    for b in lib.biomes.iter().enumerate().filter(|(bi, _)| present[*bi]).map(|(_, b)| b) {
+        for u in b.plants.iter().filter(|u| u.density > 0.0) {
+            if let Some(pi) = lib.plant(&u.plant).filter(|&pi| usable(pi)) {
+                pool.push(pi);
+            }
+        }
+    }
+    pool.sort_unstable();
+    pool.dedup();
+    // Planted: listed only in fields, gardens and towns here. A crop stays
+    // where people grow it rather than running wild over the plain.
+    let tended = |bi: usize| lib.habitat_of(bi).is_some_and(|h| TENDED.contains(&h.name.as_str()));
+    let planted: Vec<usize> = pool
+        .iter()
+        .copied()
+        .filter(|&pi| {
+            lib.biomes
+                .iter()
+                .enumerate()
+                .filter(|(bi, b)| present[*bi] && b.plants.iter().any(|u| u.density > 0.0 && lib.plant(&u.plant) == Some(pi)))
+                .all(|(bi, _)| tended(bi))
+        })
+        .collect();
+    let mut out = Vec::new();
+    for (bi, b) in lib.biomes.iter().enumerate().filter(|(bi, _)| present[*bi]) {
+        let Some(h) = lib.habitat_of(bi) else { continue };
+        // The realms this biome's life comes from (`realms_of_biome`): a
+        // newcomer must belong to one of them, and placement keeps it to
+        // the cells where its realm comes through.
+        let here = realms_of_biome(site, bi);
+        let mut listed: Vec<usize> = b.plants.iter().filter(|u| u.density > 0.0).filter_map(|u| lib.plant(&u.plant)).collect();
+        // Each realm's own cast for this habitat (`RealmDef::habitats`),
+        // as written.
+        for r in lib.realms.iter().filter(|r| here.contains(&r.name)) {
+            for u in r.habitats.get(&h.name).map_or(&[][..], |c| &c.plants[..]) {
+                let Some(pi) = lib.plant(&u.plant) else { continue };
+                if u.density > 0.0 && usable(pi) && !listed.contains(&pi) {
+                    listed.push(pi);
+                    out.push((bi, u.clone()));
+                }
+            }
+        }
+        for layer in 0..LAYERS.len() {
+            let have: f32 = b
+                .plants
+                .iter()
+                .filter(|u| u.density > 0.0)
+                .filter_map(|u| lib.plant(&u.plant).filter(|&pi| usable(pi) && layer_of(&lib.plants[pi]) == layer).map(|_| u.density))
+                .sum();
+            if have <= 0.0 {
+                continue;
+            }
+            let newcomers: Vec<(usize, f32)> = pool
+                .iter()
+                .filter(|&&pi| !listed.contains(&pi) && layer_of(&lib.plants[pi]) == layer)
+                .filter(|&&pi| tended(bi) || !planted.contains(&pi))
+                .filter(|&&pi| realms_of(&lib.plants[pi].realms).iter().any(|r| here.contains(r)))
+                .map(|&pi| (pi, lib.plants[pi].site.as_ref().map_or(0.0, |s| h.suits(s))))
+                .filter(|&(_, s)| s >= FILL_SUIT)
+                .collect();
+            let total: f32 = newcomers.iter().map(|n| n.1).sum();
+            for (pi, s) in newcomers {
+                out.push((
+                    bi,
+                    crate::library::PlantUse {
+                        plant: lib.plants[pi].name.clone(),
+                        density: share * have * s / total,
+                        placement: Default::default(),
+                        morph: None,
+                    },
+                ));
+            }
+        }
+    }
+    out
+}
+
+/// The share of a wood's trees that stand or lie dead, and of those that
+/// stood where the canopy has since fallen (`canopy_at`).
+const DEAD: f32 = 0.05;
+const GAP_DEAD: f32 = 0.35;
+
+/// The least grown height, metres, of a tree whose dead are drawn: a
+/// listed sapling or a shrubby tree dies without leaving a snag to see.
+const DEAD_TALL: f32 = 5.0;
+
+/// Forms whose dead placement v2 draws as their skeleton: the trees that
+/// raise saplings (`sapling_for`).
+fn can_die(form: Form) -> bool {
+    sapling_for(form).is_some()
+}
+
+/// What is left of a dead tree, from its hash: about a third standing, a
+/// quarter snapped, a sixth stumps, the rest fallen; in a gap where the
+/// canopy came down, half of them fallen.
+fn skeleton_kind(h0: u32, fell: bool) -> Skeleton {
+    let u = unit(hash32(h0 ^ 0x736b_656c));
+    let (standing, broken, stump) = if fell { (0.2, 0.4, 0.5) } else { (0.3, 0.55, 0.7) };
+    if u < standing {
+        Skeleton::Standing
+    } else if u < broken {
+        Skeleton::Broken
+    } else if u < stump {
+        Skeleton::Stump
+    } else {
+        Skeleton::Log
+    }
+}
+
+/// The longest a fallen log is drawn, metres: a giant's whole length would
+/// run through its neighbours.
+const LOG_MAX: f32 = 28.0;
+
+/// Lay a grown `log` (a snag's straight trunk) along the ground from its
+/// foot, the way it fell, with its top end thinner and a limb or two
+/// snapped short and standing up off it.
+fn lay_down(w: &World, mut t: super::gen::Tree) -> super::gen::Tree {
+    let a0 = unit(hash32(t.seed ^ 0x6c6f_6721)) * TAU;
+    let dir = Vec3::new(a0.cos(), 0.0, a0.sin());
+    let side = Vec3::new(-dir.z, 0.0, dir.x);
+    let len = t.trunk_h.min(LOG_MAX);
+    let r = t.trunk_r.max(0.12);
+    let at = |d: f32| {
+        let q = t.pos + dir * d;
+        Vec3::new(q.x, w.f.height(q.x, q.z) + r * 0.75, q.z)
+    };
+    let (a, m, b) = (at(0.0), at(len * 0.55), at(len));
+    let mut branches = vec![(a, m, r), (m, b, r * 0.7)];
+    let n = (unit(hash32(t.seed ^ 0x6c69_6d62)) * 3.0) as u32;
+    for k in 0..n {
+        let hk = hash32(t.seed ^ k.wrapping_mul(0x9e37_79b9) ^ 0x7374_7562);
+        let d = len * (0.45 + 0.45 * unit(hk));
+        let from = at(d);
+        let lr = (r * 0.3).max(0.06);
+        let s = if unit(hash32(hk ^ 1)) < 0.5 { -1.0 } else { 1.0 };
+        let to = from + (side * s * 0.6 + Vec3::Y * 0.8 + dir * 0.2).normalize() * (0.6 + 1.2 * unit(hash32(hk ^ 2))) * (1.0 + r);
+        branches.push((from, to, lr));
+    }
+    let top = branches.iter().map(|(p, q, rr)| p.y.max(q.y) + rr).fold(0.0f32, f32::max) - t.pos.y;
+    t.branches = branches;
+    t.blobs.clear();
+    t.trunk_h = 0.05;
+    t.canopy_lo = 0.0;
+    t.top = top.max(0.5);
+    t.radius = len + r + 0.5;
+    t.flare = 0.0;
+    t
+}
+
+/// Whether placement v2 gives its woods stand structure (P6): age classes,
+/// saplings round their parents, gaps in the canopy. `VG_STANDS=0` leaves
+/// them out, for comparing.
+fn stands_on() -> bool {
+    static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *ON.get_or_init(|| std::env::var("VG_STANDS").map_or(true, |v| v.trim() != "0"))
+}
+
+/// Forms that grow as trees, with an age to them.
+fn woody(form: Form) -> bool {
+    matches!(
+        form,
+        Form::Broad | Form::Branching | Form::Birch | Form::Weeping | Form::Gnarled | Form::Umbrella | Form::Conifer | Form::Spiral | Form::Columnar | Form::Mangrove
+    )
+}
+
+/// The generic young plant a tree's seedlings grow as: one shape for every
+/// conifer, one for every broadleaf, each worn in its parent's colours.
+fn sapling_for(form: Form) -> Option<&'static str> {
+    match form {
+        Form::Conifer | Form::Spiral | Form::Columnar => Some("sapling_conifer"),
+        Form::Broad | Form::Branching | Form::Birch | Form::Weeping | Form::Gnarled | Form::Umbrella => Some("sapling_broadleaf"),
+        _ => None,
+    }
+}
+
+/// A tree's size for its age, from its hash: about a quarter young (0.6 to
+/// 0.75 of its grown size), over half grown (0.9 to 1.05), a fifth old (1.04
+/// to 1.15) where the room over it allows.
+fn age_size(h0: u32, plant: &PlantDef, room: f32) -> f32 {
+    let (u, v) = (unit(hash32(h0 ^ 0x6167_6531)), unit(hash32(h0 ^ 0x6167_6532)));
+    let s = if u < 0.25 {
+        0.6 + 0.15 * v
+    } else if u < 0.8 {
+        0.9 + 0.15 * v
+    } else {
+        1.04 + 0.11 * v
+    };
+    if s > 1.0 && room < plant.height[1] * s + 1.0 {
+        1.0
+    } else {
+        s
+    }
+}
+
+/// How much of the canopy stands at `p`: patches 30 to 60 m across where
+/// trees have fallen and not yet come back, about a tenth of a wood.
+fn canopy_at(p: Vec2, seed: u32) -> f32 {
+    let n = fbm2(p.x / 45.0, p.y / 45.0, 3, seed ^ 0x6761_7073) * 0.5 + 0.5;
+    1.0 - 0.85 * super::noise::smoothstep(0.6, 0.72, n)
+}
+
+/// The most saplings a young-to-grown tree, and an old one, raises.
+const RECRUITS: (f32, f32) = (3.0, 4.0);
+
+/// Saplings round the trees just placed (`placed`, as `place_by_site` keeps
+/// it): each raises a few within one to two and a half crowns of its trunk,
+/// where the ground suits its kind (its site block, shade aside) and its
+/// neighbour's border zone allows; more come up where light gets through.
+/// Each is its kind's generic sapling (`sapling_for`) in the parent's
+/// colours. Returns how many.
+#[allow(clippy::too_many_arguments)]
+fn recruit(
+    w: &World,
+    site: &super::site::Site,
+    taken: &mut [bool],
+    room: &[f32],
+    sow: &mut Vec<Sow>,
+    shade: &mut [f32],
+    ns: usize,
+    away: Vec2,
+    placed: &[(Vec2, usize, usize, f32, u32, u32)],
+    zones: bool,
+) -> usize {
+    let n = w.f.n;
+    let mut got = 0;
+    for &(p, pi, bi, size, h0, seed) in placed {
+        let parent = &w.lib.plants[pi];
+        let Some(yi) = sapling_for(parent.form).and_then(|name| w.lib.plant(name)) else { continue };
+        let young = &w.lib.plants[yi];
+        let prefs = parent.site.as_ref().map(|s| crate::library::SitePrefs { shade: None, ..s.clone() });
+        let most = if size > 1.0 { RECRUITS.1 } else { RECRUITS.0 };
+        let count = (unit(hash32(h0 ^ 0x7365_6564)) * most) as u32;
+        let crown = (parent.crown_radius[0] + parent.crown_radius[1]) * 0.5 * size.powf(0.8);
+        for j in 0..count {
+            let hj = hash32(h0 ^ 0x7361_706c ^ j.wrapping_mul(0x9e37_79b9));
+            let a = unit(hj) * TAU;
+            let q = p + Vec2::new(a.cos(), a.sin()) * crown * (1.0 + 1.5 * unit(hash32(hj ^ 1)));
+            let Some((i, _)) = spot(w, young, bi, q, taken, room, zones) else { continue };
+            let share = zone_share(w, site, i, q, bi);
+            let suit = prefs.as_ref().map_or(1.0, |s| site.suits(s, q.x, q.y, 0.0));
+            // Young trees stand shade that grown ones would not, but come
+            // up best where light gets through.
+            let light = 1.0 - 0.6 * shade_at(shade, ns, q);
+            if unit(hash32(hj ^ 2)) > share * suit * light || crowded(taken, n, q, clear_of(young.form)) {
+                continue;
+            }
+            taken[i] = true;
+            sow.push(Sow::Plant {
+                gi: yi,
+                depth: None,
+                base: Vec3::new(q.x, w.f.height(q.x, q.y) - 0.1, q.y),
+                seed: hash32(hj ^ 0x1234_5678),
+                worn: coat_at(&w.lib, pi, None, q.x, q.y, seed),
+                size: 1.0,
+                like: Some(pi),
+            });
+            stamp_crown(shade, ns, q, young, away, 1.0);
+            got += 1;
+        }
+    }
+    got
 }
 
 /// Plants the chronicle put at exact spots (tower ledges): trees grown where
@@ -2478,8 +3332,8 @@ fn pl_spacing(p: &Placement) -> Option<f32> {
 
 /// Natural features the chronicle placed (fallen blocks round a tower's
 /// foot, scree, logs) sit on the ground as it stood when their event ran. An
-/// event that came later and cut the ground away under them — a river
-/// carving its gorge across a tower's rubble field — left them hanging in
+/// event that came later and cut the ground away under them â€” a river
+/// carving its gorge across a tower's rubble field â€” left them hanging in
 /// the air over the water. Drop each one back onto the ground as it finally
 /// stands, before anything is drawn from it.
 ///
@@ -2961,7 +3815,7 @@ mod tests {
                 while y <= solid_top {
                     let r = solid(&t, y);
                     // Unbroken: no height inside the crown with nothing on the
-                    // axis and more needles above it — that is the apex left
+                    // axis and more needles above it â€” that is the apex left
                     // floating clear of the tree.
                     assert!(
                         r > 0.0,

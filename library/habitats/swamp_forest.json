@@ -1,0 +1,13 @@
+{
+  "name": "swamp_forest",
+  "version": 1,
+  "introduced_by": "base",
+  "notes": "Trees standing in water or on ground that floods.",
+  "wet": 0.9,
+  "soil": 0.5,
+  "shade": 0.55,
+  "rock": 0.0,
+  "disturbed": 0.0,
+  "open": 0.3,
+  "forage": ["browse"]
+}

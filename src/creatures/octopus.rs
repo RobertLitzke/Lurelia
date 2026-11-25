@@ -240,7 +240,7 @@ fn pick_goal(terrain: &Terrain, at: Vec3, rng: &mut Rng) -> Option<Vec3> {
 
 /// Step every octopus.
 pub fn update(world: &mut hecs::World, species: &[Species], models: &[Model], dt: f32, threat: &Threat, terrain: &Terrain) {
-    for (oct, look, me, morph, anim) in world.query_mut::<(&mut Octopus, &mut Look, &Creature, Option<&mut crate::variety::Morph>, &mut Anim)>() {
+    for (oct, look, me, morph, anim, show) in world.query_mut::<(&mut Octopus, &mut Look, &Creature, Option<&mut crate::variety::Morph>, &mut Anim, Option<&super::display::Show>)>() {
         look.begin_step();
         let sp = &species[me.species];
         let m = &models[sp.model];
@@ -365,6 +365,11 @@ pub fn update(world: &mut hecs::World, species: &[Species], models: &[Model], dt
         anim.prev = std::mem::replace(&mut anim.pose, pose);
         if anim.prev.bones.len() != anim.pose.bones.len() {
             anim.prev = anim.pose.clone();
+        }
+        // A display (creatures/display: colour flashing, a lobster's claws
+        // up) lays its overlay on the pose.
+        if let Some(s) = show {
+            super::display::apply(rig, &mut anim.pose, &s.out.pose, vox);
         }
 
         // Paling as anything comes near: from its own brick red toward the

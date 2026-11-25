@@ -124,12 +124,50 @@ pub fn library_for(name: &str) -> (Library, Vec<String>) {
     // it), which leaves its ids free for the woods' grain copies.
     let mut r = reach(&root.join("library"), &dir, &lib);
     lib.reach_coats(&mut r);
+    lib.ghost_twins(&lamp_posts(&dir), &mut r);
     for m in lib.assign_ids(Some(r)) {
         errors.push(format!("material {m}: no voxel id left in world {name} (it reaches more than 238 materials with their grain copies)"));
     }
     errors.extend(round_edges_for_world(&dir, &mut lib));
     crate::world::matlib::install(&lib);
     (lib, errors)
+}
+
+/// The materials a world's race lamps stand on (`circuit::light_road`): its
+/// track.json gate's post and any circuit event's, or the default post when
+/// they name none. Empty for a world with no track and no circuit. Each gets
+/// a passable copy (`Library::ghost_twins`) so karts drive through the posts.
+pub(crate) fn lamp_posts(dir: &std::path::Path) -> Vec<String> {
+    use crate::world::chronicle::LAMP_POST;
+    use serde_json::Value;
+    fn circuits(v: &Value, out: &mut Vec<String>) {
+        match v {
+            Value::Object(o) => {
+                if o.get("event").and_then(|e| e.as_str()) == Some("circuit") {
+                    out.push(o.get("gate").and_then(|g| g.get("post")).and_then(|p| p.as_str()).unwrap_or(LAMP_POST).to_string());
+                }
+                o.values().for_each(|x| circuits(x, out));
+            }
+            Value::Array(a) => a.iter().for_each(|x| circuits(x, out)),
+            _ => {}
+        }
+    }
+    let read = |f: &str| std::fs::read_to_string(dir.join(f)).ok().and_then(|t| serde_json::from_str::<Value>(&t).ok());
+    let mut out = Vec::new();
+    if let Some(t) = read("track.json") {
+        out.push(t.get("gate").and_then(|g| g.get("post")).and_then(|p| p.as_str()).unwrap_or(LAMP_POST).to_string());
+        // The props a kart smashes through are passable too: the race
+        // clears them as a kart reaches them (race_track.rs).
+        if let Some(Value::Array(a)) = t.get("smash") {
+            out.extend(a.iter().filter_map(|s| s.get("mat").and_then(|m| m.as_str()).map(str::to_string)));
+        }
+    }
+    if let Some(c) = read("chronicle.json") {
+        circuits(&c, &mut out);
+    }
+    out.sort();
+    out.dedup();
+    out
 }
 
 /// Bevel the materials a world's `round_edges` list names (see
@@ -159,7 +197,7 @@ fn round_edges_for_world(dir: &std::path::Path, lib: &mut Library) -> Vec<String
 }
 
 /// Library materials the engine names in code, reached by every world.
-pub const ENGINE_MATERIALS: [&str; 20] = [
+pub const ENGINE_MATERIALS: [&str; 21] = [
     "dry_bunchgrass",
     "mossy_stone",
     "basalt",
@@ -182,6 +220,8 @@ pub const ENGINE_MATERIALS: [&str; 20] = [
     "maple_red",
     // The colour of the leaf cards along an ocotillo's canes (mesh/sprites.rs).
     "ocotillo_leaves",
+    // The water a kart course's water zones fall back on (race/mod.rs).
+    "river_water",
 ];
 
 /// Every library name world `dir` can reach: any string in its world.json
@@ -199,7 +239,11 @@ pub fn reach(lib_dir: &std::path::Path, dir: &std::path::Path, lib: &Library) ->
         match v {
             Value::String(s) => out.push(s.clone()),
             Value::Array(a) => a.iter().for_each(|x| strings(x, out)),
-            Value::Object(o) => o.values().for_each(|x| strings(x, out)),
+            // A biome's `habitat` and any entry's `realms` name library
+            // habitats and realms, which name no materials, and some share
+            // a name with a biome (`beach`, `bloom`), which would reach that
+            // biome's materials.
+            Value::Object(o) => o.iter().filter(|(k, _)| !matches!(k.as_str(), "habitat" | "realms")).for_each(|(_, x)| strings(x, out)),
             _ => {}
         }
     }
@@ -235,6 +279,13 @@ pub fn reach(lib_dir: &std::path::Path, dir: &std::path::Path, lib: &Library) ->
     // copies want.
     if !world.is_null() && world.get("biomes").is_none() {
         todo.extend(lib.biomes.iter().map(|b| b.name.clone()));
+    }
+    // A world that draws realm looks reaches the ground its realms turn
+    // ground into (`RealmDef::ground`).
+    if world.get("realm_looks").and_then(|v| v.as_bool()) == Some(true) {
+        for r in &lib.realms {
+            todo.extend(r.ground.values().cloned());
+        }
     }
     // A world may hand an event a data file of its own (a city import's
     // `city.json`), and the materials its buildings, streets and trees name
@@ -305,6 +356,12 @@ pub fn edges_for(name: &str) -> (Vec<crate::world::seam::Edge>, Vec<String>) {
     (edges, problems)
 }
 
+/// Whether a world can be played as explore (launch.rs `games`): the worlds
+/// that carry a survey.
+pub fn explorable(name: &str) -> bool {
+    crate::launch::games(name).iter().any(|g| g.kind == crate::launch::Mode::Explore)
+}
+
 /// Build a world by name. Errors when the folder is missing or broken.
 pub fn load(name: &str) -> Result<Loaded, String> {
     if name == "random" {
@@ -322,7 +379,13 @@ pub fn load(name: &str) -> Result<Loaded, String> {
     for e in &errors {
         eprintln!("library: {e}");
     }
-    let world = chronicle::build_world_with(&dir, lib, &edges)?;
+    let mut world = chronicle::build_world_with(&dir, lib, &edges)?;
+    // The survey (world/survey) for worlds that can be explored: read from
+    // the world's survey.bin when it was measured from this same world,
+    // measured and written back when not.
+    if explorable(name) {
+        world.survey = Some(crate::world::survey::Survey::load_or_build(&world, &dir));
+    }
     for w in &world.warnings {
         eprintln!("world {name}: {w}");
     }
@@ -368,6 +431,11 @@ pub fn used_entries(world: &World) -> std::collections::HashSet<String> {
         present[b as usize] = true;
     }
     let mut used = std::collections::HashSet::new();
+    // A zoo (creatures/zoo.rs) pens every creature it is asked for, whatever
+    // the biomes list.
+    if let Some(z) = &world.def.zoo {
+        used.extend(lib.creatures.iter().filter(|c| crate::creatures::zoo::wanted(lib, z, &c.name)).map(|c| c.name.clone()));
+    }
     for (b, def) in lib.biomes.iter().enumerate() {
         if present[b] {
             used.extend(def.creatures.iter().map(|c| c.creature.clone()));
@@ -385,9 +453,15 @@ pub fn used_entries(world: &World) -> std::collections::HashSet<String> {
         for c in &lib.creatures {
             if used.contains(&c.name) {
                 used.extend(c.behaviour.hunts.iter().filter(|n| *n != "player").cloned());
+                // What it carries in a display (an acorn, a lizard).
+                used.extend(c.behaviour.displays.iter().filter_map(|d| d.food.clone()));
             }
             if c.rarity > 0.0 && c.like.as_ref().is_some_and(|p| used.contains(p)) {
                 used.insert(c.name.clone());
+            }
+            // The entries its forms are drawn with: the lioness for the lion.
+            if used.contains(&c.name) {
+                used.extend(c.forms.each().map(|(_, f)| f.clone()));
             }
         }
     }
@@ -455,7 +529,8 @@ pub fn creatures(world: &World) -> (Vec<Model>, Vec<Species>, Vec<ItemModel>, Ve
             bones_asked: false,
         }))
         .collect();
-    for c in &srcs {
+    for (k, c) in srcs.iter().enumerate() {
+        let creature = k < lib.creatures.len();
         let mut slot: HashMap<String, u8> = HashMap::new();
         if !used.contains(c.name) {
             models_out.push(models::from_cells(&[0u8; 32 * 32 * 32], c.voxel, c.half_w, c.height));
@@ -491,6 +566,11 @@ pub fn creatures(world: &World) -> (Vec<Model>, Vec<Species>, Vec<ItemModel>, Ve
         let dims = crate::anim::slice::Dims(c.grid);
         let s = shape::compile(c.ops, c.grid, &resolve);
         let mut model = models::from_grid(&s.mat, dims, c.voxel, c.half_w, c.height);
+        // A creature without a rig is drawn whole, so the whole model gets
+        // the levels of detail; a rigged one's parts get them instead.
+        if creature && c.rig.is_none() && dims == crate::anim::slice::Dims::CUBE {
+            model = model.for_lod(&s.mat);
+        }
         model.block = block;
         model.reach = crate::creatures::crowd::measure_reach(&s.mat, dims, c.voxel, c.half_w);
         if let Some(def) = c.rig {
@@ -509,7 +589,7 @@ pub fn creatures(world: &World) -> (Vec<Model>, Vec<Species>, Vec<ItemModel>, Ve
                 .and_then(|(cells, parts)| {
                     let n = crate::anim::bones::voxels(&cells);
                     if n >= crate::anim::bones::MIN_BONE_VOXELS {
-                        Some(parts)
+                        Some((crate::anim::bones::hulls(&sliced, &cells), parts))
                     } else {
                         if c.bones_asked {
                             problems.push(format!("{}: asked for bones but only {n} voxels of them read; set \"ages\": {{\"bones\": \"none\"}}", c.name));
@@ -518,16 +598,33 @@ pub fn creatures(world: &World) -> (Vec<Model>, Vec<Species>, Vec<ItemModel>, Ve
                     }
                 });
             let mut rig = base.clone();
-            rig.offset_models(srcs.len() + parts_out.len());
+            let first = srcs.len() + parts_out.len();
+            rig.offset_models(first);
+            // The parts' smooth meshes are baked from the whole body at once,
+            // so they are one surface with seams that follow the joints.
+            let body = models::BodyBake {
+                cells: s.mat.clone(),
+                dims: c.grid,
+                owner: sliced.owner.clone(),
+                parent: sliced.rig.bones.iter().map(|b| b.parent).collect(),
+                loose: sliced.rig.bones.iter().map(|b| b.loose).collect(),
+                origins: sliced.origins.clone(),
+                parts: (first..first + sliced.parts.len()).collect(),
+            };
+            model.lod = Some(Box::new(models::Lods { body: Some(body), ..Default::default() }));
             parts_out.extend(sliced.parts.into_iter().map(|mut m| {
                 m.block = block;
+                if let Some(l) = m.lod.as_mut() {
+                    l.of_body = true;
+                }
                 m
             }));
             model.rig = Some(rig);
-            if let Some(parts) = skeleton {
+            if let Some((hulls, parts)) = skeleton {
                 let mut srig = base;
-                // Bones do not sag.
+                // Bones do not sag, and lie on bone rather than on flesh.
                 srig.soft = None;
+                crate::anim::bones::set_hulls(&mut srig, hulls);
                 srig.offset_models(srcs.len() + parts_out.len());
                 parts_out.extend(parts.into_iter().map(|mut m| {
                     m.block = block;
@@ -545,6 +642,28 @@ pub fn creatures(world: &World) -> (Vec<Model>, Vec<Species>, Vec<ItemModel>, Ve
         models_out.push(model);
     }
     models_out.extend(parts_out);
+    // The decimated and coarse meshes of every creature model and part in
+    // use (docs/CREATURES.md "Model resolution and decimation").
+    let t0 = std::time::Instant::now();
+    models::bake_all(&mut models_out);
+    if std::env::var("LOD_TIMES").is_ok() {
+        eprintln!("creature levels of detail baked in {:.0} ms", t0.elapsed().as_secs_f64() * 1000.0);
+        // Creatures in use that would draw as voxels even in smooth mode.
+        // A part with no voxels of its own draws nothing in either mode.
+        let smooth = |k: usize| models_out.get(k).is_some_and(|m| m.mesh.quads.is_empty() || m.lod.as_ref().is_some_and(|l| !l.near.is_empty()));
+        let square: Vec<&str> = srcs[..lib.creatures.len()]
+            .iter()
+            .enumerate()
+            .filter(|(_, c)| used.contains(c.name))
+            .filter(|&(k, _)| match &models_out[k].rig {
+                Some(r) => !r.bones.iter().all(|b| smooth(b.model)),
+                None => !smooth(k),
+            })
+            .map(|(_, c)| c.name)
+            .collect();
+        let n = srcs[..lib.creatures.len()].iter().filter(|c| used.contains(c.name)).count();
+        eprintln!("{} of {n} creatures in use have smooth meshes; without: {square:?}", n - square.len());
+    }
     let mut species: Vec<Species> = lib
         .creatures
         .iter()
@@ -569,8 +688,20 @@ pub fn creatures(world: &World) -> (Vec<Model>, Vec<Species>, Vec<ItemModel>, Ve
                 a
             },
             aged_tint: crate::variety::aged_tint(&c.colors.values().map(|v| [0, 1, 2].map(|i| models::linear_colour(v)[i])).collect::<Vec<_>>()),
+            forms: Default::default(),
         })
         .collect();
+    // Each species' forms, as model indices (each entry's model is at its
+    // own index).
+    for (k, c) in lib.creatures.iter().enumerate() {
+        let f = &c.forms;
+        let at = |n: &Option<String>| n.as_deref().and_then(|n| lib.creature(n));
+        species[k].forms = crate::creatures::Forms {
+            female: at(&f.female),
+            male: at(&f.male),
+            juvenile: at(&f.juvenile),
+        };
+    }
     water_forms(&mut species, lib);
     let n = lib.creatures.len();
     let items = lib
@@ -621,6 +752,7 @@ fn water_forms(species: &mut Vec<Species>, lib: &crate::library::Library) {
             morphs: Vec::new(),
             ages: land.ages,
             aged_tint: land.aged_tint,
+            forms: land.forms,
         };
         made.push((k, species.len()));
         species.push(twin);

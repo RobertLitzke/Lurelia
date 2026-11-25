@@ -242,8 +242,8 @@ pub struct Life {
     /// and which side (-1 or 1).
     pub on_side: bool,
     pub side: f32,
-    /// The pose it falls into on its side, worked out once (anim/ragdoll.rs)
-    /// the first time it lies down, since settling a ragdoll is not something
+    /// The pose it falls into on its side, worked out once (anim/limp.rs)
+    /// the first time it lies down, since settling a limp body is not something
     /// to do every frame.
     side_pose: Option<Pose>,
     /// A long tail dragged behind and a long neck that browses (trail.rs),
@@ -450,10 +450,10 @@ impl Life {
         }
         self.tilt += (tilt_want - self.tilt) * k(5.0);
 
-        // Settling onto a side is a ragdoll, worked out the first time this
-        // one lies down and kept.
+        // Lying on its side is a limp body let down onto the ground, worked
+        // out the first time this one lies down and kept.
         if self.on_side && self.level > 1.0 && self.side_pose.is_none() {
-            self.side_pose = Some(super::ragdoll::on_side(rig, voxel, self.side, (self.seed * 1000.0) as u32 | 1));
+            self.side_pose = Some(super::limp::on_side(rig, voxel, inp.pivot, self.side, (self.seed * 1000.0) as u32 | 1));
         }
 
         // A long tail and neck bending out of line (trail.rs).

@@ -23,6 +23,9 @@ use std::io::{Read, Write};
 use std::path::PathBuf;
 use std::time::Duration;
 
+pub mod eco;
+mod live;
+
 pub const STEP: f32 = 1.0 / 60.0;
 /// How a heavy footfall rocks the view at full strength (an elephant at
 /// arm's length): metres the eye drops, and radians it rolls
@@ -46,6 +49,10 @@ const SNOW_RATE: f32 = 650.0;
 /// can cast a shadow into the view. It covers both shadow cascades that draw
 /// creatures (render/mod.rs `splits` and `SLICE_MARGIN`), with room to spare.
 const SHADOW_CASTERS_M: f32 = 80.0;
+
+/// Metres from where a zombie round failed to plan before it is tried again:
+/// a start refuge is looked for within 90 m of the player.
+const ZOMBIE_RETRY_M: f32 = 120.0;
 
 /// The water surface over a point and the current there, as
 /// `Player::update` wants it: the world's own water, which is a field.
@@ -185,6 +192,9 @@ pub struct Settings {
     #[serde(deserialize_with = "crate::util::or_default")]
     pub style: Style,
     pub slopes: bool,
+    /// Creatures drawn as smooth decimated meshes (true) or as voxels
+    /// (docs/CREATURES.md "Model resolution and decimation").
+    pub smooth_creatures: bool,
     pub show_stats: bool,
     /// The debug minimap (F6): a north-up map of the ground round the player.
     pub minimap: bool,
@@ -200,6 +210,7 @@ impl Default for Settings {
             shadows: true,
             style: Style::default(),
             slopes: true,
+            smooth_creatures: true,
             show_stats: false,
             minimap: false,
             drive_chase: true,
@@ -349,6 +360,11 @@ pub struct Game {
     /// The player was put at a named place rather than left to the world or
     /// to a match (`--pos`). See `Game::pin`.
     pinned: bool,
+    /// The zombie round could not be planned, said once rather than every
+    /// frame: `Some(None)` on a world with no survey, never tried again;
+    /// `Some(Some(at))` with no refuge in reach of `at`, tried again once the
+    /// player has walked `ZOMBIE_RETRY_M` from there.
+    zombie_failed: Option<Option<Vec3>>,
     sea: f32,
     inst: Vec<(usize, Instance)>,
     /// Instances this frame had to leave out because more than the
@@ -381,9 +397,15 @@ pub struct Game {
     autosave: f32,
     /// The creature or tree under the crosshair, shown in the corner.
     pub looking_at: Option<String>,
+    /// For a creature under the crosshair: its sex, age and what it is doing
+    /// (census.rs `doing`), shown above its name, and which one it is.
+    pub looking_doing: Option<(String, hecs::Entity)>,
     pub last_render: FrameStats,
     pub gpu_name: String,
     pub freeze_creatures: bool,
+    /// The animal debug view: the ecology map, the pinned animal and the
+    /// animals' clock (game/eco.rs).
+    pub eco: eco::Eco,
     /// Instances a headless tool adds to every frame (the bot pose sheet).
     pub extra_inst: Vec<(usize, crate::models::Instance)>,
     /// Index of the first ride model (bike, flyer) in `models`.
@@ -575,6 +597,11 @@ impl Game {
             // has a species to spawn from.
             let species = l.species.into_iter().filter(|_| launch.animals).map(|mut sp| {
                 sp.model += base;
+                for f in [&mut sp.forms.female, &mut sp.forms.male, &mut sp.forms.juvenile] {
+                    if let Some(m) = f.as_mut() {
+                        *m += base;
+                    }
+                }
                 sp
             });
             let items = l.items.into_iter().map(|mut it| {
@@ -586,6 +613,11 @@ impl Game {
             crate::mesh::sprites::set_keep_out(Vec::new());
             portals = crate::portals::Portals::new(&l.world.def.portals, |w| eprintln!("world {name}: {w}"));
             ents.set_world(l.world, species.collect(), items.collect());
+            // The herds as they were left (creatures/roster.rs), unless this
+            // is a fresh start or a match.
+            if !fresh && !arena && ents.load_roster(&save_dir) {
+                eprintln!("herds: {} read from {}", ents.roster.herds.len(), save_dir.join(crate::creatures::roster::FILE).display());
+            }
         }
         let pool = task_pool(&ents.species, &models, &gen, spawn);
         let finds = ents.gems_collected.len();
@@ -638,6 +670,7 @@ impl Game {
             repeat: false,
             spawned: false,
             pinned: false,
+            zombie_failed: None,
             arena,
             sea,
             inst: Vec::new(),
@@ -656,9 +689,11 @@ impl Game {
             message: None,
             autosave: 30.0,
             looking_at: None,
+            looking_doing: None,
             last_render: FrameStats::default(),
             gpu_name: String::new(),
             freeze_creatures: false,
+            eco: Default::default(),
             extra_inst: Vec::new(),
             ride_models: usize::MAX,
             vehicle_models: usize::MAX,
@@ -705,6 +740,9 @@ impl Game {
 
     /// A new scrapbook page for the renderer, when the page has changed.
     pub fn take_map_image(&mut self) -> Option<Vec<u8>> {
+        if let Some(img) = self.eco_map_image() {
+            return Some(img);
+        }
         self.camera.page_image()
     }
 
@@ -885,14 +923,17 @@ impl Game {
             .iter()
             .position(|l| l.eq_ignore_ascii_case(&self.launch.difficulty))
             .map_or(1.0, |k| crate::launch::RACE_LEVEL_SHARE[k]);
-        self.activity = Some(Box::new(crate::race::Race::new(&def, circuit, spec, rivals, level, grip, self.vehicle_models, &w.lib)));
+        let mut race = crate::race::Race::new(&def, circuit, spec, rivals, level, grip, self.vehicle_models, &w.lib);
+        race.set_cup(self.launch.cup.clone());
+        self.activity = Some(Box::new(race));
     }
 
     /// On a world whose world.json carries a `"shooter"` block, the gun is
     /// never put away: start the rules as soon as the player is on the
     /// ground, and again after anything else has had the activity slot.
     fn start_shooter(&mut self) {
-        if self.editing || self.activity.is_some() || !self.spawned || !self.ride.allowed.has(ModeId::Shooter) {
+        let zombies = self.launch.mode == crate::launch::Mode::Zombies;
+        if self.editing || self.activity.is_some() || !self.spawned || !(zombies || self.ride.allowed.has(ModeId::Shooter)) {
             return;
         }
         if let Some(a) = self.parked.take() {
@@ -900,15 +941,85 @@ impl Game {
             return;
         }
         let Some(w) = self.generator().world.clone() else { return };
-        let Some(map) = w.def.shooter.as_ref() else { return };
+        // The zombie round is played on an explore world, which has no
+        // shooter block: its map is planned from the world's survey, from
+        // wherever the player is standing (src/shooter/zombies.rs).
+        let mut plan = None;
+        if zombies {
+            match self.zombie_failed {
+                Some(Some(at)) if at.distance(self.player.pos) < ZOMBIE_RETRY_M => return,
+                Some(None) => return,
+                _ => {}
+            }
+            let Some(survey) = w.survey.as_ref() else {
+                eprintln!("zombies: this world has no survey (only explore worlds carry one)");
+                self.note("NO ZOMBIE ROUND HERE: THIS WORLD HAS NO SURVEY");
+                self.zombie_failed = Some(None);
+                return;
+            };
+            // The kit the round is played with, as `shooter_rules` will
+            // choose it below: the plan's caches hold its guns by role.
+            let kit_name = crate::weapon_kit::chosen(self.launch.kit.as_deref(), self.launch.def().kit.as_deref(), None);
+            let Some(kit) = crate::weapon_kit::get(kit_name).or_else(|| crate::weapon_kit::get(crate::weapon_kit::DEFAULT)) else {
+                eprintln!("zombies: no weapon kit called {kit_name}");
+                self.zombie_failed = Some(None);
+                return;
+            };
+            match crate::shooter::zombies::plan(survey, self.player.pos, self.home.0, w.def.seed ^ if self.repeat { 0 } else { crate::shooter::spawn_seed(w.def.seed) }, kit) {
+                Ok(p) => {
+                    self.zombie_failed = None;
+                    for (i, l) in p.legs.iter().enumerate() {
+                        println!("zombies: leg {} of {}: {:.0} m to {:.0},{:.0} ({})", i + 1, p.legs.len(), l.route_m, l.goal.x, l.goal.z, l.name);
+                    }
+                    println!("zombies: {} pads", p.rules.pickups.len());
+                    plan = Some(p);
+                }
+                Err(e) => {
+                    eprintln!("zombies: {e}");
+                    self.note(&format!("NO ZOMBIE ROUND HERE: {e}"));
+                    self.zombie_failed = Some(Some(self.player.pos));
+                    return;
+                }
+            }
+        }
+        let Some(map) = plan.as_ref().map(|p| &p.rules).or(w.def.shooter.as_ref()) else { return };
         // The map says where things are, the game how it is played and the
         // launch screen what was asked for this time: `games.rs` puts the
         // three together, so nothing here knows which game this is.
-        let rules = self.launch.def().shooter_rules(map, &self.launch, w.def.rock.first().map(|r| r.0.as_str()));
+        let mut rules = self.launch.def().shooter_rules(map, &self.launch, w.def.rock.first().map(|r| r.0.as_str()));
         let seed = w.def.seed;
-        let mut sh = match self.repeat {
-            true => crate::shooter::Shooter::repeatable(&w.lib, &rules, self.home, &self.store, seed),
-            false => crate::shooter::Shooter::new(&w.lib, &rules, self.home, &self.store, seed),
+        // The kit fills the map's weapon spots by role. A role with a choice
+        // of guns draws once for the match, from the clock unless the match
+        // has to repeat.
+        let kit_name = rules.kit.clone().unwrap_or_else(|| crate::weapon_kit::DEFAULT.to_string());
+        match crate::weapon_kit::get(&kit_name) {
+            Some(kit) => {
+                let draw = if self.repeat { seed } else { crate::shooter::spawn_seed(seed) };
+                let a = crate::weapon_kit::apply(&mut rules, &w.lib, kit, draw);
+                for (from, to) in &a.swapped {
+                    println!("kit {kit_name}: {from} -> {to}");
+                }
+                for gone in &a.dropped {
+                    println!("kit {kit_name}: no {gone} (its role is not in the kit)");
+                }
+            }
+            None => eprintln!("no weapon kit called {kit_name}; the map's own guns"),
+        }
+        let mut sh = match (plan, self.repeat) {
+            (Some(p), repeat) => {
+                // The launch screen's condition, else (from the command line)
+                // `VG_ZOMBIE_CONDITION`, else a clear day.
+                let cond = self
+                    .launch
+                    .condition
+                    .clone()
+                    .or_else(|| std::env::var("VG_ZOMBIE_CONDITION").ok())
+                    .and_then(|c| crate::shooter::zombies::Condition::parse(&c))
+                    .unwrap_or(crate::shooter::zombies::Condition::Clear);
+                crate::shooter::Shooter::zombies(&w.lib, &rules, p, self.home, &self.store, seed, &self.launch.difficulty, repeat, cond)
+            }
+            (None, true) => crate::shooter::Shooter::repeatable(&w.lib, &rules, self.home, &self.store, seed),
+            (None, false) => crate::shooter::Shooter::new(&w.lib, &rules, self.home, &self.store, seed),
         };
         if self.pinned {
             sh.pin();
@@ -989,7 +1100,7 @@ impl Game {
         // the library here and again in `Shooter::new`, which wants the rig:
         // `avatar::build` is pure in the library, so the two agree.
         let mut palette = std::mem::take(&mut self.palette);
-        let av = crate::brain::avatar::build(self.library(), &mut palette);
+        let av = crate::brain::avatar::build_drawn(self.library(), &mut palette);
         self.palette = palette;
         self.models.extend(av.models);
     }
@@ -1009,7 +1120,9 @@ impl Game {
         let Some(t) = w.def.tide.filter(|_| w.f.tide.on()) else { return };
         w.f.tide.set_drop(t.drop_at(self.year.day as f32 * 24.0 + self.hour));
         let now = w.f.sea_now();
+        let high = 1.0 - w.f.tide.drop() / t.range.max(0.01);
         self.sea = now;
+        self.parts.platforms.set_tide(high, w.f.tide.drop());
     }
 
     /// Hand the swell the clock the renderer draws with and today's wind
@@ -1072,7 +1185,8 @@ impl Game {
             } else {
                 self.park_activity();
                 self.camera.put_away();
-                let eye = self.frame_params(1.0).cam_pos;
+                let cam = self.frame_params(1.0);
+                let eye = self.ride.free_camera_start(&self.player, &self.store, cam.cam_pos, cam.cam_fwd);
                 self.activity = Some(Box::new(Screenshot::new(eye, self.player.yaw, self.player.pitch)));
             }
         }
@@ -1118,6 +1232,7 @@ impl Game {
             }
             self.target = None;
             self.looking_at = None;
+            self.looking_doing = None;
             return;
         }
         if actions.toggle_fly {
@@ -1229,7 +1344,7 @@ impl Game {
         let eye = self.eye(self.alpha);
         let fwd = self.player.forward();
         self.target = if self.spawned { self.store.raycast(eye, fwd, 6.0) } else { None };
-        self.looking_at = if self.spawned { self.identify(eye, fwd) } else { None };
+        (self.looking_at, self.looking_doing) = if self.spawned { self.identify(eye, fwd) } else { (None, None) };
         crate::trace::end("aim", tr);
         self.dig_cd -= dt;
         self.place_cd -= dt;
@@ -1272,22 +1387,64 @@ impl Game {
         if self.autosave <= 0.0 {
             self.autosave = 30.0;
             if self.streamer.dirty_edits {
-                self.save();
+                self.save_with(false);
             }
         }
     }
 
+    /// In a zoo (creatures/zoo.rs), go to the pen `step` on from the one
+    /// the player is at: PageDown and PageUp.
+    pub fn zoo_jump(&mut self, step: i32) {
+        let Some(z) = &self.ents.zoo else { return };
+        let n = z.pens.len() as i32;
+        let Some(here) = z.nearest(self.player.pos) else { return };
+        let next = (here as i32 + step).rem_euclid(n.max(1)) as usize;
+        self.go_to_pen(next);
+    }
+
+    fn go_to_pen(&mut self, i: usize) {
+        let Some(z) = &self.ents.zoo else { return };
+        let Some((at, look)) = z.viewpoint(i) else { return };
+        let name = self.ents.species[z.pens[i].species].name.replace('_', " ").to_uppercase();
+        let total = z.pens.len();
+        let d = look - at;
+        let yaw = (-d.x).atan2(-d.y);
+        let h = self.generator().height(at.x, at.y);
+        self.set_camera(Vec3::new(at.x, h + 2.0, at.y), yaw, -0.25, false);
+        self.message = Some((format!("PEN {} OF {total}: {name}", i + 1), 2.5));
+    }
+
+    /// Start a display on the creature under the crosshair (the F10 dev
+    /// key): the next of its species' displays that can start there.
+    pub fn force_display(&mut self) {
+        let msg = match &self.looking_doing {
+            Some((_, e)) => {
+                self.ents.shows.forced = Some(*e);
+                "DISPLAY: TRYING"
+            }
+            None => "DISPLAY: NO CREATURE UNDER THE CROSSHAIR",
+        };
+        self.message = Some((msg.to_string(), 2.0));
+    }
+
     /// Names the creature or tree on the line of sight, whichever is nearer.
-    fn identify(&self, eye: Vec3, fwd: Vec3) -> Option<String> {
+    fn identify(&self, eye: Vec3, fwd: Vec3) -> (Option<String>, Option<(String, hecs::Entity)>) {
+        match self.identify_inner(eye, fwd) {
+            Some((name, doing)) => (Some(name), doing),
+            None => (None, None),
+        }
+    }
+
+    fn identify_inner(&self, eye: Vec3, fwd: Vec3) -> Option<(String, Option<(String, hecs::Entity)>)> {
         const RANGE: f32 = 60.0;
         let block = self.store.raycast(eye, fwd, RANGE);
         let block_t = block.map_or(RANGE, |(v, _)| {
             let c = (Vec3::new(v[0] as f32, v[1] as f32, v[2] as f32) + 0.5) * 0.25;
             (c - eye).length()
         });
-        if let Some((t, name)) = self.ents.identify(&self.models, eye, fwd, RANGE) {
+        if let Some((t, name, doing, e)) = self.ents.identify_one(&self.models, eye, fwd, RANGE) {
             if t < block_t + 0.5 {
-                return Some(name);
+                return Some((name, Some((doing, e))));
             }
         }
         let (v, _) = block?;
@@ -1315,7 +1472,7 @@ impl Game {
                 crate::world::gen::TreeKind::Bracket => "FUNGUS".to_string(),
             },
         };
-        Some(name.to_uppercase())
+        Some((name.to_uppercase(), None))
     }
 
     /// The water surface at a point (a river's, else the sea) and the
@@ -1415,11 +1572,14 @@ impl Game {
             }
         }
         if let Some(sh) = a.shooter_mut() {
-            let cues = sh.combat.take_cues();
+            let mut cues = sh.combat.take_cues();
+            // Only what bleeds bleeds.
+            cues.retain(|c| !matches!(c, crate::combat::Cue::Flesh { who, .. } if !sh.bleeds(*who)));
             self.combat_fx(&cues);
             self.combat_sounds(&cues);
         } else if let Some(r) = a.race_mut() {
-            let cues = r.combat_cues();
+            let mut cues = r.combat_cues();
+            cues.retain(|c| !matches!(c, crate::combat::Cue::Flesh { .. }));
             self.combat_fx(&cues);
             self.combat_sounds(&cues);
         }
@@ -1500,7 +1660,8 @@ impl Game {
             self.player.prev_pos = self.player.pos;
         }
         crate::trace::end("player", tr);
-        if !self.freeze_creatures {
+        let runs = self.eco_runs();
+        if runs > 0 {
             // How the animals read the player: where, how fast and how they
             // travel (creatures/startle.rs). Flying with the cheat on reads
             // as standing still, so nothing bolts from a camera in the sky.
@@ -1515,8 +1676,17 @@ impl Game {
             let f = self.player.forward();
             self.ents.facing = Vec3::new(f.x, 0.0, f.z).normalize_or_zero();
             let tr = crate::trace::start();
-            self.ents.update(STEP, &self.store, gen, &threat, slopes, &self.models);
+            for _ in 0..runs {
+                self.ents.update(STEP, &self.store, gen, &threat, slopes, &self.models);
+            }
             crate::trace::end("creatures", tr);
+            self.eco_after_step();
+            self.live_step(STEP * runs as f32, &threat);
+            // VG_ZOO picked the pens: start at the first.
+            // A camera pinned with --pos stays where it was put.
+            if self.ents.zoo.as_mut().is_some_and(|z| std::mem::take(&mut z.jump)) && !self.pinned {
+                self.go_to_pen(0);
+            }
             // Spray the animals threw up this step (creatures/swim.rs).
             self.fx.take(&mut self.ents.cues);
             self.lay_marks();
@@ -1590,10 +1760,11 @@ impl Game {
     }
 
     /// The car's rear tyres leave a track on ground that takes one: a piece
-    /// every `Foot::Tyre` length, laid from the last piece to here.
+    /// every `Foot::Tyre` length, laid from the last piece to here. A kart
+    /// leaves none: a circuit stays clean but for the polish.
     fn lay_tracks(&mut self, soft: f32) {
         use crate::creatures::sign::{Foot, Step};
-        let Some(car) = self.ride.car() else {
+        let Some(car) = self.ride.car().filter(|c| c.spec.model != "kart") else {
             self.tyre_marks = [None; 2];
             return;
         };
@@ -1906,6 +2077,7 @@ impl Game {
                 } => emit(Noise::at(Kind::Splat(radius), at, 1.2)),
                 Cue::Burst { at, radius, .. } => emit(Noise::at(Kind::Burst(radius), at, 2.0 * (radius / 3.0).clamp(0.4, 2.0).sqrt())),
                 Cue::Sparks { at } => emit(Noise::at(Kind::Sparks, at, 0.6)),
+                Cue::Flesh { .. } => {}
                 Cue::Muzzle { .. } => {}
             }
         }
@@ -1940,6 +2112,14 @@ impl Game {
                     if crate::fx::hooks::hard(m) {
                         self.fx.burst("impact_sparks", out, -d, 0, 1.0);
                     }
+                }
+                Cue::Flesh { at, dir, .. } => {
+                    // Back out the way the round went in: a puff of mist and
+                    // a few drops that fall.
+                    let d = dir.normalize_or(Vec3::NEG_Y);
+                    let out = at - d * 0.05;
+                    self.fx.burst("blood_puff", out, -d, 0, 1.0);
+                    self.fx.burst("blood_drops", out, -d + Vec3::Y * 0.3, 0, 1.0);
                 }
                 Cue::Sparks { at } => {
                     self.fx.burst("impact_sparks", at, Vec3::Y, 0, 2.0);
@@ -2362,6 +2542,11 @@ impl Game {
                 sg.draw(&w.lib.signs[sg.style], eye, &mut self.plates);
             }
         }
+        if !w.cloth.flags.is_empty() || !w.cloth.kites.is_empty() {
+            let day = crate::render::daylight::sun_dir(self.hour).y > 0.05;
+            let air = crate::world::cloth::Air::new(self.weather.sky().wind, self.time, day);
+            w.cloth.draw(&air, eye, &mut self.plates);
+        }
         if !w.areas.is_empty() && self.spawned {
             let p = glam::Vec2::new(self.player.pos.x, self.player.pos.z);
             let now = crate::world::places::naming(&w.areas, p, self.area);
@@ -2383,6 +2568,7 @@ impl Game {
         if let Some(a) = &self.activity {
             a.overlay(&self.player, &mut self.overlay);
         }
+        self.eco_overlay();
         // The moving parts keep stepping in a paused world; nothing else does.
         let alpha = self.still_alpha.unwrap_or(self.alpha);
         let (store, sea) = (&self.store, self.sea);
@@ -2522,6 +2708,7 @@ impl Game {
             marks: &self.marks,
             lamps: &self.lamps,
             shadows: self.settings.shadows,
+            decimated: self.settings.smooth_creatures,
             style: self.settings.style,
             slopes: self.streamer.smooth(),
             speed_fx: cam.speed_fx,
@@ -2556,6 +2743,23 @@ impl Game {
                 .map(|f| (f.x, f.z, f.half_m + crate::world::gen::STUDIO_BANK_M)),
             lens: (self.camera.active && self.camera.raised && self.camera.book.is_none() && self.activity.is_none()).then(|| self.camera.lens.fx(self.camera.orient, aspect, true)),
         }
+    }
+
+    /// The animal calls sounding now, loudest first, for the stats HUD: who,
+    /// what, how far, which way and about how loud.
+    fn heard_debug(&self) -> Vec<String> {
+        const POINTS: [&str; 8] = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+        let heard = crate::sound::audible();
+        if heard.is_empty() {
+            return Vec::new();
+        }
+        let mut out = vec![format!("HEARD {}", heard.len())];
+        for a in heard.iter().take(8) {
+            let who = if (a.who as usize) < self.ents.species.len() { crate::creatures::display_name(&self.ents.species, a.who as usize) } else { "?" };
+            let point = POINTS[((a.bearing / std::f32::consts::FRAC_PI_4).round() as usize) % 8];
+            out.push(format!("{}  {}  {:.0} M  {}  {:.0} DB", who.replace('_', " "), a.cry.name(), a.dist, point, a.db).to_uppercase());
+        }
+        out
     }
 
     /// The biome the player stands in, with the ground as the fields see it:
@@ -2762,6 +2966,7 @@ impl Game {
         if self.spawned {
             lines.push(self.aim_debug());
         }
+        lines.extend(self.heard_debug());
         let wmax = lines.iter().map(|l| Hud::text_width(l, s)).fold(0.0, f32::max);
         hud.rect(8.0, 8.0, wmax + 16.0, line * lines.len() as f32 + 12.0, [0.0, 0.0, 0.0, 0.35]);
         for (i, l) in lines.iter().enumerate() {
@@ -2899,6 +3104,15 @@ impl Game {
             self.camera.book_hud(hud, w, h, s);
             return;
         }
+        if self.eco.map {
+            let under = self.build_eco_map(hud, w, h, s);
+            self.build_inspector(hud, w, h, s, Some(under));
+            if let Some((m, t)) = &self.message {
+                let mw = Hud::text_width(m, s * 1.5);
+                hud.label((w * 0.5 - mw * 0.5).floor(), h - 40.0 * s, s * 1.5, [1.0, 1.0, 1.0, t.min(1.0)], m);
+            }
+            return;
+        }
         if self.camera.active && self.camera.raised && self.activity.is_none() {
             self.camera.hud(hud, w, h, s);
             if let Some((m, t)) = &self.message {
@@ -2963,6 +3177,8 @@ impl Game {
         }
 
         self.build_stats(hud, s, dim, w, h);
+        self.build_inspector(hud, w, h, s, None);
+        self.build_eco_keys(hud, w, s);
         if self.settings.minimap {
             let panel = if self.settings.show_stats { line * 5.0 + 20.0 } else { 0.0 };
             self.build_minimap(hud, 16.0, 16.0 + panel, 60.0 * s, s);
@@ -3021,10 +3237,28 @@ impl Game {
         // bottom left corner, so what you are looking at and where you are
         // move up above them rather than printing over them.
         let foot = if self.camera.active && !self.camera.raised { line * 2.0 + 20.0 } else { 0.0 };
+        // The area name sits above whatever is printed under it.
+        let mut area_y = h - foot - line * 3.0 - 16.0;
         if let Some(name) = &self.looking_at {
-            hud.label(16.0, h - line * 1.5 - 12.0 - foot, s * 1.5, [1.0, 0.96, 0.86, 0.95], name);
+            let y = h - line * 1.5 - 12.0 - foot;
+            hud.label(16.0, y, s * 1.5, [1.0, 0.96, 0.86, 0.95], name);
+            // Above the name: its sex, age and what it is doing, so a
+            // display (creatures/display) can be seen to be running.
+            if let Some((doing, _)) = self.looking_doing.as_ref().filter(|d| !d.0.is_empty()) {
+                let dy = y - line * 1.1;
+                hud.label(16.0, dy, s * 1.1, [0.85, 0.9, 1.0, 0.85], doing);
+                area_y = area_y.min(dy - line * 1.5 - 4.0);
+            }
         }
-        self.build_area_name(hud, h - foot, s, line);
+        self.build_area_name(hud, area_y, s);
+        // In a zoo (creatures/zoo.rs): whose pen this is and which row.
+        if let Some(pen) = self.ents.zoo.as_ref().and_then(|z| z.pen_at(self.player.pos)) {
+            let name = self.ents.species.get(pen.species).map_or(String::new(), |sp| sp.name.replace('_', " ").to_uppercase());
+            let row = pen.row_at(self.player.pos.z).unwrap_or("").to_uppercase();
+            let t = format!("PEN: {name}   ROW: {row}   PGUP/PGDN: OTHER PENS");
+            let tw = Hud::text_width(&t, s * 1.2);
+            hud.label(cx - tw * 0.5, 16.0 + line * 1.6, s * 1.2, [1.0, 0.96, 0.8, 0.9], &t);
+        }
 
         if let Some((m, t)) = &self.message {
             let a = t.min(1.0);
@@ -3041,7 +3275,7 @@ impl Game {
     /// Where you are, low in the corner: it fades up as you walk into a named
     /// area, holds for a few seconds, then settles to a dim line that stays
     /// while you are in it, and fades away as you leave.
-    fn build_area_name(&self, hud: &mut Hud, h: f32, s: f32, line: f32) {
+    fn build_area_name(&self, hud: &mut Hud, y: f32, s: f32) {
         let Some(w) = self.generator().world.as_ref() else {
             return;
         };
@@ -3059,7 +3293,7 @@ impl Game {
         if a <= 0.01 {
             return;
         }
-        hud.label(16.0, h - line * 3.0 - 16.0, s * 1.5, [0.98, 0.95, 0.88, a], name);
+        hud.label(16.0, y, s * 1.5, [0.98, 0.95, 0.88, a], name);
     }
 
     /// The controls, over a dimmed and paused game.
@@ -3130,7 +3364,29 @@ impl Game {
         }
     }
 
+    /// Read the herds from the save folder (the headless `VG_LOAD_HERDS`
+    /// hook; a game that is not fresh does this as it opens).
+    pub fn load_herds(&mut self) -> bool {
+        self.ents.load_roster(&self.save_dir)
+    }
+
+    /// Write the herds alone (the headless `VG_SAVE_HERDS` hook): how many.
+    pub fn save_herds(&self) -> std::io::Result<usize> {
+        let _ = std::fs::create_dir_all(&self.save_dir);
+        self.ents.save_roster(&self.save_dir).map(|_| self.ents.roster.herds.len())
+    }
+
+    /// Save: the player asked (F5, the pause menu), or the world is closing
+    /// (the menu, another world, quitting). The herds are written too.
     pub fn save(&mut self) {
+        self.save_with(true);
+    }
+
+    /// Save what is owed. `herds`: write the roster as well
+    /// (creatures/roster.rs); the half-minute autosave leaves it, since it
+    /// is a few hundred kilobytes and only needs to be right when the
+    /// player saves or leaves.
+    fn save_with(&mut self, herds: bool) {
         if !self.persist {
             return;
         }
@@ -3164,6 +3420,7 @@ impl Game {
         let path = self.save_dir.join("progress.json");
         let tmp = path.with_extension("tmp");
         let ok = ok && std::fs::write(&tmp, serde_json::to_string_pretty(&p).unwrap()).is_ok() && std::fs::rename(&tmp, &path).is_ok();
+        let ok = ok && (!herds || self.arena || self.ents.save_roster(&self.save_dir).is_ok());
         // A save that failed leaves the edits owed, so the autosave tries
         // again in half a minute instead of believing it is up to date.
         if ok {

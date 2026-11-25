@@ -12,7 +12,15 @@
     "legs": [40, 32, 28],
     "belly": [226, 120, 40]
   },
-  "behaviour": {"group": {"size": [6, 60], "spacing": 1.4, "range": 8, "separation": 1.0, "alignment": 1.4, "cohesion": 1.0}},
+  "behaviour": {
+    "group": {"size": [6, 60], "spacing": 1.4, "range": 8, "separation": 1.0, "alignment": 1.4, "cohesion": 1.0},
+    "voice": {
+      "calls": [
+        {"cry": "song", "on": "idle", "hours": "day", "size": 0.9, "every_s": [20, 80], "chorus": 0.3, "chorus_m": 60},
+        {"cry": "flap", "on": "takeoff", "size": 0.35}
+      ]
+    }
+  },
   "like": "starling",
-  "extra_ops": [{"op": "recolour_below", "y": 8, "from": "body", "to": "belly"}]
+  "extra_ops": [{"op": "recolour_below", "y": 22, "from": "body", "to": "belly"}]
 }

@@ -24,6 +24,9 @@ const AT_PLANT_M: f32 = 1.4;
 /// wandering. Not every time: a meadow should not drain into its hedges.
 const BROWSE_CHANCE: f32 = 0.55;
 
+/// How far a burrower wanders from its hole, metres.
+const BURROW_LEASH_M: f32 = 7.0;
+
 /// How near the water's edge a drinker stops, metres.
 const DRINK_AT: f32 = 2.5;
 /// How much of what an animal plans to do becomes a rest instead when it is
@@ -31,8 +34,27 @@ const DRINK_AT: f32 = 2.5;
 /// stirring. Drowsiness is squared on the way in, so a deer half asleep at
 /// midday beds down now and then rather than half the time.
 const BEDS_DOWN: f32 = 0.85;
+/// A member of a bedded herd (roam.rs, `Sleep::Bedded`) lies down this often
+/// when it next chooses, and stays down this long, seconds: a long sleep with
+/// the odd stretch, against a lone animal's short naps.
+const BEDDED_LIES: f32 = 0.9;
+const BEDDED_S: [f32; 2] = [240.0, 720.0];
+/// How much a fully wary herd's flee distance grows (roam.rs): 1.8 times at
+/// wariness 1, 0.76 times at its least, -0.3.
+const WARY_REACH: f32 = 0.8;
 
-#[derive(Clone, Copy, PartialEq)]
+/// Where a member of a herd or pack is in its night (roam.rs sets it each
+/// think): going to bed, it does not lie down on the way; bedded, it lies
+/// long; free, it naps by its own drowsiness as any animal does.
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
+pub enum Sleep {
+    #[default]
+    Free,
+    Going,
+    Bedded,
+}
+
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Mood {
     Idle,
     Walk,
@@ -40,6 +62,22 @@ pub enum Mood {
     Chase,
     /// Carrying a kill off, at a walk (creatures/carry.rs).
     Feed,
+    /// Standing over a carcass with its head down, eating
+    /// (creatures/carcass.rs).
+    Eat,
+}
+
+impl Mood {
+    pub fn name(self) -> &'static str {
+        match self {
+            Mood::Idle => "idle",
+            Mood::Walk => "walk",
+            Mood::Flee => "flee",
+            Mood::Chase => "chase",
+            Mood::Feed => "carry",
+            Mood::Eat => "eat",
+        }
+    }
 }
 
 pub struct Critter {
@@ -56,9 +94,20 @@ pub struct Critter {
     pub air: Option<Air>,
     /// A basking sea turtle on its way back to the sea, to swim off.
     pub seaward: bool,
+    /// Running because the herd ran (herd.rs), not from anything it sensed
+    /// itself. Such a flee does not set the rest of the herd off again, or
+    /// a herd's overlapping 1.4 s flees keep it running with nothing after it.
+    pub herded: bool,
+    /// Its herd's night (roam.rs).
+    pub sleep: Sleep,
+    /// Its herd's wariness (roam.rs, -0.3 to 1): how much further off it
+    /// runs from people (`WARY_REACH`).
+    pub wary: f32,
     /// Seconds before this one will hunt again: counting down while it
     /// carries a kill, then a long wait with a full belly.
     pub fed: f32,
+    /// The carcass it is carrying, making for or eating.
+    pub meal: Option<hecs::Entity>,
     /// Alarm at the player, built up at `startle::pressure` per second and
     /// spent when it bolts (creatures/startle.rs).
     pub alarm: f32,
@@ -72,6 +121,10 @@ pub struct Critter {
     /// Whether it stood on the generator's ground, past full detail, when
     /// it was last stepped (terrain.rs `far_ground`).
     pub far: bool,
+    /// A burrower's own hole: where it was when first stepped.
+    pub home: Option<Vec3>,
+    /// Seconds a burrower has left underground; 0 while it is up.
+    pub under: f32,
 }
 
 /// A short flight from one spot to another: up, across, down.
@@ -95,12 +148,18 @@ impl Critter {
             stuck: 0.0,
             air: None,
             seaward: false,
+            herded: false,
+            sleep: Sleep::Free,
+            wary: 0.0,
             fed: 0.0,
+            meal: None,
             alarm: 0.0,
             walked: 0.0,
             left: false,
             back: 0.0,
             far: false,
+            home: None,
+            under: 0.0,
         }
     }
 }
@@ -280,10 +339,12 @@ pub fn update(
     let thirst = thirst(hour);
     let store = terrain.store;
     let sea = terrain.sea;
-    // Where everyone is and how fast, for fleeing and hunting.
+    // Where everyone is and how fast, for fleeing and hunting. A burrower
+    // down its hole is out of reach and out of sight, so it is left out.
     let mut snap: Vec<(Option<usize>, Vec3, Vec3, hecs::Entity)> = world
         .query::<(hecs::Entity, &Critter, &Look, &Body, Option<&Creature>)>()
         .iter()
+        .filter(|(_, k, ..)| k.under <= 0.0)
         .map(|(e, _, l, b, c)| (c.map(|c| c.species), l.pos, b.vel, e))
         .collect();
     // Running birds are hunters too (a roadrunner after a lizard), though
@@ -302,10 +363,22 @@ pub fn update(
         .filter(|(_, c, _, _)| c.mood == Mood::Flee && c.air.is_none())
         .map(|(e, _, l, b)| (l.pos, b.vel, e))
         .collect();
+    // Carcasses with meat on them that nothing is carrying: (species, the
+    // middle of the body, which one).
+    // The ones still in a mouth are listed too, held, so the carrier knows
+    // its own kill when it puts it down.
+    let carcasses: Vec<(usize, Vec3, hecs::Entity, bool)> = world
+        .query::<(hecs::Entity, &Creature, &super::carcass::Carcass, Option<&super::carry::Carried>)>()
+        .iter()
+        .filter(|(_, _, c, _)| c.meat > 0.0 && !c.bones)
+        .map(|(e, cr, c, held)| (cr.species, c.at, e, held.is_some()))
+        .collect();
     let mut dived: Vec<(hecs::Entity, Vec3, usize)> = Vec::new();
     // Prey caught this step: (hunter, caught).
     let mut kills: Vec<(hecs::Entity, hecs::Entity)> = Vec::new();
-    for (ent, crit, body, look, mut anim, morph, me, age) in world.query_mut::<(
+    // Mouthfuls taken this step: (carcass, eater's position, a roll for a tug).
+    let mut bites: Vec<(hecs::Entity, Vec3, f32)> = Vec::new();
+    for (ent, crit, body, look, mut anim, morph, me, age, show, mut kept, mut insp) in world.query_mut::<(
         hecs::Entity,
         &mut Critter,
         &mut Body,
@@ -314,7 +387,21 @@ pub fn update(
         Option<&crate::variety::Morph>,
         Option<&Creature>,
         Option<&super::age::Age>,
+        Option<&super::display::Show>,
+        Option<&mut super::zoo::Kept>,
+        Option<&mut super::inspect::Inspect>,
     )>() {
+        // The pinned animal (game/eco.rs): log what last step decided.
+        if let Some(i) = insp.as_deref_mut() {
+            let act = anim.as_deref().and_then(|a| a.life.as_deref()).map(|l| l.act);
+            let mood = crit.mood;
+            i.settle(now, (mood as u8, act.map(|a| a as u8)), || match act {
+                Some(a) => format!("{}: {}", mood.name(), a.name()),
+                None => mood.name().to_string(),
+            });
+            i.probes.clear();
+            i.target = None;
+        }
         // A footfall each stride on the ground, for the marks it leaves
         // (creatures/sign.rs): one print per stride, the hind foot coming
         // down in the front one's print the way a walking deer's does,
@@ -376,6 +463,9 @@ pub fn update(
         // under the trees in the middle of the afternoon (world/weather.rs
         // `sheltering`).
         let drowsy = sp.map_or(0.0, |s| super::diel::drowsy(s.beh.period(), hour)).max(sky.sheltering());
+        // In the zoo (zoo.rs) only a free one keeps its hours; the rest are
+        // held at what their row says.
+        let drowsy = if kept.as_ref().is_some_and(|k| k.lock != super::zoo::Lock::Free) { 0.0 } else { drowsy };
         // How far out it minds the player, and how readily it runs. Asleep,
         // both drop: you can walk up on bedded deer at night.
         let stage = age.map_or(super::age::Stage::Adult, |a| a.stage);
@@ -384,6 +474,13 @@ pub fn update(
             None => super::startle::Nerve::plain(wary * morph.map_or(1.0, |m| m.wary)),
         }
         .dozing(drowsy);
+        // A herd that has been hunted runs from further off; one used to
+        // people lets them closer (roam.rs C4).
+        let nerve = {
+            let mut n = nerve;
+            n.dist *= (1.0 + WARY_REACH * crit.wary).max(0.5);
+            n
+        };
         let wary = nerve.dist;
         let verb = sp.map(|s| s.verb());
         let hop = verb.map_or(old_island.is_some_and(|l| l.hops), |v| v.hops());
@@ -397,7 +494,8 @@ pub fn update(
         // Swimming: in river water deeper than its legs, floating head up.
         let float_at = body.height * 0.8;
         let afloat = swims && terrain.inland_water(look.pos.x, look.pos.z).is_some_and(|w| w.1 > float_at);
-        let shy = sp.is_none_or(|s| s.flees_player);
+        // The zoo's animals are tame: they never mind the player.
+        let shy = sp.is_none_or(|s| s.flees_player) && kept.is_none();
         let hides = verb.is_some_and(|v| v.hides());
         // Fliers that walk (herons) take wing when startled.
         let wings = sp.is_some_and(|s| s.beh.fly_height > 0.0) && models[look.model].rig.as_ref().is_some_and(|r| r.bones.iter().any(|b| b.role == Role::Wing));
@@ -441,7 +539,7 @@ pub fn update(
         // The nearest predator it runs from, and the nearest prey it hunts.
         let mut hunter: Option<(f32, Vec3, Vec3)> = None;
         let mut prey: Option<(f32, Vec3, hecs::Entity)> = None;
-        if let Some(s) = sp {
+        if let (Some(s), None) = (sp, kept.as_ref()) {
             for (os, op, ov, oe) in &snap {
                 let Some(os) = os else { continue };
                 let d = Vec3::new(op.x - look.pos.x, 0.0, op.z - look.pos.z).length();
@@ -456,8 +554,43 @@ pub fn update(
                 }
             }
         }
+        // The nearest carcass of something it hunts, if it is hungry: a
+        // kill lying there is easier than a live one.
+        let mut food: Option<(f32, Vec3, hecs::Entity)> = None;
+        if let (Some(s), None, true) = (sp, kept.as_ref(), crit.fed <= 0.0) {
+            for &(cs, at, ce, held) in &carcasses {
+                let d = Vec3::new(at.x - look.pos.x, 0.0, at.z - look.pos.z).length();
+                if !held && s.hunts.contains(&cs) && d < hunt_sight(body.height) && food.is_none_or(|t| d < t.0) {
+                    food = Some((d, at, ce));
+                }
+            }
+        }
         let hiding = hides && dist < wary;
         stats.hiding_steps += hiding as u32;
+        // Burrowers: down the hole, it stays there while the danger is near,
+        // then comes up again at the mouth and looks about.
+        let burrows = verb.is_some_and(|v| v.burrows());
+        if burrows {
+            let home = *crit.home.get_or_insert(look.pos);
+            if crit.under > 0.0 {
+                crit.under -= dt;
+                if crit.under <= 0.0 && (dist < wary * 1.3 || hunter.is_some()) {
+                    crit.under = 2.0 + crit.rng.unit() * 4.0;
+                }
+                if crit.under > 0.0 {
+                    look.pos = home - Vec3::Y * (body.height * 3.0 + 0.6);
+                    look.prev_pos = look.pos;
+                    body.vel = Vec3::ZERO;
+                    continue;
+                }
+                let up = terrain.surface(home.x, home.z).unwrap_or(home.y);
+                look.pos = Vec3::new(home.x, up, home.z);
+                look.prev_pos = look.pos;
+                crit.mood = Mood::Idle;
+                crit.alarm = 0.0;
+                crit.timer = 3.0 + crit.rng.unit() * 4.0;
+            }
+        }
         stats.startled += (crit.mood == Mood::Flee) as u32;
         // Alarm builds while the player (or a predator) presses on it, and it
         // bolts once a second's worth has gathered (creatures/startle.rs).
@@ -468,22 +601,25 @@ pub fn update(
         // Head down in the grass or at the water, it sees little of what
         // moves (anim/life.rs `graze_w`).
         let head_down = anim.as_deref().and_then(|a| a.life.as_deref()).map_or(0.0, |l| l.graze_w);
+        let cover = || {
+            let from = look.pos + Vec3::Y * (body.height * 0.6).max(0.2);
+            let to = player + Vec3::Y * 1.2;
+            let d = to - from;
+            let len = d.length();
+            len > 0.1 && store.raycast(from, d / len, len).is_some()
+        };
         let from_player = if shy && !hiding {
-            let cover = || {
-                let from = look.pos + Vec3::Y * (body.height * 0.6).max(0.2);
-                let to = player + Vec3::Y * 1.2;
-                let d = to - from;
-                let len = d.length();
-                len > 0.1 && store.raycast(from, d / len, len).is_some()
-            };
             stats.cover_rays += (nerve.minds_people() && dist < super::startle::COVER_M) as u32;
             super::startle::pressure_on(&nerve, look.pos, facing, head_down, threat, cover)
         } else {
             0.0
         };
+        // In a display it minds the player less, or not at all
+        // (creatures/display `holds`).
+        let from_player = from_player * show.map_or(1.0, |s| s.holds);
         // A neighbour bolting: the nearest one in reach, and which way it ran.
         let mut herd: Option<(f32, Vec3, Vec3)> = None;
-        if crit.mood != Mood::Flee && !hiding {
+        if crit.mood != Mood::Flee && !hiding && kept.is_none() {
             for (bp, bv, be) in &bolting {
                 if *be == ent {
                     continue;
@@ -521,11 +657,34 @@ pub fn update(
         };
         stats.alarmed_by_herd += (from_herd > from_player.max(from_hunter)) as u32;
         let bolts = super::startle::bolts(&mut crit.alarm, from_player.max(from_hunter).max(from_herd), dt);
+        if let Some(i) = insp.as_deref_mut() {
+            i.player = if shy && !hiding {
+                super::startle::senses_on(&nerve, look.pos, facing, head_down, threat, cover)
+            } else {
+                Default::default()
+            };
+            i.hunter = from_hunter;
+            i.herd = from_herd;
+            i.flee_m = nerve.dist;
+            if bolts && !hiding {
+                i.why(if from_herd > from_player.max(from_hunter) {
+                    format!("flee: a neighbour bolting, {from_herd:.1}")
+                } else if from_hunter > from_player {
+                    format!("flee: predator {:.0} m, {from_hunter:.1}", hunter.map_or(0.0, |h| h.0))
+                } else {
+                    let (k, v) = i.player.strongest();
+                    format!("flee: {k} {v:.1} of {from_player:.1} from player {dist:.0} m")
+                });
+            }
+        }
         if hiding {
             crit.mood = Mood::Idle;
             crit.timer = crit.timer.max(2.0 + crit.rng.unit() * 3.0);
         } else if bolts {
             crit.mood = Mood::Flee;
+            // Set off by a neighbour bolting rather than by anything it
+            // sensed itself: it does not set its own herd off (herd.rs).
+            crit.herded = from_herd > from_player.max(from_hunter);
             crit.heading = away.x.atan2(away.z) + (crit.rng.unit() - 0.5) * 0.6;
             crit.timer = 1.5 + crit.rng.unit();
             if wings && body.on_ground {
@@ -554,26 +713,83 @@ pub fn update(
             // Chase prey, unless something is being run from.
             if hides || crit.mood == Mood::Flee {
                 // Hiding or running, not hunting.
-            } else if let Some((d, pp, pe)) = prey {
+            } else if crit.mood == Mood::Eat {
+                // Head down over the carcass until it is picked clean or it
+                // has had its fill (`crit.timer`).
+                match crit.meal.and_then(|m| carcasses.iter().find(|c| c.2 == m)) {
+                    Some(&(_, at, m, _)) if crit.timer > 0.0 => {
+                        let to = at - look.pos;
+                        crit.heading = to.x.atan2(to.z);
+                        bites.push((m, look.pos, crit.rng.unit()));
+                    }
+                    _ => {
+                        crit.mood = Mood::Walk;
+                        crit.meal = None;
+                        crit.timer = 2.0 + crit.rng.unit() * 3.0;
+                    }
+                }
+            } else if let Some((d, pp, pe)) = prey.filter(|p| food.is_none_or(|f| p.0 < f.0)) {
                 if crit.mood != Mood::Flee {
                     let to = pp - look.pos;
+                    if let Some(i) = insp.as_deref_mut() {
+                        i.target = Some(format!("prey {d:.0} m"));
+                        if crit.mood != Mood::Chase {
+                            i.why(format!("chase: prey at {d:.0} m"));
+                        }
+                    }
                     crit.mood = Mood::Chase;
                     crit.heading = to.x.atan2(to.z);
                     crit.timer = crit.timer.max(0.6);
                     // Close enough to take it. No model for the pounce: it is
                     // in the predator's mouth from here (creatures/carry.rs).
                     if d < super::carry::catch_m().max(body.height * 0.6) && body.on_ground {
+                        if let Some(i) = insp.as_deref_mut() {
+                            i.why("kill: caught, carrying it off".into());
+                        }
                         kills.push((ent, pe));
                         crit.mood = Mood::Feed;
+                        crit.meal = Some(pe);
                         crit.fed = super::carry::CARRY_S;
-                        crit.timer = super::carry::CARRY_S;
+                        // A second over, so the carry runs out on `fed`
+                        // below and not on the timer, which would have it
+                        // pick something else to do and walk off.
+                        crit.timer = super::carry::CARRY_S + 1.0;
                     }
+                }
+            } else if let Some((d, at, ce)) = food {
+                // A kill lying on the ground: it makes for it at a walk and
+                // eats when its mouth is over it.
+                let to = at - look.pos;
+                crit.heading = to.x.atan2(to.z);
+                if let Some(i) = insp.as_deref_mut() {
+                    i.target = Some(format!("carcass {d:.0} m"));
+                    if !matches!(crit.mood, Mood::Walk | Mood::Eat) {
+                        i.why(format!("walk: carcass at {d:.0} m"));
+                    }
+                }
+                let snout = -models[look.model].reach[0] * morph.map_or(1.0, |m| m.scale);
+                if d < snout.max(0.2) + 0.4 {
+                    if std::env::var_os("VG_CATCH_M").is_some() {
+                        eprintln!("VG_CATCH: eating a found kill at {:.1},{:.1},{:.1}", look.pos.x, look.pos.y, look.pos.z);
+                    }
+                    crit.mood = Mood::Eat;
+                    crit.meal = Some(ce);
+                    crit.timer = super::carry::EAT_S;
+                    crit.fed = super::carry::FULL_S;
+                } else {
+                    crit.mood = Mood::Walk;
+                    crit.timer = crit.timer.max(0.6);
                 }
             }
             if crit.mood == Mood::Feed && crit.fed <= 0.0 {
-                // Done with it: it is dropped where the predator stands, and
-                // the predator is not hungry again for a while.
-                crit.mood = Mood::Walk;
+                // Carried far enough: it puts the kill down where it stands
+                // (carry.rs lets go when the mood changes) and eats it, and is
+                // not hungry again for a while after.
+                if std::env::var_os("VG_CATCH_M").is_some() {
+                    eprintln!("VG_CATCH: eating at {:.1},{:.1},{:.1}", look.pos.x, look.pos.y, look.pos.z);
+                }
+                crit.mood = Mood::Eat;
+                crit.timer = super::carry::EAT_S;
                 crit.fed = super::carry::FULL_S;
             }
             // Waders keep to the water's edge.
@@ -611,6 +827,9 @@ pub fn update(
             let l = life.unwrap();
             let was_moving = crit.mood != Mood::Idle;
             let (walk, dur, turn) = l.choose(was_moving);
+            // Why, for the inspector: the activity table's pick unless
+            // something below overrides it.
+            let mut why = String::new();
             crit.mood = if walk { Mood::Walk } else { Mood::Idle };
             crit.timer = dur;
             crit.heading += turn;
@@ -628,6 +847,7 @@ pub fn update(
                     Some(d) if d < 35.0 => {
                         crit.mood = if d > DRINK_AT { Mood::Walk } else { Mood::Idle };
                         crit.timer = dur + d / slow.max(0.3);
+                        why = format!("water {d:.0} m, thirst {thirst:.2}");
                     }
                     _ => l.act = Act::Stand,
                 }
@@ -643,10 +863,12 @@ pub fn update(
                         crit.heading = to.x.atan2(to.z);
                         crit.timer = dur + d / slow.max(0.3);
                         stats.browse_walks += 1;
+                        why = format!("browse plant {d:.0} m");
                     } else {
                         l.act = Act::Graze;
                         crit.mood = Mood::Idle;
                         stats.browse_meals += 1;
+                        why = "browse plant in reach".into();
                     }
                 }
             }
@@ -656,10 +878,22 @@ pub fn update(
             // Nothing beds down while it is running, hunting or already
             // alarmed; one that is woken gets to its feet quickly
             // (anim/life.rs raises the posture fast as the alarm rises).
-            if drowsy > 0.0 && crit.alarm < 0.2 && matches!(crit.mood, Mood::Idle | Mood::Walk) && crit.rng.unit() < drowsy * drowsy * BEDS_DOWN {
+            // A herd's night overrides that (roam.rs): on its way to bed
+            // nobody lies down, and once bedded everyone sleeps long.
+            let (chance, bout) = match crit.sleep {
+                Sleep::Free => (drowsy * drowsy * BEDS_DOWN, [25.0, 95.0]),
+                Sleep::Going => (0.0, [0.0, 0.0]),
+                Sleep::Bedded => (BEDDED_LIES, BEDDED_S),
+            };
+            if chance > 0.0 && crit.alarm < 0.2 && matches!(crit.mood, Mood::Idle | Mood::Walk) && crit.rng.unit() < chance {
                 l.act = Act::Lie;
                 crit.mood = Mood::Idle;
-                crit.timer = 25.0 + crit.rng.unit() * 70.0;
+                crit.timer = bout[0] + crit.rng.unit() * (bout[1] - bout[0]);
+                why = if crit.sleep == Sleep::Bedded { "beds down with its herd".to_string() } else { format!("beds down, drowsy {drowsy:.2}") };
+            }
+            if let Some(i) = insp.as_deref_mut() {
+                let pick = if why.is_empty() { format!("table, {:.0} s", crit.timer) } else { why };
+                i.why(format!("{}: {} ({pick})", crit.mood.name(), l.act.name()));
             }
         } else if crit.timer <= 0.0 {
             if crit.mood == Mood::Walk || crit.mood == Mood::Flee || crit.rng.unit() < 0.4 {
@@ -671,12 +905,40 @@ pub fn update(
                 crit.timer = 2.0 + crit.rng.unit() * 4.0;
             }
         }
+        // Eating: head down at the carcass, whatever it had planned.
+        if crit.mood == Mood::Eat {
+            if let Some(l) = anim.as_mut().and_then(|a| a.life.as_mut()) {
+                l.act = Act::Graze;
+            }
+        }
         // Sea turtles: now and then, unless hiding, crawl back to the sea.
         if hides && verb.is_some_and(|v| v.dives()) && !hiding && !crit.seaward && crit.rng.unit() < dt / 150.0 {
             crit.seaward = true;
         }
         if crit.seaward && !hiding {
             crit.mood = Mood::Walk;
+        }
+        // Burrowers: startled, run for the hole and go down it; otherwise
+        // never wander far from it.
+        if burrows {
+            if let Some(home) = crit.home {
+                let to = home - look.pos;
+                let d = Vec3::new(to.x, 0.0, to.z).length();
+                if crit.mood == Mood::Flee {
+                    if d < 0.8 {
+                        crit.under = 8.0 + crit.rng.unit() * 12.0;
+                        look.pos = home - Vec3::Y * (body.height * 3.0 + 0.6);
+                        look.prev_pos = look.pos;
+                        body.vel = Vec3::ZERO;
+                        stats.dives += 1;
+                        continue;
+                    }
+                    crit.heading = to.x.atan2(to.z);
+                    crit.timer = crit.timer.max(0.5);
+                } else if d > BURROW_LEASH_M && crit.mood == Mood::Walk {
+                    crit.heading = to.x.atan2(to.z);
+                }
+            }
         }
         // Seals: make for the sea when startled and dive in.
         if verb.is_some_and(|v| v.dives()) && (crit.mood == Mood::Flee || (crit.seaward && !hiding)) {
@@ -722,6 +984,89 @@ pub fn update(
                 }
             }
         }
+        // Held by the zoo (zoo.rs): at home doing what its row says, pacing
+        // its line, or free within its leash. A display its stage plays
+        // takes over below.
+        if let Some(k) = kept.as_deref_mut().filter(|_| show.is_none() && crit.air.is_none()) {
+            use super::zoo::Lock;
+            let to_xz = |p: Vec3| Vec3::new(p.x - look.pos.x, 0.0, p.z - look.pos.z);
+            let home = to_xz(k.home);
+            let life = anim.as_mut().and_then(|a| a.life.as_mut());
+            crit.alarm = 0.0;
+            match k.lock {
+                Lock::Free => {
+                    if matches!(crit.mood, Mood::Flee | Mood::Chase | Mood::Feed | Mood::Eat) {
+                        crit.mood = Mood::Walk;
+                    }
+                    if home.length() > k.leash.max(1.0) {
+                        if crit.mood == Mood::Idle {
+                            crit.mood = Mood::Walk;
+                            crit.timer = crit.timer.max(2.0);
+                            if let Some(l) = life {
+                                l.act = Act::Walk;
+                            }
+                        }
+                        crit.heading = home.x.atan2(home.z);
+                    }
+                }
+                Lock::Act(Act::Walk) | Lock::Run => {
+                    let goal = to_xz(if k.outward { k.to } else { k.home });
+                    if goal.length() < 0.8 {
+                        k.outward = !k.outward;
+                    }
+                    crit.mood = if k.lock == Lock::Run { Mood::Flee } else { Mood::Walk };
+                    crit.heading = goal.x.atan2(goal.z);
+                    crit.timer = 1.0;
+                    if let Some(l) = life {
+                        l.act = Act::Walk;
+                    }
+                }
+                Lock::Act(_) | Lock::Display(_) => {
+                    let act = match k.lock {
+                        Lock::Act(a) => a,
+                        _ => Act::Stand,
+                    };
+                    crit.timer = 1.0;
+                    if home.length() > 0.4 {
+                        crit.mood = Mood::Walk;
+                        crit.heading = home.x.atan2(home.z);
+                    } else {
+                        crit.mood = Mood::Idle;
+                        if let Some(l) = life {
+                            l.act = act;
+                        }
+                    }
+                }
+            }
+        }
+        // A display has it: it stands, or walks where it is sent, and holds
+        // the posture it is given, instead of what it would have chosen.
+        // Anything running, hunting or carrying a kill is left to that, and
+        // the display ends (creatures/display).
+        let shown = show.map(|s| s.out).filter(|_| matches!(crit.mood, Mood::Idle | Mood::Walk) && crit.air.is_none() && !still);
+        if let Some(out) = shown {
+            crit.timer = crit.timer.max(0.5);
+            if let Some(l) = anim.as_mut().and_then(|a| a.life.as_mut()) {
+                l.act = out.act.unwrap_or(Act::Stand);
+            }
+            crit.mood = Mood::Idle;
+            match out.drive {
+                super::display::Drive::Go { to, .. } => {
+                    let d = to - look.pos;
+                    if Vec3::new(d.x, 0.0, d.z).length() > 0.25 {
+                        crit.mood = Mood::Walk;
+                        crit.heading = d.x.atan2(d.z);
+                    }
+                }
+                // Backing up: the way behind it, still facing forward.
+                super::display::Drive::Back { .. } => {
+                    crit.mood = Mood::Walk;
+                    crit.heading = look.yaw;
+                }
+                _ => {}
+            }
+        }
+        let backing = matches!(shown.map(|o| o.drive), Some(super::display::Drive::Back { .. }));
         let speed = match crit.mood {
             _ if still => 0.0,
             Mood::Idle => 0.0,
@@ -731,6 +1076,16 @@ pub fn update(
             Mood::Chase => fast * 0.9,
             // Carrying a kill off: a steady walk, no hurry.
             Mood::Feed => slow * 0.8,
+            Mood::Eat => 0.0,
+        };
+        let speed = match shown.map(|o| o.drive) {
+            Some(super::display::Drive::Go { to, speed: v }) if crit.mood == Mood::Walk => {
+                // Slowing onto the spot rather than overshooting it.
+                let d = Vec3::new(to.x - look.pos.x, 0.0, to.z - look.pos.z).length();
+                v.min(fast.max(slow)).min(d * 3.0 + 0.3)
+            }
+            Some(super::display::Drive::Back { speed: v }) => v.min(slow.max(0.3)),
+            _ => speed,
         };
         // A lying or sitting creature gets up before it moves.
         let speed = speed * anim.as_ref().map_or(1.0, |a| a.mobility());
@@ -793,13 +1148,20 @@ pub fn update(
             let wade_m = (body.height * 0.35).max(0.3).max(if wades { 0.6 } else { 0.0 });
             let water_line = sea - (wade_m - 0.2).max(0.0);
             let max_depth = if swims { f32::INFINITY } else { wade_m };
+            // The probes cast, kept for the inspector's world lines.
+            let probed = std::cell::RefCell::new(Vec::new());
+            let inspected = insp.is_some();
             let clear = |a: f32| {
                 let d = Vec3::new(a.sin(), 0.0, a.cos());
-                if far {
+                let ok = if far {
                     far_walkable(terrain, plants, look.pos, d, reach + body.half_w, body.half_w, water_line, max_depth)
                 } else {
                     walkable(terrain, look.pos, d, reach, wide, body.height, water_line, max_depth)
+                };
+                if inspected {
+                    probed.borrow_mut().push((a, reach, ok));
                 }
+                ok
             };
             if !crushing && !clear(crit.heading) {
                 stats.turned += 1;
@@ -820,11 +1182,15 @@ pub fn update(
                     // it instead of spinning on the spot.
                     let tight = |a: f32| {
                         let d = Vec3::new(a.sin(), 0.0, a.cos());
-                        if far {
+                        let ok = if far {
                             far_walkable(terrain, plants, look.pos, d, reach * 0.5, body.half_w, water_line, max_depth)
                         } else {
                             walkable(terrain, look.pos, d, reach * 0.5, body.half_w, body.height, water_line, max_depth)
+                        };
+                        if inspected {
+                            probed.borrow_mut().push((a, reach * 0.5, ok));
                         }
+                        ok
                     };
                     'tight: for k in 1..=9 {
                         for s in [crit.side, -crit.side] {
@@ -850,9 +1216,15 @@ pub fn update(
                         if crit.mood == Mood::Walk {
                             crit.mood = Mood::Idle;
                             crit.timer = 0.8 + crit.rng.unit() * 1.5;
+                            if let Some(i) = insp.as_deref_mut() {
+                                i.why("idle: boxed in, every probe blocked".into());
+                            }
                         }
                     }
                 }
+            }
+            if let Some(i) = insp.as_deref_mut() {
+                i.probes = probed.into_inner();
             }
         }
         let speed = match crit.mood {
@@ -867,7 +1239,7 @@ pub fn update(
         // way it faces, slowing into a sharp turn rather than pivoting on
         // the spot or sliding sideways while its body catches up.
         let rate = turn_rate(body.height, crit.mood);
-        let heavy = rate < FREE_TURN && !afloat && crit.air.is_none();
+        let heavy = rate < FREE_TURN && !afloat && crit.air.is_none() && !backing;
         let (dir, speed) = if heavy && speed > 0.0 {
             let want = crit.heading + std::f32::consts::PI;
             let off = crate::util::wrap_angle(want - look.yaw);
@@ -885,6 +1257,9 @@ pub fn update(
         body.vel.y = (body.vel.y - 24.0 * dt).max(-40.0);
         if hop && speed > 0.0 && body.on_ground {
             body.vel.y = 3.6;
+        }
+        if let Some(out) = shown.filter(|o| o.hop > 0.0 && body.on_ground) {
+            body.vel.y = out.hop;
         }
         let before = look.pos;
         let res = if let Some(gy) = far.then(|| super::terrain::far_ground(store, look.pos.x + body.vel.x * dt, look.pos.z + body.vel.z * dt)).flatten() {
@@ -949,9 +1324,33 @@ pub fn update(
         if let Some((_, m)) = voxel_ground(store, look.pos.x, look.pos.z, look.pos.y + 0.1) {
             stats.on_foliage += crate::mesh::sprites::leafy(m) as u32;
         }
-        if speed > 0.1 && !heavy {
+        if speed > 0.1 && !heavy && !backing {
             let want = dir.x.atan2(dir.z) + std::f32::consts::PI;
             look.yaw = crate::util::turn_toward(look.yaw, want, (dt * FREE_TURN).min(1.0));
+        }
+        // Standing in a display, turned the way it is told: a big body at
+        // its own rate, a small one at once.
+        if let Some(super::display::Drive::Stay { face: Some(want) }) = shown.map(|o| o.drive) {
+            if speed <= 0.1 {
+                let off = crate::util::wrap_angle(want - look.yaw);
+                let r = if heavy || rate < FREE_TURN { rate } else { FREE_TURN * 0.5 };
+                look.yaw += off.clamp(-r * dt, r * dt);
+            }
+        }
+        // Eating, turned to face what it is eating.
+        if crit.mood == Mood::Eat && speed <= 0.1 {
+            let off = crate::util::wrap_angle(crit.heading + std::f32::consts::PI - look.yaw);
+            let r = rate.min(FREE_TURN * 0.5);
+            look.yaw += off.clamp(-r * dt, r * dt);
+        }
+        // A zoo animal held at home turns to face the way its pen faces.
+        if let Some(k) = kept.as_deref() {
+            let pacing = matches!(k.lock, super::zoo::Lock::Free | super::zoo::Lock::Run | super::zoo::Lock::Act(Act::Walk));
+            if !pacing && shown.is_none() && speed <= 0.1 {
+                let off = crate::util::wrap_angle(k.yaw - look.yaw);
+                let r = if heavy || rate < FREE_TURN { rate } else { FREE_TURN * 0.5 };
+                look.yaw += off.clamp(-r * dt, r * dt);
+            }
         }
         if !slopes || afloat || far {
             look.lift = 0.0;
@@ -971,7 +1370,7 @@ pub fn update(
                 &crate::anim::life::Input {
                     dt,
                     speed: moving,
-                    moving: crit.mood != Mood::Idle,
+                    moving: !matches!(crit.mood, Mood::Idle | Mood::Eat),
                     alarm: crit.mood == Mood::Flee,
                     on_ground: body.on_ground,
                     pos: look.pos,
@@ -985,6 +1384,12 @@ pub fn update(
                     scale: morph.map_or(1.0, |m| m.scale),
                 },
             );
+            if let Some(out) = shown {
+                let voxel = models[look.model].voxel * morph.map_or(1.0, |m| m.scale);
+                let before = a.pose.clone();
+                super::display::apply(rig, &mut a.pose, &out.pose, voxel);
+                super::display::keep_up(rig, &before, &mut a.pose, &out.pose, voxel);
+            }
             // An otter idling or asleep in the river drifts on its back with
             // the current, and rolls over as soon as it moves off.
             if sp.is_some_and(|s| s.beh.back_float) {
@@ -995,6 +1400,9 @@ pub fn update(
         }
     }
     super::carry::take(world, species, models, &kills, now);
+    for (m, eater, roll) in bites {
+        super::carcass::bite(world, models, m, eater, dt, now, roll);
+    }
     for (e, at, s) in dived {
         let _ = world.despawn(e);
         super::swim::splash_at(cues, at, 0.7);
@@ -1015,8 +1423,6 @@ pub fn update(
     }
 }
 
-/// How thirsty animals are at `hour`, 0.3 at midday to 1 at dawn and dusk:
-/// the share of planned drinks they keep (world/clock.rs runs 5.2 to 18.8).
 /// The water surface standing at `pos`: a river or lake if there is one over
 /// the ground here, else the sea where the ground is below it. None on dry
 /// land. A drinking animal lowers its mouth to this rather than to the bed.
@@ -1027,8 +1433,16 @@ fn water_surface(terrain: &Terrain, pos: Vec3) -> Option<f32> {
     (pos.y < terrain.sea).then_some(terrain.sea)
 }
 
-fn thirst(hour: f32) -> f32 {
-    let from_end = (hour - crate::world::clock::dawn()).min(crate::world::clock::dusk() - hour).max(0.0);
+/// How thirsty animals are at `hour`: 1 at dawn and dusk, falling to 0.3
+/// two and a half hours either side, so at midday and in the middle of the
+/// night too (world/clock.rs: day from 5.2 to 18.8). The share of planned
+/// drinks they keep, and what sends a herd to water (roam.rs).
+pub(crate) fn thirst(hour: f32) -> f32 {
+    let off = |edge: f32| {
+        let x = (hour - edge).rem_euclid(24.0);
+        x.min(24.0 - x)
+    };
+    let from_end = off(crate::world::clock::dawn()).min(off(crate::world::clock::dusk()));
     1.0 - 0.7 * (from_end / 2.5).clamp(0.0, 1.0)
 }
 
@@ -1074,6 +1488,21 @@ fn take_wing(terrain: &Terrain, from: Vec3, heading: f32, wades: bool, height: f
 }
 
 #[cfg(test)]
+mod thirst_tests {
+    use super::thirst;
+    use crate::world::clock::{dawn, dusk};
+
+    #[test]
+    fn thirst_peaks_at_dawn_and_dusk_and_not_through_the_night() {
+        assert!((thirst(dawn()) - 1.0).abs() < 1e-4);
+        assert!((thirst(dusk()) - 1.0).abs() < 1e-4);
+        assert!((thirst(12.0) - 0.3).abs() < 1e-4, "midday");
+        assert!((thirst(0.0) - 0.3).abs() < 1e-4, "midnight");
+        assert!(thirst(dusk() + 3.0) < 0.75, "a herd beds down rather than walking to water all night");
+    }
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use crate::creatures::startle::Threat;
@@ -1110,6 +1539,7 @@ mod tests {
             rig: None,
             skeleton: None,
             block: 0,
+            lod: None,
         }
     }
 
@@ -1131,6 +1561,7 @@ mod tests {
             morphs: vec![],
             ages: Default::default(),
             aged_tint: [1.0; 3],
+            forms: Default::default(),
         }
     }
 

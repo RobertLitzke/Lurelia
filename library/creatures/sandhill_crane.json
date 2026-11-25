@@ -5,17 +5,40 @@
   "notes": "Sandhill crane: tall and grey with a red crown and a bustle of feathers over the tail. Pairs and small groups stalk wet meadows and river flats, calling, and lift off on broad slow wings.",
   "colors": {"heron": [150, 146, 140], "white": [196, 192, 184], "beak": [36, 28, 24], "crown": [200, 50, 40]},
   "behaviour": {
+    "displays": [{"kind": "dance"}],
     "wary": 16,
     "flightiness": 1.2,
-    "group": {"size": [1, 4], "spacing": 2.5, "range": 14, "alignment": 1.0, "cohesion": 1.0}
+    "group": {"size": [1, 4], "spacing": 2.5, "range": 14, "alignment": 1.0, "cohesion": 1.0},
+    "voice": {
+      "size": 6.0,
+      "calls": [
+        {"cry": "chatter", "on": "display:dance", "boost": 6},
+        {"cry": "chatter", "on": "takeoff", "boost": 6, "chorus": 0.5, "chorus_m": 200},
+        {
+          "cry": "chatter",
+          "on": "idle",
+          "hours": "day",
+          "every_s": [90, 300],
+          "boost": 6,
+          "chorus": 0.5,
+          "chorus_m": 400
+        }
+      ]
+    }
   },
   "like": "heron",
   "scale": 1.05,
   "extra_ops": [
-    {"op": "recolour", "at": [16, 12, 11], "until": [17, 17, 13], "from": "white", "to": "heron"},
-    {"op": "box", "from": [16, 18, 11], "to": [17, 19, 13], "mat": "heron", "part": "head"},
-    {"op": "set", "at": [16, 18, 10], "mat": "crown", "part": "head"},
-    {"op": "set", "at": [16, 18, 9], "mat": "crown", "part": "head"},
-    {"op": "ellipsoid", "centre": [16.5, 12, 22], "radius": [2.2, 1.6, 2.4], "mat": "heron", "part": "tail"}
+    {"op": "recolour", "at": [29, 20, 13], "until": [31, 28, 16], "from": "white", "to": "heron"},
+    {"op": "box", "from": [29, 30, 13], "to": [31, 31, 16], "mat": "heron", "part": "head"},
+    {"op": "box", "from": [29, 30, 11], "to": [31, 31, 13], "mat": "crown", "part": "head"},
+    {"op": "box", "from": [29, 30, 9], "to": [31, 31, 11], "mat": "crown", "part": "head"},
+    {
+      "op": "ellipsoid",
+      "centre": [29.826, 19.82, 30.91],
+      "radius": [3.634, 2.643, 3.964],
+      "mat": "heron",
+      "part": "tail"
+    }
   ]
 }

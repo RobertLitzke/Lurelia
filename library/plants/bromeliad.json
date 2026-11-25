@@ -1,0 +1,14 @@
+{
+  "name": "bromeliad",
+  "version": 1,
+  "introduced_by": "kitehold",
+  "notes": "Tank bromeliads on the trunks and limbs of the cloud forest. A crust plant; its biome density is the chance a tree carries a colony.",
+  "form": "crust",
+  "height": [2, 16],
+  "crown_radius": [0.3, 0.5],
+  "bark": "bromeliad",
+  "leaf": "bromeliad",
+  "crust": "bracket",
+  "hosts": ["tree"],
+  "shaded": false
+}

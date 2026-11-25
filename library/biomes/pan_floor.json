@@ -1,18 +1,17 @@
 {
   "name": "pan_floor",
-  "version": 1,
+  "version": 2,
   "introduced_by": "thornpan",
   "notes": "A salt pan: the floor of a lake that has not existed for fourteen thousand years, swept bare and cracked into plates, with dead baobabs on its rim and shells lying on it in drifts.",
+  "habitat": "salt_flat",
   "priority": 15,
   "rules": {"region": "pans", "elev": [0.1, 6]},
   "surface": "salt_crust",
   "subsurface": "salt_mud",
   "fringe": 0,
+  "soil": 0.5,
   "map_color": [214, 210, 198],
-  "plants": [
-    {"plant": "dead_baobab", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 60}}},
-    {"plant": "sagebrush", "density": 0.004, "placement": {"verb": "edge", "params": {"width": 40, "inner": 0.0}}}
-  ],
+  "plants": [{"plant": "dead_baobab", "density": 0.0004, "placement": {"verb": "lone", "params": {"spacing": 60}}}],
   "creatures": [
     {"creature": "vulture", "count": 5},
     {"creature": "jackrabbit", "count": 3.3},

@@ -8,7 +8,7 @@
 //! are things you have to read off an opponent to fight it.
 //!
 //! Nothing about the shape is written here. The bodies are library creatures
-//! (`BUILDS`, children of `robot`, which is a `humanoid` in different paint),
+//! (`BUILDS`, children of `bot`, which is built on `humanoid`),
 //! compiled the way the EDIT page compiles the entry it is showing: on
 //! demand, into models of their own, so a bot looks the same in every world
 //! whether or not that world's biomes have ever heard of it.
@@ -32,10 +32,16 @@ use glam::{Quat, Vec3};
 
 /// The library creature the builds are children of, and what is drawn when
 /// none of them is there.
-pub const SPECIES: &str = "robot";
-/// The bodies a bot may be drawn as: built for the shoulders, for the
-/// middle, and thin and a little tall.
-pub const BUILDS: [&str; 3] = ["robot_brawny", "robot_heavy", "robot_lean"];
+pub const SPECIES: &str = "bot";
+/// The bodies a bot may be drawn as: a slim android, a diving hardsuit and
+/// a reverse-kneed walker (library/creatures/bot_*.json).
+pub const BUILDS: [&str; 3] = ["bot_courier", "bot_hardsuit", "bot_walker"];
+/// The bodies a zombie may be drawn as (library/creatures/zombie_*.json),
+/// after the bots' in `Avatar::bodies`. Same eighteen bones, so a figure and
+/// a corpse work on either; no uniform and no lamps, and each build keeps
+/// its own colours in a palette block of its own, because an office shirt
+/// and a hiker's jacket are both `body` and differ.
+pub const ZOMBIE_BUILDS: [&str; 3] = ["zombie_office", "zombie_hiker", "zombie_labourer"];
 
 /// Palette slots the avatar may fill: the guns take 18..38
 /// (combat/viewmodel.rs) and the ride's start at 48. The robot names seven
@@ -80,8 +86,10 @@ pub struct Avatar {
     /// then each build's parts in turn. Bone model indices count from the
     /// first of these.
     pub models: Vec<Model>,
-    /// At least one, always: a library with no robot gets a stub.
+    /// At least one, always: a library with no robot gets a stub. The bots'
+    /// builds first (`bots` of them), then the zombies'.
     pub bodies: Vec<Body>,
+    pub bots: usize,
     /// Problems building it, for `--validate`.
     pub problems: Vec<String>,
 }
@@ -101,12 +109,17 @@ pub struct Body {
     /// Model voxel edge in metres, and the pivot the parts are placed about.
     pub voxel: f32,
     pub pivot: Vec3,
+    /// Whether it wears the lamp bars: a bot does, a zombie does not.
+    pub lit: bool,
+    /// Whether it wears a hard hat: a zombie build with `hat` voxels on its
+    /// head bone, which the zombie round does not let a headshot drop.
+    pub hard_head: bool,
     /// The middles of the front and back lamp bars, in voxels from the chest
     /// joint, found on the build's own voxels (`bars`).
     bars: [Vec3; 2],
 }
 
-/// The fallback when the library has no `robot`: a blank body with no rig, so
+/// The fallback when the library has no `bot`: a blank body with no rig, so
 /// a bot is a grey box rather than a crash.
 fn stub() -> Avatar {
     let mut g = Grid::new();
@@ -120,11 +133,14 @@ fn stub() -> Avatar {
         rig: empty_rig(),
         base: empty_rig(),
         paint: empty_rig(),
+        lit: true,
+        hard_head: false,
         bars: DEFAULT_BARS,
     };
     Avatar {
         models: shared(m),
         bodies: vec![body],
+        bots: 1,
         problems: vec![format!("no library creature called {SPECIES}: bots have no body")],
     }
 }
@@ -132,6 +148,7 @@ fn stub() -> Avatar {
 fn empty_rig() -> Rig {
     Rig {
         soft: None,
+        sit_up: 0.0,
         plan: Some(Plan::Biped),
         bones: Vec::new(),
         activities: Default::default(),
@@ -140,7 +157,7 @@ fn empty_rig() -> Rig {
 }
 
 /// The colour a bot's uniform is painted over: the chest and shoulder
-/// plates and the kneepads (`uniform` in library/creatures/robot.json, the
+/// plates and the kneepads (`uniform` in library/creatures/bot.json, the
 /// same white as the body until a side paints it). Limbs, head, waist and
 /// joints keep their own colours, so a side reads as what it is wearing
 /// rather than as a robot dipped in paint.
@@ -289,15 +306,27 @@ pub const PAD_RISE: f32 = 0.45;
 /// thick as the band it lies in.
 pub const LAMP_VOX: f32 = 1.75 / 32.0;
 
-/// The height of the lamp band's middle, in model voxels. It is the same in
-/// every build (library/creatures/robot.json): the band is a dark strip
-/// two voxels high across y 24 and 25.
-const BAR_Y: i32 = 25;
+/// The lowest row of the lamp band, in model voxels. It is the same in
+/// every build (library/creatures/bot.json): the band is a dark strip five
+/// voxels high across rows 74 to 78, so its middle is 76.5.
+const BAR_Y: i32 = 74;
+const BAR_ROWS: i32 = 5;
 
 /// Build the bots' bodies from the library, and fill in the palette slots
 /// they need. Pure in the library, so the renderer and the rules may each
 /// call it and get the same models in the same order.
-pub fn build(lib: Option<&Library>, palette: &mut [[f32; 4]]) -> Avatar {
+pub fn build(lib: Option<&Library>, palette: &mut Vec<[f32; 4]>) -> Avatar {
+    build_with(lib, palette, false)
+}
+
+/// `build`, and the parts' smooth meshes baked as well (models::bake_with),
+/// for the renderer. The rules only want the rigs, so only what draws pays
+/// for the bake.
+pub fn build_drawn(lib: Option<&Library>, palette: &mut Vec<[f32; 4]>) -> Avatar {
+    build_with(lib, palette, true)
+}
+
+fn build_with(lib: Option<&Library>, palette: &mut Vec<[f32; 4]>, bake: bool) -> Avatar {
     // Lit, but not so lit that the colour goes out of it: the lamp's whole
     // job is to be amber at full health and red near the end, and anything
     // much past half an exposure of glow reads white whatever it is tinted.
@@ -336,16 +365,21 @@ pub fn build(lib: Option<&Library>, palette: &mut [[f32; 4]]) -> Avatar {
     };
     let mut models_out: Vec<Model> = Vec::new();
     let mut bodies = Vec::new();
+    // Each rig's parts are baked as one surface, the way a library
+    // creature's are (worldload::creatures), so a living bot's two halves
+    // and its corpse are each smooth across their joints.
+    let mut bakes: Vec<models::BodyBake> = Vec::new();
     for def in defs {
         if def.colors.len() != first.colors.len() || def.colors.keys().any(|k| !first.colors.contains_key(k)) {
             problems.push(format!("{}: colours differ from {}'s, which the builds share", def.name, first.name));
         }
-        let s = crate::world::shape::compile(&def.ops, [32, 32, 32], &resolve);
+        let dims = crate::anim::slice::Dims(def.grid);
+        let s = crate::world::shape::compile(&def.ops, def.grid, &resolve);
         if s.solid == 0 {
             problems.push(format!("{} has no voxels", def.name));
             continue;
         }
-        let whole = models::from_cells(&s.mat, def.voxel, def.half_w, def.height);
+        let whole = models::from_grid(&s.mat, dims, def.voxel, def.half_w, def.height);
         let (pivot, voxel) = (whole.pivot, whole.voxel);
         if models_out.is_empty() {
             models_out = shared(whole);
@@ -355,30 +389,67 @@ pub fn build(lib: Option<&Library>, palette: &mut [[f32; 4]]) -> Avatar {
             continue;
         };
         let colour_ok = |n: &str| resolve(n).is_some();
-        let sliced = crate::anim::slice::slice(rig_def, &def.ops, &s.mat, crate::anim::slice::Dims::CUBE, &colour_ok, def.voxel, def.half_w, def.height);
-        let mut rig = sliced.rig;
+        let sliced = crate::anim::slice::slice(rig_def, &def.ops, &s.mat, dims, &colour_ok, def.voxel, def.half_w, def.height);
+        problems.extend(sliced.oversize.iter().map(|b| crate::anim::slice::oversize_problem(&def.name, b)));
+        let mut rig = sliced.rig.clone();
         rig.offset_models(models_out.len());
-        models_out.extend(sliced.parts);
+        bakes.push(body_bake(&sliced, s.mat.clone(), def.grid, models_out.len()));
+        models_out.extend(sliced.parts.into_iter().map(of_body));
         // The uniform and the rest, sliced the same way so every voxel
         // goes to the same bone it does in the whole body.
         let paint_slot = resolve(PAINT).unwrap_or(0);
         let mut halves = Vec::new();
         for painted in [false, true] {
             let mat: Vec<u8> = s.mat.iter().map(|&m| if (m == paint_slot) == painted { m } else { 0 }).collect();
-            let half = crate::anim::slice::slice(rig_def, &def.ops, &mat, crate::anim::slice::Dims::CUBE, &colour_ok, def.voxel, def.half_w, def.height);
-            let mut r = half.rig;
+            let half = crate::anim::slice::slice(rig_def, &def.ops, &mat, dims, &colour_ok, def.voxel, def.half_w, def.height);
+            let mut r = half.rig.clone();
             r.offset_models(models_out.len());
-            models_out.extend(half.parts);
+            bakes.push(body_bake(&half, mat, def.grid, models_out.len()));
+            models_out.extend(half.parts.into_iter().map(of_body));
             halves.push(r);
         }
         let paint = halves.pop().unwrap_or_else(empty_rig);
         let base = halves.pop().unwrap_or_else(empty_rig);
         let chest = rig_def.bones.iter().filter(|b| b.role == Role::Spine).next_back().and_then(|b| b.joint);
         let bars = match chest {
-            Some(j) => bars(&s, Vec3::from(j)),
+            Some(j) => bars(&s, def.grid, Vec3::from(j)),
             None => DEFAULT_BARS,
         };
-        bodies.push(Body { rig, base, paint, voxel, pivot, bars });
+        bodies.push(Body { rig, base, paint, voxel, pivot, lit: true, hard_head: false, bars });
+    }
+    let bots = bodies.len();
+    // The zombies: each whole, in a palette block of its own appended to
+    // the palette (as the vehicles' are), and drawn as `base` alone.
+    for name in ZOMBIE_BUILDS {
+        let Some(def) = creatures.iter().find(|c| c.name == name) else {
+            problems.push(format!("zombie build {name} missing from the library"));
+            continue;
+        };
+        let start = palette.len();
+        let mut names: Vec<&String> = def.colors.keys().collect();
+        names.sort();
+        problems.extend(models::block_problem(&def.name, names.len()));
+        let slot: std::collections::HashMap<&str, u8> = names.iter().map(|n| (n.as_str(), models::block_slot(palette, start, models::linear_colour(&def.colors[*n])))).collect();
+        let resolve = |n: &str| -> Option<u8> { if n == "air" { Some(0) } else { slot.get(n).copied() } };
+        let dims = crate::anim::slice::Dims(def.grid);
+        let s = crate::world::shape::compile(&def.ops, def.grid, &resolve);
+        let Some(rig_def) = def.rig.as_ref().filter(|_| s.solid > 0) else {
+            problems.push(format!("{} has no voxels or no rig", def.name));
+            continue;
+        };
+        let whole = models::from_grid(&s.mat, dims, def.voxel, def.half_w, def.height);
+        let sliced = crate::anim::slice::slice(rig_def, &def.ops, &s.mat, dims, &|n| resolve(n).is_some(), def.voxel, def.half_w, def.height);
+        problems.extend(sliced.oversize.iter().map(|b| crate::anim::slice::oversize_problem(&def.name, b)));
+        let mut rig = sliced.rig.clone();
+        rig.offset_models(models_out.len());
+        bakes.push(body_bake(&sliced, s.mat.clone(), def.grid, models_out.len()));
+        models_out.extend(sliced.parts.into_iter().map(|mut m| {
+            m.block = start as u32;
+            of_body(m)
+        }));
+        // A `hat` colour is a hard hat (the labourer's).
+        let hard_head = def.colors.contains_key("hat");
+        bodies.push(Body { base: rig.clone(), rig, paint: empty_rig(), voxel: whole.voxel, pivot: whole.pivot, lit: false, hard_head, bars: DEFAULT_BARS });
     }
     // A figure is posed on one rig and a corpse falls on it, so every build
     // has to have the same bones in the same order.
@@ -395,20 +466,49 @@ pub fn build(lib: Option<&Library>, palette: &mut [[f32; 4]]) -> Avatar {
         av.problems = problems;
         return av;
     }
-    Avatar { models: models_out, bodies, problems }
+    if bake {
+        models::bake_with(&mut models_out, bakes);
+    }
+    Avatar { models: models_out, bodies, bots, problems }
+}
+
+/// A sliced rig's parts as one body to bake, its part models starting at
+/// `first` in the avatar's models.
+fn body_bake(sliced: &crate::anim::slice::Sliced, cells: Vec<u8>, dims: [i32; 3], first: usize) -> models::BodyBake {
+    models::BodyBake {
+        cells,
+        dims,
+        owner: sliced.owner.clone(),
+        parent: sliced.rig.bones.iter().map(|b| b.parent).collect(),
+        loose: sliced.rig.bones.iter().map(|b| b.loose).collect(),
+        origins: sliced.origins.clone(),
+        parts: (first..first + sliced.parts.len()).collect(),
+    }
+}
+
+/// A part whose smooth meshes come from its body's bake.
+fn of_body(mut m: Model) -> Model {
+    if let Some(l) = m.lod.as_mut() {
+        l.of_body = true;
+    }
+    m
 }
 
 /// The lamp bars' middles, in voxels from the chest joint: across the band
 /// at `BAR_Y`, half sunk into the front and the back of the chest wherever
 /// this build's chest happens to end.
-fn bars(s: &crate::world::shape::Shape, chest: Vec3) -> [Vec3; 2] {
-    let solid = |z: i32| s.get(16, BAR_Y, z).0 != 0 && s.get(16, BAR_Y - 1, z).0 != 0;
-    let front = (0..32).find(|&z| solid(z));
-    let back = (0..32).rev().find(|&z| solid(z));
+fn bars(s: &crate::world::shape::Shape, grid: [i32; 3], chest: Vec3) -> [Vec3; 2] {
+    let x = grid[0] / 2;
+    // The band's middle row: the chest narrows toward the neck, so a test
+    // across all five rows finds the front only where the top row has it.
+    let solid = |z: i32| s.get(x, BAR_Y + BAR_ROWS / 2, z).0 != 0;
+    let front = (0..grid[2]).find(|&z| solid(z));
+    let back = (0..grid[2]).rev().find(|&z| solid(z));
     match (front, back) {
         (Some(f), Some(b)) => {
-            let y = BAR_Y as f32 - chest.y;
-            [Vec3::new(16.0 - chest.x, y, f as f32 - chest.z), Vec3::new(16.0 - chest.x, y, (b + 1) as f32 - chest.z)]
+            let y = BAR_Y as f32 + BAR_ROWS as f32 * 0.5 - chest.y;
+            let x = x as f32;
+            [Vec3::new(x - chest.x, y, f as f32 - chest.z), Vec3::new(x - chest.x, y, (b + 1) as f32 - chest.z)]
         }
         _ => DEFAULT_BARS,
     }
@@ -418,6 +518,20 @@ impl Avatar {
     /// Build `k`, wrapping round however many there are.
     pub fn body(&self, k: usize) -> &Body {
         &self.bodies[k % self.bodies.len()]
+    }
+
+    /// A bot's build for `seed`, one of the bots' own.
+    pub fn bot_build(&self, seed: u32) -> usize {
+        (seed.wrapping_mul(0x9e37_79b9) >> 16) as usize % self.bots.max(1)
+    }
+
+    /// A zombie's build for `seed`, or a bot's if the library has no zombies.
+    pub fn zombie_build(&self, seed: u32) -> usize {
+        let n = self.bodies.len() - self.bots;
+        if n == 0 {
+            return self.bot_build(seed);
+        }
+        self.bots + (seed.wrapping_mul(0x85eb_ca6b) >> 16) as usize % n
     }
 }
 
@@ -608,10 +722,12 @@ mod tests {
     /// and the same bones as the others, none taller than a little over the
     /// player's own collision box.
     #[test]
-    fn the_robot_builds_from_the_library() {
+    fn the_bot_builds_from_the_library() {
         let av = built();
         assert!(av.problems.is_empty(), "{:?}", av.problems);
-        assert_eq!(av.bodies.len(), BUILDS.len());
+        assert_eq!(av.bots, BUILDS.len());
+        assert_eq!(av.bodies.len(), BUILDS.len() + ZOMBIE_BUILDS.len());
+        assert!(av.bodies[av.bots..].iter().all(|b| !b.lit), "a zombie wears lamps");
         let mut parts = WHOLE;
         for body in &av.bodies {
             assert_eq!(body.rig.plan, Some(Plan::Biped));
@@ -626,39 +742,42 @@ mod tests {
                 let m = &av.models[b.model];
                 assert!(!m.mesh.quads.is_empty(), "bone {} owns no voxels", b.name);
             }
-            // The whole body, then the same bones split into the rest and
-            // the uniform.
-            parts += body.rig.bones.len() * 3;
+            // A bot: the whole body, then the same bones split into the
+            // rest and the uniform. A zombie: only the whole body.
+            parts += body.rig.bones.len() * if body.lit { 3 } else { 1 };
         }
         assert_eq!(av.models.len(), parts);
         let h = av.models[BODY_M].height;
         assert!((h - 1.75).abs() < 0.01, "a bot is {h} m tall");
     }
 
-    /// The builds differ where they were meant to: the brawny one widest
-    /// across the chest, the heavy one widest at the belly, the lean one the
-    /// narrowest at the ribs and the tallest.
+    /// The builds differ where they were meant to: the hardsuit the widest
+    /// and deepest through the chest, the courier the narrowest, and the
+    /// walker's knee in front of its hip (it is reverse-kneed). None is
+    /// taller than a little over the player's collision box.
     #[test]
     fn the_builds_differ_where_they_should() {
         let (lib, _) = Library::load(&crate::library::data_root());
-        let mut p = models::palette();
-        build(Some(&lib), &mut p);
         let measure = |name: &str| {
             let def = lib.creatures.iter().find(|c| c.name == name).expect(name);
-            let s = crate::world::shape::compile(&def.ops, [32, 32, 32], &|n: &str| Some(if n == "air" { 0 } else { 1 }));
-            // Solid voxels across row y at z, in metres, arms and all.
-            let across = |y: i32| (0..32).filter(|&x| (0..32).any(|z| s.get(x, y, z).0 != 0)).count() as f32 * def.voxel;
-            let deep = |y: i32| (0..32).filter(|&z| s.get(16, y, z).0 != 0).count() as f32 * def.voxel;
-            (across(23), deep(18), deep(22), s.top as f32 * def.voxel)
+            let g = def.grid;
+            let s = crate::world::shape::compile(&def.ops, g, &|n: &str| Some(if n == "air" { 0 } else { 1 }));
+            // Solid voxels across row y, in metres, arms and all, and deep
+            // through the middle of the body.
+            let across = |y: i32| (0..g[0]).filter(|&x| (0..g[2]).any(|z| s.get(x, y, z).0 != 0)).count() as f32 * def.voxel;
+            let deep = |y: i32| (0..g[2]).filter(|&z| s.get(g[0] / 2, y, z).0 != 0).count() as f32 * def.voxel;
+            let joint = |bone: &str| def.rig.as_ref().and_then(|r| r.bones.iter().find(|b| b.name == bone)).and_then(|b| b.joint).expect(bone);
+            let knee_ahead = joint("thigh_l")[2] - joint("shin_l")[2];
+            (across(70), deep(70), knee_ahead, s.top as f32 * def.voxel)
         };
-        let [brawny, heavy, lean] = BUILDS.map(measure);
-        assert!(
-            brawny.0 > heavy.0 && brawny.0 > lean.0,
-            "the brawny build is not the widest across the chest: {brawny:?} {heavy:?} {lean:?}"
-        );
-        assert!(heavy.1 > brawny.1 && heavy.1 > lean.1, "the heavy build has no belly: {brawny:?} {heavy:?} {lean:?}");
-        assert!(lean.2 < brawny.2 && lean.2 < heavy.2, "the lean build is not the thinnest at the ribs: {brawny:?} {heavy:?} {lean:?}");
-        assert!(lean.3 > brawny.3 + 0.03 && lean.3 < 1.85, "the lean build is {} m tall against {}", lean.3, brawny.3);
+        let [courier, hardsuit, walker] = BUILDS.map(measure);
+        assert!(hardsuit.0 > courier.0 && hardsuit.0 > walker.0, "the hardsuit is not the widest: {courier:?} {hardsuit:?} {walker:?}");
+        assert!(hardsuit.1 > courier.1, "the hardsuit is not deeper than the courier: {courier:?} {hardsuit:?}");
+        assert!(walker.2 > 4.0, "the walker's knee is not in front of its hip: {walker:?}");
+        assert!(courier.2.abs() < 1.0 && hardsuit.2.abs() < 1.0, "a plain build has a knee out of line: {courier:?} {hardsuit:?}");
+        for b in [courier, hardsuit, walker] {
+            assert!(b.3 < 1.85, "a build is {} m tall", b.3);
+        }
     }
 
     /// Every model the avatar hands out has voxels in it.
@@ -681,8 +800,12 @@ mod tests {
             if halves.contains(&i) {
                 continue;
             }
+            // A body on a grid bigger than 32^3 draws only its parts, so the
+            // whole is an empty model with the pivot (worldload::creatures).
+            if i == BODY_M {
+                continue;
+            }
             let what = match i {
-                BODY_M => "the body",
                 LAMP_M => "the chest lamp",
                 PAD_M => "the pickup blob",
                 CROSS_M => "the health cross",
@@ -713,15 +836,18 @@ mod tests {
     #[test]
     fn the_lamps_sit_on_the_body() {
         let av = built();
-        for (k, body) in av.bodies.iter().enumerate() {
+        for (k, body) in av.bodies.iter().enumerate().take(av.bots) {
             let fig = body.figure(1);
             let [front, back] = body.lamps(&fig, Vec3::ZERO, 0.0, 1.0);
             for (what, b) in [("front", front), ("back", back)] {
                 assert!((1.2..1.6).contains(&b.at.y), "build {k}: the {what} bar is at {} m, not on a chest", b.at.y);
                 assert!(b.at.x.abs() < 0.03, "build {k}: the {what} bar is {} m off the middle", b.at.x);
             }
-            assert!(front.at.z < -0.08, "build {k}: the front bar is not on the front: {front:?}");
-            assert!(back.at.z > 0.04, "build {k}: the back bar is not behind the body: {back:?}");
+            // The walker leans its chest forward over the hips, so its back
+            // is close behind the chest joint; what has to hold is that the
+            // bars are a chest's depth apart, front in front.
+            assert!(front.at.z < -0.05, "build {k}: the front bar is not on the front: {front:?}");
+            assert!(back.at.z > 0.02 && back.at.z - front.at.z > 0.12, "build {k}: the back bar is not behind the body: {back:?}");
             // High enough to clear a weapon held in both hands, which is what
             // put the lamps up there in the first place.
             let hand = crate::anim::figure::hand_bone(&body.rig).expect("a hand");
